@@ -70,9 +70,14 @@ const ProvidersPageLazy = lazyRouteComponent(
   () => import('./routes/ProvidersPage'),
   'ProvidersPage',
 );
+const SpendPageLazy = lazyRouteComponent(() => import('./routes/SpendPage'), 'SpendPage');
 const ContainersPageLazy = lazyRouteComponent(
   () => import('./routes/ContainersPage'),
   'ContainersPage',
+);
+const ContainerDetalhePageLazy = lazyRouteComponent(
+  () => import('./routes/ContainerDetalhePage'),
+  'ContainerDetalhePage',
 );
 
 /**
@@ -263,10 +268,22 @@ const containersRoute = createRoute({
   component: ContainersPageLazy,
 });
 
+const containerDetalheRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/containers/$projectId',
+  component: ContainerDetalhePageLazy,
+});
+
 const providersRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/providers',
   component: ProvidersPageLazy,
+});
+
+const spendRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/spend',
+  component: SpendPageLazy,
 });
 
 // A lista de abas mora em `routes/project-tabs.ts` — aqui só se pergunta se a
@@ -436,7 +453,9 @@ const routeTree = rootRoute.addChildren([
     indexRoute,
     accountRoute,
     containersRoute,
+containerDetalheRoute,
     providersRoute,
+    spendRoute,
     projectRoute,
     sessionRoute,
     provisioningRoute,

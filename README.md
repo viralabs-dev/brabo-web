@@ -1,8 +1,8 @@
 # brabo-web
 
-Interface web do Brabo: React 19, Vite, TanStack Query/Router, Tailwind 4 e shadcn/ui (Base UI). Extraído do monorepo `daneiel/brabo` (ADR 0252, EP-033) com histórico.
+Brabo web interface: React 19, Vite, TanStack Query/Router, Tailwind 4 and shadcn/ui (Base UI). Extracted from the `daneiel/brabo` monorepo (ADR 0252, EP-033) with history.
 
-## Desenvolver
+## Development
 
 ```sh
 pnpm install
@@ -13,14 +13,14 @@ pnpm areas:baixar        # baixa o areas.json do brabo-contracts (tag fixada) pa
 pnpm build
 ```
 
-## Dependências de outros repositórios
+## Dependencies on other repositories
 
-- `@brabo/shared`: `viralabs-dev/brabo-contracts#v1.0.0` (por tag, nunca por branch).
-- Tipos da api: `fixados/openapi.json` (`pnpm openapi:types`), cópia fixada; origem em `fixados/ORIGEM.md`.
-- Tokens de design: `design/tokens.css`; a doc do design em `design/` e a do app em `docs/`.
+- `@brabo/shared`: `viralabs-dev/brabo-contracts#v1.0.0` (by tag, never by branch).
+- API types: `fixados/openapi.json` (`pnpm openapi:types`), a pinned copy; its origin is in `fixados/ORIGEM.md`.
+- Design tokens: `design/tokens.css`; the design docs are in `design/` and the app docs in `docs/`.
 
-## Imagens
+## Images
 
-`Dockerfile` (produção, nginx, sem build local obrigatório) e `Dockerfile.dev` (vite com bind mount). O CI constrói a de produção sem publicar.
+`Dockerfile` (production, nginx, no local build required) and `Dockerfile.dev` (vite with a bind mount). CI builds the production image without publishing it.
 
-Branches permanentes: `dev` e `main`; tag só por workflow. Licença MIT.
+Permanent branches: `dev` and `main`; tags only via workflow. MIT license.

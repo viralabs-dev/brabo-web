@@ -1,226 +1,234 @@
 # design/
 
-Design system do Brabo — fidelidade estrita exigida na UI (ver `CLAUDE.md`).
+Brabo design system: strict fidelity is required in the UI (see `CLAUDE.md`).
 
-- **`tokens.css`** — também consumido pelo site de documentação
-  (`website/src/css/custom.css` o importa; AT-561) — cores (paleta + tokens semânticos dark/light),
-  tipografia (Space Grotesk/Archivo/IBM Plex Mono, mais a escala `--fs-*`),
-  espaçamento, radius e as métricas do shell (`--sidebar-w`, `--header-h`,
-  `--tabs-h`). Extraído do projeto claude.ai/design ["Brabo Design
+- **`tokens.css`**: also consumed by the documentation site
+  (`website/src/css/custom.css` imports it; AT-561). Colors (palette + dark/light semantic tokens),
+  typography (Space Grotesk/Archivo/IBM Plex Mono, plus the `--fs-*` scale),
+  spacing, radius and the shell metrics (`--sidebar-w`, `--header-h`,
+  `--tabs-h`). Extracted from the claude.ai/design project ["Brabo Design
   System"](https://claude.ai/design/p/1c960ca8-5e00-4558-8ced-80dfbdf01027?file=Brabo+Design+System.dc.html)
-  em 2026-07-23 e reconciliado com o handoff versionado em 2026-08-08.
-  É consumido diretamente por `apps/web/src/index.css`.
-  Dark é o tema primário; `[data-theme="light"]` no `<html>` troca para
-  o tema claro — e quem escreve esse atributo é
-  `apps/web/public/theme-boot.js` (ADR 0074, RN-182). Até ele existir o tema
-  claro estava aqui e era **inalcançável**: nenhum caminho do produto definia
+  on 2026-07-23 and reconciled with the versioned handoff on 2026-08-08.
+  It is consumed directly by `apps/web/src/index.css`.
+  Dark is the primary theme; `[data-theme="light"]` on `<html>` switches to
+  the light theme, and what writes that attribute is
+  `apps/web/public/theme-boot.js` (ADR 0074, RN-182). Until that file existed
+  the light theme was here and **unreachable**: no product path set
   `data-theme`.
 
-  Dois grupos de nome são **alias**, não renomeação: `--font-display` aponta
-  para `--font-heading`, `--shadow-modal` para `--shadow-lg`, e
-  `--r-md`/`--r-lg`/`--r-pill` para os `--radius-*` que já existiam. São os
-  nomes do handoff; trocar os antigos seria um rename cego por sinônimo em
-  dezenas de arquivos. Atenção a um degrau que **não** coincide: `--r-sm` é
-  7px e `--radius-sm` é 4px.
-- **`COMPONENTS.md`** — catálogo dos componentes (base: botões, inputs,
-  tabs, toasts, modal, tabela densa, cards; de produto: AgentCard,
+  Two groups of names are **aliases**, not renames: `--font-display` points
+  to `--font-heading`, `--shadow-modal` to `--shadow-lg`, and
+  `--r-md`/`--r-lg`/`--r-pill` to the `--radius-*` tokens that already existed.
+  They are the handoff's names; replacing the old ones would be a blind
+  synonym rename across dozens of files. Watch out for one step that does
+  **not** match: `--r-sm` is 7px and `--radius-sm` is 4px.
+- **`COMPONENTS.md`**: catalog of the components (base: buttons, inputs,
+  tabs, toasts, modal, dense table, cards; product: AgentCard,
   TokenMeter, EventItem, ApprovalCard, ModelPicker, NotificationBell),
-  extraído do mesmo projeto (arquivo `Brabo Design System.dc.html` +
-  os 5 arquivos de tela) em 2026-07-23.
-- **`SCREENS.md`** — composição de cada tela (shell+dashboard, projeto
-  com tabs, sessão/chat, aprovações, configurações), mesma fonte.
+  extracted from the same project (file `Brabo Design System.dc.html` +
+  the 5 screen files) on 2026-07-23.
+- **`SCREENS.md`**: composition of each screen (shell+dashboard, project
+  with tabs, session/chat, approvals, settings), same source.
 
-`COMPONENTS.md`/`SCREENS.md` são a tradução curada usada como base pra
-implementação real em React/TSX em `apps/web`.
+`COMPONENTS.md`/`SCREENS.md` are the curated translation used as the basis for
+the real React/TSX implementation in `apps/web`.
 
-**Tintas semânticas** (AT-285). Fundo e borda tingidos por um tom de estado
-não se escrevem mais com `color-mix()` no módulo: a escala é UMA e mora no
-`tokens.css`, no fim de cada bloco de tema —
+**Semantic tints** (AT-285). Background and border tinted by a state tone are
+no longer written with `color-mix()` in the module: the scale is ONE and lives
+in `tokens.css`, at the end of each theme block:
 
-| token | o que é | mistura |
+| token | what it is | mix |
 |---|---|---|
-| `--<tom>-soft` | fundo tingido (badge, item ativo, alerta) | tom a `--tint-soft` (12%) sobre `transparent` |
-| `--<tom>-line` | borda tingida | tom a `--tint-line` (40%) sobre `transparent` |
-| `--<tom>-panel` / `--<tom>-panel-border` | faixa de aviso opaca | tom a `--tint-panel` (8%) sobre `--surface-1`; borda a 40% sobre `--border` |
-| `--focus-ring` / `--focus-ring-inset` / `--danger-ring` | anel de foco | acento a 22% / 45%; perigo a 22% |
+| `--<tom>-soft` | tinted background (badge, active item, alert) | tone at `--tint-soft` (12%) over `transparent` |
+| `--<tom>-line` | tinted border | tone at `--tint-line` (40%) over `transparent` |
+| `--<tom>-panel` / `--<tom>-panel-border` | opaque notice strip | tone at `--tint-panel` (8%) over `--surface-1`; border at 40% over `--border` |
+| `--focus-ring` / `--focus-ring-inset` / `--danger-ring` | focus ring | accent at 22% / 45%; danger at 22% |
 
-`<tom>` é `accent`, `success`, `warning` ou `danger` (`violet` tem só `-soft` e
-`-line`). Misturar com `transparent` é o que faz a tinta funcionar sobre
-QUALQUER base — ela não carrega o matiz da superfície de baixo, que é o que
-permite a paleta neutra trocar os fundos sem revisar módulo por módulo. Cor
-DINÂMICA (`--agent-color`, `--status-color`…) continua em `color-mix()`, mas
-com a porcentagem-token: `color-mix(in srgb, var(--agent-color)
-var(--tint-soft), transparent)`. `apps/web/src/design-tintas.test.ts` reprova
-mistura de tom fixo com porcentagem literal num módulo, tinta referenciada que
-o `tokens.css` não declara, e tinta do `:root` que o tema claro não redeclara.
-A consolidação arredondou vizinhos: os fundos de 10–18% viraram 12% e as
-bordas de 30–50% viraram 40%.
+`<tom>` is `accent`, `success`, `warning` or `danger` (`violet` has only `-soft`
+and `-line`). Mixing with `transparent` is what makes the tint work over ANY
+base: it does not carry the hue of the surface underneath, which is what lets
+the neutral palette swap backgrounds without reviewing module by module.
+DYNAMIC color (`--agent-color`, `--status-color`, ...) stays in `color-mix()`,
+but with the percentage as a token: `color-mix(in srgb, var(--agent-color)
+var(--tint-soft), transparent)`. `apps/web/src/design-tintas.test.ts` rejects
+a mix of a fixed tone with a literal percentage in a module, a referenced tint
+that `tokens.css` does not declare, and a `:root` tint that the light theme
+does not redeclare. The consolidation rounded neighbors: backgrounds of 10-18%
+became 12% and borders of 30-50% became 40%.
 
-**Escala** (AT-288). Fonte, espaço e raio saem dos degraus do `tokens.css`:
-nenhum módulo tem meio-degrau de fonte (10,5/11,5/12,5 px — o 12,5 do handoff é
-o `--fs-mono`), os módulos da Sessão, do Shell e do trilho escrevem pelo token
-todo tamanho e espaço que tem degrau, e raio que coincide com um degrau passa
-pelo token em qualquer módulo. As duas famílias de raio CONVIVEM como alias
-declarado: `--r-md`/`--r-lg`/`--r-pill` apontam para `--radius-md`/`-lg`/`-full`,
-e `--r-sm` (7px, botão de ícone) **não** é `--radius-sm` (4px) —
-`apps/web/src/design-escala.test.ts` fixa as duas coisas. Ficam de fora, por
-não terem degrau, os raios de 6, 9, 10 e 11px e as fontes de 14 e 17px.
+**Scale** (AT-288). Font, space and radius come from the steps in `tokens.css`:
+no module has a half font step (10.5/11.5/12.5 px; the handoff's 12.5 is
+`--fs-mono`), the Session, Shell and rail modules write every size and space
+that has a step through the token, and a radius that matches a step goes
+through the token in any module. The two radius families COEXIST as a declared
+alias: `--r-md`/`--r-lg`/`--r-pill` point to `--radius-md`/`-lg`/`-full`, and
+`--r-sm` (7px, icon button) is **not** `--radius-sm` (4px);
+`apps/web/src/design-escala.test.ts` pins both facts. Left out, for having no
+step, are the 6, 9, 10 and 11px radii and the 14 and 17px fonts.
 
-Toda implementação de UI deve referenciar sempre os tokens semânticos
+Every UI implementation must always reference the semantic tokens
 (`var(--surface-*)`, `var(--text-*)`, `var(--accent)`, `var(--violet)`
-etc.) — nunca a paleta bruta nem valores de cor/espaçamento inventados.
+etc.), never the raw palette nor invented color/spacing values.
 
-**Padrões de tela** (AT-322, AT-327). O que a auditoria visual de 30/09 achou
-em várias formas tem UMA agora, em `apps/web/src/components/ui/`:
+**Screen patterns** (AT-322, AT-327). What the 09/30 visual audit found in
+several forms now has ONE, in `apps/web/src/components/ui/`:
 
-| padrão | componente | regra |
+| pattern | component | rule |
 |---|---|---|
-| controle segmentado ("qual destes") | `SegmentedControl` | grupo rotulado de `Chip`s com `aria-pressed`, um ligado por vez — filtro de lista OU troca de painel; nunca `role="tab"` sem `tabpanel` |
-| estado vazio | `EmptyState` | caixa tracejada centralizada, frase em `--text-secondary`, ícone e CTA opcionais; a FRASE é de quem chama (vazio por filtro ≠ por ausência) e erro/carregando seguem separados (RN-088) |
-| CTA de criar | `Button` + `PlusIcon` | ícone + verbo ("Nova ideação"), nunca o caractere "+" no texto |
-| botão desabilitado | `Button` | `--text-muted` sobre `--surface-2` com contorno `--border-strong`, SEM `opacity` — o par é medido em `design-contraste.test.ts` nos dois temas |
-| decisão pedida | `ApprovalCard` | uma variante só nas quatro superfícies (fio, aba Aprovações, "precisa de você", pendências de outras sessões): mesmos botões com largura natural, mesmas notas em corpo de 12px, código da frase em mono sem aspas; a largura é do CONTÊINER |
+| segmented control ("which of these") | `SegmentedControl` | labeled group of `Chip`s with `aria-pressed`, one on at a time: list filter OR panel switch; never `role="tab"` without `tabpanel` |
+| empty state | `EmptyState` | centered dashed box, sentence in `--text-secondary`, optional icon and CTA; the SENTENCE belongs to the caller (empty by filter is not empty by absence) and error/loading stay separate (RN-088) |
+| create CTA | `Button` + `PlusIcon` | icon + verb ("Nova ideação"), never the "+" character in the text |
+| disabled button | `Button` | `--text-muted` on `--surface-2` with a `--border-strong` outline, WITHOUT `opacity`; the pair is measured in `design-contraste.test.ts` in both themes |
+| requested decision | `ApprovalCard` | a single variant on the four surfaces (thread, Approvals tab, "needs you", pending items from other sessions): same buttons at natural width, same notes at 12px body, phrase code in mono without quotes; the width belongs to the CONTAINER |
 
-Aba do projeto começa no topo, sem margem de seção antes do título: `.arch`
-(`ProjectOverviewTab.module.css`) é de seção que vem DEPOIS de outra.
+A project tab starts at the top, with no section margin before the title:
+`.arch` (`ProjectOverviewTab.module.css`) is for a section that comes AFTER
+another.
 
-## shadcn/ui lê os tokens (ADR 0232)
+## shadcn/ui reads the tokens (ADR 0232)
 
-O `apps/web` tem shadcn/ui (Base UI + Tailwind 4) em `components/shadcn/`. O
-`src/shadcn.css` (importado depois do `index.css`, com o preflight do Tailwind ligado desde o ADR 0237) mapeia as
-cores semânticas do shadcn aos tokens deste diretório em `@theme inline`
-(`primary`→`--accent`, `accent`→`--surface-2`, `destructive`→`--danger`...) e
-liga o `dark:` a `[data-theme='dark']`. As variáveis cruas do shadcn
-(`--accent`, `--radius-*`, `--font-mono`) NÃO são declaradas: os tokens daqui
-continuam a única fonte, e os pares de contraste seguem medidos pelo
+`apps/web` has shadcn/ui (Base UI + Tailwind 4) in `components/shadcn/`.
+`src/shadcn.css` (imported after `index.css`, with the Tailwind preflight on
+since ADR 0237) maps shadcn's semantic colors to this directory's tokens in
+`@theme inline` (`primary`→`--accent`, `accent`→`--surface-2`,
+`destructive`→`--danger`...) and ties `dark:` to `[data-theme='dark']`. The raw
+shadcn variables (`--accent`, `--radius-*`, `--font-mono`) are NOT declared:
+the tokens here remain the only source, and the contrast pairs stay measured by
 `design-contraste.test.ts`.
 
-Hoje existem em `components/shadcn/` (baixados do registry `base-nova`, ainda
-sem uso em tela salvo o Button): button, badge, card, alert, label, field,
-separator, input, input-group, textarea, native-select, dialog, collapsible,
-toggle, toggle-group, tabs, table, empty, skeleton, avatar, trace, message,
-bubble, item, tooltip, hover-card, progress e spinner. `components/ai-elements/`
-guarda os padrões de IA da AT-647 (só apresentação, texto por prop, nada em tela
-ainda); o `shadcn.css` já a varre. Conversa: mensagem, sugestão, campo de prompt
-e confirmação.
+Today `components/shadcn/` contains (downloaded from the `base-nova` registry,
+still unused on any screen except Button): button, badge, card, alert, label,
+field, separator, input, input-group, textarea, native-select, dialog,
+collapsible, toggle, toggle-group, tabs, table, empty, skeleton, avatar, trace,
+message, bubble, item, tooltip, hover-card, progress and spinner.
+`components/ai-elements/` holds the AI patterns of AT-647 (presentation only,
+text by prop, nothing on screen yet); `shadcn.css` already scans it.
+Conversation: message, suggestion, prompt field and confirmation.
 
-## `design_handoff_brabo/` — o handoff, versionado
+## `design_handoff_brabo/`: the handoff, versioned
 
-Desde 2026-08-08 (FASE 16) o handoff de design vive **no repositório**, na
-raiz: `README.md` com a especificação completa e oito `.dc.html` de alta
-fidelidade em `designs/`. Antes, o detalhe visual não coberto por
-`COMPONENTS.md`/`SCREENS.md` só existia atrás do `DesignSync(get_file)` — um
-serviço externo. Agora a referência tem hash e histórico como o resto.
+Since 2026-08-08 (FASE 16) the design handoff lives **in the repository**, at
+the root: a `README.md` with the full specification and eight high-fidelity
+`.dc.html` files in `designs/`. Before that, the visual detail not covered by
+`COMPONENTS.md`/`SCREENS.md` existed only behind `DesignSync(get_file)`, an
+external service. Now the reference has a hash and a history like everything
+else.
 
-Três coisas que o handoff estabelece sobre si e valem como regra aqui:
+Three things the handoff states about itself that hold as rules here:
 
-1. Os `.dc.html` são **referência, não código para copiar**. Estilo inline é
-   construção do protótipo; a implementação usa os padrões do `apps/web`.
-2. `designs/support.js` é o runtime do protótipo — **não portar**.
-3. Nenhum asset binário. Todo ícone é SVG inline, e o único asset de marca é o
-   monograma B, que é componente e nunca imagem rasterizada.
+1. The `.dc.html` files are **reference, not code to copy**. Inline style is a
+   prototype construct; the implementation uses the `apps/web` patterns.
+2. `designs/support.js` is the prototype runtime: **do not port**.
+3. No binary assets. Every icon is inline SVG, and the only brand asset is the
+   B monogram, which is a component and never a rasterized image.
 
-**A divergência deliberada:** o handoff pede o `<link>` do Google
-Fonts. As três famílias continuam **auto-hospedadas** (`@font-face` em
-`apps/web/src/index.css` sobre os `.woff2` de `public/fonts/`). Não é
-preferência — a CSP da imagem do nginx é `style-src 'self'; font-src 'self'
-data:`, que bloqueia a folha e os arquivos; seguir o handoff nesse item
-reintroduz exatamente a falha que o ADR 0036 fechou, e o sintoma é a tipografia
-inteira caindo em fonte de sistema. As famílias, os pesos e as escalas do
-handoff valem; a forma de carregá-las, não.
+**The deliberate divergence:** the handoff asks for the Google Fonts `<link>`.
+The three families remain **self-hosted** (`@font-face` in
+`apps/web/src/index.css` over the `.woff2` files in `public/fonts/`). This is
+not a preference: the nginx image's CSP is `style-src 'self'; font-src 'self'
+data:`, which blocks the stylesheet and the files; following the handoff on
+this item reintroduces exactly the failure ADR 0036 closed, and the symptom is
+the whole typography falling back to a system font. The handoff's families,
+weights and scales hold; the way of loading them does not.
 
-A mesma régua se aplicou duas vezes mais, no ADR 0074. O handoff manda aplicar
-`data-theme` por **script inline no `<head>`** — inline é bloqueado pelo
-`script-src 'self'` da imagem; o script existe e é um **arquivo**
-(`apps/web/public/theme-boot.js`). E cinco dos oito valores `--syn-*` do
-handoff reprovam 4,5:1 contra o próprio `--code-bg` dele; valem os números
-medidos. Em todos os casos a intenção do handoff é seguida e o mecanismo (ou o
-número) que quebra o produto, não.
+The same yardstick applied twice more, in ADR 0074. The handoff says to apply
+`data-theme` through an **inline script in `<head>`**: inline is blocked by the
+image's `script-src 'self'`; the script exists and is a **file**
+(`apps/web/public/theme-boot.js`). And five of the handoff's eight `--syn-*`
+values fail 4.5:1 against its own `--code-bg`; the measured values hold. In
+every case the handoff's intent is followed, and the mechanism (or number) that
+breaks the product is not.
 
-## As duas validações da UI
+## The two UI validations
 
-Fidelidade ao desenho é conferida no olho. Duas classes de defeito, porém,
-foram para o automático porque escapam de qualquer revisão visual — quem
-escreveu já sabe onde olhar, e o monitor de quem escreveu é sempre o melhor.
+Fidelity to the design is checked by eye. Two classes of defect, however, moved
+to automation because they escape any visual review: whoever wrote the code
+already knows where to look, and the author's own monitor is always the best.
 
-**Contraste** é aritmética e virou teste:
-`apps/web/src/lib/contraste.test.ts` lê ESTE `tokens.css`, resolve os `var()`
-até a cor literal e mede a razão WCAG dos pares que a interface usa — **nos
-dois temas** desde o ADR 0074 (RN-184). O Shimmer (ADR 0210) entra pelo pior
-ponto do brilho, a cor-base `--text-secondary` sobre `--surface-0/1/2`: no
-escuro 7,58/7,17/6,62:1, no claro 7,73/7,41/7,03:1.
+**Contrast** is arithmetic and became a test:
+`apps/web/src/lib/contraste.test.ts` reads THIS `tokens.css`, resolves the
+`var()` chain down to the literal color and measures the WCAG ratio of the
+pairs the interface uses, **in both themes** since ADR 0074 (RN-184). The
+Shimmer (ADR 0210) enters at the worst point of the glow, the base color
+`--text-secondary` over `--surface-0/1/2`: in dark 7.58/7.17/6.62:1, in light
+7.73/7.41/7.03:1.
 
-**A paleta é neutra desde o ADR 0181 (RN-640).** O escuro deixou de ser
-azul-petróleo e é preto neutro (`--surface-0/1/2` `#0d0d0f/#141417/#1c1c21`)
-com o acento terracota **suave** (`#c8744f`); o claro é o neutro da mesma
-família (`#ffffff/#fafafa/#f4f4f5`, acento `#a4502c`). As superfícies, o texto
-secundário e as bordas vêm da escala bruta `--neutro-*`; a identidade terracota
-ficou no acento, e o teste confere que o matiz dele continua na faixa
-terracota nos dois temas. Os valores finais saíram da **medição**, não do
-rascunho: onde o rascunho reprovava (`--text-muted` `#71717a` nos dois temas,
-`--on-accent` claro sobre o acento do escuro), o número foi ajustado até o piso
-passar — os números de antes e depois estão no ADR 0181.
+**The palette has been neutral since ADR 0181 (RN-640).** The dark theme
+stopped being petrol blue and is neutral black (`--surface-0/1/2`
+`#0d0d0f/#141417/#1c1c21`) with the **soft** terracotta accent (`#c8744f`);
+the light theme is the neutral of the same family (`#ffffff/#fafafa/#f4f4f5`,
+accent `#a4502c`). The surfaces, secondary text and borders come from the raw
+`--neutro-*` scale; the terracotta identity stayed in the accent, and the test
+checks that its hue remains in the terracotta range in both themes. The final
+values came from **measurement**, not from the draft: where the draft failed
+(`--text-muted` `#71717a` in both themes, light `--on-accent` over the dark
+theme's accent), the number was adjusted until the floor passed; the before and
+after numbers are in ADR 0181.
 
-**Não há mais dívida de contraste.** Do ADR 0074 ao 0181 o escuro carregou
-cinco pares abaixo de 4,5:1, travados por número:
+**There is no contrast debt anymore.** From ADR 0074 to 0181 the dark theme
+carried five pairs below 4.5:1, pinned by number:
 
-| par | razão até o ADR 0181 | hoje (escuro / claro) |
+| pair | ratio until ADR 0181 | today (dark / light) |
 |---|---|---|
-| `--text-muted` sobre `--surface-1` | 3,89:1 | 5,10 / 5,21 |
-| `--text-muted` sobre `--surface-2` | 3,10:1 | 4,70 / 4,94 |
-| `--accent` sobre `--surface-1` | 3,88:1 | 5,31 / 5,35 |
-| `--danger` sobre `--surface-1` | 3,88:1 | 4,96 / 6,11 |
-| `--success` sobre `--surface-2` | 4,41:1 | 6,69 / 4,85 |
+| `--text-muted` over `--surface-1` | 3.89:1 | 5.10 / 5.21 |
+| `--text-muted` over `--surface-2` | 3.10:1 | 4.70 / 4.94 |
+| `--accent` over `--surface-1` | 3.88:1 | 5.31 / 5.35 |
+| `--danger` over `--surface-1` | 3.88:1 | 4.96 / 6.11 |
+| `--success` over `--surface-2` | 4.41:1 | 6.69 / 4.85 |
 
-Os cinco são **piso** agora, nos dois temas: a próxima mudança de paleta que os
-devolver para baixo reprova em vez de ser registrada. Foi-se junto a "exceção
-conhecida" do botão primário (`--on-accent` sobre `--accent`, 3,20:1 no
-escuro): o `--on-accent` do escuro é o preto neutro, 5,61:1. E dois
-consumidores que contornavam a dívida foram revistos — `.link` (auth) voltou
-ao `--accent` do mock; `.hint` (Input) ficou no `--text-secondary`, agora por
-hierarquia.
+All five are a **floor** now, in both themes: the next palette change that
+pushes them back down fails instead of being recorded. Gone with them is the
+"known exception" of the primary button (`--on-accent` over `--accent`, 3.20:1
+in dark): the dark `--on-accent` is neutral black, 5.61:1. And two consumers
+that worked around the debt were revisited: `.link` (auth) went back to the
+mock's `--accent`; `.hint` (Input) stayed on `--text-secondary`, now for
+hierarchy.
 
-O mesmo teste guarda a **paridade entre os dois temas**: todo token semântico
-de cor declarado no `:root` precisa ser redeclarado em `[data-theme="light"]`.
-A lista é derivada do arquivo, não escrita à mão — token novo entra sozinho na
-verificação. O defeito que isso pega não é "a cor sumiu": é a cor calibrada
-para o escuro **vazando** para o tema claro, que aparece longe do commit que a
-causou.
+The same test guards **parity between the two themes**: every semantic color
+token declared in `:root` must be redeclared in `[data-theme="light"]`. The
+list is derived from the file, not written by hand, so a new token joins the
+check on its own. The defect it catches is not "the color vanished": it is the
+color calibrated for dark **leaking** into the light theme, which shows up far
+from the commit that caused it.
 
-A **paleta de sintaxe** tem os oito papéis do handoff com o prefixo
-`--syntax-*` (RN-185), cada um com valor próprio por tema e todos medidos a
-4,5:1 contra `--code-bg` nos dois (recalculados no ADR 0181 contra os
-`--code-bg` neutros). Cinco dos oito valores que o handoff
-especifica foram **recusados por medição** (o ADR 0074 diz qual e
-por quanto; o comentário do arquivo, os números atuais) — onde o handoff
-reprova, vale o número medido.
+The **syntax palette** has the handoff's eight roles with the `--syntax-*`
+prefix (RN-185), each with its own value per theme and all measured at 4.5:1
+against `--code-bg` in both (recomputed in ADR 0181 against the neutral
+`--code-bg` values). Five of the eight values the handoff specifies were
+**rejected by measurement** (ADR 0074 says which and by how much; the file's
+comment has the current numbers): where the handoff fails, the measured number
+holds.
 
-`--violet` (agentes/IA) entrou na FASE 16 e é medido como elemento de
-interface (3:1) nas três superfícies e como texto (4,5:1) sobre `--code-bg`,
-onde ele é número e decorator no realce. No ADR 0181 ele foi dessaturado junto
-com o resto (`#9d8ad6` no escuro, `#6a50b8` no claro). As três cores de agente
-sem semântico — `--agent-leve`, `--agent-frontend`, `--agent-secops` — viraram
-token por tema no mesmo ADR (eram hex soltos em `lib/agents.ts`) e são medidas
-pela mesma régua do `--violet`.
+`--violet` (agents/AI) entered in FASE 16 and is measured as an interface
+element (3:1) on the three surfaces and as text (4.5:1) over `--code-bg`, where
+it is the number and decorator in the highlighting. In ADR 0181 it was
+desaturated along with the rest (`#9d8ad6` in dark, `#6a50b8` in light). The
+three agent colors with no semantic tone, `--agent-leve`, `--agent-frontend`
+and `--agent-secops`, became a per-theme token in the same ADR (they were loose
+hex values in `lib/agents.ts`) and are measured by the same yardstick as
+`--violet`.
 
-**Cor que precisa sair do CSS** (Mermaid, xterm, o canvas do minimapa) lê o
-token do tema ativo e, sem ele, cai em `apps/web/src/lib/tokens-padrao.ts` —
-uma cópia do `:root` que `tokens-padrao.test.ts` confere contra este arquivo.
-E `apps/web/src/design-tokens-existentes.test.ts` reprova qualquer
-`var(--x)` de módulo CSS que ninguém declara (foi assim que `--surface-3` e
-`--radius-pill`, usados e nunca definidos, apareceram).
+**Color that has to leave CSS** (Mermaid, xterm, the minimap canvas) reads the
+active theme's token and, without it, falls back to
+`apps/web/src/lib/tokens-padrao.ts`, a copy of `:root` that
+`tokens-padrao.test.ts` checks against this file. And
+`apps/web/src/design-tokens-existentes.test.ts` rejects any CSS module
+`var(--x)` that nobody declares (that is how `--surface-3` and
+`--radius-pill`, used and never defined, turned up).
 
-**Layout** depende de medida real — largura de fonte, quebra de linha, posição
-calculada — e nenhum ambiente de teste do repositório faz layout (jsdom não
-mede nada). Então roda no navegador, contra a aplicação de pé:
-`scripts/dev/validacao-visual.js`, colado no console ou executado pelo agente.
-Ele acusa quatro coisas:
+**Layout** depends on real measurement (font width, line wrapping, computed
+position) and no test environment in the repository does layout (jsdom
+measures nothing). So it runs in the browser, against the running application:
+`scripts/dev/validacao-visual.js`, pasted into the console or run by the agent.
+It flags four things:
 
-1. **texto cortado** — conteúdo maior que a caixa, com overflow não rolável;
-2. **fora da viewport** — menu, dropdown ou tooltip cujo retângulo sai da tela;
-3. **recortado por ancestral** — o clássico dropdown dentro de um container com
-   `overflow: hidden`, que existe, tem tamanho e some;
-4. **alvo pequeno** — botão ou link abaixo de 24px (WCAG 2.2 AA).
+1. **clipped text**: content larger than the box, with non-scrollable overflow;
+2. **outside the viewport**: a menu, dropdown or tooltip whose rectangle leaves
+   the screen;
+3. **clipped by an ancestor**: the classic dropdown inside an
+   `overflow: hidden` container, which exists, has a size and vanishes;
+4. **small target**: a button or link under 24px (WCAG 2.2 AA).
 
-Sem dependência nova de propósito: um verificador que exige instalar runtime
-não é rodado. A saída é JSON, para virar achado — nunca correção automática.
+No new dependency, on purpose: a checker that requires installing a runtime
+does not get run. The output is JSON, to become a finding, never an automatic
+fix.

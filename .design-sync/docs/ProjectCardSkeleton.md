@@ -5,10 +5,10 @@ keywords: [skeleton, projeto, card, carregando, dashboard]
 
 # ProjectCardSkeleton
 
-A silhueta de um `ProjectCard`, com as mesmas medidas do card real. Não recebe
-props.
+The silhouette of a `ProjectCard`, with the same measurements as the real card.
+It takes no props.
 
-## Como usar
+## How to use
 
 ```tsx
 // Enquanto a lista de projetos carrega, no lugar dos cards.
@@ -17,10 +17,10 @@ props.
   : projetos.map((p) => <ProjectCard key={p.id} {...p} />)}
 ```
 
-## O que respeitar
+## What to respect
 
-- **As medidas são o contrato.** Ele existe para que a troca skeleton → card
-  não mova nada na tela. Mexer no `ProjectCard` sem mexer aqui devolve o salto
-  que ele foi feito para eliminar.
-- Repita-o na quantidade que você espera receber, não numa fixa: três skeletons
-  seguidos de um card só é pior que um skeleton só.
+- **The measurements are the contract.** It exists so that the skeleton → card
+  swap moves nothing on screen. Changing `ProjectCard` without changing this one
+  brings back the jump it was made to eliminate.
+- Repeat it as many times as you expect to receive, not a fixed number: three
+  skeletons followed by a single card is worse than a single skeleton.

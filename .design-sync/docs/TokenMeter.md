@@ -5,10 +5,10 @@ keywords: [tokens, custo, orçamento, medidor, consumo]
 
 # TokenMeter
 
-Medidor de consumo com custo. Barra com marcas em 70/90/100% e o valor nas duas
-moedas — o controle de custo é assunto de primeira classe no produto.
+A consumption meter with cost. A bar with marks at 70/90/100% and the value in
+both currencies: cost control is a first-class concern in the product.
 
-## Como usar
+## How to use
 
 ```tsx
 <TokenMeter used={184_320} limit={500_000} costBRL={12.47} costUSD={2.29} />
@@ -18,12 +18,12 @@ moedas — o controle de custo é assunto de primeira classe no produto.
   savingsBRL={38.90} savingsPct={76} />
 ```
 
-## O que respeitar
+## What to respect
 
-- **`used` e `limit` têm que estar na mesma unidade que `unitLabel` diz.** O
-  default é "tokens". Passar contagem de token com `unitLabel="USD"` rotula o
-  número errado — é o que o `ProjectCard` faz hoje, e é incoerência conhecida,
-  não exemplo a copiar.
-- `savings*` só quando houve economia real medida. Zerado, omita as duas.
-- `variant`: `default` na tela de custo, `compact` em card ou sidebar, `live`
-  durante uma sessão em andamento.
+- **`used` and `limit` must be in the unit that `unitLabel` states.** The default
+  is "tokens". Passing a token count with `unitLabel="USD"` labels the wrong
+  number; that is what `ProjectCard` does today, and it is a known
+  inconsistency, not an example to copy.
+- `savings*` only when real, measured savings occurred. At zero, omit both.
+- `variant`: `default` on the cost screen, `compact` in a card or sidebar, `live`
+  during a session in progress.

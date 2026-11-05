@@ -5,10 +5,10 @@ keywords: [modelo, llm, provider, preço, seletor, ollama, nuvem]
 
 # ModelPicker
 
-O seletor de modelo de LLM. Agrupa por categoria (local / nuvem) e por provider,
-mostrando o custo de cada modelo — a escolha de modelo é decisão de custo.
+The LLM model picker. It groups by category (local / cloud) and by provider,
+showing the cost of each model: choosing a model is a cost decision.
 
-## Como usar
+## How to use
 
 ```tsx
 <ModelPicker
@@ -19,16 +19,16 @@ mostrando o custo de cada modelo — a escolha de modelo é decisão de custo.
 />
 ```
 
-## O que respeitar
+## What to respect
 
-- `models` é `Record<'local' | 'cloud', Record<provider, Model[]>>`. Categoria
-  vazia não desenha cabeçalho órfão — é o caso de não haver chave de API.
-- Preços em `Model` são **micro-USD por milhão de tokens**: 3_000_000 é
-  US$ 3,00/M. Modelos locais custam 0 e aparecem como "grátis".
-- **O catálogo está no dropdown**, que é estado interno sem prop que o abra.
-  Montar o componente mostra só o chip do modelo atual.
-- O dropdown é posicionado em relação à viewport de propósito: dentro de uma
-  tabela, um dropdown posicionado no fluxo é recortado nas últimas linhas — foi
-  um bug real do produto.
-- `variant`: `topbar` na barra superior, `inline` na configuração de um agente,
-  `standalone` numa tela própria.
+- `models` is `Record<'local' | 'cloud', Record<provider, Model[]>>`. An empty
+  category draws no orphan header; that is the case when there is no API key.
+- Prices in `Model` are **micro-USD per million tokens**: 3_000_000 is
+  US$ 3.00/M. Local models cost 0 and show as "grátis".
+- **The catalog lives in the dropdown**, which is internal state with no prop to
+  open it. Mounting the component shows only the current model's chip.
+- The dropdown is positioned relative to the viewport on purpose: inside a
+  table, a dropdown positioned in the flow is clipped on the last rows; that was
+  a real product bug.
+- `variant`: `topbar` in the top bar, `inline` in an agent's configuration,
+  `standalone` on a screen of its own.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Docs: the 66 component docs in `.design-sync/docs/` translated to English (AT-745). The frontmatter (`category:` and `keywords:`), code blocks, quoted UI strings and domain values in pt-BR are unchanged, so the design-sync grouping is the same.
+
 - Docs: `README.md`, `design/*.md` and `.design-sync/NOTES.md`/`conventions.md` translated to English (AT-745); `tokens.css` comments and the component docs in `.design-sync/docs/` are left for their own round.
 
 - Docs: `docs/` is now English only (AT-745): `business-rules/web.md` and `explanation/tanstack-ai.md` are reconciled with the current pt-BR content (22 missing RNs added, code refs updated), carry `idioma_original: en`, and the `docs/i18n/` translations are removed.

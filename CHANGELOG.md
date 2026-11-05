@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Docs: `README.md`, `design/*.md` and `.design-sync/NOTES.md`/`conventions.md` translated to English (AT-745); `tokens.css` comments and the component docs in `.design-sync/docs/` are left for their own round.
+
 - Docs: `docs/` is now English only (AT-745): `business-rules/web.md` and `explanation/tanstack-ai.md` are reconciled with the current pt-BR content (22 missing RNs added, code refs updated), carry `idioma_original: en`, and the `docs/i18n/` translations are removed.
 
 - Chat "PRs ready to merge": after "Mergear" proposes the merge, a success toast shows and the approval card is scrolled into view (AT-740). The flow itself was reproduced and works; the defect was feedback, since the card appeared inside a height-capped list.

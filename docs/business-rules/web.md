@@ -5615,8 +5615,8 @@ só terminariam em falha"), with both details behind the same `<details>`.
 - **Code:** `apps/web/src/components/ContainerImageGate.tsx:33`
   (`ContainerImageGateNotice`), `:42` (`bloco`);
   `apps/web/src/routes/ProjectPrsTab.tsx:157` (`superficie="prs"`);
-  `apps/web/src/components/AcoesDoContainer.tsx:252` (`semContainer`), `:272`
-  (`chaveCurtaDoBroker`); `apps/web/src/components/ui/Button.module.css:101`
+  `apps/web/src/components/AcoesDoContainer.tsx:252` (`semContainer`), `:270`
+  (`semBrokerNaSubida`; the short-key helper `chaveCurtaDoBroker` is gone: since AT-712 the missing broker is stated ONCE in the "?" help, ADR 0240, not in a `<summary>` in the cell); `apps/web/src/components/ui/Button.module.css:101`
   (`.danger:disabled`)
 - **Test:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("409 do portão vira
   o estado dedicado, com o texto da aba PRs e não o da aba Código", "409 no

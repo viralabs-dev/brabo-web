@@ -411,7 +411,9 @@
     "semPapel": "Merging here needs the developer role on the project.",
     "nota": "Proposes the merge in this session; you confirm it on the card that appears — merging stays manual.",
     "erroTitulo": "Could not propose the merge",
-    "gatePendente": "The {{gate}} gate is still pending for this PR. Merging stays available — the decision is yours."
+    "gatePendente": "The {{gate}} gate is still pending for this PR. Merging stays available — the decision is yours.",
+    "propostoTitulo": "Merge proposed",
+    "propostoMensagem": "Approve or deny it on the card right below."
   },
   "fio": {
     "carregando": "Loading session…",

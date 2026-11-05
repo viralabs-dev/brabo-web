@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Docs: `docs/` is now English only (AT-745): `business-rules/web.md` and `explanation/tanstack-ai.md` are reconciled with the current pt-BR content (22 missing RNs added, code refs updated), carry `idioma_original: en`, and the `docs/i18n/` translations are removed.
+
 - Chat "PRs ready to merge": after "Mergear" proposes the merge, a success toast shows and the approval card is scrolled into view (AT-740). The flow itself was reproduced and works; the defect was feedback, since the card appeared inside a height-capped list.
 - `politica.yml`: pins do `brabo-ci` sobem para `b030fbf` (dispensa da PR do bot, ADR 0255; AT-733).
 - Release por tag da imagem `ghcr.io/viralabs-dev/brabo-web` (AT-704): `carimbo.yml` (tag-release do brabo-ci) e `release.yml` (build, push por digest, Trivy sobre o digest, cosign keyless por digest com verify, `imagem.json` na Release). A 1ª tag final na `main` sai `v1.0.0`.

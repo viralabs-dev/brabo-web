@@ -23,7 +23,7 @@ import { lerTokens, razaoDeContraste, resolverToken, type Rgb } from './lib/cont
  * arquivo, pelas mesmas funções de `lib/contraste.ts` que o outro teste usa.
  */
 
-const css = readFileSync(resolve(process.cwd(), '../../design/tokens.css'), 'utf8');
+const css = readFileSync(resolve(process.cwd(), 'design/tokens.css'), 'utf8');
 const RAIZ = lerTokens(css, ':root');
 const LIGHT = { ...RAIZ, ...lerTokens(css, `\\[data-theme='light'\\]`) };
 

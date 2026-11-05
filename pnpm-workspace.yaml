@@ -1,0 +1,12 @@
+# Overrides de SEGURANÇA (faixa vulnerável -> versão corrigida), só os que o
+# `pnpm why` ainda pede neste repo; vieram do pnpm-workspace.yaml do monorepo.
+overrides:
+  # HIGH · GHSA-22p9-wv53-3rq4 e GHSA-v245-v573-v5vm. Entra por `ansi-to-react`.
+  linkify-it@<5.0.2: 5.0.2
+  # LOW · entra por `mermaid`.
+  katex@<0.18.2: 0.18.2
+  # Dev-only, entra por `openapi-typescript` > `@redocly/openapi-core`.
+  minimatch@<11.0.1: 11.0.1
+
+allowBuilds:
+  esbuild: true

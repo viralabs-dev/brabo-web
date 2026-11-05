@@ -36,7 +36,7 @@ import { fileURLToPath } from 'node:url';
  * tema claro é uma tela de verdade — então os MESMOS pares de auth são cobrados
  * nos dois temas, com o mesmo piso. Ver o `describe.each` abaixo.
  */
-const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..');
+const RAIZ = join(dirname(fileURLToPath(import.meta.url)), '..');
 const TOKENS = readFileSync(join(RAIZ, 'design', 'tokens.css'), 'utf8');
 
 /** Declarações `--x: y;` do primeiro bloco cujo seletor casa. */

@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { lerCor, lerTokens, resolverToken } from './contraste';
 import { lerTokenDoTema, TOKENS_PADRAO, type TokenComPadrao } from './tokens-padrao';
 
-const css = readFileSync(resolve(process.cwd(), '../../design/tokens.css'), 'utf8');
+const css = readFileSync(resolve(process.cwd(), 'design/tokens.css'), 'utf8');
 const raiz = lerTokens(css, ':root');
 
 describe('TOKENS_PADRAO é o :root de design/tokens.css, não uma cópia que envelhece', () => {

@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.git
+.github
+.contracts
+fixados
+docs
+.env
+.env.*

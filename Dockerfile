@@ -48,20 +48,20 @@ WORKDIR /repo
 
 # Manifests primeiro: a camada de deps só invalida quando o lockfile muda.
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-COPY apps/web/package.json apps/web/
-COPY packages/shared/package.json packages/shared/
 
-RUN pnpm install --frozen-lockfile --filter web...
+RUN pnpm install --frozen-lockfile
 
-COPY apps/web apps/web
-COPY packages/shared packages/shared
+COPY index.html tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts components.json ./
+COPY public public
+COPY src src
+COPY test test
 # design/tokens.css é input de build, não documentação: index.css faz
-# `@import '../../../design/tokens.css'` e o vite resolve no filesystem.
+# `@import '../design/tokens.css'` e o vite resolve no filesystem.
 COPY design design
 
 # `build` = `tsc -b && vite build`: o typecheck faz parte do build, então erro de
 # tipo quebra a imagem em vez de chegar em produção.
-RUN pnpm --filter web build
+RUN pnpm build
 
 # ---------------------------------------------------------------------------
 # Estágio 2: nginx servindo o estático. Base pinada.
@@ -90,9 +90,9 @@ ENV API_URL="http://localhost:3000" \
 # hadolint ignore=DL3018
 RUN apk upgrade --no-cache
 
-COPY docker/web/nginx.conf /templates/nginx.conf.template
-COPY docker/web/entrypoint.sh /usr/local/bin/brabo-entrypoint.sh
-COPY --from=build /repo/apps/web/dist /usr/share/nginx/html
+COPY docker/nginx.conf /templates/nginx.conf.template
+COPY docker/entrypoint.sh /usr/local/bin/brabo-entrypoint.sh
+COPY --from=build /repo/dist /usr/share/nginx/html
 
 # Prova, no build, que o bundle veio e que o envsubst existe nesta base (o
 # entrypoint depende dele) — em vez de descobrir no boot do container.

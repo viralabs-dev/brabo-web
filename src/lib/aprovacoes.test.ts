@@ -32,7 +32,7 @@ import type { PsychologistHypothesis } from './api-types';
  * `process.cwd()` (não `import.meta.url`) porque o vitest deste pacote roda com
  * cwd = `apps/web` tanto localmente quanto via `pnpm --filter web test`.
  */
-const DECIDE_TS = join(process.cwd(), '..', 'api', 'src', 'domain', 'actions', 'decide.ts');
+const DECIDE_TS = join(process.cwd(), 'fixados', 'decide.ts');
 
 function tiposDoBackend(): string[] {
   const conteudo = readFileSync(DECIDE_TS, 'utf8');

@@ -35,7 +35,7 @@ function declarados(css: string): string[] {
 
 describe('custom properties usadas nos módulos CSS existem', () => {
   const folhas = [
-    resolve(RAIZ_WEB, '../../design/tokens.css'),
+    resolve(RAIZ_WEB, 'design/tokens.css'),
     ...arquivos(SRC, (n) => n.endsWith('.css')),
   ];
   const codigo = arquivos(SRC, (n) => /\.tsx?$/.test(n) && !/\.test\.tsx?$/.test(n));

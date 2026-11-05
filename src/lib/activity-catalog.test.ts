@@ -22,7 +22,7 @@ import type { SessionEvent } from './api-types';
  * `pnpm --filter web test` — `import.meta.url` neste ambiente não é uma URL
  * `file://` de verdade.
  */
-const EVENTS_MD_PATH = join(process.cwd(), '..', '..', 'docs/reference/events.md');
+const EVENTS_MD_PATH = join(process.cwd(), 'fixados', 'events.md');
 
 const BEGIN_MARKER = '<!-- BEGIN:GENERATED:eventos-inventario -->';
 const END_MARKER = '<!-- END:GENERATED:eventos-inventario -->';

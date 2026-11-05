@@ -20,7 +20,7 @@ import { lerTokens } from './lib/contraste';
  */
 
 const raiz = process.cwd();
-const TOKENS = lerTokens(readFileSync(resolve(raiz, '../../design/tokens.css'), 'utf8'), ':root');
+const TOKENS = lerTokens(readFileSync(resolve(raiz, 'design/tokens.css'), 'utf8'), ':root');
 
 function modulos(dir: string): string[] {
   return readdirSync(dir).flatMap((nome) => {

@@ -12,4 +12,4 @@ import './fonts.css';
 // A folha global de verdade, referenciada e não copiada — ela importa
 // design/tokens.css e define as regras de `body` que dão tipografia e cor base.
 // Uma cópia inline aqui apodreceria no primeiro ajuste da app.
-import '../apps/web/src/index.css';
+import '../src/index.css';

@@ -6,11 +6,11 @@
   "srcDir": "src/components",
   "tsconfig": "tsconfig.app.json",
   "guidelinesGlob": [
-    "../../design/*.md"
+    "design/*.md"
   ],
   "extraEntries": [
-    "../../.design-sync/styles-entry.ts",
-    "../../.design-sync/preview-surface.tsx"
+    ".design-sync/styles-entry.ts",
+    ".design-sync/preview-surface.tsx"
   ],
   "provider": {
     "component": "BraboSurface"
@@ -87,6 +87,6 @@
       "cardMode": "column"
     }
   },
-  "docsDir": "../../.design-sync/docs",
+  "docsDir": ".design-sync/docs",
   "readmeHeader": ".design-sync/conventions.md"
 }

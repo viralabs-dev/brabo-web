@@ -1,32 +1,26 @@
-# React + TypeScript + Vite
+# brabo-web
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Interface web do Brabo: React 19, Vite, TanStack Query/Router, Tailwind 4 e shadcn/ui (Base UI). Extraído do monorepo `daneiel/brabo` (ADR 0252, EP-033) com histórico.
 
-Currently, two official plugins are available:
+## Desenvolver
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```sh
+pnpm install
+pnpm dev                 # vite
+pnpm typecheck           # tsc -b --force
+pnpm test                # vitest
+pnpm areas:baixar        # baixa o areas.json do brabo-contracts (tag fixada) para o teste de contrato
+pnpm build
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Dependências de outros repositórios
+
+- `@brabo/shared`: `viralabs-dev/brabo-contracts#v1.0.0` (por tag, nunca por branch).
+- Tipos da api: `fixados/openapi.json` (`pnpm openapi:types`), cópia fixada; origem em `fixados/ORIGEM.md`.
+- Tokens de design: `design/tokens.css`; a doc do design em `design/` e a do app em `docs/`.
+
+## Imagens
+
+`Dockerfile` (produção, nginx, sem build local obrigatório) e `Dockerfile.dev` (vite com bind mount). O CI constrói a de produção sem publicar.
+
+Branches permanentes: `dev` e `main`; tag só por workflow. Licença MIT.

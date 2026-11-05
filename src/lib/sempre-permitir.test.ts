@@ -8,7 +8,7 @@ import { TIPOS_SEM_SEMPRE_PERMITIR, podeOferecerSemprePermitir } from './sempre-
  * teste lê o arquivo da api, como `aprovacoes.test.ts` faz com `decide.ts`, e
  * reprova qualquer divergência (AT-320).
  */
-const FONTE = join(process.cwd(), '..', 'api', 'src', 'domain', 'actions', 'sempre-permitir.ts');
+const FONTE = join(process.cwd(), 'fixados', 'sempre-permitir.ts');
 
 function tiposDoBackend(): string[] {
   const conteudo = readFileSync(FONTE, 'utf8');

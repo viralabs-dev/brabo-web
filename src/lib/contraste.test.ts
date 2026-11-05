@@ -12,7 +12,7 @@ import {
 
 // A partir do cwd (`apps/web`), não de `import.meta.url`: o ambiente jsdom não
 // garante URL de arquivo, e a leitura falhava antes de rodar teste nenhum.
-const css = readFileSync(resolve(process.cwd(), '../../design/tokens.css'), 'utf8');
+const css = readFileSync(resolve(process.cwd(), 'design/tokens.css'), 'utf8');
 
 /**
  * Contraste dos tokens, medido.

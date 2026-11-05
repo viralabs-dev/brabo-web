@@ -44,7 +44,7 @@ describe('addressableAgents (ADR 0109)', () => {
  * tema, e foi assim que três agentes ficaram lavados no claro.
  */
 describe('cor de agente vem do design system', () => {
-  const css = readFileSync(resolve(process.cwd(), '../../design/tokens.css'), 'utf8');
+  const css = readFileSync(resolve(process.cwd(), 'design/tokens.css'), 'utf8');
   const raiz = lerTokens(css, ':root');
 
   it('caminho feliz: todo agente pinta com var(--token) que existe em design/tokens.css', () => {

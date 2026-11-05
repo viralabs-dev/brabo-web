@@ -22,7 +22,7 @@ import { lerTokens } from './lib/contraste';
  */
 
 const raizDoWeb = process.cwd();
-const css = readFileSync(resolve(raizDoWeb, '../../design/tokens.css'), 'utf8');
+const css = readFileSync(resolve(raizDoWeb, 'design/tokens.css'), 'utf8');
 const RAIZ = lerTokens(css, ':root');
 const CLARO = lerTokens(css, `\\[data-theme='light'\\]`);
 

@@ -29,6 +29,7 @@ vi.mock('../lib/auth', async (importOriginal) => {
   return { ...original, userIdDaSessao: () => usuario };
 });
 
+import { ToastProvider } from './ui/ToastProvider';
 const { PendenciasDeOutrasSessoes } = await import('./PendenciasDeOutrasSessoes');
 const { AvisoDePerguntasEmAberto } = await import('./PerguntasEmAberto');
 const { ApiError } = await import('../lib/api-client');
@@ -59,7 +60,7 @@ function pergunta(id: string, over: Partial<OpenQuestion> = {}): OpenQuestion {
 
 function montar(ui: React.ReactNode) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>);
+  return render(<QueryClientProvider client={client}><ToastProvider>{ui}</ToastProvider></QueryClientProvider>);
 }
 const pendencias = () => (
   <PendenciasDeOutrasSessoes projectId="proj-1" sessionId="sess-1" podeDecidir />

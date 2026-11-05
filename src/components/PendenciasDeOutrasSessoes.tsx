@@ -29,6 +29,7 @@ import { useDecisoesDaPolitica } from '../lib/decisao-da-politica-queries';
 import { ApprovalCard } from './ApprovalCard';
 import { useRegistrarAcoesNoBloco } from '../lib/acoes-no-bloco';
 import { Disclosure } from './ui/Disclosure';
+import { useToast } from './ui/ToastProvider';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
@@ -110,6 +111,18 @@ export function PendenciasDeOutrasSessoes({
   }, [assinatura, projectId, queryClient]);
   const [propostas, setPropostas] = useState<Record<string, ProposedAction>>({});
   const [propondo, setPropondo] = useState<string | null>(null);
+  const { showToast } = useToast();
+  // AT-740: o card nasce dentro de `.lista` (max-height) e podia ficar fora da
+  // vista; depois de propor, rola até ele.
+  const prRecemProposta = useRef<string | null>(null);
+  useEffect(() => {
+    const id = prRecemProposta.current;
+    if (!id) return;
+    const el = document.querySelector(`[data-proposta-merge="${id}"]`);
+    if (!el) return;
+    prRecemProposta.current = null;
+    el.scrollIntoView?.({ block: 'nearest' });
+  }, [propostas]);
   const [erroDoMerge, setErroDoMerge] = useState<Record<string, string>>({});
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
@@ -191,7 +204,9 @@ export function PendenciasDeOutrasSessoes({
           title: pr.title,
         },
       });
+      prRecemProposta.current = pr.id;
       setPropostas((p) => ({ ...p, [pr.id]: acao }));
+      showToast({ title: t('mergearNoChat.propostoTitulo'), message: t('mergearNoChat.propostoMensagem'), tone: 'success' });
       invalidar(acao);
     } catch (erro) {
       setErroDoMerge((e) => ({ ...e, [pr.id]: mensagemDaApi(erro) }));
@@ -412,7 +427,7 @@ export function PendenciasDeOutrasSessoes({
                         {/* RN-843: registra só enquanto o cartão está MONTADO
                             (o Disclosure recolhido desmonta e desregistra). */}
                         <RegistroDoBloco ids={[acao.id]} />
-                        {cardDeDecisao(acao)}
+                        <div data-proposta-merge={pr.id}>{cardDeDecisao(acao)}</div>
                       </>
                     ) : (
                       <div className={styles.acoesDaLinha}>

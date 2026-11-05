@@ -429,7 +429,9 @@
     "semPapel": "Mergear aqui exige o papel developer no projeto.",
     "nota": "Propõe o merge nesta sessão; quem confirma é você, no card que aparece — o merge segue manual.",
     "erroTitulo": "Não foi possível propor o merge",
-    "gatePendente": "O gate {{gate}} ainda está pendente para esta PR. O merge segue disponível — a decisão é sua."
+    "gatePendente": "O gate {{gate}} ainda está pendente para esta PR. O merge segue disponível — a decisão é sua.",
+    "propostoTitulo": "Merge proposto",
+    "propostoMensagem": "Aprove ou recuse no cartão logo abaixo."
   },
   "fio": {
     "carregando": "Carregando sessão…",

@@ -1,9 +1,11 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import type { ProposedAction } from '../lib/api-types';
 import i18n from '../lib/i18n';
 import { acaoEstaNoBloco } from '../lib/acoes-no-bloco';
+import { ToastProvider } from './ui/ToastProvider';
 import { CartaoOuReferenciaNoFio } from './CartaoOuReferenciaNoFio';
 
 const getProjectPendingActions = vi.fn();
@@ -75,7 +77,9 @@ function montar(
 ) {
   return render(
     <QueryClientProvider client={client}>
-      <PendenciasDeOutrasSessoes projectId="proj-1" sessionId={AQUI} podeDecidir={podeDecidir} filasDoChat={filasDoChat} />
+      <ToastProvider>
+        <PendenciasDeOutrasSessoes projectId="proj-1" sessionId={AQUI} podeDecidir={podeDecidir} filasDoChat={filasDoChat} />
+      </ToastProvider>
     </QueryClientProvider>,
   );
 }
@@ -463,6 +467,30 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(await within(screen.getByTestId('fila-prs-prontas')).findByRole('button', { name: 'Aprovar' })).toBeInTheDocument();
     expect(acaoEstaNoBloco('m-novo')).toBe(true);
     expect(within(fio).queryByRole('button', { name: 'Aprovar' })).toBeNull();
+  });
+
+  it('AT-740: pelo fluxo do usuário (aba, Mergear), a proposta sai e o cartão Aprovar fica VISÍVEL', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    getCodePullRequests.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
+    listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
+    proposeAction.mockResolvedValue(
+      acao('m-vis', {
+        sessionId: AQUI,
+        actionType: 'git_merge',
+        actor: { kind: 'user', id: 'u' },
+        payload: { pullRequestId: '1', sourceBranch: 'feature/task-aaaaaaaa', targetBranch: 'dev' },
+      }),
+    );
+    const user = userEvent.setup();
+    montar();
+    await user.click(await screen.findByRole('button', { name: /^PRs prontas para merge \d/ }));
+    const fila = await screen.findByTestId('fila-prs-prontas');
+    expect(fila).toBeVisible();
+    await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
+    await waitFor(() => expect(proposeAction).toHaveBeenCalledTimes(1));
+    expect(await within(fila).findByRole('button', { name: 'Aprovar' })).toBeVisible();
+    expect(screen.getByText('Merge proposto')).toBeInTheDocument();
+    expect(fila.querySelector('[data-proposta-merge]')).not.toBeNull();
   });
 
   it('RN-841: a tarefa que entra em awaiting_user relê as PRs, e a PR nova aparece sem remontar', async () => {

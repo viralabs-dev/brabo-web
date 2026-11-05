@@ -393,7 +393,9 @@
     "semPapel": "在此合并需要项目中的 developer 角色。",
     "nota": "在本会话中提议合并；由你在出现的卡片中确认 — 合并仍需手动。",
     "erroTitulo": "无法提议合并",
-    "gatePendente": "此 PR 的 gate {{gate}} 仍待定。合并仍然可用 — 由你决定。"
+    "gatePendente": "此 PR 的 gate {{gate}} 仍待定。合并仍然可用 — 由你决定。",
+    "propostoTitulo": "已提出合并",
+    "propostoMensagem": "请在下方卡片中批准或拒绝。"
   },
   "fio": {
     "carregando": "正在加载会话…",

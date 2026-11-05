@@ -5,10 +5,10 @@ keywords: [credencial, token, git, pat, provider, segredo]
 
 # CredentialStep
 
-O passo do wizard que escolhe uma credencial de git já cadastrada ou registra
-uma nova.
+The wizard step that picks an already-registered git credential or registers a
+new one.
 
-## Como usar
+## How to use
 
 ```tsx
 <CredentialStep
@@ -22,15 +22,15 @@ uma nova.
 />
 ```
 
-## O que respeitar
+## What to respect
 
-- **`credentials` são só metadados** (id, provider, datas). O token nunca chega
-  ao browser depois de salvo — é envelope encryption, e o componente foi feito
-  assumindo isso. Não espere exibir o segredo.
-- **`error` e `registering` só aparecem com o formulário de novo token aberto**,
-  e ele começa aberto apenas quando não existe nenhuma credencial. Em preview ou
-  teste, clique em "Adicionar novo token" para ver esses estados.
-- `error` deve dizer o que fazer, não só que falhou: qual escopo falta, qual
-  permissão o token não tem.
-- `onRegister` recebe o token em texto e é chamado uma vez; `registering` é
-  quem impede o duplo envio.
+- **`credentials` are metadata only** (id, provider, dates). The token never
+  reaches the browser once saved: it is envelope encryption, and the component
+  was built assuming that. Do not expect to display the secret.
+- **`error` and `registering` only show with the new-token form open**, and it
+  starts open only when no credential exists. In a preview or test, click
+  "Adicionar novo token" to see those states.
+- `error` should say what to do, not just that it failed: which scope is
+  missing, which permission the token lacks.
+- `onRegister` receives the token as plain text and is called once;
+  `registering` is what prevents a double submit.

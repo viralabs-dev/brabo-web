@@ -5,10 +5,11 @@ keywords: [agente, time, status, autonomia, modelo, custo]
 
 # AgentCard
 
-O card de um agente no painel do time: identidade, o que está fazendo agora,
-qual modelo usa, quanto já gastou e se opera em autonomia manual ou automática.
+An agent's card in the team panel: identity, what it is doing now, which model
+it uses, how much it has spent and whether it runs in manual or automatic
+autonomy.
 
-## Como usar
+## How to use
 
 ```tsx
 <AgentCard
@@ -22,14 +23,14 @@ qual modelo usa, quanto já gastou e se opera em autonomia manual ou automática
 />
 ```
 
-## O que respeitar
+## What to respect
 
-- **`agent` é um `AgentDef` do DS**, não um objeto solto: nome, papel, ícone e a
-  cor (que entra por `--agent-color`) saem dele. Inventar o objeto rende um card
-  sem identidade.
-- **`status` é em pt-BR**: `trabalhando`, `aguardando`, `ocioso`, `falhou`.
-- `tokensMicros` é micro-USD — 2_290_000 são US$ 2,29.
-- `activity` é o que o agente faz AGORA. Sem ela o card encolhe e continua
-  válido; não preencha com texto de enfeite.
-- `onAutonomyChange` é opcional, mas sem ele o toggle fica inerte: só passe
-  `autonomy` sem handler se a mudança realmente não for permitida ali.
+- **`agent` is a DS `AgentDef`**, not a loose object: name, role, icon and color
+  (which enters through `--agent-color`) come from it. Making up the object
+  yields a card with no identity.
+- **`status` is in pt-BR**: `trabalhando`, `aguardando`, `ocioso`, `falhou`.
+- `tokensMicros` is micro-USD: 2_290_000 is US$ 2.29.
+- `activity` is what the agent is doing NOW. Without it the card shrinks and
+  remains valid; do not fill it with decorative text.
+- `onAutonomyChange` is optional, but without it the toggle is inert: only pass
+  `autonomy` without a handler if changing it is really not allowed there.

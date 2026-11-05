@@ -5,11 +5,11 @@ keywords: [aprovação, ação proposta, permissão, diff, autoridade]
 
 # ApprovalCard
 
-O card de uma `proposed_action` esperando decisão. É o componente onde a
-autoridade final do usuário acontece: toda ação com efeito externo (terminal,
-git, gasto, patch de instrução) nasce aqui.
+The card of a `proposed_action` awaiting a decision. It is the component where
+the user's final authority happens: every action with an external effect
+(terminal, git, spending, instruction patch) is born here.
 
-## Como usar
+## How to use
 
 ```tsx
 <ApprovalCard
@@ -22,19 +22,20 @@ git, gasto, patch de instrução) nasce aqui.
 />
 ```
 
-## O que respeitar
+## What to respect
 
-- **Os três handlers são obrigatórios.** `onDeny` recebe um motivo opcional
-  digitado pelo usuário — o textarea só aparece depois do clique em "Negar".
-- O corpo do card muda por `action.actionType`: comando para `terminal`, diff
-  para `git_commit` e `instruction_patch`, e assim por diante. Não há prop de
-  layout; o tipo da ação decide.
-- **`actor.id` tem que ser uma chave de agente** (`dev-backend`, `qa`,
-  `anamnese`…). O card resolve nome e ícone por ela; um id de modelo cai no
-  fallback e o card perde a identidade.
-- Quando `status` sai de `pending`, os botões desaparecem e o card vira
-  registro da decisão — com o motivo, quando houve.
-- Em `instruction_patch` o "Sempre permitir" **não** é oferecido: a política do
-  domínio força aprovação sempre, então o botão prometeria um efeito que não
-  existe.
-- `variant="queue"` com `selectable` habilita decisão em lote na fila.
+- **All three handlers are required.** `onDeny` receives an optional reason typed
+  by the user; the textarea only appears after clicking
+  "Negar".
+- The card body changes by `action.actionType`: a command for `terminal`, a diff
+  for `git_commit` and `instruction_patch`, and so on. There is no layout prop;
+  the action type decides.
+- **`actor.id` must be an agent key** (`dev-backend`, `qa`, `anamnese`...). The
+  card resolves name and icon from it; a model id falls back and the card loses
+  its identity.
+- When `status` leaves `pending`, the buttons disappear and the card becomes a
+  record of the decision, with the reason when there was one.
+- On `instruction_patch`, "Sempre permitir" is **not** offered: the domain policy
+  always forces approval, so the button would promise an effect that does not
+  exist.
+- `variant="queue"` with `selectable` enables batch decisions in the queue.

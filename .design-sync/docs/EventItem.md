@@ -5,8 +5,8 @@ keywords: [evento, linha, log, narração, timeline]
 
 # EventItem
 
-Uma linha do event log. **O ícone, a cor e o texto não vêm por prop**: são
-derivados de `event.type` e `event.payload`.
+One row of the event log. **The icon, color and text do not come from props**:
+they are derived from `event.type` and `event.payload`.
 
 ## Como usar
 
@@ -14,14 +14,16 @@ derivados de `event.type` e `event.payload`.
 <EventItem event={event} highlighted={event.id === citado} />
 ```
 
-## O que respeitar
+## What to respect
 
-- Para mudar como a linha aparece, mude o **tipo** do evento, não estilo. Tipos
-  conhecidos ganham narração própria (`backlog.task_claimed` diz qual task,
-  `permission.granted` diz qual padrão); tipo desconhecido cai no genérico
-  "ator · tipo", sem inventar.
-- Eventos de falha são marcados internamente e saem em `danger` — não é preciso
-  (nem possível) passar tom.
-- O horário é relativo a agora. Em preview ou teste, use `createdAt` como offset
-  a partir de `Date.now()`; data fixa faz o rótulo derivar com o tempo.
-- `highlighted` é o alvo de navegação de evidência: destaca e recebe o scroll.
+- To change how the row looks, change the event **type**, not the style. Known
+  types get their own narration (`backlog.task_claimed` says which task,
+  `permission.granted` says which pattern); an unknown type falls back to the
+  generic
+  "ator · tipo", without making anything up.
+- Failure events are flagged internally and render as `danger`; there is no need
+  (nor any way) to pass a tone.
+- The time is relative to now. In a preview or test, use `createdAt` as an offset
+  from `Date.now()`; a fixed date makes the label drift over time.
+- `highlighted` is the evidence-navigation target: it highlights and receives the
+  scroll.

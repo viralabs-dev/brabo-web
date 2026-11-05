@@ -5,10 +5,10 @@ keywords: [badge, status, tag, contador, pílula]
 
 # Badge
 
-Pílula curta de status ou contagem. Texto em `var(--font-mono)` a 10px — é
-etiqueta, não frase.
+A short pill for status or a count. Text in `var(--font-mono)` at 10px: it is a
+label, not a sentence.
 
-## Como usar
+## How to use
 
 ```tsx
 // Status, com o ponto que marca estado vivo.
@@ -21,14 +21,14 @@ etiqueta, não frase.
 <Badge tone="accent" dot pulse>dev-backend implementando</Badge>
 ```
 
-## Escolhendo o tom
+## Choosing the tone
 
-`success` concluído ou aprovado · `warning` esperando ou perto de um limite ·
-`danger` negado, bloqueado ou falho · `accent` em andamento ou em destaque ·
-`muted` neutro, rascunho, contagem sem urgência.
+`success` done or approved · `warning` waiting or near a limit · `danger`
+denied, blocked or failed · `accent` in progress or highlighted · `muted`
+neutral, draft, a count with no urgency.
 
-## O que respeitar
+## What to respect
 
-- **`pulse` só para o que muda sozinho.** Num status parado, ele mente.
-- Conteúdo é uma palavra ou um número. Frase dentro de Badge estoura o layout
-  da linha em que ele vive.
+- **`pulse` only for what changes by itself.** On a static status it lies.
+- The content is a word or a number. A sentence inside a Badge breaks the layout
+  of the row it lives in.

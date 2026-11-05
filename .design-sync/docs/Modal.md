@@ -5,10 +5,11 @@ keywords: [modal, diálogo, overlay, confirmação]
 
 # Modal
 
-Diálogo sobre um backdrop que cobre a viewport. **Não tem prop de aberto ou
-fechado**: quem usa monta o Modal quando quer mostrá-lo e desmonta ao fechar.
+A dialog over a backdrop that covers the viewport. **It has no open/closed
+prop**: the caller mounts the Modal when it wants to show it and unmounts it on
+close.
 
-## Como usar
+## How to use
 
 ```tsx
 {confirmando && (
@@ -22,10 +23,10 @@ fechado**: quem usa monta o Modal quando quer mostrá-lo e desmonta ao fechar.
 )}
 ```
 
-## O que respeitar
+## What to respect
 
-- `onClose` é obrigatório e é o que o X do cabeçalho chama. Sem ele o usuário
-  fica preso.
-- O Modal não monta rodapé: as ações são children, e a convenção do produto é
-  alinhá-las à direita, com a destrutiva por último.
-- `title` aceita ReactNode — dá para compor com `<code>` ou um Badge.
+- `onClose` is required and is what the header X calls. Without it the user is
+  stuck.
+- The Modal does not build a footer: the actions are children, and the product
+  convention is to right-align them, with the destructive one last.
+- `title` accepts a ReactNode, so you can compose it with `<code>` or a Badge.

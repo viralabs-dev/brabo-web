@@ -5,11 +5,11 @@ keywords: [projeto, card, lista, provisionamento, time, custo]
 
 # ProjectCard
 
-O card de um projeto na lista: provider do repositório, estado de
-provisionamento, o time de agentes, o consumo e a última atividade. O card
-inteiro é um `<button>` — `onClick` navega para o projeto.
+A project's card in the list: repository provider, provisioning state, the agent
+team, consumption and the last activity. The whole card is a `<button>`;
+`onClick` navigates to the project.
 
-## Como usar
+## How to use
 
 ```tsx
 <ProjectCard
@@ -25,11 +25,12 @@ inteiro é um `<button>` — `onClick` navega para o projeto.
 />
 ```
 
-## O que respeitar
+## What to respect
 
-- `agents` é uma lista de `AgentDef` — os avatares tiram a cor de cada agente
-  dali. Ordem importa: é a ordem em que aparecem.
-- `provisioningStatus` omitido significa provisionado. `provision_failed` tem
-  que levar o usuário a retomar, não a um beco.
-- `lastActivityText` já vem formatado por quem chama; o card não formata tempo.
-- `unreadCount` acima de zero desenha o badge; omita quando não há pendência.
+- `agents` is a list of `AgentDef`; the avatars take each agent's color from
+  there. Order matters: it is the order they appear in.
+- An omitted `provisioningStatus` means provisioned. `provision_failed` must
+  lead the user to resume, not to a dead end.
+- `lastActivityText` arrives already formatted by the caller; the card does not
+  format time.
+- `unreadCount` above zero draws the badge; omit it when nothing is pending.

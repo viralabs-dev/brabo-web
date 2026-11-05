@@ -5,9 +5,9 @@ keywords: [skeleton, carregando, placeholder, esqueleto, loading]
 
 # Skeleton
 
-Retângulo pulsante que reserva a MEDIDA do conteúdo que ainda vai chegar.
+A pulsing rectangle that reserves the SIZE of content that has yet to arrive.
 
-## Como usar
+## How to use
 
 ```tsx
 // Linha de texto: largura em % acompanha o container.
@@ -17,12 +17,13 @@ Retângulo pulsante que reserva a MEDIDA do conteúdo que ainda vai chegar.
 <Skeleton width={34} height={34} radius={8} />
 ```
 
-## O que respeitar
+## What to respect
 
-- **Meça o conteúdo real.** O ponto do skeleton é a lista não PULAR quando os
-  dados chegam. Um retângulo de altura arbitrária troca o salto de lugar em vez
-  de eliminá-lo — copie as medidas do componente que ele substitui.
-- **Não anime o que não espera.** Skeleton é para carregamento em andamento;
-  num estado vazio permanente ele promete algo que nunca vem.
-- Para um card inteiro existe `ProjectCardSkeleton`, que já traz a silhueta
-  certa — não remonte à mão.
+- **Measure the real content.** The point of the skeleton is for the list not to
+  JUMP when the data arrives. A rectangle of arbitrary height just moves the jump
+  elsewhere instead of eliminating it; copy the measurements of the component it
+  replaces.
+- **Do not animate what is not waiting.** Skeleton is for loading in progress; in
+  a permanently empty state it promises something that never comes.
+- For a whole card there is `ProjectCardSkeleton`, which already has the right
+  silhouette; do not rebuild it by hand.

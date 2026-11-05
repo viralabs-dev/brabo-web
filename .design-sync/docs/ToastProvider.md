@@ -5,10 +5,10 @@ keywords: [toast, notificação, feedback, provider, contexto]
 
 # ToastProvider
 
-Provider da pilha de toasts. **Não recebe os toasts por prop** — quem está
-dentro da árvore chama `useToast().showToast()`.
+The toast stack provider. It **does not receive the toasts as a prop**: whoever
+is inside the tree calls `useToast().showToast()`.
 
-## Como usar
+## How to use
 
 ```tsx
 // Uma vez, no topo da árvore.
@@ -25,13 +25,13 @@ showToast({
 });
 ```
 
-## O que respeitar
+## What to respect
 
-- `useToast()` **lança** fora do provider. Se um componente pode ser montado
-  isolado, garanta o provider acima dele.
-- `durationMs` default é 5000, e o toast se remove sozinho. Em preview ou
-  screenshot, passe um valor grande — senão o resultado depende de quando a
-  captura aconteceu.
-- Tons: `success` deu certo · `warning` atenção · `danger` falhou ou terminou
-  mal · `accent` informação relevante.
-- `message` é opcional; sem ela o toast encolhe para uma linha.
+- `useToast()` **throws** outside the provider. If a component can be mounted in
+  isolation, make sure the provider sits above it.
+- `durationMs` defaults to 5000, and the toast removes itself. In a preview or
+  screenshot, pass a large value; otherwise the result depends on when the
+  capture happened.
+- Tones: `success` worked · `warning` attention · `danger` failed or ended badly
+  · `accent` relevant information.
+- `message` is optional; without it the toast shrinks to one line.

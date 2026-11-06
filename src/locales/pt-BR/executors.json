@@ -102,6 +102,7 @@
       "handoffAccepted": "aceitou o trabalho",
       "artifactProductBrief": "emitiu o brief",
       "artifactBusinessRule": "emitiu regra de negócio",
+      "artifactBusinessRuleRetired": "retirou regra de negócio",
       "artifactModuleMap": "emitiu o module_map",
       "artifactModuleRouting": "roteou módulos para infra",
       "artifactInsight": "emitiu hipótese",

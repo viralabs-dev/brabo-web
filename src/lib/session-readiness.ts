@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { Epic, SessionEvent } from './api-types';
+import { regrasAtivas } from './regras-ativas';
 
 /**
  * Agentes que participam do fluxo de CHAT do composer (achado 9-fix) —
@@ -112,7 +113,7 @@ export function useSessionReadiness(
   // ANTES do clique, com a MESMA fonte que já alimenta o painel "Regras de
   // negócio" em `ContextAside` — sem buscar de novo.
   const hasBusinessRule = useMemo(
-    () => events.some((e) => e.type === 'artifact.business_rule'),
+    () => regrasAtivas(events).length > 0,
     [events],
   );
 

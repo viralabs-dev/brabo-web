@@ -96,6 +96,7 @@
       "handoffAccepted": "accepted the work",
       "artifactProductBrief": "issued the brief",
       "artifactBusinessRule": "issued a business rule",
+      "artifactBusinessRuleRetired": "retired a business rule",
       "artifactModuleMap": "issued the module_map",
       "artifactModuleRouting": "routed modules to infra",
       "artifactInsight": "issued a hypothesis",

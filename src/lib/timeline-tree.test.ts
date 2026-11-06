@@ -442,6 +442,18 @@ describe('rótulos da árvore no i18n (AT-134)', () => {
   });
 });
 
+describe('regra retirada na árvore (RN-1018)', () => {
+  it('vira marco de artefato com o motivo', () => {
+    const { ramos } = montarArvore([
+      evento('artifact.business_rule_retired', agente('criativo'), { ruleId: 'r', reason: 'obsoleta' }),
+    ]);
+    const marco = ramos[0].marcos[0];
+    expect(marco.tipo).toBe('artefato');
+    expect(marco.rotulo).toBe('retirou regra de negócio');
+    expect(marco.detalhe).toBe('obsoleta');
+  });
+});
+
 describe('subagenteDoMarco (RN-970)', () => {
   it('delegação efetivada vira subagente executando quando o ramo dele está ativo', () => {
     const { ramos } = montarArvore(

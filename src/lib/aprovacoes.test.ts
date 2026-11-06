@@ -356,7 +356,7 @@ describe('AT-758 — recriar o container depois da PR de infra que declara o app
     try {
       const frase = fraseDaAcao('container_recreate', { reason: 'app_declared', ports: portas })!;
       expect(frase).toContain('The project\'s app was declared');
-      expect(frase).toContain('http://localhost:13000');
+      expect(frase).toContain('http://127.0.0.1:13000');
     } finally {
       await i18n.changeLanguage('pt-BR');
     }
@@ -369,7 +369,7 @@ describe('AT-758 — recriar o container depois da PR de infra que declara o app
       ports: portas,
     })!;
     expect(frase).toContain('O app do projeto foi declarado');
-    expect(frase).toContain('http://localhost:13000');
+    expect(frase).toContain('http://127.0.0.1:13000');
     expect(frase).not.toContain('13000:');
     expect(frase).not.toMatch(/\u{E000}|\u{E001}/u);
   });
@@ -380,7 +380,7 @@ describe('AT-758 — recriar o container depois da PR de infra que declara o app
       ports: portas,
     })!;
     expect(trechos.filter((t) => t.codigo)).toEqual([
-      { texto: 'http://localhost:13000', codigo: true },
+      { texto: 'http://127.0.0.1:13000', codigo: true },
     ]);
   });
 
@@ -393,7 +393,7 @@ describe('AT-758 — recriar o container depois da PR de infra que declara o app
 
   it('CASO DE FALHA: app_declared sem porta degrada para a frase de sempre, sem URL inventada', () => {
     const frase = fraseDaAcao('container_recreate', { reason: 'app_declared' })!;
-    expect(frase).not.toContain('localhost');
+    expect(frase).not.toContain('127.0.0.1');
     expect(frase).toContain('Recria o container do projeto');
   });
 });

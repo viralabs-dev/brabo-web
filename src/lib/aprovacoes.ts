@@ -456,7 +456,7 @@ const FRASE_DA_ACAO: Record<ActionType, (payload: Payload) => string> = {
       return i18n.t('actions.containerRecreate.appDeclared', {
         ns: 'approvals',
         porta: host,
-        url: codigo(`http://localhost:${host}`),
+        url: codigo(`http://127.0.0.1:${host}`),
       });
     }
     return (

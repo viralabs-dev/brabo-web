@@ -6104,7 +6104,7 @@ card, closed together:
   cite the numbers instead of recounting.
 - **The app recreate says which port it publishes (AT-758).** A `container_recreate`
   with `reason: 'app_declared'` (proposed by the api after the merge of the infra PR
-  that declares `run.app`) says the app was declared and shows `http://localhost:<host>`:
+  that declares `run.app`) says the app was declared and shows `http://127.0.0.1:<host>`:
   the host port (13000+) that approving publishes. The other recreates keep the
   sentence above. The text is `actions.containerRecreate.appDeclared` in
   `approvals.json` (four locales), resolved by `i18n.t` in `aprovacoes.ts`.

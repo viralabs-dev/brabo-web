@@ -123,6 +123,9 @@
       "viableLabel": "implementável",
       "unfeasibleLabel": "INVIÁVEL",
       "justificationSuffix": ": \"{{justification}}\""
+    },
+    "containerRecreate": {
+      "appDeclared": "O app do projeto foi declarado. Recriar o container liga o app: ao aprovar, a porta {{porta}} é publicada e o app abre em {{url}}. O que está só dentro do container se perde."
     }
   },
   "approvalCard": {

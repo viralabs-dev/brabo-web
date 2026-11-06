@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Session approvals: a `container_recreate` proposed after the merge of the infra PR that declares the app (`reason: 'app_declared'`) says the app was declared, that recreating the container starts it, and shows `http://127.0.0.1:<host>` with the port that approving publishes (13000+). The other recreates keep their text. The sentence is in the four locales (`actions.containerRecreate.appDeclared`, AT-758, RN-709).
+
 - Session: the feed and the timeline tree show `artifact.business_rule_retired` ("criativo retirou uma regra de negócio — substituída por outra regra: motivo"); the rules panel and the readiness button ignore a retired rule (AT-755, RN-1018). `openapi.json` and the generated types refreshed from brabo-api.
 
 - Session: the primary decision of each thread card shows text next to its icon, as an exception to the icon-only rule of AT-682 (AT-753 UX-3). The handoff acceptance reads "Aceitar e passar a {agent}" and "Ativar execução" shows its label. The `handoff.aceitarEIniciar` key was replaced by `handoff.aceitarEPassar`; the exception is recorded in `design/COMPONENTS.md`. (web#16)

@@ -113,6 +113,9 @@
       "viableLabel": "可实现",
       "unfeasibleLabel": "不可行",
       "justificationSuffix": "：\"{{justification}}\""
+    },
+    "containerRecreate": {
+      "appDeclared": "项目的应用已声明。重新创建容器会启动应用：批准后，端口 {{porta}} 将被发布，应用可在 {{url}} 打开。仅存在于容器内部的内容会丢失。"
     }
   },
   "approvalCard": {

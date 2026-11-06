@@ -4070,7 +4070,7 @@ difference is not a design choice: it is the shape of the endpoint.
   (the two queries and `ReconhecimentoDeMaquina`),
   `apps/web/src/components/RunnerOnboardingPanel.module.css`
   (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:442`
-  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:791`
+  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:807`
   (`RunnerDeviceKeyListItem`, `RunnerDeviceKeyEspecie`),
   `apps/web/src/locales/{en,pt-BR}/terminal.json` (`agenteDeMaquina.*`)
 - **Test:** `apps/web/src/lib/agente-de-maquina.test.ts` — the happy path
@@ -4935,7 +4935,7 @@ pending items from other sessions has the ceiling of 20 cards, and the rest stay
 Aprovações tab; (d) architecture pending items and the Psicólogo's hypotheses
 still have NO inline decision (there is no `ApprovalCard` for them).
 
-- **Code:** `apps/web/src/components/ApprovalCard.tsx:236` (`decidir`, the
+- **Code:** `apps/web/src/components/ApprovalCard.tsx:248` (`decidir`, the
   decision in flight and the refusal on the card); `apps/web/src/lib/session-turno.ts:59`
   (`turnoEmCursoNoLog`), `:536` (`useRetomarTurnoDoLog`);
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
@@ -5876,8 +5876,8 @@ ceilings still ask for approval (RN-154, RN-418): merge into a protected branch;
 the WORKSPACE one, with the same declared gap as the other auto mode
 screens (RN-471).
 
-- **Code:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:77`
-  (`ModoAutomaticoDoTime`), `:113` (`ligar`), `:48`
+- **Code:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:83`
+  (`ModoAutomaticoDoTime`), `:120` (`ligar`), `:54`
   (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:93`
   (`podeLigarModoAutomatico`), `:308` (where the offer mounts)
 - **Test:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx:54` (nothing
@@ -6103,12 +6103,12 @@ card, closed together:
   Dev Lead in the tool result text (`resumo_do_plano/1`), so he can
   cite the numbers instead of recounting.
 
-- **Where:** `apps/web/src/lib/aprovacoes.ts:450` (`verboDaAcao`),
+- **Where:** `apps/web/src/lib/aprovacoes.ts:471` (`verboDaAcao`),
   `apps/api/src/domain/actions/sempre-permitir.ts:33` (`TIPOS_SEM_SEMPRE_PERMITIR`),
   `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:84` (`execute`),
   `apps/api/src/application/use-cases/execution/execute-execution-plan.use-case.ts:89` (`execute`),
   `apps/api/src/application/use-cases/execution/activate-execution.use-case.ts:123` (`execute`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:645` (`resumo_do_plano`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:674` (`resumo_do_plano`)
 - **Test:** `apps/web/src/lib/aprovacoes.test.ts` ("AT-371 — o verbo segue o
   estado da ação", "AT-381 — o plano mostra a estimativa de gasto"),
   `apps/web/src/components/ApprovalCard.test.tsx` ("open_adr_pr pendente"),
@@ -6278,8 +6278,8 @@ channel) still writes the list by hand: invalidating writes no data.
   that goes back to the Dev Lead says the same, and the description of `agentes`
   asks not to promise a parallelism gain. The model's quote marks at the ends of the
   summary are removed before the sentence cites it, so no `coberto."` is left over.
-- **Where:** `apps/web/src/lib/aprovacoes.ts:327` (`propose_execution_plan`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:254` (`sobem`), `:245`
+- **Where:** `apps/web/src/lib/aprovacoes.ts:359` (`propose_execution_plan`),
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:276` (`sobem`), `:249`
   (`classificar`), `:97` (`spec`)
 - **Test:** `apps/web/src/lib/aprovacoes.test.ts` ("plano com 2 agentes num
   módulo único diz que sobe 1…"; "plano sem agente a mais não fala de
@@ -6391,7 +6391,7 @@ channel) still writes the list by hand: invalidating writes no data.
   is a checkbox already ticked inside the card itself, and approving with it
   ticked is what switches it on ([RN-804](#rn-804)). Every other action type
   keeps the rule above.
-- **Where:** `apps/web/src/components/ApprovalCard.tsx:211` (`ApprovalCard`)
+- **Where:** `apps/web/src/components/ApprovalCard.tsx:219` (`ApprovalCard`)
 - **Test:** `apps/web/src/components/ApprovalCard.test.tsx` (`ligar o
   "Modo automático" não aprova o card, e o card diz isso`; without the button, the note
   does not appear)
@@ -6410,7 +6410,7 @@ channel) still writes the list by hand: invalidating writes no data.
   event, when the first action was already waiting for a click. The default `allow` of
   `permissions.json` does NOT change (owner decision).
 - **Where:** `apps/web/src/lib/precisa-de-voce.ts:256` (`gateEsperandoClique`)
-  and `apps/web/src/components/ModoAutomaticoDoTime.tsx:67`
+  and `apps/web/src/components/ModoAutomaticoDoTime.tsx:73`
   (`agentesDaOfertaEmLote`)
 - **Test:** `apps/web/src/lib/precisa-de-voce.test.ts` (QA and SecOps gates
   named; dev agent and human not) and
@@ -6561,7 +6561,7 @@ channel) still writes the list by hand: invalidating writes no data.
   some) is stated even if the reread after the writes fails. Declared:
   the same symptom on the PRs tab's "Merge", on "Nova ideação" and on "Aplicar a
   todos os agentes" was NOT reproduced nor fixed here.
-- **Where:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:102` (`carregando`)
+- **Where:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:109` (`carregando`)
 - **Test:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("AT-477
   (RN-803): antes de a leitura de agent_autonomy chegar, o botão fica inerte e
   diz por quê")
@@ -6607,7 +6607,7 @@ channel) still writes the list by hand: invalidating writes no data.
   execution has not started yet ([RN-677](api.md#rn-677)).
 - **Where:** `apps/web/src/lib/execution.ts:37` (`contarTarefasAfetadasAoParar`),
   `apps/web/src/components/PararExecucao.tsx:26` (`PararExecucao`),
-  `apps/web/src/components/ModoAutomaticoDoTime.tsx:77` (`ModoAutomaticoDoTime`)
+  `apps/web/src/components/ModoAutomaticoDoTime.tsx:83` (`ModoAutomaticoDoTime`)
 - **Test:** `apps/web/src/components/PararExecucao.test.tsx` ("RN-815 (AT-488):
   a tarefa em revisão de QA conta…"; "RN-815: sem backlog lido não afirma…"),
   `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("RN-816 (AT-488): no
@@ -7093,7 +7093,7 @@ channel) still writes the list by hand: invalidating writes no data.
   and the task stays in the list. Claim, unblock and resumption do not change.
 - **Where:** `apps/web/src/lib/execution.ts:10` (`estadoDaTarefa`);
   `apps/web/src/routes/ProjectBacklogTab.tsx` (the task list badge);
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:442` (`bloqueio`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:471` (`bloqueio`)
 - **Test:** `apps/web/src/lib/execution.test.ts` ("blocked vence o status";
   failure: "sem bloqueio, o status"); `apps/web/src/routes/ProjectBacklogTab.test.tsx`
   ("a bloqueada mostra \"Bloqueada\" e o motivo, sem o selo \"a fazer\"");

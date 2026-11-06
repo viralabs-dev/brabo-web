@@ -490,6 +490,7 @@ Text link over `--surface-1` uses `var(--accent-hover)` at rest;
 - A destructive action keeps its text; the icon only accompanies it.
 - Icon-ONLY button is the rule (AT-682): `<Button legenda="…">` sets the accessible name (`aria-label`) and the caption in a Tooltip that opens on hover AND on keyboard focus. It holds for every button in the system, including a destructive one with an unambiguous icon (trash, square); the action's CONFIRMATION does not change.
 - It keeps text only when no icon covers the whole meaning (Estou pronto, Sempre permitir, Modo automático, Aprovar plano, Salvar when there is more than one Salvar on the screen).
+- Exception (AT-753, owner decision 06/11): the PRIMARY decision of each card in the thread carries text next to the icon, as a plain `<Button>` with children and no `legenda`. Examples: the handoff accept ("Aceitar e passar a {agente}", `handoff.aceitarEPassar`) and "Ativar execução". Toolbar actions and secondary buttons stay icon-only with `legenda`.
 - An inert control states the reason in visible TEXT: a tooltip on a `disabled` button does not open.
 - A lone icon has translated `aria-label` and `title`.
 - An inert control explains the reason in TEXT (ADR 0064), never only by tooltip.

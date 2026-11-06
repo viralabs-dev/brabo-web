@@ -335,7 +335,7 @@ describe('SessionPage — o destinatário do chat é escolhido e visível (RN-63
     await waitFor(() => expect(getProjectsSummary).toHaveBeenCalled());
     await waitFor(() =>
       expect(
-        screen.queryByRole('button', { name: /Aceitar handoff e iniciar/ }),
+        screen.queryByRole('button', { name: /Aceitar e passar a/ }),
       ).not.toBeInTheDocument(),
     );
   });
@@ -351,9 +351,9 @@ describe('SessionPage — o destinatário do chat é escolhido e visível (RN-63
     ]);
 
     const { container } = montar();
-    const botao = await screen.findByRole('button', { name: 'Aceitar handoff e iniciar PO' });
+    const botao = await screen.findByRole('button', { name: 'Aceitar e passar a PO' });
     expect(container.querySelector('[data-oferta-fora-da-janela="h-po"]')).not.toBeNull();
-    expect(botao).toHaveTextContent('');
+    expect(botao).toHaveTextContent('Aceitar e passar a PO');
     fireEvent.click(botao);
     await waitFor(() => expect(acceptHandoff).toHaveBeenCalledWith('proj-1', ID, 'h-po'));
   });
@@ -381,11 +381,11 @@ describe('SessionPage — o destinatário do chat é escolhido e visível (RN-63
     const { container } = montar();
     // O botão do PO existe UMA vez, no card do fio.
     expect(
-      await screen.findAllByRole('button', { name: 'Aceitar handoff e iniciar PO' }),
+      await screen.findAllByRole('button', { name: 'Aceitar e passar a PO' }),
     ).toHaveLength(1);
     expect(container.querySelector('[data-oferta-fora-da-janela]')).toBeNull();
     expect(
-      screen.queryByRole('button', { name: 'Aceitar handoff e iniciar UX Designer' }),
+      screen.queryByRole('button', { name: 'Aceitar e passar a UX Designer' }),
     ).not.toBeInTheDocument();
   });
 
@@ -412,7 +412,7 @@ describe('SessionPage — o destinatário do chat é escolhido e visível (RN-63
     });
 
     montar();
-    fireEvent.click(await screen.findByRole('button', { name: /Aceitar handoff e iniciar/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /Aceitar e passar a/ }));
     await waitFor(() => expect(acceptHandoff).toHaveBeenCalledWith('proj-1', ID, 'h-po'));
 
     await waitFor(async () => expect((await seletor()).value).toBe('po'));
@@ -439,7 +439,7 @@ describe('SessionPage — o destinatário do chat é escolhido e visível (RN-63
 
     montar();
     fireEvent.change(await seletor(), { target: { value: 'arquiteto' } });
-    fireEvent.click(await screen.findByRole('button', { name: /Aceitar handoff e iniciar/ }));
+    fireEvent.click(await screen.findByRole('button', { name: /Aceitar e passar a/ }));
     await waitFor(() => expect(acceptHandoff).toHaveBeenCalled());
 
     expect((await seletor()).value).toBe('arquiteto');

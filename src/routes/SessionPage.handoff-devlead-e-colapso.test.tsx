@@ -235,11 +235,11 @@ describe('SessionPage — problema 1: prioridade do handoff pro Dev Lead sobre I
 
     // O card acionável é o do Dev Lead...
     expect(
-      await screen.findByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+      await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
     // ...e o de Infra NUNCA aparece como botão nesta tela.
     expect(
-      screen.queryByRole('button', { name: /Aceitar handoff e iniciar Infra/ }),
+      screen.queryByRole('button', { name: /Aceitar e passar a Infra/ }),
     ).not.toBeInTheDocument();
 
     // Os dois continuam NARRADOS no fio (a frase de passagem de bastão).
@@ -305,7 +305,7 @@ describe('SessionPage — problema 2: "Ativar execução" inline no card do Dev 
     montarComCardDevLead();
 
     const ativar = await screen.findByRole('button', { name: 'Ativar execução' });
-    const aceitar = screen.getByRole('button', { name: /Aceitar handoff e iniciar/ });
+    const aceitar = screen.getByRole('button', { name: /Aceitar e passar a/ });
     expect(ativar).toHaveAttribute('data-variant', 'secondary');
     expect(aceitar).not.toHaveAttribute('data-variant', 'secondary');
     expect(screen.getByTestId('aviso-ativar-sem-plano')).toHaveTextContent(
@@ -346,7 +346,7 @@ describe('SessionPage — problema 2: "Ativar execução" inline no card do Dev 
 
     expect(await screen.findByRole('button', { name: 'Ativar execução' })).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+      screen.getByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /Acompanhe a execução em Executores/ }),
@@ -413,7 +413,7 @@ describe('SessionPage — problema 4: aceitar o Dev Lead não ativa a execução
       montarComCardDevLead();
 
       fireEvent.click(
-        await screen.findByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+        await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
       );
 
       await waitFor(() => {
@@ -657,7 +657,7 @@ describe('SessionPage — card do Dev Lead sem repositório (RN-582)', () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Ativar execução' })).not.toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+      screen.getByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
   });
 
@@ -677,7 +677,7 @@ describe('SessionPage — card do Dev Lead sem repositório (RN-582)', () => {
     const consultasAntes = getRepository.mock.calls.length;
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+      screen.getByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     );
 
     await waitFor(() => {

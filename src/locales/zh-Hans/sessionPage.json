@@ -199,7 +199,7 @@
     "aceiteAutomatico": "已自动接受：待办列表覆盖了 {{regras}} 条业务规则且仓库为本地仓库，因此 {{agente}} 无需点击即已加入。",
     "aceiteAutomaticoFalhou": "向 {{agente}} 的 handoff 自动接受失败：{{erro}}。请通过邀请卡片接受。",
     "passouOBastaoAo": "把接力棒交给了",
-    "aceitarEIniciar": "接受 handoff 并启动 {{agente}}",
+    "aceitarEPassar": "接受并交给 {{agente}}",
     "ativarExecucao": "激活执行",
     "ativarSemPlanoAviso": "没有计划：开发者将按现状领取任务。",
     "semRepositorio": "尚无仓库：接受此 handoff 会创建仓库，之后才能激活执行。",

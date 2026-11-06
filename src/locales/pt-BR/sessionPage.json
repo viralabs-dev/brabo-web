@@ -209,7 +209,7 @@
     "aceiteAutomatico": "Aceito automaticamente: o backlog cobre as {{regras}} regras de negócio e o repositório é local, então {{agente}} entrou sem clique.",
     "aceiteAutomaticoFalhou": "O aceite automático do handoff a {{agente}} falhou: {{erro}}. Aceite pelo card da oferta.",
     "passouOBastaoAo": "passou o bastão ao",
-    "aceitarEIniciar": "Aceitar handoff e iniciar {{agente}}",
+    "aceitarEPassar": "Aceitar e passar a {{agente}}",
     "ativarExecucao": "Ativar execução",
     "ativarSemPlanoAviso": "Sem plano: os devs pegam as tarefas como estão.",
     "semRepositorio": "Sem repositório ainda: aceitar este handoff o provisiona, e só então a execução pode ser ativada.",

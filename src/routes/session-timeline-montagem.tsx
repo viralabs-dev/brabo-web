@@ -615,10 +615,10 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             </Badge>
             <Button
               variant="success"
-              legenda={t('handoff.aceitarEIniciar', { agente: nomeDoAgente(oferta!.toAgent) })}
               onClick={() => handleAcceptHandoff(oferta!.id, oferta!.toAgent)}
             >
               <ThumbsUp aria-hidden="true" />
+              {t('handoff.aceitarEPassar', { agente: nomeDoAgente(oferta!.toAgent) })}
             </Button>
             {/* Handoff pro Dev Lead é o início da EXECUÇÃO — quem aceita
                 precisa saber onde acompanhar depois (RN-125). As outras
@@ -642,12 +642,12 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                   <>
                     <Button
                       variant="secondary"
-                      legenda={t('handoff.ativarExecucao')}
                       loading={ativandoExecucao}
                       onClick={handleActivateExecution}
                       data-testid="ativar-execucao-no-handoff"
                     >
                       <Play aria-hidden="true" />
+                      {t('handoff.ativarExecucao')}
                     </Button>
                     <span className={styles.timelineLink} data-testid="aviso-ativar-sem-plano">
                       {t('handoff.ativarSemPlanoAviso')}

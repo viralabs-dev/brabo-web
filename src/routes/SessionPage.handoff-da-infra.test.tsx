@@ -223,10 +223,10 @@ describe('SessionPage — card acionável do handoff da Infra (RN-499)', () => {
 
     // O divisor do fio segue lá, com a frase de sempre...
     expect(await screen.findByText('passou o bastão ao')).toBeInTheDocument();
-    // ...e sem o botão do card do FIO (`aceitarEIniciar`), que continua
+    // ...e sem o botão do card do FIO (`aceitarEPassar`), que continua
     // restrito a `AGENTES_DE_CHAT` (RN-136).
     expect(
-      screen.queryByRole('button', { name: /Aceitar handoff e iniciar/ }),
+      screen.queryByRole('button', { name: /Aceitar e passar a/ }),
     ).not.toBeInTheDocument();
   });
 
@@ -340,7 +340,7 @@ describe('SessionPage — não-regressão: o card do Dev Lead segue como era (RN
 
     // O card do fio continua resolvendo pro DEV LEAD, não pro Infra.
     const botaoDevLead = await screen.findByRole('button', {
-      name: 'Aceitar handoff e iniciar Dev Lead',
+      name: 'Aceitar e passar a Dev Lead',
     });
     // ...com o link de Executores que a RN-125 embutiu nele.
     expect(

@@ -836,7 +836,7 @@ describe('RN-156 — indicador de 5s', () => {
     montar();
 
     const botaoAceitar = await screen.findByRole('button', {
-      name: 'Aceitar handoff e iniciar PO',
+      name: 'Aceitar e passar a PO',
     });
     act(() => {
       botaoAceitar.click();

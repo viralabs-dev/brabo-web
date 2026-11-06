@@ -295,10 +295,10 @@ export function SessionComposer({
             </div>
             <Button
               variant="success"
-              legenda={t('handoff.aceitarEIniciar', { agente: nomeDoAgente(oferta.toAgent) })}
               onClick={() => handleAcceptHandoff(oferta.id, oferta.toAgent)}
             >
               <ThumbsUp aria-hidden="true" />
+              {t('handoff.aceitarEPassar', { agente: nomeDoAgente(oferta.toAgent) })}
             </Button>
           </div>
         ))}

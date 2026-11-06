@@ -204,7 +204,7 @@
     "aceiteAutomatico": "Accepted automatically: the backlog covers all {{regras}} business rules and the repository is local, so {{agente}} joined without a click.",
     "aceiteAutomaticoFalhou": "The automatic accept of the handoff to {{agente}} failed: {{erro}}. Accept it from the offer card.",
     "passouOBastaoAo": "handed off to",
-    "aceitarEIniciar": "Accept handoff and start {{agente}}",
+    "aceitarEPassar": "Accept and hand over to {{agente}}",
     "ativarExecucao": "Activate execution",
     "ativarSemPlanoAviso": "No plan: the devs take the tasks as they are.",
     "semRepositorio": "No repository yet: accepting this handoff provisions it, and only then can execution be activated.",

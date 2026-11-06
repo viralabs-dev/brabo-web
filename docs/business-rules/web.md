@@ -6102,8 +6102,14 @@ card, closed together:
   without `tarefas` still start the whole map. The computed summary reaches the
   Dev Lead in the tool result text (`resumo_do_plano/1`), so he can
   cite the numbers instead of recounting.
+- **The app recreate says which port it publishes (AT-758).** A `container_recreate`
+  with `reason: 'app_declared'` (proposed by the api after the merge of the infra PR
+  that declares `run.app`) says the app was declared and shows `http://localhost:<host>`:
+  the host port (13000+) that approving publishes. The other recreates keep the
+  sentence above. The text is `actions.containerRecreate.appDeclared` in
+  `approvals.json` (four locales), resolved by `i18n.t` in `aprovacoes.ts`.
 
-- **Where:** `apps/web/src/lib/aprovacoes.ts:471` (`verboDaAcao`),
+- **Where:** `apps/web/src/lib/aprovacoes.ts:485` (`verboDaAcao`),
   `apps/api/src/domain/actions/sempre-permitir.ts:33` (`TIPOS_SEM_SEMPRE_PERMITIR`),
   `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:84` (`execute`),
   `apps/api/src/application/use-cases/execution/execute-execution-plan.use-case.ts:89` (`execute`),
@@ -6278,7 +6284,7 @@ channel) still writes the list by hand: invalidating writes no data.
   that goes back to the Dev Lead says the same, and the description of `agentes`
   asks not to promise a parallelism gain. The model's quote marks at the ends of the
   summary are removed before the sentence cites it, so no `coberto."` is left over.
-- **Where:** `apps/web/src/lib/aprovacoes.ts:359` (`propose_execution_plan`),
+- **Where:** `apps/web/src/lib/aprovacoes.ts:360` (`propose_execution_plan`),
   `apps/engine/lib/engine/agents/dev_lead_tools.ex:276` (`sobem`), `:249`
   (`classificar`), `:97` (`spec`)
 - **Test:** `apps/web/src/lib/aprovacoes.test.ts` ("plano com 2 agentes num

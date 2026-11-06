@@ -4,7 +4,7 @@
 // escopa `@types/node` só a este arquivo: `tsconfig.app.json` deixa `node` de
 // fora de propósito, para não mascarar um `process`/`fs` usado por engano em
 // código que RODA no navegador.
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
@@ -17,6 +17,7 @@ import {
   verboDaAcao,
 } from './aprovacoes';
 import type { PsychologistHypothesis } from './api-types';
+import i18n from './i18n';
 
 /**
  * A FONTE DE VERDADE dos tipos de ação é o backend, e ela é um arquivo que o
@@ -337,5 +338,62 @@ describe('tetoDoPlano (AT-753, UX-4)', () => {
     expect(tetoDoPlano({ tarefas })).toBeUndefined();
     expect(tetoDoPlano({ tarefas: [], orcamentoPorTarefaMicros: 100 })).toBeUndefined();
     expect(tetoDoPlano({ orcamentoPorTarefaMicros: 100 })).toBeUndefined();
+  });
+});
+
+describe('AT-758 — recriar o container depois da PR de infra que declara o app', () => {
+  const portas = [{ host: 13000, container: 3000, protocol: 'tcp' }];
+
+  beforeAll(async () => {
+    await i18n.changeLanguage('pt-BR');
+  });
+  afterAll(() => {
+    void i18n.changeLanguage('en');
+  });
+
+  it('o texto novo vem do i18n: em en, a mesma URL sai na frase inglesa', async () => {
+    await i18n.changeLanguage('en');
+    try {
+      const frase = fraseDaAcao('container_recreate', { reason: 'app_declared', ports: portas })!;
+      expect(frase).toContain('The project\'s app was declared');
+      expect(frase).toContain('http://localhost:13000');
+    } finally {
+      await i18n.changeLanguage('pt-BR');
+    }
+  });
+
+  it('app_declared: diz que o app foi declarado e mostra a URL com a porta do host', () => {
+    const frase = fraseDaAcao('container_recreate', {
+      reason: 'app_declared',
+      pullRequestId: 'pr-2',
+      ports: portas,
+    })!;
+    expect(frase).toContain('O app do projeto foi declarado');
+    expect(frase).toContain('http://localhost:13000');
+    expect(frase).not.toContain('13000:');
+    expect(frase).not.toMatch(/\u{E000}|\u{E001}/u);
+  });
+
+  it('app_declared: a URL sai como trecho de código, e a porta do host é a da URL', () => {
+    const trechos = trechosDaFraseDaAcao('container_recreate', {
+      reason: 'app_declared',
+      ports: portas,
+    })!;
+    expect(trechos.filter((t) => t.codigo)).toEqual([
+      { texto: 'http://localhost:13000', codigo: true },
+    ]);
+  });
+
+  it('sem app_declared, o recreate de sempre não ganha a URL', () => {
+    const frase = fraseDaAcao('container_recreate', { ports: portas })!;
+    expect(frase).toBe(
+      'Recria o container do projeto: remove o atual e sobe outro com o comando do app e a rede declarados — o que está só dentro do container se perde.',
+    );
+  });
+
+  it('CASO DE FALHA: app_declared sem porta degrada para a frase de sempre, sem URL inventada', () => {
+    const frase = fraseDaAcao('container_recreate', { reason: 'app_declared' })!;
+    expect(frase).not.toContain('localhost');
+    expect(frase).toContain('Recria o container do projeto');
   });
 });

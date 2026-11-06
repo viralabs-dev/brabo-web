@@ -1,5 +1,6 @@
 import type { ActionType, PsychologistHypothesis } from './api-types';
 import { AGENTS } from './agents';
+import i18n from './i18n';
 
 /**
  * A LINGUAGEM das decisões que o produto pede ao usuário — verbo e frase, num
@@ -447,9 +448,22 @@ const FRASE_DA_ACAO: Record<ActionType, (payload: Payload) => string> = {
 
   // AT-608 (ADR 0228): remove + sobe de novo, para valer o comando do app e a
   // rede declarados. O que está dentro do container se perde.
-  container_recreate: () =>
-    `Recria o container do projeto: ${codigo('remove')} o atual e ${codigo('sobe')} ` +
-    'outro com o comando do app e a rede declarados — o que está só dentro do container se perde.',
+  // AT-758: depois da PR de infra que declara o app, a api propõe com
+  // `reason: 'app_declared'` e a porta do host (13000+); o clique publica essa porta.
+  container_recreate: (p) => {
+    const host = (p.ports as Array<{ host?: unknown }> | undefined)?.[0]?.host;
+    if (p.reason === 'app_declared' && typeof host === 'number') {
+      return i18n.t('actions.containerRecreate.appDeclared', {
+        ns: 'approvals',
+        porta: host,
+        url: codigo(`http://localhost:${host}`),
+      });
+    }
+    return (
+      `Recria o container do projeto: ${codigo('remove')} o atual e ${codigo('sobe')} ` +
+      'outro com o comando do app e a rede declarados — o que está só dentro do container se perde.'
+    );
+  },
 
   // RN-508 (ADR 0145) — segundo tipo pra subir o container real do projeto,
   // exclusivo do modo Runner: sobe pelo `brabo-runner`, na máquina do

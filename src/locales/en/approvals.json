@@ -130,6 +130,7 @@
     },
     "actions": {
       "approve": "Approve",
+      "approvePlan": "Approve plan",
       "deny": "Deny",
       "alwaysAllow": "Always allow",
       "autoMode": "Auto mode"
@@ -150,7 +151,8 @@
       "alwaysAllowed": "Always allowed · recorded in permissions.json",
       "failed": "Failed",
       "approvedTerminal": "Approved · command running",
-      "approved": "Approved"
+      "approved": "Approved",
+      "failedConflict": "Conflict in {{files}} — the agent redoes the PR on its own"
     },
     "body": {
       "commit": {
@@ -187,7 +189,16 @@
       "empty": "This action carries no payload."
     },
     "actorYou": "You",
-    "actorOtherMember": "Another member"
+    "actorOtherMember": "Another member",
+    "plan": {
+      "agents_one": "Starts the execution with {{count}} dev agent, one per module.",
+      "agents_other": "Starts the execution with {{count}} dev agents, one per module.",
+      "tasks_one": "It is {{count}} task.",
+      "tasks_other": "It is {{count}} tasks.",
+      "cost": "Expected cost: up to {{total}} ({{perTask}} cap per task).",
+      "autoPilot_one": "Turn on autopilot for the team ({{count}} agent; merge stays with you)",
+      "autoPilot_other": "Turn on autopilot for the team ({{count}} agents; merge stays with you)"
+    }
   },
   "prGateTimeline": {
     "steps": {

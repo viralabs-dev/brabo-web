@@ -6373,6 +6373,11 @@ channel) still writes the list by hand: invalidating writes no data.
   modo automático não aprova esta ação: ela continua esperando o seu
   Aprovar."). Approving the card along with switching on the mode would be the
   owner's decision and was NOT done.
+  **Exception (AT-753, owner decision P3 of 06/11):** the `propose_execution_plan`
+  card no longer has the separate offer, the button or this note. The autopilot
+  is a checkbox already ticked inside the card itself, and approving with it
+  ticked is what switches it on ([RN-804](#rn-804)). Every other action type
+  keeps the rule above.
 - **Where:** `apps/web/src/components/ApprovalCard.tsx:211` (`ApprovalCard`)
 - **Test:** `apps/web/src/components/ApprovalCard.test.tsx` (`ligar o
   "Modo automático" não aprova o card, e o card diz isso`; without the button, the note
@@ -6551,22 +6556,27 @@ channel) still writes the list by hand: invalidating writes no data.
 
 ### RN-804 — The Dev Lead's plan card offers auto mode in batch before approving {#rn-804}
 
-- **Rule:** the `ApprovalCard` of a pending `propose_execution_plan` shows,
-  above "Aprovar", the SAME batch offer control as the Executores tab
-  ([RN-661](#rn-661)): the `dev-<modulo>` the plan starts (same derivation of
-  `devAgentId` as the api) plus the gate subagents, all checked, and nothing
-  recorded without the click on "Ligar". Same endpoint (`PUT .../agent-autonomy`,
-  wildcard `*`), one PUT per agent, per-agent outcome and the same list of what
-  auto mode does not unlock. Approving activates execution ([RN-677](api.md#rn-677)) and the
-  dev asks for the first command right after; switching on later does not approve the pending one
-  ([RN-755](#rn-755)). It only appears where the caller passed the auto mode
-  callback (role `maintainer`) and there is a `QueryClient`. The card stays single
-  (AT-322): it is one more block of the type, not an appearance variant.
-- **Where:** `apps/web/src/components/ApprovalCard.tsx:363`
-  (`ModoAutomaticoDoPlano`), `apps/web/src/components/ModoAutomaticoDoPlano.tsx:17`
-  (`agentesDoPlano`)
+- **Rule:** the `ApprovalCard` of a `propose_execution_plan` shows only what
+  matters (AT-753, UX-4): a short sentence (dev agents, one per module, and the
+  task count), the expected cost line (`tetoDoPlano`: the sum of the per-task
+  caps from the payload, RN-802), "Aprovar plano" and "Negar". The jargon
+  (raw payload, the `permissions.json` note, "Sempre permitir", the policy
+  reason and the list of what the autopilot releases) is inside "Detalhes",
+  closed. The autopilot offer ([RN-661](#rn-661)) is a checkbox ALREADY TICKED in
+  the card ("Ligar o piloto automático para o time"): approving with it ticked
+  first writes the wildcard `*` of each agent (the `dev-<modulo>` the plan
+  starts plus the gate subagents) with the same endpoint as the Executores tab
+  (`PUT .../agent-autonomy`, one PUT per agent), then approves. A refused PUT
+  does not stop the approval; unticked, nothing is written. Approving activates
+  execution ([RN-677](api.md#rn-677)); merge stays with the user. It only appears
+  where the caller passed the auto mode callback (role `maintainer`). The card
+  stays single (AT-322). This replaces the separate offer of AT-476, which
+  revokes the split of AT-443 ([RN-755](#rn-755)) for this card.
+- **Where:** `apps/web/src/components/ApprovalCard.tsx` (`ofereceOPiloto`,
+  `ligarOPilotoDoTime`), `apps/web/src/lib/aprovacoes.ts` (`tetoDoPlano`),
+  `apps/web/src/components/ModoAutomaticoDoPlano.tsx` (`agentesDoPlano`)
 - **Test:** `apps/web/src/components/ApprovalCard.modo-automatico-do-plano.test.tsx`
-- **Origin:** AT-476 (TP-01 of 10/10)
+- **Origin:** AT-476 (TP-01 of 10/10); AT-753 (checkbox instead of the separate offer)
 
 ### RN-815 — "Parar execução" counts the tasks in progress AND in review, read from the backlog {#rn-815}
 

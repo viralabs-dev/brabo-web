@@ -464,3 +464,33 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+
+/* AT-753 (UX-4): o custo esperado do plano, à vista logo abaixo da frase. */
+.custoDoPlano {
+  margin: -6px 0 0;
+  padding: 0 16px 12px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* A oferta do piloto automático: uma linha só, antes dos botões. */
+.ofertaDoPiloto {
+  flex-basis: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+}
+
+.acoesNosDetalhes {
+  padding: 0 16px 12px;
+}
+
+/* AT-753 (UX-8): a causa da falha sob a linha de desfecho. */
+.causaDaFalha {
+  padding: 0 16px 12px;
+}

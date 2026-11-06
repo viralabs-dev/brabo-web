@@ -8,6 +8,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
+  tetoDoPlano,
   SEM_FRASE,
   descreverAcao,
   descreverHipotese,
@@ -315,5 +316,26 @@ describe('AT-381 — o plano mostra a estimativa de gasto', () => {
 
   it('sem orçamento no payload, não inventa número', () => {
     expect(fraseDaAcao('propose_execution_plan', { tarefas: [{ taskId: 't', modulo: 'api' }] })).not.toContain('US$');
+  });
+});
+
+describe('tetoDoPlano (AT-753, UX-4)', () => {
+  const tarefas = [{ modulo: 'a' }, { modulo: 'a' }, { modulo: 'b' }];
+
+  it('soma o teto por tarefa; a primeira de cada módulo vale o multiplicador', () => {
+    expect(tetoDoPlano({ tarefas, orcamentoPorTarefaMicros: 100 })).toEqual({
+      total: 300,
+      porTarefa: 100,
+      tarefas: 3,
+    });
+    expect(
+      tetoDoPlano({ tarefas, orcamentoPorTarefaMicros: 100, multiplicadorDaPrimeiraDoModulo: 2 }),
+    ).toEqual({ total: 100 + 2 * 200, porTarefa: 100, tarefas: 3, multiplicador: 2 });
+  });
+
+  it('CASO DE FALHA: sem orçamento ou sem tarefas não inventa custo', () => {
+    expect(tetoDoPlano({ tarefas })).toBeUndefined();
+    expect(tetoDoPlano({ tarefas: [], orcamentoPorTarefaMicros: 100 })).toBeUndefined();
+    expect(tetoDoPlano({ orcamentoPorTarefaMicros: 100 })).toBeUndefined();
   });
 });

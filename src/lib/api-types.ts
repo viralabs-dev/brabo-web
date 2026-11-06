@@ -496,6 +496,20 @@ export interface TerminalExecutionResult {
   estimatedTokensCompressed: number | null;
 }
 
+/**
+ * O que a ação git grava quando a execução falha (`resultadoDaFalha` em
+ * `execute-git-action.use-case.ts` da api): a causa em texto e, num merge
+ * recusado por conflito, os arquivos em conflito. Não tem `stdout`: é o que
+ * separa este formato do `TerminalExecutionResult`.
+ */
+export interface GitActionFailureResult {
+  kind?: string;
+  failed: true;
+  error: string;
+  pullRequestId?: string;
+  conflictingFiles?: string[];
+}
+
 export interface ProposedAction {
   id: string;
   projectId: string;
@@ -509,7 +523,7 @@ export interface ProposedAction {
   decidedBy: string | null;
   decidedAt: string | null;
   rejectionReason: string | null;
-  executionResult: TerminalExecutionResult | null;
+  executionResult: TerminalExecutionResult | GitActionFailureResult | null;
   createdAt: string;
   updatedAt: string;
 }

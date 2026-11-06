@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Session: the primary decision of each thread card shows text next to its icon, as an exception to the icon-only rule of AT-682 (AT-753 UX-3). The handoff acceptance reads "Aceitar e passar a {agent}" and "Ativar execução" shows its label. The `handoff.aceitarEIniciar` key was replaced by `handoff.aceitarEPassar`; the exception is recorded in `design/COMPONENTS.md`. (web#16)
+
+- Session approvals: the execution-plan card now shows only what will be done, the expected cost, "Aprovar plano" and "Negar"; the jargon (raw payload, permissions.json, the autopilot list) moved to a collapsed "Detalhes". The auto mode offer is a pre-ticked checkbox in the card and, when approving, writes the wildcard of each plan agent (revokes the AT-443 split for this card; RN-755 and RN-804 updated). A failed git action now shows its cause and next step ("Conflito em README.md — o agente refaz a PR sozinho"), and the `executionResult` type gained the git failure shape (AT-753, UX-4 and UX-8). (web#17)
+
+- Executors: with an active execution and no agent working, a warning explains why (agents wait for the task they depend on and wake up when the dependency is merged); the session status badge is now translated (AT-753, P5, no wake button). The team auto-mode offer in the chat has a compact variant (pilot list under "Details", card capped at 40vh with inner scroll). The unused `ModoAutomaticoDoPlano` component is removed; `agentesDoPlano` stays. (web#18)
+
+- Session merge confirms on the PR's own row ("Mergear #N em dev? Confirmar / Cancelar"): Confirm proposes and approves in one gesture, the result ("Mergeada" or the failure cause) shows on the row, and the approval is still recorded. The thread reference gained a "Ver o cartão" button. An item leaving the queue shows a dismissible notice. A blocked task shows the title before " — " with the diagnosis collapsed. The chat column got `min-height:0` (AT-753, UX-2, UX-7 and UX-9). (web#19)
+
 - Docs: the 66 component docs in `.design-sync/docs/` translated to English (AT-745). The frontmatter (`category:` and `keywords:`), code blocks, quoted UI strings and domain values in pt-BR are unchanged, so the design-sync grouping is the same.
 
 - Docs: `README.md`, `design/*.md` and `.design-sync/NOTES.md`/`conventions.md` translated to English (AT-745); `tokens.css` comments and the component docs in `.design-sync/docs/` are left for their own round.

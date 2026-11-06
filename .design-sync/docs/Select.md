@@ -5,10 +5,10 @@ keywords: [seleção, dropdown, opções, filtro]
 
 # Select
 
-A native `<select>` styled with the DS tokens. The options are children: plain
-`<option>` and `<optgroup>`.
+Um `<select>` nativo estilizado com os tokens do DS. As opções são children —
+`<option>` e `<optgroup>` comuns.
 
-## How to use
+## Como usar
 
 ```tsx
 <Select value={agente} onChange={(e) => setAgente(e.target.value)}>
@@ -18,9 +18,9 @@ A native `<select>` styled with the DS tokens. The options are children: plain
 </Select>
 ```
 
-## When NOT to use
+## Quando NÃO usar
 
-If each option needs more than one line of information (price, provider,
-description, a rich selection state), `Select` cannot cope: `<option>` only
-accepts text. That is exactly why `ModelPicker` exists instead of a model
-`Select`.
+Se cada opção precisa de mais de uma linha de informação — preço, provider,
+descrição, estado de seleção rico — o `Select` não dá conta: `<option>` só
+aceita texto. É exatamente por isso que existe o `ModelPicker` em vez de um
+`Select` de modelos.

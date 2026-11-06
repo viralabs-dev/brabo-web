@@ -5,10 +5,10 @@ keywords: [feed, atividade, eventos, sessão, filtro, timeline]
 
 # ActivityFeed
 
-The activity feed of a session or project: an agent filter, chips by activity
-type, and one row (`EventItem`) per event.
+O feed de atividade de uma sessão ou projeto: filtro por agente, chips por tipo
+de atividade, e uma linha (`EventItem`) por evento.
 
-## How to use
+## Como usar
 
 ```tsx
 <ActivityFeed
@@ -18,17 +18,16 @@ type, and one row (`EventItem`) per event.
 />
 ```
 
-## What to respect
+## O que respeitar
 
-- **The feed HIDES machine noise.** `agent.status`, `agent.response`,
-  `agent.delta`, `tool.call`, `tool.result` and `context.compacted` do not
-  appear: they are internal to the agent loop. A feed built only from these
-  types renders
+- **O feed ESCONDE ruído de máquina.** `agent.status`, `agent.response`,
+  `agent.delta`, `tool.call`, `tool.result` e `context.compacted` não aparecem —
+  são internos do ciclo do agente. Um feed montado só com esses tipos renderiza
   "Nenhuma atividade por aqui ainda".
-- **`highlightEventId` wins over the filter**, including the machine-noise one.
-  It is the Psychologist's evidence navigation, which cites exactly `tool.result`
-  and `agent.response`; an invisible highlight would be a navigation that leads
-  nowhere.
-- The type chips are derived from the events present. A single-type feed shows a
-  single chip.
-- Without `agentOptions` the agent filter bar disappears.
+- **`highlightEventId` vence o filtro**, inclusive o de ruído de máquina. É a
+  navegação de evidência do Psicólogo, que cita justamente `tool.result` e
+  `agent.response` — um destaque invisível seria uma navegação que não chega a
+  nada.
+- Os chips de tipo são derivados dos eventos presentes. Um feed de um tipo só
+  mostra um chip só.
+- Sem `agentOptions` a barra de filtro de agente desaparece.

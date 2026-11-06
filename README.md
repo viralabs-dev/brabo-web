@@ -1,26 +1,48 @@
 # brabo-web
 
-Brabo web interface: React 19, Vite, TanStack Query/Router, Tailwind 4 and shadcn/ui (Base UI). Extracted from the `daneiel/brabo` monorepo (ADR 0252, EP-033) with history.
+Interface web do Brabo: React 19, Vite, TanStack Query/Router, Tailwind 4 e shadcn/ui (Base UI).
 
-## Development
+## Desenvolver
 
 ```sh
 pnpm install
 pnpm dev                 # vite
+pnpm lint                # oxlint
 pnpm typecheck           # tsc -b --force
 pnpm test                # vitest
 pnpm areas:baixar        # baixa o areas.json do brabo-contracts (tag fixada) para o teste de contrato
 pnpm build
 ```
 
-## Dependencies on other repositories
+## Dependências de outros repositórios
 
-- `@brabo/shared`: `viralabs-dev/brabo-contracts#v1.0.0` (by tag, never by branch).
-- API types: `fixados/openapi.json` (`pnpm openapi:types`), a pinned copy; its origin is in `fixados/ORIGEM.md`.
-- Design tokens: `design/tokens.css`; the design docs are in `design/` and the app docs in `docs/`.
+- `@brabo/shared`: [brabo-contracts](https://github.com/viralabs-dev/brabo-contracts) na tag `v1.0.0` (`package.json`; por tag, nunca por branch).
+- Tipos da api: `fixados/openapi.json` é uma cópia fixada do contrato do [brabo-api](https://github.com/viralabs-dev/brabo-api); `pnpm openapi:types` gera os tipos e o CI confere com `pnpm openapi:types:check`. A origem de cada arquivo fixado está em `fixados/ORIGEM.md`.
+- Tokens de design: `design/tokens.css`; a doc do design está em `design/` e a do app em `docs/` (regras de negócio em `docs/business-rules/web.md`).
 
-## Images
+## Imagens
 
-`Dockerfile` (production, nginx, no local build required) and `Dockerfile.dev` (vite with a bind mount). CI builds the production image without publishing it.
+`Dockerfile` (produção, nginx, sem build local obrigatório) e `Dockerfile.dev` (vite com bind mount). O CI constrói a imagem de produção sem publicar; a imagem `ghcr.io/viralabs-dev/brabo-web` é publicada pelo `release.yml` quando sai uma tag final (`vX.Y.Z`).
 
-Permanent branches: `dev` and `main`; tags only via workflow. MIT license.
+Branches permanentes: `dev` e `main`; tag só por workflow. Licença MIT.
+
+## Repositórios do Brabo
+
+O Brabo é dividido em repositórios por camada (ADR 0252), e a documentação central está no [brabo](https://github.com/viralabs-dev/brabo) e em https://viralabs-dev.github.io/brabo/prd/.
+
+- **Depende de:** [brabo-contracts](https://github.com/viralabs-dev/brabo-contracts), [brabo-ci](https://github.com/viralabs-dev/brabo-ci) e [brabo-api](https://github.com/viralabs-dev/brabo-api) (cópia fixada do `openapi.json`).
+- **É usado por:** [brabo](https://github.com/viralabs-dev/brabo) e [brabo-infra](https://github.com/viralabs-dev/brabo-infra).
+
+| Repositório | Papel |
+|---|---|
+| [brabo](https://github.com/viralabs-dev/brabo) | Porta de entrada do produto: documentação, ADRs, `install.sh` e release do produto |
+| [brabo-api](https://github.com/viralabs-dev/brabo-api) | API NestJS: domínio, banco e autenticação |
+| [brabo-engine](https://github.com/viralabs-dev/brabo-engine) | Engine Elixir/OTP: agentes, gates, sessões e filas |
+| [brabo-web](https://github.com/viralabs-dev/brabo-web) | Interface web em React |
+| [brabo-runner](https://github.com/viralabs-dev/brabo-runner) | CLI que roda na máquina do usuário |
+| [brabo-broker](https://github.com/viralabs-dev/brabo-broker) | Único processo com acesso ao socket do Docker |
+| [brabo-contracts](https://github.com/viralabs-dev/brabo-contracts) | Contratos compartilhados entre os repositórios |
+| [brabo-infra](https://github.com/viralabs-dev/brabo-infra) | Composes, Kubernetes e o `make dev` que sobe tudo |
+| [brabo-ci](https://github.com/viralabs-dev/brabo-ci) | Workflows reutilizáveis e política de PR |
+| [brabo-qa](https://github.com/viralabs-dev/brabo-qa) | Testes de ponta a ponta, golden-sets e smoke das imagens |
+| [brabo-workspace](https://github.com/viralabs-dev/brabo-workspace) | Pasta-mãe que clona os repositórios lado a lado |

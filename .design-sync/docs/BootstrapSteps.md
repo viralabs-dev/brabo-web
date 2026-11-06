@@ -5,26 +5,25 @@ keywords: [bootstrap, gitflow, provisionamento, passos, progresso]
 
 # BootstrapSteps
 
-The progress of the Gitflow bootstrap: the six steps that prepare the
-repository, with the state of each one.
+O progresso do bootstrap de Gitflow: os seis passos que preparam o repositório,
+com o estado de cada um.
 
-## How to use
+## Como usar
 
 ```tsx
 <BootstrapSteps stepStates={estados} failedStep={status.failedStep ?? undefined} />
 ```
 
-## What to respect
+## O que respeitar
 
-- **`stepStates` needs all six steps**: it is a complete `Record` of
-  `BootstrapStepName`, in the order the pipeline runs them:
+- **`stepStates` precisa dos seis passos** — é um `Record` completo de
+  `BootstrapStepName`, na ordem em que o pipeline executa:
   `commit_pr_template`, `commit_branching_policy`, `create_dev_branch`,
   `create_qa_branch`, `create_rc_branch`, `protect_branches`.
-- States in **pt-BR**: `pendente`, `rodando`, `ok`, `skip`, `falha`.
-- **`skip` is not a failure**: it means the step was unnecessary (the file
-  already existed, the branch was already there). Use `note` to say why; the
-  bootstrap is idempotent and resumable, and the user needs to understand that
-  nothing broke.
-- `failedStep` is what lets you offer a resume from the right point.
-- One `rodando` step at a time. Two at once describe a state the pipeline never
-  produces.
+- Estados em **pt-BR**: `pendente`, `rodando`, `ok`, `skip`, `falha`.
+- **`skip` não é falha**: significa que o passo era desnecessário (o arquivo já
+  existia, a branch já estava lá). Use `note` para dizer por quê — o bootstrap é
+  idempotente e retomável, e o usuário precisa entender que nada quebrou.
+- `failedStep` é o que permite oferecer retomada a partir do ponto certo.
+- Um passo `rodando` por vez. Dois simultâneos descrevem um estado que o
+  pipeline não produz.

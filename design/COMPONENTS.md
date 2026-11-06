@@ -1,93 +1,95 @@
-# Components: catalog extracted from claude.ai/design
+# Componentes — catálogo extraído do claude.ai/design
 
-Source: claude.ai/design project `1c960ca8-5e00-4558-8ced-80dfbdf01027`
-("Brabo Design System"), files `Brabo Design System.dc.html` (sections
-"Componentes base" and "Componentes de produto") + the 5 screen files
-(`Brabo App/Project/Session/Approvals/Settings.dc.html`), extracted via
-`DesignSync` on 2026-07-23. These `.dc.html` files use the claude.ai/design
-canvas template syntax (`sc-for`, `sc-if`, `{{ }}`, `style-hover`/`style-focus`
-attributes); they are not executable code. This
-file is the basis for the real React/TSX implementation: every color/
-spacing value references the tokens in `tokens.css`, never raw hex.
+Fonte: projeto claude.ai/design `1c960ca8-5e00-4558-8ced-80dfbdf01027`
+("Brabo Design System"), arquivos `Brabo Design System.dc.html` (seções
+"Componentes base" e "Componentes de produto") + os 5 arquivos de tela
+(`Brabo App/Project/Session/Approvals/Settings.dc.html`), extraídos via
+`DesignSync` em 2026-07-23. Esses `.dc.html` usam a sintaxe de template do
+canvas do claude.ai/design (`sc-for`, `sc-if`, `{{ }}`, atributos
+`style-hover`/`style-focus`) — não são código executável. Este
+arquivo é a base pra implementação real em React/TSX — todo valor de cor/
+espaçamento referencia os tokens de `tokens.css`, nunca hex cru.
 
-**Since 2026-08-08 (FASE 16) the living reference is the versioned handoff in
-`design_handoff_brabo/`**: a README with the specification and 8 high-fidelity
-`.dc.html` files. What this file says still holds; what the handoff adds is in
-the three foundation sections below. A rule the handoff's own README
-establishes and that holds here: the `.dc.html` files are **design reference,
-not production code to copy**; the implementation uses the `apps/web` patterns.
+**Desde 2026-08-08 (FASE 16) a referência viva é o handoff versionado em
+`design_handoff_brabo/`** — README com a especificação e 8 arquivos `.dc.html`
+de alta fidelidade. O que este arquivo diz continua valendo; o que o handoff
+acrescenta está nas três seções de fundação abaixo. Regra que o próprio README
+do handoff estabelece e que vale aqui: os `.dc.html` são **referência de
+design, não código de produção para copiar** — a implementação usa os padrões
+do `apps/web`.
 
-General convention confirmed on every screen: outline icons (stroke 1.6-2.0,
-24px grid, `currentColor`, `stroke-linecap`/`stroke-linejoin: round`), buttons
-with 3 variants (primary/secondary/ghost) × 4 states (default/hover/focus/
-disabled), real `:hover`/`:focus` via CSS (the mockup's `style-hover` does not
-exist in CSS/React; it needs CSS Modules or an equivalent styled approach,
-never inline-only). No binary asset: every icon is inline SVG, and the only
-brand asset is the monogram documented below, which is a **component, never a
-rasterized image**.
+Convenção geral confirmada em todas as telas: ícones outline (stroke 1.6–2.0,
+grid 24px, `currentColor`, `stroke-linecap`/`stroke-linejoin: round`), botões
+com 3 variantes (primary/secondary/ghost) × 4 estados (default/hover/focus/
+disabled), `:hover`/`:focus` real via CSS (o `style-hover` do mockup não existe
+em CSS/React — precisa de CSS Modules ou styled approach equivalente, nunca
+inline-only). Nenhum asset binário: todo ícone é SVG inline, e o único asset de
+marca é o monograma documentado abaixo — que é **componente, nunca imagem
+rasterizada**.
 
-## Typography: the handoff scale
+## Tipografia — a escala do handoff
 
-The three families and what each one carries. Loading is self-hosted
-(`@font-face` in `apps/web/src/index.css` pointing to `public/fonts/`); the
-handoff asks for the Google Fonts `<link>` and **that is the only deliberate
-divergence**; see ADR 0036 and the header of `tokens.css`.
+As três famílias e o que cada uma carrega. A carga é auto-hospedada
+(`@font-face` em `apps/web/src/index.css` apontando para `public/fonts/`); o
+handoff pede o `<link>` do Google Fonts e **essa é a única divergência
+deliberada** — ver o ADR 0036 e o cabeçalho de `tokens.css`.
 
-- **Space Grotesk** (`var(--font-heading)`): titles, agent and project names,
-  wordmark. Weights 600/700. Section title 18px/600; H1 22px/700
+- **Space Grotesk** (`var(--font-heading)`) — títulos, nomes de agente e de
+  projeto, wordmark. Pesos 600/700. Título de seção 18px/600; H1 22px/700
   `letter-spacing:-.02em`; wordmark 700 `letter-spacing:-.045em`.
-- **Archivo** (`var(--font-body)`): body, labels, buttons. Weights 400/500/600.
-  Body 13px, label 12px, button 13px/600.
-- **IBM Plex Mono** (`var(--font-mono)`): code, diffs, terminal, token
-  counters, paths, keys, IDs and status badges. 10-13px. Table header label:
-  10px/600, `letter-spacing:.05em`, uppercase.
+- **Archivo** (`var(--font-body)`) — corpo, labels, botões. Pesos 400/500/600.
+  Corpo 13px, label 12px, botão 13px/600.
+- **IBM Plex Mono** (`var(--font-mono)`) — código, diffs, terminal, contadores
+  de token, caminhos, chaves, IDs e badges de status. 10–13px. Label de
+  cabeçalho de tabela: 10px/600, `letter-spacing:.05em`, uppercase.
 
-The rule behind the list: mono is not only for code. It marks a **value the
-person will compare, copy or type**: hash, path, id, count. It is what keeps
-title and data distinguishable even at 10px.
+A regra por trás da lista: mono não é só para código. Ele marca **valor que a
+pessoa vai comparar, copiar ou digitar** — hash, path, id, contagem. É o que
+mantém título e dado distinguíveis mesmo em 10px.
 
-## Heights, radii, shadows and transitions
+## Alturas, raios, sombras e transições
 
-8px grid. Card padding 14-18px; table cell padding 10-11px × 14px.
+Grade de 8px. Padding de card 14–18px; padding de célula de tabela 10–11px ×
+14px.
 
-| height | where |
+| altura | onde |
 |---|---|
-| 44px | top bar; login primary button |
-| 42px | input; login secondary button |
-| 36px | editor tab |
-| 28-36px | button in a dense context |
+| 44px | barra de topo; botão primário do login |
+| 42px | input; botão secundário do login |
+| 36px | aba do editor |
+| 28–36px | botão em contexto denso |
 | 28px | breadcrumb |
 | 24px | status bar |
-| 21px | code line |
+| 21px | linha de código |
 
-Radii: 4-5px (mono badge), 6-7px (small input, icon button), 8px (button,
-input, small card; `var(--radius-md)`), 10-12px (card, table;
-`var(--radius-lg)`), 22px (large brand tile). The tokens cover the three steps
-the UI uses in volume (`--radius-sm` 4px, `--radius-md` 8px, `--radius-lg`
-12px, `--radius-full`); 6-7px and 22px are single-context values and stay
-written where they are used.
+Raios: 4–5px (badge mono), 6–7px (input pequeno, botão de ícone), 8px (botão,
+input, card pequeno — `var(--radius-md)`), 10–12px (card, tabela —
+`var(--radius-lg)`), 22px (tile de marca grande). Os tokens cobrem os três
+degraus que a UI usa em volume (`--radius-sm` 4px, `--radius-md` 8px,
+`--radius-lg` 12px, `--radius-full`); 6–7px e 22px são valores de contexto
+único e ficam escritos onde são usados.
 
-Shadows: `var(--shadow)` is the default (`0 1px 2px rgba(0,0,0,.4), 0 12px 32px
-rgba(0,0,0,.45)`); `var(--shadow-lg)` is the login card's
+Sombras: `var(--shadow)` é a padrão (`0 1px 2px rgba(0,0,0,.4), 0 12px 32px
+rgba(0,0,0,.45)`); `var(--shadow-lg)` é a do card de login
 (`0 24px 60px rgba(0,0,0,.55)`).
 
-Transitions: 120-130ms for color and border; `bfade` .13s ease-out for
-dropdowns; terminal caret 1.05s step-end; live pulse `bpulse` 2.4s ease-in-out
-infinite (opacity 1 → .35); spinner `bspin` .7s linear. Every continuous
-animation stops under `prefers-reduced-motion`: the element stays, only the
-motion goes (see "Button with `loading`").
+Transições: 120–130ms para cor e borda; `bfade` .13s ease-out para dropdowns;
+caret do terminal 1.05s step-end; pulso ao vivo `bpulse` 2.4s ease-in-out
+infinite (opacidade 1 → .35); spinner `bspin` .7s linear. Toda animação
+contínua para em `prefers-reduced-motion` — o elemento fica, só o movimento
+sai (ver "Botão com `loading`").
 
-Derived colors always come from `color-mix(in srgb, <token> N%, transparent)`,
-typically 11-15% for a chip background and 34-45% for a chip border. Never a
-new hex invented for "the light version of".
+Cores derivadas saem sempre de `color-mix(in srgb, <token> N%, transparent)` —
+tipicamente 11–15% para fundo de chip e 34–45% para borda de chip. Nunca um
+hex novo inventado para "a versão clara de".
 
-## Brand: the B monogram
+## Marca — o monograma B
 
-Solid vertical stem + two chevrons. Up close it is the letter B; from afar it
-reads `>>`, agents advancing in a chain. The lower chevron sits at **58%
-opacity**, and that is semantic: it is the handoff still in progress.
+Haste vertical sólida + dois chevrons. De perto é a letra B; de longe lê-se
+`>>` — agentes avançando em cadeia. O chevron inferior fica a **58% de
+opacidade**, e isso é semântico: é o handoff ainda em execução.
 
-Canonical SVG (`viewBox="0 0 24 24"`, `fill:none`, `stroke-linecap` and
+SVG canônico (`viewBox="0 0 24 24"`, `fill:none`, `stroke-linecap` e
 `stroke-linejoin: round`):
 
 ```html
@@ -96,432 +98,425 @@ Canonical SVG (`viewBox="0 0 24 24"`, `fill:none`, `stroke-linecap` and
 <path d="M10.4 12l5.6 3.8-5.6 3.8" stroke-width="2.8" opacity=".58"/>
 ```
 
-Default application: `var(--accent)` tile with `var(--on-accent)` stroke,
-radius ≈ 28% of the side (32px→9px, 40px→11px, 96px→22px). Minimum size 16px,
-and at that size the lower chevron goes up to `opacity:.7`, otherwise it
-disappears.
+Aplicação padrão: tile `var(--accent)` com stroke `var(--on-accent)`, raio ≈
+28% do lado (32px→9px, 40px→11px, 96px→22px). Tamanho mínimo 16px — e nesse
+tamanho o chevron inferior sobe para `opacity:.7`, senão some.
 
-Allowed variants: terracotta tile; terracotta over surface; teal over dark
-background (active state); monochrome. **Never** rotate, stretch, outline or
-apply a gradient. Minimum clear space = the stem width (3.4 units of the 24
-grid).
+Variantes permitidas: tile terracota; terracota sobre superfície; teal sobre
+fundo escuro (estado ativo); monocromático. **Nunca** girar, esticar, contornar
+ou aplicar gradiente. Respiro mínimo = a largura da haste (3.4 unidades da
+grade de 24).
 
 Wordmark: Space Grotesk 700, `letter-spacing:-.045em`.
 
-## Buttons (base)
+## Botões (base)
 
-- **primary**: bg `var(--accent)`, text `var(--on-accent)`, border
+- **primary**: bg `var(--accent)`, texto `var(--on-accent)`, border
   `var(--accent)`, radius 8px, padding `9px 16px`, `font-weight:600`,
   `font-size:13px` Archivo. Hover: bg/border `var(--accent-hover)`. Focus:
   outline 2px `var(--accent)` offset 2px. Disabled: bg `var(--surface-2)`,
-  text `var(--text-muted)`, opacity .6, `cursor:not-allowed`.
+  texto `var(--text-muted)`, opacity .6, `cursor:not-allowed`.
 
-**Size** (`size`, FASE 17a): the default is the dense button above, in the
-28-36px range of the heights table. `lg` is the **main action of an entire
-screen**: `height: 44px`, `padding: 0 16px`, `font-size:14px`,
-`letter-spacing:.01em`, today the submit of the four auth screens. It is a
-fixed `height` and no longer padding because the label changes under `loading`
-("Entrar" → "Autenticando…") and the box cannot change height when the spinner
-comes in. `size` is independent of `fullWidth`: width and height answer
-different questions.
-- **secondary**: bg `var(--surface-2)`, text `var(--text-primary)`,
+**Tamanho** (`size`, FASE 17a): o default é o botão denso acima, na faixa de
+28–36px da tabela de alturas. `lg` é a **ação principal de uma tela inteira** —
+`height: 44px`, `padding: 0 16px`, `font-size:14px`,
+`letter-spacing:.01em` —, hoje o submit das quatro telas de auth. É `height`
+fixa e não mais padding porque o rótulo troca em `loading` ("Entrar" →
+"Autenticando…") e a caixa não pode mudar de altura quando o spinner entra.
+`size` é independente de `fullWidth`: largura e altura respondem a perguntas
+diferentes.
+- **secondary**: bg `var(--surface-2)`, texto `var(--text-primary)`,
   border `var(--border)`. Hover: border `var(--border-strong)`. Disabled:
   bg transparent, opacity .5.
-- **ghost**: bg transparent, text `var(--text-secondary)`, no border.
-  Hover: bg `var(--surface-2)`, text `var(--text-primary)`.
+- **ghost**: bg transparent, texto `var(--text-secondary)`, sem border.
+  Hover: bg `var(--surface-2)`, texto `var(--text-primary)`.
 
-**Dense and icon-only** (AT-287): `size="sm"` is the 28px button
-(`font-size: var(--fs-sm)`) for a table row, side panel and language bar;
-`icon` is the handoff's **icon button**: square (36px, or 28px with `sm`),
-radius `--r-sm` (7px), accessible name via `aria-label`. A raw button (a
-`<button>` with its own module) stays only where the element is NOT a button
-action: project tab (`role="tab"`), disclosure header, navigation item,
-editable title.
+**Denso e só-ícone** (AT-287): `size="sm"` é o botão de 28px (`font-size:
+var(--fs-sm)`) para linha de tabela, painel lateral e barra de idioma; `icon` é
+o **botão de ícone** do handoff — quadrado (36px, ou 28px com `sm`), raio
+`--r-sm` (7px), nome acessível por `aria-label`. Botão cru (`<button>` com
+módulo próprio) fica só onde o elemento NÃO é uma ação de botão: aba do projeto
+(`role="tab"`), cabeçalho de disclosure, item de navegação, título editável.
 
-## Card, Chip and Badge (AT-286, AT-287)
+## Card, Chip e Badge (AT-286, AT-287)
 
-- **`ui/Card`**: `var(--surface-1)` + `1px solid var(--border)` + radius
-  `--r-lg` (or `--r-md` with `radius="md"`, the dense grid/thread card),
-  padding `none|sm|md|lg` (0 / 12 / 16 / 24px). `recorta` is `overflow:hidden`,
-  for whoever paints a region flush against the border (`ApprovalCard`).
-  Outside layout (margin, width) belongs to the caller, via `className`. Panel,
-  rail and fixed header are NOT a card; they stay `surface-1` in their own
-  module.
-- **`ui/Chip`**: the FILTER pill, interactive (`<button aria-pressed>`), mono
-  `--fs-sm`, on = `--accent` (or `--violet`) border over `--surface-2`.
-- **`ui/Badge`**: the NON-interactive counterpart (`<span>`). Tones `success|warning|
-  danger|accent|muted`, plus `neutral` (`--text-secondary` text: a badge whose
-  text is content, like a branch name) and `agent` (color inherited from
-  `--agent-color`). `size="md"` is the 11px one; `square` is the table
-  rectangle. `emCurso` puts the label in the `Shimmer`, only for IN-PROGRESS
-  state (container and `provisioning` project); the other badges do not change.
-  The dot pulses (Badge's `pulse`, current gate marker, status dots) stop under
-  `prefers-reduced-motion: reduce`: the animation goes, the dot stays.
+- **`ui/Card`**: `var(--surface-1)` + `1px solid var(--border)` + raio
+  `--r-lg` (ou `--r-md` com `radius="md"`, o card denso de grade/fio), padding
+  `none|sm|md|lg` (0 / 12 / 16 / 24px). `recorta` é `overflow:hidden`, para
+  quem pinta região colada na borda (`ApprovalCard`). Layout de fora (margem,
+  largura) é do chamador, por `className`. Painel, trilho e cabeçalho fixo NÃO
+  são card — continuam `surface-1` no próprio módulo.
+- **`ui/Chip`**: a pílula de FILTRO, interativa (`<button aria-pressed>`), mono
+  `--fs-sm`, ligada = borda `--accent` (ou `--violet`) sobre `--surface-2`.
+- **`ui/Badge`**: o par NÃO interativo (`<span>`). Tons `success|warning|
+  danger|accent|muted`, mais `neutral` (texto `--text-secondary`: badge cujo
+  texto é conteúdo, como nome de branch) e `agent` (cor herdada de
+  `--agent-color`). `size="md"` é o de 11px; `square` é o retângulo de tabela.
+  `emCurso` põe o rótulo no `Shimmer` — só em estado EM CURSO (container e
+  projeto `provisioning`); os outros badges não mudam. Os pulsos de ponto
+  (`pulse` do Badge, marcador do gate corrente, pontos de status) param em
+  `prefers-reduced-motion: reduce`: a animação sai, o ponto fica.
 
 ## AgentCard
 
-Geometric avatar (outline SVG icon distinct per agent, not photo/letter)
-40-44px, `border-radius:10px`, bg `color-mix(in srgb, <status-color> 18%,
-var(--surface-2))`, border `color-mix(in srgb, <color> 40-50%, transparent)`.
-Name (Space Grotesk 600, 14-15px) + status badge (pill, `font-family:
-IBM Plex Mono`, 10px, with a 6px dot):
-| status | color | animation |
+Avatar geométrico (ícone SVG outline distinto por agente, não foto/letra)
+40–44px, `border-radius:10px`, bg `color-mix(in srgb, <cor-do-status> 18%,
+var(--surface-2))`, border `color-mix(in srgb, <cor> 40-50%, transparent)`.
+Nome (Space Grotesk 600, 14-15px) + badge de status (pílula, `font-family:
+IBM Plex Mono`, 10px, com dot 6px):
+| status | cor | animação |
 |---|---|---|
-| trabalhando | `var(--success)` | `bpulse` (pulse, 1.4s infinite) |
-| aguardando | `var(--warning)` | none |
-| ocioso | `var(--text-muted)` | none |
-| falhou | `var(--danger)` | none |
+| trabalhando | `var(--success)` | `bpulse` (pulso, 1.4s infinite) |
+| aguardando | `var(--warning)` | nenhuma |
+| ocioso | `var(--text-muted)` | nenhuma |
+| falhou | `var(--danger)` | nenhuma |
 
-Subtitle: role/specialty (12px, `var(--text-muted)`). Footer separated by
-`border-top`: "model" icon (helmet/box) + name of the bound model + provider
-(`claude-sonnet-4 · API` / `llama3.1:8b · Ollama`), 11px mono. In the agent
-team panel (Project screen), each card also has a manual/auto autonomy toggle
-(2-button pill).
+Subtítulo: papel/especialidade (12px, `var(--text-muted)`). Rodapé
+separado por `border-top`: ícone de "model" (capacete/caixa) + nome do
+modelo vinculado + provider (`claude-sonnet-4 · API` / `llama3.1:8b ·
+Ollama`), 11px mono. No painel do time de agentes (tela Project), cada
+card também tem um toggle de autonomia manual/auto (pill de 2 botões).
 
-**Fixed roster of the 9 agents** (CLAUDE.md): Psicólogo, Anamnese, Criativo,
-Arquiteto, PO, Dev Backend, Dev Frontend, Infra, QA, SecOps, each with its own
-accent color used on the avatar/name throughout the UI (consistent between chat
-and overview): Psicólogo `var(--violet)` `#9C7BE0`, Anamnese
-`var(--success)` `#37B3A4`, Criativo `var(--warning)` `#E0982F`, Arquiteto
-`var(--accent)` `#D6633A`, PO `var(--violet)` `#9C7BE0`, Dev Backend
-`var(--success)` `#37B3A4`, Dev Frontend `#5EBEB1`, Infra `var(--warning)`
-`#E0982F`, QA `var(--danger)` `#E05A3E`, SecOps `#8AA6AE`.
+**Roster fixo dos 9 agentes** (CLAUDE.md): Psicólogo, Anamnese, Criativo,
+Arquiteto, PO, Dev Backend, Dev Frontend, Infra, QA, SecOps — cada um com
+uma cor de acento própria usada no avatar/nome ao longo de toda a UI
+(consistente entre chat e overview): Psicólogo `var(--violet)` `#9C7BE0`,
+Anamnese `var(--success)` `#37B3A4`, Criativo `var(--warning)` `#E0982F`,
+Arquiteto `var(--accent)` `#D6633A`, PO `var(--violet)` `#9C7BE0`, Dev
+Backend `var(--success)` `#37B3A4`, Dev Frontend `#5EBEB1`, Infra
+`var(--warning)` `#E0982F`, QA `var(--danger)` `#E05A3E`, SecOps `#8AA6AE`.
 
 ## TokenMeter
 
-Card `var(--surface-1)`, border `var(--border)`, radius 12px, padding 20px
-(compact variant in the ProjectCards: smaller, radius 8px, padding 10-12px,
-without the extra savings text).
-- Top line: `"{used} / {limit} tokens"` (mono 12-13px, secondary) + percentage on
-  the right (mono, bold, color per threshold).
-- Bar: height 6-10px, bg `var(--surface-0)`/`var(--surface-2)`, full radius,
-  fill `linear-gradient(90deg, var(--success), var(--warning))` (at 100%
-  `--danger` fades in on the real composition; see the "alert" variant below)
-  with width = percentage.
-- **Color thresholds** (confirmed in the Project/Settings mockups):
-  `< 70%` → green (`var(--success)` dominates, no warning); `70-89%` → warning,
-  percentage color and possibly text in `var(--warning)`;
-  `>= 90%` → `var(--danger)`, blinking alert icon (`balert`,
-  `opacity 1↔.5`, 1.6s) and card border in
-  `color-mix(in srgb, var(--danger) 45%, var(--border))`; in that case the bar
-  gradient gets a third stage toward red (`success→warning→danger`) with thin
-  vertical markers at 70%/90%. Text label on the alert card:
-  `"{pct}% do limite mensal"`.
-- Markers 70/90/100 below the bar (9px mono text, `text-muted`, positioned via
-  `left:70%/90%/100%`).
-- Footer: cycle cost (`"R$ X · US$ Y"`, mono 15-16px bold) on the left,
-  compression savings on the right (mono bold, `var(--success)`, `"−R$ X"`).
-  Expanded variant (base Design System) also shows an extra badge below:
-  `"{pct}% de tokens poupados este ciclo"` with an up-arrow icon, background
-  `color-mix(var(--success) 12%)`.
-- **"Live" variant** (chat session topbar): more compact (220px, padding
-  7-12px), with a `"ao vivo"` indicator (pulsing green dot) + `"falta {N}"`
-  text in `var(--warning)` on the right, without the threshold markers or the
-  savings footer (only `"{used}/{limit}"` + `"R$ cost"` on one compact line).
+Card `var(--surface-1)`, border `var(--border)`, radius 12px, padding
+20px (variante compacta nos ProjectCards: menor, radius 8px, padding
+10-12px, sem o texto de economia extra).
+- Linha superior: `"{usado} / {limite} tokens"` (mono 12-13px, secondary)
+  + percentual à direita (mono, bold, cor conforme threshold).
+- Barra: altura 6-10px, bg `var(--surface-0)`/`var(--surface-2)`, radius
+  full, preenchimento `linear-gradient(90deg, var(--success), var(--warning))`
+  (a 100% some o `--danger` na composição real — ver variante "alerta"
+  abaixo) — largura = percentual.
+- **Thresholds de cor** (confirmados nos mockups Project/Settings):
+  `< 70%` → verde (`var(--success)` domina, sem aviso); `70–89%` → aviso,
+  cor do percentual e possivelmente do texto em `var(--warning)`;
+  `>= 90%` → `var(--danger)`, ícone de alerta piscando (`balert`,
+  `opacity 1↔.5`, 1.6s) e borda do card em
+  `color-mix(in srgb, var(--danger) 45%, var(--border))`; nesse caso o
+  gradiente da barra ganha um terceiro estágio pro vermelho
+  (`success→warning→danger`) com marcadores verticais finos em 70%/90%.
+  Rótulo textual no card de alerta: `"{pct}% do limite mensal"`.
+- Marcadores 70/90/100 abaixo da barra (texto 9px mono, `text-muted`,
+  posicionados via `left:70%/90%/100%`).
+- Rodapé: custo do ciclo (`"R$ X · US$ Y"`, mono 15-16px bold) à esquerda,
+  economia por compressão à direita (mono bold, `var(--success)`,
+  `"−R$ X"`). Variante expandida (Design System base) ainda mostra um
+  badge extra abaixo: `"{pct}% de tokens poupados este ciclo"` com ícone
+  de seta-pra-cima, fundo `color-mix(var(--success) 12%)`.
+- **Variante "ao vivo"** (topbar da sessão de chat): mais compacta (220px,
+  padding 7-12px), com indicador `"ao vivo"` (dot pulsante verde) + texto
+  `"falta {N}"` em `var(--warning)` à direita, sem os marcadores de
+  threshold nem o rodapé de economia (só `"{usado}/{limite}"` +
+  `"R$ custo"` numa linha compacta).
 
 ## EventItem / ActivityFeed
 
-Row: 26x26px icon `border-radius:7px` colored by type (`bg:
-color-mix(<color> 15-16%, transparent)`, `color:<color>`), text (13px,
-`<b>{agent}</b> {action}` with technical snippets in mono `text-secondary`),
-relative time on the right (11px mono, `text-muted`, `white-space:nowrap`).
-Row hover: `background: var(--surface-2)`. Border between items:
+Linha: ícone 26x26px `border-radius:7px` colorido por tipo (`bg:
+color-mix(<cor> 15-16%, transparent)`, `color:<cor>`), texto (13px,
+`<b>{agente}</b> {ação}` com trechos técnicos em mono `text-secondary`),
+tempo relativo à direita (11px mono, `text-muted`, `white-space:nowrap`).
+Hover de linha: `background: var(--surface-2)`. Borda entre itens:
 `border-top: 1px solid var(--border)`.
-Colors by event type: commit → `text-secondary`; PR/pull request →
-`var(--accent)`; hypothesis (psychologist) → `var(--violet)`; session
-(abnormal termination) → `var(--danger)`; permission (granted/denied) →
-`var(--success)` (denied uses `var(--danger)` via a `bad` flag separate from
-the type).
-In the Project screen feed: filter by agent (select) + type chips (clickable
-pills, selected = bg `var(--accent)`/text `on-accent`).
-Empty state: clock icon + centered explanatory text.
+Cores por tipo de evento: commit → `text-secondary`; PR/pull request →
+`var(--accent)`; hypothesis (psicólogo) → `var(--violet)`; session (encerramento
+anormal) → `var(--danger)`; permission (concedida/negada) → `var(--success)`
+(negada usa `var(--danger)` via um flag `bad` separado do tipo).
+No feed da tela Project: filtro por agente (select) + chips de tipo
+(pílulas clicáveis, selecionado = bg `var(--accent)`/texto `on-accent`).
+Estado vazio: ícone de relógio + texto explicativo centralizado.
 
 ## ApprovalCard
 
-Card `var(--surface-1)`, border `var(--border)` (or
-`color-mix(var(--danger) 32%, var(--border))` when urgency = critical),
+Card `var(--surface-1)`, border `var(--border)` (ou
+`color-mix(var(--danger) 32%, var(--border))` quando urgência = crítica),
 radius 12px.
-- Header: icon per action type (diff→"diff" icon, terminal→"terminal" icon,
-  PR→"pr" icon), `<b>{agent}</b> {action}` (e.g. "propõe alteração" / "quer
-  executar comando" / "abriu pull request"), meta (model · context) on the
-  right or below, optional urgency badge (Approvals queue: critical/high/normal,
-  pill with a pulsing dot only on critical).
-- Body per variant:
-  - **diff**: `var(--code-bg)` block, lines with number (opacity .6),
-    colored `+`/`-` sign (`var(--success)`/`var(--danger)`), line background
-    `--diff-add`(`#0E2E24`)/`--diff-del`(`#331A16`) when expanded;
-    in the Approvals queue it is collapsible (clickable header with a chevron
-    that rotates 90°, shows the file name + `+N −N` count).
-  - **command/terminal**: one mono line `$ {command}` over
-    `var(--code-bg)`; in chat, the command's real output goes with it (separate
-    "terminal · output" block, with an optional `rtk −N%` badge when there is
-    real compression).
-  - **PR**: title (Space Grotesk 600), `{source-branch} → {target-branch}`
-    (mono rectangles with radius 6 and a `var(--border)` border, not pills) +
-    status, summary (secondary text).
-- Actions (pending state): 3 buttons side by side: **Aprovar** (bg
-  `var(--success)`, white text), **Negar** (ghost with border
-  `color-mix(var(--danger) 45%)`, text `var(--danger)`), **Sempre
-  permitir** (secondary). The first two stretch (`flex:1`) only in the **chat**
-  variant, where the column is narrow; in the **Approvals queue** they have
-  content width, as in the handoff. Below, in chat: fixed note (alert icon +
-  mono 11px, `text-muted`):
+- Header: ícone por tipo de ação (diff→ícone "diff", terminal→ícone
+  "terminal", PR→ícone "pr"), `<b>{agente}</b> {ação}` (ex.: "propõe
+  alteração" / "quer executar comando" / "abriu pull request"), meta
+  (modelo · contexto) à direita ou abaixo, badge de urgência opcional
+  (fila de Aprovações: crítico/alta/normal, pílula com dot pulsante só no
+  crítico).
+- Corpo por variante:
+  - **diff**: bloco `var(--code-bg)`, linhas com número (opacity .6),
+    sinal `+`/`-` colorido (`var(--success)`/`var(--danger)`), fundo de
+    linha `--diff-add`(`#0E2E24`)/`--diff-del`(`#331A16`) quando expandido;
+    na fila de Aprovações é colapsável (header clicável com chevron que
+    gira 90°, mostra nome do arquivo + contagem `+N −N`).
+  - **comando/terminal**: uma linha mono `$ {comando}` sobre
+    `var(--code-bg)`; no chat, o output real do comando some junto (bloco
+    separado "terminal · output", com badge opcional `rtk −N%` quando
+    houver compressão real).
+  - **PR**: título (Space Grotesk 600), `{branch-origem} → {branch-destino}`
+    (retângulos mono de raio 6 com borda `var(--border)`, não pílulas) +
+    status, resumo (texto secundário).
+- Ações (estado pendente): 3 botões lado a lado — **Aprovar** (bg
+  `var(--success)`, texto branco), **Negar** (ghost com borda
+  `color-mix(var(--danger) 45%)`, texto `var(--danger)`), **Sempre
+  permitir** (secondary). Os dois primeiros esticam (`flex:1`) só na
+  variante **chat**, onde a coluna é estreita; na **fila de Aprovações**
+  têm largura de conteúdo, como no handoff. Abaixo, no chat: nota fixa
+  (ícone de alerta + mono 11px, `text-muted`):
   `"'Sempre permitir' grava a regra em .brabo/permissions.json"`.
-- Decided state: the buttons go away, showing a line with a colored dot +
-  text (`"Aprovado · comando em execução"` green / `"Negado"` red /
+- Estado decidido: some os botões, mostra uma linha com dot colorido +
+  texto (`"Aprovado · comando em execução"` verde / `"Negado"` vermelho /
   `"Sempre permitido · gravado em permissions.json"` accent).
-- The Approvals queue also has batch selection: checkbox per card (top-left
-  corner of the header) + an action bar in the SECTION HEADER when there is a
-  selection (`"{N} selecionadas"` + "Aprovar selecionados" + "Limpar"). In the
-  header, and not in a strip of its own above the queue: the strip pushed the
-  list down 44px on the first click of every selection.
+- Fila de Aprovações também tem seleção em lote: checkbox por card (canto
+  superior esquerdo do header) + barra de ação no CABEÇALHO DA SEÇÃO
+  quando há seleção (`"{N} selecionadas"` + "Aprovar selecionados" +
+  "Limpar"). No cabeçalho, e não numa faixa própria acima da fila: a faixa
+  empurrava a lista 44px para baixo no primeiro clique de cada seleção.
 
-**Card structure (handoff, section 6):** the card CLIPS
-(`overflow: hidden`) and has no padding of its own; each region brings its own
-and the divider: header 14×16 with a bottom border, body flush against the
-borders (terminal and diff over `var(--code-bg)`, PR over the card surface),
-actions 12×16 with a top border. The strip that opens the diff sits over
+**Estrutura do card (handoff, seção 6):** o card RECORTA
+(`overflow: hidden`) e não tem padding próprio — cada região traz o seu e a
+divisória: cabeçalho 14×16 com borda embaixo, corpo colado nas bordas
+(terminal e diff sobre `var(--code-bg)`, PR sobre a superfície do card),
+ações 12×16 com borda em cima. A faixa que abre o diff fica sobre
 `var(--surface-2)`.
 
 ## ModelPicker
 
-Dropdown/list (width ~300-440px depending on context: standalone in the Design
-System, inline in the Settings table rows, or a dropdown in the session
-topbar), background `var(--surface-1)`, border `var(--border-strong)` when
-open, `box-shadow: var(--shadow)`.
-- Group header (sticky): `var(--surface-2)`, mono 9-10px uppercase
-  `letter-spacing:.08em`, `text-muted`, two fixed groups: **"Local ·
-  Ollama"** and **"Cloud · por provedor"** (or "Cloud" alone in the base
-  variant).
-- Each option: custom radio (circle 13-16px, ring `var(--border-strong)`
-  or `var(--accent)` when selected, inner dot filled only when selected) +
-  model name (mono 12-13px) + (cloud) `· {provider}` in `text-muted` + cost
-  badge on the right (`"grátis"` in `var(--success)` for local ones;
-  `"R$ X · US$ Y"` in `text-secondary`/`text-muted` for cloud ones), whole
-  button background highlighted (`color-mix(var(--accent) 10%, transparent)`)
-  when it is the current selection. Hover: `background: var(--surface-2)`.
-- Trigger (closed): button with model icon + current name + (topbar variant)
-  chevron; in the table context (Settings), the trigger hides the binding
-  origin (separate badge, see Settings below) and shows only
-  model+abbreviated provider+chevron.
+Dropdown/lista (largura ~300-440px conforme o contexto: standalone no
+Design System, inline nas linhas da tabela de Configurações, ou dropdown
+no topbar da sessão), fundo `var(--surface-1)`, border `var(--border-strong)`
+quando aberto, `box-shadow: var(--shadow)`.
+- Cabeçalho de grupo (sticky): `var(--surface-2)`, mono 9-10px uppercase
+  `letter-spacing:.08em`, `text-muted` — dois grupos fixos: **"Local ·
+  Ollama"** e **"Cloud · por provedor"** (ou "Cloud" sozinho na variante
+  base).
+- Cada opção: radio custom (círculo 13-16px, ring `var(--border-strong)`
+  ou `var(--accent)` quando selecionado, dot interno preenchido só quando
+  selecionado) + nome do modelo (mono 12-13px) + (cloud) `· {provider}`
+  em `text-muted` + badge de custo à direita (`"grátis"` em
+  `var(--success)` pros locais; `"R$ X · US$ Y"` em `text-secondary`/
+  `text-muted` pros cloud), fundo do botão inteiro realçado
+  (`color-mix(var(--accent) 10%, transparent)`) quando é o selecionado
+  atual. Hover: `background: var(--surface-2)`.
+- Trigger (fechado): botão com ícone de modelo + nome atual + (variante
+  topbar) chevron; no contexto de tabela (Configurações), o trigger some
+  a origem do binding (badge separado, ver Settings abaixo) e mostra só
+  modelo+provider abreviado+chevron.
 
-## NotificationBell (not in the base Design System; extracted from the App screen)
+## NotificationBell (não estava no Design System base — extraído da tela
+App)
 
-38x38px button, radius 8px, `var(--surface-1)`/`var(--border)`, count badge
-(`var(--accent)` pill, mono 9px, `border: 2px solid var(--surface-0)` to
-"cut out" of the background) at the top-right corner.
-Dropdown (380px, `max-height:70vh` with scroll): sticky header "Notificações"
-+ "marcar lidas" link (accent). Grouped by project: group header
-(`var(--surface-2)`, project dot + name + event count), event list (same look
-as EventItem, icon+text+time).
+Botão 38x38px, radius 8px, `var(--surface-1)`/`var(--border)`, badge de
+contagem (pílula `var(--accent)`, mono 9px, `border: 2px solid
+var(--surface-0)` pra "recortar" do fundo) no canto superior direito.
+Dropdown (380px, `max-height:70vh` com scroll): header sticky "Notificações"
++ link "marcar lidas" (accent). Agrupado por projeto: cabeçalho de grupo
+(`var(--surface-2)`, dot do projeto + nome + contagem de eventos), lista de
+eventos (mesmo visual do EventItem, ícone+texto+tempo).
 
-## Generic cards (base Design System: Cards / Dense table / Inputs /
+## Cards genéricos (Design System base — Cards / Tabela densa / Inputs /
 Tabs / Toasts / Modal)
 
-- **ProjectCard** (dashboard): header (34px provider icon + name
-  Space Grotesk 600 15px + mono 11px muted provider label + optional unread
-  badge), row of overlapping agent avatars (`margin-left:-6px`,
-  `box-shadow: 0 0 0 2px var(--surface-1)` to separate them), compact
-  `TokenMeter`, footer with activity dot + text (last activity, 12px,
-  truncated).
-- **Dense table** (permissions/members/models/matrix): grid via
-  `display:grid;grid-template-columns:...` (not `<table>`), header
-  `var(--surface-2)` mono 10px uppercase, rows with `border-top` +
-  hover `var(--surface-1)`, columns separated by `border-left`.
-- **Inputs/selects**: background `var(--surface-0)`/`var(--surface-1)`, border
+- **ProjectCard** (dashboard): header (ícone do provider 34px + nome
+  Space Grotesk 600 15px + provider label mono 11px muted + badge de
+  não-lidos opcional), fileira de avatares de agente sobrepostos
+  (`margin-left:-6px`, `box-shadow: 0 0 0 2px var(--surface-1)` pra
+  separar), `TokenMeter` compacto, rodapé com dot de atividade + texto
+  (última atividade, 12px, truncado).
+- **Tabela densa** (permissões/membros/modelos/matriz): grid via
+  `display:grid;grid-template-columns:...` (não `<table>`), header
+  `var(--surface-2)` mono 10px uppercase, linhas com `border-top` +
+  hover `var(--surface-1)`, colunas separadas por `border-left`.
+- **Inputs/selects**: fundo `var(--surface-0)`/`var(--surface-1)`, border
   `var(--border)`, radius 8px, padding `8-11px 12-13px`. Focus:
   `border-color: var(--accent)` + `box-shadow: 0 0 0 3px var(--focus-ring)`
-  (the accent at 22% over `transparent`, AT-285). Custom select with an
-  absolutely positioned SVG chevron (never the browser's native arrow;
-  `appearance:none`).
-- **Tabs**: no background, `border-bottom:2px solid transparent`, active =
+  (o acento a 22% sobre `transparent`, AT-285). Select custom com chevron SVG
+  posicionado absoluto (nunca a seta nativa do browser — `appearance:none`).
+- **Tabs**: sem fundo, `border-bottom:2px solid transparent`, ativo =
   `border-color: var(--accent)` + `color: var(--text-primary)` +
-  `font-weight:600`; inactive = `color: var(--text-muted)`,
-  `font-weight:500`. Optional count badge next to the label (accent pill, same
-  pattern as the unread badge).
-- **Toast**: fixed `bottom:24px;right:24px`, `border-left:3px solid <color>`,
-  colored dot, title (Space Grotesk 600 13px) + message (mono 11px
-  secondary), close button (ghost X). Entry animation `btoast`
-  (rises 8px + fade).
+  `font-weight:600`; inativo = `color: var(--text-muted)`,
+  `font-weight:500`. Badge de contagem opcional ao lado do label (pílula
+  accent, mesmo padrão de badge de não-lidos).
+- **Toast**: fixo `bottom:24px;right:24px`, `border-left:3px solid <cor>`,
+  dot colorido, título (Space Grotesk 600 13px) + mensagem (mono 11px
+  secondary), botão de fechar (X ghost). Animação de entrada `btoast`
+  (sobe 8px + fade).
 - **Modal**: overlay `rgba(3,10,14,.62-.66)` + `backdrop-filter: blur(2-3px)`,
-  centered card `var(--surface-1)`, `border: 1px solid
+  card centralizado `var(--surface-1)`, `border: 1px solid
   var(--border-strong)`, radius 12-14px, `box-shadow: var(--shadow)`,
-  entry animation (fade+scale, `bpop`/`btoast`). Header with icon +
-  title + close button (X). A click on the overlay closes it; a click on the
-  card calls `stopPropagation` (does not close).
+  animação de entrada (fade+scale, `bpop`/`btoast`). Header com ícone +
+  título + botão fechar (X). Clique no overlay fecha; clique no card
+  propaga `stopPropagation` (não fecha).
 
-## "New project" wizard (App screen, modal)
+## Wizard "Novo projeto" (tela App, modal)
 
-4 steps with a stepper (numbered circles joined by a line,
-filled/current/pending in different colors: accent on the current one and on
-those already completed, `surface-2`/`text-muted` on pending):
-1. **Provider**: 2x2 grid of options (GitHub/GitLab/Bitbucket/Local),
-   icon + label + description, selection = accent border+background.
-2. **Name**: text input + preview of the computed slug
-   (`repo: brabo/{slug}`, mono, in a `var(--code-bg)` block).
-3. **Branches** *(cosmetic: no backend counterpart, see plan)*:
-   policy choice (Gitflow/Trunk-based/Custom, custom radio)
-   + preview of the resulting branch list (mono pills).
-4. **Agents** *(cosmetic: no backend counterpart)*: list of
-   agents with checkbox, selected counter.
-Footer: Back button (conditional) + `"passo N de 4"` + Continue/Create project
-button (reduced opacity when the step cannot advance).
+4 passos com stepper (círculos numerados conectados por linha,
+preenchido/atual/pendente com cores diferentes — accent no atual e nos já
+completos, `surface-2`/`text-muted` no pendente):
+1. **Provider**: grid 2x2 de opções (GitHub/GitLab/Bitbucket/Local),
+   ícone + label + descrição, seleção = borda+fundo accent.
+2. **Nome**: input de texto + preview do slug calculado
+   (`repo: brabo/{slug}`, mono, em bloco `var(--code-bg)`).
+3. **Branches** *(cosmético — sem contraparte no backend, ver plano)*:
+   escolha de política (Gitflow/Trunk-based/Personalizada, radio custom)
+   + preview da lista de branches resultante (pílulas mono).
+4. **Agentes** *(cosmético — sem contraparte no backend)*: lista de
+   agentes com checkbox, contador de selecionados.
+Rodapé: botão Voltar (condicional) + `"passo N de 4"` + botão
+Continuar/Criar projeto (opacity reduzida quando o passo não pode
+avançar).
 
-## Alert (extracted from the login mockup, 2026-07-30)
+## Alert (extraído do mockup de login — 2026-07-30)
 
-Warning block **in the flow** of the page, not floating. It is not a `Toast`:
-that one is transient and lives fixed in the viewport; this one takes up space
-and stays.
+Bloco de aviso **no fluxo** da página, não flutuante. Não é `Toast`: aquele
+é transiente e vive fixo na viewport; este ocupa espaço e fica.
 
-Common anatomy: `display:flex; align-items:flex-start; gap:10px;
-padding:10px 12px; radius 8px`, 15px icon with `flex-shrink:0` and
-`margin-top:2px` (aligns with the first line of text, not with the top of the
-box), 12.5px text with `line-height:1.5` and `text-wrap:pretty`. `<strong>`
-inside the text takes `var(--text-primary)` + `font-weight:600`: it is the
-name of the action the person needs to look for.
+Anatomia comum: `display:flex; align-items:flex-start; gap:10px;
+padding:10px 12px; radius 8px`, ícone 15px com `flex-shrink:0` e
+`margin-top:2px` (alinha com a primeira linha do texto, não com o topo da
+caixa), texto 12.5px `line-height:1.5` com `text-wrap:pretty`. `<strong>`
+dentro do texto puxa `var(--text-primary)` + `font-weight:600` — é o nome
+da ação que a pessoa precisa procurar.
 
-Two forms, and the difference is position:
+Duas formas, e a diferença é de posição:
 
-- **inside a card** (form error): background and border tinted by the tone,
-  `color-mix(in srgb, var(--danger) 10%, transparent)` and
-  `color-mix(..., 40%, transparent)`, no side border. It must separate from the
-  card by color. Text in `var(--text-primary)`: it is the information of the
-  moment.
-- **outside a card** (context notice): background `var(--surface-1)`, border
-  `1px var(--border)` and `border-left: 2px solid <tone color>`. It already
-  sits on the page background, so it only needs an accent.
+- **dentro de um card** (erro de formulário): fundo e borda tingidos pelo
+  tom — `color-mix(in srgb, var(--danger) 10%, transparent)` e
+  `color-mix(..., 40%, transparent)`, sem borda lateral. Precisa se separar
+  do card por cor. Texto em `var(--text-primary)`: é a informação da hora.
+- **fora do card** (aviso de contexto): fundo `var(--surface-1)`, borda
+  `1px var(--border)` e `border-left: 2px solid <cor do tom>`. Já está
+  sobre o fundo da página, então só precisa de um acento.
 
-4 tones: `danger` / `warning` / `success` / `accent`. The default icon comes
-from the tone: circle with `!` on `danger` (**failure**), triangle with `!` on
-`warning`/`accent` (**attention**), check on `success`. Two symbols for two
-different things; with just one, you would have to read the text to know which
-is which.
+4 tons — `danger` / `warning` / `success` / `accent`. O ícone default vem
+do tom: círculo com `!` no `danger` (**falha**), triângulo com `!` no
+`warning`/`accent` (**atenção**), check no `success`. Dois símbolos para duas
+coisas diferentes; com um só, seria preciso ler o texto para saber qual é.
 
-**The accessibility role is NOT derived from the tone**; the caller chooses
-it. `role="alert"` is an assertive live region (interrupts the screen reader)
-and fits the result of an action the person has just triggered;
-`role="status"` is polite and fits confirmation; the default is no role, for
-text that was already on the screen when it opened. See ADR 0036.
+**O papel de acessibilidade NÃO é derivado do tom** — é escolhido por quem
+usa. `role="alert"` é live region assertiva (interrompe o leitor de tela) e
+serve para o resultado de uma ação que a pessoa acabou de disparar;
+`role="status"` é polida e serve para confirmação; o default é papel nenhum,
+para texto que já estava na tela quando ela abriu. Ver ADR 0036.
 
-## Button with `loading`
+## Botão com `loading`
 
-Extends the already specified `primary`/`secondary`. 15px spinner to the left
-of the label, `gap:9px`: `border: 2px solid color-mix(in srgb, var(--on-accent)
+Estende o `primary`/`secondary` já especificado. Spinner 15px à esquerda do
+label, `gap:9px`: `border: 2px solid color-mix(in srgb, var(--on-accent)
 35%, transparent)`, `border-top-color: var(--on-accent)`, `radius 50%`,
-`animation: bspin .7s linear infinite`. The label changes (`Entrar` →
+`animation: bspin .7s linear infinite`. O label troca (`Entrar` →
 `Autenticando…`).
 
-Three obligations: the button becomes `disabled` (this is what keeps a double
-submit from turning into two requests); it gets `aria-busy="true"` (without it,
-a screen reader user only notices that the button got disabled); and the
-spinner is `aria-hidden`, so it does not enter the accessible name. Under
-`prefers-reduced-motion` the animation stops; the element **stays**, because
-removing it would change the button's layout.
+Três obrigações: o botão fica `disabled` (é o que impede duplo submit virar
+duas requisições); ganha `aria-busy="true"` (sem isso, quem usa leitor de
+tela só percebe que o botão desabilitou); e o spinner é `aria-hidden`, para
+não entrar no nome acessível. Em `prefers-reduced-motion` a animação para —
+o elemento **fica**, porque removê-lo mudaria o layout do botão.
 
-## Shimmer (in-progress text, ADR 0210)
+## Shimmer (texto em curso — ADR 0210)
 
-`components/ui/Shimmer.tsx`, adapted from the AI Elements Shimmer: the text
-stays in `--text-secondary` and a glow in `--text-primary` runs across it
-(`duration` 2s, width `--spread` = length × `spread`). When to use:
-TEXT that says something is in progress ("Pensando…", "Reunindo informações…",
-the AgentCard "trabalhando" status, and the screen loading text:
-"Carregando…", "Buscando…", "Somando…", "Verificando…", AT-402). When NOT to
-use: a block waiting for data → `Skeleton`; a button waiting for a response →
-`loading`. The text stays in the DOM; `role`/`aria-live` belong to the
-caller's container. Under `prefers-reduced-motion` the animation stops and the
-text stays, static, in the base color. It is the only place in the web app that
-imports `motion`.
+`components/ui/Shimmer.tsx`, adaptado do Shimmer do AI Elements: o texto fica
+em `--text-secondary` e um brilho em `--text-primary` corre por ele
+(`duration` 2s, largura `--spread` = comprimento × `spread`). Quando usar:
+TEXTO que diz que algo está em curso ("Pensando…", "Reunindo informações…",
+o status "trabalhando" do AgentCard, e o texto de carregamento de tela —
+"Carregando…", "Buscando…", "Somando…", "Verificando…", AT-402). Quando NÃO usar: bloco que espera dado →
+`Skeleton`; botão que espera resposta → `loading`. O texto fica no DOM;
+`role`/`aria-live` são do contêiner de quem chama. Em
+`prefers-reduced-motion` a animação para e o texto fica, estático, na
+cor-base. É o único lugar do web que importa `motion`.
 
-## Filled field (second input anatomy)
+## Campo preenchido (segunda anatomia de input)
 
-The `Inputs/selects` above still holds as the default. This is the login
-mockup's variant, and it is **opt-in**: screens outside auth stay on the
-default.
+O `Inputs/selects` acima segue valendo como default. Esta é a variante do
+mockup de login, e é **opt-in**: as telas fora de auth continuam no default.
 
 `background: var(--code-bg)`, `height: 42px`, `padding: 0 13px`,
-`font-size: 14px`. The three things come from the same specification and travel
-together; half of it gives a field that exists nowhere.
+`font-size: 14px`. As três coisas vêm da mesma especificação e viajam
+juntas — metade dela dá um campo que não existe em lugar nenhum.
 
-The field is **sunken**, as in the handoff. It was `var(--surface-2)`
-(**raised** field) until FASE 17a, a divergence ADR 0036 had recorded: over a
-`var(--surface-1)` card, the field's default background is the SAME as the
-card's, separated only by a 1px border. The problem was real and still holds
-for screens outside auth; sinking it solves it equally, follows the versioned
-reference and even improves contrast.
+O campo é **afundado**, como no handoff. Foi `var(--surface-2)` (campo
+**elevado**) até a FASE 17a, divergência que o ADR 0036 registrara: sobre um
+card `var(--surface-1)`, o fundo default do campo é o MESMO do card, separados
+só por 1px de borda. O problema era real e continua valendo para as telas fora
+de auth; afundar o resolve igual, segue a referência versionada e ainda melhora
+o contraste.
 
-**Password**: `var(--font-mono)` 13.5px `letter-spacing: .02em` (mono at 14px
-next to Archivo at 14px reads as larger body text). Placeholder in
-`var(--text-secondary)`, not `var(--text-muted)`: over `--code-bg` muted would
-pass (5.65:1), but a placeholder is reading text and the reason it is more
-present than in the handoff has not changed.
+**Senha**: `var(--font-mono)` 13.5px `letter-spacing: .02em` (mono a 14px ao
+lado de Archivo a 14px lê como corpo maior). Placeholder em
+`var(--text-secondary)`, não `var(--text-muted)`: sobre `--code-bg` o muted
+passaria (5.65:1), mas placeholder é texto de leitura e a razão de ele estar
+mais presente que no handoff não mudou.
 
-**Reveal button**: 32×32 absolute, `right: 5px`, vertically centered,
+**Botão de revelar**: 32×32 absoluto, `right: 5px`, centrado vertical,
 radius 4px, `color: var(--text-muted)`; hover `var(--text-secondary)` +
-`background: var(--surface-2)`. The field opens `padding-right: 44px`. The
-accessible label states the **action** ("Mostrar senha"/"Esconder senha") and
-`aria-pressed` states the state; a state label would leave the person not
-knowing what the button does.
+`background: var(--surface-2)`. O campo abre `padding-right: 44px`. Rótulo
+acessível diz a **ação** ("Mostrar senha"/"Esconder senha") e `aria-pressed`
+diz o estado — rótulo de estado deixaria a pessoa sem saber o que o botão faz.
 
-**Action in the label** (the "Esqueci minha senha" next to "Senha"): flex row
-with `justify-content: space-between; align-items: baseline`. The action is a
-**sibling** of the `<label>`, never a child: a click anywhere in a `<label>`
-activates the associated field.
+**Ação no rótulo** (o "Esqueci minha senha" ao lado de "Senha"): linha flex
+com `justify-content: space-between; align-items: baseline`. A ação é
+**irmã** do `<label>`, nunca filha — clique em qualquer lugar de um
+`<label>` ativa o campo associado.
 
-## Visible focus (general rule, fixed in Phase 7)
+## Foco visível (regra geral, corrigida na Fase 7)
 
-`:focus-visible`, never `:focus`: the latter lights up on a mouse click, which
-is not what the focus indication is for.
+`:focus-visible`, nunca `:focus`: este acende ao clicar com o mouse, o que
+não é o que a indicação de foco resolve.
 
-Field: `border-color: var(--accent)` + `box-shadow: 0 0 0 3px color-mix(in
-srgb, var(--accent) 22%, transparent)` **plus** `outline: 2px solid
-transparent`. The transparent outline is not decoration: under `forced-colors`
-(system high contrast) the `box-shadow` is discarded, and without it the
-focused field has NO indicator at all. A `@media (forced-colors: active)` paints
-the outline with `Highlight`.
+Campo: `border-color: var(--accent)` + `box-shadow: 0 0 0 3px color-mix(in
+srgb, var(--accent) 22%, transparent)` **mais** `outline: 2px solid
+transparent`. O outline transparente não é enfeite: em `forced-colors`
+(alto contraste do sistema) o `box-shadow` é descartado, e sem ele o campo
+focado fica sem indicador NENHUM. Um `@media (forced-colors: active)` pinta
+o outline com `Highlight`.
 
-Button and link: `outline: 2px solid var(--accent); outline-offset: 2px`.
-Text link over `--surface-1` uses `var(--accent-hover)` at rest;
-`var(--accent)` gives 3.88:1 and fails AA (ADR 0036).
+Botão e link: `outline: 2px solid var(--accent); outline-offset: 2px`.
+Link de texto sobre `--surface-1` usa `var(--accent-hover)` em repouso —
+`var(--accent)` dá 3.88:1 e reprova o AA (ADR 0036).
 
-## Iconography
+## Iconografia
 
-- A new icon comes from Lucide, via `lucide-react`. The house icons (`components/ui/icons.tsx`) do not migrate.
-- Size 16px and stroke 1.6: `Button` already forces `size-4` on `svg` without `size-*` and `index.css` pins `svg.lucide` at 1.6.
-- A destructive action keeps its text; the icon only accompanies it.
-- Icon-ONLY button is the rule (AT-682): `<Button legenda="…">` sets the accessible name (`aria-label`) and the caption in a Tooltip that opens on hover AND on keyboard focus. It holds for every button in the system, including a destructive one with an unambiguous icon (trash, square); the action's CONFIRMATION does not change.
-- It keeps text only when no icon covers the whole meaning (Estou pronto, Sempre permitir, Modo automático, Aprovar plano, Salvar when there is more than one Salvar on the screen).
-- Exception (AT-753, owner decision 06/11): the PRIMARY decision of each card in the thread carries text next to the icon, as a plain `<Button>` with children and no `legenda`. Examples: the handoff accept ("Aceitar e passar a {agente}", `handoff.aceitarEPassar`) and "Ativar execução". Toolbar actions and secondary buttons stay icon-only with `legenda`.
-- An inert control states the reason in visible TEXT: a tooltip on a `disabled` button does not open.
-- A lone icon has translated `aria-label` and `title`.
-- An inert control explains the reason in TEXT (ADR 0064), never only by tooltip.
+- Ícone novo vem do Lucide, via `lucide-react`. Os ícones da casa (`components/ui/icons.tsx`) não migram.
+- Tamanho 16px e traço 1,6: o `Button` já força `size-4` em `svg` sem `size-*` e o `index.css` fixa `svg.lucide` em 1,6.
+- Ação destrutiva mantém o texto; o ícone só acompanha.
+- Botão SÓ ícone é a regra (AT-682): `<Button legenda="…">` põe o nome acessível (`aria-label`) e a legenda num Tooltip que abre no hover E no foco por teclado. Vale para todo botão do sistema, inclusive destrutivo de ícone inequívoco (lixeira, quadrado); a CONFIRMAÇÃO da ação não muda.
+- Fica com texto só quando nenhum ícone cobre o sentido inteiro (Estou pronto, Sempre permitir, Modo automático, Aprovar plano, Salvar com mais de um Salvar na tela).
+- Exceção (AT-753, decisão do dono de 06/11): a decisão PRINCIPAL de cada cartão do fio leva texto ao lado do ícone, como `<Button>` simples com children e sem `legenda`. Exemplos: o aceite do handoff ("Aceitar e passar a {agente}", `handoff.aceitarEPassar`) e "Ativar execução". Ações de toolbar e botões secundários seguem só com ícone e `legenda`.
+- Controle inerte diz o motivo em TEXTO visível: tooltip em botão `disabled` não abre.
+- Ícone sozinho tem `aria-label` e `title` traduzidos.
+- Controle inerte explica o motivo em TEXTO (ADR 0064), nunca só por tooltip.
 
-## Help (AT-712)
+## Ajuda (AT-712)
 
-`components/ui/Ajuda.tsx`: the "?" button that holds the long explanatory text and opens it on demand. `<Ajuda assunto="Capacidades">text</Ajuda>`; the accessible name is "Ajuda: {assunto}" (`ui:ajuda.rotulo`).
+`components/ui/Ajuda.tsx`: o botão "?" que guarda o texto explicativo longo e o abre sob demanda. `<Ajuda assunto="Capacidades">texto</Ajuda>`; o nome acessível é "Ajuda: {assunto}" (`ui:ajuda.rotulo`).
 
-- It is the kit's `Popover` with `openOnHover` (Base UI mandates Popover, not Tooltip, for an infotip): opens on click, on Enter/Space and on hover; closes with Esc and returns focus; the text is the popup's `aria-describedby` and it also opens on touch. The `Button legenda` Tooltip is only the name of an icon button, never explanatory text.
-- It sits inline next to the section title, never inside a `disabled` control. Tokens only, no Tailwind utility outside `components/shadcn` (ADR 0232).
+- É o `Popover` do kit com `openOnHover` (Base UI manda Popover, não Tooltip, para infotip): abre no clique, no Enter/Espaço e no hover; fecha com Esc e devolve o foco; o texto é o `aria-describedby` do popup e abre também no toque. O Tooltip do `Button legenda` é só o nome de um botão de ícone, nunca texto explicativo.
+- Fica inline ao lado do título da seção, nunca dentro de controle `disabled`. Só tokens, sem utilitário Tailwind fora de `components/shadcn` (ADR 0232).
 
-**May go into the "?":** long explanatory subtitle and caption, the "how it works", the context note. A short visible line stays when the rule says to warn (RN-902).
+**Pode ir para o "?":** subtítulo e legenda explicativos longos, o "como funciona", a nota de contexto. Fica uma linha curta visível quando a regra manda avisar (RN-902).
 
-**May NOT, and stays visible as text:**
-- the reason for an inert control (RN-646, RN-102, ADR 0064): a tooltip on `disabled` does not open;
-  - EXCEPTION, only on the Containers page (ADR 0240): the per-row reasons live in an ACTIVE `Ajuda`, subject "Por que as ações estão indisponíveis", next to the buttons; the "?" is not `disabled` and opens on click, keyboard and hover. The role reason stays in text, at the top. On no other screen.
-- the irreversible consequence or the absolute ceiling before acting (RN-939, RN-418);
-  - EXCEPTION, only on the execution-mode conversion warning (ADR 0243): it lives in `Perigo` (`components/ui/Perigo.tsx`, `TriangleAlert` icon in the `--danger` color, Popover like `Ajuda`, accessible name "Atenção: {assunto}", `ui:perigo.rotulo`), always visible next to the selector under the same conditions as the old warning, with the full warning in the popover. Any other use requires another ADR.
-- the declared scope, such as the day window and the read ceiling (RN-180);
-- the state divergence and the gap that an RN says to state (RN-486, RN-468, RN-470).
+**NÃO pode, e fica visível em texto:**
+- o motivo de um controle inerte (RN-646, RN-102, ADR 0064): tooltip em `disabled` não abre;
+  - EXCEÇÃO, só na página de Containers (ADR 0240): os motivos por linha moram num `Ajuda` ATIVO, assunto "Por que as ações estão indisponíveis", ao lado dos botões; o "?" não é `disabled` e abre no clique, no teclado e no hover. O motivo de papel continua em texto, no topo. Em nenhuma outra tela.
+- a consequência irreversível ou o teto absoluto antes de agir (RN-939, RN-418);
+  - EXCEÇÃO, só no aviso de conversão de modo de execução (ADR 0243): ele mora no `Perigo` (`components/ui/Perigo.tsx`, ícone `TriangleAlert` na cor `--danger`, Popover como o `Ajuda`, nome acessível "Atenção: {assunto}", `ui:perigo.rotulo`), sempre visível ao lado do seletor nas mesmas condições do aviso antigo, com o aviso inteiro no popover. Outro uso exige outro ADR.
+- o recorte declarado, como a janela de dias e o teto de leitura (RN-180);
+- a divergência de estado e a lacuna que uma RN manda dizer (RN-486, RN-468, RN-470).
 
-## v7 linear design (AT-714, ADR 0241/0242)
+## Desenho linear da v7 (AT-714, ADR 0241/0242)
 
-- **Sidebar**: shadcn `sidebar-07` block, 256px open and 48 collapsed,
-  Ctrl/Cmd+B, Lucide icons. Project tabs: body font, `--text-primary`,
-  32px, 16px icons and a divider between groups. Footer: the user card is the
-  trigger of a `DropdownMenu` (Conta, Tema, Sair); collapsed, only the avatar,
-  and the menu opens to the side.
-- **Linear table** (`components/ui/Table`, Containers with
-  `@tanstack/react-table`): one row per item, icon-only actions with `legenda`.
-- **`CabecalhoDePagina`** (`components/shadcn/cabecalho-de-pagina.tsx`): title,
-  description and actions; `nivel="h2"` when the page already has an `h1` (Spend panels).
-- **`SectionCards`** (`components/shadcn/section-cards.tsx`): inline total
-  highlights, no nested cards.
+- **Sidebar**: block `sidebar-07` do shadcn, 256px abertos e 48 recolhidos,
+  Ctrl/Cmd+B, ícones Lucide. Abas do projeto: fonte de corpo, `--text-primary`,
+  32px, ícones de 16px e divisória entre grupos. Rodapé: cartão do usuário é o
+  gatilho de um `DropdownMenu` (Conta, Tema, Sair); recolhida, só o avatar e o
+  menu abre ao lado.
+- **Tabela linear** (`components/ui/Table`, Containers com
+  `@tanstack/react-table`): uma linha por item, ações só ícone com `legenda`.
+- **`CabecalhoDePagina`** (`components/shadcn/cabecalho-de-pagina.tsx`): título,
+  descrição e ações; `nivel="h2"` quando a página já tem `h1` (painéis de Gastos).
+- **`SectionCards`** (`components/shadcn/section-cards.tsx`): destaques de total
+  em linha, sem cartões aninhados.

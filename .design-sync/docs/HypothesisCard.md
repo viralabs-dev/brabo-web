@@ -5,10 +5,10 @@ keywords: [hipótese, psicólogo, evidência, confiança, anamnese]
 
 # HypothesisCard
 
-A Psychologist hypothesis about an agent's behavior, with the evidence that
-supports it and the user's decision.
+Uma hipótese do Psicólogo sobre o comportamento de um agente, com a evidência
+que a sustenta e a decisão do usuário.
 
-## How to use
+## Como usar
 
 ```tsx
 <HypothesisCard
@@ -19,16 +19,15 @@ supports it and the user's decision.
 />
 ```
 
-## What to respect
+## O que respeitar
 
-- The domain fields are in **pt-BR**: `observacao` (what was observed),
-  `hipotese` (the proposed explanation), `sugestao` (what to do), `agenteAlvo`.
-- `confiancaPercent` is always visible, even when low: hiding uncertainty is the
-  opposite of the component's purpose.
-- `evidenceEventIds` is what makes the hypothesis navigable to the event log. An
-  empty list leaves the hypothesis ungrounded; prefer not to propose it.
-- `terminationAnalysis` only when the hypothesis came from an ended session. It
-  separates agent behavior from an operational cause (a `node_shutdown`, for
-  example, is not the agent's fault).
-- With a `status` other than `proposed` the buttons go away and the card becomes
-  a record.
+- Os campos do domínio são em **pt-BR**: `observacao` (o que foi observado),
+  `hipotese` (a explicação proposta), `sugestao` (o que fazer), `agenteAlvo`.
+- `confiancaPercent` fica visível sempre, inclusive quando é baixo — esconder
+  incerteza é o oposto do propósito do componente.
+- `evidenceEventIds` é o que torna a hipótese navegável até o event log. Lista
+  vazia deixa a hipótese sem lastro; prefira não propor.
+- `terminationAnalysis` só quando a hipótese nasceu de uma sessão encerrada. Ela
+  distingue comportamento do agente de causa operacional (um `node_shutdown`,
+  por exemplo, não é culpa do agente).
+- Com `status` diferente de `proposed` os botões saem e o card vira registro.

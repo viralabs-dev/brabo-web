@@ -4942,7 +4942,7 @@ still have NO inline decision (there is no `ApprovalCard` for them).
   `:56` (`separarPendenciasDeOutrasSessoes`);
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:71`
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.tsx:28`
-  (`prAbertaDaAcao`), `:56` (`jaHaMergeDaPr`), `:89` (`MergearNoChat`);
+  (`prAbertaDaAcao`), `:56` (`jaHaMergeDaPr`), `:101` (`MergearNoChat`);
   `apps/web/src/routes/SessionPage.tsx:155` (`podeDecidir`), `:277`
   (`useRetomarTurnoDoLog`), `:771` (`PendenciasDeOutrasSessoes`)
 - **Test:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
@@ -6709,7 +6709,7 @@ channel) still writes the list by hand: invalidating writes no data.
   already make (same `queryKey`s, backlog at 15 s), with no new tight poll
   ([RN-579](engine.md#rn-579)).
 - **Where:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:130` (`prontas`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:115` (`prontas`)
 - **Test:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("a PR com os gates aprovados aparece, a com gate pendente não, e Mergear
   mostra o cartão ali")
@@ -6724,7 +6724,7 @@ channel) still writes the list by hand: invalidating writes no data.
   row: success in text, and the refusal with the api's sentence. A role below
   `developer` sees the queue with the button inert and the reason in text.
 - **Where:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:218` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:210` (`desbloquear`)
 - **Test:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origin:** AT-497
@@ -6945,7 +6945,7 @@ channel) still writes the list by hand: invalidating writes no data.
   "Ver o cartão" button that opens the "PRs prontas" tab (`brabo:abrir-fila`, which
   generalizes the questions event), because the tab is born closed (AT-680).
 - **Where:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:520` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:528` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
   `apps/web/src/routes/session-timeline-montagem.tsx:1286` (`CartaoOuReferenciaNoFio`)
 - **Test:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
@@ -7189,7 +7189,7 @@ channel) still writes the list by hand: invalidating writes no data.
 ### RN-943 — The chat's pending block is called "Pendências deste projeto"; only the Executores tab says "de outras sessões" {#rn-943}
 
 - **Rule:** refines RN-626, RN-825, RN-826 and RN-861. Inside the chat block live five queues, and only approvals and merges are filtered by "another session"; open questions, ready PRs and blocked tasks belong to the whole project (the question from the session ITSELF shows up there on purpose, because the composer's notice reads the same query). Therefore, with `filasDoChat` (the chat) the title is "Pendências deste projeto" (`pendencias.tituloDoProjeto`, in the four locales); with `filasDoChat={false}` (Executores tab, only approvals and merges) the title stays "Pendências de outras sessões deste projeto". No queue is filtered, no ceiling changes and the `data-testid` does not change.
-- **Where:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:355` (`tituloDoProjeto`).
+- **Where:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:347` (`tituloDoProjeto`).
 - **Test:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (question from the session itself: header "Pendências deste projeto", without "outras sessões"; `filasDoChat={false}` keeps the old title).
 - **Origin:** AT-619 (EP-031).
 

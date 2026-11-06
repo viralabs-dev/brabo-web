@@ -1,7 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { listAgentAutonomy } from '../lib/api-client';
 import { devAgentId } from '../lib/agent-status';
-import { ModoAutomaticoDoTime, agentesDaOfertaEmLote } from './ModoAutomaticoDoTime';
+import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime';
 
 /**
  * AT-476 (RN-804): a oferta em lote do modo automático (RN-661) também no
@@ -24,29 +22,4 @@ export function agentesDoPlano(payload: Record<string, unknown>): string[] {
     )
     .filter((id): id is string => id !== null && id !== 'dev-');
   return agentesDaOfertaEmLote(ids);
-}
-
-export function ModoAutomaticoDoPlano({
-  projectId,
-  payload,
-}: {
-  projectId: string;
-  payload: Record<string, unknown>;
-}) {
-  const { data: autonomyRules } = useQuery({
-    queryKey: ['agent-autonomy', projectId],
-    queryFn: () => listAgentAutonomy(projectId),
-  });
-  const agentes = agentesDoPlano(payload);
-  if (agentes.length === 0) return null;
-  return (
-    <ModoAutomaticoDoTime
-      projectId={projectId}
-      agentes={agentes}
-      autonomyRules={autonomyRules}
-      podeLigar
-      noPlano
-      compacto
-    />
-  );
 }

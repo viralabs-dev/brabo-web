@@ -1,7 +1,9 @@
-import { afterEach, describe, expect, it } from 'vitest';
-import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import type { ProposedAction } from '../lib/api-types';
 import { registrarAcoesNoBloco } from '../lib/acoes-no-bloco';
+import i18n from '../lib/i18n';
+import { EVENTO_ABRIR_FILA } from '../lib/perguntas-em-aberto';
 import { CartaoOuReferenciaNoFio } from './CartaoOuReferenciaNoFio';
 
 function acao(status: ProposedAction['status']): ProposedAction {
@@ -23,6 +25,10 @@ function Fio({ status }: { status: ProposedAction['status'] }) {
     </CartaoOuReferenciaNoFio>
   );
 }
+
+beforeAll(async () => {
+  await i18n.changeLanguage('pt-BR');
+});
 
 let soltar: (() => void) | null = null;
 afterEach(() => {
@@ -62,5 +68,16 @@ describe('CartaoOuReferenciaNoFio (RN-843, AT-512)', () => {
     act(() => soltar?.());
     soltar = null;
     expect(screen.getByRole('button', { name: 'Aprovar' })).toBeInTheDocument();
+  });
+
+  it('AT-753: a referência tem o botão "Ver o cartão", que pede a aba prontas', () => {
+    soltar = registrarAcoesNoBloco(['m-1']);
+    const ouvinte = vi.fn((e: Event) => (e as CustomEvent).detail);
+    window.addEventListener(EVENTO_ABRIR_FILA, ouvinte);
+    render(<Fio status="pending" />);
+    fireEvent.click(screen.getByRole('button', { name: 'Ver o cartão' }));
+    window.removeEventListener(EVENTO_ABRIR_FILA, ouvinte);
+    expect(ouvinte).toHaveBeenCalledTimes(1);
+    expect(ouvinte.mock.results[0]!.value).toBe('prontas');
   });
 });

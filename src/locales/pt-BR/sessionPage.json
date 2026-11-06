@@ -364,7 +364,7 @@
     "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" acima.",
     "titulo": "Pendências de outras sessões deste projeto",
     "tituloDoProjeto": "Pendências deste projeto",
-    "nota": "Atalho para a decisão: os mesmos cards e os mesmos endpoints da aba Aprovações. Nenhum teto muda — merge em branch protegida segue manual.",
+    "nota": "Atalho para a decisão: os mesmos cards e os mesmos endpoints da aba Aprovações. Nenhum teto muda — o merge em branch protegida segue sendo gesto seu (Mergear pede a sua confirmação).",
     "filas": {
       "aprovacoes": "Aprovações",
       "merges": "Merges de PR",
@@ -391,11 +391,12 @@
       "algumas_other": "Não foi possível ler o motivo da política de {{count}} dos {{total}} cards abaixo: a leitura do log da sessão que propôs as ações falhou."
     },
     "bloqueadas": {
-      "botao": "Desbloquear",
+      "botao": "Desbloquear (volta à fila do dev)",
       "ok": "Tarefa desbloqueada: ela volta para a fila do dev agent do módulo.",
       "erro": "Não foi possível desbloquear a tarefa.",
       "semMotivo": "Sem motivo registrado.",
-      "semPapel": "Desbloquear exige o papel developer no projeto."
+      "semPapel": "Desbloquear exige o papel developer no projeto.",
+      "diagnostico": "Diagnóstico"
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",
@@ -421,17 +422,40 @@
       "corrigir": "Corrigir a história",
       "corrigirHistoria": "História afetada: {{titulo}}",
       "dispensar": "Dispensar"
+    },
+    "verOCartao": "Ver o cartão",
+    "saidas": {
+      "aviso": "Saiu da fila: {{lista}}",
+      "dispensar": "Dispensar",
+      "perguntas_zero": "{{count}} perguntas",
+      "perguntas_one": "{{count}} pergunta",
+      "perguntas_other": "{{count}} perguntas",
+      "aprovacoes_zero": "{{count}} aprovações",
+      "aprovacoes_one": "{{count}} aprovação",
+      "aprovacoes_other": "{{count}} aprovações",
+      "merges_zero": "{{count}} merges de PR",
+      "merges_one": "{{count}} merge de PR",
+      "merges_other": "{{count}} merges de PR",
+      "prontas_zero": "{{count}} PRs prontas",
+      "prontas_one": "{{count}} PR pronta",
+      "prontas_other": "{{count}} PRs prontas",
+      "bloqueadas_zero": "{{count}} tarefas bloqueadas",
+      "bloqueadas_one": "{{count}} tarefa bloqueada",
+      "bloqueadas_other": "{{count}} tarefas bloqueadas"
     }
   },
   "mergearNoChat": {
     "botao": "Mergear",
     "propondo": "Propondo…",
     "semPapel": "Mergear aqui exige o papel developer no projeto.",
-    "nota": "Propõe o merge nesta sessão; quem confirma é você, no card que aparece — o merge segue manual.",
+    "nota": "Pede a confirmação aqui mesmo; Confirmar propõe e aprova o merge, e a aprovação fica registrada.",
     "erroTitulo": "Não foi possível propor o merge",
     "gatePendente": "O gate {{gate}} ainda está pendente para esta PR. O merge segue disponível — a decisão é sua.",
-    "propostoTitulo": "Merge proposto",
-    "propostoMensagem": "Aprove ou recuse no cartão logo abaixo."
+    "confirmacao": "Mergear {{pr}} em {{alvo}}?",
+    "confirmar": "Confirmar",
+    "cancelar": "Cancelar",
+    "mergeada": "Mergeada",
+    "falhou": "O merge falhou."
   },
   "fio": {
     "carregando": "Carregando sessão…",

@@ -352,7 +352,7 @@
     "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",
     "titulo": "Pending decisions from other sessions in this project",
     "tituloDoProjeto": "Pending decisions in this project",
-    "nota": "A shortcut to the decision: the same cards and endpoints as the Approvals tab. No ceiling changes — merging into a protected branch stays manual.",
+    "nota": "A shortcut to the decision: the same cards and endpoints as the Approvals tab. No ceiling changes — merging into a protected branch stays your own gesture (Merge asks for your confirmation).",
     "filas": {
       "aprovacoes": "Approvals",
       "merges": "PR merges",
@@ -376,11 +376,12 @@
       "algumas_other": "The policy reason for {{count}} of the {{total}} cards below could not be read: reading the log of the session that proposed the actions failed."
     },
     "bloqueadas": {
-      "botao": "Unblock",
+      "botao": "Unblock (back to the dev queue)",
       "ok": "Task unblocked: it goes back to the module's dev agent queue.",
       "erro": "Could not unblock the task.",
       "semMotivo": "No reason recorded.",
-      "semPapel": "Unblocking requires the developer role on the project."
+      "semPapel": "Unblocking requires the developer role on the project.",
+      "diagnostico": "Diagnosis"
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",
@@ -403,17 +404,35 @@
       "corrigir": "Fix the story",
       "corrigirHistoria": "Affected story: {{titulo}}",
       "dispensar": "Dismiss"
+    },
+    "verOCartao": "See the card",
+    "saidas": {
+      "aviso": "Left the queue: {{lista}}",
+      "dispensar": "Dismiss",
+      "perguntas_one": "{{count}} question",
+      "perguntas_other": "{{count}} questions",
+      "aprovacoes_one": "{{count}} approval",
+      "aprovacoes_other": "{{count}} approvals",
+      "merges_one": "{{count}} PR merge",
+      "merges_other": "{{count}} PR merges",
+      "prontas_one": "{{count}} ready PR",
+      "prontas_other": "{{count}} ready PRs",
+      "bloqueadas_one": "{{count}} blocked task",
+      "bloqueadas_other": "{{count}} blocked tasks"
     }
   },
   "mergearNoChat": {
     "botao": "Merge",
     "propondo": "Proposing…",
     "semPapel": "Merging here needs the developer role on the project.",
-    "nota": "Proposes the merge in this session; you confirm it on the card that appears — merging stays manual.",
+    "nota": "Asks for confirmation right here; Confirm proposes and approves the merge, and the approval stays on record.",
     "erroTitulo": "Could not propose the merge",
     "gatePendente": "The {{gate}} gate is still pending for this PR. Merging stays available — the decision is yours.",
-    "propostoTitulo": "Merge proposed",
-    "propostoMensagem": "Approve or deny it on the card right below."
+    "confirmacao": "Merge {{pr}} into {{alvo}}?",
+    "confirmar": "Confirm",
+    "cancelar": "Cancel",
+    "mergeada": "Merged",
+    "falhou": "The merge failed."
   },
   "fio": {
     "carregando": "Loading session…",

@@ -71,6 +71,7 @@ export function ModoAutomaticoNoChat({
       agentes={agentesDoChat(oferta.ativados)}
       autonomyRules={autonomyRules}
       podeLigar={podeLigar}
+      compacto
     />
   );
 }

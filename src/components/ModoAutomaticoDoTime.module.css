@@ -46,3 +46,10 @@
   font-size: 12px;
   color: var(--text-primary);
 }
+
+/* AT-753 (UX-5): teto de altura com rolagem interna; o cabeçalho e o painel
+   da direita não se mexem. */
+.compacto {
+  max-height: 40vh;
+  overflow-y: auto;
+}

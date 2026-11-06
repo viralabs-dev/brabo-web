@@ -21,7 +21,8 @@
       "rearmed": "智能体已重新启用",
       "rearmError": "无法重新启用智能体"
     },
-    "noExecutorsTitle": "暂无执行者"
+    "noExecutorsTitle": "目前无人执行",
+    "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。"
   },
   "agentCard": {
     "status": {

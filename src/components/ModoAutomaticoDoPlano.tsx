@@ -46,6 +46,7 @@ export function ModoAutomaticoDoPlano({
       autonomyRules={autonomyRules}
       podeLigar
       noPlano
+      compacto
     />
   );
 }

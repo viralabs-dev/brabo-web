@@ -4560,9 +4560,9 @@ of them was covered by the comparison with the engine's vocabulary.
   `useTranslation` — switching language rebuilds the tree. A key the table
   uses without text in one of the two locales fails in `timeline-tree.test.ts`.
 
-- **Code:** `apps/web/src/lib/timeline-tree.ts:164` (`TRADUCAO`), `:205`
-  (`dev.started`), `:206` (`dev.working` with the title), `:222`
-  (`dev.blocked_by_container`), `:227` (`dev.error`), `:246`
+- **Code:** `apps/web/src/lib/timeline-tree.ts:164` (`TRADUCAO`), `:209`
+  (`dev.started`), `:212` (`dev.working` with the title), `:230`
+  (`dev.blocked_by_container`), `:235` (`dev.error`), `:255`
   (`TRADUCAO_FORA`), `:307` (the `ativo` read from the panel), `:96`
   (`ChaveDeRotulo`, AT-134), `:135` (`tradutorDaArvore`);
   `apps/web/src/locales/{en,pt-BR}/executors.json` (`timelineTree.label`,

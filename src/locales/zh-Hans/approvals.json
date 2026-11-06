@@ -124,6 +124,7 @@
     },
     "actions": {
       "approve": "批准",
+      "approvePlan": "批准计划",
       "deny": "拒绝",
       "alwaysAllow": "始终允许",
       "autoMode": "自动模式"
@@ -144,7 +145,8 @@
       "alwaysAllowed": "始终允许 · 已写入 permissions.json",
       "failed": "失败",
       "approvedTerminal": "已批准 · 命令执行中",
-      "approved": "已批准"
+      "approved": "已批准",
+      "failedConflict": "{{files}} 存在冲突——智能体会自行重做该 PR"
     },
     "body": {
       "commit": {
@@ -179,7 +181,13 @@
       "empty": "此操作不携带 payload。"
     },
     "actorYou": "你",
-    "actorOtherMember": "其他成员"
+    "actorOtherMember": "其他成员",
+    "plan": {
+      "agents_other": "以 {{count}} 个 dev agent 开始执行，每个模块一个。",
+      "tasks_other": "共 {{count}} 个任务。",
+      "cost": "预计费用：最高 {{total}}（每个任务上限 {{perTask}}）。",
+      "autoPilot_other": "为团队开启自动驾驶（{{count}} 个智能体；合并仍由你决定）"
+    }
   },
   "prGateTimeline": {
     "steps": {

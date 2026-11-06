@@ -6,10 +6,16 @@ import { QueryClientContext } from '@tanstack/react-query';
 import { useAutoriaDaSessao } from '../lib/autoria-da-sessao';
 import { autorDaMensagem } from '../lib/autor-da-mensagem';
 import { useTranslation } from 'react-i18next';
-import type { ActionType, ProposedAction } from '../lib/api-types';
+import {
+  AGENT_AUTONOMY_ALL_ACTIONS,
+  type ActionType,
+  type GitActionFailureResult,
+  type ProposedAction,
+  type TerminalExecutionResult,
+} from '../lib/api-types';
 import { AGENTS } from '../lib/agents';
-import { ApiError, mensagemDaApi } from '../lib/api-client';
-import { SEM_FRASE, descreverAcao } from '../lib/aprovacoes';
+import { ApiError, mensagemDaApi, setAgentAutonomy } from '../lib/api-client';
+import { SEM_FRASE, descreverAcao, tetoDoPlano } from '../lib/aprovacoes';
 import {
   fraseDaDecisaoDaPolitica,
   fraseDaDecisaoForaDoRecorte,
@@ -30,7 +36,8 @@ import {
 } from './ui/icons';
 import { podeOferecerSemprePermitir } from '../lib/sempre-permitir';
 import { OQueOPilotoLibera } from './OQueOPilotoLibera';
-import { ModoAutomaticoDoPlano } from './ModoAutomaticoDoPlano';
+import { agentesDoPlano } from './ModoAutomaticoDoPlano';
+import { Alert } from './ui/Alert';
 import { Checkbox } from './shadcn/checkbox';
 import styles from './ApprovalCard.module.css';
 import { Check, X, ShieldCheck, Plane } from 'lucide-react';
@@ -223,7 +230,7 @@ export function ApprovalCard({
   bloqueio,
   detalheRecolhido,
 }: ApprovalCardProps) {
-  const { t } = useTranslation('approvals');
+  const { t, i18n } = useTranslation('approvals');
   const [expandedFile, setExpandedFile] = useState<string | null>(null);
   // AT-256. `emVoo` segura o duplo clique (a segunda chamada era um 409 certo);
   // `recusa` guarda a frase da api; `obsoleta` é o 409 — a ação JÁ não está
@@ -233,6 +240,10 @@ export function ApprovalCard({
   const [recusa, setRecusa] = useState<string | null>(null);
   const [obsoleta, setObsoleta] = useState(false);
   const travaRef = useRef(false);
+  // AT-753 (UX-4, decisão P3): a oferta do modo automático é um checkbox JÁ
+  // MARCADO no cartão do plano; vale ao aprovar.
+  const [ligarPiloto, setLigarPiloto] = useState(true);
+  const queryClient = useContext(QueryClientContext);
 
   async function decidir(chamada: () => void | Promise<unknown>) {
     if (travaRef.current) return;
@@ -289,6 +300,70 @@ export function ApprovalCard({
    */
   const detalheAberto = temCorpoProprio && isPending && !detalheRecolhido;
 
+  // AT-753 (UX-4): o plano do Dev Lead mostra só o que importa — o que vai
+  // acontecer, o custo, "Aprovar plano" e "Negar". O jargão (payload cru,
+  // permissions.json, a lista do piloto) fica em "Detalhes", fechado.
+  const modulosDoPlano = Array.isArray(payload.modulos) ? payload.modulos.length : 0;
+  const tarefasDoPlano = Array.isArray(payload.tarefas) ? payload.tarefas.length : 0;
+  const ehPlano = action.actionType === 'propose_execution_plan' && modulosDoPlano > 0;
+  const tetoDoPlanoLido = ehPlano ? tetoDoPlano(payload) : undefined;
+  const agentesDoPiloto = ehPlano ? agentesDoPlano(payload) : [];
+  const ofereceOPiloto = ehPlano && isPending && !!onActivateAutoMode && agentesDoPiloto.length > 0;
+  const dolar = new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD' });
+
+  /** Mesma chamada da oferta em lote dos Executores (RN-661): a curinga `*` de
+   *  cada agente, um PUT por vez. Uma recusa não impede a aprovação (o piloto é
+   *  conveniência; o plano é a decisão) nem as outras gravações. */
+  async function ligarOPilotoDoTime() {
+    for (const agentId of agentesDoPiloto) {
+      try {
+        await setAgentAutonomy(action.projectId, {
+          agentId,
+          actionType: AGENT_AUTONOMY_ALL_ACTIONS,
+          mode: 'auto_approve',
+        });
+      } catch {
+        // segue para o próximo agente
+      }
+    }
+    await queryClient?.invalidateQueries({ queryKey: ['agent-autonomy', action.projectId] }).catch(() => undefined);
+  }
+
+  async function aprovar() {
+    if (ofereceOPiloto && ligarPiloto) await ligarOPilotoDoTime();
+    return onApprove();
+  }
+
+  // Ficam à vista nos tipos de sempre; no cartão do plano vão para "Detalhes".
+  const politicaJsx = (
+    decisaoDaPolitica !== undefined && (
+        <p className={styles.motivoDaPolitica} data-testid="motivo-da-politica">
+          {decisaoDaPolitica === null
+            ? fraseDaDecisaoForaDoRecorte()
+            : fraseDaDecisaoDaPolitica(decisaoDaPolitica)}
+        </p>
+      )
+  );
+  const notaSemprePermitirJsx = (
+    podeSemprePermitir && (
+            <p className={styles.note} data-testid="nota-sempre-permitir">
+              <AlertIcon size={14} className={styles.noteIcon} />
+              <span>
+                {ehAgenteDeModulo
+                  ? t('approvalCard.notes.alwaysAllowScoped', { agent: actorLabel })
+                  : t('approvalCard.notes.alwaysAllowCurta')}
+              </span>
+              {!ehAgenteDeModulo && (
+                <Ajuda assunto={t('approvalCard.actions.alwaysAllow')}>
+                  {action.actionType === 'terminal'
+                    ? t('approvalCard.notes.alwaysAllow')
+                    : t('approvalCard.notes.alwaysAllowTyped')}
+                </Ajuda>
+              )}
+            </p>
+          )
+  );
+
   return (
     <Confirmacao
       id={`acao-${action.id}`}
@@ -335,6 +410,22 @@ export function ApprovalCard({
           conhece não tem frase: aí a linha degrada para verbo + "ver detalhes",
           e o detalhe é o payload cru COLAPSADO. O que nunca mais acontece é o
           despejo de `chave: JSON.stringify(valor)` que estava aqui. */}
+      {ehPlano ? (
+        <>
+          <p className={styles.frase} data-testid="resumo-do-plano">
+            {t('approvalCard.plan.agents', { count: modulosDoPlano })}
+            {tarefasDoPlano > 0 && ` ${t('approvalCard.plan.tasks', { count: tarefasDoPlano })}`}
+          </p>
+          {tetoDoPlanoLido && (
+            <p className={styles.custoDoPlano} data-testid="custo-do-plano">
+              {t('approvalCard.plan.cost', {
+                total: dolar.format(tetoDoPlanoLido.total / 1_000_000),
+                perTask: dolar.format(tetoDoPlanoLido.porTarefa / 1_000_000),
+              })}
+            </p>
+          )}
+        </>
+      ) : (
       <p className={styles.frase}>
         {trechos
           ? trechos.map((trecho, indice) =>
@@ -350,23 +441,28 @@ export function ApprovalCard({
             )
           : `${verbo} — ${SEM_FRASE}.`}
       </p>
+      )}
         </>
       }
       acoes={isPending ? (
         <>
-          {/* AT-476 (RN-804): no plano do Dev Lead, a oferta em lote do modo
-              automático vem ANTES de aprovar — aprovar ativa a execução. Só
-              com o callback (quem chama já confirmou maintainer) e com
-              QueryClient (a oferta lê `agent_autonomy`). */}
-          {action.actionType === 'propose_execution_plan' &&
-            onActivateAutoMode &&
-            temQueryClient && (
-              <ModoAutomaticoDoPlano projectId={action.projectId} payload={payload} />
-            )}
+          {/* AT-753 (UX-4, P3): a oferta do modo automático é um checkbox já
+              marcado no próprio cartão — revoga a separação da AT-443. Aprovar
+              com ele marcado liga a curinga de cada agente do plano antes. */}
+          {ofereceOPiloto && (
+            <label className={styles.ofertaDoPiloto} data-testid="oferta-do-piloto">
+              <Checkbox
+                checked={ligarPiloto}
+                disabled={inerte}
+                onCheckedChange={(marcado) => setLigarPiloto(marcado === true)}
+              />
+              <span>{t('approvalCard.plan.autoPilot', { count: agentesDoPiloto.length })}</span>
+            </label>
+          )}
           <div className={styles.acoesDoCard} data-acoes-do-card="">
-            <Button variant="success" disabled={inerte} onClick={() => void decidir(() => onApprove())}>
+            <Button variant="success" disabled={inerte} onClick={() => void decidir(aprovar)}>
               <Check aria-hidden="true" />
-              {t('approvalCard.actions.approve')}
+              {t(ehPlano ? 'approvalCard.actions.approvePlan' : 'approvalCard.actions.approve')}
             </Button>
             <Button variant="danger" disabled={inerte} onClick={() => void decidir(() => onDeny())}>
               <X aria-hidden="true" />
@@ -375,7 +471,7 @@ export function ApprovalCard({
             {/* Patch de instrução NUNCA é auto-aprovável (teto em decide.ts):
                 gravar a regra em permissions.json não muda nada, então o botão
                 prometia um efeito que não existe. */}
-            {podeSemprePermitir && (
+            {podeSemprePermitir && !ehPlano && (
               <Button variant="secondary" disabled={inerte} onClick={() => void decidir(() => onAlwaysAllow())}>
                 <ShieldCheck aria-hidden="true" />
                 {t('approvalCard.actions.alwaysAllow')}
@@ -385,7 +481,7 @@ export function ApprovalCard({
                 maintainer e passou o callback; ausente some o botão em vez de
                 desabilitar sem explicar (action.actor.kind === 'user' também
                 cai aqui: não há AGENTE pra confiar). */}
-            {onActivateAutoMode && podeSemprePermitir && (
+            {onActivateAutoMode && podeSemprePermitir && !ehPlano && (
               <Button
                 variant="ghost"
                 legenda={t('approvalCard.actions.autoMode')}
@@ -399,23 +495,15 @@ export function ApprovalCard({
         </>
       ) : null}
     >
-      {/* AT-148 (RN-614): QUAL regra decidiu e, em `terminal`, contra qual
-          raiz relativa — a MESMA frase da linha do evento no painel de log. */}
-      {decisaoDaPolitica !== undefined && (
-        <p className={styles.motivoDaPolitica} data-testid="motivo-da-politica">
-          {decisaoDaPolitica === null
-            ? fraseDaDecisaoForaDoRecorte()
-            : fraseDaDecisaoDaPolitica(decisaoDaPolitica)}
-        </p>
-      )}
+      {!ehPlano && politicaJsx}
 
       <Disclosure
-        titulo={temCorpoProprio ? t('approvalCard.details.title') : t('approvalCard.details.rawPayloadTitle')}
+        titulo={temCorpoProprio || ehPlano ? t('approvalCard.details.title') : t('approvalCard.details.rawPayloadTitle')}
         padraoAberto={detalheAberto}
         className={styles.detalhes}
         classNameCabecalho={styles.detalhesCabecalho}
         trailing={
-          temCorpoProprio
+          temCorpoProprio || ehPlano
             ? undefined
             : t('approvalCard.details.fieldCount', { count: Object.keys(payload).length })
         }
@@ -427,6 +515,25 @@ export function ApprovalCard({
           expandedFile={expandedFile}
           onToggleFile={(path) => setExpandedFile((current) => (current === path ? null : path))}
         />
+        {ehPlano && (
+          <>
+            {politicaJsx}
+            {isPending && (
+              <>
+                {podeSemprePermitir && (
+                  <div className={styles.acoesNosDetalhes}>
+                    <Button variant="secondary" disabled={inerte} onClick={() => void decidir(() => onAlwaysAllow())}>
+                      <ShieldCheck aria-hidden="true" />
+                      {t('approvalCard.actions.alwaysAllow')}
+                    </Button>
+                  </div>
+                )}
+                {notaSemprePermitirJsx}
+                {onActivateAutoMode && <OQueOPilotoLibera />}
+              </>
+            )}
+          </>
+        )}
       </Disclosure>
 
       {isPending ? (
@@ -449,33 +556,13 @@ export function ApprovalCard({
               </span>
             </p>
           )}
-          {/* AT-322: a nota de "Sempre permitir" sai em TODA superfície onde o
-              botão sai — antes só no fio, e a mesma decisão tinha texto numa
-              tela e nenhum na outra. O texto só muda com o ATOR (RN-509), nunca
-              com a tela. */}
-          {podeSemprePermitir && (
-            <p className={styles.note} data-testid="nota-sempre-permitir">
-              <AlertIcon size={14} className={styles.noteIcon} />
-              <span>
-                {ehAgenteDeModulo
-                  ? t('approvalCard.notes.alwaysAllowScoped', { agent: actorLabel })
-                  : t('approvalCard.notes.alwaysAllowCurta')}
-              </span>
-              {!ehAgenteDeModulo && (
-                <Ajuda assunto={t('approvalCard.actions.alwaysAllow')}>
-                  {action.actionType === 'terminal'
-                    ? t('approvalCard.notes.alwaysAllow')
-                    : t('approvalCard.notes.alwaysAllowTyped')}
-                </Ajuda>
-              )}
-            </p>
-          )}
+          {!ehPlano && notaSemprePermitirJsx}
           {/* A nota do modo automático sai onde o botão sai (RN-603): é a
               única frase que diz, antes do clique, o que o botão libera. Desde
               a RN-670 (ADR 0189) a lista inteira — o que o piloto libera e o
               que não libera — vem junto, a MESMA dos Executores e do card do
               agente. */}
-          {onActivateAutoMode && podeSemprePermitir && (
+          {onActivateAutoMode && podeSemprePermitir && !ehPlano && (
             <>
               <p className={styles.note} data-testid="nota-modo-automatico">
                 <AlertIcon size={14} className={styles.noteIcon} />
@@ -504,6 +591,39 @@ export function ApprovalCard({
   );
 }
 
+const ARQUIVOS_NA_CAUSA = 3;
+const CAUSA_MAX_CARACTERES = 160;
+
+/** O resultado de uma ação git que falhou (`{error, conflictingFiles}`) — o
+ *  terminal grava `stdout`/`exitCode` e nunca `error`. */
+function falhaGit(r: ProposedAction['executionResult']): GitActionFailureResult | null {
+  return r && 'error' in r && typeof r.error === 'string' ? r : null;
+}
+
+/** A causa curta e o próximo passo de uma ação que falhou, ou `null` quando o
+ *  resultado não diz nada (aí a linha fica só com "Falhou"). Conflito: os
+ *  arquivos e o que acontece em seguida; outro erro: a 1ª frase da api. */
+function causaDaFalha(
+  r: ProposedAction['executionResult'],
+  t: (key: string, options?: Record<string, unknown>) => string,
+): string | null {
+  const falha = falhaGit(r);
+  if (!falha) return null;
+  const arquivos = (falha.conflictingFiles ?? []).filter((f) => typeof f === 'string' && f !== '');
+  if (arquivos.length > 0) {
+    const mostrados = arquivos.slice(0, ARQUIVOS_NA_CAUSA).join(', ');
+    const resto = arquivos.length - ARQUIVOS_NA_CAUSA;
+    return t('approvalCard.decided.failedConflict', {
+      files: resto > 0 ? `${mostrados} (+${resto})` : mostrados,
+    });
+  }
+  const primeiraFrase = falha.error.trim().split(/(?<=[.!?])\s/)[0] ?? '';
+  if (primeiraFrase === '') return null;
+  return primeiraFrase.length > CAUSA_MAX_CARACTERES
+    ? `${primeiraFrase.slice(0, CAUSA_MAX_CARACTERES - 1)}…`
+    : primeiraFrase;
+}
+
 function DecidedLine({ action }: { action: ProposedAction }) {
   const { t } = useTranslation('approvals');
   if (action.status === 'denied') {
@@ -526,11 +646,22 @@ function DecidedLine({ action }: { action: ProposedAction }) {
     );
   }
   if (action.status === 'failed') {
+    // AT-753 (UX-8): a causa e o próximo passo, no lugar do "Falhou" mudo.
+    const causa = causaDaFalha(action.executionResult, t);
     return (
-      <div className={styles.decided} style={{ ['--decided-color' as string]: 'var(--danger)' } as CSSProperties}>
-        <span className={styles.decidedDot} />
-        <span className={styles.decidedText}>{t('approvalCard.decided.failed')}</span>
-      </div>
+      <>
+        <div className={styles.decided} style={{ ['--decided-color' as string]: 'var(--danger)' } as CSSProperties}>
+          <span className={styles.decidedDot} />
+          <span className={styles.decidedText}>{t('approvalCard.decided.failed')}</span>
+        </div>
+        {causa && (
+          <div className={styles.causaDaFalha}>
+            <Alert tone="danger" role="alert">
+              {causa}
+            </Alert>
+          </div>
+        )}
+      </>
     );
   }
   const text =
@@ -589,11 +720,13 @@ interface ApprovalBodyProps {
 function ApprovalBody({ actionType, payload, executionResult, expandedFile, onToggleFile }: ApprovalBodyProps) {
   const { t } = useTranslation('approvals');
   if (actionType === 'terminal') {
+    const resultado: TerminalExecutionResult | null =
+      executionResult && 'rawBytes' in executionResult ? executionResult : null;
     const command = readString(payload, 'command');
     const comandoValido = eValido(command);
     const compressionPct =
-      executionResult?.compressedBytes != null && executionResult.rawBytes > 0
-        ? Math.round((1 - executionResult.compressedBytes / executionResult.rawBytes) * 100)
+      resultado?.compressedBytes != null && resultado.rawBytes > 0
+        ? Math.round((1 - resultado.compressedBytes / resultado.rawBytes) * 100)
         : null;
 
     return (
@@ -601,11 +734,11 @@ function ApprovalBody({ actionType, payload, executionResult, expandedFile, onTo
         <Terminal
           comando={comandoValido ? command : undefined}
           semComando={t('approvalCard.body.terminal.invalidCommand')}
-          saida={executionResult ? executionResult.stdout || executionResult.stderr : undefined}
+          saida={resultado ? resultado.stdout || resultado.stderr : undefined}
           semSaida={t('approvalCard.body.terminal.emptyOutput')}
-          exitCode={executionResult?.exitCode}
+          exitCode={resultado?.exitCode}
           cabecalho={
-            executionResult
+            resultado
               ? [
                   t('approvalCard.body.terminal.outputHeader'),
                   compressionPct !== null && compressionPct > 0

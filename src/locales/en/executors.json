@@ -22,7 +22,8 @@
       "rearmed": "Agent rearmed",
       "rearmError": "Could not rearm the agent"
     },
-    "noExecutorsTitle": "Nobody acting yet"
+    "noExecutorsTitle": "Nobody acting right now",
+    "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged."
   },
   "agentCard": {
     "status": {

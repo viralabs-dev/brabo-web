@@ -38,6 +38,7 @@ import { PararExecucao } from '../components/PararExecucao';
 import type { AutonomyMode } from '../components/AgentCard';
 import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { AgentTimelineTree } from '../components/AgentTimelineTree';
+import { Alert } from '../components/ui/Alert';
 import { Badge } from '../components/ui/Badge';
 import { Users } from 'lucide-react';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -302,7 +303,10 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
             {rotuloDaSessao(executionSession.id, executionSession.name)}
           </Link>{' '}
           <Badge tone="success" dot>
-            {executionSession.status}
+            {t(`sessionsTab.status.${executionSession.status}`, {
+              ns: 'sessions',
+              defaultValue: executionSession.status,
+            })}
           </Badge>
         </div>
       )}
@@ -323,6 +327,14 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           {/* RN-661 (AT-315): no início da execução, a oferta de ligar o
               modo automático para o time de uma vez. Some quando todos já
               estão em automático; desligar segue no card de cada um. */}
+          {executionSession?.status === 'active' &&
+            summaryQuery.isSuccess &&
+            workingCount === 0 && (
+              <Alert tone="warning" role="status">
+                {t('tab.idleWarning')}
+              </Alert>
+            )}
+
           {executorRoster.length > 0 && (
             <ModoAutomaticoDoTime
               projectId={projectId}

@@ -294,6 +294,33 @@ describe('ProjectExecutorsTab (FASE 27 — RN-121)', () => {
   });
 });
 
+describe('ProjectExecutorsTab — 0 agentes explicados (AT-753, P5)', () => {
+  const semTrabalho = () =>
+    listSessionEvents.mockResolvedValue({ items: [EVENTOS[0]], nextCursor: null });
+
+  it('execução ativa e ninguém trabalhando: aviso que explica, e o status vem traduzido', async () => {
+    getActiveExecutionSession.mockResolvedValue({ ...SESSAO, status: 'active' });
+    semTrabalho();
+    montar();
+
+    expect(await screen.findByText(/aguardam a tarefa de que dependem/)).toBeInTheDocument();
+    expect(screen.getByText(/acordam quando a dependência for mergeada/)).toBeInTheDocument();
+    expect(screen.getByText('ativa')).toBeInTheDocument();
+    expect(screen.queryByText('active')).toBeNull();
+    // P5: só aviso, sem botão de acordar.
+    expect(screen.queryByRole('button', { name: /acordar/i })).toBeNull();
+  });
+
+  it('sessão que não está ativa não mostra o aviso', async () => {
+    semTrabalho();
+    montar();
+
+    await screen.findByText('#sess-1');
+    await screen.findByText('dev-backend');
+    expect(screen.queryByText(/aguardam a tarefa de que dependem/)).toBeNull();
+  });
+});
+
 describe('ProjectExecutorsTab — sessão de execução (RN-139)', () => {
   it('mostra a sessão de execução vigente, mesmo com sessão mais recente existindo no projeto', async () => {
     // A aba não lista as sessões do projeto NEM escolhe a mais recente — ela

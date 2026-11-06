@@ -421,6 +421,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/projects/{projectId}/business-rules/{ruleId}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Retires an obsolete business rule (RN-1018)
+         * @description Writes `artifact.business_rule_retired`. The rule stays in the log but leaves every reader (list, coverage, duplicate check, dev context). Stories citing it cite `replacedBy` instead; the retirement is refused when a story would be left with no rule. No approval card: the citation (`replacedBy` and/or an answered `questionId`) is the standard.
+         */
+        post: operations["InternalBusinessRulesController_retireRoute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/projects/{projectId}/container-exec": {
         parameters: {
             query?: never;
@@ -521,6 +541,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/projects/{projectId}/open-questions/{questionId}/answer": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Closes an open question on behalf of an agent (RN-1002)
+         * @description Writes the same `decision_record` + `open_question.answered` pair as the human answer (actor: the author of the chat session, `viaAgente` names the agent) and resumes the parked QA gate (RN-860). Without `resposta`, the question suggestion is the answer. Idempotent: an already closed question returns `already_answered`, never 409.
+         */
+        post: operations["InternalOpenQuestionsController_answer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/projects/{projectId}/product-metrics": {
         parameters: {
             query?: never;
@@ -530,7 +570,7 @@ export interface paths {
         };
         /**
          * The project's delivery funnel and partial DORA metrics, for the PO to read
-         * @description The SAME report as the `analise:funil` script (ADR 0089) — session → commit → PR → merge funnel, real lead time and real deployment frequency — through the same pure functions and the same query (`apps/api/src/application/services/funil-metrics.ts`), so the two never diverge from the same fact. Closes `docs/fluxo.yml` (role `po`, input `metricas-de-produto`, previously `status: lacuna`) (RN-407).
+         * @description The SAME report as the `analise:funil` script (ADR 0089) — session → commit → PR → merge funnel, real lead time and real deployment frequency — through the same pure functions and the same query (`src/application/services/funil-metrics.ts`), so the two never diverge from the same fact. Closes `docs/fluxo.yml` (role `po`, input `metricas-de-produto`, previously `status: lacuna`) (RN-407).
          */
         get: operations["InternalProjectsController_productMetrics"];
         put?: never;
@@ -4885,6 +4925,25 @@ export interface components {
              */
             pullRequestUrl: Record<string, never> | null;
         };
+        AgentAnswerOpenQuestionDto: {
+            /** @description The chat session where the user answered. */
+            sessionId: string;
+            /**
+             * @description The agent closing it.
+             * @example criativo
+             */
+            agentId: string;
+            /** @description Answer text; omitted = the suggestion. */
+            resposta?: string;
+            /** @description The chat message event that answered. */
+            messageEventId?: string;
+        };
+        AgentAnswerOpenQuestionResponseDto: {
+            /** @enum {string} */
+            status: "answered" | "already_answered";
+            /** Format: uuid */
+            questionId: string;
+        };
         AgentAutonomyRuleResponseDto: {
             /**
              * @description Agent slug.
@@ -5730,7 +5789,7 @@ export interface components {
         CodeBlameResponseDto: {
             /** @example dev */
             ref: string;
-            /** @example apps/api/src/main.ts */
+            /** @example src/main.ts */
             path: string;
             lines: components["schemas"]["CodeBlameLineResponseDto"][];
             /**
@@ -5792,7 +5851,7 @@ export interface components {
         CodeDiffFileResponseDto: {
             /**
              * @description Path AFTER the change (for `removed`, what disappeared).
-             * @example apps/api/src/main.ts
+             * @example src/main.ts
              */
             path: string;
             /**
@@ -5829,7 +5888,7 @@ export interface components {
         CodeFileResponseDto: {
             /** @example dev */
             ref: string;
-            /** @example apps/api/src/main.ts */
+            /** @example src/main.ts */
             path: string;
             /**
              * @description UTF-8 content. Binary is not served by this route.
@@ -5885,7 +5944,7 @@ export interface components {
             updatedAt: string | null;
         };
         CodeSearchMatchResponseDto: {
-            /** @example apps/api/src/main.ts */
+            /** @example src/main.ts */
             path: string;
             /**
              * @description 1-based, like every editor shows.
@@ -5923,7 +5982,7 @@ export interface components {
         CodeTreeEntryResponseDto: {
             /**
              * @description Full path from the repository's root.
-             * @example apps/api/src/main.ts
+             * @example src/main.ts
              */
             path: string;
             /**
@@ -5950,7 +6009,7 @@ export interface components {
             ref: string;
             /**
              * @description Listed directory; `""` is the root.
-             * @example apps/api
+             * @example src
              */
             path: string;
             entries: components["schemas"]["CodeTreeEntryResponseDto"][];
@@ -6602,6 +6661,12 @@ export interface components {
             title: string;
             /** @example Accepts SKU and quantity; validates stock. */
             description?: string;
+            /**
+             * @description Agent creating the task; becomes the actor of the event.
+             * @default po
+             * @enum {string}
+             */
+            agentRole: "po" | "dev_lead";
         };
         CreateWorkspaceDto: {
             /** @example Acme Corp */
@@ -10239,6 +10304,28 @@ export interface components {
             /** @example openai responded with status 401 */
             detalhe?: string;
         };
+        RetireBusinessRuleInternalDto: {
+            /** @description The session the retirement is logged in. */
+            sessionId: string;
+            /**
+             * @description Who retires. Only `criativo` and `po` are allowed (403).
+             * @example criativo
+             */
+            agentRole: string;
+            /** @example Replaced by the per-professional agenda rule. */
+            reason: string;
+            /** @description The existing, non-retired rule that replaces it. Stories citing the retired rule cite this one. Required when `questionId` is absent. */
+            replacedBy?: string;
+            /** @description An open question the user ALREADY answered (RN-859 standard). Required when `replacedBy` is absent. */
+            questionId?: string;
+        };
+        RetiredBusinessRuleResponseDto: {
+            ruleId: string;
+            replacedBy: string | null;
+            questionId: string | null;
+            /** @description Stories whose citation of the rule was swapped or removed. */
+            storyIds: string[];
+        };
         ReturnStoryDto: {
             /**
              * @description The reason is REQUIRED: it becomes a message pinned to the PO session, and a return with no reason hands back work with no information.
@@ -12480,6 +12567,60 @@ export interface operations {
             };
         };
     };
+    InternalBusinessRulesController_retireRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                ruleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RetireBusinessRuleInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RetiredBusinessRuleResponseDto"];
+                };
+            };
+            /** @description Named refusal (`reason`): `retirada_sem_citacao` or `substituta_invalida`. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one; or the role is not `criativo`/`po` (`papel_nao_retira_regra`). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rule not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `regra_ja_retirada`, `pergunta_nao_respondida`, `historia_ficaria_sem_regra` or `historia_com_tarefa_em_execucao`. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     InternalProjectsController_containerExec: {
         parameters: {
             query?: never;
@@ -12659,6 +12800,53 @@ export interface operations {
             };
             /** @description Service token missing or different from the shared one. */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalOpenQuestionsController_answer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                questionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentAnswerOpenQuestionDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentAnswerOpenQuestionResponseDto"];
+                };
+            };
+            /** @description Invalid body, or no answer and no suggestion. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Question or session not in this project. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

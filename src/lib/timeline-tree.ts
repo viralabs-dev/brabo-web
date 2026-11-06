@@ -104,6 +104,7 @@ export type ChaveDeRotulo =
   | 'handoffAccepted'
   | 'artifactProductBrief'
   | 'artifactBusinessRule'
+  | 'artifactBusinessRuleRetired'
   | 'artifactModuleMap'
   | 'artifactModuleRouting'
   | 'artifactInsight'
@@ -186,6 +187,11 @@ const TRADUCAO: Record<string, Traducao> = {
   'handoff.accepted': { tipo: 'handoff', rotulo: 'handoffAccepted' },
   'artifact.product_brief': { tipo: 'artefato', rotulo: 'artifactProductBrief' },
   'artifact.business_rule': { tipo: 'artefato', rotulo: 'artifactBusinessRule' },
+  'artifact.business_rule_retired': {
+    tipo: 'artefato',
+    rotulo: 'artifactBusinessRuleRetired',
+    detalhe: (p) => texto(p.reason),
+  },
   'artifact.module_map': { tipo: 'artefato', rotulo: 'artifactModuleMap' },
   'artifact.module_routing': { tipo: 'artefato', rotulo: 'artifactModuleRouting' },
   'artifact.insight': { tipo: 'artefato', rotulo: 'artifactInsight' },

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Session: the feed and the timeline tree show `artifact.business_rule_retired` ("criativo retirou uma regra de negócio — substituída por outra regra: motivo"); the rules panel and the readiness button ignore a retired rule (AT-755, RN-1018). `openapi.json` and the generated types refreshed from brabo-api.
+
 - Session: the primary decision of each thread card shows text next to its icon, as an exception to the icon-only rule of AT-682 (AT-753 UX-3). The handoff acceptance reads "Aceitar e passar a {agent}" and "Ativar execução" shows its label. The `handoff.aceitarEIniciar` key was replaced by `handoff.aceitarEPassar`; the exception is recorded in `design/COMPONENTS.md`. (web#16)
 
 - Session approvals: the execution-plan card now shows only what will be done, the expected cost, "Aprovar plano" and "Negar"; the jargon (raw payload, permissions.json, the autopilot list) moved to a collapsed "Detalhes". The auto mode offer is a pre-ticked checkbox in the card and, when approving, writes the wildcard of each plan agent (revokes the AT-443 split for this card; RN-755 and RN-804 updated). A failed git action now shows its cause and next step ("Conflito em README.md — o agente refaz a PR sozinho"), and the `executionResult` type gained the git failure shape (AT-753, UX-4 and UX-8). (web#17)

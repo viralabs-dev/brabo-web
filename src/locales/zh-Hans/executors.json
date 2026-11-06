@@ -90,6 +90,7 @@
       "handoffAccepted": "接受了移交",
       "artifactProductBrief": "发布了产品简报",
       "artifactBusinessRule": "发布了业务规则",
+      "artifactBusinessRuleRetired": "撤销了业务规则",
       "artifactModuleMap": "发布了 module_map",
       "artifactModuleRouting": "将模块路由给 Infra",
       "artifactInsight": "发布了假设",

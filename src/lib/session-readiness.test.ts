@@ -86,6 +86,15 @@ describe('useSessionReadiness', () => {
     expect(result.current.hasPromotedStory).toBe(true);
   });
 
+  it('hasBusinessRule ignora a regra retirada (RN-1018)', () => {
+    const events: SessionEvent[] = [
+      evento(1, 'artifact.business_rule'),
+      evento(2, 'artifact.business_rule_retired', { ruleId: 'evt-1' }),
+    ];
+    const { result } = renderHook(() => useSessionReadiness(events, undefined));
+    expect(result.current.hasBusinessRule).toBe(false);
+  });
+
   it('degrada pra falso/null sem nenhuma evidência (sessão nova, backlog undefined)', () => {
     const { result } = renderHook(() => useSessionReadiness([], undefined));
 

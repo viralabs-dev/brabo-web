@@ -288,6 +288,21 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
       text: `${gateLabel}${isInfra ? ' (PR de infra)' : ''}: ${approved ? 'aprovado' : 'mudanças solicitadas'}`,
     };
   }
+  if (type === 'artifact.business_rule_retired') {
+    const motivo = payloadField(payload, 'reason');
+    const por = payloadField(payload, 'replacedBy')
+      ? ' — substituída por outra regra'
+      : payloadField(payload, 'questionId')
+        ? ' — pela resposta do usuário a uma pergunta'
+        : '';
+    return {
+      kind: 'hypothesis',
+      icon: HypothesisIcon,
+      color: 'var(--accent)',
+      bad: false,
+      text: `${actorLabel} retirou uma regra de negócio${por}${motivo ? `: ${motivo}` : ''}`,
+    };
+  }
   if (type.startsWith('artifact.')) {
     const artifactKind = type.slice('artifact.'.length);
     const label =

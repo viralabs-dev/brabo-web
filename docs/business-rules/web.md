@@ -1515,7 +1515,7 @@ to the opening of the turn and the history is ONE chronological block, not group
 origin (which put the answer above the question). The log panel remains as
 described here.
 
-- **Where:** `apps/web/src/lib/activity.ts:94` (`OrigemDeEvento`), `:125`
+- **Where:** `apps/web/src/lib/activity.ts:95` (`OrigemDeEvento`), `:125`
   (`origemDoEvento`), `:152` (`agruparPorOrigem`);
   `apps/web/src/components/ActivityFeed.tsx:34` (the cut of 5), `:66` (the
   toggle); `apps/web/src/routes/session-fio.tsx:119` (the thread cut), `:291`
@@ -1554,7 +1554,7 @@ list, and a `useEffect` would render once with the invalid page before
 correcting it. With 5 or fewer, the paginator **does not exist** — a control that paginates
 nothing is noise taking up height.
 
-- **Where:** `apps/web/src/routes/ContextAside.tsx:109` (`REGRAS_POR_PAGINA`) and
+- **Where:** `apps/web/src/routes/ContextAside.tsx:110` (`REGRAS_POR_PAGINA`) and
   the ordering of the four sections in the same file;
   `apps/web/src/components/ActivityFeed.tsx:98` (the descending `sort`)
 - **Test:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -4560,7 +4560,7 @@ of them was covered by the comparison with the engine's vocabulary.
   `useTranslation` — switching language rebuilds the tree. A key the table
   uses without text in one of the two locales fails in `timeline-tree.test.ts`.
 
-- **Code:** `apps/web/src/lib/timeline-tree.ts:161` (`TRADUCAO`), `:205`
+- **Code:** `apps/web/src/lib/timeline-tree.ts:164` (`TRADUCAO`), `:205`
   (`dev.started`), `:206` (`dev.working` with the title), `:222`
   (`dev.blocked_by_container`), `:227` (`dev.error`), `:246`
   (`TRADUCAO_FORA`), `:307` (the `ativo` read from the panel), `:96`
@@ -4773,7 +4773,7 @@ screen rebuilds no path at all. The sentences are in `en` and `pt-BR`
 - **Code:** `apps/web/src/lib/decisao-da-politica.ts:111`
   (`fraseDaDecisaoDaPolitica`), `:65` (`lerDecisaoDaPolitica`), `:124`
   (`decisaoDaPoliticaDaAcao`), `:145` (`linhaDoEventoDePolitica`);
-  `apps/web/src/lib/activity.ts:721` (the branch for `proposed_action.created`);
+  `apps/web/src/lib/activity.ts:804` (the branch for `proposed_action.created`);
   `apps/web/src/components/ApprovalCard.tsx:272` (the card's line);
   `apps/web/src/routes/session-timeline-montagem.tsx:825` and
   `apps/web/src/routes/ProjectApprovalsTab.tsx:311` (`decisoesDaPolitica`, since
@@ -5698,7 +5698,7 @@ change.
   (`origemDaAtividade`), `:601` (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:127` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:75` (`lastActivityText`);
-  `apps/web/src/routes/ContextAside.tsx:46` (`quantos`), `:340`
+  `apps/web/src/routes/ContextAside.tsx:47` (`quantos`), `:340`
   (`totalDeArtefatos`)
 - **Test:** `apps/web/src/routes/Shell.test.tsx` ("Shell — Atividades": without
   execution it reads the Visão geral's session and the Criativo appears; with execution it reads the
@@ -6031,7 +6031,7 @@ pending card only appeared DURING the live session — a transient state of the
 screen, not of the api nor of the window. The next AT-015 round captures the network at the
 moment it appears, before any fix.
 
-- **Where:** `apps/web/src/routes/ContextAside.tsx:393` (`trailing`), `:415`
+- **Where:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`), `:415`
   (`nadaNaJanela`)
 - **Test:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   ("RN-701 (AT-365): com as regras fora da janela, o contador não afirma 0";
@@ -6471,7 +6471,7 @@ channel) still writes the list by hand: invalidating writes no data.
   is not the most recent. No extra request: the keys are the ones the
   sidebar already subscribes to, and `useActiveExecutionSession` gets a `staleTime` equal to the
   interval, so the second subscriber does not redo the fetch ([RN-632](#rn-632)).
-- **Where:** `apps/web/src/routes/ContextAside.tsx:393` (`trailing`),
+- **Where:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:97` (`linhaDoTempoNaExecucao`)
 - **Test:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (a decision outside the window does not become 0; a whole session in the window says empty),
@@ -6685,7 +6685,7 @@ channel) still writes the list by hand: invalidating writes no data.
   [RN-102](api.md#rn-102)); the enabled button gets the explanation in its `title`. The
   derivation reads the `events` the screen already has — no new query
   ([RN-579](engine.md#rn-579)).
-- **Where:** `apps/web/src/lib/session-readiness.ts:149` (`temMapaDeModulos`),
+- **Where:** `apps/web/src/lib/session-readiness.ts:150` (`temMapaDeModulos`),
   `apps/web/src/routes/SessionComposer.tsx:136` (`hasModuleMap`)
 - **Test:** `apps/web/src/routes/SessionPage.proximo-passo-arquitetura.test.tsx`
   ("mapa gravado + história promovida + Arquiteto parado: o texto aparece";
@@ -7230,7 +7230,7 @@ Revises [RN-212](#rn-212) on the destination of the "Definir orçamento" button 
 ### RN-970 — In the team tree, each delegation of a lead appears as a subagent {#rn-970}
 
 - **Rule:** in the team tree (Visão geral/Executores), each delegation recorded by a lead (`delegation.*`) appears on its branch as a subagent — name, outcome (effected/failed/dismissed, failure with the origin) and whether the subagent is working now —, derived from the events already loaded, with no new request; a delegation outside the window does not appear. The subagent's own branch continues.
-- **Where:** `apps/web/src/lib/timeline-tree.ts:287` (`subagenteDoMarco`), `apps/web/src/components/AgentTimelineTree.tsx:51` (`AgentTimelineTree`).
+- **Where:** `apps/web/src/lib/timeline-tree.ts:293` (`subagenteDoMarco`), `apps/web/src/components/AgentTimelineTree.tsx:51` (`AgentTimelineTree`).
 - **Test:** `apps/web/src/lib/timeline-tree.test.ts`, `apps/web/src/components/ai-elements/passos.test.tsx`.
 - **Origin:** AT-655 (EP-031).
 

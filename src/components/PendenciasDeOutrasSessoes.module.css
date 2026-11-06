@@ -138,3 +138,11 @@
   gap: 6px;
   align-items: center;
 }
+
+/* AT-753 (UX-7): o aviso curto do que saiu da fila, com o botão de dispensar. */
+.saidas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}

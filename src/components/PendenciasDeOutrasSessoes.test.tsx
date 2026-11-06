@@ -402,8 +402,15 @@ function backlog(tarefas: Record<string, unknown>[]) {
 }
 
 describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497, RN-825/826)', () => {
-  it('a PR com os gates aprovados aparece, a com gate pendente não, e Mergear mostra o cartão ali', async () => {
-    getProjectPendingActions.mockResolvedValue([]);
+  it('a PR com os gates aprovados aparece, a com gate pendente não, e a proposta pendente da sessão vira o cartão ali', async () => {
+    getProjectPendingActions.mockResolvedValue([
+      acao('m-novo', {
+        sessionId: AQUI,
+        actionType: 'git_merge',
+        actor: { kind: 'user', id: 'u' },
+        payload: { pullRequestId: '1', sourceBranch: 'feature/task-aaaaaaaa', targetBranch: 'dev' },
+      }),
+    ]);
     getCodePullRequests.mockResolvedValue({
       items: [pr('1', 'feature/task-aaaaaaaa'), pr('2', 'feature/task-bbbbbbbb'), pr('3', 'docs/adr-0300')],
     });
@@ -412,14 +419,6 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
         { id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' },
         { id: 'bbbbbbbb-1', title: 'Em QA', gateStatus: 'awaiting_qa' },
       ]),
-    );
-    proposeAction.mockResolvedValue(
-      acao('m-novo', {
-        sessionId: AQUI,
-        actionType: 'git_merge',
-        actor: { kind: 'user', id: 'u' },
-        payload: { pullRequestId: '1', sourceBranch: 'feature/task-aaaaaaaa', targetBranch: 'dev' },
-      }),
     );
 
     montar();
@@ -431,14 +430,8 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fila).getByText(/PR 3/)).toBeInTheDocument();
     expect(within(fila).queryByText(/PR 2/)).toBeNull();
 
-    fireEvent.click(within(fila).getAllByRole('button', { name: 'Mergear' })[0]!);
-    await waitFor(() =>
-      expect(proposeAction).toHaveBeenCalledWith(
-        'proj-1',
-        AQUI,
-        expect.objectContaining({ actionType: 'git_merge' }),
-      ),
-    );
+    // A PR 3 (sem proposta) oferece o Mergear; a 1 mostra o cartão.
+    expect(within(fila).getAllByRole('button', { name: 'Mergear' })).toHaveLength(1);
     expect(await within(fila).findByRole('button', { name: 'Aprovar' })).toBeInTheDocument();
     // RN-843: a ação desenhada aqui fica registrada para o fio recolher a dele.
     expect(acaoEstaNoBloco('m-novo')).toBe(true);
@@ -469,28 +462,54 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fio).queryByRole('button', { name: 'Aprovar' })).toBeNull();
   });
 
-  it('AT-740: pelo fluxo do usuário (aba, Mergear), a proposta sai e o cartão Aprovar fica VISÍVEL', async () => {
+  it('AT-753 (UX-2): Mergear confirma na própria linha; Confirmar propõe e aprova, Cancelar não chama nada', async () => {
     getProjectPendingActions.mockResolvedValue([]);
     getCodePullRequests.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
-    proposeAction.mockResolvedValue(
-      acao('m-vis', {
-        sessionId: AQUI,
-        actionType: 'git_merge',
-        actor: { kind: 'user', id: 'u' },
-        payload: { pullRequestId: '1', sourceBranch: 'feature/task-aaaaaaaa', targetBranch: 'dev' },
-      }),
-    );
+    proposeAction.mockResolvedValue(acao('m-vis', { sessionId: AQUI, actionType: 'git_merge' }));
+    approveAction.mockResolvedValue(acao('m-vis', { sessionId: AQUI, actionType: 'git_merge', status: 'executed' }));
     const user = userEvent.setup();
     montar();
     await user.click(await screen.findByRole('button', { name: /^PRs prontas para merge \d/ }));
     const fila = await screen.findByTestId('fila-prs-prontas');
-    expect(fila).toBeVisible();
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
-    await waitFor(() => expect(proposeAction).toHaveBeenCalledTimes(1));
-    expect(await within(fila).findByRole('button', { name: 'Aprovar' })).toBeVisible();
-    expect(screen.getByText('Merge proposto')).toBeInTheDocument();
-    expect(fila.querySelector('[data-proposta-merge]')).not.toBeNull();
+    expect(within(fila).getByText('Mergear #1 em dev?')).toBeInTheDocument();
+    await user.click(within(fila).getByRole('button', { name: 'Cancelar' }));
+    expect(proposeAction).not.toHaveBeenCalled();
+    await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
+    await user.click(within(fila).getByRole('button', { name: 'Confirmar' }));
+    await waitFor(() => expect(approveAction).toHaveBeenCalledWith('proj-1', AQUI, 'm-vis'));
+    expect(proposeAction).toHaveBeenCalledTimes(1);
+    expect(await within(fila).findByText('Mergeada')).toBeInTheDocument();
+  });
+
+  it('AT-753 (UX-9): a tarefa bloqueada mostra o título antes do " — " e o diagnóstico recolhido', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([{ id: 't9', title: 'Tarefa 9', blocked: true, blockedReason: 'Falta o validador — o diagnóstico longo' }]),
+    );
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(within(fila).getByText('Falta o validador')).toBeInTheDocument();
+    expect(within(fila).queryByText('o diagnóstico longo')).toBeNull();
+    fireEvent.click(within(fila).getByRole('button', { name: /Diagnóstico/ }));
+    expect(within(fila).getByText('o diagnóstico longo')).toBeInTheDocument();
+  });
+
+  it('AT-753 (UX-7): a PR que sai da fila dá um aviso; a primeira leitura não avisa nada', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    getCodePullRequests.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
+    listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    montar(true, client);
+    await screen.findByTestId('fila-prs-prontas');
+    expect(screen.queryByTestId('saidas-da-fila')).toBeNull();
+    getCodePullRequests.mockResolvedValue({ items: [] });
+    await client.invalidateQueries({ queryKey: ['code-pull-requests'] });
+    expect(await screen.findByTestId('saidas-da-fila')).toHaveTextContent('Saiu da fila: 1 PR pronta');
+    fireEvent.click(screen.getByRole('button', { name: 'Dispensar' }));
+    expect(screen.queryByTestId('saidas-da-fila')).toBeNull();
   });
 
   it('RN-841: a tarefa que entra em awaiting_user relê as PRs, e a PR nova aparece sem remontar', async () => {
@@ -551,7 +570,7 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
 
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
     expect(within(fila).getByText('ciclo de correção esgotado')).toBeInTheDocument();
-    fireEvent.click(within(fila).getByRole('button', { name: 'Desbloquear' }));
+    fireEvent.click(within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' }));
     await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8'));
     expect(await within(fila).findByTestId('retorno-desbloqueio')).toHaveTextContent(
       'a tarefa não está bloqueada',

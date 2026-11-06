@@ -5,16 +5,17 @@ import type { ProposedAction, SessionEvent } from '../lib/api-types';
 import i18n from '../lib/i18n';
 
 const proposeAction = vi.fn();
-const showToast = vi.fn();
+const approveAction = vi.fn();
 
 vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
-  return { ...original, proposeAction: (...a: unknown[]) => proposeAction(...a) };
+  return {
+    ...original,
+    proposeAction: (...a: unknown[]) => proposeAction(...a),
+    approveAction: (...a: unknown[]) => approveAction(...a),
+  };
 });
 vi.mock('../lib/auth', () => ({ userIdDaSessao: () => 'user-1' }));
-vi.mock('../components/ui/ToastProvider', () => ({
-  useToast: () => ({ showToast }),
-}));
 
 const { MergearNoChat, jaHaMergeDaPr, prAbertaDaAcao } = await import('./MergearNoChat');
 const { ApiError } = await import('../lib/api-client');
@@ -97,43 +98,65 @@ function montar(podeDecidir = true, gatePendente: string | null = null) {
   );
 }
 
-describe('MergearNoChat (AT-266)', () => {
-  it('o clique PROPÕE git_merge como usuário, na sessão — não aprova nada por conta própria', async () => {
-    proposeAction.mockResolvedValue({});
-    montar();
+const decidida = (status: ProposedAction['status'], executionResult: ProposedAction['executionResult'] = null) =>
+  acao({ id: 'm-1', actionType: 'git_merge', status, executionResult });
 
+async function confirmarMerge() {
+  fireEvent.click(screen.getByRole('button', { name: 'Mergear' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Confirmar' }));
+}
+
+describe('MergearNoChat (AT-266, AT-753 UX-2)', () => {
+  it('o Mergear só pergunta; Cancelar não chama nada', () => {
+    montar();
     fireEvent.click(screen.getByRole('button', { name: 'Mergear' }));
+    expect(screen.getByTestId('mergear-confirmacao')).toHaveTextContent('Mergear #7 em dev?');
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(proposeAction).not.toHaveBeenCalled();
+    expect(approveAction).not.toHaveBeenCalled();
+    expect(screen.getByRole('button', { name: 'Mergear' })).toBeInTheDocument();
+  });
+
+  it('Confirmar PROPÕE git_merge como usuário e APROVA a proposta no mesmo gesto', async () => {
+    proposeAction.mockResolvedValue(decidida('pending'));
+    approveAction.mockResolvedValue(decidida('executed'));
+    montar();
+    await confirmarMerge();
 
     await waitFor(() =>
       expect(proposeAction).toHaveBeenCalledWith('proj-1', 's-1', {
         actionType: 'git_merge',
         actor: { kind: 'user', id: 'user-1' },
-        payload: {
-          pullRequestId: '7',
-          sourceBranch: 'feature/x',
-          targetBranch: 'dev',
-          title: 'feat: x',
-        },
+        payload: { pullRequestId: '7', sourceBranch: 'feature/x', targetBranch: 'dev', title: 'feat: x' },
       }),
     );
-    expect(screen.getByTestId('mergear-nota')).toHaveTextContent('quem confirma é você');
+    await waitFor(() => expect(approveAction).toHaveBeenCalledWith('proj-1', 's-1', 'm-1'));
+    expect(await screen.findByTestId('mergear-resultado')).toHaveTextContent('Mergeada');
   });
 
-  it('CASO DE FALHA: a recusa da api (409) vira toast com a frase dela', async () => {
+  it('CASO DE FALHA: a recusa da api (409) aparece na linha com a frase dela, sem aprovar', async () => {
     proposeAction.mockRejectedValue(new ApiError(409, { message: 'PR já mergeada.' }));
     montar();
+    await confirmarMerge();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Mergear' }));
+    expect(await screen.findByRole('alert')).toHaveTextContent('PR já mergeada.');
+    expect(approveAction).not.toHaveBeenCalled();
+  });
 
-    await waitFor(() =>
-      expect(showToast).toHaveBeenCalledWith(
-        expect.objectContaining({ message: 'PR já mergeada.', tone: 'danger' }),
-      ),
+  it('CASO DE FALHA: o merge que falha na execução mostra a causa e os arquivos em conflito', async () => {
+    proposeAction.mockResolvedValue(decidida('pending'));
+    approveAction.mockResolvedValue(
+      decidida('failed', { failed: true, error: 'Conflito ao mergear. Detalhes longos.', conflictingFiles: ['a.ts'] }),
     );
+    montar();
+    await confirmarMerge();
+
+    const alerta = await screen.findByRole('alert');
+    expect(alerta).toHaveTextContent('Conflito ao mergear. (a.ts)');
+    expect(alerta).not.toHaveTextContent('Detalhes longos');
   });
 
   it('gate pendente é AVISO (AT-249, RN-663): o texto nomeia o gate e o botão segue ativo', async () => {
-    proposeAction.mockResolvedValue({});
     montar(true, 'qa-verificada');
 
     expect(screen.getByTestId('aviso-gate-pendente')).toHaveTextContent(
@@ -142,7 +165,7 @@ describe('MergearNoChat (AT-266)', () => {
     const botao = screen.getByRole('button', { name: 'Mergear' });
     expect(botao).toBeEnabled();
     fireEvent.click(botao);
-    await waitFor(() => expect(proposeAction).toHaveBeenCalled());
+    expect(screen.getByTestId('mergear-confirmacao')).toBeInTheDocument();
   });
 
   it('sem gate pendente, nenhum aviso', () => {

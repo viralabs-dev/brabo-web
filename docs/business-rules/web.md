@@ -4896,16 +4896,21 @@ api, the engine and every ceiling stay as they are.
    de M"): a declared cut, as in [RN-180](#rn-180). The poll is the session's
    (5 s with the channel down, the 15 s fallback with it live — `intervaloDaSessao`),
    because the session channel does not announce another session's writes.
-4. **"Mergear" on the card of the open PR (AT-266).** Under the card of an executed
-   `pr_open`, and only when the `action.pr_open` event carries the PR id and there is no
-   live `git_merge` (pending, approved or auto-approved) for it, the button
-   PROPOSES the `git_merge` through the same endpoint as the PRs tab (actor `user`, in this
-   session). The proposal appears in the thread as the usual card, with Aprovar/Negar:
-   **the confirmation is the same and belongs to the human** — merge into a protected branch
-   remains unconditional `require_approval` ([RN-418](api.md#rn-418)), without auto-approval,
-   without "sempre permitir", without auto mode. The dedupe and the api's refusals
-   (PR already merged, merge already proposed — [RN-663](api.md#rn-663)) reach the owner as
-   the api's sentence; a pending gate is not a refusal, it is a text notice next to the button.
+4. **"Mergear" on the PR row (AT-266, AT-753 UX-2).** On the row of a ready PR and under
+   the card of an executed `pr_open` (only when the `action.pr_open` event carries the PR
+   id and there is no live `git_merge` — pending, approved or auto-approved — for it), the
+   button does not act: it opens the confirmation ON THE SAME ROW ("Mergear #6 em dev?
+   Confirmar / Cancelar"). Confirm PROPOSES the `git_merge` (actor `user`, in this session)
+   and APPROVES it in the same gesture, through the same two endpoints as the PRs tab and
+   the card, so both the proposal and the approval stay on the log. **The confirmation is
+   the human's** — merge into a protected branch remains unconditional `require_approval`
+   ([RN-418](api.md#rn-418)), without auto-approval, without "sempre permitir", without
+   auto mode; the Confirm click IS the approval. The outcome appears on the row:
+   "Mergeada", or the cause of the failure (the first sentence of `error` plus the
+   `conflictingFiles` of a `GitActionFailureResult`). The api's refusals (PR already
+   merged, merge already proposed — [RN-663](api.md#rn-663)) reach the owner as the api's
+   sentence; a pending gate is not a refusal, it is a text notice next to the button. A
+   merge proposed by an agent keeps the `ApprovalCard`.
 5. **The role is the ENDPOINT's, and the gap is declared.** Deciding an action and proposing
    an action require `developer` (`actions.controller.ts`); the screen uses `roleAtLeast`
    over the WORKSPACE role, because the Session does not fetch `project_members` — the
@@ -4914,8 +4919,16 @@ api, the engine and every ceiling stay as they are.
    text (`bloqueio` of `ApprovalCard`): what is taken away is the control, never the
    information.
 
-**What this rule does NOT close, declared:** (a) "Mergear" does not propose AND approve
-in a single click — it is two clicks, the proposal and the confirmation, on purpose;
+6. **What leaves a queue says so (AT-753 UX-7), and a blocked task has a short title
+   (UX-9).** `saidasDaFila` (`apps/web/src/lib/saidas-da-fila.ts`) compares the ids of the
+   previous read with the current one, per queue, and the block shows a dismissible
+   `role="status"` line ("Saiu da fila: 1 PR pronta"); questions answered on this screen
+   are left out because they have their own return. The title of a blocked task is the
+   part of `blockedReason` before the first " — " (decision P4, web only); the rest is the
+   diagnosis, in a closed `Disclosure`.
+
+**What this rule does NOT close, declared:** (a) if the approval call fails after the
+proposal was made, the proposal stays pending and the row shows it as the usual card;
 (b) resuming the turn reads the window of events already loaded, and an `agent.status`
 outside it is not seen (not knowing is not "is working"); (c) the list of
 pending items from other sessions has the ceiling of 20 cards, and the rest stays in the
@@ -4944,7 +4957,7 @@ still have NO inline decision (there is no `ApprovalCard` for them).
   `apps/web/src/routes/MergearNoChat.test.tsx:62` (PR from the event), `:75`
   (dedupe), `:100` (proposes as user, without approving), `:121` (api refusal —
   failure case), `:134` (role — failure case)
-- **Origin:** AT-256, AT-268, AT-265 and AT-266, from the analysis of the real use of
+- **Origin:** AT-256, AT-268, AT-265, AT-266 and AT-753 (UX-2, UX-7, UX-9), from the analysis of the real use of
   2026-09-29 (items 4, 5 and 10a), round 27, lane web-sessao
 
 ### RN-631 — The chat recipient is chosen and visible, and the handoff offer is matched by `handoffId` {#rn-631}
@@ -6928,7 +6941,9 @@ channel) still writes the list by hand: invalidating writes no data.
   to the card (history); without the block mounted (another screen, PR outside the queue), the
   thread shows the full card. The registration only holds while the card is
   MOUNTED: with the block collapsed (the `Disclosure` unmounts the content), the thread
-  shows the card. No endpoint or ceiling changes.
+  shows the card. No endpoint or ceiling changes. AT-753: the reference line carries a
+  "Ver o cartão" button that opens the "PRs prontas" tab (`brabo:abrir-fila`, which
+  generalizes the questions event), because the tab is born closed (AT-680).
 - **Where:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:520` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),

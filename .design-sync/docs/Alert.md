@@ -5,11 +5,11 @@ keywords: [alerta, aviso, erro, sucesso, mensagem, banner]
 
 # Alert
 
-A message block with an icon and a tone. It is for what the user must read
-before moving on, not for transient status (that is `Badge`) nor for action
-confirmation (that is a toast).
+Bloco de mensagem com ícone e tom. É para o que o usuário precisa ler antes de
+seguir — não para status passageiro, que é `Badge`, nem para confirmação de
+ação, que é toast.
 
-## How to use
+## Como usar
 
 ```tsx
 // O tom escolhe o ícone sozinho.
@@ -24,20 +24,20 @@ confirmation (that is a toast).
 <Alert tone="success" role="status">Link enviado.</Alert>
 ```
 
-## `role` is a choice, not a consequence of the tone
+## `role` é escolha, não consequência do tom
 
-This is the rule [ADR 0036] set and the one most often broken: `role="alert"` is
-an **assertive** live region: it interrupts the screen reader mid-sentence.
-`role="status"` waits for a pause. A `tone="danger"` that merely describes a
-screen state does not deserve to interrupt anyone, and a `tone="success"` that
-confirms the end of a long action sometimes does. Choose by what the message
-DOES, not by its color.
+Esta é a regra que o [ADR 0036] fixou e a que mais se erra: `role="alert"` é
+live region **assertiva** — interrompe o leitor de tela no meio da frase.
+`role="status"` espera a pausa. Um `tone="danger"` que só descreve um estado da
+tela não merece interromper ninguém, e um `tone="success"` que confirma o fim
+de uma ação longa às vezes merece. Escolha pelo que a mensagem FAZ, não pela
+cor dela.
 
-Without `role`, the block is decorative for screen-reader users, which is
-correct when the text is also visible in the flow.
+Sem `role`, o bloco é decorativo para quem navega por leitor — o que é correto
+quando o texto também está visível no fluxo.
 
-## What to respect
+## O que respeitar
 
-- **One Alert per topic.** Three stacked become noise and the user stops reading.
-- `children` accepts markup: a `<strong>` on the key term helps scanning.
-- `icon` only when the tone's default misrepresents the message.
+- **Um Alert por assunto.** Três empilhados viram ruído e o usuário para de ler.
+- O `children` aceita markup: `<strong>` no termo que importa ajuda a varredura.
+- `icon` só quando o default do tom mente sobre a mensagem.

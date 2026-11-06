@@ -5,10 +5,10 @@ keywords: [textarea, campo, texto, multilinha, formulário]
 
 # Textarea
 
-A multiline text field with label, hint and error: the sibling of `Input` for
-when the answer is a paragraph.
+Campo de texto multilinha com rótulo, apoio e erro — o irmão do `Input` para
+quando a resposta é um parágrafo.
 
-## How to use
+## Como usar
 
 ```tsx
 <Textarea
@@ -23,11 +23,10 @@ when the answer is a paragraph.
 <Textarea label="Motivo" error="Diga o que falta." />
 ```
 
-## What to respect
+## O que respeitar
 
-- **Use `label`, not your own `<label>`.** The component generates the id and
-  does the association, which is what makes clicking the label focus the field.
-- **`error` and `hint` do not coexist.** When there is an error, it replaces the
-  hint: two lines of text under the field compete, and the one that matters
-  loses.
-- It accepts the native `<textarea>` props (`rows`, `placeholder`, `maxLength`).
+- **Use `label`, não um `<label>` seu.** O componente gera o id e faz a
+  associação — é isso que faz o clique no rótulo focar o campo.
+- **`error` e `hint` não convivem.** Havendo erro, ele substitui o apoio: duas
+  linhas de texto sob o campo competem, e a que importa perde.
+- Aceita as props nativas de `<textarea>` (`rows`, `placeholder`, `maxLength`).

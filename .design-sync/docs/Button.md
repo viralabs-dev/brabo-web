@@ -5,10 +5,10 @@ keywords: [botão, ação, variante, submit]
 
 # Button
 
-The DS button. It forwards every `<button>` attribute by spread, so `type`,
-`disabled`, `onClick` and `aria-*` work as on the native element.
+O botão do DS. Repassa todos os atributos de `<button>` por spread, então
+`type`, `disabled`, `onClick` e `aria-*` funcionam como no elemento nativo.
 
-## How to use
+## Como usar
 
 ```tsx
 <Button variant="primary" onClick={aprovar}>Aprovar</Button>
@@ -16,18 +16,17 @@ The DS button. It forwards every `<button>` attribute by spread, so `type`,
 <Button variant="ghost" disabled>Sempre permitir</Button>
 ```
 
-## Choosing the variant
+## Escolhendo a variante
 
-- **primary**: the action the user came to do. At most one per screen.
-- **secondary**: the alternative of equal weight (the
-  "Negar" next to the "Aprovar").
-- **success** / **danger**: when the outcome of the action is what matters to
-  communicate: confirming something irreversible, ending a session.
-- **ghost**: a tertiary action that should not compete for attention.
+- **primary** — a ação que o usuário veio fazer. Uma por tela, no máximo.
+- **secondary** — a alternativa de mesmo peso (o "Negar" ao lado do "Aprovar").
+- **success** / **danger** — quando o resultado da ação é o que importa
+  comunicar: confirmar algo irreversível, encerrar uma sessão.
+- **ghost** — ação terciária, que não deve competir por atenção.
 
-## What to respect
+## O que respeitar
 
-- `fullWidth` is for a form submit or a wizard step, where the button fills the
-  column. Otherwise the button sizes to its content.
-- Do not put a lone icon inside a Button expecting a square button: it keeps the
-  label padding. Icon + text is the intended use.
+- `fullWidth` é para submit de formulário ou passo de wizard, onde o botão
+  ocupa a coluna. Fora disso o botão dimensiona pelo conteúdo.
+- Não coloque ícone sozinho dentro de um Button esperando um botão quadrado —
+  ele mantém o padding de rótulo. Ícone + texto é o uso previsto.

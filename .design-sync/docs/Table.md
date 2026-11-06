@@ -5,10 +5,10 @@ keywords: [tabela, lista, colunas, grid, backlog]
 
 # Table
 
-A CSS-grid table, generic over the row. Each column declares `render(row)`, so
-the cell can be any node: a Badge, mono text, a link.
+Tabela em CSS grid, genérica na linha. Cada coluna declara `render(row)`, então
+a célula pode ser qualquer nó — Badge, texto mono, link.
 
-## How to use
+## Como usar
 
 ```tsx
 const colunas = [
@@ -21,13 +21,13 @@ const colunas = [
   emptyMessage="Nenhuma ação aguardando sua decisão." />
 ```
 
-## What to respect
+## O que respeitar
 
-- `width` feeds `grid-template-columns` (default `1fr`). Mix `fr` for the column
-  that stretches and px for the fixed-width ones.
-- `rowKey` is required and must be stable; it is the React key.
-- The empty state keeps the header on purpose: the table does not collapse and
-  the user still sees what would be there.
-- **Beware of overlays inside a cell.** A dropdown open on the last row is
-  clipped by the table container unless it is positioned relative to the
-  viewport; that was a real product bug.
+- `width` alimenta o `grid-template-columns` (default `1fr`). Misture `fr` para
+  a coluna que estica e px para as de largura fixa.
+- `rowKey` é obrigatório e tem que ser estável — é a key do React.
+- O estado vazio preserva o cabeçalho de propósito: a tabela não colapsa e o
+  usuário continua vendo o que estaria ali.
+- **Cuidado com overlay dentro de célula.** Dropdown aberto na última linha é
+  recortado pelo container da tabela se não for posicionado em relação à
+  viewport — foi um bug real do produto.

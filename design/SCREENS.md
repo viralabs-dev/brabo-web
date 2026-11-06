@@ -1,429 +1,429 @@
-# Screens: layout extracted from claude.ai/design
+# Telas — layout extraído do claude.ai/design
 
-Same source as `COMPONENTS.md` (see there for the visual details of the
-components cited below). This file covers the COMPOSITION of each screen:
-which regions exist, how they are organized, and the state behavior of each.
+Mesma fonte de `COMPONENTS.md` (ver lá pra detalhes visuais dos
+componentes citados abaixo). Este arquivo cobre a COMPOSIÇÃO de cada tela
+— quais regiões existem, como se organizam, e o comportamento de estado
+de cada uma.
 
-## The living reference is `design_handoff_brabo/` (since 2026-08-08, FASE 16)
+## A referência viva é `design_handoff_brabo/` (desde 2026-08-08, FASE 16)
 
-The handoff is **versioned in the repository**: a `README.md` with the full
-specification (colors, typography, heights, radii, transitions, brand) and
-eight high-fidelity `.dc.html` files in `designs/`. It replaces
-`DesignSync(get_file)` as the way to recheck a detail; the source is no longer
-an external service that can vanish.
+O handoff está **versionado no repositório**: um `README.md` com a
+especificação completa (cores, tipografia, alturas, raios, transições, marca)
+e oito `.dc.html` de alta fidelidade em `designs/`. Ele substitui o
+`DesignSync(get_file)` como forma de reconferir um detalhe — a fonte não é
+mais um serviço externo que pode sumir.
 
-The `.dc.html` files are **design reference, not production code**: inline
-styles by prototype construction, and `designs/support.js` is the prototype
-runtime, which the handoff's README explicitly marks as **do not port**.
+Os `.dc.html` são **referência de design, não código de produção**: estilos
+inline por construção do protótipo, e `designs/support.js` é o runtime do
+protótipo, que o README do handoff marca explicitamente como **não portar**.
 
-Coverage, compared with this file:
+Cobertura, comparada com este arquivo:
 
-| handoff file | screen | composition written here |
+| arquivo do handoff | tela | composição escrita aqui |
 |---|---|---|
-| `Brabo Login.dc.html` | login and sibling screens | yes, section "Auth" |
-| `Brabo App.dc.html` | project list | yes, "App shell + Dashboard" |
-| `Brabo Project.dc.html` | project view | yes, "Projeto" |
-| `Brabo Session.dc.html` | session with agents | yes, "Sessão / Chat" |
-| `Brabo Approvals.dc.html` | approvals queue | yes, "Aprovações" |
-| `Brabo Settings.dc.html` | settings (AI + IAM) | yes, "Configurações" |
-| `Brabo Design System.dc.html` | visual foundation and components | it is `COMPONENTS.md`, not a screen |
-| `Brabo Code.dc.html` | code tab (IDE) | **no**, see below |
+| `Brabo Login.dc.html` | login e telas irmãs | sim — seção "Auth" |
+| `Brabo App.dc.html` | lista de projetos | sim — "App shell + Dashboard" |
+| `Brabo Project.dc.html` | visão de projeto | sim — "Projeto" |
+| `Brabo Session.dc.html` | sessão com agentes | sim — "Sessão / Chat" |
+| `Brabo Approvals.dc.html` | fila de aprovações | sim — "Aprovações" |
+| `Brabo Settings.dc.html` | configurações (IA + IAM) | sim — "Configurações" |
+| `Brabo Design System.dc.html` | fundação visual e componentes | é `COMPONENTS.md`, não tela |
+| `Brabo Code.dc.html` | aba de código (IDE) | **não** — ver abaixo |
 
-**Code tab (IDE):** the handoff specifies it entirely (48px rail, 252px
-explorer, editor with a 64px overlay minimap, bottom panel, 24px status bar,
-branch selector, syntax highlighting). The composition was **not** transcribed
-here because this screen's terminal became an architecture decision: a
-container per project, with the image decided by the Architect; writing the
-layout before the decision would pin a screen that the decision may move. In
-the meantime, the reference is the `.dc.html`.
+**Aba de código (IDE):** o handoff a especifica inteira (rail 48px, explorador
+252px, editor com minimapa overlay de 64px, painel inferior, status bar 24px,
+seletor de branch, realce de sintaxe). A composição **não** foi transcrita para
+cá porque o terminal dessa tela virou decisão de arquitetura — container por
+projeto, com a imagem decidida pelo Arquiteto — e escrever o layout antes da
+decisão seria fixar uma tela que a decisão pode mover. Enquanto isso, a
+referência é o `.dc.html`.
 
-**Brand divergence: RESOLVED in FASE 17a.** The handoff has **one** symbol, the
-B monogram (see `COMPONENTS.md`), and the product had two: the auth screens'
-`LogoMark`, which is the monogram, and the app shell's `BrandIcon`, an
-isometric cube with no counterpart in the handoff. The swap happened on the
-transition from login to the app. The shell now uses `LogoMark`; `BrandIcon`
-remains exported as a generic artifact icon, with the warning that it is **not**
-the brand.
+**Divergência de marca — RESOLVIDA na FASE 17a.** O handoff tem **um** símbolo,
+o monograma B (ver `COMPONENTS.md`), e o produto tinha dois: o `LogoMark` das
+telas de auth, que é o monograma, e o `BrandIcon` do app shell, um cubo
+isométrico sem contraparte no handoff. A troca acontecia na passagem do login
+para o app. O shell passou a usar o `LogoMark`; o `BrandIcon` continua exportado
+como ícone genérico de artefato, com a advertência de que **não** é a marca.
 
-## Deliberate divergences of Project and Session (FASE 17b)
+## Divergências deliberadas de Projeto e Sessão (FASE 17b)
 
-Both screens were rewritten against `Brabo Project.dc.html` and
-`Brabo Session.dc.html`. What follows was **not** ported, and each item has a
-reason; the list exists so that the next reading of the handoff does not treat
-as an oversight what was a decision.
+As duas telas foram reescritas contra `Brabo Project.dc.html` e
+`Brabo Session.dc.html`. O que segue **não** foi portado, e cada item tem
+motivo — a lista existe para que a próxima leitura do handoff não trate como
+esquecimento o que foi decisão.
 
-**The logo in the screen header.** Both `.dc.html` files open with the monogram
-at 30px (Project) and 28px (Session) followed by a vertical divider. The
-prototypes are ISOLATED screens, without the shell; in the product both live
-inside it, and the brand is already in the sidebar. Repeating it 250px away is
-noise, not fidelity.
+**O logo no cabeçalho da tela.** Os dois `.dc.html` abrem com o monograma de
+30px (Projeto) e 28px (Sessão) seguido de uma divisória vertical. Os protótipos
+são telas ISOLADAS, sem o shell; no produto as duas vivem dentro dele, e a marca
+já está na sidebar. Repeti-la a 250px de distância é ruído, não fidelidade.
 
-**Data that does not exist.** The Project header shows the policy chain
-(`dev → qa → rc → main`), the current commit hash and `↑3 ↓1`; the Session bar
-shows the duration (`24min`). None of that is in what the api returns today:
-`ProvisionedRepository` carries `defaultBranch` and nothing else about repo
-state. What exists is shown; the rest is pending, not invention.
+**Dados que não existem.** O cabeçalho do Projeto mostra a cadeia da política
+(`dev → qa → rc → main`), o hash do commit corrente e `↑3 ↓1`; a barra da Sessão
+mostra a duração (`24min`). Nada disso está no que a api devolve hoje —
+`ProvisionedRepository` traz `defaultBranch` e mais nada de estado do repo. O
+que existe é mostrado; o resto é pendência, não invenção.
 
-**The agent team's empty state** ("Nenhum agente no time ainda" + button
-"Adicionar agentes") is **unreachable** in the product: agent presence is a
-RULE, not an editable list; `rosterFromFacts` always returns at least Criativo,
-PO and Arquiteto. An empty state that no path produces is dead code, and the
-button would promise an action that does not exist.
+**O estado vazio do time de agentes** ("Nenhum agente no time ainda" + botão
+"Adicionar agentes") é **inalcançável** no produto: a presença de agente é uma
+REGRA, não uma lista editável — `rosterFromFacts` sempre devolve pelo menos
+Criativo, PO e Arquiteto. Um estado vazio que nenhum caminho produz é código
+morto, e o botão prometeria uma ação que não existe.
 
-**Code and terminal blocks inside the bubble** (header with file name, mono
-body over `--code-bg`, `rtk −78%` badge) depend on the agent's response being
-structured. It is text today. Pending.
+**Blocos de código e de terminal dentro da bolha** (header com nome do arquivo,
+corpo mono sobre `--code-bg`, badge `rtk −78%`) dependem de a resposta do agente
+ser estruturada. Ela é texto hoje. Pendência.
 
-**The bubble text color** stays at `--text-primary`, and the handoff asks for
-`--text-secondary`. The message content is the densest reading surface in the
-product, and the `--text-secondary` over `--surface-1` pair sits at the border
-of the AA floor measured in `apps/web/src/lib/contraste.test.ts`.
+**A cor do texto da bolha** fica em `--text-primary`, e o handoff pede
+`--text-secondary`. O conteúdo da mensagem é a superfície de leitura mais densa
+do produto, e o par `--text-secondary` sobre `--surface-1` fica na fronteira do
+piso AA medido em `apps/web/src/lib/contraste.test.ts`.
 
-**The tab ruler's numeric badge** stays solid (`--accent` with
-`--on-accent`), and the handoff asks for it tinted (`--accent` at 18% with text
-in `--accent`). The tinted one uses a pair that is already in the recorded
-contrast debt (3.88:1), and the badge is 10px text.
+**O selo numérico da régua de abas** continua sólido (`--accent` com
+`--on-accent`), e o handoff o pede tingido (`--accent` a 18% com texto em
+`--accent`). O tingido usa um par que já está na dívida de contraste registrada
+(3,88:1), e o selo é texto de 10px.
 
-**The horizontal tab ruler no longer exists** (ADR 0126). Project navigation
-was a VERTICAL RAIL (`ProjectRail.tsx`, removed in ADR 0211), with the three
-groups open at the same time: 12 tabs in 3 groups did not fit in a bar designed
-for half a dozen items. The geometry is that of the Code tab's rail
-(`--surface-1` strip, 32px item at `--radius-sm`, active tinted at 12% of
-`--accent`), with one declared divergence: 180px wide instead of 48px, because
-this rail carries a label and a group header, not an icon.
+**A régua horizontal de abas não existe mais** (ADR 0126). A navegação do
+Projeto era um TRILHO VERTICAL (`ProjectRail.tsx`, removido no ADR 0211), com os
+três grupos abertos ao mesmo tempo — 12 abas em 3 grupos não cabiam numa barra
+desenhada para meia dúzia de itens. A geometria é a do trilho da aba Código
+(faixa `--surface-1`, item de 32px em `--radius-sm`, ativo tingido a 12% de
+`--accent`), com uma divergência declarada: 180px de largura em vez de 48px,
+porque este trilho carrega rótulo e cabeçalho de grupo, e não ícone.
 
-**The rail left in ADR 0211** (AT-404): project navigation is the project's
-list in the SIDEBAR (`apps/web/src/routes/AbasDoProjeto.tsx`), with the same
-groups, the same item geometry (28px, `--fs-sm`, active in `--accent-soft`) and
-the five separate counters. Collapsed, the open project opens a flyout with the
-same tabs; on the phone, they live in the drawer. The Code tab's frame dropped
-from 492px to 312px (110px collapsed).
+**O trilho saiu no ADR 0211** (AT-404): a navegação do projeto é a lista do
+projeto na SIDEBAR (`apps/web/src/routes/AbasDoProjeto.tsx`), com os mesmos
+grupos, a mesma geometria de item (28px, `--fs-sm`, ativo em `--accent-soft`) e
+os cinco contadores separados. Recolhida, o projeto aberto abre um flyout com as
+mesmas abas; no telefone, elas moram na gaveta. A moldura da aba Código caiu de
+492px para 312px (110px recolhida).
 
-The pending item this paragraph used to record (per-tab spacing, interval and
-divider adjusted by the CALLER's CSS (`ProjectPage.module.css`) instead of in
-the primitive) **closed before that, in ADR 0078**: the values migrated to
-`components/ui/Tabs.module.css`, which documents the migration at the top of
-the file, and `ProjectPage.module.css` kept only the side spacing (later
-removed along with the ruler). The `Tabs` primitive continues to exist as a
-design system piece (`ds-bundle/components/primitivas/Tabs`), now with no caller
-inside the app.
+A pendência que este parágrafo registrava — respiro por aba, intervalo e
+divisória ajustados por CSS do CHAMADOR (`ProjectPage.module.css`) em vez de
+na primitiva — **fechou antes disso, no ADR 0078**: os valores migraram para
+`components/ui/Tabs.module.css`, que documenta a migração no topo do arquivo,
+e no `ProjectPage.module.css` sobrou só o respiro lateral (depois removido com
+a régua). A primitiva `Tabs` continua existindo como peça do design system
+(`ds-bundle/components/primitivas/Tabs`), agora sem chamador dentro do app.
 
 ## App shell + Dashboard (`Brabo App.dc.html`)
 
-Layout: `display:flex;height:100vh`: fixed sidebar (248px) + main column
-(`flex:1`).
+Layout: `display:flex;height:100vh` — sidebar fixa (248px) + coluna
+principal (`flex:1`).
 
-**Sidebar** (`var(--surface-1)`, `border-right`): logo+name at the top;
-label "PROJETOS" (mono uppercase, muted); project list (nav, each item = color
-dot + truncated mono name + conditional unread badge, active = `surface-2`
-background); fixed footer with 2 buttons ("Chat global", "Configurações";
-outside this implementation's scope, it is global navigation) + logged-in user
-card (34×34 avatar radius 8px with initials, name + RBAC role). The avatar is
-SOLID `var(--accent)`, not the handoff's gradient: the mix with `--warning`
-drops the initials' contrast to 2.10:1, and the handoff does not specify a
-seniority the product has to show.
+**Sidebar** (`var(--surface-1)`, `border-right`): logo+nome no topo;
+label "PROJETOS" (mono uppercase, muted); lista de projetos (nav, cada
+item = dot de cor + nome mono truncado + badge de não-lidos condicional,
+ativo = fundo `surface-2`); rodapé fixo com 2 botões ("Chat global",
+"Configurações" — fora do escopo desta implementação, é navegação
+global) + card do usuário logado (avatar 34×34 radius 8px com iniciais, nome +
+papel RBAC). O avatar é `var(--accent)` SÓLIDO, não o gradiente do handoff: a
+mistura com `--warning` derruba o contraste das iniciais para 2.10:1, e o
+handoff não especifica senioridade que o produto tenha para mostrar.
 
-Deliberate divergence from the mock: a "+" button (icon only, 22×22px) next to
-the "PROJETOS" label, which opens the SAME `NewProjectWizard` as the topbar
-button. The mock only draws "Novo projeto" in the Dashboard topbar, but the
-sidebar is the PERSISTENT layout (`Shell.tsx`, mounted on every
-`/projects/$projectId/**` route); without it, creating a second project while
-inside an already open one required manually going back to `/`. The two coexist
-on purpose: they live in distinct visual regions, and there is no perceptible
-redundancy on the only screen where both appear (the dashboard).
+Divergência do mock, deliberada: um botão "+" (ícone só, 22×22px) ao lado do
+label "PROJETOS", que abre o MESMO `NewProjectWizard` do botão da topbar. O
+mock só desenha "Novo projeto" na topbar do Dashboard, mas a sidebar é o
+layout PERSISTENTE (`Shell.tsx`, montado em toda rota `/projects/$projectId/**`)
+— sem ele, criar um segundo projeto estando dentro de um já aberto exigia
+voltar manualmente para `/`. Os dois convivem de propósito: moram em regiões
+visuais distintas, e não há redundância perceptível na única tela onde ambos
+aparecem (o dashboard).
 
-**Topbar** (60px, `border-bottom`): title "Projetos" on the left; search
-(input with icon, 260px); `NotificationBell`; primary button "+ Novo
-projeto" (opens the wizard, see `COMPONENTS.md`).
+**Topbar** (60px, `border-bottom`): título "Projetos" à esquerda; busca
+(input com ícone, 260px); `NotificationBell`; botão primary "+ Novo
+projeto" (abre o wizard, ver `COMPONENTS.md`).
 
-**Main**: summary line (`"{N} projetos ativos · {N} agentes · R$ {X}
-este mês"`, mono) + responsive grid (`repeat(auto-fill, minmax(340px,1fr))`)
-of `ProjectCard`.
+**Main**: linha de resumo (`"{N} projetos ativos · {N} agentes · R$ {X}
+este mês"`, mono) + grid responsivo (`repeat(auto-fill, minmax(340px,1fr))`)
+de `ProjectCard`.
 
-**Notif dropdown**: see `COMPONENTS.md` (`NotificationBell`); opens anchored at
-the top right, a clickable invisible overlay closes it.
+**Notif dropdown**: ver `COMPONENTS.md` (`NotificationBell`) — abre
+ancorado no topo direito, overlay invisível clicável fecha.
 
-## Project: Overview (`Brabo Project.dc.html`)
+## Projeto — Visão geral (`Brabo Project.dc.html`)
 
-Layout: fixed header + body with tabs; the overview has 2 columns
-(`flex:1` content + fixed 360px aside).
+Layout: header fixo + corpo com tabs; overview tem 2 colunas
+(`flex:1` conteúdo + aside 360px fixo).
 
-**Header**: provider icon + project name (Space Grotesk 700 20px)
-+ badge `"{provider} · {visibilidade}"`; below, mono metadata
-(current branch policy `dev → qa → rc → main`, commit hash,
-`↑N ↓N` ahead/behind); the project's `TokenMeter` (alert variant
-when ≥90%, see `COMPONENTS.md`) aligned right; "ver estado vazio"
-toggle (dev-only, to preview the empty state).
+**Header**: ícone do provider + nome do projeto (Space Grotesk 700 20px)
++ badge `"{provider} · {visibilidade}"`; abaixo, metadata mono
+(política de branch atual `dev → qa → rc → main`, hash do commit,
+`↑N ↓N` ahead/behind); `TokenMeter` do projeto (variante com alerta
+quando ≥90%, ver `COMPONENTS.md`) alinhado à direita; toggle
+"ver estado vazio" (dev-only, pra visualizar o empty state).
 
-**Tabs**: "Visão geral" / "Sessões" / "Aprovações" (badge with pending count) /
-"Configurações". "Sessões"/"Backlog" appear in the mockup but their content is out
-of this screen's scope (generic placeholder "Conteúdo desta aba fora do
-escopo desta tela"; in this implementation, Sessões becomes a simple real
-screen, see plan; Backlog is not in the request, omit it).
+**Tabs**: Visão geral / Sessões / Aprovações (badge com contagem de
+pendentes) / Configurações. Sessões/Backlog aparecem no mockup mas o
+conteúdo delas está fora do escopo desta tela (placeholder genérico
+"Conteúdo desta aba fora do escopo desta tela" — nesta implementação,
+Sessões vira uma tela real simples, ver plano; Backlog não existe no
+pedido, omitir).
 
-**"Time de agentes" region** (main area): header with count
-(`"{N} agentes · {N} trabalhando · {N} aguardando"`); grid of
-`AgentCard` (`repeat(auto-fill, minmax(300px,1fr))`) with the manual/auto
-autonomy toggle per card. Empty state (newly created project):
-icon illustration + title + text + "Adicionar agentes" button
-(dashed border, centered).
+**Região "Time de agentes"** (área principal): header com contagem
+(`"{N} agentes · {N} trabalhando · {N} aguardando"`); grid de
+`AgentCard` (`repeat(auto-fill, minmax(300px,1fr))`) com o toggle de
+autonomia manual/auto por card. Estado vazio (projeto recém-criado):
+ilustração de ícone + título + texto + botão "Adicionar agentes"
+(dashed border, centralizado).
 
-**"Atividade" aside**: header with count; filter select by agent
-+ type filter chips (see `COMPONENTS.md` EventItem); scrollable list of
-`EventItem`; empty state with a contextual message.
+**Aside "Atividade"**: header com contagem; select de filtro por agente
++ chips de filtro por tipo (ver `COMPONENTS.md` EventItem); lista
+scrollável de `EventItem`; estado vazio com mensagem contextual.
 
-## Session / Chat (`Brabo Session.dc.html`)
+## Sessão / Chat (`Brabo Session.dc.html`)
 
-Layout: `flex-direction:column`, topbar (60px) + body (`flex:1` chat +
-optional 320px aside).
+Layout: `flex-direction:column`, topbar (60px) + corpo (`flex:1` chat +
+aside opcional 320px).
 
-**Topbar**: pulsing green dot + session title + mono metadata
+**Topbar**: dot pulsante verde + título da sessão + metadata mono
 (`"{projeto} · #{id-curto} · {duração}"`); `ModelPicker` (dropdown,
-compact trigger); "live" variant `TokenMeter` (220px); "Encerrar" button
-(ghost, danger color); context panel toggle button (icon of a layout with a
-column).
+trigger compacto); `TokenMeter` variante "ao vivo" (220px); botão
+"Encerrar" (ghost, cor danger); botão de toggle do painel de contexto
+(ícone de layout com coluna).
 
-**Chat** (`max-width:780px`, centered): stacked messages
-(`gap:20px`), each one = avatar (gradient for the user; geometric icon
-colored per agent for the others, see the palette in `COMPONENTS.md`) + name
-(agent color) + meta (model · time) + bubble (`var(--surface-1)`,
-`border-top-left-radius:2px`: tail at the top-left corner).
-The bubble content can include, besides text: code/diff block
-(header with file name + "diff" badge, mono body over
-`var(--code-bg)`, colored +/- lines) and terminal block (header
-"terminal · output" + optional `rtk −N%` badge when there is compression,
-mono body). Handoff divider between agents: horizontal line + central pill
-(`"{agente A} → passou o bastão ao {agente B}"`). `ApprovalCard`
-appears inline as one more "message" when a `pending` action arrives
-(same component as the Approvals queue, compact variant without batch
-selection). Typing indicator: avatar + 3 dots blinking in sequence
-+ text `"{agente} está aguardando aprovação…"` (or "digitando", depending on
-the real state).
+**Chat** (`max-width:780px`, centralizado): mensagens empilhadas
+(`gap:20px`), cada uma = avatar (gradiente pro usuário; ícone geométrico
+colorido por agente pros demais, ver paleta em `COMPONENTS.md`) + nome
+(cor do agente) + meta (modelo · tempo) + bolha (`var(--surface-1)`,
+`border-top-left-radius:2px` — cauda no canto superior esquerdo).
+Conteúdo da bolha pode incluir, além de texto: bloco de código/diff
+(header com nome do arquivo + badge "diff", corpo mono sobre
+`var(--code-bg)`, linhas +/- coloridas) e bloco de terminal (header
+"terminal · output" + badge opcional `rtk −N%` quando há compressão,
+corpo mono). Divisor de handoff entre agentes: linha horizontal + pílula
+central (`"{agente A} → passou o bastão ao {agente B}"`). `ApprovalCard`
+aparece inline como mais uma "mensagem" quando uma ação `pending` chega
+(mesmo componente da fila de Aprovações, variante compacta sem seleção
+em lote). Indicador de digitação: avatar + 3 dots piscando em sequência
++ texto `"{agente} está aguardando aprovação…"` (ou "digitando", conforme
+o estado real).
 
-**Context aside** (collapsible): 3 sections with an uppercase mono header:
-"Artefatos gerados" (file+icon+author list), "Decisões
-registradas" (list with colored dot + text), "Arquivos tocados"
-(git-status-style list: colored M/A letter + path + `+N −N`).
+**Aside de contexto** (colapsável): 3 seções com header uppercase mono —
+"Artefatos gerados" (lista de arquivo+ícone+autor), "Decisões
+registradas" (lista com dot colorido + texto), "Arquivos tocados"
+(lista estilo git status: letra M/A colorida + path + `+N −N`).
 
-**Composer**: not explicitly detailed in the extracted mockup (the typing
-interaction is implicit); implement it as a multi-line text input fixed at the
-bottom of the chat, styled consistently with the other inputs
-(`COMPONENTS.md`), with a send button; disabled during streaming.
+**Composer**: não detalhado explicitamente no mockup extraído (a
+interação de digitar é implícita) — implementar como um input de texto
+multi-linha fixo no rodapé do chat, estilo consistente com os outros
+inputs (`COMPONENTS.md`), com botão de enviar; desabilitado durante
+streaming.
 
-## Approvals (`Brabo Approvals.dc.html`)
+## Aprovações (`Brabo Approvals.dc.html`)
 
-Layout: single column, centered `max-width:960px`. Project header
-(same name+badge pattern) + tabs (same 5, "Aprovações" active).
+Layout: coluna única, `max-width:960px` centralizada. Header do projeto
+(mesmo padrão de nome+badge) + tabs (mesmas 5, "Aprovações" ativa).
 
-**"Pendentes" section**: header with title (Space Grotesk 600/17) and the mono
-caption "ordenadas por urgência" on the SAME baseline; batch selection bar on
-the right of the header (shows only with an active selection, see
-`COMPONENTS.md`); list of `ApprovalCard` (variant with checkbox + urgency
-badge); empty state in a dashed frame with a 48px tile and the sentence
+**Seção "Pendentes"**: header com título (Space Grotesk 600/17) e a legenda
+mono "ordenadas por urgência" na MESMA linha de base; barra de seleção em
+lote à direita do header (aparece só com seleção ativa, ver
+`COMPONENTS.md`); lista de `ApprovalCard` (variante com checkbox + badge de
+urgência); estado vazio em moldura tracejada com tile de 48px e a frase
 "Nenhuma aprovação pendente. O time está fluindo.".
 
-Three deliberate divergences from the `.dc.html`, all for lack of data or by
-product decision:
+Três divergências deliberadas em relação ao `.dc.html`, todas por falta de
+dado ou por decisão de produto:
 
-1. **"Selecionar todas"** (the button the mockup shows when there is no
-   selection) does NOT exist. Select all followed by "Aprovar selecionados"
-   turns mass approval into one click, and how many approvals fit in one
-   gesture is a product decision, not visual fidelity. "Limpar" came in;
-   this one did not.
-2. **Urgency is not derived.** `ApprovalCard` knows how to draw the pill
-   (`crítico`/`alta`/`normal`), but nothing in the domain classifies a
-   `proposed_action` by urgency, so the queue does not pass the prop and
-   ordering remains by `seq`. The caption "ordenadas por urgência" follows the
-   design's text and today describes an intent, not what happens.
-3. **The GRANTED BY and WHEN columns** of the rules table do not exist:
-   `permissions.json` stores patterns, not authorship or date.
+1. **"Selecionar todas"** (o botão que o mockup mostra quando não há
+   seleção) NÃO existe. Selecionar tudo seguido de "Aprovar selecionados"
+   torna a aprovação em massa um clique — e quantas aprovações cabem num
+   gesto é decisão de produto, não de fidelidade visual. "Limpar" entrou;
+   este não.
+2. **A urgência não é derivada.** O `ApprovalCard` sabe desenhar a pílula
+   (`crítico`/`alta`/`normal`), mas nada no domínio classifica uma
+   `proposed_action` por urgência, então a fila não passa a prop e a
+   ordenação continua por `seq`. A legenda "ordenadas por urgência" segue o
+   texto do desenho e hoje descreve uma intenção, não o que acontece.
+3. **As colunas CONCEDIDO POR e QUANDO** da tabela de regras não existem:
+   `permissions.json` guarda padrões, não autoria nem data.
 
-**"Permissões do projeto" section**: header + subtitle referencing
-`.brabo/permissions.json`; fixed warning banner (icon + text):
-`"Ordem de avaliação: deny sempre vence allow, independente da ordem no arquivo."` (soft `var(--warning)` background, text with `deny`/`allow`
-highlighted in `var(--danger)`/`var(--success)` mono); search (input,
-340px) filtering by pattern/type/granted-by; dense rules table
-(columns: PADRÃO mono, TIPO allow/deny/ask badge, CONCEDIDO POR,
-"QUANDO", "AÇÃO" = per-row revoke button, trash icon, hover turns
-red). Revoking removes the row from the local list (in the real implementation:
-removes the pattern from the corresponding array, `allow`/`deny`/`ask`
-depending on the row's TYPE, and persists via `PUT .../permissions`).
+**Seção "Permissões do projeto"**: header + subtítulo referenciando
+`.brabo/permissions.json`; banner fixo de aviso (ícone + texto):
+`"Ordem de avaliação: deny sempre vence allow, independente da ordem no
+arquivo."` (`var(--warning)` de fundo suave, texto com `deny`/`allow`
+destacados em `var(--danger)`/`var(--success)` mono); busca (input,
+340px) filtrando por padrão/tipo/concedido-por; tabela densa de regras
+(colunas: PADRÃO mono, TIPO badge allow/deny/ask, CONCEDIDO POR,
+QUANDO, AÇÃO = botão de revogar por linha, ícone de lixeira, hover vira
+vermelho). Revogar remove a linha da lista local (na implementação real:
+remove o padrão do array correspondente — `allow`/`deny`/`ask` conforme
+o TIPO da linha — e persiste via `PUT .../permissions`).
 
-## Settings (`Brabo Settings.dc.html`)
+## Configurações (`Brabo Settings.dc.html`)
 
-Layout: same header+tabs structure (`max-width:1040px`, left-aligned since ADR
-0244), 2 sections.
+Layout: mesma estrutura de header+tabs (`max-width:1040px`, alinhada à esquerda desde o ADR 0244), 2 seções.
 
-**"Modelos por agente" section**: subtitle explaining the cascade
-(`global → projeto → agente`, colors muted/warning/accent respectively;
-note: in the mockup text the labels used are "global/projeto/agente",
-but the real API vocabulary is `workspace/project/agent/session`; use
-the real API vocabulary in the implementation, mapping visually to the
-same 3 color levels + adding "sessão" as a 4th level
-when applicable); team estimated cost summary (card with a clock
-icon); dense table (AGENTE with avatar+name, MODELO VIGENTE =
-inline `ModelPicker` dropdown, ORIGEM = badge colored by the cascade
-level, FALLBACK mono, EST. MÊS).
+**Seção "Modelos por agente"**: subtítulo explicando a cascata
+(`global → projeto → agente`, cores muted/warning/accent respectivamente
+— nota: no texto do mockup os rótulos usados são "global/projeto/agente",
+mas o vocabulário real da API é `workspace/project/agent/session`; usar
+o vocabulário real da API na implementação, mapeando visualmente pros
+mesmos 3 níveis de cor + acrescentando "sessão" como 4º nível quando
+aplicável); resumo de custo estimado do time (card com ícone de
+relógio); tabela densa (AGENTE com avatar+nome, MODELO VIGENTE =
+`ModelPicker` inline dropdown, ORIGEM = badge colorido pelo nível da
+cascata, FALLBACK mono, EST. MÊS).
 
-**"Membros e papéis" section**: subtitle; invite bar (email input
-+ role select + "Convidar" button); members table
-(MEMBRO = gradient avatar+name+email, PAPEL NO PROJETO = inline select,
-STATUS = dot+text "ativo"/"convite", action = remove button); summarized
-matrix "Quem pode aprovar o quê" (table: action type × role,
-check/dash per cell), mockup rows: Merge/abrir PR, Deploy em
-"produção", "Comando privilegiado", "Alterar schema/migração", "Editar
-permissions.json"; columns owner/maintainer/developer/viewer. This matrix
-is illustrative/static in the implementation (it reflects `MIN_ROLE_FOR_ACTION_TYPE`
-of the backend where applicable: terminal/git_commit≥developer,
-git_push/pr_open≥maintainer, spend≥owner, but the "Merge/PR" and
-"Editar permissions.json" rows have no granular role check
-implemented in the backend today; keep the table informative, not
-editable).
+**Seção "Membros e papéis"**: subtítulo; barra de convite (input de
+e-mail + select de papel + botão "Convidar"); tabela de membros
+(MEMBRO = avatar gradiente+nome+email, PAPEL NO PROJETO = select inline,
+STATUS = dot+texto "ativo"/"convite", ação = botão remover); matriz
+resumida "Quem pode aprovar o quê" (tabela: tipo de ação × papel,
+check/traço por célula) — linhas do mockup: Merge/abrir PR, Deploy em
+produção, Comando privilegiado, Alterar schema/migração, Editar
+permissions.json; colunas owner/maintainer/developer/viewer. Esta matriz
+é ilustrativa/estática na implementação (reflete `MIN_ROLE_FOR_ACTION_TYPE`
+do backend onde aplicável — terminal/git_commit≥developer,
+git_push/pr_open≥maintainer, spend≥owner — mas as linhas "Merge/PR" e
+"Editar permissions.json" não têm checagem de papel granular
+implementada no backend hoje; manter a tabela como informativa, não
+editável).
 
-**"Credenciais de provider" section**: it is the handoff's "Conectores de IA"
-(section 7, item 4), with the same design: grid
-`repeat(auto-fill, minmax(300px, 1fr))`, one card per provider with a 2px
-left border in the connector's color, 28px chip with the two-letter acronym,
-name (Space Grotesk 600/14), type in mono 10 uppercase
-(`credencial de provider` / `hub de providers`) and status dot, pulsing in
-`var(--success)` when there is a key, dimmed when there is not.
+**Seção "Credenciais de provider"** — é a "Conectores de IA" do handoff
+(seção 7, item 4), com o mesmo desenho: grid
+`repeat(auto-fill, minmax(300px, 1fr))`, um card por provider com borda
+esquerda de 2px na cor do conector, chip de 28px com a sigla de duas
+letras, nome (Space Grotesk 600/14), tipo em mono 10 uppercase
+(`credencial de provider` / `hub de providers`) e ponto de status —
+pulsante em `var(--success)` quando há chave, apagado quando não há.
 
-The acronym comes from the CAPITALS of the name (`OA`, `OR`, `NV`), and not
-from the first letter of each word: "OpenAI" and "OpenRouter" are one word
-each and both gave `OP`.
+A sigla sai das MAIÚSCULAS do nome (`OA`, `OR`, `NV`), e não da primeira
+letra de cada palavra: "OpenAI" e "OpenRouter" são uma palavra só cada e
+davam `OP` os dois.
 
-**The divergence:** where the mockup shows the masked credential
-(`sk-ant-api03-••••7f2c`), the implementation shows "Configurada em {data} ·
-nunca reexibida" or "Nenhuma credencial salva". The key is write-only and
-never comes back from the server (ADR 0050); the masked prefix would require
-storing a piece of it in the clear. The card keeps the same mono box over
-`var(--code-bg)`, the replace field and the save/test/remove buttons.
+**A divergência:** onde o mockup mostra a credencial mascarada
+(`sk-ant-api03-••••7f2c`), a implementação mostra "Configurada em {data} ·
+nunca reexibida" ou "Nenhuma credencial salva". A chave é write-only e
+nunca volta do servidor (ADR 0050) — o prefixo mascarado exigiria guardar
+em claro um pedaço dela. O card mantém a mesma caixa mono sobre
+`var(--code-bg)`, o campo de troca e os botões salvar/testar/remover.
 
-**Does not exist yet:** the "Melhores modelos por capacidade" section (ranking
-by capability with score and "used by"). It depends on a per-model quality
-metric that the product does not compute.
+**Ainda não existe:** a seção "Melhores modelos por capacidade" (ranking
+por capacidade com score e "usado por"). Ela depende de uma métrica de
+qualidade por modelo que o produto não calcula.
 
-## Auth: Login and sibling screens (`Brabo Login.dc.html`)
+## Auth — Login e telas irmãs (`Brabo Login.dc.html`)
 
-**A different source from the five above.** This mockup was created in the same
-design project (`1c960ca8-5e00-4558-8ced-80dfbdf01027`) but **after** the
-2026-07-23 extraction; the auth screens were born in Phase 7a with no mockup at
-all, because until the cutover it was Keycloak that served this surface.
-Extracted on 2026-07-30. Decisions and divergences in
+**Fonte diferente das cinco acima.** Este mockup foi criado no mesmo projeto
+de design (`1c960ca8-5e00-4558-8ced-80dfbdf01027`) mas **depois** da extração
+de 2026-07-23 — as telas de auth nasceram na Fase 7a sem mockup nenhum,
+porque até o corte era o Keycloak que servia essa superfície. Extraído em
+2026-07-30. Decisões e divergências no
 [ADR 0036](../docs/adr/0036-telas-de-auth-fieis-ao-design-e-fontes-auto-hospedadas.md).
 
-Four screens share the frame: `/login`, `/registrar`,
+Quatro telas compartilham a moldura: `/login`, `/registrar`,
 `/esqueci-senha`, `/definir-senha`.
 
-### Frame (holds for all four)
+### Moldura (vale para as quatro)
 
-`min-height:100vh` page, flex centered, `position:relative;
-overflow:hidden`, background `var(--surface-0)`, vertical padding 32px / side
-padding 24px. Two decorative layers, both `aria-hidden`:
+Página `min-height:100vh` flex centrado, `position:relative;
+overflow:hidden`, fundo `var(--surface-0)`, padding vertical 32px / lateral
+24px. Duas camadas decorativas, ambas `aria-hidden`:
 
-- **grid**: `inset:0`, two crossed 1px `linear-gradient`s in
-  `var(--border)`, `background-size:64px 64px`, `opacity:.22`: the graph
-  paper that gives the reading of an engineering tool;
-- **glow**: 900×520 ellipse at `top:-160px`, centered,
+- **grade**: `inset:0`, duas `linear-gradient` cruzadas de 1px em
+  `var(--border)`, `background-size:64px 64px`, `opacity:.22` — o papel
+  milimetrado que dá a leitura de ferramenta de engenharia;
+- **brilho**: elipse 900×520 em `top:-160px`, centrada,
   `radial-gradient(closest-side, color-mix(in srgb, var(--success) 14%,
-  transparent), transparent)`, clipped by the page's `overflow`.
+  transparent), transparent)`, cortada pelo `overflow` da página.
 
-Container `max-width:412px`, entry `bfade .4s ease both` (zeroed under
-`prefers-reduced-motion`, which keeps the keyframe's final state).
+Container `max-width:412px`, entrada `bfade .4s ease both` (zerada em
+`prefers-reduced-motion`, que mantém o estado final do keyframe).
 
-**Two-column mode** (only `/login`; see below). When the screen supplies
-`colunaDeIdentidade`, the container becomes a two-column `flex` (`max-width:940px`,
-gap 64px, `align-items:center`): identity and environment on the left, the
-412px card on the right. Below a 900px viewport the mode is undone entirely and
-goes back to being the 412px stack. This is CSS and not a second JSX: the two
-wrappers (`.colunaIdentidade`, `.colunaFormulario`) **always** exist in the DOM
-and are `display:contents` by default; the tree, and therefore the `Tab` order
-and the `<section>` → `<footer>` neighborhood, is the same on all four screens.
+**Modo de duas colunas** (só `/login` — ver abaixo). Quando a tela entrega
+`colunaDeIdentidade`, o container vira `flex` de duas colunas (`max-width:940px`,
+gap 64px, `align-items:center`): identidade e ambiente à esquerda, o card de
+412px à direita. Abaixo de 900px de viewport o modo se desfaz por completo e
+volta a ser a pilha de 412px. Isso é CSS e não um segundo JSX: os dois
+invólucros (`.colunaIdentidade`, `.colunaFormulario`) existem **sempre** no
+DOM e são `display:contents` por padrão — a árvore, e portanto a ordem de
+`Tab` e a vizinhança `<section>` → `<footer>`, é a mesma nas quatro telas.
 
-**Brand header** (flex, gap 12px, `margin-bottom:26px`): 40×40 seal
-radius 11px in `var(--accent)` with the 23px glyph in `var(--on-accent)`
-(`LogoMark`: vertical bar + two chevrons, the second at `opacity:.58`; it is
-the SAME symbol as the app shell since FASE 17a, there in a 32×32 seal radius
-9px), then the "Brabo" wordmark (Space Grotesk 700, 24px,
-`letter-spacing:-.035em`, `line-height:1.1`) with the tagline below (IBM Plex
-Mono 10px, `letter-spacing:.12em`, uppercase, `var(--text-muted)`).
+**Cabeçalho de marca** (flex, gap 12px, `margin-bottom:26px`): selo 40×40
+radius 11px em `var(--accent)` com o glyph 23px em `var(--on-accent)`
+(`LogoMark` — barra vertical + dois chevrons, o segundo a `opacity:.58`; é o
+MESMO símbolo do app shell desde a FASE 17a, lá num selo 32×32 radius 9px),
+depois wordmark "Brabo" (Space Grotesk 700, 24px, `letter-spacing:-.035em`,
+`line-height:1.1`) com a tagline abaixo (IBM Plex Mono 10px,
+`letter-spacing:.12em`, uppercase, `var(--text-muted)`).
 
 **Card**: `var(--surface-1)`, `1px var(--border)`, radius 12px,
-`var(--shadow-lg)`, `overflow:hidden` (this is what makes the footer respect
-the radius). The login shadow is the large one (`0 24px 60px`), not the
-default; the brand seal uses the same.
-Three regions:
+`var(--shadow-lg)`, `overflow:hidden` (é o que faz o rodapé respeitar o raio).
+A sombra do login é a grande (`0 24px 60px`), não a padrão — o selo de marca
+usa a mesma.
+Três regiões:
 
-1. **head**: padding `26px 28px 8px`: `<h1>` (Space Grotesk 600, 19px,
-   `letter-spacing:-.015em`) + 13px subtitle `var(--text-secondary)`. The
-   card title is the page's **only `<h1>`**: "Brabo" is identity, not a
-   heading, and promoting it would give two `<h1>`;
-2. **body**: padding `20px 28px 26px`, flex column gap 16px: the error `Alert`
-   (when there is one) and the form, **siblings, never nested**;
-3. **footer**: `border-top 1px var(--border)`, background `var(--surface-0)` (one
-   step below the card), padding `14px 28px`, 12.5px
-   `var(--text-secondary)` with a link to the neighboring screen.
+1. **cabeça** — padding `26px 28px 8px`: `<h1>` (Space Grotesk 600, 19px,
+   `letter-spacing:-.015em`) + subtítulo 13px `var(--text-secondary)`. O
+   título do card é o **único `<h1>` da página**: "Brabo" é identidade, não
+   cabeçalho, e promovê-lo daria dois `<h1>`;
+2. **corpo** — padding `20px 28px 26px`, flex column gap 16px: o `Alert` de
+   erro (quando houver) e o formulário, **irmãos, nunca aninhados**;
+3. **rodapé** — `border-top 1px var(--border)`, fundo `var(--surface-0)` (um
+   degrau abaixo do card), padding `14px 28px`, 12.5px
+   `var(--text-secondary)` com um link para a tela vizinha.
 
-**Block below the card** (`margin-top:18px`): `Alert` outside the card, when
-the screen has context to give about the account. It stays outside on purpose;
-inside it would compete with what the person came to do.
+**Bloco abaixo do card** (`margin-top:18px`): `Alert` fora do card, quando a
+tela tem contexto a dar sobre a conta. Fica fora de propósito — dentro
+competiria com o que a pessoa veio fazer.
 
-**Page footer** (`margin-top:22px`, flex centered, uniform 16px gap
-between the five children, IBM Plex Mono 10.5px `var(--text-muted)`):
-`<versão> · Status · Documentação`. The version is the artifact's **raw**
-value, `dev` outside a release, and that is true information. "Status" is a
-button (internal route); "Documentação" is `<a target="_blank" rel="noreferrer">`.
+**Rodapé da página** (`margin-top:22px`, flex centrado, gap 16px uniforme
+entre os cinco filhos, IBM Plex Mono 10.5px `var(--text-muted)`):
+`<versão> · Status · Documentação`. A versão é o valor **cru** do artefato —
+`dev` fora de um release, e isso é informação verdadeira. "Status" é botão
+(rota interna); "Documentação" é `<a target="_blank" rel="noreferrer">`.
 
 ### `/login`
 
-Title "Entrar", subtitle "Acesse seu workspace e retome as sessões em
-andamento.". Fields: email (placeholder `voce@empresa.com`) and password
-(`revelavel`, mono, placeholder `••••••••••`), both in the `preenchido`
-variant. "Esqueci minha senha" on the password label line, on the right.
-Full-width submit with `loading` (`Entrar` → `Autenticando…`). Card footer:
-"Não tem acesso? **Criar uma conta**". Below the card: `warning` notice about
-the migrated account.
+Título "Entrar", subtítulo "Acesse seu workspace e retome as sessões em
+andamento.". Campos: e-mail (placeholder `voce@empresa.com`) e senha
+(`revelavel`, mono, placeholder `••••••••••`), os dois na variante
+`preenchido`. "Esqueci minha senha" na linha do rótulo da senha, à direita.
+Submit full-width com `loading` (`Entrar` → `Autenticando…`). Rodapé do card:
+"Não tem acesso? **Criar uma conta**". Abaixo do card: aviso `warning` sobre
+a conta migrada.
 
-**Identity and environment column.** `/login` is the only one of the four that
-uses the two-column mode, and that is deliberate: the other three are steps of a
-flow already started, and whoever arrives at them already knows where they are.
-On the left, under the brand header: an identity sentence (`<p>`, IBM Plex Sans
-15px `var(--text-secondary)`, `max-width:42ch`; **not** an `<h2>`, so the card
-title remains the only `<h1>`) and the **Ambiente** block, with one row per
-service (8px dot, label, state).
+**Coluna de identidade e ambiente.** `/login` é a única das quatro que usa o
+modo de duas colunas, e é deliberado: as outras três são passagens de um fluxo
+já iniciado, e quem chega nelas já sabe onde está. À esquerda, sob o cabeçalho
+de marca: uma frase de identidade (`<p>`, IBM Plex Sans 15px
+`var(--text-secondary)`, `max-width:42ch` — **não** um `<h2>`, para o título do
+card seguir sendo o único `<h1>`) e o bloco **Ambiente**, com uma linha por
+serviço (bolinha 8px, rótulo, estado).
 
-The block shows only what is true **without identity**: the `/health` of the api
-and of the engine, public on both services. Three states per row and none of
-them collapsed: `verificando…` (hollow ring), `respondendo` (`var(--success)`),
-`sem resposta` (`var(--danger)`), with a 6s ceiling for the hanging probe. The
-version is **not** repeated here: it is still rendered once, in the page
-footer. **Nothing in the column is focusable**, and that is a contract: it comes
-before the card in the DOM, and a button there would steal the email field's
-first `Tab` stop.
+O bloco mostra só o que é verdade **sem identidade**: os `/health` da api e do
+engine, públicos nos dois serviços. Três estados por linha e nenhum deles
+colapsado — `verificando…` (anel vazado), `respondendo` (`var(--success)`),
+`sem resposta` (`var(--danger)`) —, com teto de 6s para a sonda pendurada. A
+versão **não** se repete aqui: continua sendo renderizada uma vez, no rodapé da
+página. **Nada na coluna é focável**, e isso é contrato: ela vem antes do card
+no DOM, e um botão ali roubaria a primeira parada de `Tab` do campo de e-mail.
 
-**Two things from the mockup that the implementation does not have** (ADR
-0036): the "ou" divider existed only to separate the two social buttons and came
-back along with them (ADR 0084, which closed the GitHub button divergence); the
-**"N agentes online"** indicator is still missing. It did not enter the
-Ambiente block on purpose: an agent count belongs to a workspace, and before
-login there is no workspace; the question has no subject. Runner and local
-models have the same problem (`{user_id, project_id}` and
-`projects/:projectId/models`) and so live in the project Overview, not here;
-the block SAYS this absence instead of omitting it. Without the indicator, the
-card footer is left with one item and the mockup's `space-between` becomes
-left alignment.
+**Duas coisas do mockup que a implementação não tem** (ADR 0036): o divisor
+"ou" existia só para separar os dois botões sociais e voltou junto com eles
+(ADR 0084, que fechou a divergência do botão do GitHub); segue faltando o
+indicador **"N agentes online"**. Ele não entrou no bloco de Ambiente de
+propósito: contagem de agentes é de um workspace, e antes do login não existe
+workspace — a pergunta não tem sujeito. Runner e modelos locais têm o mesmo
+problema (`{user_id, project_id}` e `projects/:projectId/models`) e por isso
+moram na Visão geral do projeto, não aqui; o bloco DIZ essa ausência em vez de
+omiti-la. Sem o indicador, o rodapé do card fica com um item e o
+`space-between` do mockup vira alinhamento à esquerda.
 
 ### `/registrar`, `/esqueci-senha`, `/definir-senha`
 
-Same frame, same components. Each has a **success state** that replaces the
-form: a `success`-tone `Alert` with `role="status"` (polite, does not
-interrupt; interrupting to give good news is rude) plus an exit button.
+Mesma moldura, mesmos componentes. Cada uma tem **estado de sucesso** que
+substitui o formulário: um `Alert` tom `success` com `role="status"` (polido,
+não interrompe — interromper para dar boa notícia é grosseria) mais um botão
+de saída.
 
-The success texts are **conditional on purpose** ("se o endereço estiver disponível", "se houver uma conta com…"): the api answers the same for an
-existing and a non-existing account, and an affirmative sentence here would
-reopen the enumeration that the server closes.
+Os textos de sucesso são **condicionais de propósito** ("se o endereço estiver
+disponível", "se houver uma conta com…"): a api responde igual para conta
+existente e inexistente, e uma frase afirmativa aqui reabriria a enumeração
+que o servidor fecha.
 
-A field error (short password, mismatched confirmation) goes **under the field**
-with `aria-invalid`; a form error (rejected credential, invalid link, network
-failure) goes in the **`Alert` at the top of the card**. Whoever reads the
-message should not need it to know where to act.
+Erro de campo (senha curta, confirmação diferente) vai **sob o campo** com
+`aria-invalid`; erro de formulário (credencial recusada, link inválido, falha
+de rede) vai no **`Alert` do topo do card**. Quem lê a mensagem não deveria
+precisar dela para saber onde mexer.

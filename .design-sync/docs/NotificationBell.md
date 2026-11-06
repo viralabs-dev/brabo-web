@@ -5,10 +5,10 @@ keywords: [notificações, sino, pendências, agrupado, topbar]
 
 # NotificationBell
 
-The topbar bell. It groups unread events **by project** and opens a panel with
-the event rows (each one is an `EventItem`).
+O sino da topbar. Agrupa eventos não lidos **por projeto** e abre um painel com
+as linhas de evento (cada uma é um `EventItem`).
 
-## How to use
+## Como usar
 
 ```tsx
 <NotificationBell
@@ -18,12 +18,12 @@ the event rows (each one is an `EventItem`).
 />
 ```
 
-## What to respect
+## O que respeitar
 
-- **The panel is internal state**, with no prop to open it. Mounting the
-  component shows only the bell: in a preview or test that needs the panel, click
-  the `aria-label="Notificações"` button.
-- `unreadCount` is independent of `groups`: it comes from the server counter and
-  decides whether the badge shows (above 99 it becomes "99+").
-- `onMarkRead` marks **everything** as read, not one group. This component has no
-  per-project marking.
+- **O painel é estado interno**, sem prop que o abra. Montar o componente
+  mostra só o sino: num preview ou teste que precise do painel, é preciso
+  clicar no botão `aria-label="Notificações"`.
+- `unreadCount` é independente de `groups` — vem do contador do servidor e é o
+  que decide se o badge aparece (acima de 99 vira "99+").
+- `onMarkRead` marca **tudo** como lido, não um grupo. Não existe marcação por
+  projeto neste componente.

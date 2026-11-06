@@ -5,10 +5,10 @@ keywords: [abas, navegação, tabs, seções]
 
 # Tabs
 
-A controlled tab strip. `active` and `onChange` belong to the caller; the
-component does not store the selected tab.
+Régua de abas controlada. `active` e `onChange` são de quem usa — o componente
+não guarda a aba selecionada.
 
-## How to use
+## Como usar
 
 ```tsx
 const abas = [
@@ -20,10 +20,10 @@ const abas = [
 <Tabs items={abas} active={aba} onChange={setAba} />
 ```
 
-## What to respect
+## O que respeitar
 
-- `count` is for what demands attention (pending items, items to decide).
-  Counting everything on every tab removes the signal from the number.
-- `trailing` anchors content to the right of the strip: the place for the
-  screen's primary action, not for more tabs.
-- Tabs only draws the strip. The panel of each tab is the caller's responsibility.
+- `count` é para o que exige atenção (pendências, itens a decidir). Contar
+  tudo em toda aba tira o sinal do número.
+- `trailing` ancora conteúdo à direita da régua — o lugar da ação primária da
+  tela, não de mais abas.
+- Tabs só desenha a régua. O painel de cada aba é responsabilidade de quem usa.

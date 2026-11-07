@@ -1,8 +1,3 @@
-// deslocamento temporário (prova AT-782)
-// deslocamento temporário
-// deslocamento temporário
-// deslocamento temporário
-// deslocamento temporário
 /**
  * Como uma sessão se chama na tela.
  *

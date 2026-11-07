@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `@brabo/shared` passa a vir do GitHub Packages (AT-770, ADR 0270): alias `npm:@viralabs-dev/brabo-shared@1.2.0` no lugar da dependência git por tag, `.npmrc` com o registry do escopo (sem token), `pnpm-workspace.yaml` com `minimumReleaseAgeExclude` para a 1.2.0 recém-publicada, `scripts/baixar-areas.mjs` na tag `v1.2.0`. O lock muda só nas entradas do `@brabo/shared`.
+- Docker e CI: o `pnpm install` do `Dockerfile` usa o secret `npmrc` do BuildKit (RN-1039); o `ci.yml` e o `release.yml` passam `secret-files` com o `GITHUB_TOKEN`, e o `ci.yml` ganha `packages: read` e `setup-node` com o escopo. Spec `test/token-do-registry.test.ts`.
+- CI: `contracts-alinhado.yml` chama o reutilizável do `brabo-ci` (pin `4976af2`, RN-1038). Não é check obrigatório.
 - Segurança: o `js-yaml` sai da faixa vulnerável (4.3.1) para a 4.3.2 por `pnpm.overrides` (`js-yaml@>=4.0.0 <4.3.2`), só no caminho dev `openapi-typescript` > `@redocly/openapi-core` (que fixa a 4.3.1). Fecha o alerta do Dependabot e o erro do `Dependabot Updates` (AT-795).
 - CI: o regressivo do brabo-qa roda em toda PR para a `dev` (AT-769): o job `imagem-hotfix` do `ci.yml` publica a `sha-<12>` assinada também com `base_ref == 'dev'` (mesma guarda de fork, sem Dependabot); o `limpeza-ghcr.yml` apaga toda `sha-*` de PR fechada e as de mais de 7 dias (eram 14); o `qa-e2e.yml` passa a `branches: [dev, main]` (PR para a `dev` = `Regressivo do brabo-qa`, nunca exigido; PR para a `main` segue com o `E2E do brabo-qa`). CLAUDE.md e `.claude/agents/analista.md` ganham a regra do card.
 - CI: o run do `release.yml` ganha `run-name` com a origem e o passo `Vínculos` (helper do `brabo-ci`, origem pela linha `Carimbo:` da tag; AT-773, RN-1044).

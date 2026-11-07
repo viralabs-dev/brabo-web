@@ -47,9 +47,11 @@ RUN npm pack "pnpm@${PNPM_VERSION}" --silent \
 WORKDIR /repo
 
 # Manifests primeiro: a camada de deps só invalida quando o lockfile muda.
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
-RUN pnpm install --frozen-lockfile
+# O token do GitHub Packages entra só como secret do BuildKit (RN-1039, ADR 0270): nunca em
+# ARG, ENV nem camada. Build: `docker build --secret id=npmrc,src=$HOME/.npmrc .`
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc pnpm install --frozen-lockfile
 
 COPY index.html tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts components.json ./
 COPY public public

@@ -12,3 +12,6 @@ overrides:
 
 allowBuilds:
   esbuild: true
+
+minimumReleaseAgeExclude:
+  - '@viralabs-dev/brabo-shared@1.2.0'

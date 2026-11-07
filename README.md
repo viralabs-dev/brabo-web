@@ -5,24 +5,24 @@ Interface web do Brabo: React 19, Vite, TanStack Query/Router, Tailwind 4 e shad
 ## Desenvolver
 
 ```sh
-pnpm install
+pnpm install             # exige ~/.npmrc com PAT classic read:packages (veja abaixo)
 pnpm dev                 # vite
 pnpm lint                # oxlint
 pnpm typecheck           # tsc -b --force
 pnpm test                # vitest
-pnpm areas:baixar        # baixa o areas.json do brabo-contracts (tag fixada) para o teste de contrato
+pnpm areas:baixar        # baixa o areas.json do brabo-contracts (mesma versão do `@brabo/shared`) para o teste de contrato
 pnpm build
 ```
 
 ## Dependências de outros repositórios
 
-- `@brabo/shared`: [brabo-contracts](https://github.com/viralabs-dev/brabo-contracts) na tag `v1.0.0` (`package.json`; por tag, nunca por branch).
+- `@brabo/shared`: pacote público `@viralabs-dev/brabo-shared@1.2.0` do GitHub Packages, publicado pelo [brabo-contracts](https://github.com/viralabs-dev/brabo-contracts) e instalado pelo alias do pnpm (`package.json`; versão exata). O GitHub Packages pede token até para instalar pacote público: no host, grave no `~/.npmrc` uma linha `//npm.pkg.github.com/:_authToken=<PAT>` com um PAT classic só com `read:packages` (nunca no repo; o `.npmrc` versionado só nomeia o registry). No CI, é o `GITHUB_TOKEN`. Para subir a versão, use `scripts/ci/subir-contracts.sh` do [brabo-ci](https://github.com/viralabs-dev/brabo-ci).
 - Tipos da api: `fixados/openapi.json` é uma cópia fixada do contrato do [brabo-api](https://github.com/viralabs-dev/brabo-api); `pnpm openapi:types` gera os tipos e o CI confere com `pnpm openapi:types:check`. A origem de cada arquivo fixado está em `fixados/ORIGEM.md`.
 - Tokens de design: `design/tokens.css`; a doc do design está em `design/` e a do app em `docs/` (regras de negócio em `docs/business-rules/web.md`).
 
 ## Imagens
 
-`Dockerfile` (produção, nginx, sem build local obrigatório) e `Dockerfile.dev` (vite com bind mount). O CI constrói a imagem de produção sem publicar; a imagem `ghcr.io/viralabs-dev/brabo-web` é publicada pelo `release.yml` quando sai uma tag final (`vX.Y.Z`).
+`Dockerfile` (produção, nginx, sem build local obrigatório) e `Dockerfile.dev` (vite com bind mount). O build da imagem de produção recebe o token do registry só como secret do BuildKit: `docker build --secret id=npmrc,src=$HOME/.npmrc .`. O CI constrói a imagem de produção sem publicar; a imagem `ghcr.io/viralabs-dev/brabo-web` é publicada pelo `release.yml` quando sai uma tag final (`vX.Y.Z`).
 
 Branches permanentes: `dev` e `main`; tag só por workflow. Licença MIT.
 

@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  packages: read # instalar @viralabs-dev/brabo-shared do GitHub Packages (ADR 0270)
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -35,8 +36,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
+          registry-url: https://npm.pkg.github.com
+          scope: '@viralabs-dev'
 
       - run: pnpm install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: pnpm lint
       # Os tipos da api vêm da spec FIXADA em fixados/openapi.json (ver fixados/ORIGEM.md).
       - run: pnpm openapi:types:check
@@ -53,7 +58,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           persist-credentials: false
-      - run: docker build -f Dockerfile -t brabo-web:ci .
+      - name: Token do registry como secret do BuildKit (RN-1039)
+        run: |
+          umask 077
+          printf '//npm.pkg.github.com/:_authToken=%s\n' "${GITHUB_TOKEN}" > "${RUNNER_TEMP}/npmrc"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: docker build -f Dockerfile --secret id=npmrc,src="${RUNNER_TEMP}/npmrc" -t brabo-web:ci .
 
   # Imagem da PR: publica `:sha-<12 do head>` para o E2E (PR hotfix/* -> main, AT-765) e para o regressivo
   # (PR -> dev, AT-769; decisão do dono 06/11: assinada, apagada ao fechar a PR ou em 7 dias).
@@ -86,6 +97,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Token do registry como secret do BuildKit (RN-1039)
+        run: |
+          umask 077
+          printf '//npm.pkg.github.com/:_authToken=%s\n' "${GITHUB_TOKEN}" > "${RUNNER_TEMP}/npmrc"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Tag sha-<12>
         id: v
         run: echo "tag=${TAG_SHA:0:16}" >> "$GITHUB_OUTPUT"
@@ -96,6 +113,8 @@ jobs:
           context: .
           file: Dockerfile
           push: true
+          secret-files: |
+            npmrc=${{ runner.temp }}/npmrc
           tags: |
             ${{ env.IMAGEM }}:${{ steps.v.outputs.tag }}
           build-args: |

@@ -7339,7 +7339,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Teste:** `apps/web/src/routes/session-timeline-montagem.perguntas.test.tsx` (resposta antes do cartão; turno em curso; duas perguntas na ordem; não pula para a resposta do turno seguinte).
 - **Origem:** pedido do dono, 03/11/2026.
 
-## A versão do brabo-contracts é uma só e o token do registry nunca entra em camada (RN-1038, RN-1039)
+## A versão do brabo-contracts é uma só (RN-1038)
 
 ### RN-1038 — No web, a versão do brabo-contracts é a mesma no alias do `package.json`, no lock e em `scripts/baixar-areas.mjs` {#rn-1038}
 
@@ -7348,9 +7348,4 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Teste:** o reutilizável `contracts-alinhado.yml` do `brabo-ci` (spec `scripts/ci/contracts-alinhado.spec.ts` no `brabo-ci`) roda no PR; `apps/web/src/lib/agent-areas.contrato.test.ts` confere o `agent-areas.generated.ts` contra o `areas.json` da mesma tag.
 - **Origem:** AT-770 (EP-033), R2a.
 
-### RN-1039 — O token do GitHub Packages nunca entra em camada, `ARG` ou `ENV`: só como secret do BuildKit {#rn-1039}
-
-- **Regra:** o `pnpm install` do `Dockerfile` roda com `--mount=type=secret,id=npmrc,target=/root/.npmrc`; quem constrói passa `--secret id=npmrc,src=$HOME/.npmrc` (dev local, com PAT `read:packages`) ou `secret-files: npmrc=…` (CI e release, com o `GITHUB_TOKEN` e `packages: read`). O `.npmrc` do repo só nomeia o registry do escopo `@viralabs-dev`. O `Dockerfile.dev` não instala no build e não muda.
-- **Onde:** `Dockerfile:54`, `.npmrc:1`, `.github/workflows/ci.yml:61`, `.github/workflows/release.yml:56`.
-- **Teste:** `test/token-do-registry.test.ts` (o `RUN` usa o secret, nenhum `ARG`/`ENV` carrega token, o `.npmrc` não tem token, o CI e o release passam o secret).
-- **Origem:** AT-770 (EP-033), R2a.
+O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` ou `ENV`, só como secret do BuildKit), definida no brabo-broker em [`docs/business-rules/broker.md`](https://github.com/viralabs-dev/brabo-broker/blob/dev/docs/business-rules/broker.md). A prova no web é `test/token-do-registry.test.ts:1`, junto de `Dockerfile:54`, `.npmrc:1`, `.github/workflows/ci.yml:61` e `.github/workflows/release.yml:56`.

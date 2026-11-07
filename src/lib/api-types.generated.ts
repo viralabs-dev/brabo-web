@@ -381,6 +381,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/projects/{projectId}/app/restart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restarts only the project app process, in place (RN-1026)
+         * @description Called only by the engine, after the project folder advanced. Proxies to `ContainerBrokerPort.reiniciarApp`; the command is read by the broker from the container-spec, never from the caller. The body is empty. The answer is typed and carries NO free text or log (the app command may hold a secret): `reiniciou: false` with `motivo` is the NORMAL shape of a missing container, a timeout, a failed exec, an app that exited (`exitCode`) or an unreachable broker.
+         */
+        post: operations["InternalProjectsController_reiniciarOApp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/projects/{projectId}/backlog": {
         parameters: {
             query?: never;
@@ -6775,6 +6795,12 @@ export interface components {
              */
             repositorio: "local" | "a_provisionar_local";
         };
+        CutFileResponseDto: {
+            path: string;
+            bytes: number;
+            /** @enum {string} */
+            reason: "too_large" | "binary";
+        };
         DecideBootstrapPlanDto: {
             /**
              * Format: date-time
@@ -7546,6 +7572,7 @@ export interface components {
             docsChunks: number;
             adrChunks: number;
             truncated: boolean;
+            cutFiles: components["schemas"]["CutFileResponseDto"][];
             embedding: components["schemas"]["IndexEmbeddingResponseDto"];
         };
         IndexEmbeddingResponseDto: {
@@ -9867,6 +9894,7 @@ export interface components {
             filesInRepo: number;
             filesIndexed: number;
             truncated: boolean;
+            filesCut: number;
         };
         RagLocalCoverageResponseDto: {
             filesIndexed: number;
@@ -10167,6 +10195,20 @@ export interface components {
             total: number;
             indexed: number;
             chunksCreated: number;
+        };
+        ReiniciarAppInternalResponseDto: {
+            /** @example true */
+            reiniciou: boolean;
+            /**
+             * @description Present only when `reiniciou: false`.
+             * @enum {string}
+             */
+            motivo?: "sem_container" | "tempo_esgotado" | "falha_no_exec" | "app_saiu" | "sem_app";
+            /**
+             * @description Present only when `motivo: app_saiu`.
+             * @example 1
+             */
+            exitCode?: number;
         };
         RenameSessionDto: {
             /**
@@ -12500,6 +12542,34 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SyncModelCatalogResponseDto"];
+                };
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalProjectsController_reiniciarOApp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReiniciarAppInternalResponseDto"];
                 };
             };
             /** @description Service token missing or different from the shared one. */

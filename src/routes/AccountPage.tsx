@@ -5,7 +5,7 @@ import { emailDaSessao } from '../lib/auth';
 import { mensagemDaApi } from '../lib/api-client';
 import { definirIdioma, ehIdioma, IDIOMA_PADRAO, IDIOMAS, ROTULO_NATIVO, type Idioma } from '../lib/idioma';
 import { temCatalogo } from '../lib/i18n';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { CabecalhoDePagina } from '../components/shadcn/cabecalho-de-pagina';
 import { Select } from '../components/ui/Select';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemTitle } from '../components/shadcn/item';
@@ -13,7 +13,6 @@ import styles from './AccountPage.module.css';
 import { MachineDeviceKeysSection } from './MachineDeviceKeysSection';
 import { ResponseLanguageSection } from './ResponseLanguageSection';
 import { MatrixSection } from './settings/MatrixSection';
-
 
 /**
  * A tela de conta (`/account`, fundação de i18n — Onda 6a).

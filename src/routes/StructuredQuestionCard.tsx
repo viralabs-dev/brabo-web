@@ -6,7 +6,7 @@ import { answerStructuredQuestion, mensagemDaApi } from '../lib/api-client';
 import { ehRecusaDeSessaoEncerrada } from '../lib/sessao-encerrada';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
 import type { StructuredQuestion } from '../lib/api-types';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';

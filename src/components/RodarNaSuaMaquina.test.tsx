@@ -3,7 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import i18n from '../lib/i18n';
 import * as api from '../lib/api-client';
-import { RodarNaSuaMaquina, releSeInfraAbriuPr, urlLocalSegura } from './RodarNaSuaMaquina';
+import { RodarNaSuaMaquina } from './RodarNaSuaMaquina';
+import { releSeInfraAbriuPr, urlLocalSegura } from './RodarNaSuaMaquina.helpers';
 
 beforeAll(async () => {
   await i18n.changeLanguage('pt-BR');

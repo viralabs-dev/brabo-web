@@ -5,6 +5,7 @@ import type { ExecutionMode, MirrorState } from '../lib/api-types';
 import { LinhaDeSinal } from './SinaisDoAmbiente';
 import sinais from './SinaisDoAmbiente.module.css';
 
+import { ehModeloDeEmbedding } from './AmbienteDoProjeto.helpers';
 /** A chave de tradução de cada modo, no namespace `overview`. */
 const CHAVE_DO_MODO: Record<ExecutionMode, string> = {
   container: 'ambiente.modos.container',
@@ -201,11 +202,6 @@ export function AmbienteDoProjeto({ projectId }: { projectId: string }) {
       </ul>
     </div>
   );
-}
-
-/** Modelo de embedding pelo nome (`nomic-embed-text`, `mxbai-embed-large`…). */
-export function ehModeloDeEmbedding(nome: string): boolean {
-  return /embed/i.test(nome);
 }
 
 type Traducao = ReturnType<typeof useTranslation<'overview'>>['t'];

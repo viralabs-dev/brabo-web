@@ -3,7 +3,7 @@ import { ROTULO_DO_PROVIDER } from './models';
 import type { LLMProviderName } from './api-types';
 import { tokensDe, type SpendLinha } from './spend';
 import type { LinhaDeRanking } from '../components/SpendCharts';
-import { formatarUsd } from '../components/CredentialSpendSection';
+import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 
 type T = (chave: string, opcoes?: Record<string, unknown>) => string;
 

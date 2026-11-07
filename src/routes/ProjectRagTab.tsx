@@ -15,7 +15,7 @@ import { RefreshCw } from 'lucide-react';
 import { Chip } from '../components/ui/Chip';
 import { Alert } from '../components/ui/Alert';
 import { Input } from '../components/ui/Input';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { FolderIcon, SearchIcon } from '../components/ui/icons';
 import styles from './ProjectRagTab.module.css';
 

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import type { FonteDoTurno } from '../../lib/fontes-do-turno';
 import { sendSourceClick } from '../../lib/api-client';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '../shadcn/hover-card';
-import { hrefDaFonte } from './sources';
+import { hrefDaFonte } from './sources.helpers';
 
 /* AT-716: selo [n] inline. Lista simples, sem carrossel (decisão do dono). */
 export function SeloDeCitacao({

@@ -6,7 +6,7 @@ import { mensagemDaRecusaDoAgente } from '../lib/recusa-do-agente';
 import { estadosNaFila } from '../lib/fila-de-mensagens';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
 import type { SessionEvent } from '../lib/api-types';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { Queue } from '../components/ai-elements/queue';
 import { nomeDoAgente } from '../lib/agents';
 

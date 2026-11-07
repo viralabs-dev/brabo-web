@@ -47,7 +47,8 @@ import { ActivityFeed } from '../components/ActivityFeed';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { AmbienteDoProjeto } from '../components/AmbienteDoProjeto';
 import { PrimeirosPassos } from '../components/PrimeirosPassos';
-import { RodarNaSuaMaquina, releSeInfraAbriuPr } from '../components/RodarNaSuaMaquina';
+import { RodarNaSuaMaquina } from '../components/RodarNaSuaMaquina';
+import { releSeInfraAbriuPr } from '../components/RodarNaSuaMaquina.helpers';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { Skeleton } from '../components/ui/Skeleton';
@@ -62,7 +63,7 @@ ItemMedia,
   ItemTitle,
 } from '../components/shadcn/item';
 import { Button } from '../components/ui/Button';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { AgentAutonomyActionType, Architecture, ProposedAction, SessionEvent } from '../lib/api-types';
 import { Card } from '../components/ui/Card';
 import { nomeDoAgente } from '../lib/agents';

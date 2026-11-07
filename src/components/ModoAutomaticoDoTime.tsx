@@ -6,13 +6,14 @@ import { useQueryClient } from '@tanstack/react-query';
 import { mensagemDaApi, setAgentAutonomy } from '../lib/api-client';
 import { AGENT_AUTONOMY_ALL_ACTIONS, type AgentAutonomyRule } from '../lib/api-types';
 import { nomeDoAgente } from '../lib/agents';
-import { AREAS } from '../lib/agent-areas.generated';
+
 import { Plane } from 'lucide-react';
 import { Button } from './ui/Button';
 import { Checkbox } from './shadcn/checkbox';
 import { OQueOPilotoLibera } from './OQueOPilotoLibera';
 import styles from './ModoAutomaticoDoTime.module.css';
 
+import { agentesEmModoAutomatico } from './ModoAutomaticoDoTime.helpers';
 /**
  * O modo automático oferecido EM LOTE para o time, no início da execução
  * (RN-661, AT-315).
@@ -49,30 +50,6 @@ export interface ModoAutomaticoDoTimeProps {
    * dentro. Os Executores mantêm o cartão completo.
    */
   compacto?: boolean;
-}
-
-export function agentesEmModoAutomatico(
-  rules: readonly AgentAutonomyRule[] | undefined,
-): Set<string> {
-  return new Set(
-    (rules ?? [])
-      .filter(
-        (r) => r.actionType === AGENT_AUTONOMY_ALL_ACTIONS && r.mode === 'auto_approve',
-      )
-      .map((r) => r.agentId),
-  );
-}
-
-/**
- * AT-449 (RN-766): a oferta cobre os subagentes de GATE desde a ativação, e
- * não só depois que eles aparecem no roster — o `qa-automacao` só entra na
- * lista quando o primeiro evento dele chega, e aí a primeira ação dele já
- * está esperando clique. São os agentes da área de QA (`AREAS.qa`), que
- * rodam o `terminal`; a ordem é a do time e depois a dos gates, sem repetir.
- */
-export function agentesDaOfertaEmLote(time: readonly string[]): string[] {
-  const gates = [AREAS.qa.lead, ...AREAS.qa.members];
-  return [...new Set([...time, ...gates])];
 }
 
 type Desfecho =

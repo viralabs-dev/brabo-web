@@ -4,13 +4,8 @@ import type { FonteDoTurno } from '../../lib/fontes-do-turno';
 import { ChainOfThought } from './chain-of-thought';
 import { sendSourceClick } from '../../lib/api-client';
 
+import { hrefDaFonte } from './sources.helpers';
 /* AT-716: rodapé "Consultado neste turno" (RN-180/468: nunca "Fontes"). Sem args (RN-096). */
-export function hrefDaFonte(f: FonteDoTurno, projectId: string): string | undefined {
-  if (!f.ref) return undefined;
-  if (f.tipo === 'historia')
-    return `/projects/${projectId}?tab=backlog&historia=${encodeURIComponent(f.ref)}`;
-  return /^https:\/\/\S+\/pull\/\d+/.test(f.ref) ? f.ref : undefined;
-}
 
 export function ConsultadoNesteTurno({
   fontes,

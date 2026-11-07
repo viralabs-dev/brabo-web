@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import i18n from '../../lib/i18n';
-import { Canvas, CONTROLES, grafoDe } from './canvas';
+import { Canvas } from './canvas';
+import { CONTROLES, grafoDe } from './canvas.helpers';
 
 await i18n.changeLanguage('pt-BR');
 

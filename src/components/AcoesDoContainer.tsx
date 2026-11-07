@@ -11,7 +11,7 @@ import {
 } from '../lib/api-client';
 import { useLatestSession } from '../lib/hooks';
 import { userIdDaSessao } from '../lib/auth';
-import type { ContainerOverviewItem, ContainerLifecycleStatus, Role } from '../lib/api-types';
+import type { ContainerOverviewItem, Role } from '../lib/api-types';
 import {
   avisoDeImagemDesatualizada,
   decidirSubida,
@@ -20,20 +20,12 @@ import {
   type AcaoDeSubida,
 } from '../routes/containers-subida';
 import { ApprovalCard } from './ApprovalCard';
-import { Badge, type BadgeTone } from './ui/Badge';
+import { Badge } from './ui/Badge';
 import { Ajuda } from './ui/Ajuda';
 import { Button } from './ui/Button';
-import { useToast } from './ui/ToastProvider';
+import { useToast } from './ui/ToastProvider.helpers';
 import styles from '../routes/ContainersPage.module.css';
 import { Square, Trash2, Play } from 'lucide-react';
-
-export const TOM_DO_STATUS: Record<ContainerLifecycleStatus, BadgeTone> = {
-  provisioning: 'warning',
-  running: 'success',
-  stopped: 'muted',
-  failed: 'danger',
-  removed: 'muted',
-};
 
 /** Roda dentro de CADA linha (não da página): a sessão mais recente é POR
  *  PROJETO, e um hook num `.map()` da página violaria a ordem de hooks —

@@ -60,24 +60,18 @@ import {
 } from '../lib/session-timeline';
 import { decisaoDaPoliticaDaAcao } from '../lib/decisao-da-politica';
 import { StorySlide } from './StorySlide';
-import { MergearNoChat, jaHaMergeDaPr, prAbertaDaAcao } from './MergearNoChat';
+import { MergearNoChat } from './MergearNoChat';
+import { jaHaMergeDaPr, prAbertaDaAcao } from './MergearNoChat.helpers';
 import { gatePendenteNoMerge } from '../lib/gate-do-merge';
 import { StructuredQuestionCard } from './StructuredQuestionCard';
 import { ecosDeRespostaEstruturada } from '../lib/eco-de-formulario';
 import { agruparNarracoesDoTurno } from './session-fio';
 import { camposDoArtefato } from '../lib/artefato-do-fio';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
-import {
-  RetomarGateEstacionado,
-  cicloEstacionado,
-  cicloInterrompido,
-} from './RetomarGateEstacionado';
-import {
-  RetomarTurnoInterrompido,
-  ehRetomadaAutomatica,
-  planoVigente,
-  turnoInterrompidoPendente,
-} from './RetomarTurnoInterrompido';
+import { RetomarGateEstacionado } from './RetomarGateEstacionado';
+import { cicloEstacionado, cicloInterrompido } from './RetomarGateEstacionado.helpers';
+import { RetomarTurnoInterrompido } from './RetomarTurnoInterrompido';
+import { ehRetomadaAutomatica, planoVigente, turnoInterrompidoPendente } from './RetomarTurnoInterrompido.helpers';
 
 type Turno = ReturnType<typeof useTurnoDoAgente>;
 

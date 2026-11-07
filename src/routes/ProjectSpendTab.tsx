@@ -28,7 +28,7 @@ import { alertaDeOrcamento } from '../lib/spend';
 import { GastoPorDia } from '../components/GastoPorDia';
 import { Ranking } from '../components/SpendCharts';
 import { TokenMeter } from '../components/TokenMeter';
-import { formatarUsd } from '../components/CredentialSpendSection';
+import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 import { GastoDoTimeNoProjeto, GastoDoWorkspace } from '../components/SpendPaineis';
 import { comoRanking } from '../lib/spend-ranking';
 import styles from './ProjectSpendTab.module.css';

@@ -16,7 +16,8 @@ import {
   useCurrentWorkspaceWithRole,
 } from '../lib/hooks';
 import type { ContainerOverviewItem } from '../lib/api-types';
-import { AcoesDoContainer, EstadoObservadoCelula, TOM_DO_STATUS } from '../components/AcoesDoContainer';
+import { AcoesDoContainer, EstadoObservadoCelula } from '../components/AcoesDoContainer';
+import { TOM_DO_STATUS } from '../components/AcoesDoContainer.helpers';
 import { Table, type TableColumn } from '../components/ui/Table';
 import { Ajuda } from '../components/ui/Ajuda';
 import { podeDecidirCicloDeVida } from './containers-subida';

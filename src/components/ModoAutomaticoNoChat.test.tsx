@@ -18,7 +18,8 @@ vi.mock('../lib/api-client', () => ({
     erro instanceof Error ? erro.message : padrao,
 }));
 
-const { ModoAutomaticoNoChat, agentesDoChat } = await import('./ModoAutomaticoNoChat');
+const { ModoAutomaticoNoChat } = await import('./ModoAutomaticoNoChat');
+const { agentesDoChat } = await import('./ModoAutomaticoNoChat.helpers');
 
 function montar(comExecucao: boolean) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });

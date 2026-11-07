@@ -17,7 +17,8 @@ vi.mock('../lib/api-client', async (importOriginal) => {
 });
 vi.mock('../lib/auth', () => ({ userIdDaSessao: () => 'user-1' }));
 
-const { MergearNoChat, jaHaMergeDaPr, prAbertaDaAcao } = await import('./MergearNoChat');
+const { MergearNoChat } = await import('./MergearNoChat');
+const { jaHaMergeDaPr, prAbertaDaAcao } = await import('./MergearNoChat.helpers');
 const { ApiError } = await import('../lib/api-client');
 
 beforeAll(async () => {

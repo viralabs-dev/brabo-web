@@ -23,7 +23,7 @@ import { Button } from '../../components/ui/Button';
 import { FolderIcon } from '../../components/ui/icons';
 import { FolderBrowserModal } from '../../components/FolderBrowserModal';
 import { RunnerOnboardingPanel } from '../../components/RunnerOnboardingPanel';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';

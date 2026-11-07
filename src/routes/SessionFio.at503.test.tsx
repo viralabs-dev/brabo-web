@@ -12,7 +12,7 @@ import {
   marcarMensagemNaoEnviada,
 } from '../lib/mensagem-nao-enviada';
 import { SessionFio, type SessionFioProps } from './SessionFio';
-import { ignorarComposicaoIme } from './SessionComposer';
+import { ignorarComposicaoIme } from './SessionComposer.helpers';
 import { montarTimeline, type ContextoDaTimeline } from './session-timeline-montagem';
 
 vi.mock('@tanstack/react-router', () => ({

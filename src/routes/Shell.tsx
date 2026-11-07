@@ -39,7 +39,8 @@ import { INTERVALO_DO_PROJETO_MS } from '../lib/canal-vivo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
 import { alternarTema, observarTema, temaAtual, type Tema } from '../lib/tema';
 import { pedirAba, useAbaDaSessao, useAbaPublicada, useContagensDoProjeto } from '../lib/contagens-do-projeto';
-import { AbasDoProjeto, itensDasAbas } from './AbasDoProjeto';
+import { AbasDoProjeto } from './AbasDoProjeto';
+import { itensDasAbas } from './AbasDoProjeto.helpers';
 import { useTranslation } from 'react-i18next';
 import {
   corDoProjeto,

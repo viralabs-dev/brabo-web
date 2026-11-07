@@ -7,7 +7,7 @@ import { getProject, updateProject } from '../../lib/api-client';
 import { Ajuda } from '../../components/ui/Ajuda';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { MarcaDeHeranca } from './heranca';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';

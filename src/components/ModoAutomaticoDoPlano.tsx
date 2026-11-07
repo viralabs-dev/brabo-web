@@ -1,5 +1,5 @@
 import { devAgentId } from '../lib/agent-status';
-import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime';
+import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime.helpers';
 
 /**
  * AT-476 (RN-804): a oferta em lote do modo automático (RN-661) também no

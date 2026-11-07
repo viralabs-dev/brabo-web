@@ -16,7 +16,8 @@ import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSesso
 import { roleAtLeast } from '../lib/roles';
 import { useRetomarTurnoDoLog, useTurnoDoAgente } from '../lib/session-turno';
 import { subirAnexosPendentes } from '../lib/anexos';
-import { useEnfileirarMensagem } from '../lib/enfileirar-mensagem'; import { marcarMensagemNaoEnviada } from '../lib/mensagem-nao-enviada';
+import { useEnfileirarMensagem } from '../lib/enfileirar-mensagem';
+import { marcarMensagemNaoEnviada } from '../lib/mensagem-nao-enviada';
 import { mensagemDaRecusaDoAgente } from '../lib/recusa-do-agente';
 import {
   useBacklog,
@@ -36,26 +37,20 @@ import { emailDaSessao } from '../lib/auth';
 import { useAutoriaDaSessao } from '../lib/autoria-da-sessao';
 import { nomeDaMensagemOtimista, otimistaJaNoLog } from '../lib/mensagem-otimista';
 import { AGENTS } from '../lib/agents';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { planoDoTurno } from '../lib/plano-do-turno';
 import { TurnActivityStripDoStore } from '../components/TurnActivityStrip';
 import { hashtagDaSessao, rotuloDaSessao } from '../lib/session-label';
 import { tipoDaSessao, usePublicarAbaDaSessao } from '../lib/session-kind';
 import styles from './SessionPage.module.css';
 import { conversaComecou as conversaJaComecou } from '../lib/conversa-comecou';
-import {
-  aberturasDeTurno,
-  afundarDesfechos,
-  ordemDaAcaoNaTimeline,
-  turnoDoSeq,
-  type TimelineEntry,
-} from '../lib/session-timeline';
+import { type TimelineEntry } from '../lib/session-timeline';
 import { ContextAside } from './ContextAside';
 import { useEncerrarComConfirmacao } from './ConfirmarEncerramento';
 import { sessaoTemExecucao } from '../lib/sessao-de-execucao';
 import { ModoAutomaticoNoChat } from '../components/ModoAutomaticoNoChat';
 import { useSessionReadiness } from '../lib/session-readiness';
-import { agruparNarracoesDoTurno, agruparTimelinePorAgente, dividirFio } from './session-fio';
+import { agruparTimelinePorAgente, dividirFio } from './session-fio';
 import { montarTimeline } from './session-timeline-montagem';
 import { SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
@@ -113,13 +108,6 @@ interface SessionPageProps {
  * `styles.narracoes*`) e saiu no PR 1 do ADR 0176 para `./session-fio`, um
  * `.tsx` em `routes/` — reexportada pelo mesmo motivo das outras.
  */
-export {
-  aberturasDeTurno,
-  afundarDesfechos,
-  agruparNarracoesDoTurno,
-  ordemDaAcaoNaTimeline,
-  turnoDoSeq,
-};
 
 export function SessionPage({
   projectId,
@@ -455,6 +443,11 @@ export function SessionPage({
 
   // A montagem mora em `./session-timeline-montagem` desde o PR 2 do ADR
   // 0176. A lista de dependências abaixo é a MESMA de antes, byte a byte.
+  // Dependências deliberadamente estreitas: os handlers (promover, aceitar,
+  // ativar) e `t` são recriados a cada render e a montagem os lê pelo valor
+  // corrente; o `backlogQuery.data` representa o `backlogQuery`. Listar tudo
+  // reconstruiria a timeline inteira a cada render.
+  /* oxlint-disable react-hooks/exhaustive-deps */
   const timeline = useMemo<TimelineEntry[]>(
     () =>
       montarTimeline({
@@ -508,14 +501,14 @@ export function SessionPage({
       continuarRespostaCortada,
       backlogQuery.data,
     ],
-  );
+  );  /* oxlint-enable react-hooks/exhaustive-deps */
 
   // O colapso por agente que passou o bastão (RN-138) e o corte do fio
   // (RN-177) moram em `./session-fio` desde o PR 1 do ADR 0176 — mesmas
   // dependências de antes, só o corpo mudou de arquivo.
   const timelineAgrupada = useMemo(
     () => agruparTimelinePorAgente(timeline, handoffs, actions, t),
-    [timeline, handoffs, actions],
+    [timeline, handoffs, actions, t],
   );
 
   const fio = useMemo(() => dividirFio(timelineAgrupada), [timelineAgrupada]);

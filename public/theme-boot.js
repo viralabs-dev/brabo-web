@@ -32,7 +32,7 @@
     // mão, resto de uma versão antiga, `null` — cai no default em vez de virar
     // um `data-theme` que o CSS não conhece e que renderiza sem tema nenhum.
     if (salvo === 'dark' || salvo === 'light') tema = salvo;
-  } catch (erro) {
+  } catch {
     // localStorage pode lançar (modo privado, cookies de terceiros bloqueados,
     // iframe sem storage access). Tema é preferência, não função: falhar aqui
     // não pode derrubar o boot da app.

@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -19,6 +17,7 @@ import {
 import { useSecaoInicial } from './secao-inicial';
 import styles from '../ProjectSettingsTab.module.css';
 
+import { useSumario, SumarioContext } from './SecaoDeConfiguracoes.helpers';
 /**
  * A moldura de UMA seção da aba Configurações, e o registro que o sumário lê.
  *
@@ -44,7 +43,7 @@ import styles from '../ProjectSettingsTab.module.css';
  * para receber um `id`. Duas regras para 18 seções envelhecem pior que uma.
  */
 
-interface RegistroDoSumario {
+export interface RegistroDoSumario {
   /** As seções montadas AGORA, na ordem de render. */
   presentes: ChaveDeSecao[];
   /** A seção vigente segundo o scroll-spy — `undefined` antes do primeiro passo. */
@@ -53,8 +52,6 @@ interface RegistroDoSumario {
   irPara: (chave: ChaveDeSecao) => void;
   registrar: (chave: ChaveDeSecao, el: HTMLElement) => () => void;
 }
-
-const SumarioContext = createContext<RegistroDoSumario | undefined>(undefined);
 
 /**
  * Quanto da altura visível conta como "topo" para o scroll-spy.
@@ -163,22 +160,6 @@ export function ProvedorDoSumario({ children }: { children: ReactNode }) {
   );
 
   return <SumarioContext.Provider value={valor}>{children}</SumarioContext.Provider>;
-}
-
-/**
- * O registro, para o sumário. Fora do provedor devolve um registro VAZIO em
- * vez de estourar: as seções são renderizadas isoladamente em teste, e uma
- * seção não deve exigir a aba inteira em volta para montar.
- */
-const REGISTRO_VAZIO: RegistroDoSumario = {
-  presentes: [],
-  ativa: undefined,
-  irPara: () => {},
-  registrar: () => () => {},
-};
-
-export function useSumario(): RegistroDoSumario {
-  return useContext(SumarioContext) ?? REGISTRO_VAZIO;
 }
 
 interface SecaoDeConfiguracoesProps {

@@ -23,6 +23,12 @@ function CartaoDeArquivos({ rotulo, cobertura }: { rotulo: string; cobertura: Ra
             <AlertIcon size={11} /> {t('ragCoverage.truncated')}
           </span>
         )}
+        {cobertura.filesCut > 0 && (
+          <span className={styles.aviso}>
+            {' · '}
+            <AlertIcon size={11} /> {t('ragCoverage.filesCut', { count: cobertura.filesCut })}
+          </span>
+        )}
       </div>
     </Card>
   );

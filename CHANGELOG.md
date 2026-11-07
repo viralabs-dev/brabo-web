@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- A RN-473 (passo 4, binário) deixa de citar `npm install -g @brabo/runner`: o runner sai só como binário da Release do `brabo-runner` (AT-774). Nenhuma tela exibia o npm; só a doc muda.
+
 - CI: repina os reutilizáveis do `brabo-ci` em `13f3697` (merge da ci#17, que inclui a ci#16): `ubuntu-26.04`, `client-id` no lugar de `app-id`, rótulo de família criado antes de aplicar, linha `Carimbo:` na tag e helper `vinculos` (AT-772, AT-773).
 - Conhecimento: o toast do "Reindexar agora" avisa quantos arquivos foram cortados no teto de 4 MiB ou pulados por serem binários (`cutFiles`), e o painel de cobertura mostra `filesCut` nos cartões docs e ADR, nos quatro locales (AT-764, RN-1036). `openapi.json` e os tipos gerados atualizados a partir do brabo-api (api#51).
 

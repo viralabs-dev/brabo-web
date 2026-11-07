@@ -3248,7 +3248,7 @@ binário`, e o último passo é **best-effort**:
 | 1. `showDirectoryPicker` | **sim** | sem pasta não há onde gravar nada. Cancelar (`AbortError`/`NotAllowedError`) NÃO é falha — volta ao estado inicial, sem alerta |
 | 2. `brabo-runner.config.json` | **sim** | é metade do par que a [RN-466](runner.md#rn-466) lê |
 | 3. par Ed25519 + `registerRunnerDeviceKey` + `…device-key.jwk.json` | **sim** | privada em disco sem contraparte no servidor não autentica; por isso o registro vem ANTES da gravação, e as duas são adjacentes |
-| 4. binário | **não** | devolve `falhaDoBinario` preenchido; a instrução final vira `npm install -g @brabo/runner && brabo-runner` |
+| 4. binário | **não** | devolve `falhaDoBinario` preenchido; a pessoa fica sem o agente local e a instrução final diz isso e aponta a issue em `https://github.com/viralabs-dev/brabo-runner/issues` (o runner sai só como binário, AT-774) |
 
 O caminho alternativo funciona **sem flag nenhuma** exatamente porque os passos
 2 e 3 já rodaram: o CLI lê os dois arquivos do `cwd` (RN-466). É um dos TRÊS

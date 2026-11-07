@@ -326,7 +326,7 @@ com `key`, e quem escreve `active` recebe a chave crua do
 - **Onde:** `apps/web/src/routes/project-tabs.ts:95` (as duas entradas),
   `apps/web/src/routes/ProjectSessionsTab.tsx:114` (o filtro pelo `kind`
   gravado) e `:98` (o CTA criando no `kind` da aba),
-  `apps/web/src/routes/SessionPage.tsx:722` (`conviteVisivel`, a única
+  `apps/web/src/routes/SessionPage.tsx:715` (`conviteVisivel`, a única
   pergunta que a topbar e o convite compartilham)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx`,
   `apps/web/src/routes/project-tabs.test.tsx`,
@@ -622,7 +622,7 @@ Provisioning, AdoptionPlan) não têm turno conversacional em andamento e
 ficam como estavam.
 
 - **Onde:** `apps/web/src/lib/hooks.ts:221` (`useSessionEvents`),
-  `apps/web/src/routes/SessionPage.tsx:277` (`eventsQuery`)
+  `apps/web/src/routes/SessionPage.tsx:269` (`eventsQuery`)
 - **Teste:** `apps/web/src/lib/hooks.pausar-poll.test.tsx`
 - **Caso de borda:** pausar o timer não é desabilitar a query — a invalidação
   explícita segue funcionando, e a correção depende dela para nunca perder dado.
@@ -703,7 +703,7 @@ qualquer dos dois caminhos. O que mudou é que a PRIMEIRA MENSAGEM agora também
 conta como esse gesto: ninguém deveria precisar de um clique à parte antes de falar
 com quem a tela já o convidou a falar.
 
-- **Onde:** `apps/web/src/routes/SessionPage.tsx:684` (`handleSend`)
+- **Onde:** `apps/web/src/routes/SessionPage.tsx:690` (`handleSend`)
 - **Teste:** `apps/web/src/routes/SessionPage.ideacao-automatica.test.tsx`
 - **Caso de borda:** sessão `consultiva` não tem agente Criativo — a regra
   não se aplica, e o caminho SSE genérico segue sendo o certo para ela.
@@ -1850,8 +1850,8 @@ projeto aberto abre um flyout com as mesmas abas.
 - **Onde:** `apps/web/src/routes/Shell.tsx:564` (`projetosAbertosEfetivo`),
   `:504` (`useContagensDoProjeto`), `:519` (`irParaAba`), `:546`
   (`flyoutAberto`), `:243` (`contagensDoResumo`);
-  `apps/web/src/routes/AbasDoProjeto.tsx:88` (`AbasDoProjeto`), `:44`
-  (`itensDasAbas`), `:105` (`aoTeclar`);
+  `apps/web/src/routes/AbasDoProjeto.tsx:69` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
+  (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:86` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),
   `:70` (`publicarAbaAtiva`), `:86` (`pedirAba`);
   `apps/web/src/lib/sidebar-state.ts` (`lerProjetosAbertos`/`gravarProjetosAbertos`)
@@ -2760,7 +2760,7 @@ si não muda.
   `apps/web/src/components/TurnActivityStrip.tsx` (componente);
   `apps/web/src/lib/session-channel.ts:54` (`onToolCall`);
   `apps/web/src/routes/session-fio.tsx:48` (`agruparNarracoesDoTurno`),
-  `apps/web/src/routes/SessionPage.tsx:202` (`turnoViaCanal`)
+  `apps/web/src/routes/SessionPage.tsx:191` (`turnoViaCanal`)
 - **Teste:** `apps/web/src/lib/atividade-do-turno.test.ts`,
   `apps/web/src/components/TurnActivityStrip.test.tsx`,
   `apps/web/src/lib/session-channel.test.ts`,
@@ -2956,9 +2956,9 @@ linha alterna entre "Salvar" e "Trocar" conforme aquele provider já tenha
 chave; e ele divide o card com "Testar" e "Remover", que são irredutivelmente
 da linha.
 
-- **Onde:** `apps/web/src/routes/settings/secao-salvavel.tsx:105`
+- **Onde:** `apps/web/src/routes/settings/secao-salvavel.helpers.ts:64`
   (`useSecaoSalvavel` — o laço em série, o desfecho por linha e os três toasts),
-  `:130` (sujo por valor interpretado), `:241` (`MarcaDeNaoSalvo` — a contagem,
+  `:89` (sujo por valor interpretado), `apps/web/src/routes/settings/secao-salvavel.tsx:66` (`MarcaDeNaoSalvo` — a contagem,
   e o inválido substituindo-a),
   `apps/web/src/routes/settings/ParallelismSection.tsx:31`,
   `apps/web/src/routes/settings/BudgetSection.tsx:37` (os dois consumidores),
@@ -3056,12 +3056,12 @@ níveis acima dela estão vazios). Mesma disciplina da
 [RN-180](#rn-180): a tela não afirma com um traço o que não
 consegue nomear.
 
-- **Onde:** `apps/web/src/routes/settings/cascata.tsx:119` (`montarCadeia` — os
-  quatro estados e o nó do Criativo), `:178` (`herdouDoCriativo` — a dedução e
-  seu limite), `:287` (`CadeiaDeCascata`),
-  `apps/web/src/routes/settings/ModelsSection.tsx:158` (`cadeiaDoAgente`),
-  `:325` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
-  por que a linha só relê no sucesso), `:407` (`handleClearAgentBinding` — os
+- **Onde:** `apps/web/src/routes/settings/cascata.helpers.ts:14` (`montarCadeia` — os
+  quatro estados e o nó do Criativo), `:73` (`herdouDoCriativo` — a dedução e
+  seu limite), `apps/web/src/routes/settings/cascata.tsx:196` (`CadeiaDeCascata`),
+  `apps/web/src/routes/settings/ModelsSection.tsx:154` (`cadeiaDoAgente`),
+  `:321` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
+  por que a linha só relê no sucesso), `:403` (`handleClearAgentBinding` — os
   três desfechos, e por que o 404 tem o dele), `:359` (coluna Origem), `:429`
   (`não há nível abaixo`), `:448` (`sem gasto ainda`),
   `apps/web/src/components/ModelPicker.tsx:95` (`selected` sai do prop — o
@@ -4836,9 +4836,9 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
    encolhe (com piso e o nome inteiro no `title`), e os botões não quebram
    linha — "Encerrar" vira ícone com nome acessível só na barra mínima.
 
-- **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:84`
-  (`SessionLanguageIndicator`), `:40` (`idiomaSemOverride`), `:175`
-  (`origemPorExtenso`), `:224` (`podeTrocar`);
+- **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:72`
+  (`SessionLanguageIndicator`), `:29` (`idiomaSemOverride`), `:163`
+  (`origemPorExtenso`), `:215` (`podeTrocar`);
   `apps/web/src/routes/SessionTopbar.tsx:260` (`SessionLanguageIndicator`),
   `:128` (`modoDaBarra`), `:377` (`AjustesAgrupados`);
   `apps/web/src/lib/modo-da-barra-da-sessao.ts:35` (`modoDaBarra`)
@@ -4943,10 +4943,10 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
   `:56` (`separarPendenciasDeOutrasSessoes`);
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:71`
-  (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.tsx:28`
-  (`prAbertaDaAcao`), `:56` (`jaHaMergeDaPr`), `:101` (`MergearNoChat`);
-  `apps/web/src/routes/SessionPage.tsx:155` (`podeDecidir`), `:277`
-  (`useRetomarTurnoDoLog`), `:771` (`PendenciasDeOutrasSessoes`)
+  (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
+  (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
+  `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:266`
+  (`useRetomarTurnoDoLog`), `:767` (`PendenciasDeOutrasSessoes`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -5051,8 +5051,8 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:228` (`agentesEmConversa`),
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
-  `apps/web/src/routes/SessionComposer.tsx:380` (`destinatarioRow`), `:278`
-  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:354`
+  `apps/web/src/routes/SessionComposer.tsx:368` (`destinatarioRow`), `:266`
+  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
   (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:580`
   (`handoffIdDoEvento`), `:588` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
@@ -5139,9 +5139,9 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:127`
   (`useProjectSessions`), `:158` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
-  `apps/web/src/components/AcoesDoContainer.tsx:52` (`useLatestSession`, sem poll);
+  `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:203` (`invalidador`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:202` (`invalidador`);
+  `apps/web/src/routes/ProjectOverviewTab.tsx:206` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
 - **Teste:** `apps/web/src/routes/duas-abas.orcamento.test.tsx` (as duas abas
   com canal vivo, com rajada, com o canal que nunca conecta, e `/containers`;
@@ -5278,7 +5278,7 @@ o do chat.
   `:121` (os merges da mesma leitura);
   `apps/web/src/routes/ProjectApprovalsTab.tsx:115` (`pendentesQuery`), `:119`
   (`sessaoDeTrabalho`), `:326` (`handleApprove`);
-  `apps/web/src/routes/ProjectOverviewTab.tsx:125` (`pendentesDoProjeto`);
+  `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:107` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
@@ -5447,7 +5447,7 @@ barra) fechou no ADR 0211.
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:444`
   (`movel`), `:463` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:70` (`movel`);
-  `apps/web/src/routes/ProjectOverviewTab.tsx:76` (`movel`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;
   fecha pelo link, pelo X, pelo fundo e pela troca de rota; ignora o colapso
@@ -5630,7 +5630,7 @@ só terminariam em falha"), com os dois detalhes atrás do mesmo `<details>`.
 - **Código:** `apps/web/src/components/ContainerImageGate.tsx:33`
   (`ContainerImageGateNotice`), `:42` (`bloco`);
   `apps/web/src/routes/ProjectPrsTab.tsx:157` (`superficie="prs"`);
-  `apps/web/src/components/AcoesDoContainer.tsx:252` (`semContainer`), `:270`
+  `apps/web/src/components/AcoesDoContainer.tsx:244` (`semContainer`), `:270`
   (`semBrokerNaSubida`; o helper da chave curta `chaveCurtaDoBroker` saiu: desde a AT-712 a falta de broker é dita UMA vez na ajuda "?", ADR 0240, e não num `<summary>` na célula); `apps/web/src/components/ui/Button.module.css:101`
   (`.danger:disabled`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("409 do portão vira
@@ -5878,8 +5878,8 @@ absolutos seguem pedindo aprovação (RN-154, RN-418): merge em branch protegida
 o de WORKSPACE, com a mesma lacuna declarada das outras telas de modo
 automático (RN-471).
 
-- **Código:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:83`
-  (`ModoAutomaticoDoTime`), `:120` (`ligar`), `:54`
+- **Código:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:60`
+  (`ModoAutomaticoDoTime`), `:97` (`ligar`), `:70`
   (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:93`
   (`podeLigarModoAutomatico`), `:308` (onde a oferta monta)
 - **Teste:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx:54` (nada
@@ -5970,8 +5970,8 @@ E o composer e os campos de texto das perguntas estruturadas levam
 `data-form-type="other"`): cada foco abria o popup de autofill do navegador.
 
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:15` (`conversaComecou`),
-  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:440`
-  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:524`
+  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:428`
+  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:512`
   (`SEM_AUTOFILL`); `apps/web/src/routes/StructuredQuestionCard.tsx:242`
   (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/SessionPage.sessao.test.tsx:316` (Criativo
@@ -6228,8 +6228,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   pegam as tarefas como estão ([RN-677](api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
-  `apps/web/src/routes/SessionPage.tsx:798` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:644`
+  `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:640`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -6330,8 +6330,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
   `apps/web/src/routes/session-timeline-montagem.tsx:950` (`respostaCortada`),
-  `apps/web/src/routes/SessionPage.tsx:451` (`continuarRespostaCortada`),
-  `:692` (`enviarMensagem`)
+  `apps/web/src/routes/SessionPage.tsx:439` (`continuarRespostaCortada`),
+  `:685` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
   (RN-749)`: as duas linhas reconhecidas; resposta inteira e a frase no meio do
   texto não)
@@ -6418,7 +6418,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   evento dele, quando a primeira ação já esperava clique. O `allow` padrão do
   `permissions.json` NÃO muda (decisão do dono).
 - **Onde:** `apps/web/src/lib/precisa-de-voce.ts:256` (`gateEsperandoClique`)
-  e `apps/web/src/components/ModoAutomaticoDoTime.tsx:73`
+  e `apps/web/src/components/ModoAutomaticoDoTime.helpers.ts:24`
   (`agentesDaOfertaEmLote`)
 - **Teste:** `apps/web/src/lib/precisa-de-voce.test.ts` (gate de QA e SecOps
   nomeados; dev agent e humano não) e
@@ -6439,7 +6439,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   bloqueio). Sem sessão no projeto, o mesmo: o motivo vai em texto, nunca só
   no `title` do botão `disabled`, que não abre no Chromium. Se tarefa
   bloqueada deve ou não travar o merge é pergunta do dono, não decidida aqui.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:280` (`avisoDaLinha`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:293` (`avisoDaLinha`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("AT-451: tarefa
   bloqueada com gate pendente NÃO diz que o merge segue disponível")
 - **Origem:** AT-451 (TP-01 de 09/10: "O merge segue disponível — a decisão é
@@ -6459,7 +6459,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   vocabulário lê os JSON, e o enum entrava pela interpolação em runtime;
   `i18n-enum-cru.test.ts` reprova `t(…, { status: x.status })`.
 - **Onde:** `apps/web/src/routes/ConfirmarEncerramento.tsx:13`
-  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:614`
+  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:602`
   (`statusGenerico`)
 - **Teste:** `apps/web/src/routes/ConfirmarEncerramento.test.tsx` (sem
   execução encerra direto; com execução só encerra ao confirmar; cancelar não
@@ -6481,7 +6481,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   sidebar já assina, e `useActiveExecutionSession` ganha `staleTime` igual ao
   intervalo, para o segundo assinante não refazer a busca ([RN-632](#rn-632)).
 - **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:97` (`linhaDoTempoNaExecucao`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:101` (`linhaDoTempoNaExecucao`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (decisão fora da janela não vira 0; sessão inteira na janela diz vazio),
   `apps/web/src/routes/ProjectOverviewTab.test.tsx` (lê a sessão de execução e
@@ -6537,7 +6537,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   Infra Lead cujo handoff foi aceito lá), e com uma ideação aberta depois a
   árvore dizia "Nenhum agente entrou em ação nesta sessão ainda" sobre um time
   trabalhando. Sem leitura nova.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:275` (`overviewEvents`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:279` (`overviewEvents`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("AT-471: agente
   que só agiu na execução aparece na árvore…"; o caso sem execução segue lendo
   a mais recente)
@@ -6570,7 +6570,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   alguns) é dito mesmo que a releitura depois das gravações falhe. Declarado:
   o mesmo sintoma no "Merge" da aba PRs, em "Nova ideação" e no "Aplicar a
   todos os agentes" NÃO foi reproduzido nem corrigido aqui.
-- **Onde:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:109` (`carregando`)
+- **Onde:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:98` (`carregando`)
 - **Teste:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("AT-477
   (RN-803): antes de a leitura de agent_autonomy chegar, o botão fica inerte e
   diz por quê")
@@ -6616,7 +6616,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   a execução ainda não começou ([RN-677](api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/execution.ts:37` (`contarTarefasAfetadasAoParar`),
   `apps/web/src/components/PararExecucao.tsx:26` (`PararExecucao`),
-  `apps/web/src/components/ModoAutomaticoDoTime.tsx:83` (`ModoAutomaticoDoTime`)
+  `apps/web/src/components/ModoAutomaticoDoTime.tsx:60` (`ModoAutomaticoDoTime`)
 - **Teste:** `apps/web/src/components/PararExecucao.test.tsx` ("RN-815 (AT-488):
   a tarefa em revisão de QA conta…"; "RN-815: sem backlog lido não afirma…"),
   `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("RN-816 (AT-488): no
@@ -6639,7 +6639,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   deslocamento em pixels.
 - **Onde:** `apps/web/src/routes/SessionPage.tsx` (`PendenciasDeOutrasSessoes`
   antes de `styles.messages`), `apps/web/src/routes/ProjectExecutorsTab.tsx`,
-  `apps/web/src/routes/ProjectPrsTab.tsx:103` (`ProjectPrsTab`),
+  `apps/web/src/routes/ProjectPrsTab.tsx:83` (`ProjectPrsTab`),
   `apps/web/src/routes/ProjectPrsTab.module.css` (`.reservaDaEsteira`)
 - **Teste:** `apps/web/src/routes/salto-de-layout.test.ts`,
   `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-816 (AT-480): o Merge não
@@ -6676,7 +6676,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   permitir) a esquece. Declarado: a causa foi medida no CÓDIGO (o cartão
   dependia do refetch), não no navegador; que o refetch demore o bastante para
   o clique parecer perdido é inferência do TP-01.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:125` (`acaoDaPr`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:105` (`acaoDaPr`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-822 (AT-493):
   o 1º clique em Merge abre o cartão sem esperar a fila do projeto voltar" e
   "RN-822: a fila lida DEPOIS da proposta, sem ela, vence o cartão local")
@@ -6694,7 +6694,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   [RN-102](api.md#rn-102)); o botão habilitado ganha a explicação no `title`. A
   derivação lê os `events` que a tela já tem — nenhuma query nova
   ([RN-579](engine.md#rn-579)).
-- **Onde:** `apps/web/src/lib/session-readiness.ts:150` (`temMapaDeModulos`),
+- **Onde:** `apps/web/src/lib/session-readiness.ts:144` (`temMapaDeModulos`),
   `apps/web/src/routes/SessionComposer.tsx:136` (`hasModuleMap`)
 - **Teste:** `apps/web/src/routes/SessionPage.proximo-passo-arquitetura.test.tsx`
   ("mapa gravado + história promovida + Arquiteto parado: o texto aparece";
@@ -6765,7 +6765,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   `aria-live="polite"`: o leitor de tela anuncia a resposta nova e o que o
   agente está fazendo sem interromper quem está lendo. A checagem mora no
   composer, não na página, que está no teto de linhas ([ADR 0176](../adr/0176-sessionpage-abaixo-de-mil-linhas.md)).
-- **Onde:** `apps/web/src/routes/SessionComposer.tsx:97` (`ignorarComposicaoIme`),
+- **Onde:** `apps/web/src/routes/SessionComposer.helpers.ts:9` (`ignorarComposicaoIme`),
   `apps/web/src/components/TurnActivityStrip.tsx:47` (`TurnActivityStrip`)
 - **Teste:** `apps/web/src/routes/SessionFio.at503.test.tsx` ("Enter sem
   composição chega ao handler de envio", "a faixa do turno é uma região de
@@ -6848,7 +6848,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
 - **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:498` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:630` (`blockedTasks`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:634` (`blockedTasks`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),
@@ -6956,7 +6956,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:528` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1286` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1281` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -6976,9 +6976,9 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   aparece, como o de primeiros passos some quando não há o que dizer. A
   leitura é de configuração (`FRESCOR_DA_CONFIGURACAO_MS`, sem poll) e o
   aviso `infra.pr_opened` do canal da sessão a relê.
-- **Onde:** `apps/web/src/components/RodarNaSuaMaquina.tsx:32` (`RodarNaSuaMaquina`), `:20` (`urlLocalSegura`),
-  `:13` (`releSeInfraAbriuPr`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:210` (`releSeInfraAbriuPr`),
+- **Onde:** `apps/web/src/components/RodarNaSuaMaquina.tsx:19` (`RodarNaSuaMaquina`),
+  `apps/web/src/components/RodarNaSuaMaquina.helpers.ts:15` (`urlLocalSegura`), `:8` (`releSeInfraAbriuPr`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:214` (`releSeInfraAbriuPr`),
   `apps/web/src/lib/api-client.ts:882` (`getRunInstructions`)
 - **Teste:** `apps/web/src/components/RodarNaSuaMaquina.test.tsx` ("mostra
   comando, copiar, link local e a nota de não verificado"; "sem declaração
@@ -7024,7 +7024,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   tempo; no outro, o aviso diz que o gate espera a resposta e aponta o cartão
   "Perguntas em aberto" (RN-861). O botão "Retomar gate" (RN-724) segue nos
   dois.
-- **Onde:** `apps/web/src/routes/RetomarGateEstacionado.tsx:18`
+- **Onde:** `apps/web/src/routes/RetomarGateEstacionado.helpers.ts:6`
   (`cicloEstacionado`), `apps/web/src/routes/session-timeline-montagem.tsx`
   (`gateEstacionado.avisoPergunta`)
 - **Teste:** `apps/web/src/routes/RetomarGateEstacionado.test.tsx` ("o
@@ -7063,8 +7063,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   (`agentesDaOfertaEmLote`); papel `maintainer` (o do endpoint). Sem execução,
   nada aparece e `agent_autonomy` nem é lido. Some quando todos já estão em
   automático.
-- **Onde:** `apps/web/src/components/ModoAutomaticoNoChat.tsx:41`
-  (`ModoAutomaticoNoChat`), `:18` (`agentesDoChat`)
+- **Onde:** `apps/web/src/components/ModoAutomaticoNoChat.tsx:7`
+  (`ModoAutomaticoNoChat`), `:6` (`agentesDoChat`)
 - **Teste:** `apps/web/src/components/ModoAutomaticoNoChat.test.tsx` ("caminho
   feliz: com execução, a oferta aparece e só o clique grava"; falha: "sem
   execução, nada aparece e nem a leitura acontece")
@@ -7082,7 +7082,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:402`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:391`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba
@@ -7169,14 +7169,14 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 ### RN-912 — O modelo da área é uma caixa na linha do lead, em "Modelos por agente" {#rn-912}
 
 - **Regra:** a seção "Modelo por área" deixou de existir. O padrão da área (RN-102, escopo `area` da RN-470) liga-se por uma caixa **só na linha do lead** de cada área (`dev-lead`, `qa`, `infra`): "Valer para a área X inteira (lead + subagentes)". O binding de área é um valor por área e não guarda o agente de origem, então a caixa em toda linha deixaria duas disputarem o valor. Marcada ⇔ o vigente do lead vem da área (`origin: 'area'`), lido do lote da RN-654, sem consulta nova. **Marcar** grava a área com o vigente do lead e o critério de roteamento dele (`PUT .../area-bindings/:area`) e DEPOIS apaga o binding próprio do lead (`DELETE .../agent-bindings/:lead`; copiar o deixaria para trás, RN-102). São duas chamadas e o desfecho é por passo (RN-469): se a área recusa (inclusive o 422 da RN-040) nada mudou e o toast traz a frase da api; se a área gravou e o DELETE falha, a tela diz que o padrão da área foi gravado e o modelo próprio do lead não foi removido (404 do DELETE conta como já removido). **Desmarcar** apaga a área (`DELETE .../area-bindings/:area`) e não grava nada no lead; 404 vira "já herdava". Com a caixa marcada, o seletor e o critério de roteamento do lead gravam a ÁREA. O agente com binding próprio vence a área (RN-470) e NÃO segue: a tela lista, com plural, os subagentes conhecidos nessa situação (recorte declarado, RN-180; os `dev-<modulo>` dinâmicos não entram e a tela diz isso) e não apaga a decisão deles. O "aplicar a todos" (RN-476) grava binding próprio nos 17 e, por isso, tira os subagentes do padrão da área; o aviso dele diz isso. **Papel:** a caixa e, enquanto marcada, o seletor do lead pedem `maintainer` (o mínimo do endpoint de área, RN-102), comparado por `roleAtLeast`; abaixo disso ficam inertes e o motivo é dito UMA vez em texto na legenda da seção (ADR 0064). As demais linhas seguem em `developer`. A caixa nasce desabilitada se o lead não tem vigente para copiar, e diz o motivo em texto na própria caixa (AT-601, chave `modelsSection.areaBox.needsModel`). Revisa a UI das RN-040, RN-102 e RN-470; a cascata, o escopo e os endpoints não mudam (sem ADR).
-- **Onde:** `apps/web/src/routes/settings/ModelsSection.tsx:98` (`podeEditarArea`), `:432` (`areaDoLead`), `:450` (`handleMarcarArea`), `:490` (`handleDesmarcarArea`)
+- **Onde:** `apps/web/src/routes/settings/ModelsSection.tsx:94` (`podeEditarArea`), `:432` (`areaDoLead`), `:446` (`handleMarcarArea`), `:486` (`handleDesmarcarArea`)
 - **Teste:** `apps/web/src/routes/settings/ModelsSection.caixa-da-area.test.tsx` (AT-601: motivo sem vigente no lead); `apps/web/src/routes/ProjectSettingsTab.test.tsx` (marcar, a área recusando, FALHA PARCIAL, desmarcar com e sem 404, seletor do lead na área, não-seguidores, `developer` inerte); `apps/web/src/routes/settings/papel-na-tabela-de-agentes.test.tsx` (os dois mínimos); `bindings-em-lote.test.tsx` (lote único); `cascata.test.tsx`; `heranca.test.tsx`; `filtro-de-aptos.test.tsx` (RN-040); `preferencia-de-roteamento.test.tsx` (ADR 0166)
 - **Origem:** AT-600 (EP-031), pedido do dono de 22/10.
 
 ### RN-925 — Cada container tem página de detalhe com o estado registrado e o observado separados e as URLs declaradas {#rn-925}
 
 - **Regra:** `/containers/$projectId` (carregada sob demanda) abre a partir de cada linha de `/containers`. Só lê o que já existe: a linha da visão geral (a [RN-486](api.md#rn-486): registrado e observado nunca se fundem; projeto "nunca provisionado" tem texto próprio, a imagem/versão, os recursos, a postura de rede da decisão vigente e o modo de execução) e as URLs de `GET projects/:projectId/run-instructions`, que a tela diz serem declaradas pela Infra e não verificadas, nunca verdes ([RN-855](#rn-855)); sem declaração, texto próprio. A leitura da página polla no ritmo de projeto (15 s, [RN-632](#rn-632)), nunca nos 5 s da lista. Subir, parar e remover são o MESMO componente da lista (`AcoesDoContainer`), com as mesmas recusas locais em texto ([RN-521](api.md#rn-521), [RN-574](api.md#rn-574), [RN-610](engine.md#rn-610)) e o papel do endpoint por `roleAtLeast`.
-- **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:20` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:40` (`AcoesDoContainer`)
+- **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:24` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:34` (`AcoesDoContainer`)
 - **Teste:** `apps/web/src/routes/ContainerDetalhePage.test.tsx:92` (caminho feliz com ritmo de 15 s, nunca provisionado com URLs vazias, projeto fora da lista); `apps/web/src/routes/ContainersPage.test.tsx` cobre as ações extraídas
 - **Origem:** AT-609 (EP-030), fatia da AT-608.
 
@@ -7307,7 +7307,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
 - **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:138` (`ARTEFATOS_DO_FIO`).
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:141` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:135` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
 

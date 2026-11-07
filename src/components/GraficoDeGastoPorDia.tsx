@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts';
 import { diaCurto, type SpendPorDia } from '../lib/spend';
-import { formatarUsd } from './CredentialSpendSection';
+import { formatarUsd } from './CredentialSpendSection.helpers';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from './shadcn/chart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './shadcn/table';
 import styles from './GraficoDeGastoPorDia.module.css';

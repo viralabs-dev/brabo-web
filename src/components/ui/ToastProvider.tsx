@@ -1,8 +1,9 @@
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { XIcon } from './icons';
 import styles from './Toast.module.css';
 
+import { ToastContext } from './ToastProvider.helpers';
 export type ToastTone = 'success' | 'warning' | 'danger' | 'accent';
 
 interface ToastEntry {
@@ -27,11 +28,9 @@ interface ToastOptions {
   acao?: AcaoDoToast;
 }
 
-interface ToastContextValue {
+export interface ToastContextValue {
   showToast: (options: ToastOptions) => void;
 }
-
-const ToastContext = createContext<ToastContextValue | null>(null);
 
 const TONE_VAR: Record<ToastTone, string> = {
   success: 'var(--success)',
@@ -103,8 +102,3 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useToast(): ToastContextValue {
-  const ctx = useContext(ToastContext);
-  if (!ctx) throw new Error('useToast precisa estar dentro de ToastProvider');
-  return ctx;
-}

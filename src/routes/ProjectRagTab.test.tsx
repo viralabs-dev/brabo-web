@@ -59,8 +59,8 @@ function comPapel(role: Role) {
 }
 
 const cobertura: RagCoverage = {
-  docs: { filesInRepo: 12, filesIndexed: 10, truncated: false },
-  adr: { filesInRepo: 4, filesIndexed: 4, truncated: false },
+  docs: { filesInRepo: 12, filesIndexed: 10, truncated: false, filesCut: 0 },
+  adr: { filesInRepo: 4, filesIndexed: 4, truncated: false, filesCut: 0 },
   session: { sessionsInProject: 3, sessionsIndexed: 2 },
   local: { filesIndexed: 0, folderName: null, lastAttachedAt: null },
   chunksTotal: 180,
@@ -183,7 +183,7 @@ describe('ProjectRagTab', () => {
   it('maintainer vê e pode disparar a reindexação', async () => {
     listWorkspaces.mockResolvedValue(comPapel('maintainer'));
     reindexRag.mockResolvedValue({
-      docs: { filesScanned: 12, docsChunks: 30, adrChunks: 10, truncated: false, embedding: { available: true, embedded: 40, skipped: 0 } },
+      docs: { filesScanned: 12, docsChunks: 30, adrChunks: 10, truncated: false, cutFiles: [], embedding: { available: true, embedded: 40, skipped: 0 } },
       sessions: { total: 3, indexed: 3, chunksCreated: 15 },
       embeddingAvailable: true,
     });
@@ -194,6 +194,46 @@ describe('ProjectRagTab', () => {
     await user.click(botao);
 
     await waitFor(() => expect(reindexRag).toHaveBeenCalledWith('p-1'));
+  });
+
+  it('reindexação com arquivo cortado avisa no toast com a contagem (RN-1036)', async () => {
+    listWorkspaces.mockResolvedValue(comPapel('maintainer'));
+    reindexRag.mockResolvedValue({
+      docs: {
+        filesScanned: 12, docsChunks: 30, adrChunks: 10, truncated: false,
+        cutFiles: [
+          { path: 'docs/a.md', bytes: 5_000_000, reason: 'too_large' },
+          { path: 'docs/b.md', bytes: 10, reason: 'binary' },
+        ],
+        embedding: { available: true, embedded: 40, skipped: 0 },
+      },
+      sessions: { total: 3, indexed: 3, chunksCreated: 15 },
+      embeddingAvailable: true,
+    });
+    const user = userEvent.setup();
+    montar();
+
+    await user.click(await screen.findByRole('button', { name: /Reindexar agora/ }));
+
+    const aviso = await screen.findByText(/2 arquivos cortados no teto ou pulados/);
+    expect(aviso.closest('[style*="--tone-color"]')?.getAttribute('style')).toContain('warning');
+  });
+
+  it('reindexação sem corte não menciona arquivo cortado', async () => {
+    listWorkspaces.mockResolvedValue(comPapel('maintainer'));
+    reindexRag.mockResolvedValue({
+      docs: { filesScanned: 12, docsChunks: 30, adrChunks: 10, truncated: false, cutFiles: [], embedding: { available: true, embedded: 40, skipped: 0 } },
+      sessions: { total: 3, indexed: 3, chunksCreated: 15 },
+      embeddingAvailable: true,
+    });
+    const user = userEvent.setup();
+    montar();
+
+    await user.click(await screen.findByRole('button', { name: /Reindexar agora/ }));
+
+    await screen.findByText(/Reindexação concluída|concluíd/i);
+    expect(screen.queryByText(/cortado/)).not.toBeInTheDocument();
+    expect(screen.getByText(/Reindexação concluída/).closest('[style*="--tone-color"]')?.getAttribute('style')).not.toContain('warning');
   });
 
   it('CASO DE FALHA: erro ao carregar a cobertura mostra o motivo e o botão de tentar de novo', async () => {

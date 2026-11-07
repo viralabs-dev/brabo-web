@@ -10,7 +10,8 @@ import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
-import { MarcaDeNaoSalvo, useSecaoSalvavel } from './secao-salvavel';
+import { MarcaDeNaoSalvo } from './secao-salvavel';
+import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { Item } from '@/components/shadcn/item';
 

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mensagemDaApi } from '../../lib/api-client';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 
 /** Uma linha que a aplicação em lote alcança: a chave que vai na api, o nome que vai na tela. */
 export interface AlvoDaAplicacao {

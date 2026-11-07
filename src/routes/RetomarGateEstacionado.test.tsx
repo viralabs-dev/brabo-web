@@ -10,12 +10,12 @@ vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
   return { ...original, resumeParkedGate: (...a: unknown[]) => resumeParkedGate(...a) };
 });
-vi.mock('../components/ui/ToastProvider', () => ({
+vi.mock('../components/ui/ToastProvider.helpers', () => ({
   useToast: () => ({ showToast }),
 }));
 
-const { RetomarGateEstacionado, cicloEstacionado, cicloInterrompido } =
-  await import('./RetomarGateEstacionado');
+const { RetomarGateEstacionado } = await import('./RetomarGateEstacionado');
+const { cicloEstacionado, cicloInterrompido } = await import('./RetomarGateEstacionado.helpers');
 const { ApiError } = await import('../lib/api-client');
 
 beforeAll(async () => {

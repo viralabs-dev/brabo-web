@@ -16,7 +16,7 @@ import { Ajuda } from '@/components/ui/Ajuda';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Modal } from './ui/Modal';
-import { useToast } from './ui/ToastProvider';
+import { useToast } from './ui/ToastProvider.helpers';
 import { AlertIcon, ModelIcon, SearchIcon } from './ui/icons';
 import styles from './HuggingFaceModelBrowser.module.css';
 import { Checkbox } from './shadcn/checkbox';

@@ -20,7 +20,7 @@ env:
 jobs:
   web:
     name: Tipos, testes e build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -47,7 +47,7 @@ jobs:
 
   imagem:
     name: Imagem de produção (sem publicar)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
@@ -61,7 +61,7 @@ jobs:
   imagem-hotfix:
     name: Imagem do hotfix (sha-)
     if: github.event_name == 'pull_request' && github.base_ref == 'main' && startsWith(github.head_ref, 'hotfix/') && github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     timeout-minutes: 40
     permissions:
       contents: read

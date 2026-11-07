@@ -9,7 +9,7 @@ import {
 import { AGENT_LIST } from '../../lib/agents';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';

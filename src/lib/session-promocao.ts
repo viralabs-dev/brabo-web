@@ -2,7 +2,7 @@ import { useState } from 'react';
 import type { QueryClient } from '@tanstack/react-query';
 import type { TFunction } from 'i18next';
 import { promoteStories, returnStory } from './api-client';
-import type { useToast } from '../components/ui/ToastProvider';
+import type { useToast } from '../components/ui/ToastProvider.helpers';
 import type { useTurnoDoAgente } from './session-turno';
 
 type Turno = ReturnType<typeof useTurnoDoAgente>;

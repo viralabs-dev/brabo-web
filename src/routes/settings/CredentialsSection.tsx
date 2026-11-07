@@ -21,7 +21,7 @@ import {
 import { Input } from '../../components/ui/Input';
 import { Ajuda } from '@/components/ui/Ajuda';
 import { Button } from '../../components/ui/Button';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from '@/components/shadcn/item';
 import styles from '../ProjectSettingsTab.module.css';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';

@@ -29,16 +29,12 @@ import { ModelPicker } from '../../components/ModelPicker';
 import { Button } from '../../components/ui/Button';
 import { Ajuda } from '../../components/ui/Ajuda';
 import { ClockIcon } from '../../components/ui/icons';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import { formatarCustoMicros } from './shared';
 import styles from '../ProjectSettingsTab.module.css';
-import { useVoltarAHerdar } from './heranca';
-import {
-  AGENTE_DE_START,
-  CadeiaDeCascata,
-  herdouDoCriativo,
-  montarCadeia,
-} from './cascata';
+import { useVoltarAHerdar } from './heranca.helpers';
+import { CadeiaDeCascata } from './cascata';
+import { AGENTE_DE_START, herdouDoCriativo, montarCadeia } from './cascata.helpers';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { useAplicacaoEmLote } from './aplicar-a-todos';
 import { PreferenciaDeRoteamento } from './PreferenciaDeRoteamento';

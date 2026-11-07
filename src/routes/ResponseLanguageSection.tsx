@@ -21,7 +21,7 @@ import { Select } from '../components/ui/Select';
 import { Input } from '../components/ui/Input';
 import { Ajuda } from '../components/ui/Ajuda';
 import { Button } from '../components/ui/Button';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import styles from './AccountPage.module.css';
 
 /**

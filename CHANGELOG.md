@@ -3,6 +3,16 @@
 ## Unreleased
 
 - Imagem a cada carimbo `-dev` e no hotfix, com limpeza do GHCR (AT-765): o `release.yml` reage também a `vX.Y.Z-dev.N` (publica, escaneia, assina; o `imagem.json` vai como artefato do run, sem Release); o `ci.yml` ganha o job `imagem-hotfix` (`:sha-<12>` em PR `hotfix/*` para a `main`, com Trivy e cosign); o `limpeza-ghcr.yml` apaga o `sha-` da PR fechada e guarda as 10 `-dev.*` mais novas, sem tocar em `vX.Y.Z`.
+
+- A RN-473 (passo 4, binário) deixa de citar `npm install -g @brabo/runner`: o runner sai só como binário da Release do `brabo-runner` (AT-774). Nenhuma tela exibia o npm; só a doc muda.
+
+- CI: repina os reutilizáveis do `brabo-ci` em `13f3697` (merge da ci#17, que inclui a ci#16): `ubuntu-26.04`, `client-id` no lugar de `app-id`, rótulo de família criado antes de aplicar, linha `Carimbo:` na tag e helper `vinculos` (AT-772, AT-773).
+- Conhecimento: o toast do "Reindexar agora" avisa quantos arquivos foram cortados no teto de 4 MiB ou pulados por serem binários (`cutFiles`), e o painel de cobertura mostra `filesCut` nos cartões docs e ADR, nos quatro locales (AT-764, RN-1036). `openapi.json` e os tipos gerados atualizados a partir do brabo-api (api#51).
+
+- O lint sai com 0 avisos (AT-772): as constantes e funções exportadas por componentes (40 avisos `react-refresh/only-export-components`) foram para arquivos `*.helpers.ts` irmãos, `buttonVariants` para `shadcn/button-variants.ts`, sem mudar comportamento; `session-readiness` deixa de ter `useMemo` com dependência errada (`activeFor`/`events`), com teste novo; `public/theme-boot.js` usa `catch {}`; e `runs-on` dos workflows passa a `ubuntu-26.04`.
+
+- Ko-fi do mantenedor: `.github/FUNDING.yml` (botão Sponsor) e seção Apoie no README (AT-768).
+
 - Docs: a documentação do repositório volta a ser em pt-BR por padrão (decisão do dono de 06/11/2026, revertendo o ADR 0260; AT-766). `docs/business-rules/web.md` e `docs/explanation/tanstack-ai.md` saem do inglês e perdem o `idioma_original: en` (âncoras `{#rn-NNN}`, refs de código e links intactos); `README.md`, `design/*.md`, `.design-sync/NOTES.md`, `.design-sync/conventions.md` e os 66 docs de componente em `.design-sync/docs/` voltam ao pt-BR, com o frontmatter (`category:`, `keywords:`) que o design-sync lê; o README ganha a seção "Repositórios do Brabo"; e o `CLAUDE.md` troca a regra de doc em inglês por pt-BR.
 
 - Aprovações da sessão: um `container_recreate` proposto depois do merge da PR de infra que declara o app (`reason: 'app_declared'`) diz que o app foi declarado, que recriar o container o sobe, e mostra `http://127.0.0.1:<host>` com a porta que aprovar publica (13000+). Os outros recreates mantêm o texto. A frase está nos quatro locales (`actions.containerRecreate.appDeclared`, AT-758, RN-709).

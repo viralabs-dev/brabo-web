@@ -66,6 +66,18 @@ function epic(status: Epic['stories'][number]['status']): Epic {
 }
 
 describe('useSessionReadiness', () => {
+  it('cada agente só conta pela própria ativação e acompanha os eventos novos', () => {
+    const so_criativo: SessionEvent[] = [evento(1, 'agent.activated', { agent: 'criativo' })];
+    const { result, rerender } = renderHook(({ events }) => useSessionReadiness(events, undefined), {
+      initialProps: { events: so_criativo },
+    });
+    expect(result.current.criativoActive).toBe(true);
+    expect(result.current.arquitetoActive).toBe(false);
+
+    rerender({ events: [...so_criativo, evento(2, 'agent.activated', { agent: 'arquiteto' })] });
+    expect(result.current.arquitetoActive).toBe(true);
+  });
+
   it('deriva os seis sinalizadores a partir dos eventos e do backlog (caminho feliz)', () => {
     const events: SessionEvent[] = [
       evento(1, 'agent.activated', { agent: 'criativo' }),

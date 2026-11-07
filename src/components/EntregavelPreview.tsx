@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { WebPreview } from './ai-elements/web-preview';
-import { urlLocalSegura } from './RodarNaSuaMaquina';
+import { urlLocalSegura } from './RodarNaSuaMaquina.helpers';
 
 /* Encaixe do Web preview: usa a primeira URL local declarada; sem ela, diz em texto (nunca iframe vazio). */
 export function EntregavelPreview({ urls }: { urls: { label: string; url: string }[] }) {

@@ -7,6 +7,8 @@ overrides:
   katex@<0.18.2: 0.18.2
   # Dev-only, entra por `openapi-typescript` > `@redocly/openapi-core`.
   minimatch@<11.0.1: 11.0.1
+  # Dev-only, entra por `openapi-typescript` > `@redocly/openapi-core` (fixa js-yaml 4.3.1). Alerta Dependabot do js-yaml (AT-795).
+  js-yaml@>=4.0.0 <4.3.2: 4.3.2
 
 allowBuilds:
   esbuild: true

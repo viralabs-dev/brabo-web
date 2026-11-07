@@ -5,7 +5,7 @@ import { sendAgentMessage } from './api-client';
 import { subirAnexosPendentes } from './anexos';
 import { mensagemDaRecusaDoAgente } from './recusa-do-agente';
 import { nomeDoAgente } from './agents';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 
 /**
  * Mandar mensagem a um agente ENQUANTO um turno está em curso (RN-673, ADR

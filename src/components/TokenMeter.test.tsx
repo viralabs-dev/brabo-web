@@ -1,7 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { TokenMeter, tokenThreshold } from './TokenMeter';
+import { TokenMeter } from './TokenMeter';
+import { tokenThreshold } from './TokenMeter.helpers';
 // A instância REAL do app: o componente usa `useTranslation('shell')` sem
 // `I18nextProvider` próprio — mesmo padrão de `ProjectExecutorsTab.test.tsx`.
 import i18n from '../lib/i18n';

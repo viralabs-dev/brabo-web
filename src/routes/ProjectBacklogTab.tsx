@@ -28,7 +28,7 @@ import { Ajuda } from '../components/ui/Ajuda';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Modal } from '../components/ui/Modal';
 import { Textarea } from '../components/ui/Textarea';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import {
   ChevronRightIcon,
   StackIcon,
@@ -37,6 +37,7 @@ import {
 } from '../components/ui/icons';
 import styles from './ProjectBacklogTab.module.css';
 
+import { aguardandoPromocao } from './ProjectBacklogTab.helpers';
 const STATUS_TONE: Record<StoryStatus, BadgeTone> = {
   draft: 'muted',
   ready: 'accent',
@@ -66,18 +67,6 @@ const TASK_STATE_LABEL_KEY: Record<EstadoDaTarefa, string> = {
   in_review: 'taskState.inReview',
   done: 'taskState.done',
 };
-
-/**
- * As histórias que o PO terminou e que aguardam a decisão do usuário (Fase 12c
- * — RN-048). `proposedReady` convive com `status: 'draft'`: é uma proposta,
- * não um estado, e por isso não entra em `STATUS_TONE`.
- */
-export function aguardandoPromocao(epics: Epic[] | undefined): Story[] {
-  if (!epics) return [];
-  return epics.flatMap((e) => e.stories.filter((s) => s.proposedReady));
-}
-
-export { motivoDeCorrecaoInerte };
 
 export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('backlog');

@@ -23,7 +23,8 @@ import { GastoPorDia } from './GastoPorDia';
 import { Ranking } from './SpendCharts';
 import { CabecalhoDePagina } from './shadcn/cabecalho-de-pagina';
 import { SectionCards } from './shadcn/section-cards';
-import { CredentialSpendSection, formatarUsd } from './CredentialSpendSection';
+import { CredentialSpendSection } from './CredentialSpendSection';
+import { formatarUsd } from './CredentialSpendSection.helpers';
 import styles from '../routes/ProjectSpendTab.module.css';
 
 export function SeletorDeJanela({

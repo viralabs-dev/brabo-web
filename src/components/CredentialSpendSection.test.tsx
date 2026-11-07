@@ -1,11 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
-import {
-  CredentialSpendSection,
-  formatarMes,
-  formatarUsd,
-} from './CredentialSpendSection';
+import { CredentialSpendSection } from './CredentialSpendSection';
+import { formatarMes, formatarUsd } from './CredentialSpendSection.helpers';
 // A instância REAL do app: o componente usa `useTranslation('models')` sem
 // `I18nextProvider` próprio, e `formatarUsd`/`formatarMes` chamam
 // `i18n.t`/`i18n.language` direto no singleton — mesmo padrão de

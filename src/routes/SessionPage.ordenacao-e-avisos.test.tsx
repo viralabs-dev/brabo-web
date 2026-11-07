@@ -119,14 +119,11 @@ vi.mock('../lib/api-client', () => ({
   transitionSession: vi.fn(),
 }));
 
-const {
-  SessionPage,
-  ordemDaAcaoNaTimeline,
-  aberturasDeTurno,
-  turnoDoSeq,
-  afundarDesfechos,
-  agruparNarracoesDoTurno,
-} = await import('./SessionPage');
+const { SessionPage } = await import('./SessionPage');
+const { ordemDaAcaoNaTimeline, aberturasDeTurno, turnoDoSeq, afundarDesfechos } = await import(
+  '../lib/session-timeline'
+);
+const { agruparNarracoesDoTurno } = await import('./session-fio');
 const { ToastProvider } = await import('../components/ui/ToastProvider');
 
 const ID = 'a1b2c3d4-e5f6-4789-a0b1-c2d3e4f5a6b7';

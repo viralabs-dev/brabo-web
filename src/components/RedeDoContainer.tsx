@@ -17,7 +17,7 @@ import type { ContainerOverviewItem, Role } from '../lib/api-types';
 import { Ajuda } from './ui/Ajuda';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
-import { useToast } from './ui/ToastProvider';
+import { useToast } from './ui/ToastProvider.helpers';
 import styles from '../routes/ContainersPage.module.css';
 import { RefreshCw, Save } from 'lucide-react';
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { etapasDaEsteira } from './PrGateTimeline';
+import { etapasDaEsteira } from './PrGateTimeline.helpers';
 import type { GateResumo, RegistroDeGates } from '../lib/api-types';
 
 /**

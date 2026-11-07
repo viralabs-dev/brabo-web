@@ -3,8 +3,7 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@
 import { cn } from '@/lib/utils';
 import type { ItemDoMenu } from '../../lib/comandos-do-composer';
 
-export const idDoItemDoMenu = (idDaLista: string, indice: number) => `${idDaLista}-${indice}`;
-
+import { idDoItemDoMenu } from './menu-do-composer.helpers';
 /**
  * AT-717: a LISTA de sugestões do `@` e do `/` — `Command` do shadcn dentro de
  * um `Popover`. O foco NUNCA sai do campo (que segue NÃO controlado, RN-882):

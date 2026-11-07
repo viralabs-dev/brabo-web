@@ -1,5 +1,6 @@
 import type { SessionEvent } from './api-types';
-import { planoVigente, type PlanoDoAgente } from '../routes/RetomarTurnoInterrompido';
+import { type PlanoDoAgente } from '../routes/RetomarTurnoInterrompido';
+import { planoVigente } from '../routes/RetomarTurnoInterrompido.helpers';
 
 /**
  * O plano do agente NO TURNO EM CURSO (RN-967): o último `agent.plan` dele

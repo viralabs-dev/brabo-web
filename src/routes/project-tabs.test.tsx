@@ -2,7 +2,8 @@ import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { ProjectPage } from './ProjectPage';
-import { AbasDoProjeto, itensDasAbas } from './AbasDoProjeto';
+import { AbasDoProjeto } from './AbasDoProjeto';
+import { itensDasAbas } from './AbasDoProjeto.helpers';
 import {
   pedirAba,
   useAbaPublicada,

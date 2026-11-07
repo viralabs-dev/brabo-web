@@ -9,7 +9,7 @@ import {
   setAgentAutonomy,
 } from './api-client';
 import { AGENT_AUTONOMY_ALL_ACTIONS } from './api-types';
-import type { useToast } from '../components/ui/ToastProvider';
+import type { useToast } from '../components/ui/ToastProvider.helpers';
 import type { useTurnoDoAgente } from './session-turno';
 
 type Turno = ReturnType<typeof useTurnoDoAgente>;

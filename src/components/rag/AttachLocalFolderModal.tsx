@@ -13,7 +13,7 @@ import type { AttachLocalFolderReport, LocalFolderFile } from '../../lib/api-typ
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Alert } from '../ui/Alert';
-import { useToast } from '../ui/ToastProvider';
+import { useToast } from '../ui/ToastProvider.helpers';
 import { FolderIcon } from '../ui/icons';
 import styles from './AttachLocalFolderModal.module.css';
 

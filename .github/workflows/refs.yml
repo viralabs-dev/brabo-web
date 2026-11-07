@@ -2,7 +2,7 @@ name: refs
 
 # Confere as refs `caminho:N` (`símbolo`) das RNs no próprio PR (AT-782). Reutilizável do brabo-ci;
 # ref interna quebrada reprova, o artefato `refs-patch` traz a reancoragem. NÃO é check obrigatório.
-run-name: refs ← #${{ github.event.pull_request.number }} (${{ github.head_ref }})
+run-name: "refs ← #${{ github.event.pull_request.number }} (${{ github.head_ref }})"
 
 on:
   pull_request:

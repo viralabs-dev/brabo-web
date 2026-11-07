@@ -93,8 +93,11 @@ export function ProjectRagTab({ projectId }: { projectId: string }) {
           embeddingSuffix: relatorio.embeddingAvailable
             ? ''
             : t('rag.embeddingUnavailableSuffix'),
+          cutSuffix: relatorio.docs.cutFiles.length
+            ? t('rag.cutFilesSuffix', { count: relatorio.docs.cutFiles.length })
+            : '',
         }),
-        tone: relatorio.embeddingAvailable ? 'success' : 'warning',
+        tone: relatorio.embeddingAvailable && relatorio.docs.cutFiles.length === 0 ? 'success' : 'warning',
       });
     },
     onError: (erro) =>

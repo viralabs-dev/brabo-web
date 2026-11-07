@@ -204,7 +204,7 @@ viveu, e o nome é um rótulo de navegação, trocado quantas vezes se
 quiser — N eventos de renomeação empurrariam justamente o que importa para
 fora da cauda de 200 eventos.
 
-- **Onde:** `apps/web/src/lib/session-label.ts:66` (`rotuloDaSessao`),
+- **Onde:** `apps/web/src/lib/session-label.ts:61` (`rotuloDaSessao`),
   `apps/api/src/application/ports/session-repository.port.ts:52` (`rename`).
   Alcançável tanto de dentro da sessão
   (`apps/web/src/routes/SessionPage.tsx:439`, `handleRename`) quanto da

@@ -30,10 +30,8 @@ import { INTERVALO_DO_PROJETO_MS, criarInvalidadorDoCanal } from '../lib/canal-v
 import { rotuloDaSessao } from '../lib/session-label';
 import { roleAtLeast } from '../lib/roles';
 import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSessoes';
-import {
-  ModoAutomaticoDoTime,
-  agentesDaOfertaEmLote,
-} from '../components/ModoAutomaticoDoTime';
+import { ModoAutomaticoDoTime } from '../components/ModoAutomaticoDoTime';
+import { agentesDaOfertaEmLote } from '../components/ModoAutomaticoDoTime.helpers';
 import { PararExecucao } from '../components/PararExecucao';
 import type { AutonomyMode } from '../components/AgentCard';
 import { AgentTeamGrid } from '../components/AgentTeamGrid';
@@ -44,7 +42,7 @@ import { Users } from 'lucide-react';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Skeleton } from '../components/ui/Skeleton';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { AgentAutonomyActionType } from '../lib/api-types';
 import { nomeDoAgente } from '../lib/agents';
 import styles from './ProjectOverviewTab.module.css';

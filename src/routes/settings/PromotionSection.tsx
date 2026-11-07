@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getProject, updateProject } from '../../lib/api-client';
 import type { StoryPromotionMode } from '../../lib/api-types';
 import { Select } from '../../components/ui/Select';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';

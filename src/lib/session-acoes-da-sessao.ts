@@ -10,7 +10,7 @@ import {
   startAgent,
   transitionSession,
 } from './api-client';
-import type { useToast } from '../components/ui/ToastProvider';
+import type { useToast } from '../components/ui/ToastProvider.helpers';
 import type { useTurnoDoAgente } from './session-turno';
 import { mensagemDaRecusaDoAgente } from './recusa-do-agente';
 import { ehRecusaDeSessaoEncerrada } from './sessao-encerrada';
@@ -94,7 +94,6 @@ export function useAcoesDaSessao({
     queryClient.invalidateQueries({ queryKey: ['session', projectId, sessionId] });
     queryClient.invalidateQueries({ queryKey: ['sessions', projectId] });
   }
-
 
   async function handleRename() {
     if (rascunhoDoNome === null) return;

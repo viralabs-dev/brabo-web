@@ -45,7 +45,7 @@ import { useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
 import { Tabs } from './ui/Tabs';
 import { useProvidersComChave } from '../lib/providers-com-chave';
-import { useToast } from './ui/ToastProvider';
+import { useToast } from './ui/ToastProvider.helpers';
 import { HuggingFaceModelBrowser } from './HuggingFaceModelBrowser';
 import styles from './ModelCatalogSection.module.css';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';

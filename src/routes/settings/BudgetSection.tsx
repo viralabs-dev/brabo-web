@@ -12,7 +12,8 @@ import { formatarCustoMicros } from './shared';
 import styles from '../ProjectSettingsTab.module.css';
 import { MarcaDeHeranca } from './heranca';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
-import { MarcaDeNaoSalvo, useSecaoSalvavel } from './secao-salvavel';
+import { MarcaDeNaoSalvo } from './secao-salvavel';
+import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { Item } from '@/components/shadcn/item';
 

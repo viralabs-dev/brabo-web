@@ -106,7 +106,7 @@ export function AdoptionPlanPage({
           queryKey: ['repository', projectId],
         });
       });
-  }, [projectId, provider, externalId, queryClient]);
+  }, [projectId, provider, externalId, queryClient, t]);
 
   async function decidir(qual: 'approve' | 'skip') {
     const generatedAt = planQuery.data?.plan?.generatedAt;

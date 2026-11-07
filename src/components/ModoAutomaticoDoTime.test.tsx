@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import i18n from '../lib/i18n';
-import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime';
+import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime.helpers';
 import type { AgentAutonomyRule } from '../lib/api-types';
 
 /**

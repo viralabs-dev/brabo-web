@@ -12,7 +12,7 @@ import { ToastProvider } from '../../components/ui/ToastProvider';
 import { AGENT_LIST } from '../../lib/agents';
 import type { Project } from '../../lib/api-types';
 import { ModelsSection } from './ModelsSection';
-import { herdouDoCriativo, montarCadeia } from './cascata';
+import { herdouDoCriativo, montarCadeia } from './cascata.helpers';
 import { loteSobreLeiturasPorChave } from '../../test/lote-de-bindings';
 
 /**

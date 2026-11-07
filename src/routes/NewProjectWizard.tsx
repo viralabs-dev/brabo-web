@@ -32,7 +32,7 @@ import { Input } from '../components/ui/Input';
 import { Alert } from '../components/ui/Alert';
 import { Ajuda } from '../components/ui/Ajuda';
 import { ToggleGroup, ToggleGroupItem } from '../components/shadcn/toggle-group';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { GitHubIcon, GitLabIcon, LocalRepoIcon, PlusIcon, FolderIcon } from '../components/ui/icons';
 import {
   FolderBrowserModal,

@@ -2,7 +2,7 @@ import { EmptyState } from './ui/EmptyState';
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { alturasRelativas, diaCurto, tituloDoDia, type SpendPorDia } from '../lib/spend';
-import { formatarUsd } from './CredentialSpendSection';
+import { formatarUsd } from './CredentialSpendSection.helpers';
 import styles from './SpendCharts.module.css';
 
 /**

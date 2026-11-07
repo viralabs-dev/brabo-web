@@ -1899,6 +1899,8 @@ export interface RagFileCoverage {
   filesInRepo: number;
   filesIndexed: number;
   truncated: boolean;
+  /** Arquivos indexados só até o teto ou pulados por binário (RN-1036). */
+  filesCut: number;
 }
 
 export interface RagSessionCoverage {
@@ -1941,11 +1943,19 @@ export interface RagIndexEmbeddingReport {
   reason?: string;
 }
 
+/** `too_large`: indexado só até o teto; `binary`: pulado (RN-1036). */
+export interface RagCutFile {
+  path: string;
+  bytes: number;
+  reason: 'too_large' | 'binary';
+}
+
 export interface RagIndexDocsReport {
   filesScanned: number;
   docsChunks: number;
   adrChunks: number;
   truncated: boolean;
+  cutFiles: RagCutFile[];
   embedding: RagIndexEmbeddingReport;
 }
 

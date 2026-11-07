@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Segurança: o `js-yaml` sai da faixa vulnerável (4.3.1) para a 4.3.2 por `pnpm.overrides` (`js-yaml@>=4.0.0 <4.3.2`), só no caminho dev `openapi-typescript` > `@redocly/openapi-core` (que fixa a 4.3.1). Fecha o alerta do Dependabot e o erro do `Dependabot Updates` (AT-795).
 - CI: o regressivo do brabo-qa roda em toda PR para a `dev` (AT-769): o job `imagem-hotfix` do `ci.yml` publica a `sha-<12>` assinada também com `base_ref == 'dev'` (mesma guarda de fork, sem Dependabot); o `limpeza-ghcr.yml` apaga toda `sha-*` de PR fechada e as de mais de 7 dias (eram 14); o `qa-e2e.yml` passa a `branches: [dev, main]` (PR para a `dev` = `Regressivo do brabo-qa`, nunca exigido; PR para a `main` segue com o `E2E do brabo-qa`). CLAUDE.md e `.claude/agents/analista.md` ganham a regra do card.
 - CI: o run do `release.yml` ganha `run-name` com a origem e o passo `Vínculos` (helper do `brabo-ci`, origem pela linha `Carimbo:` da tag; AT-773, RN-1044).
 

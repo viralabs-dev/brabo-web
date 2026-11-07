@@ -7338,3 +7338,14 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:151` (`montarTimeline`).
 - **Teste:** `apps/web/src/routes/session-timeline-montagem.perguntas.test.tsx` (resposta antes do cartão; turno em curso; duas perguntas na ordem; não pula para a resposta do turno seguinte).
 - **Origem:** pedido do dono, 03/11/2026.
+
+## A versão do brabo-contracts é uma só (RN-1038)
+
+### RN-1038 — No web, a versão do brabo-contracts é a mesma no alias do `package.json`, no lock e em `scripts/baixar-areas.mjs` {#rn-1038}
+
+- **Regra:** `@brabo/shared` é o alias do pnpm `npm:@viralabs-dev/brabo-shared@X.Y.Z` (pacote público no GitHub Packages, ADR 0270), com versão exata. O `areas.json` baixado pelo `pnpm areas:baixar` vem da tag `vX.Y.Z` do mesmo contracts. As três fontes (alias, lock e a constante `TAG`) têm de coincidir; quem troca a versão usa `scripts/ci/subir-contracts.sh` do `brabo-ci`, e o lock nunca é editado à mão. Diverge, o check `contracts-alinhado` reprova; difere do `componentes.json` do `brabo`, só avisa. O check não é obrigatório.
+- **Onde:** `package.json:20` (`@brabo/shared`), `scripts/baixar-areas.mjs:3` (`TAG`), `.github/workflows/contracts-alinhado.yml:17`.
+- **Teste:** o reutilizável `contracts-alinhado.yml` do `brabo-ci` (spec `scripts/ci/contracts-alinhado.spec.ts` no `brabo-ci`) roda no PR; `apps/web/src/lib/agent-areas.contrato.test.ts` confere o `agent-areas.generated.ts` contra o `areas.json` da mesma tag.
+- **Origem:** AT-770 (EP-033), R2a.
+
+O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` ou `ENV`, só como secret do BuildKit), definida no brabo-broker em [`docs/business-rules/broker.md`](https://github.com/viralabs-dev/brabo-broker/blob/dev/docs/business-rules/broker.md). A prova no web é `test/token-do-registry.test.ts:1`, junto de `Dockerfile:54`, `.npmrc:1`, `.github/workflows/ci.yml:61` e `.github/workflows/release.yml:56`.

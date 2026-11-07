@@ -18,8 +18,8 @@ importers:
         specifier: ^1.9.0
         version: 1.9.0(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@brabo/shared':
-        specifier: github:viralabs-dev/brabo-contracts#v1.0.0&path:/packages/shared
-        version: https://codeload.github.com/viralabs-dev/brabo-contracts/tar.gz/0513a15fd257456e031e995f8a32046bd9e31b2e#path:/packages/shared
+        specifier: npm:@viralabs-dev/brabo-shared@1.2.0
+        version: '@viralabs-dev/brabo-shared@1.2.0'
       '@shadcn/react':
         specifier: 0.3.1
         version: 0.3.1(@types/react@19.2.17)(react@19.2.8)
@@ -221,10 +221,6 @@ packages:
   '@bcoe/v8-coverage@1.0.2':
     resolution: {integrity: sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==}
     engines: {node: '>=18'}
-
-  '@brabo/shared@https://codeload.github.com/viralabs-dev/brabo-contracts/tar.gz/0513a15fd257456e031e995f8a32046bd9e31b2e#path:/packages/shared':
-    resolution: {gitHosted: true, path: /packages/shared, tarball: https://codeload.github.com/viralabs-dev/brabo-contracts/tar.gz/0513a15fd257456e031e995f8a32046bd9e31b2e}
-    version: 0.0.1
 
   '@braintree/sanitize-url@7.1.2':
     resolution: {integrity: sha512-jigsZK+sMF/cuiB7sERuo9V7N9jx+dhmHHnQyDSVdpZwVutaBu7WvNYqMDLSgFgfB30n452TP3vjDAvFC973mA==}
@@ -935,6 +931,9 @@ packages:
 
   '@upsetjs/venn.js@2.0.0':
     resolution: {integrity: sha512-WbBhLrooyePuQ1VZxrJjtLvTc4NVfpOyKx0sKqioq9bX1C1m7Jgykkn8gLrtwumBioXIqam8DLxp88Adbue6Hw==}
+
+  '@viralabs-dev/brabo-shared@1.2.0':
+    resolution: {integrity: sha512-6zrUSEg0gJiUde/X+DQejTe1RaGIRWDtwCiBRfkEhA271weHoq7ouyNJNXPY0OQqbqBr5p+1rAmgKpXo4jWC5g==, tarball: https://npm.pkg.github.com/download/@viralabs-dev/brabo-shared/1.2.0/8c2e7676e2aff3771fc10e53851a89a26212c214}
 
   '@vitejs/plugin-react@6.0.3':
     resolution: {integrity: sha512-vmFvco5/QuC2f9Oj+wTk0+9XeDFkHxSamwZKYc7MxYwKICfvUvlMhqKI0VuICPltGqh1neqBKDvO4kes1ya8vg==}
@@ -2337,8 +2336,6 @@ snapshots:
 
   '@bcoe/v8-coverage@1.0.2': {}
 
-  '@brabo/shared@https://codeload.github.com/viralabs-dev/brabo-contracts/tar.gz/0513a15fd257456e031e995f8a32046bd9e31b2e#path:/packages/shared': {}
-
   '@braintree/sanitize-url@7.1.2': {}
 
   '@bramus/specificity@2.4.2':
@@ -2936,6 +2933,8 @@ snapshots:
     optionalDependencies:
       d3-selection: 3.0.0
       d3-transition: 3.0.1(d3-selection@3.0.0)
+
+  '@viralabs-dev/brabo-shared@1.2.0': {}
 
   '@vitejs/plugin-react@6.0.3(vite@8.3.5(@types/node@24.13.3)(jiti@2.7.0))':
     dependencies:

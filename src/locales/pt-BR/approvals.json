@@ -123,6 +123,9 @@
       "viableLabel": "implementável",
       "unfeasibleLabel": "INVIÁVEL",
       "justificationSuffix": ": \"{{justification}}\""
+    },
+    "containerRecreate": {
+      "appDeclared": "O app do projeto foi declarado. Recriar o container liga o app: ao aprovar, a porta {{porta}} é publicada e o app abre em {{url}}. O que está só dentro do container se perde."
     }
   },
   "approvalCard": {
@@ -136,6 +139,7 @@
     },
     "actions": {
       "approve": "Aprovar",
+      "approvePlan": "Aprovar plano",
       "deny": "Negar",
       "alwaysAllow": "Sempre permitir",
       "autoMode": "Modo automático"
@@ -156,7 +160,8 @@
       "alwaysAllowed": "Sempre permitido · gravado em permissions.json",
       "failed": "Falhou",
       "approvedTerminal": "Aprovado · comando em execução",
-      "approved": "Aprovado"
+      "approved": "Aprovado",
+      "failedConflict": "Conflito em {{files}} — o agente refaz a PR sozinho"
     },
     "body": {
       "commit": {
@@ -195,7 +200,19 @@
       "empty": "Esta ação não carrega payload."
     },
     "actorYou": "Você",
-    "actorOtherMember": "Outro membro"
+    "actorOtherMember": "Outro membro",
+    "plan": {
+      "agents_zero": "Começa a execução com {{count}} dev agents, um por módulo.",
+      "agents_one": "Começa a execução com {{count}} dev agent, um por módulo.",
+      "agents_other": "Começa a execução com {{count}} dev agents, um por módulo.",
+      "tasks_zero": "São {{count}} tarefas.",
+      "tasks_one": "É {{count}} tarefa.",
+      "tasks_other": "São {{count}} tarefas.",
+      "cost": "Custo esperado: até {{total}} ({{perTask}} de teto por tarefa).",
+      "autoPilot_zero": "Ligar o piloto automático para o time ({{count}} agentes; o merge continua com você)",
+      "autoPilot_one": "Ligar o piloto automático para o time ({{count}} agente; o merge continua com você)",
+      "autoPilot_other": "Ligar o piloto automático para o time ({{count}} agentes; o merge continua com você)"
+    }
   },
   "prGateTimeline": {
     "steps": {

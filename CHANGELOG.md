@@ -2,6 +2,40 @@
 
 ## Unreleased
 
+- CI: repina o `brabo-ci` em `2d9ec1b` (merge da ci#28: o `HEAD` do `brabo-ci` deixa de sombrear o `dev` em `qa-e2e-disparar.ts`, então o portão da `main` volta a rodar) em todos os pins, `uses:` e `ci_ref:` (AT-789).
+- CI: repina os reutilizáveis do `brabo-ci` em `384b5d1` (merge da ci#22: o job `disparar` do `qa-e2e-gatilho.yml` agora instala as dependências) em todos os pins, `uses:`, `ci_ref:` e checkout do `brabo-ci` (AT-785).
+
+- Check `refs` no PR (AT-782): o `refs.yml` chama o `refs-com-simbolo` do `brabo-ci` (pin `64a1e15`) e reprova a ref `caminho:N` (`símbolo`) de RN que o PR quebra; o artefato `refs-patch` traz a reancoragem. Não é check obrigatório.
+
+- `fixados/ORIGEM.md` deixa de citar só o monorepo e um SHA único: cada arquivo diz a origem de hoje (`brabo-api`, `brabo`) e o ponto conferido; `openapi.json` e `sempre-permitir.ts` batem com a `dev` da api em `7d94c3b7` (AT-783).
+
+- Imagem a cada carimbo `-dev` e no hotfix, com limpeza do GHCR (AT-765): o `release.yml` reage também a `vX.Y.Z-dev.N` (publica, escaneia, assina; o `imagem.json` vai como artefato do run, sem Release); o `ci.yml` ganha o job `imagem-hotfix` (`:sha-<12>` em PR `hotfix/*` para a `main`, com Trivy e cosign); o `limpeza-ghcr.yml` apaga o `sha-` da PR fechada e guarda as 10 `-dev.*` mais novas, sem tocar em `vX.Y.Z`.
+
+- A RN-473 (passo 4, binário) deixa de citar `npm install -g @brabo/runner`: o runner sai só como binário da Release do `brabo-runner` (AT-774). Nenhuma tela exibia o npm; só a doc muda.
+
+- CI: repina os reutilizáveis do `brabo-ci` em `13f3697` (merge da ci#17, que inclui a ci#16): `ubuntu-26.04`, `client-id` no lugar de `app-id`, rótulo de família criado antes de aplicar, linha `Carimbo:` na tag e helper `vinculos` (AT-772, AT-773).
+- Conhecimento: o toast do "Reindexar agora" avisa quantos arquivos foram cortados no teto de 4 MiB ou pulados por serem binários (`cutFiles`), e o painel de cobertura mostra `filesCut` nos cartões docs e ADR, nos quatro locales (AT-764, RN-1036). `openapi.json` e os tipos gerados atualizados a partir do brabo-api (api#51).
+
+- O lint sai com 0 avisos (AT-772): as constantes e funções exportadas por componentes (40 avisos `react-refresh/only-export-components`) foram para arquivos `*.helpers.ts` irmãos, `buttonVariants` para `shadcn/button-variants.ts`, sem mudar comportamento; `session-readiness` deixa de ter `useMemo` com dependência errada (`activeFor`/`events`), com teste novo; `public/theme-boot.js` usa `catch {}`; e `runs-on` dos workflows passa a `ubuntu-26.04`.
+
+- Ko-fi do mantenedor: `.github/FUNDING.yml` (botão Sponsor) e seção Apoie no README (AT-768).
+
+- Docs: a documentação do repositório volta a ser em pt-BR por padrão (decisão do dono de 06/11/2026, revertendo o ADR 0260; AT-766). `docs/business-rules/web.md` e `docs/explanation/tanstack-ai.md` saem do inglês e perdem o `idioma_original: en` (âncoras `{#rn-NNN}`, refs de código e links intactos); `README.md`, `design/*.md`, `.design-sync/NOTES.md`, `.design-sync/conventions.md` e os 66 docs de componente em `.design-sync/docs/` voltam ao pt-BR, com o frontmatter (`category:`, `keywords:`) que o design-sync lê; o README ganha a seção "Repositórios do Brabo"; e o `CLAUDE.md` troca a regra de doc em inglês por pt-BR.
+
+- Aprovações da sessão: um `container_recreate` proposto depois do merge da PR de infra que declara o app (`reason: 'app_declared'`) diz que o app foi declarado, que recriar o container o sobe, e mostra `http://127.0.0.1:<host>` com a porta que aprovar publica (13000+). Os outros recreates mantêm o texto. A frase está nos quatro locales (`actions.containerRecreate.appDeclared`, AT-758, RN-709).
+
+- Sessão: o feed e a árvore da linha do tempo mostram `artifact.business_rule_retired` ("criativo retirou uma regra de negócio — substituída por outra regra: motivo"); o painel de regras e o botão de prontidão ignoram regra retirada (AT-755, RN-1018). `openapi.json` e os tipos gerados atualizados a partir do brabo-api.
+
+- Sessão: a decisão principal de cada cartão do fio mostra texto ao lado do ícone, como exceção à regra de só ícone da AT-682 (AT-753 UX-3). O aceite do handoff diz "Aceitar e passar a {agente}" e "Ativar execução" mostra o rótulo. A chave `handoff.aceitarEIniciar` foi trocada por `handoff.aceitarEPassar`; a exceção está registrada em `design/COMPONENTS.md`. (web#16)
+
+- Aprovações da sessão: o cartão do plano de execução agora mostra só o que será feito, o custo previsto, "Aprovar plano" e "Negar"; o jargão (payload cru, permissions.json, a lista do piloto automático) foi para um "Detalhes" recolhido. A oferta do modo automático é um checkbox já marcado no cartão e, ao aprovar, grava a curinga de cada agente do plano (revoga a separação da AT-443 para este cartão; RN-755 e RN-804 atualizadas). Uma ação de git que falha agora mostra a causa e o próximo passo ("Conflito em README.md — o agente refaz a PR sozinho"), e o tipo `executionResult` ganhou o formato da falha de git (AT-753, UX-4 e UX-8). (web#17)
+
+- Executores: com execução ativa e nenhum agente trabalhando, um aviso explica por quê (os agentes esperam a task de que dependem e acordam quando a dependência é mergeada); o badge de status da sessão agora é traduzido (AT-753, P5, sem botão de acordar). A oferta do modo automático do time no chat tem uma variante compacta (lista de pilotos sob "Detalhes", cartão limitado a 40vh com rolagem interna). O componente sem uso `ModoAutomaticoDoPlano` sai; `agentesDoPlano` fica. (web#18)
+
+- O merge da sessão é confirmado na própria linha da PR ("Mergear #N em dev? Confirmar / Cancelar"): Confirmar propõe e aprova num gesto só, o resultado ("Mergeada" ou a causa da falha) aparece na linha, e a aprovação continua registrada. A referência no fio ganhou um botão "Ver o cartão". Um item que sai da fila mostra um aviso dispensável. Uma task bloqueada mostra o título antes do " — " com o diagnóstico recolhido. A coluna do chat ganhou `min-height:0` (AT-753, UX-2, UX-7 e UX-9). (web#19)
+
+- Chat "PRs prontas para merge": depois que o "Mergear" propõe o merge, aparece um toast de sucesso e o cartão de aprovação é rolado até ficar visível (AT-740). O fluxo em si foi reproduzido e funciona; o defeito era o retorno, já que o cartão aparecia dentro de uma lista com altura limitada.
+- `politica.yml`: pins do `brabo-ci` sobem para `b030fbf` (dispensa da PR do bot, ADR 0255; AT-733).
 - Release por tag da imagem `ghcr.io/viralabs-dev/brabo-web` (AT-704): `carimbo.yml` (tag-release do brabo-ci) e `release.yml` (build, push por digest, Trivy sobre o digest, cosign keyless por digest com verify, `imagem.json` na Release). A 1ª tag final na `main` sai `v1.0.0`.
 
 ## v1.0.0 - 2026-11-05

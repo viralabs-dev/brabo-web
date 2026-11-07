@@ -25,6 +25,16 @@ export function usePerguntasEmAberto(projectId: string | undefined) {
 /** O painel ouve este evento e abre a aba Perguntas (a aba fechada está `hidden`). */
 export const EVENTO_ABRIR_PERGUNTAS = 'brabo:abrir-perguntas';
 
+/** Generaliza o evento acima: abre uma aba do bloco de pendências (`detail` = a fila). */
+export const EVENTO_ABRIR_FILA = 'brabo:abrir-fila';
+
+export function abrirFilaDePendencias(fila: string) {
+  window.dispatchEvent(new CustomEvent(EVENTO_ABRIR_FILA, { detail: fila }));
+  setTimeout(() => {
+    document.querySelector('[data-testid="pendencias-de-outras-sessoes"]')?.scrollIntoView?.({ block: 'nearest' });
+  }, 0);
+}
+
 export function rolarAteAsPerguntas() {
   window.dispatchEvent(new Event(EVENTO_ABRIR_PERGUNTAS));
   // Depois do render que revela a aba: scrollIntoView em `hidden` não faz nada.

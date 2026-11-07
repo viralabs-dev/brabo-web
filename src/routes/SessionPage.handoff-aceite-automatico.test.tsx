@@ -189,7 +189,7 @@ describe('SessionPage — o aceite automático do handoff PO → Arquiteto (RN-6
     expect(aviso).toHaveTextContent('Aceito automaticamente');
     expect(aviso).toHaveTextContent('4 regras de negócio');
     expect(
-      screen.queryByRole('button', { name: 'Aceitar handoff e iniciar Arquiteto' }),
+      screen.queryByRole('button', { name: 'Aceitar e passar a Arquiteto' }),
     ).not.toBeInTheDocument();
   });
 
@@ -222,7 +222,7 @@ describe('SessionPage — o aceite automático do handoff PO → Arquiteto (RN-6
       await screen.findByTestId('handoff-aceite-automatico-falhou'),
     ).toHaveTextContent('engine fora');
     fireEvent.click(
-      await screen.findByRole('button', { name: 'Aceitar handoff e iniciar Arquiteto' }),
+      await screen.findByRole('button', { name: 'Aceitar e passar a Arquiteto' }),
     );
     await waitFor(() =>
       expect(acceptHandoff).toHaveBeenCalledWith('proj-1', ID, 'h-arq'),

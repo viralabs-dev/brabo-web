@@ -87,6 +87,7 @@ Web do Brabo: React 19 + Vite + TanStack Query/Router, i18n pt-BR (fonte), en, r
   archived".
 - PR do Dependabot entra pela `dev`, nunca direto na `main`; na `dev` ele não espera aprovação humana (ADR 0236) e a `main` segue com a escada inteira. Dependência de linguagem só por segurança (`open-pull-requests-limit: 0`), `github-actions` e `docker` semanais, `target-branch: dev`. O `dependabot-para-dev.yml` do `brabo-ci` fecha ou redireciona o PR de segurança que o GitHub abre contra a `main`.
 - Merge em branch protegida (`dev`/`main`) é SEMPRE manual do usuário, sem opção de automatizar. A política de PR, escada, promoção e carimbo de tag vem dos workflows reutilizáveis do `brabo-ci`, fixados por SHA com `# vX` no `uses:`. Imagem de terceiro por digest com a tag inline. Segredo nunca é impresso; teste nunca roda contra o Postgres da instalação.
+- Ref de doc quebrada reprova no próprio PR: o check `refs` (reutilizável `refs-com-simbolo` do `brabo-ci`, não obrigatório) confere cada `caminho:N` (`símbolo`) das RNs, e o artefato `refs-patch` traz a reancoragem (`gh run download <id> -n refs-patch && git apply refs.patch`) (AT-782).
 
 ## Convenções (repositório, dados e domínio)
 - O papel de PROJETO sobrepõe o de workspace nos DOIS sentidos —
@@ -399,7 +400,7 @@ Web do Brabo: React 19 + Vite + TanStack Query/Router, i18n pt-BR (fonte), en, r
   declarada (a decisão continua registrada em Aprovações).
 
 ## Documentação é parte da definição de pronto (permanente)
-- A doc deste repo mora em `docs/` (fonte pt-BR; `en`, `ru` e `zh-Hans` em `docs/i18n/`). Ao alterar código, atualize a doc da área NA MESMA mudança e mostre o diff dela junto com o do código. Não pergunte se deve: faça. NUNCA crie `website/docs/`: o site é agregado pelo `brabo`, que lê a `docs/` de cada repositório.
+- A doc deste repo mora em `docs/` (em pt-BR por padrão, como o README e o CHANGELOG — decisão do dono de 06/11/2026, que reverte o ADR 0260; sem `idioma_original` e sem `docs/i18n/`). Ao alterar código, atualize a doc da área NA MESMA mudança e mostre o diff dela junto com o do código. Não pergunte se deve: faça. NUNCA crie `website/docs/`: o site é agregado pelo `brabo`, que lê a `docs/` de cada repositório.
 - Mudança de comportamento observável → entrada em `CHANGELOG.md` (Unreleased). Versão própria a partir da 1.0.0, e toda tag nasce de workflow (nunca versionar à mão).
 - Regra de negócio nova → RN-XXX com `caminho:N` (`símbolo`) e o teste que a cobre, na `docs/business-rules*` deste repo; a numeração é UMA só no produto (nunca reinicie), a âncora `{#rn-NNN}` é o contrato e não muda quando a RN muda de arquivo. Aloque o número varrendo as branches locais e o remoto (colide com frente paralela).
 - Mudança estrutural (fronteira de camada, banco, modelo de consistência, dependência pesada) → ADR novo com o próximo número; ADR aceito NUNCA é editado (o novo o referencia). Os ADRs moram no repo `brabo` (a porta de entrada do produto).

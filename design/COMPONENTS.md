@@ -485,6 +485,7 @@ Link de texto sobre `--surface-1` usa `var(--accent-hover)` em repouso —
 - Ação destrutiva mantém o texto; o ícone só acompanha.
 - Botão SÓ ícone é a regra (AT-682): `<Button legenda="…">` põe o nome acessível (`aria-label`) e a legenda num Tooltip que abre no hover E no foco por teclado. Vale para todo botão do sistema, inclusive destrutivo de ícone inequívoco (lixeira, quadrado); a CONFIRMAÇÃO da ação não muda.
 - Fica com texto só quando nenhum ícone cobre o sentido inteiro (Estou pronto, Sempre permitir, Modo automático, Aprovar plano, Salvar com mais de um Salvar na tela).
+- Exceção (AT-753, decisão do dono de 06/11): a decisão PRINCIPAL de cada cartão do fio leva texto ao lado do ícone, como `<Button>` simples com children e sem `legenda`. Exemplos: o aceite do handoff ("Aceitar e passar a {agente}", `handoff.aceitarEPassar`) e "Ativar execução". Ações de toolbar e botões secundários seguem só com ícone e `legenda`.
 - Controle inerte diz o motivo em TEXTO visível: tooltip em botão `disabled` não abre.
 - Ícone sozinho tem `aria-label` e `title` traduzidos.
 - Controle inerte explica o motivo em TEXTO (ADR 0064), nunca só por tooltip.

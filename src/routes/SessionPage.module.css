@@ -306,6 +306,8 @@
 .chatColumn {
   flex: 1;
   min-width: 0;
+  /* AT-753 (UX-5): sem isto a coluna flex cresce com o conteúdo e a página rola. */
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -1150,6 +1152,11 @@
   font-family: var(--font-mono);
   font-size: var(--fs-meta);
   color: var(--text-muted);
+}
+
+.mergearErro {
+  font-size: var(--fs-meta);
+  color: var(--danger);
 }
 
 /* AT-249 (RN-663): o gate pendente, em TEXTO — aviso, o botão segue ativo. */

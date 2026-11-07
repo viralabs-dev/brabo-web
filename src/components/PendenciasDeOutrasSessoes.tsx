@@ -8,16 +8,14 @@ import {
   denyAction,
   getCodePullRequests,
   mensagemDaApi,
-  proposeAction,
   unblockTask,
 } from '../lib/api-client';
-import type { CodePullRequestSummary, OpenQuestion, ProposedAction, Task } from '../lib/api-types';
-import { userIdDaSessao } from '../lib/auth';
+import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
 import { useBacklog } from '../lib/hooks';
 import { assinaturaDoBacklog, prsProntasParaMerge, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
-import { EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
+import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
   CHAVE_DAS_PENDENCIAS_DO_PROJETO,
   separarPendenciasDeOutrasSessoes,
@@ -29,6 +27,9 @@ import { useDecisoesDaPolitica } from '../lib/decisao-da-politica-queries';
 import { ApprovalCard } from './ApprovalCard';
 import { useRegistrarAcoesNoBloco } from '../lib/acoes-no-bloco';
 import { Disclosure } from './ui/Disclosure';
+import { Alert } from './ui/Alert';
+import { MergearNoChat } from '../routes/MergearNoChat';
+import { saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
@@ -108,9 +109,6 @@ export function PendenciasDeOutrasSessoes({
       void queryClient.invalidateQueries({ queryKey: ['session-context-summary', projectId] });
     }
   }, [assinatura, projectId, queryClient]);
-  const [propostas, setPropostas] = useState<Record<string, ProposedAction>>({});
-  const [propondo, setPropondo] = useState<string | null>(null);
-  const [erroDoMerge, setErroDoMerge] = useState<Record<string, string>>({});
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
@@ -139,9 +137,40 @@ export function PendenciasDeOutrasSessoes({
   const [aberta, setAberta] = useState<ChaveDeFila | null>(null);
   useEffect(() => {
     const abrir = () => setAberta('perguntas');
+    // AT-753: o evento genérico abre qualquer aba (o `detail` é a fila).
+    const abrirFila = (e: Event) => setAberta((e as CustomEvent<ChaveDeFila>).detail);
     window.addEventListener(EVENTO_ABRIR_PERGUNTAS, abrir);
-    return () => window.removeEventListener(EVENTO_ABRIR_PERGUNTAS, abrir);
+    window.addEventListener(EVENTO_ABRIR_FILA, abrirFila);
+    return () => {
+      window.removeEventListener(EVENTO_ABRIR_PERGUNTAS, abrir);
+      window.removeEventListener(EVENTO_ABRIR_FILA, abrirFila);
+    };
   }, []);
+
+  // AT-753 (UX-7): o que sai da fila não some em silêncio. Compara os ids da
+  // leitura anterior com os da atual, por fila; as perguntas respondidas aqui
+  // já têm o retorno delas (`respondidas`) e ficam de fora. Leitura que ainda
+  // não chegou só faz entrar ids depois (o react-query guarda o dado), nunca sair.
+  const [saidas, setSaidas] = useState<Partial<Record<ChaveDeFila, number>> | null>(null);
+  const idsAnteriores = useRef<IdsPorFila | null>(null);
+  const respondidasRef = useRef(respondidas);
+  respondidasRef.current = respondidas;
+  const assinaturaDeIds = JSON.stringify([
+    aprovacoes.map((a) => a.id),
+    merges.map((a) => a.id),
+    prontas.map((p) => p.pr.id),
+    bloqueadas.map((b) => b.id),
+    perguntas.map((q) => q.questionId),
+  ]);
+  useEffect(() => {
+    const [ap, me, pr, bl, pe] = JSON.parse(assinaturaDeIds) as string[][];
+    const atual: IdsPorFila = { aprovacoes: ap!, merges: me!, prontas: pr!, bloqueadas: bl!, perguntas: pe! };
+    const anterior = idsAnteriores.current;
+    idsAnteriores.current = atual;
+    if (!anterior) return;
+    const novas = saidasDaFila(anterior, atual, new Set(respondidasRef.current.map((p) => p.questionId)));
+    if (Object.keys(novas).length > 0) setSaidas(novas);
+  }, [assinaturaDeIds]);
   const painel = (chave: ChaveDeFila, conteudo: React.ReactNode) => (
     <div hidden={aberta !== chave}>{conteudo}</div>
   );
@@ -169,6 +198,7 @@ export function PendenciasDeOutrasSessoes({
   );
 
   if (
+    saidas === null &&
     total === 0 &&
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
@@ -176,29 +206,6 @@ export function PendenciasDeOutrasSessoes({
     respondidas.length === 0
   )
     return null;
-
-  async function proporMerge(pr: CodePullRequestSummary) {
-    setPropondo(pr.id);
-    setErroDoMerge((e) => ({ ...e, [pr.id]: '' }));
-    try {
-      const acao = await proposeAction(projectId, sessionId, {
-        actionType: 'git_merge',
-        actor: { kind: 'user', id: userIdDaSessao() ?? 'usuário' },
-        payload: {
-          pullRequestId: pr.id,
-          sourceBranch: pr.sourceBranch,
-          targetBranch: pr.targetBranch,
-          title: pr.title,
-        },
-      });
-      setPropostas((p) => ({ ...p, [pr.id]: acao }));
-      invalidar(acao);
-    } catch (erro) {
-      setErroDoMerge((e) => ({ ...e, [pr.id]: mensagemDaApi(erro) }));
-    } finally {
-      setPropondo(null);
-    }
-  }
 
   async function desbloquear(task: Task) {
     setDesbloqueio((d) => ({ ...d, [task.id]: 'enviando' }));
@@ -353,6 +360,20 @@ export function PendenciasDeOutrasSessoes({
             )}
           </p>
         )}
+        {saidas && (
+          <div className={styles.saidas} data-testid="saidas-da-fila">
+            <Alert tone="success" role="status">
+              {t('pendencias.saidas.aviso', {
+                lista: (Object.keys(saidas) as ChaveDeFila[])
+                  .map((fila) => t(`pendencias.saidas.${fila}`, { count: saidas[fila] }))
+                  .join(' · '),
+              })}
+            </Alert>
+            <Button variant="secondary" onClick={() => setSaidas(null)}>
+              {t('pendencias.saidas.dispensar')}
+            </Button>
+          </div>
+        )}
         <ToggleGroup
           className={styles.abas}
           variant="outline"
@@ -399,9 +420,9 @@ export function PendenciasDeOutrasSessoes({
                 <span className={styles.contagem}>{prontas.length}</span>
               </h4>
               {pProntas.itens.map(({ pr, mergeDaSessao }) => {
-                // RN-822: a proposta que ESTE clique criou aparece na hora; a
-                // fila do projeto, quando volta, diz se ela segue pendente.
-                const acao = mergeDaSessao ?? propostas[pr.id];
+                // RN-822: a proposta pendente (a de um agente, ou a que sobrou de um
+                // Confirmar que não chegou a aprovar) é o cartão de sempre.
+                const acao = mergeDaSessao;
                 return (
                   <div key={pr.id} className={styles.grupo} data-testid="pr-pronta">
                     <div className={styles.origem}>
@@ -412,27 +433,23 @@ export function PendenciasDeOutrasSessoes({
                         {/* RN-843: registra só enquanto o cartão está MONTADO
                             (o Disclosure recolhido desmonta e desregistra). */}
                         <RegistroDoBloco ids={[acao.id]} />
-                        {cardDeDecisao(acao)}
+                        <div data-proposta-merge={pr.id}>{cardDeDecisao(acao)}</div>
                       </>
                     ) : (
                       <div className={styles.acoesDaLinha}>
-                        <Button
-                          variant="primary"
-                          disabled={!podeDecidir}
-                          loading={propondo === pr.id}
-                          onClick={() => void proporMerge(pr)}
-                        >
-                          {t('mergearNoChat.botao')}
-                        </Button>
-                        <span className={styles.nota}>
-                          {podeDecidir ? t('mergearNoChat.nota') : t('mergearNoChat.semPapel')}
-                        </span>
+                        <MergearNoChat
+                          projectId={projectId}
+                          sessionId={sessionId}
+                          numero={pr.number}
+                          pr={{
+                            pullRequestId: pr.id,
+                            sourceBranch: pr.sourceBranch,
+                            targetBranch: pr.targetBranch,
+                            title: pr.title,
+                          }}
+                          podeDecidir={podeDecidir}
+                        />
                       </div>
-                    )}
-                    {erroDoMerge[pr.id] && (
-                      <p className={styles.erro} role="alert">
-                        {t('mergearNoChat.erroTitulo')}: {erroDoMerge[pr.id]}
-                      </p>
                     )}
                   </div>
                 );
@@ -456,12 +473,18 @@ export function PendenciasDeOutrasSessoes({
               </h4>
               {pBloqueadas.itens.map((task) => {
                 const estado = desbloqueio[task.id];
+                const { titulo, diagnostico } = tituloEDiagnostico(
+                  task.blockedReason ?? t('pendencias.bloqueadas.semMotivo'),
+                );
                 return (
                   <div key={task.id} className={styles.grupo} data-testid="tarefa-bloqueada">
                     <div className={styles.origem}>{task.title}</div>
-                    <p className={styles.nota}>
-                      {task.blockedReason ?? t('pendencias.bloqueadas.semMotivo')}
-                    </p>
+                    <p className={styles.nota}>{titulo}</p>
+                    {diagnostico && (
+                      <Disclosure titulo={t('pendencias.bloqueadas.diagnostico')}>
+                        <p className={styles.nota}>{diagnostico}</p>
+                      </Disclosure>
+                    )}
                     <div className={styles.acoesDaLinha}>
                       <Button
                         variant="secondary"

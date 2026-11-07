@@ -21,7 +21,8 @@
       "rearmed": "智能体已重新启用",
       "rearmError": "无法重新启用智能体"
     },
-    "noExecutorsTitle": "暂无执行者"
+    "noExecutorsTitle": "目前无人执行",
+    "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。"
   },
   "agentCard": {
     "status": {
@@ -89,6 +90,7 @@
       "handoffAccepted": "接受了移交",
       "artifactProductBrief": "发布了产品简报",
       "artifactBusinessRule": "发布了业务规则",
+      "artifactBusinessRuleRetired": "撤销了业务规则",
       "artifactModuleMap": "发布了 module_map",
       "artifactModuleRouting": "将模块路由给 Infra",
       "artifactInsight": "发布了假设",

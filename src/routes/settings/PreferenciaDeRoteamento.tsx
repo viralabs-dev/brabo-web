@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
-import { listProviderCapabilities } from '../../lib/api-client';
+
 import type {
   Model,
   ModelBindingScope,
@@ -10,23 +9,12 @@ import type {
 import { Select } from '../../components/ui/Select';
 import styles from '../ProjectSettingsTab.module.css';
 
+import { useCapacidadesDosProviders } from './PreferenciaDeRoteamento.helpers';
 /** A ordem de oferta — a mesma de `PREFERENCIAS_DE_ROTEAMENTO` na api. */
 const OPCOES: readonly RoutingPreference[] = ['price', 'throughput', 'latency'];
 
 /** Valor do `<option>` que representa "sem critério" — nunca vai ao fio. */
 const HUB_DECIDE = '';
-
-/**
- * As capabilities de PROVIDER (ADR 0166). Chave global: é fato do código da
- * instalação, igual para todo projeto, e as duas seções de modelo a dividem.
- */
-export function useCapacidadesDosProviders() {
-  return useQuery({
-    queryKey: ['provider-capabilities'],
-    queryFn: listProviderCapabilities,
-    staleTime: Infinity,
-  });
-}
 
 /**
  * O critério de roteamento de UMA linha de binding (ADR 0166, RN-583).

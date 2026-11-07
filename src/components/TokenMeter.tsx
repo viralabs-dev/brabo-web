@@ -4,6 +4,7 @@ import { brlFmt, numberFmt, usdFmt } from '../lib/currency';
 import { Badge } from './ui/Badge';
 import styles from './TokenMeter.module.css';
 
+import { tokenThreshold } from './TokenMeter.helpers';
 export type TokenMeterVariant = 'default' | 'compact' | 'live';
 export type TokenThreshold = 'ok' | 'warning' | 'danger';
 
@@ -31,12 +32,6 @@ export interface TokenMeterProps {
   noBudget?: boolean;
   /** Acionado ao clicar no CTA de `noBudget` — só usado na variante `compact`. */
   onDefineBudget?: () => void;
-}
-
-export function tokenThreshold(pct: number): TokenThreshold {
-  if (pct >= 90) return 'danger';
-  if (pct >= 70) return 'warning';
-  return 'ok';
 }
 
 const THRESHOLD_COLOR: Record<TokenThreshold, string> = {

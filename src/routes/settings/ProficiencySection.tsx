@@ -18,7 +18,7 @@ import { Badge, type BadgeTone } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Play, Trash2 } from 'lucide-react';
 import { Modal } from '../../components/ui/Modal';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 

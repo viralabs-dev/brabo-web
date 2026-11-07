@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import i18n from '../lib/i18n';
-import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime';
+import { agentesDaOfertaEmLote } from './ModoAutomaticoDoTime.helpers';
 import type { AgentAutonomyRule } from '../lib/api-types';
 
 /**
@@ -27,6 +27,7 @@ function montar(
     autonomyRules: AgentAutonomyRule[] | undefined;
     podeLigar: boolean;
     noPlano: boolean;
+    compacto: boolean;
   }> = {},
 ) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -38,6 +39,7 @@ function montar(
         autonomyRules={'autonomyRules' in props ? props.autonomyRules : []}
         podeLigar={props.podeLigar ?? true}
         noPlano={props.noPlano}
+        compacto={props.compacto}
       />
     </QueryClientProvider>,
   );
@@ -101,6 +103,15 @@ describe('ModoAutomaticoDoTime (RN-661)', () => {
     expect(libera).toHaveTextContent('"Sempre permitir" neste agente não desliga o piloto');
     // A MESMA lista, sem um segundo texto: aqui ela vem aberta.
     expect(screen.queryByTestId('piloto-detalhe')).toBeNull();
+  });
+
+  it('UX-5: compacto recolhe a lista do piloto em "Detalhes" e limita a altura do cartão (AT-753)', () => {
+    montar({ compacto: true });
+    expect(screen.getByTestId('piloto-detalhe')).toBeInTheDocument();
+    expect(screen.getByRole('region').className).toMatch(/compacto/);
+    cleanup();
+    montar();
+    expect(screen.getByRole('region').className).not.toMatch(/compacto/);
   });
 
   it('CASO DE FALHA: a api recusa um agente — o desfecho diz quantos passaram e quem ficou em manual', async () => {

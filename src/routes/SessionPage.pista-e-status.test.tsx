@@ -270,7 +270,7 @@ describe('SessionPage — achado B: indicador entre aceitar o handoff e o primei
     montar();
 
     const botaoAceitar = await screen.findByRole('button', {
-      name: 'Aceitar handoff e iniciar PO',
+      name: 'Aceitar e passar a PO',
     });
     fireEvent.click(botaoAceitar);
 
@@ -308,7 +308,7 @@ describe('SessionPage — achado B: indicador entre aceitar o handoff e o primei
     montar();
 
     const botaoAceitar = await screen.findByRole('button', {
-      name: 'Aceitar handoff e iniciar PO',
+      name: 'Aceitar e passar a PO',
     });
     fireEvent.click(botaoAceitar);
 
@@ -334,7 +334,7 @@ describe('SessionPage — achado B: indicador entre aceitar o handoff e o primei
     montar();
 
     const botaoAceitar = await screen.findByRole('button', {
-      name: 'Aceitar handoff e iniciar PO',
+      name: 'Aceitar e passar a PO',
     });
     fireEvent.click(botaoAceitar);
 

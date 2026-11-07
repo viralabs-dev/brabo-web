@@ -24,7 +24,8 @@
       "rearmed": "Агент перезапущен",
       "rearmError": "Не удалось перезапустить агента"
     },
-    "noExecutorsTitle": "Пока никто не действует"
+    "noExecutorsTitle": "Сейчас никто не действует",
+    "idleWarning": "Сейчас ни один агент не работает. Выполнение активно: агенты ждут задачу, от которой зависят, и просыпаются, когда зависимость будет смержена."
   },
   "agentCard": {
     "status": {
@@ -107,6 +108,7 @@
       "handoffAccepted": "принял работу",
       "artifactProductBrief": "выпустил бриф",
       "artifactBusinessRule": "выпустил бизнес-правило",
+      "artifactBusinessRuleRetired": "отозвал бизнес-правило",
       "artifactModuleMap": "выпустил module_map",
       "artifactModuleRouting": "распределил модули для инфраструктуры",
       "artifactInsight": "выпустил гипотезу",

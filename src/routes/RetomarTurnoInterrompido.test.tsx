@@ -10,12 +10,14 @@ vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
   return { ...original, resumeInterruptedTurn: (...a: unknown[]) => resumeInterruptedTurn(...a) };
 });
-vi.mock('../components/ui/ToastProvider', () => ({
+vi.mock('../components/ui/ToastProvider.helpers', () => ({
   useToast: () => ({ showToast }),
 }));
 
-const { RetomarTurnoInterrompido, turnoInterrompidoPendente, planoVigente, ehRetomadaAutomatica } =
-  await import('./RetomarTurnoInterrompido');
+const { RetomarTurnoInterrompido } = await import('./RetomarTurnoInterrompido');
+const { turnoInterrompidoPendente, planoVigente, ehRetomadaAutomatica } = await import(
+  './RetomarTurnoInterrompido.helpers'
+);
 const { ApiError } = await import('../lib/api-client');
 
 beforeAll(async () => {

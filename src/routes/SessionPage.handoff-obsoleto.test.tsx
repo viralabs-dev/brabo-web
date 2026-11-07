@@ -229,7 +229,7 @@ describe('AT-293 — o handoff MANUAL não declara prontidão (RN-633)', () => {
     ]);
 
     montar();
-    await screen.findByRole('button', { name: 'Aceitar handoff e iniciar PO' });
+    await screen.findByRole('button', { name: 'Aceitar e passar a PO' });
     expect(
       screen.queryByRole('button', { name: 'Estou pronto — a necessidade está validada' }),
     ).not.toBeInTheDocument();
@@ -265,7 +265,7 @@ describe('AT-294 — oferta a agente ativo em OUTRA sessão do projeto não é a
     await waitFor(() => expect(getProjectsSummary).toHaveBeenCalled());
     await waitFor(() =>
       expect(
-        screen.queryByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+        screen.queryByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
       ).not.toBeInTheDocument(),
     );
   });
@@ -277,7 +277,7 @@ describe('AT-294 — oferta a agente ativo em OUTRA sessão do projeto não é a
     montar();
     await waitFor(() => expect(getProjectsSummary).toHaveBeenCalled());
     expect(
-      await screen.findByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+      await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
   });
 });

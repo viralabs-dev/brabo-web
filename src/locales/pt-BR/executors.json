@@ -23,7 +23,8 @@
       "rearmed": "Agente rearmado",
       "rearmError": "Não foi possível rearmar o agente"
     },
-    "noExecutorsTitle": "Ninguém em ação"
+    "noExecutorsTitle": "Ninguém em ação agora",
+    "idleWarning": "Nenhum agente está trabalhando agora. A execução está ativa: os agentes aguardam a tarefa de que dependem e acordam quando a dependência for mergeada."
   },
   "agentCard": {
     "status": {
@@ -101,6 +102,7 @@
       "handoffAccepted": "aceitou o trabalho",
       "artifactProductBrief": "emitiu o brief",
       "artifactBusinessRule": "emitiu regra de negócio",
+      "artifactBusinessRuleRetired": "retirou regra de negócio",
       "artifactModuleMap": "emitiu o module_map",
       "artifactModuleRouting": "roteou módulos para infra",
       "artifactInsight": "emitiu hipótese",

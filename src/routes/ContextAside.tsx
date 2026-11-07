@@ -8,6 +8,7 @@ import {
   useContextoDaSessaoInteira,
 } from '../lib/contexto-da-sessao';
 import { AGENTS, corDoAgente, nomeDoAgente } from '../lib/agents';
+import { regrasAtivas } from '../lib/regras-ativas';
 import { ordemDaAcaoNaTimeline } from '../lib/session-timeline';
 import {
   montarArvoreDeBacklog,
@@ -159,6 +160,7 @@ export function ContextAside({
   // falhou) = "não li", e a tela cai no comportamento da RN-180/701.
   const TIPOS_DE_ARTEFATO = new Set([
     'artifact.business_rule',
+    'artifact.business_rule_retired',
     'artifact.decision_record',
     'backlog.epic_created',
     'backlog.story_created',
@@ -180,8 +182,7 @@ export function ContextAside({
   // RN-178: do último para o primeiro, nas quatro seções. Cópia antes do
   // `sort`: `baixados` é derivado do cache da query, e ordená-lo no lugar
   // reordenaria o que os outros consumidores leem.
-  const regrasDaJanela = events
-    .filter((e) => e.type === 'artifact.business_rule')
+  const regrasDaJanela = regrasAtivas(events)
     .sort((a, b) => b.seq - a.seq)
     .map((e) => {
       const rule = e.payload as BusinessRulePayload;

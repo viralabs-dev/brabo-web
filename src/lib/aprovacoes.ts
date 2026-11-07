@@ -1,5 +1,6 @@
 import type { ActionType, PsychologistHypothesis } from './api-types';
 import { AGENTS } from './agents';
+import i18n from './i18n';
 
 /**
  * A LINGUAGEM das decisões que o produto pede ao usuário — verbo e frase, num
@@ -171,6 +172,37 @@ function nomeDoAgente(id: string | undefined): string {
 
 function dolares(micros: number): string {
   return `US$ ${(micros / 1_000_000).toFixed(2).replace('.', ',')}`;
+}
+
+/**
+ * O custo ESPERADO do plano do Dev Lead (AT-381, RN-802): a soma dos tetos por
+ * tarefa, com a primeira de cada módulo valendo `multiplicador` vezes. Vem do
+ * payload, nunca de uma constante daqui. `undefined` quando o payload não traz o
+ * orçamento ou as tarefas (a conta não se inventa). Quem mostra (a frase e o
+ * cartão do plano) lê daqui, para os dois não divergirem.
+ */
+export function tetoDoPlano(
+  p: Payload,
+): { total: number; porTarefa: number; tarefas: number; multiplicador?: number } | undefined {
+  const porTarefa = numero(p, 'orcamentoPorTarefaMicros');
+  const multiplicador = numero(p, 'multiplicadorDaPrimeiraDoModulo');
+  const tarefas = quantidade(p, 'tarefas');
+  if (porTarefa === undefined || tarefas === undefined || tarefas <= 0) return undefined;
+  const modulosComTarefa = new Set(
+    (p.tarefas as unknown[])
+      .map((t) => (t && typeof t === 'object' ? (t as { modulo?: unknown }).modulo : undefined))
+      .filter((m): m is string => typeof m === 'string' && m.length > 0),
+  ).size;
+  if (multiplicador !== undefined && multiplicador > 1 && modulosComTarefa > 0) {
+    const primeiras = Math.min(modulosComTarefa, tarefas);
+    return {
+      total: (tarefas - primeiras) * porTarefa + primeiras * multiplicador * porTarefa,
+      porTarefa,
+      tarefas,
+      multiplicador,
+    };
+  }
+  return { total: porTarefa * tarefas, porTarefa, tarefas };
 }
 
 function plural(n: number, singular: string, pluralForma: string): string {
@@ -353,23 +385,13 @@ const FRASE_DA_ACAO: Record<ActionType, (payload: Payload) => string> = {
     // EFETIVO: (tarefas − módulos) × teto + módulos × multiplicador × teto. O
     // número vem do payload, nunca de uma constante daqui; sem ele, a conta
     // antiga.
-    const orcamento = numero(p, 'orcamentoPorTarefaMicros');
-    const multiplicador = numero(p, 'multiplicadorDaPrimeiraDoModulo');
-    const listaDeTarefas = Array.isArray(p.tarefas) ? (p.tarefas as unknown[]) : [];
-    const modulosComTarefa = new Set(
-      listaDeTarefas
-        .map((t) => (t && typeof t === 'object' ? (t as { modulo?: unknown }).modulo : undefined))
-        .filter((m): m is string => typeof m === 'string' && m.length > 0),
-    ).size;
+    const teto = tetoDoPlano(p);
     let estimativa = '';
-    if (orcamento !== undefined && tarefas !== undefined && tarefas > 0) {
-      if (multiplicador !== undefined && multiplicador > 1 && modulosComTarefa > 0) {
-        const primeiras = Math.min(modulosComTarefa, tarefas);
-        const total = (tarefas - primeiras) * orcamento + primeiras * multiplicador * orcamento;
-        estimativa = ` Estimativa: até ${dolares(total)} (${plural(tarefas, 'tarefa', 'tarefas')} × ${dolares(orcamento)}; a primeira de cada módulo vale ${multiplicador === 2 ? 'o dobro' : `${multiplicador}×`}) — é o teto por tarefa, não o preço.`;
-      } else {
-        estimativa = ` Estimativa: até ${dolares(orcamento * tarefas)} (${plural(tarefas, 'tarefa', 'tarefas')} × ${dolares(orcamento)}) — é o teto por tarefa, não o preço.`;
-      }
+    if (teto) {
+      const { total, porTarefa, tarefas: n, multiplicador } = teto;
+      estimativa = multiplicador
+        ? ` Estimativa: até ${dolares(total)} (${plural(n, 'tarefa', 'tarefas')} × ${dolares(porTarefa)}; a primeira de cada módulo vale ${multiplicador === 2 ? 'o dobro' : `${multiplicador}×`}) — é o teto por tarefa, não o preço.`
+        : ` Estimativa: até ${dolares(total)} (${plural(n, 'tarefa', 'tarefas')} × ${dolares(porTarefa)}) — é o teto por tarefa, não o preço.`;
     }
     // RN-677 (AT-263, ADR 0194): aprovar o plano É ativar a execução — sobe
     // os dev agents e começa o gasto. A frase diz isso antes do clique.
@@ -426,9 +448,22 @@ const FRASE_DA_ACAO: Record<ActionType, (payload: Payload) => string> = {
 
   // AT-608 (ADR 0228): remove + sobe de novo, para valer o comando do app e a
   // rede declarados. O que está dentro do container se perde.
-  container_recreate: () =>
-    `Recria o container do projeto: ${codigo('remove')} o atual e ${codigo('sobe')} ` +
-    'outro com o comando do app e a rede declarados — o que está só dentro do container se perde.',
+  // AT-758: depois da PR de infra que declara o app, a api propõe com
+  // `reason: 'app_declared'` e a porta do host (13000+); o clique publica essa porta.
+  container_recreate: (p) => {
+    const host = (p.ports as Array<{ host?: unknown }> | undefined)?.[0]?.host;
+    if (p.reason === 'app_declared' && typeof host === 'number') {
+      return i18n.t('actions.containerRecreate.appDeclared', {
+        ns: 'approvals',
+        porta: host,
+        url: codigo(`http://127.0.0.1:${host}`),
+      });
+    }
+    return (
+      `Recria o container do projeto: ${codigo('remove')} o atual e ${codigo('sobe')} ` +
+      'outro com o comando do app e a rede declarados — o que está só dentro do container se perde.'
+    );
+  },
 
   // RN-508 (ADR 0145) — segundo tipo pra subir o container real do projeto,
   // exclusivo do modo Runner: sobe pelo `brabo-runner`, na máquina do

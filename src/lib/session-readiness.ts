@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { Epic, SessionEvent } from './api-types';
+import { regrasAtivas } from './regras-ativas';
 
 /**
  * Agentes que participam do fluxo de CHAT do composer (achado 9-fix) —
@@ -91,19 +92,13 @@ export function useSessionReadiness(
   // Um agente está ativo se houve um agent.activated pra ele nesta sessão.
   // Isto é EXISTÊNCIA histórica ("já entrou alguma vez"), não "é ele quem
   // fala AGORA" — os dois viram perguntas diferentes logo abaixo.
-  const activeFor = (agent: string) =>
-    events.some(
-      (e) =>
-        e.type === 'agent.activated' &&
-        (e.payload as { agent?: string })?.agent === agent,
-    );
-  const criativoActive = useMemo(() => activeFor('criativo'), [events]);
+  const criativoActive = useMemo(() => agenteJaAtivado(events, 'criativo'), [events]);
   // Mesmo padrão do Criativo, para o botão de prontidão da arquitetura
   // (achado do problema 1) — o Arquiteto não tinha NENHUM jeito de o usuário
   // disparar `OfferInfraHandoffUseCase`: o endpoint já existia
   // (`POST .../agents/arquiteto/handoff-infra`), mas nenhum lugar do
   // frontend o chamava.
-  const arquitetoActive = useMemo(() => activeFor('arquiteto'), [events]);
+  const arquitetoActive = useMemo(() => agenteJaAtivado(events, 'arquiteto'), [events]);
 
   // A garantia de VERDADE é o guardrail no engine — `CriativoServer` recusa
   // `confirm_readiness` (e narra a recusa como `agent.error` no fio) quando
@@ -112,7 +107,7 @@ export function useSessionReadiness(
   // ANTES do clique, com a MESMA fonte que já alimenta o painel "Regras de
   // negócio" em `ContextAside` — sem buscar de novo.
   const hasBusinessRule = useMemo(
-    () => events.some((e) => e.type === 'artifact.business_rule'),
+    () => regrasAtivas(events).length > 0,
     [events],
   );
 
@@ -148,4 +143,13 @@ export function useSessionReadiness(
 /** RN-824: derivação pura — a sessão tem ao menos um `artifact.module_map`. */
 export function temMapaDeModulos(events: SessionEvent[]): boolean {
   return events.some((e) => e.type === 'artifact.module_map');
+}
+
+// EXISTÊNCIA histórica ("já entrou alguma vez"), não "é ele quem fala AGORA".
+function agenteJaAtivado(events: SessionEvent[], agent: string): boolean {
+  return events.some(
+    (e) =>
+      e.type === 'agent.activated' &&
+      (e.payload as { agent?: string })?.agent === agent,
+  );
 }

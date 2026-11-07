@@ -19,12 +19,14 @@ import { CampoDoComposer } from '../components/CampoDoComposer';
 import { AnexosPendentes, BotaoDeAnexar } from '../components/ai-elements/anexos';
 import { adicionarAnexos } from '../lib/anexos';
 import { useMenuDoComposer } from '../lib/use-menu-do-composer';
-import { MenuDoComposer, idDoItemDoMenu } from '../components/ai-elements/menu-do-composer';
+import { MenuDoComposer } from '../components/ai-elements/menu-do-composer';
+import { idDoItemDoMenu } from '../components/ai-elements/menu-do-composer.helpers';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '../components/shadcn/dialog';
 import { fraseDaAcao, SEM_FRASE } from '../lib/aprovacoes';
 import { X } from 'lucide-react';
 import styles from './SessionPage.module.css';
 
+import { ignorarComposicaoIme } from './SessionComposer.helpers';
 /**
  * A faixa de baixo da coluna de chat da Sessão, que não rola: o card do
  * handoff da Infra (RN-499), o handoff manual a agente à escolha (ADR
@@ -86,21 +88,6 @@ export interface SessionComposerProps {
   handleReopen?: () => Promise<void>;
   /** RN-102: o mínimo das ações de passo é o do ENDPOINT (`developer`). */
   podeDecidir?: boolean;
-}
-
-/**
- * RN-830 (AT-503): Enter no meio da composição de acento (IME, tecla morta)
- * confirma o caractere, nunca envia — o handler da página só vê a tecla
- * quando não há composição em curso. Mora aqui, e não no `SessionPage.tsx`,
- * porque a página está no teto de linhas.
- */
-export function ignorarComposicaoIme(
-  handler: (e: KeyboardEvent<HTMLTextAreaElement>) => void,
-): (e: KeyboardEvent<HTMLTextAreaElement>) => void {
-  return (e) => {
-    if (e.nativeEvent.isComposing) return;
-    handler(e);
-  };
 }
 
 export function SessionComposer({
@@ -295,10 +282,10 @@ export function SessionComposer({
             </div>
             <Button
               variant="success"
-              legenda={t('handoff.aceitarEIniciar', { agente: nomeDoAgente(oferta.toAgent) })}
               onClick={() => handleAcceptHandoff(oferta.id, oferta.toAgent)}
             >
               <ThumbsUp aria-hidden="true" />
+              {t('handoff.aceitarEPassar', { agente: nomeDoAgente(oferta.toAgent) })}
             </Button>
           </div>
         ))}

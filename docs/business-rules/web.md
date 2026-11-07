@@ -185,36 +185,36 @@ Origem concreta: uma execução de validação criou vinte projetos chamados
 
 ## Session
 
-### RN-098 — The session name adds to the hashtag, never replaces it {#rn-098}
+### RN-098 — O nome da sessão soma à hashtag, nunca a substitui {#rn-098}
 
-The session can receive a friendly name (`sessions.name`, optional), at
-creation or later, via `PATCH /projects/:projectId/sessions/:sessionId`. The
-label shown on screen is **composite**: `<name> · #<first 8 characters of the
-id>`. With no name, it degrades to the **hashtag alone**.
+A sessão pode receber um nome amigável (`sessions.name`, opcional), na
+criação ou depois, por `PATCH /projects/:projectId/sessions/:sessionId`. O
+rótulo mostrado na tela é **composto**: `<nome> · #<8 primeiros caracteres do
+id>`. Sem nome, ele degrada para a **hashtag sozinha**.
 
-The hashtag never disappears, and the reason is operational: it's what gets
-pasted into a URL, a command, or a conversation, and a name chosen by a
-person **isn't unique** — two sessions named "Checkout" are normal. A blank
-name (or whitespace only) counts as **absence**, both on creation and on
-renaming: writing `''` would turn the label into `" · #a1b2c3d4"`, worse than
-the hashtag alone. `null` in the `PATCH` body is the way to **undo**.
+A hashtag nunca some, e o motivo é operacional: é ela que se cola numa URL,
+num comando ou numa conversa, e um nome escolhido por uma pessoa **não é
+único** — duas sessões chamadas "Checkout" são normais. Nome em branco (ou só
+espaços) conta como **ausência**, tanto na criação quanto ao renomear:
+gravar `''` transformaria o rótulo em `" · #a1b2c3d4"`, pior que a hashtag
+sozinha. `null` no corpo do `PATCH` é o jeito de **desfazer**.
 
-Renaming is **not** a session event. The event log is what the session lived
-through, and the name is a navigation label, changed as many times as
-desired — N renaming events would push exactly what matters out of the
-200-event tail.
+Renomear **não** é evento de sessão. O log de eventos é o que a sessão
+viveu, e o nome é um rótulo de navegação, trocado quantas vezes se
+quiser — N eventos de renomeação empurrariam justamente o que importa para
+fora da cauda de 200 eventos.
 
-- **Where:** `apps/web/src/lib/session-label.ts:61` (`rotuloDaSessao`),
+- **Onde:** `apps/web/src/lib/session-label.ts:61` (`rotuloDaSessao`),
   `apps/api/src/application/ports/session-repository.port.ts:52` (`rename`).
-  Reachable both from inside the session
-  (`apps/web/src/routes/SessionPage.tsx:439`, `handleRename`) and from the
-  project's list, without needing to open the session first
-  (`apps/web/src/routes/ProjectSessionsTab.tsx:101`, `handleRenomear`) — both
-  screens call the same `renameSession` and the same `rotuloDaSessao`.
-- **Test:** `apps/web/src/lib/session-label.test.ts`,
+  Alcançável tanto de dentro da sessão
+  (`apps/web/src/routes/SessionPage.tsx:439`, `handleRename`) quanto da
+  lista do projeto, sem precisar abrir a sessão antes
+  (`apps/web/src/routes/ProjectSessionsTab.tsx:101`, `handleRenomear`) — as
+  duas telas chamam o mesmo `renameSession` e o mesmo `rotuloDaSessao`.
+- **Teste:** `apps/web/src/lib/session-label.test.ts`,
   `apps/api/test/application/use-cases/sessions/session-kind-e-nome.spec.ts`,
   `apps/web/src/routes/ProjectSessionsTab.test.tsx`
-- **Origin:** [ADR 0061](../adr/0061-tipo-da-sessao-na-criacao.md)
+- **Origem:** [ADR 0061](../adr/0061-tipo-da-sessao-na-criacao.md)
 
 ## Painel de projetos
 
@@ -279,62 +279,62 @@ coluna dizia "nenhuma atividade" quando a api tinha recusado.
 
 ## Session
 
-### RN-104 — The tab derives from the recorded kind, and creates in that kind {#rn-104}
+### RN-104 — A aba deriva do tipo gravado, e cria nesse tipo {#rn-104}
 
-The project has **two** session tabs — **Creative** and **Chat** — and each
-one is a `kind`: it lists the sessions whose `sessions.kind` is its own, and
-its CTA creates in that `kind`, **without asking again**. There's no third
-tab listing both together.
+O projeto tem **duas** abas de sessão — **Criativo** e **Chat** — e cada
+uma é um `kind`: lista as sessões cujo `sessions.kind` é o seu, e o
+CTA dela cria nesse `kind`, **sem perguntar de novo**. Não há terceira
+aba listando as duas juntas.
 
-The kind was already immutable ([RN-097](api.md#rn-097)), and that's what makes it
-a legitimate navigation coordinate instead of a saved filter: a session never
-switches tabs. The tab reads the **recorded** field — it doesn't derive the
-kind from any event, for the same reason as RN-097: `execution.activated`
-classifies execution STATE, and a tab that looked at it would move on its
-own.
+O tipo já era imutável ([RN-097](api.md#rn-097)), e é isso que o torna
+uma coordenada de navegação legítima em vez de um filtro salvo: uma sessão nunca
+troca de aba. A aba lê o campo **gravado** — não deriva o
+tipo de evento nenhum, pelo mesmo motivo da RN-097: `execution.activated`
+classifica ESTADO de execução, e uma aba que olhasse para ele mudaria
+sozinha.
 
-Two consequences the rule fixes, and which aren't screen detail:
+Duas consequências que a regra fixa, e que não são detalhe de tela:
 
-- **The kind choice leaves the form.** It used to live in a radio-button
-  `fieldset`, and now it happens the moment the person clicks the tab.
-  Keeping both would offer the chance to create a session that contradicts
-  the place you're standing in. What's left in the form is the **name**,
-  which stays optional ([RN-098](#rn-098)).
-- **One action, one place at a time.** "Start ideation" still exists — it's
-  what brings the Creative agent into the session, and from there on the
-  owner's key starts being spent ([RN-058](api.md#rn-058)); no one steps in alone.
-  What changed is where it lives: **inside the invite** while the invite is
-  on screen, and in the topbar when it isn't. The invite used to POINT to the
-  topbar ("use Start ideation, at the top of the screen"), which is the
-  literal version of the problem that originated [RN-097](api.md#rn-097) — the
-  action in one place and the explanation in another. The topbar can't
-  simply lose the button: it's possible to type into a creative session
-  without ever having called the Creative agent, and then the invite leaves
-  the scene.
+- **A escolha do tipo sai do formulário.** Ela morava num `fieldset` de
+  radio buttons, e agora acontece no momento em que a pessoa clica na aba.
+  Manter os dois ofereceria a chance de criar uma sessão que contradiz
+  o lugar onde se está. O que sobra no formulário é o **nome**,
+  que segue opcional ([RN-098](#rn-098)).
+- **Uma ação, um lugar de cada vez.** "Iniciar ideação" continua existindo — é
+  o que traz o agente Criativo para a sessão, e dali em diante a
+  chave do dono começa a ser gasta ([RN-058](api.md#rn-058)); ninguém entra sozinho.
+  O que mudou é onde ela mora: **dentro do convite** enquanto o convite está
+  na tela, e na topbar quando não está. O convite APONTAVA para a
+  topbar ("use Iniciar ideação, no topo da tela"), que é a
+  versão literal do problema que originou a [RN-097](api.md#rn-097) — a
+  ação num lugar e a explicação em outro. A topbar não pode
+  simplesmente perder o botão: dá para digitar numa sessão criativa
+  sem nunca ter chamado o agente Criativo, e aí o convite sai
+  de cena.
 
-The three screens honor the three states of [RN-088](#rn-088), with **error
-before empty**: the filtered list is empty in both cases, and saying "no
-ideation yet" after a 429 would be lying about what happened.
+As três telas honram os três estados da [RN-088](#rn-088), com **erro
+antes de vazio**: a lista filtrada fica vazia nos dois casos, e dizer "nenhuma
+ideação ainda" depois de um 429 seria mentir sobre o que aconteceu.
 
-The Chat's deep-link key stays `sessions`, not `chat`. That's what makes an
-old bookmarked `?tab=sessions` link open the Chat **with the tab marked in
-the tab bar** — resolving the old key as an alias only in the panel would
-leave the tab bar with no selection at all, because `Tabs` compares `active`
-to `key`, and whoever writes `active` receives the raw key from
+A chave de deep link do Chat continua `sessions`, não `chat`. É isso que faz um
+link antigo salvo com `?tab=sessions` abrir o Chat **com a aba marcada na
+barra de abas** — resolver a chave antiga como alias só no painel deixaria
+a barra de abas sem seleção nenhuma, porque `Tabs` compara `active`
+com `key`, e quem escreve `active` recebe a chave crua do
 `validateSearch`.
 
-- **Where:** `apps/web/src/routes/project-tabs.ts:95` (both entries),
-  `apps/web/src/routes/ProjectSessionsTab.tsx:114` (the filter by recorded
-  `kind`) and `:98` (the CTA creating in the tab's `kind`),
-  `apps/web/src/routes/SessionPage.tsx:722` (`conviteVisivel`, the one
-  question the topbar and the invite share)
-- **Test:** `apps/web/src/routes/ProjectSessionsTab.test.tsx`,
+- **Onde:** `apps/web/src/routes/project-tabs.ts:95` (as duas entradas),
+  `apps/web/src/routes/ProjectSessionsTab.tsx:114` (o filtro pelo `kind`
+  gravado) e `:98` (o CTA criando no `kind` da aba),
+  `apps/web/src/routes/SessionPage.tsx:715` (`conviteVisivel`, a única
+  pergunta que a topbar e o convite compartilham)
+- **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx`,
   `apps/web/src/routes/project-tabs.test.tsx`,
   `apps/web/src/routes/SessionPage.sessao.test.tsx`
-- **Edge case:** a project with no session of that kind shows the empty
-  state OF THAT KIND, even when it has sessions of the other kind — that's
-  information, not an error.
-- **Origin:** [ADR 0061](../adr/0061-tipo-da-sessao-na-criacao.md)
+- **Caso de borda:** projeto sem sessão daquele tipo mostra o estado vazio
+  DAQUELE TIPO, mesmo quando tem sessões do outro tipo — é
+  informação, não erro.
+- **Origem:** [ADR 0061](../adr/0061-tipo-da-sessao-na-criacao.md)
 
 ### RN-107 — A aba Code tem um QUARTO estado: bloqueada por decisão pendente {#rn-107}
 
@@ -561,71 +561,71 @@ event log.
 
 ## Session
 
-### RN-119 — The session's ACTIVE agent is the one with the most recent `agent.activated` — never a fixed chain {#rn-119}
+### RN-119 — O agente ATIVO da sessão é o do `agent.activated` mais recente — nunca uma cadeia fixa {#rn-119}
 
-`SessionPage` decides two things from the SAME agent: who the composer's
-message goes to, and which agent the topbar resolves the displayed model
-from (the full cascade session→agent→area→project→workspace, the same one
-`RunLlmTurnUseCase` uses to actually run the turn). The two questions used
-to have DIFFERENT answers before this rule: routing used a fixed precedence
-chain (architect > po > creative, based on historical EXISTENCE — "has
-already activated once", which never "turned off"), and the displayed model
-didn't even know who was active — the model-binding route received no agent
-at all and always fell back to the Creative agent's fixed fallback
-(`herdarModeloDeStart`), even after a handoff to the PO, Architect, or Dev
+`SessionPage` decide duas coisas a partir do MESMO agente: para quem vai a
+mensagem do composer, e de qual agente a topbar resolve o modelo mostrado
+(a cascata completa sessão→agente→área→projeto→workspace, a mesma que o
+`RunLlmTurnUseCase` usa para de fato rodar o turno). As duas perguntas
+tinham respostas DIFERENTES antes desta regra: o roteamento usava uma cadeia
+fixa de precedência (architect > po > creative, baseada em EXISTÊNCIA
+histórica — "já ativou uma vez", que nunca "desligava"), e o modelo mostrado
+nem sabia quem estava ativo — a rota de vínculo de modelo não recebia agente
+nenhum e sempre caía no fallback fixo do agente Criativo
+(`herdarModeloDeStart`), mesmo depois de um handoff para o PO, o Arquiteto ou o Dev
 Lead.
 
-The single definition: the ACTIVE agent is the one with the most RECENT
-`agent.activated` (by `seq`), among the conversational agents of the chat
-flow (Creative, PO, Architect, Dev Lead). **Infra Lead is left out**:
-`agent_command_controller.ex` (engine) only has a `message` route for
-po/dev-lead/arquiteto (plus Creative, as the last clause's implicit
-fallback) — Infra never had `message` wired, only `start`. Sending a message
-to "infra" today would silently fall through to the Creative agent; treating
-it as the composer's active agent would reopen that trap instead of closing
-one.
+A definição única: o agente ATIVO é o do `agent.activated` mais
+RECENTE (por `seq`), entre os agentes conversacionais do fluxo do chat
+(Criativo, PO, Arquiteto, Dev Lead). **O Infra Lead fica de fora**:
+`agent_command_controller.ex` (engine) só tem rota `message` para
+po/dev-lead/arquiteto (mais o Criativo, como fallback implícito da última
+cláusula) — o Infra nunca teve `message` ligado, só `start`. Mandar mensagem
+para "infra" hoje cairia em silêncio no agente Criativo; tratá-lo
+como agente ativo do composer reabriria essa armadilha em vez de fechar
+uma.
 
-> **Superseded in part by [RN-631](#rn-631) (AT-251):** "most recent
-> `agent.activated` wins" was itself an implicit default recipient, and an
-> invisible one. The composer's recipient is now CHOSEN by the person (a "To"
-> selector listing the agents already in the session) and the topbar model
-> follows that recipient. What survives from this rule is the half about the
-> model: the binding route receives the agent, never falls back silently.
+> **Superada em parte pela [RN-631](#rn-631) (AT-251):** "vence o `agent.activated`
+> mais recente" era ele mesmo um destinatário padrão implícito, e invisível.
+> O destinatário do composer agora é ESCOLHIDO pela pessoa (um seletor "Para"
+> listando os agentes que já estão na sessão) e o modelo da topbar
+> segue esse destinatário. O que sobrevive desta regra é a metade do
+> modelo: a rota de vínculo recebe o agente, nunca cai em fallback calado.
 
-- **Where:** `apps/web/src/lib/session-destinatario.ts:290`
-  (`useDestinatarioDoChat`, since RN-631),
-  `apps/web/src/lib/api-client.ts:1192` (`getSessionModelBinding`, the
+- **Onde:** `apps/web/src/lib/session-destinatario.ts:290`
+  (`useDestinatarioDoChat`, desde a RN-631),
+  `apps/web/src/lib/api-client.ts:1192` (`getSessionModelBinding`, o
   `agentId`), `apps/api/src/interfaces/http/llm/model-bindings.controller.ts:166`
   (`getSessionBinding`, `@Query('agentId')`)
-- **Test:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
-  (formerly `SessionPage.agente-mais-recente.test.tsx`),
+- **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
+  (antes `SessionPage.agente-mais-recente.test.tsx`),
   `apps/web/src/routes/SessionPage.modelo-do-agente-ativo.test.tsx`,
   `apps/api/test/application/use-cases/llm/resolve-model-binding.use-case.spec.ts`
-- **Edge case:** Infra Lead doesn't participate in composer routing nor in
-  the "active agent" definition — it's proactive (Phase 4), not
-  conversational through the composer.
+- **Caso de borda:** o Infra Lead não participa do roteamento do composer nem
+  da definição de "agente ativo" — ele é proativo (Fase 4), não
+  conversacional pelo composer.
 
-### RN-120 — The session's event poll pauses during an in-progress turn {#rn-120}
+### RN-120 — O poll de eventos da sessão pausa durante um turno em andamento {#rn-120}
 
-`useSessionEvents` fetched events every few seconds with NO awareness of an
-in-progress turn. If the poll landed DURING a turn (common — turns usually
-last longer than the interval), it brought already-persisted
-`chat.message`/`agent.response`, which rendered ALONGSIDE the
-optimistic/streaming state still on screen: the same message, twice.
+`useSessionEvents` buscava eventos a cada poucos segundos SEM saber de um
+turno em andamento. Se o poll caía DURANTE um turno (comum — turnos costumam
+durar mais que o intervalo), ele trazia `chat.message`/`agent.response` já
+persistidos, que renderizavam JUNTO com o estado
+otimista/de streaming ainda na tela: a mesma mensagem, duas vezes.
 
-The fix pauses only the TIMER (`refetchInterval`) while `streaming` is
-`true` — the query stays `enabled`, so the explicit invalidation that
-already fires at the end of the turn (`finalizarTurnoDoAgente`) keeps
-fetching fresh data at the right time. `pausarPoll` is an OPTIONAL
-parameter, default `false`: the hook's other consumers (Overview, Code,
-Provisioning, AdoptionPlan) have no conversational turn in progress and
-stay as they were.
+A correção pausa só o TIMER (`refetchInterval`) enquanto `streaming` é
+`true` — a query continua `enabled`, então a invalidação explícita que
+já dispara no fim do turno (`finalizarTurnoDoAgente`) segue
+buscando dados frescos na hora certa. `pausarPoll` é parâmetro
+OPCIONAL, padrão `false`: os outros consumidores do hook (Overview, Code,
+Provisioning, AdoptionPlan) não têm turno conversacional em andamento e
+ficam como estavam.
 
-- **Where:** `apps/web/src/lib/hooks.ts:221` (`useSessionEvents`),
-  `apps/web/src/routes/SessionPage.tsx:277` (`eventsQuery`)
-- **Test:** `apps/web/src/lib/hooks.pausar-poll.test.tsx`
-- **Edge case:** pausing the timer isn't disabling the query — explicit
-  invalidation keeps working, and the fix depends on it to never miss data.
+- **Onde:** `apps/web/src/lib/hooks.ts:221` (`useSessionEvents`),
+  `apps/web/src/routes/SessionPage.tsx:269` (`eventsQuery`)
+- **Teste:** `apps/web/src/lib/hooks.pausar-poll.test.tsx`
+- **Caso de borda:** pausar o timer não é desabilitar a query — a invalidação
+  explícita segue funcionando, e a correção depende dela para nunca perder dado.
 
 ## Painel de projetos
 
@@ -685,28 +685,28 @@ mudam de lugar.
 
 ## Session
 
-### RN-123 — Creative session with no active Creative agent: the first message ALSO activates it {#rn-123}
+### RN-123 — Sessão criativa sem agente Criativo ativo: a primeira mensagem TAMBÉM o ativa {#rn-123}
 
-In a `kind: 'criativa'` session ([RN-097](api.md#rn-097)) with no `agent.activated`
-yet, sending the first message through the composer activates the Creative
-agent first (waiting for activation to finish) and only then delivers that
-message to it through the real path (`sendAgentMessage` — history, system
-prompt, `emit_artifact` tool). Before this rule, whoever typed without
-clicking "Start ideation" fell into a generic SSE chat with no history and no
-business rules: it was NOT the real Creative agent, and the conversation
-recorded nothing in the domain.
+Numa sessão `kind: 'criativa'` ([RN-097](api.md#rn-097)) ainda sem `agent.activated`,
+mandar a primeira mensagem pelo composer ativa antes o agente
+Criativo (esperando a ativação terminar) e só então entrega aquela
+mensagem a ele pelo caminho real (`sendAgentMessage` — histórico, prompt de
+sistema, ferramenta `emit_artifact`). Antes desta regra, quem digitava sem
+clicar em "Iniciar ideação" caía num chat SSE genérico, sem histórico e sem
+regras de negócio: NÃO era o agente Criativo de verdade, e a conversa
+não registrava nada no domínio.
 
-The "Start ideation" click still exists ([RN-104](#rn-104)) — it's still
-what triggers activation when the person prefers the explicit gesture, and
-it's from it that the owner's key ([RN-058](api.md#rn-058)) starts being spent on
-either of the two paths. What changed is that the FIRST MESSAGE now also
-counts as that gesture: no one should need a separate click before talking
-to whoever the screen already invited them to talk to.
+O clique em "Iniciar ideação" continua existindo ([RN-104](#rn-104)) — ainda é
+o que dispara a ativação quando a pessoa prefere o gesto explícito, e
+é a partir dele que a chave do dono ([RN-058](api.md#rn-058)) começa a ser gasta em
+qualquer dos dois caminhos. O que mudou é que a PRIMEIRA MENSAGEM agora também
+conta como esse gesto: ninguém deveria precisar de um clique à parte antes de falar
+com quem a tela já o convidou a falar.
 
-- **Where:** `apps/web/src/routes/SessionPage.tsx:684` (`handleSend`)
-- **Test:** `apps/web/src/routes/SessionPage.ideacao-automatica.test.tsx`
-- **Edge case:** a `consultiva` session has no Creative agent — the rule
-  doesn't apply, and the generic SSE path stays the right one for it.
+- **Onde:** `apps/web/src/routes/SessionPage.tsx:690` (`handleSend`)
+- **Teste:** `apps/web/src/routes/SessionPage.ideacao-automatica.test.tsx`
+- **Caso de borda:** sessão `consultiva` não tem agente Criativo — a regra
+  não se aplica, e o caminho SSE genérico segue sendo o certo para ela.
 
 ## Painel de projetos
 
@@ -1515,7 +1515,7 @@ até a abertura do turno e o histórico é UM bloco cronológico, não grupos po
 origem (que punham a resposta acima da pergunta). O painel de log segue como
 descrito aqui.
 
-- **Onde:** `apps/web/src/lib/activity.ts:94` (`OrigemDeEvento`), `:125`
+- **Onde:** `apps/web/src/lib/activity.ts:95` (`OrigemDeEvento`), `:125`
   (`origemDoEvento`), `:152` (`agruparPorOrigem`);
   `apps/web/src/components/ActivityFeed.tsx:34` (o corte de 5), `:66` (o
   toggle); `apps/web/src/routes/session-fio.tsx:119` (o corte do fio), `:291`
@@ -1554,7 +1554,7 @@ lista, e um `useEffect` renderizaria uma vez com a página inválida antes de
 corrigir. Com 5 ou menos, o paginador **não existe** — controle que não pagina
 nada é ruído ocupando altura.
 
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:109` (`REGRAS_POR_PAGINA`) e
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:110` (`REGRAS_POR_PAGINA`) e
   a ordenação das quatro seções no mesmo arquivo;
   `apps/web/src/components/ActivityFeed.tsx:98` (o `sort` decrescente)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -1850,8 +1850,8 @@ projeto aberto abre um flyout com as mesmas abas.
 - **Onde:** `apps/web/src/routes/Shell.tsx:564` (`projetosAbertosEfetivo`),
   `:504` (`useContagensDoProjeto`), `:519` (`irParaAba`), `:546`
   (`flyoutAberto`), `:243` (`contagensDoResumo`);
-  `apps/web/src/routes/AbasDoProjeto.tsx:88` (`AbasDoProjeto`), `:44`
-  (`itensDasAbas`), `:105` (`aoTeclar`);
+  `apps/web/src/routes/AbasDoProjeto.tsx:69` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
+  (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:86` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),
   `:70` (`publicarAbaAtiva`), `:86` (`pedirAba`);
   `apps/web/src/lib/sidebar-state.ts` (`lerProjetosAbertos`/`gravarProjetosAbertos`)
@@ -2760,7 +2760,7 @@ si não muda.
   `apps/web/src/components/TurnActivityStrip.tsx` (componente);
   `apps/web/src/lib/session-channel.ts:54` (`onToolCall`);
   `apps/web/src/routes/session-fio.tsx:48` (`agruparNarracoesDoTurno`),
-  `apps/web/src/routes/SessionPage.tsx:202` (`turnoViaCanal`)
+  `apps/web/src/routes/SessionPage.tsx:191` (`turnoViaCanal`)
 - **Teste:** `apps/web/src/lib/atividade-do-turno.test.ts`,
   `apps/web/src/components/TurnActivityStrip.test.tsx`,
   `apps/web/src/lib/session-channel.test.ts`,
@@ -2956,9 +2956,9 @@ linha alterna entre "Salvar" e "Trocar" conforme aquele provider já tenha
 chave; e ele divide o card com "Testar" e "Remover", que são irredutivelmente
 da linha.
 
-- **Onde:** `apps/web/src/routes/settings/secao-salvavel.tsx:105`
+- **Onde:** `apps/web/src/routes/settings/secao-salvavel.helpers.ts:64`
   (`useSecaoSalvavel` — o laço em série, o desfecho por linha e os três toasts),
-  `:130` (sujo por valor interpretado), `:241` (`MarcaDeNaoSalvo` — a contagem,
+  `:89` (sujo por valor interpretado), `apps/web/src/routes/settings/secao-salvavel.tsx:66` (`MarcaDeNaoSalvo` — a contagem,
   e o inválido substituindo-a),
   `apps/web/src/routes/settings/ParallelismSection.tsx:31`,
   `apps/web/src/routes/settings/BudgetSection.tsx:37` (os dois consumidores),
@@ -3056,12 +3056,12 @@ níveis acima dela estão vazios). Mesma disciplina da
 [RN-180](#rn-180): a tela não afirma com um traço o que não
 consegue nomear.
 
-- **Onde:** `apps/web/src/routes/settings/cascata.tsx:119` (`montarCadeia` — os
-  quatro estados e o nó do Criativo), `:178` (`herdouDoCriativo` — a dedução e
-  seu limite), `:287` (`CadeiaDeCascata`),
-  `apps/web/src/routes/settings/ModelsSection.tsx:158` (`cadeiaDoAgente`),
-  `:325` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
-  por que a linha só relê no sucesso), `:407` (`handleClearAgentBinding` — os
+- **Onde:** `apps/web/src/routes/settings/cascata.helpers.ts:14` (`montarCadeia` — os
+  quatro estados e o nó do Criativo), `:73` (`herdouDoCriativo` — a dedução e
+  seu limite), `apps/web/src/routes/settings/cascata.tsx:196` (`CadeiaDeCascata`),
+  `apps/web/src/routes/settings/ModelsSection.tsx:154` (`cadeiaDoAgente`),
+  `:321` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
+  por que a linha só relê no sucesso), `:403` (`handleClearAgentBinding` — os
   três desfechos, e por que o 404 tem o dele), `:359` (coluna Origem), `:429`
   (`não há nível abaixo`), `:448` (`sem gasto ainda`),
   `apps/web/src/components/ModelPicker.tsx:95` (`selected` sai do prop — o
@@ -3248,7 +3248,7 @@ binário`, e o último passo é **best-effort**:
 | 1. `showDirectoryPicker` | **sim** | sem pasta não há onde gravar nada. Cancelar (`AbortError`/`NotAllowedError`) NÃO é falha — volta ao estado inicial, sem alerta |
 | 2. `brabo-runner.config.json` | **sim** | é metade do par que a [RN-466](runner.md#rn-466) lê |
 | 3. par Ed25519 + `registerRunnerDeviceKey` + `…device-key.jwk.json` | **sim** | privada em disco sem contraparte no servidor não autentica; por isso o registro vem ANTES da gravação, e as duas são adjacentes |
-| 4. binário | **não** | devolve `falhaDoBinario` preenchido; a instrução final vira `npm install -g @brabo/runner && brabo-runner` |
+| 4. binário | **não** | devolve `falhaDoBinario` preenchido; a pessoa fica sem o agente local e a instrução final diz isso e aponta a issue em `https://github.com/viralabs-dev/brabo-runner/issues` (o runner sai só como binário, AT-774) |
 
 O caminho alternativo funciona **sem flag nenhuma** exatamente porque os passos
 2 e 3 já rodaram: o CLI lê os dois arquivos do `cwd` (RN-466). É um dos TRÊS
@@ -4072,7 +4072,7 @@ diferença não é escolha de desenho: é a forma do endpoint.
   (as duas consultas e o `ReconhecimentoDeMaquina`),
   `apps/web/src/components/RunnerOnboardingPanel.module.css`
   (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:442`
-  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:791`
+  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:807`
   (`RunnerDeviceKeyListItem`, `RunnerDeviceKeyEspecie`),
   `apps/web/src/locales/{en,pt-BR}/terminal.json` (`agenteDeMaquina.*`)
 - **Teste:** `apps/web/src/lib/agente-de-maquina.test.ts` — o caminho feliz
@@ -4562,9 +4562,9 @@ delas estava coberta pela comparação com o vocabulário do engine.
   `useTranslation` — trocar de idioma refaz a árvore. Uma chave que a tabela
   usa sem texto em um dos dois locales reprova em `timeline-tree.test.ts`.
 
-- **Código:** `apps/web/src/lib/timeline-tree.ts:161` (`TRADUCAO`), `:205`
-  (`dev.started`), `:206` (`dev.working` com o título), `:222`
-  (`dev.blocked_by_container`), `:227` (`dev.error`), `:246`
+- **Código:** `apps/web/src/lib/timeline-tree.ts:164` (`TRADUCAO`), `:209`
+  (`dev.started`), `:212` (`dev.working` com o título), `:230`
+  (`dev.blocked_by_container`), `:235` (`dev.error`), `:255`
   (`TRADUCAO_FORA`), `:307` (o `ativo` lido do painel), `:96`
   (`ChaveDeRotulo`, AT-134), `:135` (`tradutorDaArvore`);
   `apps/web/src/locales/{en,pt-BR}/executors.json` (`timelineTree.label`,
@@ -4775,7 +4775,7 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
 - **Código:** `apps/web/src/lib/decisao-da-politica.ts:111`
   (`fraseDaDecisaoDaPolitica`), `:65` (`lerDecisaoDaPolitica`), `:124`
   (`decisaoDaPoliticaDaAcao`), `:145` (`linhaDoEventoDePolitica`);
-  `apps/web/src/lib/activity.ts:721` (o ramo de `proposed_action.created`);
+  `apps/web/src/lib/activity.ts:804` (o ramo de `proposed_action.created`);
   `apps/web/src/components/ApprovalCard.tsx:272` (a linha do card);
   `apps/web/src/routes/session-timeline-montagem.tsx:825` e
   `apps/web/src/routes/ProjectApprovalsTab.tsx:311` (`decisoesDaPolitica`, desde a
@@ -4836,9 +4836,9 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
    encolhe (com piso e o nome inteiro no `title`), e os botões não quebram
    linha — "Encerrar" vira ícone com nome acessível só na barra mínima.
 
-- **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:84`
-  (`SessionLanguageIndicator`), `:40` (`idiomaSemOverride`), `:175`
-  (`origemPorExtenso`), `:224` (`podeTrocar`);
+- **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:72`
+  (`SessionLanguageIndicator`), `:29` (`idiomaSemOverride`), `:163`
+  (`origemPorExtenso`), `:215` (`podeTrocar`);
   `apps/web/src/routes/SessionTopbar.tsx:260` (`SessionLanguageIndicator`),
   `:128` (`modoDaBarra`), `:377` (`AjustesAgrupados`);
   `apps/web/src/lib/modo-da-barra-da-sessao.ts:35` (`modoDaBarra`)
@@ -4898,16 +4898,21 @@ api, o engine e todo teto ficam como estão.
    de M"): recorte declarado, como na [RN-180](#rn-180). O poll é o da sessão
    (5 s com o canal caído, o fallback de 15 s com ele vivo — `intervaloDaSessao`),
    porque o canal da sessão não avisa escrita de outra.
-4. **"Mergear" no card da PR aberta (AT-266).** Sob o card de um `pr_open`
-   executado, e só quando o evento `action.pr_open` traz o id da PR e não há
-   `git_merge` vivo (pendente, aprovado ou auto-aprovado) para ela, o botão
-   PROPÕE o `git_merge` pelo mesmo endpoint da aba PRs (ator `user`, nesta
-   sessão). A proposta aparece no fio como o card de sempre, com Aprovar/Negar:
-   **a confirmação é a mesma e é do humano** — o merge em branch protegida
-   continua `require_approval` incondicional ([RN-418](api.md#rn-418)), sem auto-aprovar,
-   sem "sempre permitir", sem o modo automático. O dedupe e as recusas da api
-   (PR já mergeada, merge já proposto — [RN-663](api.md#rn-663)) chegam ao dono como
-   a frase da api; gate pendente não é recusa, é aviso em texto ao lado do botão.
+4. **"Mergear" na linha da PR (AT-266, AT-753 UX-2).** Na linha de uma PR pronta e sob
+   o card de um `pr_open` executado (só quando o evento `action.pr_open` traz o id da
+   PR e não há `git_merge` vivo — pendente, aprovado ou auto-aprovado — para ela), o
+   botão não age: abre a confirmação NA MESMA LINHA ("Mergear #6 em dev?
+   Confirmar / Cancelar"). Confirmar PROPÕE o `git_merge` (ator `user`, nesta sessão)
+   e o APROVA no mesmo gesto, pelos mesmos dois endpoints da aba PRs e do card, então
+   a proposta e a aprovação ficam no log. **A confirmação é do humano** — o merge em
+   branch protegida continua `require_approval` incondicional
+   ([RN-418](api.md#rn-418)), sem auto-aprovar, sem "sempre permitir", sem o modo
+   automático; o clique em Confirmar É a aprovação. O desfecho aparece na linha:
+   "Mergeada", ou a causa da falha (a primeira frase de `error` mais os
+   `conflictingFiles` de um `GitActionFailureResult`). As recusas da api (PR já
+   mergeada, merge já proposto — [RN-663](api.md#rn-663)) chegam ao dono como a frase
+   da api; gate pendente não é recusa, é aviso em texto ao lado do botão. Merge
+   proposto por agente mantém o `ApprovalCard`.
 5. **O papel é o do ENDPOINT, e a lacuna é declarada.** Decidir ação e propor
    ação pedem `developer` (`actions.controller.ts`); a tela usa `roleAtLeast`
    sobre o papel de WORKSPACE, porque a Sessão não busca `project_members` — a
@@ -4916,24 +4921,32 @@ api, o engine e todo teto ficam como estão.
    texto (`bloqueio` do `ApprovalCard`): o que se tira é o controle, nunca a
    informação.
 
-**O que esta regra NÃO fecha, declarado:** (a) o "Mergear" não propõe E aprova
-num clique só — são dois cliques, a proposta e a confirmação, e é de propósito;
+6. **O que sai de uma fila diz que saiu (AT-753 UX-7), e task bloqueada tem título
+   curto (UX-9).** `saidasDaFila` (`apps/web/src/lib/saidas-da-fila.ts`) compara os ids
+   da leitura anterior com os da atual, por fila, e o bloco mostra uma linha
+   `role="status"` dispensável ("Saiu da fila: 1 PR pronta"); perguntas respondidas
+   nesta tela ficam de fora porque têm retorno próprio. O título de uma task bloqueada
+   é a parte do `blockedReason` antes do primeiro " — " (decisão P4, só no web); o resto
+   é o diagnóstico, num `Disclosure` fechado.
+
+**O que esta regra NÃO fecha, declarado:** (a) se a chamada de aprovação falha depois
+de a proposta ter sido feita, a proposta fica pendente e a linha a mostra como o card de sempre;
 (b) a retomada do turno lê a janela dos eventos já carregada, e um `agent.status`
 fora dela não é visto (não saber não é "está trabalhando"); (c) a lista de
 pendências de outras sessões tem o teto de 20 cards, e o resto continua na aba
 Aprovações; (d) as pendências de arquitetura e as hipóteses do Psicólogo
 continuam SEM decisão inline (não há `ApprovalCard` para elas).
 
-- **Código:** `apps/web/src/components/ApprovalCard.tsx:236` (`decidir`, a
+- **Código:** `apps/web/src/components/ApprovalCard.tsx:248` (`decidir`, a
   decisão em voo e a recusa no card); `apps/web/src/lib/session-turno.ts:59`
   (`turnoEmCursoNoLog`), `:536` (`useRetomarTurnoDoLog`);
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
   `:56` (`separarPendenciasDeOutrasSessoes`);
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:71`
-  (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.tsx:28`
-  (`prAbertaDaAcao`), `:56` (`jaHaMergeDaPr`), `:89` (`MergearNoChat`);
-  `apps/web/src/routes/SessionPage.tsx:155` (`podeDecidir`), `:277`
-  (`useRetomarTurnoDoLog`), `:771` (`PendenciasDeOutrasSessoes`)
+  (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
+  (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
+  `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:266`
+  (`useRetomarTurnoDoLog`), `:767` (`PendenciasDeOutrasSessoes`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -4946,7 +4959,7 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   `apps/web/src/routes/MergearNoChat.test.tsx:62` (PR do evento), `:75`
   (dedupe), `:100` (propõe como usuário, sem aprovar), `:121` (recusa da api —
   caso de falha), `:134` (papel — caso de falha)
-- **Origem:** AT-256, AT-268, AT-265 e AT-266, da análise do uso real de
+- **Origem:** AT-256, AT-268, AT-265, AT-266 e AT-753 (UX-2, UX-7, UX-9), da análise do uso real de
   2026-09-29 (itens 4, 5 e 10a), rodada 27, lane web-sessao
 
 ### RN-631 — O destinatário do chat é escolhido e visível, e a oferta de handoff é casada pelo `handoffId` {#rn-631}
@@ -5038,8 +5051,8 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:228` (`agentesEmConversa`),
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
-  `apps/web/src/routes/SessionComposer.tsx:380` (`destinatarioRow`), `:278`
-  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:354`
+  `apps/web/src/routes/SessionComposer.tsx:368` (`destinatarioRow`), `:266`
+  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
   (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:580`
   (`handoffIdDoEvento`), `:588` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
@@ -5126,9 +5139,9 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:127`
   (`useProjectSessions`), `:158` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
-  `apps/web/src/components/AcoesDoContainer.tsx:52` (`useLatestSession`, sem poll);
+  `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:203` (`invalidador`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:202` (`invalidador`);
+  `apps/web/src/routes/ProjectOverviewTab.tsx:206` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
 - **Teste:** `apps/web/src/routes/duas-abas.orcamento.test.tsx` (as duas abas
   com canal vivo, com rajada, com o canal que nunca conecta, e `/containers`;
@@ -5265,7 +5278,7 @@ o do chat.
   `:121` (os merges da mesma leitura);
   `apps/web/src/routes/ProjectApprovalsTab.tsx:115` (`pendentesQuery`), `:119`
   (`sessaoDeTrabalho`), `:326` (`handleApprove`);
-  `apps/web/src/routes/ProjectOverviewTab.tsx:125` (`pendentesDoProjeto`);
+  `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:107` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
@@ -5434,7 +5447,7 @@ barra) fechou no ADR 0211.
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:444`
   (`movel`), `:463` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:70` (`movel`);
-  `apps/web/src/routes/ProjectOverviewTab.tsx:76` (`movel`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;
   fecha pelo link, pelo X, pelo fundo e pela troca de rota; ignora o colapso
@@ -5617,8 +5630,8 @@ só terminariam em falha"), com os dois detalhes atrás do mesmo `<details>`.
 - **Código:** `apps/web/src/components/ContainerImageGate.tsx:33`
   (`ContainerImageGateNotice`), `:42` (`bloco`);
   `apps/web/src/routes/ProjectPrsTab.tsx:157` (`superficie="prs"`);
-  `apps/web/src/components/AcoesDoContainer.tsx:252` (`semContainer`), `:272`
-  (`detalhesDoBroker`); `apps/web/src/components/ui/Button.module.css:101`
+  `apps/web/src/components/AcoesDoContainer.tsx:244` (`semContainer`), `:270`
+  (`semBrokerNaSubida`; o helper da chave curta `chaveCurtaDoBroker` saiu: desde a AT-712 a falta de broker é dita UMA vez na ajuda "?", ADR 0240, e não num `<summary>` na célula); `apps/web/src/components/ui/Button.module.css:101`
   (`.danger:disabled`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("409 do portão vira
   o estado dedicado, com o texto da aba PRs e não o da aba Código", "409 no
@@ -5687,7 +5700,7 @@ muda.
   (`origemDaAtividade`), `:601` (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:127` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:75` (`lastActivityText`);
-  `apps/web/src/routes/ContextAside.tsx:46` (`quantos`), `:340`
+  `apps/web/src/routes/ContextAside.tsx:47` (`quantos`), `:340`
   (`totalDeArtefatos`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — Atividades": sem
   execução lê a sessão da Visão geral e o Criativo aparece; com execução lê a
@@ -5865,8 +5878,8 @@ absolutos seguem pedindo aprovação (RN-154, RN-418): merge em branch protegida
 o de WORKSPACE, com a mesma lacuna declarada das outras telas de modo
 automático (RN-471).
 
-- **Código:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:77`
-  (`ModoAutomaticoDoTime`), `:113` (`ligar`), `:48`
+- **Código:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:60`
+  (`ModoAutomaticoDoTime`), `:97` (`ligar`), `:70`
   (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:93`
   (`podeLigarModoAutomatico`), `:308` (onde a oferta monta)
 - **Teste:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx:54` (nada
@@ -5957,8 +5970,8 @@ E o composer e os campos de texto das perguntas estruturadas levam
 `data-form-type="other"`): cada foco abria o popup de autofill do navegador.
 
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:15` (`conversaComecou`),
-  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:440`
-  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:524`
+  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:428`
+  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:512`
   (`SEM_AUTOFILL`); `apps/web/src/routes/StructuredQuestionCard.tsx:242`
   (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/SessionPage.sessao.test.tsx:316` (Criativo
@@ -6020,7 +6033,7 @@ cartão pendente apareceu só DURANTE a sessão ao vivo — estado transitório 
 tela, não da api nem da janela. A próxima rodada da AT-015 captura a rede no
 momento em que ele aparecer, antes de qualquer correção.
 
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:393` (`trailing`), `:415`
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`), `:415`
   (`nadaNaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   ("RN-701 (AT-365): com as regras fora da janela, o contador não afirma 0";
@@ -6091,13 +6104,19 @@ decisão, fechados juntos:
   sem `tarefas` seguem subindo o mapa inteiro. O resumo calculado chega ao
   Dev Lead no texto do resultado da ferramenta (`resumo_do_plano/1`), para ele
   citar os números em vez de recontar.
+- **O recreate do app diz que porta publica (AT-758).** Um `container_recreate`
+  com `reason: 'app_declared'` (proposto pela api depois do merge da PR de infra
+  que declara `run.app`) diz que o app foi declarado e mostra `http://127.0.0.1:<host>`:
+  a porta do host (13000+) que aprovar publica. Os outros recreates mantêm a
+  frase acima. O texto é `actions.containerRecreate.appDeclared` em
+  `approvals.json` (quatro locales), resolvido por `i18n.t` em `aprovacoes.ts`.
 
-- **Onde:** `apps/web/src/lib/aprovacoes.ts:450` (`verboDaAcao`),
+- **Onde:** `apps/web/src/lib/aprovacoes.ts:485` (`verboDaAcao`),
   `apps/api/src/domain/actions/sempre-permitir.ts:33` (`TIPOS_SEM_SEMPRE_PERMITIR`),
   `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:84` (`execute`),
   `apps/api/src/application/use-cases/execution/execute-execution-plan.use-case.ts:89` (`execute`),
   `apps/api/src/application/use-cases/execution/activate-execution.use-case.ts:123` (`execute`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:587` (`resumo_do_plano`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:674` (`resumo_do_plano`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("AT-371 — o verbo segue o
   estado da ação", "AT-381 — o plano mostra a estimativa de gasto"),
   `apps/web/src/components/ApprovalCard.test.tsx` ("open_adr_pr pendente"),
@@ -6209,8 +6228,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   pegam as tarefas como estão ([RN-677](api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
-  `apps/web/src/routes/SessionPage.tsx:798` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:644`
+  `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:640`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -6267,8 +6286,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   ferramenta que volta ao Dev Lead diz o mesmo, e a descrição de `agentes`
   pede para não prometer ganho de paralelismo. A aspa do modelo nas pontas do
   resumo é removida antes de a frase citá-lo, para não sobrar `coberto."`.
-- **Onde:** `apps/web/src/lib/aprovacoes.ts:327` (`propose_execution_plan`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:254` (`sobem`), `:245`
+- **Onde:** `apps/web/src/lib/aprovacoes.ts:360` (`propose_execution_plan`),
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:276` (`sobem`), `:249`
   (`classificar`), `:97` (`spec`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("plano com 2 agentes num
   módulo único diz que sobe 1…"; "plano sem agente a mais não fala de
@@ -6311,8 +6330,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
   `apps/web/src/routes/session-timeline-montagem.tsx:950` (`respostaCortada`),
-  `apps/web/src/routes/SessionPage.tsx:451` (`continuarRespostaCortada`),
-  `:692` (`enviarMensagem`)
+  `apps/web/src/routes/SessionPage.tsx:439` (`continuarRespostaCortada`),
+  `:685` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
   (RN-749)`: as duas linhas reconhecidas; resposta inteira e a frase no meio do
   texto não)
@@ -6375,7 +6394,12 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   modo automático não aprova esta ação: ela continua esperando o seu
   Aprovar."). Aprovar o cartão junto com a ligação do modo seria decisão do
   dono e NÃO foi feito.
-- **Onde:** `apps/web/src/components/ApprovalCard.tsx:211` (`ApprovalCard`)
+  **Exceção (AT-753, decisão P3 do dono de 06/11):** o cartão de
+  `propose_execution_plan` não tem mais a oferta separada, o botão nem esta nota. O
+  piloto automático é um checkbox já marcado dentro do próprio cartão, e aprovar com
+  ele marcado é o que o liga ([RN-804](#rn-804)). Todo outro tipo de ação
+  mantém a regra acima.
+- **Onde:** `apps/web/src/components/ApprovalCard.tsx:219` (`ApprovalCard`)
 - **Teste:** `apps/web/src/components/ApprovalCard.test.tsx` (`ligar o
   "Modo automático" não aprova o card, e o card diz isso`; sem o botão, a nota
   não sai)
@@ -6394,7 +6418,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   evento dele, quando a primeira ação já esperava clique. O `allow` padrão do
   `permissions.json` NÃO muda (decisão do dono).
 - **Onde:** `apps/web/src/lib/precisa-de-voce.ts:256` (`gateEsperandoClique`)
-  e `apps/web/src/components/ModoAutomaticoDoTime.tsx:67`
+  e `apps/web/src/components/ModoAutomaticoDoTime.helpers.ts:24`
   (`agentesDaOfertaEmLote`)
 - **Teste:** `apps/web/src/lib/precisa-de-voce.test.ts` (gate de QA e SecOps
   nomeados; dev agent e humano não) e
@@ -6415,7 +6439,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   bloqueio). Sem sessão no projeto, o mesmo: o motivo vai em texto, nunca só
   no `title` do botão `disabled`, que não abre no Chromium. Se tarefa
   bloqueada deve ou não travar o merge é pergunta do dono, não decidida aqui.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:280` (`avisoDaLinha`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:293` (`avisoDaLinha`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("AT-451: tarefa
   bloqueada com gate pendente NÃO diz que o merge segue disponível")
 - **Origem:** AT-451 (TP-01 de 09/10: "O merge segue disponível — a decisão é
@@ -6435,7 +6459,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   vocabulário lê os JSON, e o enum entrava pela interpolação em runtime;
   `i18n-enum-cru.test.ts` reprova `t(…, { status: x.status })`.
 - **Onde:** `apps/web/src/routes/ConfirmarEncerramento.tsx:13`
-  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:614`
+  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:602`
   (`statusGenerico`)
 - **Teste:** `apps/web/src/routes/ConfirmarEncerramento.test.tsx` (sem
   execução encerra direto; com execução só encerra ao confirmar; cancelar não
@@ -6456,8 +6480,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   não é a mais recente. Nenhuma requisição a mais: as chaves são as que a
   sidebar já assina, e `useActiveExecutionSession` ganha `staleTime` igual ao
   intervalo, para o segundo assinante não refazer a busca ([RN-632](#rn-632)).
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:393` (`trailing`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:97` (`linhaDoTempoNaExecucao`)
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:101` (`linhaDoTempoNaExecucao`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (decisão fora da janela não vira 0; sessão inteira na janela diz vazio),
   `apps/web/src/routes/ProjectOverviewTab.test.tsx` (lê a sessão de execução e
@@ -6513,7 +6537,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   Infra Lead cujo handoff foi aceito lá), e com uma ideação aberta depois a
   árvore dizia "Nenhum agente entrou em ação nesta sessão ainda" sobre um time
   trabalhando. Sem leitura nova.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:275` (`overviewEvents`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:279` (`overviewEvents`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("AT-471: agente
   que só agiu na execução aparece na árvore…"; o caso sem execução segue lendo
   a mais recente)
@@ -6546,7 +6570,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   alguns) é dito mesmo que a releitura depois das gravações falhe. Declarado:
   o mesmo sintoma no "Merge" da aba PRs, em "Nova ideação" e no "Aplicar a
   todos os agentes" NÃO foi reproduzido nem corrigido aqui.
-- **Onde:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:102` (`carregando`)
+- **Onde:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:98` (`carregando`)
 - **Teste:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("AT-477
   (RN-803): antes de a leitura de agent_autonomy chegar, o botão fica inerte e
   diz por quê")
@@ -6554,22 +6578,27 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 ### RN-804 — O cartão do plano do Dev Lead oferece o modo automático em lote antes de aprovar {#rn-804}
 
-- **Regra:** o `ApprovalCard` de `propose_execution_plan` pendente mostra,
-  acima de "Aprovar", o MESMO controle de oferta em lote da aba Executores
-  ([RN-661](#rn-661)): os `dev-<modulo>` que o plano sobe (mesma derivação de
-  `devAgentId` da api) mais os subagentes de gate, todos marcados, e nada
-  gravado sem o clique em "Ligar". Mesmo endpoint (`PUT .../agent-autonomy`,
-  curinga `*`), um PUT por agente, desfecho por agente e a mesma lista do que o
-  modo automático não libera. Aprovar ativa a execução ([RN-677](api.md#rn-677)) e o
-  dev pede o primeiro comando logo depois; ligar depois não aprova o pendente
-  ([RN-755](#rn-755)). Só aparece onde quem chama passou o callback do modo
-  automático (papel `maintainer`) e há `QueryClient`. O cartão segue único
-  (AT-322): é um bloco a mais do tipo, não variante de aparência.
-- **Onde:** `apps/web/src/components/ApprovalCard.tsx:363`
-  (`ModoAutomaticoDoPlano`), `apps/web/src/components/ModoAutomaticoDoPlano.tsx:17`
-  (`agentesDoPlano`)
+- **Regra:** o `ApprovalCard` de `propose_execution_plan` mostra só o que
+  importa (AT-753, UX-4): uma frase curta (dev agents, um por módulo, e a
+  contagem de tarefas), a linha de custo previsto (`tetoDoPlano`: a soma dos
+  tetos por tarefa do payload, RN-802), "Aprovar plano" e "Negar". O jargão
+  (payload cru, a nota do `permissions.json`, "Sempre permitir", o motivo da
+  política e a lista do que o piloto automático libera) fica dentro de "Detalhes",
+  fechado. A oferta do piloto automático ([RN-661](#rn-661)) é um checkbox JÁ MARCADO no
+  cartão ("Ligar o piloto automático para o time"): aprovar com ele marcado
+  primeiro grava a curinga `*` de cada agente (os `dev-<modulo>` que o plano
+  sobe mais os subagentes de gate) pelo mesmo endpoint da aba Executores
+  (`PUT .../agent-autonomy`, um PUT por agente), depois aprova. Um PUT recusado
+  não impede a aprovação; desmarcado, nada é gravado. Aprovar ativa a
+  execução ([RN-677](api.md#rn-677)); o merge segue com o usuário. Só aparece
+  onde quem chama passou o callback do modo automático (papel `maintainer`). O cartão
+  segue único (AT-322). Isto substitui a oferta separada da AT-476, o que
+  revoga a separação da AT-443 ([RN-755](#rn-755)) para este cartão.
+- **Onde:** `apps/web/src/components/ApprovalCard.tsx` (`ofereceOPiloto`,
+  `ligarOPilotoDoTime`), `apps/web/src/lib/aprovacoes.ts` (`tetoDoPlano`),
+  `apps/web/src/components/ModoAutomaticoDoPlano.tsx` (`agentesDoPlano`)
 - **Teste:** `apps/web/src/components/ApprovalCard.modo-automatico-do-plano.test.tsx`
-- **Origem:** AT-476 (TP-01 de 10/10)
+- **Origem:** AT-476 (TP-01 de 10/10); AT-753 (checkbox no lugar da oferta separada)
 
 ### RN-815 — O "Parar execução" conta as tarefas em curso E em revisão, lidas do backlog {#rn-815}
 
@@ -6587,7 +6616,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   a execução ainda não começou ([RN-677](api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/execution.ts:37` (`contarTarefasAfetadasAoParar`),
   `apps/web/src/components/PararExecucao.tsx:26` (`PararExecucao`),
-  `apps/web/src/components/ModoAutomaticoDoTime.tsx:77` (`ModoAutomaticoDoTime`)
+  `apps/web/src/components/ModoAutomaticoDoTime.tsx:60` (`ModoAutomaticoDoTime`)
 - **Teste:** `apps/web/src/components/PararExecucao.test.tsx` ("RN-815 (AT-488):
   a tarefa em revisão de QA conta…"; "RN-815: sem backlog lido não afirma…"),
   `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("RN-816 (AT-488): no
@@ -6610,7 +6639,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   deslocamento em pixels.
 - **Onde:** `apps/web/src/routes/SessionPage.tsx` (`PendenciasDeOutrasSessoes`
   antes de `styles.messages`), `apps/web/src/routes/ProjectExecutorsTab.tsx`,
-  `apps/web/src/routes/ProjectPrsTab.tsx:103` (`ProjectPrsTab`),
+  `apps/web/src/routes/ProjectPrsTab.tsx:83` (`ProjectPrsTab`),
   `apps/web/src/routes/ProjectPrsTab.module.css` (`.reservaDaEsteira`)
 - **Teste:** `apps/web/src/routes/salto-de-layout.test.ts`,
   `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-816 (AT-480): o Merge não
@@ -6647,7 +6676,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   permitir) a esquece. Declarado: a causa foi medida no CÓDIGO (o cartão
   dependia do refetch), não no navegador; que o refetch demore o bastante para
   o clique parecer perdido é inferência do TP-01.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:125` (`acaoDaPr`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:105` (`acaoDaPr`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-822 (AT-493):
   o 1º clique em Merge abre o cartão sem esperar a fila do projeto voltar" e
   "RN-822: a fila lida DEPOIS da proposta, sem ela, vence o cartão local")
@@ -6665,7 +6694,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   [RN-102](api.md#rn-102)); o botão habilitado ganha a explicação no `title`. A
   derivação lê os `events` que a tela já tem — nenhuma query nova
   ([RN-579](engine.md#rn-579)).
-- **Onde:** `apps/web/src/lib/session-readiness.ts:149` (`temMapaDeModulos`),
+- **Onde:** `apps/web/src/lib/session-readiness.ts:144` (`temMapaDeModulos`),
   `apps/web/src/routes/SessionComposer.tsx:136` (`hasModuleMap`)
 - **Teste:** `apps/web/src/routes/SessionPage.proximo-passo-arquitetura.test.tsx`
   ("mapa gravado + história promovida + Arquiteto parado: o texto aparece";
@@ -6689,7 +6718,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   já fazem (mesmas `queryKey`s, backlog a 15 s), sem poll novo apertado
   ([RN-579](engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:116` (`prontas`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:115` (`prontas`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("a PR com os gates aprovados aparece, a com gate pendente não, e Mergear
   mostra o cartão ali")
@@ -6704,7 +6733,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   tarefa: sucesso em texto, e a recusa com a frase da api. Papel abaixo de
   `developer` vê a fila com o botão inerte e o motivo em texto.
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:201` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:210` (`desbloquear`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
@@ -6736,7 +6765,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   `aria-live="polite"`: o leitor de tela anuncia a resposta nova e o que o
   agente está fazendo sem interromper quem está lendo. A checagem mora no
   composer, não na página, que está no teto de linhas ([ADR 0176](../adr/0176-sessionpage-abaixo-de-mil-linhas.md)).
-- **Onde:** `apps/web/src/routes/SessionComposer.tsx:97` (`ignorarComposicaoIme`),
+- **Onde:** `apps/web/src/routes/SessionComposer.helpers.ts:9` (`ignorarComposicaoIme`),
   `apps/web/src/components/TurnActivityStrip.tsx:47` (`TurnActivityStrip`)
 - **Teste:** `apps/web/src/routes/SessionFio.at503.test.tsx` ("Enter sem
   composição chega ao handler de envio", "a faixa do turno é uma região de
@@ -6819,7 +6848,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
 - **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:498` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:630` (`blockedTasks`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:634` (`blockedTasks`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),
@@ -6921,11 +6950,13 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   ao cartão (histórico); sem o bloco montado (outra tela, PR fora da fila), o
   fio mostra o cartão completo. O registro vale só enquanto o cartão está
   MONTADO: com o bloco recolhido (o `Disclosure` desmonta o conteúdo), o fio
-  mostra o cartão. Nenhum endpoint nem teto muda.
+  mostra o cartão. Nenhum endpoint nem teto muda. AT-753: a linha de referência leva um
+  botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
+  generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:504` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:528` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1286` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1281` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -6945,9 +6976,9 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   aparece, como o de primeiros passos some quando não há o que dizer. A
   leitura é de configuração (`FRESCOR_DA_CONFIGURACAO_MS`, sem poll) e o
   aviso `infra.pr_opened` do canal da sessão a relê.
-- **Onde:** `apps/web/src/components/RodarNaSuaMaquina.tsx:32` (`RodarNaSuaMaquina`), `:20` (`urlLocalSegura`),
-  `:13` (`releSeInfraAbriuPr`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:210` (`releSeInfraAbriuPr`),
+- **Onde:** `apps/web/src/components/RodarNaSuaMaquina.tsx:19` (`RodarNaSuaMaquina`),
+  `apps/web/src/components/RodarNaSuaMaquina.helpers.ts:15` (`urlLocalSegura`), `:8` (`releSeInfraAbriuPr`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:214` (`releSeInfraAbriuPr`),
   `apps/web/src/lib/api-client.ts:882` (`getRunInstructions`)
 - **Teste:** `apps/web/src/components/RodarNaSuaMaquina.test.tsx` ("mostra
   comando, copiar, link local e a nota de não verificado"; "sem declaração
@@ -6993,7 +7024,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   tempo; no outro, o aviso diz que o gate espera a resposta e aponta o cartão
   "Perguntas em aberto" (RN-861). O botão "Retomar gate" (RN-724) segue nos
   dois.
-- **Onde:** `apps/web/src/routes/RetomarGateEstacionado.tsx:18`
+- **Onde:** `apps/web/src/routes/RetomarGateEstacionado.helpers.ts:6`
   (`cicloEstacionado`), `apps/web/src/routes/session-timeline-montagem.tsx`
   (`gateEstacionado.avisoPergunta`)
 - **Teste:** `apps/web/src/routes/RetomarGateEstacionado.test.tsx` ("o
@@ -7032,8 +7063,8 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   (`agentesDaOfertaEmLote`); papel `maintainer` (o do endpoint). Sem execução,
   nada aparece e `agent_autonomy` nem é lido. Some quando todos já estão em
   automático.
-- **Onde:** `apps/web/src/components/ModoAutomaticoNoChat.tsx:41`
-  (`ModoAutomaticoNoChat`), `:18` (`agentesDoChat`)
+- **Onde:** `apps/web/src/components/ModoAutomaticoNoChat.tsx:7`
+  (`ModoAutomaticoNoChat`), `:6` (`agentesDoChat`)
 - **Teste:** `apps/web/src/components/ModoAutomaticoNoChat.test.tsx` ("caminho
   feliz: com execução, a oferta aparece e só o clique grava"; falha: "sem
   execução, nada aparece e nem a leitura acontece")
@@ -7051,7 +7082,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:402`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:391`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba
@@ -7071,7 +7102,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   e a tarefa segue na lista. Claim, desbloqueio e retomada não mudam.
 - **Onde:** `apps/web/src/lib/execution.ts:10` (`estadoDaTarefa`);
   `apps/web/src/routes/ProjectBacklogTab.tsx` (o selo da lista de tarefas);
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:410` (`bloqueio`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:471` (`bloqueio`)
 - **Teste:** `apps/web/src/lib/execution.test.ts` ("blocked vence o status";
   falha: "sem bloqueio, o status"); `apps/web/src/routes/ProjectBacklogTab.test.tsx`
   ("a bloqueada mostra \"Bloqueada\" e o motivo, sem o selo \"a fazer\"");
@@ -7138,14 +7169,14 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 ### RN-912 — O modelo da área é uma caixa na linha do lead, em "Modelos por agente" {#rn-912}
 
 - **Regra:** a seção "Modelo por área" deixou de existir. O padrão da área (RN-102, escopo `area` da RN-470) liga-se por uma caixa **só na linha do lead** de cada área (`dev-lead`, `qa`, `infra`): "Valer para a área X inteira (lead + subagentes)". O binding de área é um valor por área e não guarda o agente de origem, então a caixa em toda linha deixaria duas disputarem o valor. Marcada ⇔ o vigente do lead vem da área (`origin: 'area'`), lido do lote da RN-654, sem consulta nova. **Marcar** grava a área com o vigente do lead e o critério de roteamento dele (`PUT .../area-bindings/:area`) e DEPOIS apaga o binding próprio do lead (`DELETE .../agent-bindings/:lead`; copiar o deixaria para trás, RN-102). São duas chamadas e o desfecho é por passo (RN-469): se a área recusa (inclusive o 422 da RN-040) nada mudou e o toast traz a frase da api; se a área gravou e o DELETE falha, a tela diz que o padrão da área foi gravado e o modelo próprio do lead não foi removido (404 do DELETE conta como já removido). **Desmarcar** apaga a área (`DELETE .../area-bindings/:area`) e não grava nada no lead; 404 vira "já herdava". Com a caixa marcada, o seletor e o critério de roteamento do lead gravam a ÁREA. O agente com binding próprio vence a área (RN-470) e NÃO segue: a tela lista, com plural, os subagentes conhecidos nessa situação (recorte declarado, RN-180; os `dev-<modulo>` dinâmicos não entram e a tela diz isso) e não apaga a decisão deles. O "aplicar a todos" (RN-476) grava binding próprio nos 17 e, por isso, tira os subagentes do padrão da área; o aviso dele diz isso. **Papel:** a caixa e, enquanto marcada, o seletor do lead pedem `maintainer` (o mínimo do endpoint de área, RN-102), comparado por `roleAtLeast`; abaixo disso ficam inertes e o motivo é dito UMA vez em texto na legenda da seção (ADR 0064). As demais linhas seguem em `developer`. A caixa nasce desabilitada se o lead não tem vigente para copiar, e diz o motivo em texto na própria caixa (AT-601, chave `modelsSection.areaBox.needsModel`). Revisa a UI das RN-040, RN-102 e RN-470; a cascata, o escopo e os endpoints não mudam (sem ADR).
-- **Onde:** `apps/web/src/routes/settings/ModelsSection.tsx:98` (`podeEditarArea`), `:432` (`areaDoLead`), `:450` (`handleMarcarArea`), `:490` (`handleDesmarcarArea`)
+- **Onde:** `apps/web/src/routes/settings/ModelsSection.tsx:94` (`podeEditarArea`), `:432` (`areaDoLead`), `:446` (`handleMarcarArea`), `:486` (`handleDesmarcarArea`)
 - **Teste:** `apps/web/src/routes/settings/ModelsSection.caixa-da-area.test.tsx` (AT-601: motivo sem vigente no lead); `apps/web/src/routes/ProjectSettingsTab.test.tsx` (marcar, a área recusando, FALHA PARCIAL, desmarcar com e sem 404, seletor do lead na área, não-seguidores, `developer` inerte); `apps/web/src/routes/settings/papel-na-tabela-de-agentes.test.tsx` (os dois mínimos); `bindings-em-lote.test.tsx` (lote único); `cascata.test.tsx`; `heranca.test.tsx`; `filtro-de-aptos.test.tsx` (RN-040); `preferencia-de-roteamento.test.tsx` (ADR 0166)
 - **Origem:** AT-600 (EP-031), pedido do dono de 22/10.
 
 ### RN-925 — Cada container tem página de detalhe com o estado registrado e o observado separados e as URLs declaradas {#rn-925}
 
 - **Regra:** `/containers/$projectId` (carregada sob demanda) abre a partir de cada linha de `/containers`. Só lê o que já existe: a linha da visão geral (a [RN-486](api.md#rn-486): registrado e observado nunca se fundem; projeto "nunca provisionado" tem texto próprio, a imagem/versão, os recursos, a postura de rede da decisão vigente e o modo de execução) e as URLs de `GET projects/:projectId/run-instructions`, que a tela diz serem declaradas pela Infra e não verificadas, nunca verdes ([RN-855](#rn-855)); sem declaração, texto próprio. A leitura da página polla no ritmo de projeto (15 s, [RN-632](#rn-632)), nunca nos 5 s da lista. Subir, parar e remover são o MESMO componente da lista (`AcoesDoContainer`), com as mesmas recusas locais em texto ([RN-521](api.md#rn-521), [RN-574](api.md#rn-574), [RN-610](engine.md#rn-610)) e o papel do endpoint por `roleAtLeast`.
-- **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:20` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:40` (`AcoesDoContainer`)
+- **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:24` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:34` (`AcoesDoContainer`)
 - **Teste:** `apps/web/src/routes/ContainerDetalhePage.test.tsx:92` (caminho feliz com ritmo de 15 s, nunca provisionado com URLs vazias, projeto fora da lista); `apps/web/src/routes/ContainersPage.test.tsx` cobre as ações extraídas
 - **Origem:** AT-609 (EP-030), fatia da AT-608.
 
@@ -7166,7 +7197,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
 - **Regra:** refina a RN-626, a RN-825, a RN-826 e a RN-861. Dentro do bloco do chat moram cinco filas, e só aprovações e merges são filtradas por "outra sessão"; perguntas em aberto, PRs prontas e tarefas bloqueadas são do projeto inteiro (a pergunta da PRÓPRIA sessão aparece ali de propósito, porque o aviso do composer lê a mesma query). Por isso, com `filasDoChat` (o chat) o título é "Pendências deste projeto" (`pendencias.tituloDoProjeto`, nos quatro locales); com `filasDoChat={false}` (aba Executores, só aprovações e merges) o título segue "Pendências de outras sessões deste projeto". Nenhuma fila é filtrada, nenhum teto muda e o `data-testid` não muda.
-- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:338` (`tituloDoProjeto`).
+- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:347` (`tituloDoProjeto`).
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 
@@ -7207,7 +7238,7 @@ Revisa a [RN-212](#rn-212) no destino do botão "Definir orçamento" e convive c
 ### RN-970 — Na árvore do time, cada delegação de um lead aparece como subagente {#rn-970}
 
 - **Regra:** na árvore do time (Visão geral/Executores), cada delegação gravada por um lead (`delegation.*`) aparece no ramo dele como subagente — nome, desfecho (efetivada/falhou/dispensada, falha com a origem) e se o subagente está trabalhando agora —, derivada dos eventos já carregados, sem requisição nova; delegação fora da janela não aparece. O ramo próprio do subagente continua.
-- **Onde:** `apps/web/src/lib/timeline-tree.ts:287` (`subagenteDoMarco`), `apps/web/src/components/AgentTimelineTree.tsx:51` (`AgentTimelineTree`).
+- **Onde:** `apps/web/src/lib/timeline-tree.ts:293` (`subagenteDoMarco`), `apps/web/src/components/AgentTimelineTree.tsx:51` (`AgentTimelineTree`).
 - **Teste:** `apps/web/src/lib/timeline-tree.test.ts`, `apps/web/src/components/ai-elements/passos.test.tsx`.
 - **Origem:** AT-655 (EP-031).
 
@@ -7276,7 +7307,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
 - **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:138` (`ARTEFATOS_DO_FIO`).
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:141` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:135` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
 

@@ -60,24 +60,18 @@ import {
 } from '../lib/session-timeline';
 import { decisaoDaPoliticaDaAcao } from '../lib/decisao-da-politica';
 import { StorySlide } from './StorySlide';
-import { MergearNoChat, jaHaMergeDaPr, prAbertaDaAcao } from './MergearNoChat';
+import { MergearNoChat } from './MergearNoChat';
+import { jaHaMergeDaPr, prAbertaDaAcao } from './MergearNoChat.helpers';
 import { gatePendenteNoMerge } from '../lib/gate-do-merge';
 import { StructuredQuestionCard } from './StructuredQuestionCard';
 import { ecosDeRespostaEstruturada } from '../lib/eco-de-formulario';
 import { agruparNarracoesDoTurno } from './session-fio';
 import { camposDoArtefato } from '../lib/artefato-do-fio';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
-import {
-  RetomarGateEstacionado,
-  cicloEstacionado,
-  cicloInterrompido,
-} from './RetomarGateEstacionado';
-import {
-  RetomarTurnoInterrompido,
-  ehRetomadaAutomatica,
-  planoVigente,
-  turnoInterrompidoPendente,
-} from './RetomarTurnoInterrompido';
+import { RetomarGateEstacionado } from './RetomarGateEstacionado';
+import { cicloEstacionado, cicloInterrompido } from './RetomarGateEstacionado.helpers';
+import { RetomarTurnoInterrompido } from './RetomarTurnoInterrompido';
+import { ehRetomadaAutomatica, planoVigente, turnoInterrompidoPendente } from './RetomarTurnoInterrompido.helpers';
 
 type Turno = ReturnType<typeof useTurnoDoAgente>;
 
@@ -615,10 +609,10 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             </Badge>
             <Button
               variant="success"
-              legenda={t('handoff.aceitarEIniciar', { agente: nomeDoAgente(oferta!.toAgent) })}
               onClick={() => handleAcceptHandoff(oferta!.id, oferta!.toAgent)}
             >
               <ThumbsUp aria-hidden="true" />
+              {t('handoff.aceitarEPassar', { agente: nomeDoAgente(oferta!.toAgent) })}
             </Button>
             {/* Handoff pro Dev Lead é o início da EXECUÇÃO — quem aceita
                 precisa saber onde acompanhar depois (RN-125). As outras
@@ -642,12 +636,12 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                   <>
                     <Button
                       variant="secondary"
-                      legenda={t('handoff.ativarExecucao')}
                       loading={ativandoExecucao}
                       onClick={handleActivateExecution}
                       data-testid="ativar-execucao-no-handoff"
                     >
                       <Play aria-hidden="true" />
+                      {t('handoff.ativarExecucao')}
                     </Button>
                     <span className={styles.timelineLink} data-testid="aviso-ativar-sem-plano">
                       {t('handoff.ativarSemPlanoAviso')}

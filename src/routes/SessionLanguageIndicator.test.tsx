@@ -9,10 +9,8 @@ import responseLanguageEn from '../locales/en/responseLanguage.json';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import { ApiError } from '../lib/api-client';
 import type { SessionResponseLanguage } from '../lib/api-types';
-import {
-  SessionLanguageIndicator,
-  idiomaSemOverride,
-} from './SessionLanguageIndicator';
+import { SessionLanguageIndicator } from './SessionLanguageIndicator';
+import { idiomaSemOverride } from './SessionLanguageIndicator.helpers';
 
 /**
  * O idioma das respostas na barra da sessão (RN-620).

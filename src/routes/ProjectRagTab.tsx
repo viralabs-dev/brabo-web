@@ -15,7 +15,7 @@ import { RefreshCw } from 'lucide-react';
 import { Chip } from '../components/ui/Chip';
 import { Alert } from '../components/ui/Alert';
 import { Input } from '../components/ui/Input';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 import { FolderIcon, SearchIcon } from '../components/ui/icons';
 import styles from './ProjectRagTab.module.css';
 
@@ -93,8 +93,11 @@ export function ProjectRagTab({ projectId }: { projectId: string }) {
           embeddingSuffix: relatorio.embeddingAvailable
             ? ''
             : t('rag.embeddingUnavailableSuffix'),
+          cutSuffix: relatorio.docs.cutFiles.length
+            ? t('rag.cutFilesSuffix', { count: relatorio.docs.cutFiles.length })
+            : '',
         }),
-        tone: relatorio.embeddingAvailable ? 'success' : 'warning',
+        tone: relatorio.embeddingAvailable && relatorio.docs.cutFiles.length === 0 ? 'success' : 'warning',
       });
     },
     onError: (erro) =>

@@ -199,7 +199,7 @@
     "aceiteAutomatico": "已自动接受：待办列表覆盖了 {{regras}} 条业务规则且仓库为本地仓库，因此 {{agente}} 无需点击即已加入。",
     "aceiteAutomaticoFalhou": "向 {{agente}} 的 handoff 自动接受失败：{{erro}}。请通过邀请卡片接受。",
     "passouOBastaoAo": "把接力棒交给了",
-    "aceitarEIniciar": "接受 handoff 并启动 {{agente}}",
+    "aceitarEPassar": "接受并交给 {{agente}}",
     "ativarExecucao": "激活执行",
     "ativarSemPlanoAviso": "没有计划：开发者将按现状领取任务。",
     "semRepositorio": "尚无仓库：接受此 handoff 会创建仓库，之后才能激活执行。",
@@ -337,10 +337,10 @@
     "passosCount_other": "{{count}} 步"
   },
   "pendencias": {
-    "referenciaNoFio": "已提议合并 — 请在上方“可合并的 PR”队列中决定。",
+    "referenciaNoFio": "已提出合并 — 请在上方“可合并的 PR”队列中决定。",
     "titulo": "本项目其他会话的待处理事项",
     "tituloDoProjeto": "本项目的待处理事项",
-    "nota": "决策捷径：与审批标签页相同的卡片和接口。所有上限不变 — 受保护分支的合并仍需手动。",
+    "nota": "决定的快捷方式：与“批准”标签页相同的卡片和相同的端点。没有任何上限改变 — 合并到受保护分支仍是你的操作（“合并”会请你确认）。",
     "filas": {
       "aprovacoes": "审批",
       "merges": "PR 合并",
@@ -361,11 +361,12 @@
       "algumas_other": "无法读取下方 {{total}} 张卡片中 {{count}} 张的策略原因：读取提议这些操作的会话日志失败。"
     },
     "bloqueadas": {
-      "botao": "解除阻塞",
+      "botao": "解除阻塞（回到 dev 队列）",
       "ok": "任务已解除阻塞：它回到该模块 dev agent 的队列。",
       "erro": "无法解除任务阻塞。",
       "semMotivo": "未记录原因。",
-      "semPapel": "解除阻塞需要项目中的 developer 角色。"
+      "semPapel": "解除阻塞需要项目中的 developer 角色。",
+      "diagnostico": "诊断"
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",
@@ -385,15 +386,30 @@
       "corrigir": "修正用户故事",
       "corrigirHistoria": "受影响的用户故事：{{titulo}}",
       "dispensar": "忽略"
+    },
+    "verOCartao": "查看卡片",
+    "saidas": {
+      "aviso": "已离开队列：{{lista}}",
+      "dispensar": "关闭",
+      "perguntas_other": "{{count}} 个问题",
+      "aprovacoes_other": "{{count}} 个批准",
+      "merges_other": "{{count}} 个 PR 合并",
+      "prontas_other": "{{count}} 个可合并的 PR",
+      "bloqueadas_other": "{{count}} 个被阻塞的任务"
     }
   },
   "mergearNoChat": {
     "botao": "合并",
     "propondo": "正在提议…",
     "semPapel": "在此合并需要项目中的 developer 角色。",
-    "nota": "在本会话中提议合并；由你在出现的卡片中确认 — 合并仍需手动。",
+    "nota": "就在此处请求确认；“确认”会提议并批准合并，批准会留有记录。",
     "erroTitulo": "无法提议合并",
-    "gatePendente": "此 PR 的 gate {{gate}} 仍待定。合并仍然可用 — 由你决定。"
+    "gatePendente": "此 PR 的 gate {{gate}} 仍待定。合并仍然可用 — 由你决定。",
+    "confirmacao": "将 {{pr}} 合并到 {{alvo}}？",
+    "confirmar": "确认",
+    "cancelar": "取消",
+    "mergeada": "已合并",
+    "falhou": "合并失败。"
   },
   "fio": {
     "carregando": "正在加载会话…",

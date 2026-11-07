@@ -68,6 +68,17 @@ describe('classifyEvent — fase de execução (Fase 4a)', () => {
     ).toContain('in_review');
   });
 
+  it('regra retirada diz quem retirou, a substituição ou a resposta, e o motivo (RN-1018)', () => {
+    const porRegra = classifyEvent(
+      ev('artifact.business_rule_retired', 'criativo', { ruleId: 'r', replacedBy: 'n', reason: 'duplicada' }),
+    ).text;
+    expect(porRegra).toBe('criativo retirou uma regra de negócio — substituída por outra regra: duplicada');
+    const porResposta = classifyEvent(
+      ev('artifact.business_rule_retired', 'po', { ruleId: 'r', questionId: 'q', reason: 'obsoleta' }),
+    ).text;
+    expect(porResposta).toContain('pela resposta do usuário');
+  });
+
   it('parecer de gate distingue dev de infra pelo prActionId', () => {
     const dev = classifyEvent(ev('artifact.qa_verdict', 'qa', { taskId: 't-1' }));
     const infra = classifyEvent(

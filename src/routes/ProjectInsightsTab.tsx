@@ -24,7 +24,7 @@ import { Badge } from '../components/ui/Badge';
 import { Lightbulb, Pause, RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
-import { useToast } from '../components/ui/ToastProvider';
+import { useToast } from '../components/ui/ToastProvider.helpers';
 // Mesmo módulo de estilo da Visão geral, de propósito: a seção saiu de lá
 // inteira (achado #15) e precisa continuar idêntica. Duplicar as classes só
 // para ter arquivo próprio abriria a porta para as duas versões divergirem.

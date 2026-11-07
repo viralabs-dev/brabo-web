@@ -177,9 +177,12 @@ describe('SessionPage — item 1: aceite de handoff inline no fio', () => {
 
     // ...e o botão de aceitar existe UMA VEZ SÓ (não duplicado com a topbar).
     const botoes = await screen.findAllByRole('button', {
-      name: 'Aceitar handoff e iniciar PO',
+      name: 'Aceitar e passar a PO',
     });
     expect(botoes).toHaveLength(1);
+    // AT-753 (P2): a decisão primária leva TEXTO visível, não só aria-label.
+    expect(botoes[0]).toHaveTextContent('Aceitar e passar a PO');
+    expect(botoes[0]).not.toHaveAttribute('aria-label');
 
     fireEvent.click(botoes[0]);
     expect(acceptHandoff).toHaveBeenCalledWith('proj-1', ID, 'handoff-po');
@@ -217,7 +220,7 @@ describe('SessionPage — item 1: aceite de handoff inline no fio', () => {
 
     // Só UM botão — o da oferta mais recente.
     const botoes = await screen.findAllByRole('button', {
-      name: 'Aceitar handoff e iniciar PO',
+      name: 'Aceitar e passar a PO',
     });
     expect(botoes).toHaveLength(1);
   });
@@ -285,7 +288,7 @@ describe('SessionPage — item 3: CTA de handoff pro Dev Lead aponta pra Executo
     montar();
 
     expect(
-      await screen.findByRole('button', { name: 'Aceitar handoff e iniciar Dev Lead' }),
+      await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
 
     const link = screen.getByRole('link', {
@@ -323,7 +326,7 @@ describe('SessionPage — item 3: CTA de handoff pro Dev Lead aponta pra Executo
 
     montar();
 
-    await screen.findByRole('button', { name: 'Aceitar handoff e iniciar PO' });
+    await screen.findByRole('button', { name: 'Aceitar e passar a PO' });
     expect(
       screen.queryByRole('link', { name: /Acompanhe a execução em Executores/ }),
     ).not.toBeInTheDocument();

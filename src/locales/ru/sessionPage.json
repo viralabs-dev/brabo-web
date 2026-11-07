@@ -214,7 +214,7 @@
     "aceiteAutomatico": "Принято автоматически: бэклог покрывает {{regras}} бизнес-правил(а), а репозиторий локальный, поэтому {{agente}} подключился без клика.",
     "aceiteAutomaticoFalhou": "Автоматическое принятие handoff для {{agente}} не удалось: {{erro}}. Примите его через карточку предложения.",
     "passouOBastaoAo": "передал эстафету",
-    "aceitarEIniciar": "Принять handoff и запустить {{agente}}",
+    "aceitarEPassar": "Принять и передать: {{agente}}",
     "ativarExecucao": "Запустить исполнение",
     "ativarSemPlanoAviso": "Без плана: разработчики берут задачи как есть.",
     "semRepositorio": "Репозитория пока нет: принятие этого handoff создаст его, и только после этого можно будет запустить исполнение.",
@@ -376,7 +376,7 @@
     "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» выше.",
     "titulo": "Ожидающие решения из других сессий этого проекта",
     "tituloDoProjeto": "Ожидающие решения в этом проекте",
-    "nota": "Быстрый путь к решению: те же карточки и те же эндпоинты, что на вкладке «Одобрения». Ни один предел не меняется — merge в защищённую ветку остаётся ручным.",
+    "nota": "Быстрый путь к решению: те же карточки и те же эндпоинты, что на вкладке «Утверждения». Ни один потолок не меняется — merge в защищённую ветку остаётся вашим жестом («Merge» просит вашего подтверждения).",
     "filas": {
       "aprovacoes": "Одобрения",
       "merges": "Merge PR",
@@ -406,11 +406,12 @@
       "algumas_other": "Не удалось прочитать причину политики для {{count}} из {{total}} карточек ниже: чтение журнала сессии, предложившей действия, не удалось."
     },
     "bloqueadas": {
-      "botao": "Разблокировать",
+      "botao": "Разблокировать (вернётся в очередь dev)",
       "ok": "Задача разблокирована: она возвращается в очередь dev agent модуля.",
       "erro": "Не удалось разблокировать задачу.",
       "semMotivo": "Причина не записана.",
-      "semPapel": "Для разблокировки нужна роль developer в проекте."
+      "semPapel": "Для разблокировки нужна роль developer в проекте.",
+      "diagnostico": "Диагностика"
     },
     "perguntas": {
       "origem": "{{agente}} спросил · {{tempo}}",
@@ -439,15 +440,45 @@
       "corrigir": "Исправить историю",
       "corrigirHistoria": "Затронутая история: {{titulo}}",
       "dispensar": "Отклонить"
+    },
+    "verOCartao": "Показать карточку",
+    "saidas": {
+      "aviso": "Вышло из очереди: {{lista}}",
+      "dispensar": "Скрыть",
+      "perguntas_one": "{{count}} вопрос",
+      "perguntas_few": "{{count}} вопроса",
+      "perguntas_many": "{{count}} вопросов",
+      "perguntas_other": "{{count}} вопроса",
+      "aprovacoes_one": "{{count}} утверждение",
+      "aprovacoes_few": "{{count}} утверждения",
+      "aprovacoes_many": "{{count}} утверждений",
+      "aprovacoes_other": "{{count}} утверждения",
+      "merges_one": "{{count}} merge PR",
+      "merges_few": "{{count}} merge PR",
+      "merges_many": "{{count}} merge PR",
+      "merges_other": "{{count}} merge PR",
+      "prontas_one": "{{count}} готовый PR",
+      "prontas_few": "{{count}} готовых PR",
+      "prontas_many": "{{count}} готовых PR",
+      "prontas_other": "{{count}} готового PR",
+      "bloqueadas_one": "{{count}} заблокированная задача",
+      "bloqueadas_few": "{{count}} заблокированные задачи",
+      "bloqueadas_many": "{{count}} заблокированных задач",
+      "bloqueadas_other": "{{count}} заблокированной задачи"
     }
   },
   "mergearNoChat": {
     "botao": "Выполнить merge",
     "propondo": "Предлагаю…",
     "semPapel": "Для merge здесь нужна роль developer в проекте.",
-    "nota": "Предлагает merge в этой сессии; подтверждаете вы, в появившейся карточке — merge остаётся ручным.",
+    "nota": "Запрашивает подтверждение прямо здесь; «Подтвердить» предлагает и одобряет merge, одобрение остаётся в журнале.",
     "erroTitulo": "Не удалось предложить merge",
-    "gatePendente": "Gate {{gate}} для этого PR ещё не пройден. Merge всё равно доступен — решение за вами."
+    "gatePendente": "Gate {{gate}} для этого PR ещё не пройден. Merge всё равно доступен — решение за вами.",
+    "confirmacao": "Выполнить merge {{pr}} в {{alvo}}?",
+    "confirmar": "Подтвердить",
+    "cancelar": "Отмена",
+    "mergeada": "Merge выполнен",
+    "falhou": "Merge не удался."
   },
   "fio": {
     "carregando": "Загрузка сессии…",

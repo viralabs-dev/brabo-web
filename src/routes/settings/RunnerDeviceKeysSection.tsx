@@ -23,7 +23,7 @@ import { Ajuda } from '../../components/ui/Ajuda';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { TrashIcon } from '../../components/ui/icons';
-import { useToast } from '../../components/ui/ToastProvider';
+import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';

@@ -26,8 +26,8 @@ function novaInstanciaI18n() {
 
 function makeCoverage(overrides: Partial<RagCoverage> = {}): RagCoverage {
   return {
-    docs: { filesInRepo: 12, filesIndexed: 10, truncated: false },
-    adr: { filesInRepo: 8, filesIndexed: 8, truncated: false },
+    docs: { filesInRepo: 12, filesIndexed: 10, truncated: false, filesCut: 0 },
+    adr: { filesInRepo: 8, filesIndexed: 8, truncated: false, filesCut: 0 },
     session: { sessionsInProject: 5, sessionsIndexed: 3 },
     local: { filesIndexed: 0, folderName: null, lastAttachedAt: null },
     chunksTotal: 240,
@@ -66,6 +66,13 @@ describe('RagCoveragePanel', () => {
 
     expect(screen.queryByText(/reindexado há/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/min atrás/i)).not.toBeInTheDocument();
+  });
+
+  it('avisa os arquivos cortados no escopo certo, sem avisar quando é zero (RN-1036)', () => {
+    montar(makeCoverage({ docs: { filesInRepo: 12, filesIndexed: 10, truncated: false, filesCut: 3 } }));
+
+    expect(screen.getAllByText(/cortados no teto ou pulados/)).toHaveLength(1);
+    expect(screen.getByText(/3 arquivos cortados/)).toBeInTheDocument();
   });
 
   it('avisa quando há chunk sem vetor, sem esconder o número', () => {

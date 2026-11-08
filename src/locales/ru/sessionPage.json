@@ -560,5 +560,19 @@
     "semPapel": "Для перезапуска и разблокировки нужна роль developer в проекте.",
     "feito": "Готово — ход работы появится в этой ленте.",
     "erroTitulo": "Не удалось снять остановку выполнения"
+  },
+  "avisoDePrPronta": {
+    "uma": "PR #{{numero}} «{{titulo}}» готов к слиянию: проверки пройдены.",
+    "varias_one": "{{count}} PR готов к слиянию.",
+    "varias_few": "{{count}} PR готовы к слиянию.",
+    "varias_many": "{{count}} PR готовы к слиянию.",
+    "varias_other": "{{count}} PR готовы к слиянию.",
+    "espera": "Готов {{quando}}.",
+    "ver": "Открыть PR",
+    "verAs_one": "Открыть {{count}}",
+    "verAs_few": "Открыть все {{count}}",
+    "verAs_many": "Открыть все {{count}}",
+    "verAs_other": "Открыть все {{count}}",
+    "agoraNao": "Не сейчас"
   }
 }

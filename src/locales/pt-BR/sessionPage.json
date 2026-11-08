@@ -533,5 +533,15 @@
     "semPapel": "Rearmar e desbloquear exigem o papel developer no projeto.",
     "feito": "Feito — o andamento aparece neste fio.",
     "erroTitulo": "Não foi possível destravar a execução"
+  },
+  "avisoDePrPronta": {
+    "uma": "PR #{{numero}} \"{{titulo}}\" está pronta para você mergear: os gates passaram.",
+    "varias_one": "{{count}} PR pronta para você mergear.",
+    "varias_other": "{{count}} PRs prontas para você mergear.",
+    "espera": "Pronta {{quando}}.",
+    "ver": "Ver a PR",
+    "verAs_one": "Ver a {{count}}",
+    "verAs_other": "Ver as {{count}}",
+    "agoraNao": "Agora não"
   }
 }

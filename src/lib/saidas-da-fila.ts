@@ -22,6 +22,16 @@ export function saidasDaFila(
   return saidas;
 }
 
+/**
+ * AT-810 (RN-1063): o que ENTROU numa fila entre duas leituras — está na atual e
+ * não na anterior. Na primeira leitura (`anterior === null`) TUDO conta como
+ * novo, para quem abre o chat com a PR já esperando também ser avisado.
+ */
+export function entradasDaFila(anterior: readonly string[] | null, atual: readonly string[]): string[] {
+  const antes = new Set(anterior ?? []);
+  return atual.filter((id) => !antes.has(id));
+}
+
 const TITULO_MAX = 120;
 const SEPARADOR = ' — ';
 

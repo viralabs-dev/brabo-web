@@ -6718,7 +6718,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   já fazem (mesmas `queryKey`s, backlog a 15 s), sem poll novo apertado
   ([RN-579](engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:115` (`prontas`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:87` (`prontas`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("a PR com os gates aprovados aparece, a com gate pendente não, e Mergear
   mostra o cartão ali")
@@ -6740,7 +6740,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   `travado` do card (`devStatus`). A tarefa bloqueada cujo `assignedTo` está
   travado diz "rearme antes de desbloquear".
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:221` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:217` (`desbloquear`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
@@ -6961,7 +6961,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:608` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:604` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
   `apps/web/src/routes/session-timeline-montagem.tsx:1325` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
@@ -7204,7 +7204,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
 - **Regra:** refina a RN-626, a RN-825, a RN-826 e a RN-861. Dentro do bloco do chat moram cinco filas, e só aprovações e merges são filtradas por "outra sessão"; perguntas em aberto, PRs prontas e tarefas bloqueadas são do projeto inteiro (a pergunta da PRÓPRIA sessão aparece ali de propósito, porque o aviso do composer lê a mesma query). Por isso, com `filasDoChat` (o chat) o título é "Pendências deste projeto" (`pendencias.tituloDoProjeto`, nos quatro locales); com `filasDoChat={false}` (aba Executores, só aprovações e merges) o título segue "Pendências de outras sessões deste projeto". Nenhuma fila é filtrada, nenhum teto muda e o `data-testid` não muda.
-- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:374` (`tituloDoProjeto`).
+- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:370` (`tituloDoProjeto`).
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 
@@ -7284,7 +7284,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 ### RN-975 — O painel de pendências do chat é uma faixa de abas, e cada fila pagina de 3 em 3 {#rn-975}
 
-- **Regra:** o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
+- **Regra:** o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). Exceção (AT-810, [RN-1063](#rn-1063)): PR que entra na fila `prontas` abre essa aba sozinha quando nenhuma está aberta. O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
 - **Onde:** `apps/web/src/lib/paginacao-de-fila.ts:16` (`paginar`), `apps/web/src/components/PaginadorDaFila.tsx:11` (`PaginadorDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:76` (`PendenciasDeOutrasSessoes`).
 - **Teste:** `apps/web/src/lib/paginacao-de-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`, `apps/web/src/components/PerguntasEmAberto.test.tsx`.
 - **Origem:** AT-680 (EP-031).
@@ -7379,3 +7379,10 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/components/TetoDoPlano.tsx:33` (`TetoDoPlano`), `apps/web/src/components/TetoDoPlano.helpers.ts:15` (`menorTetoAplicavel`), `apps/web/src/components/ApprovalCard.tsx:432` (`TetoDoPlano`).
 - **Teste:** `apps/web/src/components/ApprovalCard.teto-do-plano.test.tsx`.
 - **Origem:** AT-808 (EP-031); decisão do dono, 07/11/2026 (ajuste só da área dev; o aviso não trava).
+
+### RN-1063 — PR que entra na fila de prontas avisa na borda do fio e no título da aba, com Mergear e o tempo de espera, e se dispensa {#rn-1063}
+
+- **Regra:** estende a [RN-825](#rn-825)/[RN-841](#rn-841). Quando há PR pronta para o dono mergear (a fila `prontas`: gates aprovados, ou PR sem tarefa), um `Alert` accent fica FIXO na borda do fio, entre o fio e o composer (RN-981), com `role="status"`: "PR #3 "título" está pronta para você mergear: os gates passaram", com "Pronta há N min" (sobre o `updatedAt` da tarefa da PR, quando há) e o `MergearNoChat` com a confirmação na linha (AT-753 P1). Com várias: "N PRs prontas para você mergear" e "Ver as N", que abre a aba `prontas` ([RN-975](#rn-975)). "Agora não" dispensa as PRs avisadas; o aviso só volta se ENTRAR uma PR nova. Quando a PR sai da fila (mergeada), o aviso some. O título da aba mostra o contador enquanto houver PR pronta ("(1) Brabo"), mesmo com o aviso dispensado, e volta ao normal quando a fila esvazia. PR que ENTRA na fila (na primeira leitura, as que já esperavam) abre sozinha a aba `prontas` do painel de pendências quando nenhuma está aberta (exceção declarada à "nenhuma aba nasce aberta" da RN-975). Sem evento novo, sem mudança em api ou engine e sem notificação do navegador: o aviso lê as mesmas prontas do painel (`usePrsProntas`, cache compartilhado), pela releitura de 15 s do backlog. O merge segue gesto humano ([RN-418](api.md#rn-418)/[RN-663](api.md#rn-663)): o aviso só oferece o `MergearNoChat`.
+- **Onde:** `apps/web/src/components/AvisoDePrPronta.tsx:29` (`AvisoDePrPronta`), `apps/web/src/lib/prs-prontas.ts:14` (`usePrsProntas`), `apps/web/src/lib/saidas-da-fila.ts:30` (`entradasDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:172` (`idsDasProntas`), `apps/web/src/routes/SessionPage.tsx:825` (`AvisoDePrPronta`).
+- **Teste:** `apps/web/src/components/AvisoDePrPronta.test.tsx`, `apps/web/src/lib/saidas-da-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`.
+- **Origem:** AT-810 (EP-031); decisão do dono, 07/11/2026 (aviso fixo na borda do fio; contador no título da aba; sem notificação do navegador).

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Corrigido: a instalação aberta por `127.0.0.1:8088` não parece mais fora do ar. A web vai para o loopback da `apiUrl` (`localhost`) antes de restaurar a sessão e montar a tela, porque o CORS e o cookie `SameSite=Strict` só valem no host da api; fora do loopback nada muda (AT-801, RN-1060).
 - Corrigido: o chat não repete o mesmo turno. Cada entrada do fio ganha a chave própria `TimelineEntry.chave` (um evento gera várias entradas com o mesmo `seq`, e a `key` por `seq` deixava nós órfãos a cada poll, até a aba travar); o `seq` fica só como eixo de ordem (AT-803, RN-974).
 - Disjuntor: o agente travado (`dev.idle_tripped`) segue `travado` mesmo com o `backlog.task_blocked` que vem logo depois, até o `dev.rearmed`; o card mostra Rearmar e as pendências do chat ganham a fila "Agentes travados" com Rearmar (AT-799, RN-826).
 - `@brabo/shared` passa a vir do GitHub Packages (AT-770, ADR 0270): alias `npm:@viralabs-dev/brabo-shared@1.2.0` no lugar da dependência git por tag, `.npmrc` com o registry do escopo (sem token), `pnpm-workspace.yaml` com `minimumReleaseAgeExclude` para a 1.2.0 recém-publicada, `scripts/baixar-areas.mjs` na tag `v1.2.0`. O lock muda só nas entradas do `@brabo/shared`.

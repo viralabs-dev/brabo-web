@@ -102,3 +102,24 @@ export function readRuntimeConfig(
  * a possibilidade de dois módulos enxergarem configurações diferentes.
  */
 export const runtimeConfig: RuntimeConfig = readRuntimeConfig();
+
+const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+/**
+ * RN-1060 (AT-801): `localhost` e `127.0.0.1` são SITES diferentes — o CORS da
+ * api e o cookie `SameSite=Strict` só valem no host da `apiUrl`. Devolve o
+ * endereço da página com o host trocado pelo da api quando os DOIS são loopback
+ * e diferentes; senão `null` (domínio, IP de rede e `apiUrl` inválida não mudam).
+ */
+export function enderecoNoLoopbackDaApi(href: string, apiUrl: string): string | null {
+  try {
+    const pagina = new URL(href);
+    const api = new URL(apiUrl);
+    if (!LOOPBACK.has(pagina.hostname) || !LOOPBACK.has(api.hostname)) return null;
+    if (pagina.hostname === api.hostname) return null;
+    pagina.hostname = api.hostname;
+    return pagina.href;
+  } catch {
+    return null;
+  }
+}

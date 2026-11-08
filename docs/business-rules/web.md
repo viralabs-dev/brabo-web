@@ -7356,3 +7356,12 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Origem:** AT-770 (EP-033), R2a.
 
 O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` ou `ENV`, só como secret do BuildKit), definida no brabo-broker em [`docs/business-rules/broker.md`](https://github.com/viralabs-dev/brabo-broker/blob/dev/docs/business-rules/broker.md). A prova no web é `test/token-do-registry.test.ts:1`, junto de `Dockerfile:54`, `.npmrc:1`, `.github/workflows/ci.yml:61` e `.github/workflows/release.yml:56`.
+
+## Achados do TP-01 27ª (RN-1060 a RN-1063)
+
+### RN-1060 — Aberta por um loopback diferente do da api, a web vai para o loopback da api antes de montar {#rn-1060}
+
+- **Regra:** `localhost` e `127.0.0.1` são SITES diferentes para o navegador: a página num e a api (`apiUrl` do `/config.js`) no outro dão CORS recusado e cookie `SameSite=Strict` ([RN-034](#rn-034)) que não viaja, e a tela parece fora do ar ("api sem resposta"). Antes de `restaurarSessao()` e do primeiro render, se o host da página e o da `apiUrl` são AMBOS loopback (`localhost`, `127.0.0.1`, `[::1]`) e diferentes, a página faz `location.replace` para o mesmo endereço (porta, caminho, query e hash preservados) com o host da api. Domínio, IP de rede, k8s e `apiUrl` vazia ou inválida não mudam. Nenhuma origem nova entra no CORS da api nem do engine.
+- **Onde:** `apps/web/src/lib/runtime-config.ts:114` (`enderecoNoLoopbackDaApi`), `apps/web/src/main.tsx:96` (`noLoopbackDaApi`).
+- **Teste:** `apps/web/src/lib/runtime-config.test.ts` (127.0.0.1 → localhost com caminho/query/hash, o inverso, `[::1]`, mesmo host, domínio, IP de rede, `apiUrl` inválida).
+- **Origem:** AT-801 (EP-030), TP-01 27ª achado 1.

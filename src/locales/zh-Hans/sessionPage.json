@@ -471,5 +471,16 @@
       "feito": "完成",
       "descartado": "已放弃"
     }
+  },
+  "execucaoParada": {
+    "aviso_other": "执行已停止：有 {{count}} 个待办任务，没有代理能接手。原因：{{atras}}。",
+    "tarefa": "被阻塞的任务“{{titulo}}”",
+    "agente": "已熔断的代理 {{agente}}",
+    "rearmar": "重新启用 {{agente}}",
+    "desbloquear": "解除阻塞“{{titulo}}”",
+    "nota": "重新启用会让代理脱离熔断；解除阻塞会把任务放回队列。",
+    "semPapel": "重新启用和解除阻塞需要项目中的 developer 角色。",
+    "feito": "完成——进展会显示在此对话中。",
+    "erroTitulo": "无法解除执行停滞"
   }
 }

@@ -68,6 +68,8 @@ import { ecosDeRespostaEstruturada } from '../lib/eco-de-formulario';
 import { agruparNarracoesDoTurno } from './session-fio';
 import { camposDoArtefato } from '../lib/artefato-do-fio';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
+import { DestravarExecucao, textoDaExecucaoParada } from './DestravarExecucao';
+import { execucaoParadaDe, type ExecucaoParada } from '../lib/execution';
 import { RetomarGateEstacionado } from './RetomarGateEstacionado';
 import { cicloEstacionado, cicloInterrompido } from './RetomarGateEstacionado.helpers';
 import { RetomarTurnoInterrompido } from './RetomarTurnoInterrompido';
@@ -1167,6 +1169,43 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             }
           >
             {t('gateInterrompido.aviso', { gate: ciclo.gate, taskId: ciclo.taskId, hora })}
+          </MensagemDeConversa>
+        ),
+      });
+    } else if (event.type === 'execution.stalled') {
+      // RN-1061 (AT-800): a execução inteira parou atrás de tarefa bloqueada ou
+      // agente travado. O aviso fica no histórico; Rearmar/Desbloquear só
+      // enquanto é a parada vigente (o último stalled, sem destrave depois).
+      const parada = execucaoParadaDe(events);
+      const ultimo = [...events].reverse().find((e) => e.type === 'execution.stalled');
+      const p = event.payload as Partial<ExecucaoParada>;
+      empurrar({
+        node: (
+          <MensagemDeConversa
+            key={event.id}
+            data-testid="execucao-parada"
+            avatar={
+              <span className={styles.avatar}>
+                <AlertCircleIcon size={15} />
+              </span>
+            }
+            rodape={
+              parada && ultimo?.id === event.id ? (
+                <DestravarExecucao
+                  projectId={projectId}
+                  sessionId={sessionId}
+                  parada={parada}
+                  podeDecidir={podeDecidir}
+                />
+              ) : undefined
+            }
+          >
+            {textoDaExecucaoParada(t, {
+              agentesOciosos: p.agentesOciosos ?? [],
+              agentesTravados: p.agentesTravados ?? [],
+              tarefasBloqueadas: p.tarefasBloqueadas ?? [],
+              tarefasPendentes: p.tarefasPendentes ?? 0,
+            })}
           </MensagemDeConversa>
         ),
       });

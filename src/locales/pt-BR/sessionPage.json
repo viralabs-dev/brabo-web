@@ -521,5 +521,17 @@
       "feito": "feito",
       "descartado": "descartado"
     }
+  },
+  "execucaoParada": {
+    "aviso_one": "A execução parou: {{count}} tarefa pendente e nenhum agente pode pegá-la. Atrás de: {{atras}}.",
+    "aviso_other": "A execução parou: {{count}} tarefas pendentes e nenhum agente pode pegá-las. Atrás de: {{atras}}.",
+    "tarefa": "tarefa bloqueada \"{{titulo}}\"",
+    "agente": "agente travado {{agente}}",
+    "rearmar": "Rearmar {{agente}}",
+    "desbloquear": "Desbloquear \"{{titulo}}\"",
+    "nota": "Rearmar tira o agente do disjuntor; desbloquear devolve a tarefa à fila.",
+    "semPapel": "Rearmar e desbloquear exigem o papel developer no projeto.",
+    "feito": "Feito — o andamento aparece neste fio.",
+    "erroTitulo": "Não foi possível destravar a execução"
   }
 }

@@ -23,7 +23,7 @@ import {
   setAgentAutonomy,
 } from '../lib/api-client';
 import { deriveAgentRoster, groupRosterByArea, isExecutorAgentId, isExecutorGroup } from '../lib/agent-status';
-import { contarTarefasPendentes, deriveExecutionProgress } from '../lib/execution';
+import { contarTarefasPendentes, deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
 import { ReligarExecucao } from '../components/ReligarExecucao';
 import { connectSessionHeartbeat } from '../lib/session-channel';
 import { INTERVALO_DO_PROJETO_MS, criarInvalidadorDoCanal } from '../lib/canal-vivo';
@@ -37,6 +37,7 @@ import type { AutonomyMode } from '../components/AgentCard';
 import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { AgentTimelineTree } from '../components/AgentTimelineTree';
 import { Alert } from '../components/ui/Alert';
+import { DestravarExecucao, textoDaExecucaoParada } from './DestravarExecucao';
 import { Badge } from '../components/ui/Badge';
 import { Users } from 'lucide-react';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -80,6 +81,7 @@ import styles from './ProjectOverviewTab.module.css';
  */
 export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('executors');
+  const { t: tParada } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   // AT-298: decidir pede `developer` no ENDPOINT (RN-102) — o mesmo papel de
@@ -196,6 +198,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   const executorEvents = events.filter(
     (e) => e.actor.kind === 'agent' && isExecutorAgentId(e.actor.id),
   );
+  const paradaVigente = execucaoParadaDe(events);
   const workingCount = executorRoster.filter((r) => r.status === 'trabalhando').length;
   const waitingCount = executorRoster.filter((r) => r.status === 'aguardando').length;
 
@@ -311,6 +314,20 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
 
       {sessionId && (
         <>
+
+          {/* RN-1061 (AT-800): a execução parada atrás de tarefa bloqueada ou de
+              agente travado — o mesmo aviso e os mesmos botões do chat. */}
+          {executionSession?.status === 'active' && paradaVigente && (
+            <Alert tone="danger" role="status">
+              <span data-testid="execucao-parada">{textoDaExecucaoParada(tParada, paradaVigente)}</span>
+              <DestravarExecucao
+                projectId={projectId}
+                sessionId={sessionId}
+                parada={paradaVigente}
+                podeDecidir={podeDecidir}
+              />
+            </Alert>
+          )}
 
           {/* RN-763 (AT-456): parar a execução é FECHAR a sessão dela; o
               engine para os dev agents e os gates. */}

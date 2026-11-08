@@ -146,3 +146,41 @@ export function deriveExecutionProgress(
 export function formatMicros(micros: number): string {
   return `US$ ${(micros / 1_000_000).toFixed(4)}`;
 }
+
+/**
+ * RN-1061 (AT-800): o que o engine grava em `execution.stalled` (RN-1059) —
+ * todos os dev agents parados com tarefa pendente atrás de tarefa bloqueada ou
+ * de agente travado. O contrato do payload é do engine.
+ */
+export interface ExecucaoParada {
+  agentesOciosos: string[];
+  agentesTravados: { agentId: string; module?: string }[];
+  tarefasBloqueadas: { taskId: string; title?: string; module?: string; reason?: string }[];
+  tarefasPendentes: number;
+}
+
+const FIM_DA_PARADA = new Set(['dev.working', 'dev.rearmed', 'backlog.task_unblocked']);
+
+/**
+ * A parada vigente: o ÚLTIMO evento entre `execution.stalled`, `dev.working`,
+ * `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`. Devolve o
+ * payload dele, ou `null` quando não há parada (ou ela já foi destravada).
+ */
+export function execucaoParadaDe(events: SessionEvent[]): ExecucaoParada | null {
+  for (let i = events.length - 1; i >= 0; i -= 1) {
+    const e = events[i]!;
+    if (FIM_DA_PARADA.has(e.type)) return null;
+    if (e.type === 'execution.stalled') {
+      const p = e.payload as Partial<ExecucaoParada>;
+      return {
+        agentesOciosos: p.agentesOciosos ?? [],
+        agentesTravados: p.agentesTravados ?? [],
+        tarefasBloqueadas: p.tarefasBloqueadas ?? [],
+        tarefasPendentes: p.tarefasPendentes ?? 0,
+      };
+    }
+  }
+  return null;
+}
+
+export const execucaoParadaVigente = (events: SessionEvent[]): boolean => execucaoParadaDe(events) !== null;

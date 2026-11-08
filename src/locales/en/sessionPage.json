@@ -496,5 +496,17 @@
       "feito": "done",
       "descartado": "dropped"
     }
+  },
+  "execucaoParada": {
+    "aviso_one": "The run has stopped: {{count}} pending task and no agent can pick it up. Held behind: {{atras}}.",
+    "aviso_other": "The run has stopped: {{count}} pending tasks and no agent can pick them up. Held behind: {{atras}}.",
+    "tarefa": "blocked task \"{{titulo}}\"",
+    "agente": "tripped agent {{agente}}",
+    "rearmar": "Rearm {{agente}}",
+    "desbloquear": "Unblock \"{{titulo}}\"",
+    "nota": "Rearming takes the agent out of the circuit breaker; unblocking puts the task back in the queue.",
+    "semPapel": "Rearming and unblocking require the developer role on the project.",
+    "feito": "Done — progress shows up in this thread.",
+    "erroTitulo": "Could not unstick the run"
   }
 }

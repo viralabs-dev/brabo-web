@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- CI: o passo do vitest do `ci.yml` passa a rodar com `--coverage` e cobra o piso já declarado no `vite.config.ts` (AT-834). Medido em 08/11/2026 com a suíte inteira (321 arquivos, 3232 testes): statements 88,56% / branches 84,27% / functions 80,96% / lines 89,99%, acima do piso 82/77/72/83.
+
+- CI: o `ci.yml` chama o reutilizável `cadeia.yml` do `brabo-ci` (actionlint e pins, `ci_ref` obrigatório, AT-819) e repina todos os `uses:` e `ci_ref` em `0a9eba8` (`v1.4.0-dev.5`, brabo-ci#39).
+
 - PR pronta para o dono mergear avisa: um aviso fixo na borda do fio (`AvisoDePrPronta`) com Mergear e o tempo de espera, o contador no título da aba ("(1) Brabo") e a aba "PRs prontas" do painel aberta sozinha quando uma PR entra na fila. "Agora não" dispensa; só uma PR nova o traz de volta. O hook `usePrsProntas` divide as leituras com o painel (AT-810, RN-1063).
 - O cartão do plano do Dev Lead mostra o teto do projeto e das áreas dev/qa junto do custo esperado (`TetoDoPlano`), avisa quando a estimativa passa do que resta do menor teto (sem travar o Aprovar) e ajusta o teto da área dev ali, com o link "Outros tetos" para Configurações (AT-808, RN-1062).
 - A execução parada atrás de uma tarefa bloqueada ou de um agente travado avisa: o `execution.stalled` do engine (RN-1059) aparece em vermelho no feed, vira uma mensagem na sessão de execução e um aviso na aba Executores, com Rearmar por agente travado e Desbloquear por tarefa bloqueada (`DestravarExecucao`) enquanto a parada vale (AT-800, RN-1061).

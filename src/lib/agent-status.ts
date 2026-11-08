@@ -143,7 +143,39 @@ function devStatus(events: SessionEvent[], agentId: string): AgentStatus {
     (e) => e.actor.id === agentId && e.type in DEV_STATUS_EVENTS,
   );
 
+  // AT-799: o disjuntor aberto vence o que vem depois dele (o engine emite
+  // `backlog.task_blocked` 6 ms depois do `idle_tripped`) até o rearm: só
+  // `dev.rearmed` do agente (ator `user`, `payload.agentId`) ou, por defesa
+  // contra evento perdido, um `dev.working`/`dev.started` dele o encerram.
+  if (last && last.type !== 'dev.idle_tripped' && last.type !== 'dev.credit_exhausted') {
+    const disparo = lastEventFor(
+      events,
+      (e) => e.actor.id === agentId && (e.type === 'dev.idle_tripped' || e.type === 'dev.credit_exhausted'),
+    );
+    if (disparo) {
+      const depois = events.slice(events.indexOf(disparo) + 1);
+      const encerrado = depois.some(
+        (e) =>
+          (e.type === 'dev.rearmed' && (e.payload as { agentId?: string }).agentId === agentId) ||
+          (e.actor.id === agentId && (e.type === 'dev.working' || e.type === 'dev.started')),
+      );
+      if (!encerrado) return 'travado';
+    }
+  }
+
   return last ? DEV_STATUS_EVENTS[last.type] : 'ocioso';
+}
+
+/** Dev agents travados pelo disjuntor (AT-799), com o motivo, para a fila do chat. */
+export function agentesTravados(events: SessionEvent[]): { agentId: string; motivo: string }[] {
+  const ids = new Set(
+    events
+      .filter((e) => e.type === 'dev.idle_tripped' || e.type === 'dev.credit_exhausted')
+      .map((e) => e.actor.id),
+  );
+  return [...ids]
+    .filter((id) => devStatus(events, id) === 'travado')
+    .map((agentId) => ({ agentId, motivo: breakerReasonFor(events, agentId) ?? '' }));
 }
 
 // Subagentes de área (Fase 8b/8c/8d) não broadcastam `agent.status` próprio

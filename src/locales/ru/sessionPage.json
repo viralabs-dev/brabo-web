@@ -382,7 +382,8 @@
       "merges": "Merge PR",
       "prontas": "PR, готовые к merge",
       "bloqueadas": "Заблокированные задачи",
-      "perguntas": "Открытые вопросы"
+      "perguntas": "Открытые вопросы",
+      "travados": "Застрявшие агенты"
     },
     "origem_one": "{{count}} предложение в сессии {{hashtag}} · {{tempo}}",
     "origem_few": "{{count}} предложения в сессии {{hashtag}} · самое старое {{tempo}}",
@@ -411,7 +412,8 @@
       "erro": "Не удалось разблокировать задачу.",
       "semMotivo": "Причина не записана.",
       "semPapel": "Для разблокировки нужна роль developer в проекте.",
-      "diagnostico": "Диагностика"
+      "diagnostico": "Диагностика",
+      "agenteTravado": "{{agente}} застрял: перезапустите его перед разблокировкой."
     },
     "perguntas": {
       "origem": "{{agente}} спросил · {{tempo}}",
@@ -465,6 +467,12 @@
       "bloqueadas_few": "{{count}} заблокированные задачи",
       "bloqueadas_many": "{{count}} заблокированных задач",
       "bloqueadas_other": "{{count}} заблокированной задачи"
+    },
+    "travados": {
+      "botao": "Перезапустить",
+      "ok": "Агент перезапущен: он снова берёт задачи.",
+      "erro": "Не удалось перезапустить агента.",
+      "semPapel": "Для перезапуска нужна роль developer в проекте."
     }
   },
   "mergearNoChat": {

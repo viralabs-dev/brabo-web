@@ -6732,6 +6732,13 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   ([RN-794](#rn-794)) com a sessão aberta. O retorno é dito na linha da
   tarefa: sucesso em texto, e a recusa com a frase da api. Papel abaixo de
   `developer` vê a fila com o botão inerte e o motivo em texto.
+  AT-799: ao lado dela mora a fila "Agentes travados" (disjuntor aberto, RN-047):
+  cada dev agent com `dev.idle_tripped`/`dev.credit_exhausted` sem `dev.rearmed`
+  (nem `dev.working`/`dev.started`) depois, lido dos eventos da execução ativa
+  (`agentesTravados`), com o motivo e o botão "Rearmar" (`rearmDevAgent`). O
+  `backlog.task_blocked` que o engine emite logo após o disparo NÃO tira o
+  `travado` do card (`devStatus`). A tarefa bloqueada cujo `assignedTo` está
+  travado diz "rearme antes de desbloquear".
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:210` (`desbloquear`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`

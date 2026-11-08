@@ -358,7 +358,8 @@
       "merges": "PR merges",
       "prontas": "PRs ready to merge",
       "bloqueadas": "Blocked tasks",
-      "perguntas": "Open questions"
+      "perguntas": "Open questions",
+      "travados": "Stuck agents"
     },
     "origem_one": "Proposed in session {{hashtag}} · {{tempo}}",
     "origem_other": "{{count}} proposed in session {{hashtag}} · oldest {{tempo}}",
@@ -381,7 +382,8 @@
       "erro": "Could not unblock the task.",
       "semMotivo": "No reason recorded.",
       "semPapel": "Unblocking requires the developer role on the project.",
-      "diagnostico": "Diagnosis"
+      "diagnostico": "Diagnosis",
+      "agenteTravado": "{{agente}} is stuck: re-arm it before unblocking."
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",
@@ -419,6 +421,12 @@
       "prontas_other": "{{count}} ready PRs",
       "bloqueadas_one": "{{count}} blocked task",
       "bloqueadas_other": "{{count}} blocked tasks"
+    },
+    "travados": {
+      "botao": "Re-arm",
+      "ok": "Agent re-armed: it picks up tasks again.",
+      "erro": "Could not re-arm the agent.",
+      "semPapel": "Re-arming requires the developer role on the project."
     }
   },
   "mergearNoChat": {

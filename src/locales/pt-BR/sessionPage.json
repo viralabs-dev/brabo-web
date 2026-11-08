@@ -370,7 +370,8 @@
       "merges": "Merges de PR",
       "prontas": "PRs prontas para merge",
       "bloqueadas": "Tarefas bloqueadas",
-      "perguntas": "Perguntas em aberto"
+      "perguntas": "Perguntas em aberto",
+      "travados": "Agentes travados"
     },
     "origem_zero": "{{count}} propostas na sessão {{hashtag}} · a mais antiga {{tempo}}",
     "origem_one": "Proposta na sessão {{hashtag}} · {{tempo}}",
@@ -396,7 +397,8 @@
       "erro": "Não foi possível desbloquear a tarefa.",
       "semMotivo": "Sem motivo registrado.",
       "semPapel": "Desbloquear exige o papel developer no projeto.",
-      "diagnostico": "Diagnóstico"
+      "diagnostico": "Diagnóstico",
+      "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear."
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",
@@ -442,6 +444,12 @@
       "bloqueadas_zero": "{{count}} tarefas bloqueadas",
       "bloqueadas_one": "{{count}} tarefa bloqueada",
       "bloqueadas_other": "{{count}} tarefas bloqueadas"
+    },
+    "travados": {
+      "botao": "Rearmar",
+      "ok": "Agente rearmado: ele volta a pegar tarefas.",
+      "erro": "Não foi possível rearmar o agente.",
+      "semPapel": "Rearmar exige o papel developer no projeto."
     }
   },
   "mergearNoChat": {

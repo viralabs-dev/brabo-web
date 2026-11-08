@@ -18,6 +18,8 @@ const listBacklog = vi.fn();
 const proposeAction = vi.fn();
 const unblockTask = vi.fn();
 const getOpenQuestions = vi.fn();
+const getActiveExecutionSession = vi.fn();
+const rearmDevAgent = vi.fn();
 
 vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
@@ -33,6 +35,8 @@ vi.mock('../lib/api-client', async (importOriginal) => {
     proposeAction: (...a: unknown[]) => proposeAction(...a),
     unblockTask: (...a: unknown[]) => unblockTask(...a),
     getOpenQuestions: (...a: unknown[]) => getOpenQuestions(...a),
+    getActiveExecutionSession: (...a: unknown[]) => getActiveExecutionSession(...a),
+    rearmDevAgent: (...a: unknown[]) => rearmDevAgent(...a),
   };
 });
 
@@ -96,6 +100,7 @@ beforeEach(() => {
   getCodePullRequests.mockResolvedValue({ items: [] });
   listBacklog.mockResolvedValue([]);
   getOpenQuestions.mockResolvedValue({ itens: [], total: 0 });
+  getActiveExecutionSession.mockResolvedValue(null);
 });
 
 describe('PendenciasDeOutrasSessoes (AT-265)', () => {
@@ -602,5 +607,39 @@ describe('PendenciasDeOutrasSessoes — faixa de abas (AT-680, RN-975)', () => {
     montar();
     await waitFor(() => expect(getProjectPendingActions).toHaveBeenCalled());
     expect(screen.queryByRole('group', { name: 'Filas de pendências' })).toBeNull();
+  });
+});
+
+describe('AT-799: fila Agentes travados', () => {
+  const evento = (seq: number, type: string, id: string, payload = {}) => ({
+    id: `e${seq}`, sessionId: 'exec-1', seq, type, actor: { kind: 'agent', id }, payload,
+    createdAt: new Date().toISOString(),
+  });
+
+  it('mostra o agente travado com o motivo e Rearmar chama a rota com o agentId', async () => {
+    getActiveExecutionSession.mockResolvedValue({ id: 'exec-1', status: 'active' });
+    listSessionEvents.mockResolvedValue({
+      items: [
+        evento(1, 'dev.idle_tripped', 'dev-core', { consecutiveBlocked: 3 }),
+        evento(2, 'backlog.task_blocked', 'dev-core'),
+      ],
+      nextCursor: null,
+    });
+    rearmDevAgent.mockResolvedValue({ ok: true });
+    montar();
+    await abrir('Agentes travados');
+    const item = await screen.findByTestId('agente-travado');
+    expect(item).toHaveTextContent('dev-core');
+    fireEvent.click(within(item).getByRole('button', { name: 'Rearmar' }));
+    await waitFor(() => expect(rearmDevAgent).toHaveBeenCalledWith('proj-1', 'exec-1', 'dev-core'));
+    expect(await screen.findByTestId('retorno-rearme')).toHaveTextContent('Agente rearmado');
+  });
+
+  it('sem agente travado a fila não aparece', async () => {
+    getActiveExecutionSession.mockResolvedValue({ id: 'exec-1', status: 'active' });
+    getProjectPendingActions.mockResolvedValue([acao('a1')]);
+    montar();
+    await screen.findByRole('button', { name: /^Aprovações \d/ });
+    expect(screen.queryByTestId('fila-agentes-travados')).toBeNull();
   });
 });

@@ -8,10 +8,12 @@ import {
   denyAction,
   getCodePullRequests,
   mensagemDaApi,
+  rearmDevAgent,
   unblockTask,
 } from '../lib/api-client';
 import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
 import { useBacklog } from '../lib/hooks';
+import { useAgentesTravados } from '../lib/agentes-travados-query';
 import { assinaturaDoBacklog, prsProntasParaMerge, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
@@ -35,7 +37,7 @@ import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
 
-type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas';
+type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados';
 
 /** Nenhum evento local: estas ações são sempre de OUTRA sessão (AT-340). */
 const SEM_EVENTOS_LOCAIS: readonly never[] = [];
@@ -119,6 +121,13 @@ export function PendenciasDeOutrasSessoes({
     sessionId,
   );
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
+  // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
+  // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
+  const { sessionId: execucaoId, travados } = useAgentesTravados(filasDoChat ? projectId : undefined);
+  const idsTravados = new Set(travados.map((a) => a.agentId));
+  const [rearme, setRearme] = useState<
+    Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
+  >({});
   // RN-861 (AT-521): a fila "Perguntas em aberto", só no chat; sem poll —
   // o canal da sessão a relê (alvo `perguntas`).
   const perguntasQuery = usePerguntasEmAberto(filasDoChat ? projectId : undefined);
@@ -182,6 +191,7 @@ export function PendenciasDeOutrasSessoes({
   const pMerges = paginar(merges, paginaDe('merges'));
   const pProntas = paginar(prontas, paginaDe('prontas'));
   const pBloqueadas = paginar(bloqueadas, paginaDe('bloqueadas'));
+  const pTravados = paginar(travados, paginaDe('travados'));
   const desenhadas = pAprovacoes.itens.length + pMerges.itens.length;
 
   // AT-340 (RN-656): o motivo da política de CADA card desenhado, lido pela
@@ -202,6 +212,7 @@ export function PendenciasDeOutrasSessoes({
     total === 0 &&
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
+    travados.length === 0 &&
     perguntas.length === 0 &&
     respondidas.length === 0
   )
@@ -217,6 +228,21 @@ export function PendenciasDeOutrasSessoes({
       setDesbloqueio((d) => ({
         ...d,
         [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.erro')) },
+      }));
+    }
+  }
+
+  async function rearmar(agentId: string) {
+    if (!execucaoId) return;
+    setRearme((d) => ({ ...d, [agentId]: 'enviando' }));
+    try {
+      await rearmDevAgent(projectId, execucaoId, agentId);
+      setRearme((d) => ({ ...d, [agentId]: { tom: 'ok', texto: t('pendencias.travados.ok') } }));
+      void queryClient.invalidateQueries({ queryKey: ['session-events', projectId, execucaoId] });
+    } catch (erro) {
+      setRearme((d) => ({
+        ...d,
+        [agentId]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.travados.erro')) },
       }));
     }
   }
@@ -333,9 +359,10 @@ export function PendenciasDeOutrasSessoes({
     merges: merges.length,
     prontas: prontas.length,
     bloqueadas: bloqueadas.length,
+    travados: travados.length,
     perguntas: totalDePerguntas,
   };
-  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas'] as const)
+  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
@@ -383,7 +410,7 @@ export function PendenciasDeOutrasSessoes({
           onValueChange={(v) => setAberta((v[0] as ChaveDeFila | undefined) ?? null)}
         >
           <Ajuda assunto={t('pendencias.abas')}>{t('pendencias.nota')}</Ajuda>
-          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas'] as const)
+          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
             .filter((chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0))
             .map((chave) => (
               <ToggleGroupItem key={chave} value={chave}>
@@ -480,6 +507,11 @@ export function PendenciasDeOutrasSessoes({
                   <div key={task.id} className={styles.grupo} data-testid="tarefa-bloqueada">
                     <div className={styles.origem}>{task.title}</div>
                     <p className={styles.nota}>{titulo}</p>
+                    {task.assignedTo && idsTravados.has(task.assignedTo) && (
+                      <p className={styles.erro} data-testid="bloqueada-agente-travado">
+                        {t('pendencias.bloqueadas.agenteTravado', { agente: task.assignedTo })}
+                      </p>
+                    )}
                     {diagnostico && (
                       <Disclosure titulo={t('pendencias.bloqueadas.diagnostico')}>
                         <p className={styles.nota}>{diagnostico}</p>
@@ -514,6 +546,54 @@ export function PendenciasDeOutrasSessoes({
                 fila={t('pendencias.filas.bloqueadas')}
                 pagina={pBloqueadas}
                 aoMudar={irParaPagina('bloqueadas')}
+              />
+            </section>
+          ))}
+          {painel('travados', travados.length > 0 && (
+            <section
+              className={styles.fila}
+              aria-label={t('pendencias.filas.travados')}
+              data-testid="fila-agentes-travados"
+            >
+              <h4 className={styles.filaTitulo}>
+                {t('pendencias.filas.travados')}
+                <span className={styles.contagem}>{travados.length}</span>
+              </h4>
+              {pTravados.itens.map(({ agentId, motivo }) => {
+                const estado = rearme[agentId];
+                return (
+                  <div key={agentId} className={styles.grupo} data-testid="agente-travado">
+                    <div className={styles.origem}>{agentId}</div>
+                    {motivo && <p className={styles.nota}>{motivo}</p>}
+                    <div className={styles.acoesDaLinha}>
+                      <Button
+                        variant="secondary"
+                        disabled={!podeDecidir}
+                        loading={estado === 'enviando'}
+                        onClick={() => void rearmar(agentId)}
+                      >
+                        {t('pendencias.travados.botao')}
+                      </Button>
+                      {!podeDecidir && (
+                        <span className={styles.nota}>{t('pendencias.travados.semPapel')}</span>
+                      )}
+                    </div>
+                    {estado && estado !== 'enviando' && (
+                      <p
+                        className={estado.tom === 'erro' ? styles.erro : styles.nota}
+                        role={estado.tom === 'erro' ? 'alert' : 'status'}
+                        data-testid="retorno-rearme"
+                      >
+                        {estado.texto}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+              <PaginadorDaFila
+                fila={t('pendencias.filas.travados')}
+                pagina={pTravados}
+                aoMudar={irParaPagina('travados')}
               />
             </section>
           ))}

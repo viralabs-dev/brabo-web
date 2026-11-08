@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Docs: o `README.md` segue o esqueleto de 8 seções do `brabo-ci` (`README.modelo.md`, AT-826), com o bloco "Onde se encaixa" gerado do `repos.yml` do brabo e a seção "Licença". Novo workflow `readme.yml` (informativo, não obrigatório) chama `readme-esqueleto.yml` e `mapa-alinhado.yml` pinados em `54dc896` (`v1.4.0-dev.13`).
+
 - Tipos da api: `fixados/openapi.json` e `src/lib/api-types.generated.ts` regenerados a partir do `brabo-api` `dev` em `ff2c2ac` (rota interna `POST /internal/sessions/:sessionId/tasks/:taskId/update` da AT-805, RN-1068, e o `UpdateTaskInternalDto`). Sem mudança de tela.
 
 - CI: o check `Dependências de merge` (AT-787) entra pelo `dependencias.yml`, que chama o reutilizável `dependencias-de-merge.yml` do `brabo-ci` pinado em `c6d9394` (`v1.4.0-dev.10`). A PR declara `Depende-de: viralabs-dev/<repo>#<n>` no corpo e o check fica amarelo (`esperando …`) até cada PR citada estar mergeada. Sem linha `Depende-de` o check fica verde ("Sem dependências declaradas"). Não é exigido por ruleset ainda.

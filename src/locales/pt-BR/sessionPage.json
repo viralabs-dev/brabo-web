@@ -523,6 +523,7 @@
     }
   },
   "execucaoParada": {
+    "aviso_zero": "A execução parou: {{count}} tarefas pendentes e nenhum agente pode pegá-las. Atrás de: {{atras}}.",
     "aviso_one": "A execução parou: {{count}} tarefa pendente e nenhum agente pode pegá-la. Atrás de: {{atras}}.",
     "aviso_other": "A execução parou: {{count}} tarefas pendentes e nenhum agente pode pegá-las. Atrás de: {{atras}}.",
     "tarefa": "tarefa bloqueada \"{{titulo}}\"",
@@ -536,10 +537,12 @@
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}} \"{{titulo}}\" está pronta para você mergear: os gates passaram.",
+    "varias_zero": "{{count}} PRs prontas para você mergear.",
     "varias_one": "{{count}} PR pronta para você mergear.",
     "varias_other": "{{count}} PRs prontas para você mergear.",
     "espera": "Pronta {{quando}}.",
     "ver": "Ver a PR",
+    "verAs_zero": "Ver as {{count}}",
     "verAs_one": "Ver a {{count}}",
     "verAs_other": "Ver as {{count}}",
     "agoraNao": "Agora não"

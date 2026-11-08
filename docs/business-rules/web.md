@@ -5053,8 +5053,8 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
   `apps/web/src/routes/SessionComposer.tsx:368` (`destinatarioRow`), `:266`
   (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
-  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:580`
-  (`handoffIdDoEvento`), `:588` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
+  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:584`
+  (`handoffIdDoEvento`), `:592` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
   (escolha → envio ao escolhido; dois agentes sem escolha não enviam e dizem
@@ -5279,7 +5279,7 @@ o do chat.
   `apps/web/src/routes/ProjectApprovalsTab.tsx:115` (`pendentesQuery`), `:119`
   (`sessaoDeTrabalho`), `:326` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:107` (`pendentesQuery`), `:290`
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:111` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
@@ -6329,7 +6329,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   fecho tem o botão; os passos do turno não. A tela reconhece a linha pelo
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:950` (`respostaCortada`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:954` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:439` (`continuarRespostaCortada`),
   `:685` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
@@ -6520,7 +6520,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   com execução de pé, ritmo de projeto quando ligada, [RN-632](#rn-632)).
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:99` (`semExecucaoVigente`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
@@ -7278,7 +7278,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
 - **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
-- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:969` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:973` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
 - **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
 - **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 
@@ -7369,7 +7369,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1061 — O aviso de execução parada, no feed, no fio e em Executores, oferece Rearmar e Desbloquear {#rn-1061}
 
 - **Regra:** o `execution.stalled` que o engine grava ([RN-1059](engine.md#rn-1059): todos os dev agents parados, tarefa pendente atrás de tarefa bloqueada ou de agente travado) aparece em vermelho no feed de atividade, nomeando as tarefas e os agentes que seguram a execução. Na sessão de execução ele vira uma mensagem do fio (`data-testid="execucao-parada"`) e, acima do time, na aba Executores, o mesmo aviso. Sob ele, `DestravarExecucao` traz um **Rearmar** por agente travado (`rearmDevAgent`, [RN-047](engine.md#rn-047)) e um **Desbloquear** por tarefa bloqueada (`unblockTask`, [RN-826](#rn-826)), com as mesmas rotas dos atalhos do chat. Os botões só existem enquanto a parada é VIGENTE: o último evento entre `execution.stalled`, `dev.working`, `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`; depois do destrave o aviso fica no histórico, sem botões. Papel abaixo de `developer` vê os botões inertes e o motivo em texto; a recusa da api vira toast com a frase dela. A web não decide nada: só lê o payload do engine.
-- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:37` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:218` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:201` (`paradaVigente`).
+- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:218` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:201` (`paradaVigente`).
 - **Teste:** `apps/web/src/routes/DestravarExecucao.test.tsx`, `apps/web/src/lib/execution.test.ts`, `apps/web/src/lib/activity.test.ts`.
 - **Origem:** AT-800 (EP-030), parte web; engine#57.
 

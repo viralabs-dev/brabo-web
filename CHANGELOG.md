@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Tipos da api: `fixados/openapi.json` e `src/lib/api-types.generated.ts` regenerados a partir do `brabo-api` `dev` em `ff2c2ac` (rota interna `POST /internal/sessions/:sessionId/tasks/:taskId/update` da AT-805, RN-1068, e o `UpdateTaskInternalDto`). Sem mudança de tela.
+
 - CI: o check `Dependências de merge` (AT-787) entra pelo `dependencias.yml`, que chama o reutilizável `dependencias-de-merge.yml` do `brabo-ci` pinado em `c6d9394` (`v1.4.0-dev.10`). A PR declara `Depende-de: viralabs-dev/<repo>#<n>` no corpo e o check fica amarelo (`esperando …`) até cada PR citada estar mergeada. Sem linha `Depende-de` o check fica verde ("Sem dependências declaradas"). Não é exigido por ruleset ainda.
 
 - CI: o passo do vitest do `ci.yml` passa a rodar com `--coverage` e cobra o piso já declarado no `vite.config.ts` (AT-834). Medido em 08/11/2026 com a suíte inteira (321 arquivos, 3232 testes): statements 88,56% / branches 84,27% / functions 80,96% / lines 89,99%, acima do piso 82/77/72/83.

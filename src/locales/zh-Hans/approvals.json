@@ -189,7 +189,25 @@
       "agents_other": "以 {{count}} 个 dev agent 开始执行，每个模块一个。",
       "tasks_other": "共 {{count}} 个任务。",
       "cost": "预计费用：最高 {{total}}（每个任务上限 {{perTask}}）。",
-      "autoPilot_other": "为团队开启自动驾驶（{{count}} 个智能体；合并仍由你决定）"
+      "autoPilot_other": "为团队开启自动驾驶（{{count}} 个智能体；合并仍由你决定）",
+      "teto": {
+        "linha": "上限：{{partes}}",
+        "projeto": "项目 {{limite}}（已花费 {{gasto}}）",
+        "area": "{{area}} {{limite}}（已花费 {{gasto}}）",
+        "semTeto": "{{quem}}无上限",
+        "quemProjeto": "项目",
+        "aviso": "预估（最多 {{estimativa}}）超过{{onde}}上限（剩余 {{resta}}）。达到上限时执行会停止；预估是每个任务的上限，不是价格。",
+        "ondeProjeto": "项目",
+        "ondeArea": "{{area}} 区域",
+        "ajustar": "调整上限",
+        "campo": "dev 区域的上限（美元）",
+        "placeholder": "无上限",
+        "salvar": "保存",
+        "cancelar": "取消",
+        "outros": "其他上限",
+        "semPapel": "调整上限需要项目中的 maintainer 角色。",
+        "invalido": "请输入不小于零的美元金额，或留空表示无上限。"
+      }
     }
   },
   "prGateTimeline": {

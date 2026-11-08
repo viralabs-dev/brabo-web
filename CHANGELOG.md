@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- O cartão do plano do Dev Lead mostra o teto do projeto e das áreas dev/qa junto do custo esperado (`TetoDoPlano`), avisa quando a estimativa passa do que resta do menor teto (sem travar o Aprovar) e ajusta o teto da área dev ali, com o link "Outros tetos" para Configurações (AT-808, RN-1062).
 - A execução parada atrás de uma tarefa bloqueada ou de um agente travado avisa: o `execution.stalled` do engine (RN-1059) aparece em vermelho no feed, vira uma mensagem na sessão de execução e um aviso na aba Executores, com Rearmar por agente travado e Desbloquear por tarefa bloqueada (`DestravarExecucao`) enquanto a parada vale (AT-800, RN-1061).
 - Corrigido: a instalação aberta por `127.0.0.1:8088` não parece mais fora do ar. A web vai para o loopback da `apiUrl` (`localhost`) antes de restaurar a sessão e montar a tela, porque o CORS e o cookie `SameSite=Strict` só valem no host da api; fora do loopback nada muda (AT-801, RN-1060).
 - Corrigido: o chat não repete o mesmo turno. Cada entrada do fio ganha a chave própria `TimelineEntry.chave` (um evento gera várias entradas com o mesmo `seq`, e a `key` por `seq` deixava nós órfãos a cada poll, até a aba travar); o `seq` fica só como eixo de ordem (AT-803, RN-974).

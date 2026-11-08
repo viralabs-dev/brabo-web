@@ -378,6 +378,7 @@ describe('RN-172 — turno e desfecho (unidade)', () => {
     seq: number,
     over: { autor?: string; turno?: number; desfecho?: boolean } = {},
   ) => ({
+    chave: String(seq),
     seq,
     node: null,
     autor: 'agent:po',
@@ -927,6 +928,7 @@ describe('agruparNarracoesDoTurno — "Passos do turno" colapsados', () => {
     texto: string,
     over: { autor?: string; turno?: number } = {},
   ) => ({
+    chave: String(seq),
     seq,
     node: <div key={seq}>{texto}</div>,
     autor: 'agent:po',
@@ -1009,6 +1011,7 @@ describe('agruparNarracoesDoTurno — "Passos do turno" colapsados', () => {
 
   it('entradas que NÃO são agent.response passam direto, sem participar de grupo nenhum', () => {
     const divisor = {
+      chave: 'divisor',
       seq: 2,
       node: <div key="divisor">Divisor</div>,
       autor: 'agent:po',

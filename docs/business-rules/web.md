@@ -6229,7 +6229,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
   `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:640`
+  `apps/web/src/routes/session-timeline-montagem.tsx:644`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -6963,7 +6963,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:608` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1281` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1286` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -7277,10 +7277,10 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
-- **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180).
-- **Onde:** `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:969` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
-- **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`.
-- **Origem:** AT-675 (EP-031).
+- **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:969` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
+- **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
+- **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 
 ### RN-975 — O painel de pendências do chat é uma faixa de abas, e cada fila pagina de 3 em 3 {#rn-975}
 

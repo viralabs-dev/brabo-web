@@ -105,6 +105,7 @@ function entrada(
   over: { autor?: string; turno?: number; desfecho?: boolean } = {},
 ): TimelineEntry {
   return {
+    chave: String(seq),
     seq,
     node: null,
     autor: 'agent:po',

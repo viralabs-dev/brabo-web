@@ -601,6 +601,10 @@ export const getCodePullRequests = (
     `/projects/${projectId}/code/pull-requests${qs(opts)}`,
   );
 
+// AT-843: a fila e o aviso de PR pronta do chat escapam do portão da imagem (RN-825).
+export const getOpenPullRequestsDoChat = (projectId: string) =>
+  get<CodePullRequestList>(`/projects/${projectId}/git/open-pull-requests`);
+
 export const getCodeBranches = (projectId: string) =>
   get<CodeBranchDetailList>(`/projects/${projectId}/code/branches`);
 

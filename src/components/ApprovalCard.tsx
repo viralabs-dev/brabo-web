@@ -38,6 +38,7 @@ import { podeOferecerSemprePermitir } from '../lib/sempre-permitir';
 import { OQueOPilotoLibera } from './OQueOPilotoLibera';
 import { agentesDoPlano } from './ModoAutomaticoDoPlano';
 import { Alert } from './ui/Alert';
+import { TetoDoPlano } from './TetoDoPlano';
 import { Checkbox } from './shadcn/checkbox';
 import styles from './ApprovalCard.module.css';
 import { Check, X, ShieldCheck, Plane } from 'lucide-react';
@@ -423,6 +424,12 @@ export function ApprovalCard({
                 perTask: dolar.format(tetoDoPlanoLido.porTarefa / 1_000_000),
               })}
             </p>
+          )}
+          {/* AT-808 (RN-1062): o teto do projeto e das áreas ao lado do custo
+              esperado, com o aviso e o ajuste da área dev. Sem `QueryClient`
+              (teste isolado do card) não há onde ler. */}
+          {temQueryClient && isPending && tetoDoPlanoLido && (
+            <TetoDoPlano projectId={action.projectId} estimativaMicros={tetoDoPlanoLido.total} />
           )}
         </>
       ) : (

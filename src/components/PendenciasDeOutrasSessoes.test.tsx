@@ -427,7 +427,10 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     );
 
     montar();
-    await abrir('PRs prontas para merge');
+    // RN-1063: a PR que entra na fila abre a aba sozinha.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /^PRs prontas para merge \d/ })).toHaveAttribute('aria-pressed', 'true'),
+    );
 
     const fila = await screen.findByTestId('fila-prs-prontas');
     expect(within(fila).getByText(/PR 1/)).toBeInTheDocument();
@@ -475,7 +478,10 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     approveAction.mockResolvedValue(acao('m-vis', { sessionId: AQUI, actionType: 'git_merge', status: 'executed' }));
     const user = userEvent.setup();
     montar();
-    await user.click(await screen.findByRole('button', { name: /^PRs prontas para merge \d/ }));
+    // RN-1063: a aba `prontas` abre sozinha quando a PR entra na fila.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /^PRs prontas para merge \d/ })).toHaveAttribute('aria-pressed', 'true'),
+    );
     const fila = await screen.findByTestId('fila-prs-prontas');
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
     expect(within(fila).getByText('Mergear #1 em dev?')).toBeInTheDocument();

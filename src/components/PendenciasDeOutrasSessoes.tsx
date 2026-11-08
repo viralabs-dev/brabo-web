@@ -1,27 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Ajuda } from '@/components/ui/Ajuda';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   approveAction,
   approveAlwaysAction,
   denyAction,
-  getCodePullRequests,
   mensagemDaApi,
   rearmDevAgent,
   unblockTask,
 } from '../lib/api-client';
 import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
-import { useBacklog } from '../lib/hooks';
+import { usePrsProntas } from '../lib/prs-prontas';
 import { useAgentesTravados } from '../lib/agentes-travados-query';
-import { assinaturaDoBacklog, prsProntasParaMerge, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
+import { assinaturaDoBacklog, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
   CHAVE_DAS_PENDENCIAS_DO_PROJETO,
   separarPendenciasDeOutrasSessoes,
-  usePendenciasDoProjeto,
 } from '../lib/pendencias-do-projeto';
 import { hashtagDaSessao } from '../lib/session-label';
 import { formatRelativeTime } from '../lib/time';
@@ -31,7 +29,7 @@ import { useRegistrarAcoesNoBloco } from '../lib/acoes-no-bloco';
 import { Disclosure } from './ui/Disclosure';
 import { Alert } from './ui/Alert';
 import { MergearNoChat } from '../routes/MergearNoChat';
-import { saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
+import { entradasDaFila, saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
@@ -81,19 +79,13 @@ export function PendenciasDeOutrasSessoes({
 }: PendenciasDeOutrasSessoesProps) {
   const { t } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
-  const consulta = usePendenciasDoProjeto(projectId, sessionId);
-  const { aprovacoes, merges } = separarPendenciasDeOutrasSessoes(consulta.data, sessionId);
   // RN-825/826 (AT-497): as PRs prontas e as tarefas bloqueadas, pelas MESMAS
   // leituras da aba PRs (`['code-pull-requests', id, 'open']`) e do backlog
   // (`['backlog', id]`) — cache compartilhado, sem poll novo apertado (o
   // backlog no ritmo de projeto, 15 s; a lista de PRs sem poll, o canal e a
   // mudança do backlog a invalidam — RN-841).
-  const prsQuery = useQuery({
-    queryKey: ['code-pull-requests', projectId, 'open'],
-    queryFn: () => getCodePullRequests(projectId, { state: 'open' }),
-    enabled: !!projectId && filasDoChat,
-  });
-  const backlogQuery = useBacklog(filasDoChat ? projectId : undefined, 15_000, sessionId);
+  const { prontas, consulta, backlogQuery } = usePrsProntas(projectId, sessionId, filasDoChat);
+  const { aprovacoes, merges } = separarPendenciasDeOutrasSessoes(consulta.data, sessionId);
   // RN-841 (AT-510): a lista de PRs não tem poll; a PR do dev nasce na sessão
   // de EXECUÇÃO, cujo canal esta página não ouve. A tarefa que muda de status
   // ou de gate (a PR aberta, os gates aprovando) aparece na leitura de 15 s do
@@ -114,12 +106,6 @@ export function PendenciasDeOutrasSessoes({
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
-  const prontas = prsProntasParaMerge(
-    prsQuery.data?.items,
-    backlogQuery.data,
-    consulta.data,
-    sessionId,
-  );
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
   // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
   // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
@@ -180,6 +166,16 @@ export function PendenciasDeOutrasSessoes({
     const novas = saidasDaFila(anterior, atual, new Set(respondidasRef.current.map((p) => p.questionId)));
     if (Object.keys(novas).length > 0) setSaidas(novas);
   }, [assinaturaDeIds]);
+  // RN-1063 (AT-810): PR que ENTRA na fila de prontas abre a aba `prontas` sozinha
+  // quando nenhuma está aberta (na primeira leitura, as que já esperavam contam).
+  const prontasAnteriores = useRef<readonly string[] | null>(null);
+  const idsDasProntas = prontas.map((p) => p.pr.id).join(',');
+  useEffect(() => {
+    const atual = idsDasProntas === '' ? [] : idsDasProntas.split(',');
+    const novas = entradasDaFila(prontasAnteriores.current, atual);
+    prontasAnteriores.current = atual;
+    if (novas.length > 0) setAberta((a) => a ?? 'prontas');
+  }, [idsDasProntas]);
   const painel = (chave: ChaveDeFila, conteudo: React.ReactNode) => (
     <div hidden={aberta !== chave}>{conteudo}</div>
   );

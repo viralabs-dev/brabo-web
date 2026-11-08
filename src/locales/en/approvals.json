@@ -200,7 +200,25 @@
       "tasks_other": "It is {{count}} tasks.",
       "cost": "Expected cost: up to {{total}} ({{perTask}} cap per task).",
       "autoPilot_one": "Turn on autopilot for the team ({{count}} agent; merge stays with you)",
-      "autoPilot_other": "Turn on autopilot for the team ({{count}} agents; merge stays with you)"
+      "autoPilot_other": "Turn on autopilot for the team ({{count}} agents; merge stays with you)",
+      "teto": {
+        "linha": "Cap: {{partes}}",
+        "projeto": "project {{limite}} (spent {{gasto}})",
+        "area": "{{area}} {{limite}} (spent {{gasto}})",
+        "semTeto": "{{quem}} no cap",
+        "quemProjeto": "project",
+        "aviso": "The estimate (up to {{estimativa}}) exceeds the cap {{onde}} ({{resta}} left). The run stops when the cap is reached; the estimate is the per-task cap, not the price.",
+        "ondeProjeto": "of the project",
+        "ondeArea": "of the {{area}} area",
+        "ajustar": "Adjust cap",
+        "campo": "Cap of the dev area, in dollars",
+        "placeholder": "no cap",
+        "salvar": "Save",
+        "cancelar": "Cancel",
+        "outros": "Other caps",
+        "semPapel": "Adjusting the cap requires the maintainer role on the project.",
+        "invalido": "Enter a dollar amount of zero or more, or leave it empty for no cap."
+      }
     }
   },
   "prGateTimeline": {

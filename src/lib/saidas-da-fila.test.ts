@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { saidasDaFila, tituloEDiagnostico, type IdsPorFila } from './saidas-da-fila';
+import { entradasDaFila, saidasDaFila, tituloEDiagnostico, type IdsPorFila } from './saidas-da-fila';
 
 const vazio: IdsPorFila = { perguntas: [], aprovacoes: [], merges: [], prontas: [], bloqueadas: [] };
 
@@ -36,5 +36,18 @@ describe('tituloEDiagnostico (AT-753, UX-9, P4)', () => {
     expect(r.titulo).toHaveLength(120);
     expect(r.titulo.endsWith('…')).toBe(true);
     expect(r.diagnostico).toBe(longo);
+  });
+});
+
+describe('entradasDaFila (AT-810, RN-1063)', () => {
+  it('na primeira leitura tudo conta como novo', () => {
+    expect(entradasDaFila(null, ['1', '2'])).toEqual(['1', '2']);
+  });
+  it('só o id novo entra', () => {
+    expect(entradasDaFila(['1'], ['1', '3'])).toEqual(['3']);
+  });
+  it('o id que já estava não é entrada, e o que saiu também não', () => {
+    expect(entradasDaFila(['1', '2'], ['1'])).toEqual([]);
+    expect(entradasDaFila(['1'], ['1'])).toEqual([]);
   });
 });

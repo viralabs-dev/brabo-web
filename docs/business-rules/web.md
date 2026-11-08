@@ -5053,8 +5053,8 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
   `apps/web/src/routes/SessionComposer.tsx:368` (`destinatarioRow`), `:266`
   (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
-  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:580`
-  (`handoffIdDoEvento`), `:588` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
+  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:584`
+  (`handoffIdDoEvento`), `:592` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
   (escolha → envio ao escolhido; dois agentes sem escolha não enviam e dizem
@@ -5140,7 +5140,7 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   (`useProjectSessions`), `:158` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
   `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:203` (`invalidador`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:207` (`invalidador`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:206` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
 - **Teste:** `apps/web/src/routes/duas-abas.orcamento.test.tsx` (as duas abas
@@ -5279,7 +5279,7 @@ o do chat.
   `apps/web/src/routes/ProjectApprovalsTab.tsx:115` (`pendentesQuery`), `:119`
   (`sessaoDeTrabalho`), `:326` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:107` (`pendentesQuery`), `:290`
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:111` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
@@ -6229,7 +6229,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
   `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:640`
+  `apps/web/src/routes/session-timeline-montagem.tsx:644`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -6329,7 +6329,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   fecho tem o botão; os passos do turno não. A tela reconhece a linha pelo
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:950` (`respostaCortada`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:954` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:439` (`continuarRespostaCortada`),
   `:685` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
@@ -6520,7 +6520,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   com execução de pé, ritmo de projeto quando ligada, [RN-632](#rn-632)).
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:99` (`semExecucaoVigente`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
@@ -6718,7 +6718,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   já fazem (mesmas `queryKey`s, backlog a 15 s), sem poll novo apertado
   ([RN-579](engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:115` (`prontas`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:87` (`prontas`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("a PR com os gates aprovados aparece, a com gate pendente não, e Mergear
   mostra o cartão ali")
@@ -6740,7 +6740,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   `travado` do card (`devStatus`). A tarefa bloqueada cujo `assignedTo` está
   travado diz "rearme antes de desbloquear".
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:221` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:217` (`desbloquear`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
@@ -6961,9 +6961,9 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:608` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:604` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1281` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1325` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -7204,7 +7204,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
 - **Regra:** refina a RN-626, a RN-825, a RN-826 e a RN-861. Dentro do bloco do chat moram cinco filas, e só aprovações e merges são filtradas por "outra sessão"; perguntas em aberto, PRs prontas e tarefas bloqueadas são do projeto inteiro (a pergunta da PRÓPRIA sessão aparece ali de propósito, porque o aviso do composer lê a mesma query). Por isso, com `filasDoChat` (o chat) o título é "Pendências deste projeto" (`pendencias.tituloDoProjeto`, nos quatro locales); com `filasDoChat={false}` (aba Executores, só aprovações e merges) o título segue "Pendências de outras sessões deste projeto". Nenhuma fila é filtrada, nenhum teto muda e o `data-testid` não muda.
-- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:374` (`tituloDoProjeto`).
+- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:370` (`tituloDoProjeto`).
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 
@@ -7277,14 +7277,14 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
-- **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180).
-- **Onde:** `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:969` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
-- **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`.
-- **Origem:** AT-675 (EP-031).
+- **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:973` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
+- **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
+- **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 
 ### RN-975 — O painel de pendências do chat é uma faixa de abas, e cada fila pagina de 3 em 3 {#rn-975}
 
-- **Regra:** o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
+- **Regra:** o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). Exceção (AT-810, [RN-1063](#rn-1063)): PR que entra na fila `prontas` abre essa aba sozinha quando nenhuma está aberta. O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
 - **Onde:** `apps/web/src/lib/paginacao-de-fila.ts:16` (`paginar`), `apps/web/src/components/PaginadorDaFila.tsx:11` (`PaginadorDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:76` (`PendenciasDeOutrasSessoes`).
 - **Teste:** `apps/web/src/lib/paginacao-de-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`, `apps/web/src/components/PerguntasEmAberto.test.tsx`.
 - **Origem:** AT-680 (EP-031).
@@ -7356,3 +7356,33 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Origem:** AT-770 (EP-033), R2a.
 
 O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` ou `ENV`, só como secret do BuildKit), definida no brabo-broker em [`docs/business-rules/broker.md`](https://github.com/viralabs-dev/brabo-broker/blob/dev/docs/business-rules/broker.md). A prova no web é `test/token-do-registry.test.ts:1`, junto de `Dockerfile:54`, `.npmrc:1`, `.github/workflows/ci.yml:61` e `.github/workflows/release.yml:56`.
+
+## Achados do TP-01 27ª (RN-1060 a RN-1063)
+
+### RN-1060 — Aberta por um loopback diferente do da api, a web vai para o loopback da api antes de montar {#rn-1060}
+
+- **Regra:** `localhost` e `127.0.0.1` são SITES diferentes para o navegador: a página num e a api (`apiUrl` do `/config.js`) no outro dão CORS recusado e cookie `SameSite=Strict` ([RN-034](api.md#rn-034)) que não viaja, e a tela parece fora do ar ("api sem resposta"). Antes de `restaurarSessao()` e do primeiro render, se o host da página e o da `apiUrl` são AMBOS loopback (`localhost`, `127.0.0.1`, `[::1]`) e diferentes, a página faz `location.replace` para o mesmo endereço (porta, caminho, query e hash preservados) com o host da api. Domínio, IP de rede, k8s e `apiUrl` vazia ou inválida não mudam. Nenhuma origem nova entra no CORS da api nem do engine.
+- **Onde:** `apps/web/src/lib/runtime-config.ts:114` (`enderecoNoLoopbackDaApi`), `apps/web/src/main.tsx:96` (`noLoopbackDaApi`).
+- **Teste:** `apps/web/src/lib/runtime-config.test.ts` (127.0.0.1 → localhost com caminho/query/hash, o inverso, `[::1]`, mesmo host, domínio, IP de rede, `apiUrl` inválida).
+- **Origem:** AT-801 (EP-030), TP-01 27ª achado 1.
+
+### RN-1061 — O aviso de execução parada, no feed, no fio e em Executores, oferece Rearmar e Desbloquear {#rn-1061}
+
+- **Regra:** o `execution.stalled` que o engine grava ([RN-1059](engine.md#rn-1059): todos os dev agents parados, tarefa pendente atrás de tarefa bloqueada ou de agente travado) aparece em vermelho no feed de atividade, nomeando as tarefas e os agentes que seguram a execução. Na sessão de execução ele vira uma mensagem do fio (`data-testid="execucao-parada"`) e, acima do time, na aba Executores, o mesmo aviso. Sob ele, `DestravarExecucao` traz um **Rearmar** por agente travado (`rearmDevAgent`, [RN-047](engine.md#rn-047)) e um **Desbloquear** por tarefa bloqueada (`unblockTask`, [RN-826](#rn-826)), com as mesmas rotas dos atalhos do chat. Os botões só existem enquanto a parada é VIGENTE: o último evento entre `execution.stalled`, `dev.working`, `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`; depois do destrave o aviso fica no histórico, sem botões. Papel abaixo de `developer` vê os botões inertes e o motivo em texto; a recusa da api vira toast com a frase dela. A web não decide nada: só lê o payload do engine.
+- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:218` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:201` (`paradaVigente`).
+- **Teste:** `apps/web/src/routes/DestravarExecucao.test.tsx`, `apps/web/src/lib/execution.test.ts`, `apps/web/src/lib/activity.test.ts`.
+- **Origem:** AT-800 (EP-030), parte web; engine#57.
+
+### RN-1062 — O cartão do plano mostra o teto do projeto e das áreas dev/qa, avisa quando a estimativa passa do que resta e ajusta o teto da área dev ali {#rn-1062}
+
+- **Regra:** o "custo esperado" do plano do Dev Lead é o teto POR TAREFA × tarefas ([RN-802](api.md#rn-802)), não o preço. Enquanto o plano está pendente, logo abaixo dele o cartão mostra o teto do projeto (`GET /projects/:id/budget`, `maintainer`; para papel abaixo a linha do projeto some) e o das áreas `dev` e `qa` (`GET .../agent-areas`), cada um com o gasto, ou "sem teto" ([RN-443](api.md#rn-443)). Quando a estimativa passa do que resta (`limite − gasto`, nunca negativo) do MENOR teto aplicável, entre o do projeto (só com política `block`; `allow` não para nada) e o da área `dev`, aparece um aviso `warning` com o que resta e a frase "a execução para quando o teto for atingido; a estimativa é o teto por tarefa, não o preço". O aviso NÃO trava o Aprovar ([RN-677](api.md#rn-677)). "Ajustar teto" (ícone e rótulo) abre na própria linha um campo em dólar para o teto da área `dev` só, com Salvar e Cancelar (`setAreaBudget`; vazio = sem teto, como na [RN-980](#rn-980)); abaixo de `maintainer` fica inerte, com o motivo em texto (ADR 0064). "Outros tetos" abre `?section=budget` em outra aba: o teto do projeto, que tem política, segue em Configurações. Reusa as chaves de cache `['budget', projectId]` e `['agent-areas', projectId]`; sem `QueryClient` (teste isolado do card) nada é lido nem mostrado.
+- **Onde:** `apps/web/src/components/TetoDoPlano.tsx:33` (`TetoDoPlano`), `apps/web/src/components/TetoDoPlano.helpers.ts:15` (`menorTetoAplicavel`), `apps/web/src/components/ApprovalCard.tsx:432` (`TetoDoPlano`).
+- **Teste:** `apps/web/src/components/ApprovalCard.teto-do-plano.test.tsx`.
+- **Origem:** AT-808 (EP-031); decisão do dono, 07/11/2026 (ajuste só da área dev; o aviso não trava).
+
+### RN-1063 — PR que entra na fila de prontas avisa na borda do fio e no título da aba, com Mergear e o tempo de espera, e se dispensa {#rn-1063}
+
+- **Regra:** estende a [RN-825](#rn-825)/[RN-841](#rn-841). Quando há PR pronta para o dono mergear (a fila `prontas`: gates aprovados, ou PR sem tarefa), um `Alert` accent fica FIXO na borda do fio, entre o fio e o composer (RN-981), com `role="status"`: "PR #3 "título" está pronta para você mergear: os gates passaram", com "Pronta há N min" (sobre o `updatedAt` da tarefa da PR, quando há) e o `MergearNoChat` com a confirmação na linha (AT-753 P1). Com várias: "N PRs prontas para você mergear" e "Ver as N", que abre a aba `prontas` ([RN-975](#rn-975)). "Agora não" dispensa as PRs avisadas; o aviso só volta se ENTRAR uma PR nova. Quando a PR sai da fila (mergeada), o aviso some. O título da aba mostra o contador enquanto houver PR pronta ("(1) Brabo"), mesmo com o aviso dispensado, e volta ao normal quando a fila esvazia. PR que ENTRA na fila (na primeira leitura, as que já esperavam) abre sozinha a aba `prontas` do painel de pendências quando nenhuma está aberta (exceção declarada à "nenhuma aba nasce aberta" da RN-975). Sem evento novo, sem mudança em api ou engine e sem notificação do navegador: o aviso lê as mesmas prontas do painel (`usePrsProntas`, cache compartilhado), pela releitura de 15 s do backlog. O merge segue gesto humano ([RN-418](api.md#rn-418)/[RN-663](api.md#rn-663)): o aviso só oferece o `MergearNoChat`.
+- **Onde:** `apps/web/src/components/AvisoDePrPronta.tsx:29` (`AvisoDePrPronta`), `apps/web/src/lib/prs-prontas.ts:14` (`usePrsProntas`), `apps/web/src/lib/saidas-da-fila.ts:30` (`entradasDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:172` (`idsDasProntas`), `apps/web/src/routes/SessionPage.tsx:825` (`AvisoDePrPronta`).
+- **Teste:** `apps/web/src/components/AvisoDePrPronta.test.tsx`, `apps/web/src/lib/saidas-da-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`.
+- **Origem:** AT-810 (EP-031); decisão do dono, 07/11/2026 (aviso fixo na borda do fio; contador no título da aba; sem notificação do navegador).

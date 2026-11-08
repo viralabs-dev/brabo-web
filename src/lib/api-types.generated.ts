@@ -1436,6 +1436,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/sessions/{sessionId}/tasks/{taskId}/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Corrects the title and/or description of a `todo` task
+         * @description Only a `todo` task; writes `backlog.task_updated` with the PO (default) or the Dev Lead as actor (RN-1068). A task of a `ready` story too when `questionId` cites an open question the user already answered (RN-859).
+         */
+        post: operations["InternalSessionsController_updateTaskRoute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/sessions/{sessionId}/tasks/claim": {
         parameters: {
             query?: never;
@@ -11676,6 +11696,27 @@ export interface components {
              */
             title: string;
         };
+        UpdateTaskInternalDto: {
+            /**
+             * Format: uuid
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: string;
+            /**
+             * @default po
+             * @enum {string}
+             */
+            agentId: "po" | "dev-lead";
+            /** @example Return 200 for a past date */
+            title?: string;
+            /** @example The day agenda accepts a past date. */
+            description?: string;
+            /**
+             * Format: uuid
+             * @description RN-859: an open question the user ALREADY answered — only then a task of a `ready` story can be corrected.
+             */
+            questionId?: string;
+        };
         UpdateUserPreferencesDto: {
             /**
              * @description The interface language. Closed to the list — not free-form BCP-47.
@@ -14924,6 +14965,59 @@ export interface operations {
             };
             /** @description Session, project, or resource not found. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalSessionsController_updateTaskRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTaskInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description No field, or an empty title. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `tarefa_em_execucao`, `historia_arquivada` or `historia_nao_draft`. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

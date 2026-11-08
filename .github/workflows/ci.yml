@@ -54,7 +54,7 @@ jobs:
       - run: pnpm openapi:types:check
       - run: pnpm typecheck
       - run: pnpm areas:baixar
-      - run: pnpm exec vitest run --maxWorkers=2
+      - run: pnpm exec vitest run --maxWorkers=2 --coverage
       - run: pnpm exec vite build
 
   imagem:

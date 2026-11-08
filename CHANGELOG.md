@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Doc (AT-845): a ref `apps/api/src/application/use-cases/actions/propose-action.use-case.ts` (`execute`) de `docs/business-rules/web.md` passa de `:84` para `:88`, a linha atual no `brabo-api` `dev` (check `refs`).
 - Docs: o `README.md` segue o esqueleto de 8 seções do `brabo-ci` (`README.modelo.md`, AT-826), com o bloco "Onde se encaixa" gerado do `repos.yml` do brabo e a seção "Licença". Novo workflow `readme.yml` (informativo, não obrigatório) chama `readme-esqueleto.yml` e `mapa-alinhado.yml` pinados em `54dc896` (`v1.4.0-dev.13`).
 
 - Tipos da api: `fixados/openapi.json` e `src/lib/api-types.generated.ts` regenerados a partir do `brabo-api` `dev` em `ff2c2ac` (rota interna `POST /internal/sessions/:sessionId/tasks/:taskId/update` da AT-805, RN-1068, e o `UpdateTaskInternalDto`). Sem mudança de tela.

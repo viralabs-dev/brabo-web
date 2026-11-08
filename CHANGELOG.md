@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Doc (AT-848): o bloco "Onde se encaixa" do README é regenerado do `repos.yml` do brabo com o formato `{arquivo, trecho}` e a aresta `brabo → brabo-contracts` (brabo#84); o check `mapa-alinhado` volta a passar.
 - CI (AT-848): todos os `uses:` e `ci_ref` repinam em `6390ef5` (`v1.4.0-dev.17`, brabo-ci#53), que aceita a prova `{arquivo, trecho}` do `mapa-dos-repos.ts`.
 - Doc (AT-845): a ref `apps/api/src/application/use-cases/actions/propose-action.use-case.ts` (`execute`) de `docs/business-rules/web.md` passa de `:84` para `:88`, a linha atual no `brabo-api` `dev` (check `refs`).
 - Docs: o `README.md` segue o esqueleto de 8 seções do `brabo-ci` (`README.modelo.md`, AT-826), com o bloco "Onde se encaixa" gerado do `repos.yml` do brabo e a seção "Licença". Novo workflow `readme.yml` (informativo, não obrigatório) chama `readme-esqueleto.yml` e `mapa-alinhado.yml` pinados em `54dc896` (`v1.4.0-dev.13`).

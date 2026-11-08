@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- O aviso e a fila de PRs prontas do chat aparecem mesmo sem a decisão de imagem do projeto: `usePrsProntas` lê `GET /projects/:id/git/open-pull-requests` (api#80), com a `queryKey` `['code-pull-requests', projectId, 'open', 'chat']`. A aba PRs segue atrás do portão (AT-843, RN-825, RN-646). Tipos regenerados do `brabo-api` `dev` em `e3be45d`.
 - Doc (AT-848): o bloco "Onde se encaixa" do README é regenerado do `repos.yml` do brabo com o formato `{arquivo, trecho}` e a aresta `brabo → brabo-contracts` (brabo#84); o check `mapa-alinhado` volta a passar.
 - CI (AT-848): todos os `uses:` e `ci_ref` repinam em `6390ef5` (`v1.4.0-dev.17`, brabo-ci#53), que aceita a prova `{arquivo, trecho}` do `mapa-dos-repos.ts`.
 - Doc (AT-845): a ref `apps/api/src/application/use-cases/actions/propose-action.use-case.ts` (`execute`) de `docs/business-rules/web.md` passa de `:84` para `:88`, a linha atual no `brabo-api` `dev` (check `refs`).

@@ -5642,9 +5642,9 @@ só terminariam em falha"), com os dois detalhes atrás do mesmo `<details>`.
   sem container e o motivo curto (AT-324)" (nunca provisionado, removido, o
   caso de falha "container de pé: nenhum motivo", o `<details>` fechado com
   `BROKER_URL` só dentro dele, e a linha única quando o broker trava as três)
-- **Origem:** AT-323, AT-324. Não muda o portão da RN-105/RN-494 (a lista de
-  PRs segue bloqueada sem imagem decidida — se ela DEVE escapar do portão é
-  decisão do dono), nem a régua de subida da RN-521/RN-574.
+- **Origem:** AT-323, AT-324. Não muda o portão da RN-105/RN-494 (a lista da aba
+  PRs segue bloqueada sem imagem decidida; só a fila do chat e o aviso de PR
+  pronta escapam do portão, AT-843, decisão do dono de 08/11/2026), nem a régua de subida da RN-521/RN-574.
 
 ### RN-648 — A sidebar, o card do Dashboard e o painel de artefatos não se contradizem: cada estado vazio diz QUAL sessão leu, e contador e lista contam na mesma unidade {#rn-648}
 
@@ -6714,9 +6714,12 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
   sessão, pelo mesmo endpoint da aba PRs, e o cartão de aprovação aparece na
   linha da PR com a ação devolvida pela api ([RN-822](#rn-822)); o merge segue
   manual ([RN-418](api.md#rn-418)). Cada fila tem título e contagem próprios, nunca
-  somados ([RN-467](#rn-467)), e as leituras são as que a aba PRs e o backlog
-  já fazem (mesmas `queryKey`s, backlog a 15 s), sem poll novo apertado
-  ([RN-579](engine.md#rn-579)).
+  somados ([RN-467](#rn-467)), e a lista de PRs abertas vem de
+  `GET /projects/:projectId/git/open-pull-requests`, que não passa pelo portão
+  da imagem ([RN-105](api.md#rn-105), AT-843), com a `queryKey`
+  `['code-pull-requests', projectId, 'open', 'chat']` (sob o prefixo da aba PRs,
+  para as mesmas releituras da [RN-841](#rn-841)) e o backlog a 15 s, sem poll
+  novo apertado ([RN-579](engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:87` (`prontas`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`

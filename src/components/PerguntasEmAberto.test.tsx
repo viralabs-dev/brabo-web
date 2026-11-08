@@ -8,7 +8,7 @@ const getOpenQuestions = vi.fn();
 const answerOpenQuestion = vi.fn();
 const getProjectPendingActions = vi.fn();
 const listSessionEvents = vi.fn();
-const getCodePullRequests = vi.fn();
+const getOpenPullRequestsDoChat = vi.fn();
 const listBacklog = vi.fn();
 let usuario: string | null = 'user-autor';
 
@@ -20,7 +20,7 @@ vi.mock('../lib/api-client', async (importOriginal) => {
     answerOpenQuestion: (...a: unknown[]) => answerOpenQuestion(...a),
     getProjectPendingActions: (...a: unknown[]) => getProjectPendingActions(...a),
     listSessionEvents: (...a: unknown[]) => listSessionEvents(...a),
-    getCodePullRequests: (...a: unknown[]) => getCodePullRequests(...a),
+    getOpenPullRequestsDoChat: (...a: unknown[]) => getOpenPullRequestsDoChat(...a),
     listBacklog: (...a: unknown[]) => listBacklog(...a),
   };
 });
@@ -75,7 +75,7 @@ beforeEach(() => {
   usuario = 'user-autor';
   getProjectPendingActions.mockResolvedValue([]);
   listSessionEvents.mockResolvedValue({ items: [], nextCursor: null });
-  getCodePullRequests.mockResolvedValue({ items: [] });
+  getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
   listBacklog.mockResolvedValue([]);
   getOpenQuestions.mockResolvedValue({ itens: [pergunta('a'), pergunta('b')], total: 2 });
   answerOpenQuestion.mockResolvedValue({});

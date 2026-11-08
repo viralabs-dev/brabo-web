@@ -8,6 +8,7 @@ import { esperaRelativa, tituloComContador } from './AvisoDePrPronta.helpers';
 
 /** AT-810 (RN-1063): PR pronta para o dono mergear avisa na borda do fio. */
 const getProjectPendingActions = vi.fn();
+const getOpenPullRequestsDoChat = vi.fn();
 const getCodePullRequests = vi.fn();
 const listBacklog = vi.fn();
 const proposeAction = vi.fn();
@@ -16,6 +17,7 @@ const approveAction = vi.fn();
 vi.mock('../lib/api-client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../lib/api-client')>()),
   getProjectPendingActions: (...a: unknown[]) => getProjectPendingActions(...a),
+  getOpenPullRequestsDoChat: (...a: unknown[]) => getOpenPullRequestsDoChat(...a),
   getCodePullRequests: (...a: unknown[]) => getCodePullRequests(...a),
   listBacklog: (...a: unknown[]) => listBacklog(...a),
   proposeAction: (...a: unknown[]) => proposeAction(...a),
@@ -93,7 +95,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   document.title = 'Brabo';
   getProjectPendingActions.mockResolvedValue([]);
-  getCodePullRequests.mockResolvedValue({ items: [] });
+  getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
   listBacklog.mockResolvedValue(backlog([]));
 });
 
@@ -103,7 +105,7 @@ describe('AvisoDePrPronta', () => {
     await waitFor(() => expect(listBacklog).toHaveBeenCalled());
     expect(screen.queryByTestId('aviso-pr-pronta')).toBeNull();
 
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'feature/task-aaaaaaaa')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', gateStatus: 'awaiting_user' }]));
     await reler(client);
 
@@ -115,14 +117,23 @@ describe('AvisoDePrPronta', () => {
     expect(document.title).toBe('(1) Brabo');
   });
 
+  it('AT-843: com /code/pull-requests em 409 (sem imagem decidida), o aviso aparece mesmo assim', async () => {
+    getCodePullRequests.mockRejectedValue(new Error('409 sem_decisao'));
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'feature/task-aaaaaaaa')] });
+    listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', gateStatus: 'awaiting_user' }]));
+    montar();
+    expect(await screen.findByTestId('aviso-pr-pronta')).toBeInTheDocument();
+    expect(getCodePullRequests).not.toHaveBeenCalled();
+  });
+
   it('na abertura, a PR que já esperava também é avisada', async () => {
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
     montar();
     expect(await screen.findByTestId('aviso-pr-pronta')).toBeInTheDocument();
   });
 
   it('Mergear → Confirmar propõe e aprova o git_merge', async () => {
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
     proposeAction.mockResolvedValue({ id: 'm1', status: 'pending' });
     approveAction.mockResolvedValue({ id: 'm1', status: 'executed', executionResult: null });
     const user = userEvent.setup();
@@ -138,7 +149,7 @@ describe('AvisoDePrPronta', () => {
   });
 
   it('"Agora não" esconde o aviso, que não volta com a mesma PR, mas volta com uma PR nova; o título segue contando', async () => {
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
     const user = userEvent.setup();
     const { client } = montar();
     await user.click(await screen.findByRole('button', { name: 'Agora não' }));
@@ -148,7 +159,7 @@ describe('AvisoDePrPronta', () => {
     expect(screen.queryByTestId('aviso-pr-pronta')).toBeNull();
     expect(document.title).toBe('(1) Brabo');
 
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300'), pr('4', 'docs/adr-0301')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300'), pr('4', 'docs/adr-0301')] });
     await reler(client);
     const aviso = await screen.findByTestId('aviso-pr-pronta');
     expect(aviso.textContent).toContain('PR #4');
@@ -156,7 +167,7 @@ describe('AvisoDePrPronta', () => {
   });
 
   it('com 2 PRs mostra "Ver as 2" e abre a aba prontas', async () => {
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300'), pr('4', 'docs/adr-0301')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300'), pr('4', 'docs/adr-0301')] });
     const aberta = vi.fn();
     window.addEventListener(EVENTO_ABRIR_FILA, aberta);
     const user = userEvent.setup();
@@ -168,13 +179,13 @@ describe('AvisoDePrPronta', () => {
   });
 
   it('o título volta ao normal quando a PR sai da fila ou a tela desmonta', async () => {
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
     const { client, unmount } = montar();
     await screen.findByTestId('aviso-pr-pronta');
-    getCodePullRequests.mockResolvedValue({ items: [] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
     await reler(client);
     await waitFor(() => expect(document.title).toBe('Brabo'));
-    getCodePullRequests.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
     await reler(client);
     await waitFor(() => expect(document.title).toBe('(1) Brabo'));
     unmount();

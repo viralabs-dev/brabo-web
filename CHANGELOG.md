@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Doc (AT-862): as RNs da web saem de `docs/business-rules/web.md` (480 KB) para `docs/business-rules/web/parte-01.md` a `parte-07.md`, cortadas por faixa de RN (orçamento de 90 KB de markdown por parte). O `web.md` vira índice por parte e uma grade congelada de âncoras `#rn-NNN`, para os links antigos seguirem valendo. As 209 RNs e seus números não mudam; as refs `caminho:N` ficam nas partes.
+
 - Doc (AT-867): a linha de badges logo abaixo do título separa o CI (`ci.yml`) e a versão da `dev` (última tag `-dev`) e da `main` (release final), e mantém licença, documentação e Ko-fi.
 
 - O aviso e a fila de PRs prontas do chat aparecem mesmo sem a decisão de imagem do projeto: `usePrsProntas` lê `GET /projects/:id/git/open-pull-requests` (api#80), com a `queryKey` `['code-pull-requests', projectId, 'open', 'chat']`. A aba PRs segue atrás do portão (AT-843, RN-825, RN-646). Tipos regenerados do `brabo-api` `dev` em `e3be45d`.

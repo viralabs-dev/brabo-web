@@ -20,7 +20,7 @@ keywords: [regras de negócio, web]
   conviviam durante o turno, uma com o nome e outra com o e-mail. (2) No card
   "passou o bastão ao Dev Lead", aceitar o handoff é o gesto primário e
   "Ativar execução" é SECUNDÁRIO, com o aviso do que pula: sem plano, os devs
-  pegam as tarefas como estão ([RN-677](../api.md#rn-677)).
+  pegam as tarefas como estão ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
   `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
@@ -227,7 +227,7 @@ keywords: [regras de negócio, web]
 ### RN-768 — Na aba PRs, o texto ao lado do Merge diz a verdade do botão {#rn-768}
 
 - **Regra:** gate pendente continua AVISO e não trava o merge
-  ([RN-663](../api.md#rn-663)). Tarefa BLOQUEADA (`task.blocked`) é outra coisa e
+  ([RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)). Tarefa BLOQUEADA (`task.blocked`) é outra coisa e
   desabilita o botão; nesse caso a linha da PR NÃO mostra "o merge segue
   disponível": diz, em texto, que o merge está indisponível porque a tarefa
   está bloqueada (nomeando o gate pendente, se houver, ou o motivo do
@@ -247,7 +247,7 @@ keywords: [regras de negócio, web]
   sessão inteira — o Dev Lead não conta, ele planeja antes da execução) abre
   uma confirmação que diz o que para: os agentes da sessão param na hora, o
   comando em andamento é cortado, o turno em curso não é gravado, e sessão com
-  execução não reabre ([RN-650](../api.md#rn-650)). Sem execução, o clique encerra
+  execução não reabre ([RN-650](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-650)). Sem execução, o clique encerra
   direto, como antes. A frase de sessão encerrada no composer interpola o
   estado TRADUZIDO (`pontoDaSessao(...).rotuloKey`), nunca o enum cru
   (`closed`). E isso é guardado no CÓDIGO, não só no locale: a régua de
@@ -300,14 +300,14 @@ keywords: [regras de negócio, web]
 
 ### RN-794 — Sem execução vigente, a tela diz o que ficou pendente e religa pelo mesmo caminho {#rn-794}
 
-- **Regra:** quando a leitura da sessão de execução vigente ([RN-139](../api.md#rn-139))
+- **Regra:** quando a leitura da sessão de execução vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139))
   CONFIRMA que não há nenhuma e o backlog tem tarefa que não está `done`
   (`todo` — inclusive a devolvida pelo gate —, `in_progress`, `in_review`,
   bloqueada), a aba Executores e a seção Execução da Visão geral dizem
   quantas são e oferecem "Religar execução", que chama o MESMO
   `POST .../execution/activate` (`ActivateExecutionUseCase`) do botão
   "Ativar execução", sem `originSessionId` (como a Visão geral sempre
-  chamou: não há sessão de chat para a api fechar, [RN-135](../api.md#rn-135)). A
+  chamou: não há sessão de chat para a api fechar, [RN-135](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-135)). A
   recusa (409 sem repositório, sessão consultiva, papel) aparece com a frase
   da api. "Desbloquear" sem execução vigente avisa que a tarefa só roda
   quando a execução for religada — o botão está na mesma seção. Na aba
@@ -385,7 +385,7 @@ keywords: [regras de negócio, web]
   sobe mais os subagentes de gate) pelo mesmo endpoint da aba Executores
   (`PUT .../agent-autonomy`, um PUT por agente), depois aprova. Um PUT recusado
   não impede a aprovação; desmarcado, nada é gravado. Aprovar ativa a
-  execução ([RN-677](../api.md#rn-677)); o merge segue com o usuário. Só aparece
+  execução ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)); o merge segue com o usuário. Só aparece
   onde quem chama passou o callback do modo automático (papel `maintainer`). O cartão
   segue único (AT-322). Isto substitui a oferta separada da AT-476, o que
   revoga a separação da AT-443 ([RN-755](#rn-755)) para este cartão.
@@ -397,7 +397,7 @@ keywords: [regras de negócio, web]
 
 ### RN-815 — O "Parar execução" conta as tarefas em curso E em revisão, lidas do backlog {#rn-815}
 
-- **Regra:** a confirmação de "Parar execução" ([RN-763](../engine.md#rn-763)) conta as
+- **Regra:** a confirmação de "Parar execução" ([RN-763](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-763)) conta as
   tarefas pelo BACKLOG, lido só com a confirmação aberta, e não pela janela de
   eventos: `in_progress` e `in_review` (gate de QA rodando) em frases
   separadas, cada uma dizendo o que acontece com ela ao parar — a em curso é
@@ -408,7 +408,7 @@ keywords: [regras de negócio, web]
   Backlog carregando ou com erro é dito em texto próprio, nunca como "nenhuma".
   Junto, o cartão do plano do Dev Lead ([RN-804](#rn-804)) abre a oferta em
   lote com texto próprio ("Ao aprovar o plano, a execução começa"), porque ali
-  a execução ainda não começou ([RN-677](../api.md#rn-677)).
+  a execução ainda não começou ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/execution.ts:37` (`contarTarefasAfetadasAoParar`),
   `apps/web/src/components/PararExecucao.tsx:26` (`PararExecucao`),
   `apps/web/src/components/ModoAutomaticoDoTime.tsx:60` (`ModoAutomaticoDoTime`)
@@ -486,9 +486,9 @@ keywords: [regras de negócio, web]
   que a arquitetura pode ser confirmada para o sistema oferecer a Infra. Sem
   história promovida, o mesmo lugar diz o motivo de o botão estar inerte, uma
   vez, em texto (o `title` de botão desabilitado não abre no Chromium,
-  [RN-102](../api.md#rn-102)); o botão habilitado ganha a explicação no `title`. A
+  [RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102)); o botão habilitado ganha a explicação no `title`. A
   derivação lê os `events` que a tela já tem — nenhuma query nova
-  ([RN-579](../engine.md#rn-579)).
+  ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/session-readiness.ts:144` (`temMapaDeModulos`),
   `apps/web/src/routes/SessionComposer.tsx:136` (`hasModuleMap`)
 - **Teste:** `apps/web/src/routes/SessionPage.proximo-passo-arquitetura.test.tsx`
@@ -508,13 +508,13 @@ keywords: [regras de negócio, web]
   sessão (essa já está em "Merges de PR"). "Mergear" PROPÕE o merge nesta
   sessão, pelo mesmo endpoint da aba PRs, e o cartão de aprovação aparece na
   linha da PR com a ação devolvida pela api ([RN-822](#rn-822)); o merge segue
-  manual ([RN-418](../api.md#rn-418)). Cada fila tem título e contagem próprios, nunca
+  manual ([RN-418](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-418)). Cada fila tem título e contagem próprios, nunca
   somados ([RN-467](parte-03.md#rn-467)), e a lista de PRs abertas vem de
   `GET /projects/:projectId/git/open-pull-requests`, que não passa pelo portão
-  da imagem ([RN-105](../api.md#rn-105), AT-843), com a `queryKey`
+  da imagem ([RN-105](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-105), AT-843), com a `queryKey`
   `['code-pull-requests', projectId, 'open', 'chat']` (sob o prefixo da aba PRs,
   para as mesmas releituras da [RN-841](#rn-841)) e o backlog a 15 s, sem poll
-  novo apertado ([RN-579](../engine.md#rn-579)).
+  novo apertado ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:87` (`prontas`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
@@ -569,7 +569,7 @@ keywords: [regras de negócio, web]
   faixa de atividade do turno ([RN-460](parte-03.md#rn-460)) é `role="status"` com
   `aria-live="polite"`: o leitor de tela anuncia a resposta nova e o que o
   agente está fazendo sem interromper quem está lendo. A checagem mora no
-  composer, não na página, que está no teto de linhas ([ADR 0176](../../adr/0176-sessionpage-abaixo-de-mil-linhas.md)).
+  composer, não na página, que está no teto de linhas ([ADR 0176](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0176-sessionpage-abaixo-de-mil-linhas.md)).
 - **Onde:** `apps/web/src/routes/SessionComposer.helpers.ts:9` (`ignorarComposicaoIme`),
   `apps/web/src/components/TurnActivityStrip.tsx:47` (`TurnActivityStrip`)
 - **Teste:** `apps/web/src/routes/SessionFio.at503.test.tsx` ("Enter sem
@@ -607,7 +607,7 @@ keywords: [regras de negócio, web]
   o ping DELA) antes de a nova nascer, e todo callback de geração antiga é
   no-op — o `onClose` de um socket substituído não agenda reconexão, não
   limpa o ping do atual e não marca morto o canal vivo. O canal vivo
-  ([RN-579](../engine.md#rn-579)) é CONTAGEM de conexões por sessão, não booleano. A
+  ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579)) é CONTAGEM de conexões por sessão, não booleano. A
   neutralização do auto-reconnect ([RN-108](parte-01.md#rn-108))
   continua obrigatória no tipo de `criarSocket`.
 - **Onde:** `apps/web/src/lib/socket-phoenix.ts:31` (`criarSocket`),
@@ -713,7 +713,7 @@ keywords: [regras de negócio, web]
   EXECUÇÃO, cujo canal o chat não ouve, e os gates aprovando aparecem ali); e
   (2) quando o canal desta sessão avisa `adr.pr_opened`, `infra.pr_opened`,
   `action.pr_open`, `action.git_merge` ou `action.failed`, pelo
-  invalidador com janela de 2 s ([RN-579](../engine.md#rn-579), [RN-632](parte-05.md#rn-632)). A
+  invalidador com janela de 2 s ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579), [RN-632](parte-05.md#rn-632)). A
   primeira leitura e a leitura igual não releem nada: o custo é zero de poll
   novo. Fica de fora, declarado: PR de infra aberta noutra sessão sem mudar
   tarefa nem passar por este canal só aparece na próxima leitura disparada por
@@ -980,14 +980,14 @@ keywords: [regras de negócio, web]
 
 ### RN-925 — Cada container tem página de detalhe com o estado registrado e o observado separados e as URLs declaradas {#rn-925}
 
-- **Regra:** `/containers/$projectId` (carregada sob demanda) abre a partir de cada linha de `/containers`. Só lê o que já existe: a linha da visão geral (a [RN-486](../api.md#rn-486): registrado e observado nunca se fundem; projeto "nunca provisionado" tem texto próprio, a imagem/versão, os recursos, a postura de rede da decisão vigente e o modo de execução) e as URLs de `GET projects/:projectId/run-instructions`, que a tela diz serem declaradas pela Infra e não verificadas, nunca verdes ([RN-855](#rn-855)); sem declaração, texto próprio. A leitura da página polla no ritmo de projeto (15 s, [RN-632](parte-05.md#rn-632)), nunca nos 5 s da lista. Subir, parar e remover são o MESMO componente da lista (`AcoesDoContainer`), com as mesmas recusas locais em texto ([RN-521](../api.md#rn-521), [RN-574](../api.md#rn-574), [RN-610](../engine.md#rn-610)) e o papel do endpoint por `roleAtLeast`.
+- **Regra:** `/containers/$projectId` (carregada sob demanda) abre a partir de cada linha de `/containers`. Só lê o que já existe: a linha da visão geral (a [RN-486](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-486): registrado e observado nunca se fundem; projeto "nunca provisionado" tem texto próprio, a imagem/versão, os recursos, a postura de rede da decisão vigente e o modo de execução) e as URLs de `GET projects/:projectId/run-instructions`, que a tela diz serem declaradas pela Infra e não verificadas, nunca verdes ([RN-855](#rn-855)); sem declaração, texto próprio. A leitura da página polla no ritmo de projeto (15 s, [RN-632](parte-05.md#rn-632)), nunca nos 5 s da lista. Subir, parar e remover são o MESMO componente da lista (`AcoesDoContainer`), com as mesmas recusas locais em texto ([RN-521](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-521), [RN-574](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-574), [RN-610](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-610)) e o papel do endpoint por `roleAtLeast`.
 - **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:24` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:34` (`AcoesDoContainer`)
 - **Teste:** `apps/web/src/routes/ContainerDetalhePage.test.tsx:92` (caminho feliz com ritmo de 15 s, nunca provisionado com URLs vazias, projeto fora da lista); `apps/web/src/routes/ContainersPage.test.tsx` cobre as ações extraídas
 - **Origem:** AT-609 (EP-030), fatia da AT-608.
 
 ### RN-931 — As telas de providers e do catálogo mostram só o que tem chave do TITULAR, com a cor do provider {#rn-931}
 
-- **Regra:** "ativo" é o provider LOCAL ou o que tem chave do titular do workspace (RN-058), lida da rota da [RN-926](../api.md#rn-926). A tabela "O que cada provider sabe fazer" lista só os ativos, com o nome humano e a mesma cor do card de credencial (`COR_DO_PROVIDER`, fonte única) e uma linha dizendo quantos ficaram de fora e quais. O catálogo de modelos vira um painel com UMA ABA por provider ativo (o hub continua repartido por fabricante); busca, facetas e a barra de lote são globais e a seleção sobrevive à troca de aba. Provider SEM chave que ainda tem modelo ATIVO aparece como aba marcada "sem chave do titular", para dar para desativar o modelo (RN-043); os demais sem chave entram na linha "de fora" (RN-180). Carregando ou falhando a rota, mostra TODOS: "não sei" não é "não tem". Revisa o item 1 da [RN-694](parte-05.md#rn-694): o catálogo não tem mais os grupos Local, APIs diretas e Hubs, e a busca que não casa na aba nomeia as abas que casam. O relatório do sync segue com todos os providers.
+- **Regra:** "ativo" é o provider LOCAL ou o que tem chave do titular do workspace (RN-058), lida da rota da [RN-926](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-926). A tabela "O que cada provider sabe fazer" lista só os ativos, com o nome humano e a mesma cor do card de credencial (`COR_DO_PROVIDER`, fonte única) e uma linha dizendo quantos ficaram de fora e quais. O catálogo de modelos vira um painel com UMA ABA por provider ativo (o hub continua repartido por fabricante); busca, facetas e a barra de lote são globais e a seleção sobrevive à troca de aba. Provider SEM chave que ainda tem modelo ATIVO aparece como aba marcada "sem chave do titular", para dar para desativar o modelo (RN-043); os demais sem chave entram na linha "de fora" (RN-180). Carregando ou falhando a rota, mostra TODOS: "não sei" não é "não tem". Revisa o item 1 da [RN-694](parte-05.md#rn-694): o catálogo não tem mais os grupos Local, APIs diretas e Hubs, e a busca que não casa na aba nomeia as abas que casam. O relatório do sync segue com todos os providers.
 - **Onde:** `apps/web/src/lib/models.ts:363` (`providerAtivo`), `apps/web/src/lib/models.ts:371` (`catalogoDoProvider`), `apps/web/src/components/ModelCatalogSection.tsx:132` (`useMemo`), `apps/web/src/routes/ProvidersPage.tsx:33` (`deFora`)
 - **Teste:** `apps/web/src/routes/ProvidersPage.test.tsx:102` (só os com chave do titular, e a falha que mostra todos), `apps/web/src/components/ModelCatalogSection.test.tsx:399` (aba "sem chave" com modelo ativo; seleção entre abas; busca nomeia a aba que casa), `apps/web/src/lib/models.test.ts:126` (`providerAtivo`)
 - **Origem:** AT-607 (EP-026), tela; a rota é a RN-926.
@@ -1015,7 +1015,7 @@ keywords: [regras de negócio, web]
 
 ### RN-963 — O gasto tem página GLOBAL e aba do PROJETO, e o orçamento tem editor {#rn-963}
 
-Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" e convive com a [RN-060](../api.md#rn-060), a [RN-952](../api.md#rn-952), a [RN-953](../api.md#rn-953) e a [RN-954](../api.md#rn-954).
+Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" e convive com a [RN-060](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-060), a [RN-952](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-952), a [RN-953](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-953) e a [RN-954](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-954).
 
 1. **Página global.** `/spend`, no menu global ao lado de Containers e Providers, serve todo papel: o `owner` vê o workspace inteiro (janela 30/90/180, por modelo, provider, projeto e ator), os orçamentos de todos os projetos e a fatura por chave (`CredentialSpendSection`, que saiu de Providers); quem não é `owner` vê só o PRÓPRIO consumo por projeto (`spend/me` do workspace) e nunca provider nem credencial.
 2. **Aba do projeto.** A aba Gastos é SÓ do projeto: o `owner` lê `spend-report?projectId=` (com a quebra por sessão), o membro lê o total e o custo por agente e por área (`spend/team`) e, abaixo, o próprio consumo. O consumo do Criativo (`CriativoKpis`) passou a mostrar o total do projeto.
@@ -1063,7 +1063,7 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 
 ### RN-973 — A série diária do gasto é desenhada pelo Chart, carregado sob demanda, e também existe como tabela {#rn-973}
 
-Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Chart do shadcn (`recharts@3.8.0`, ADR 0234), sem mexer em quem vê o quê ([RN-952](../api.md#rn-952), [RN-953](../api.md#rn-953), [RN-963](#rn-963)).
+Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Chart do shadcn (`recharts@3.8.0`, ADR 0234), sem mexer em quem vê o quê ([RN-952](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-952), [RN-953](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-953), [RN-963](#rn-963)).
 
 1. **Só as três séries diárias** (owner, não-owner e membro) viram gráfico: barras (soma por dia), eixo em US$, tooltip com dia, US$ e chamadas, cor `var(--accent)` pelo `ChartConfig` (nenhuma variável nova). Os rankings seguem barras com o número ao lado, e o empilhado por provider segue fora ([RN-211](parte-02.md#rn-211)).
 2. **Carga sob demanda.** O gráfico mora em `GraficoDeGastoPorDia.tsx`, carregado por `React.lazy` em `GastoPorDia.tsx`, com o SVG de `BarrasPorDia` como fallback. `SpendCharts.tsx` não importa o recharts, porque a aba Sessões importa o `Destaque` dali.

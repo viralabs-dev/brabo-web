@@ -175,8 +175,8 @@ de fora dessa correção, e sem ela a bolha do agente ficava presa vazia
 
 ### RN-136 — O card acionável de handoff no chat só considera quem CONVERSA nesta tela {#rn-136}
 
-> **Desde o [ADR 0185](../../adr/0185-estou-pronto-fecha-os-dois-gates.md)
-> ([RN-658](../api.md#rn-658))** o handoff Criativo→PO que o "Estou pronto" pediu
+> **Desde o [ADR 0185](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0185-estou-pronto-fecha-os-dois-gates.md)
+> ([RN-658](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-658))** o handoff Criativo→PO que o "Estou pronto" pediu
 > nasce e é aceito na mesma chamada, em nome de quem clicou — o card de
 > aceite dele só aparece quando esse aceite não cabe (sessão anterior ao ADR,
 > brief que não veio do clique) ou falhou. O filtro abaixo não muda.
@@ -216,7 +216,7 @@ sabe o que quer, sem passar pela conversa. Chama a MESMA
 `activateExecution` que a Visão Geral usa, agora com `sessionId` (a sessão
 de chat aberta) como `originSessionId` — sem isto a sessão que trouxe o
 Dev Lead ficava `active` para sempre, mesmo com a execução (numa sessão
-SEPARADA) já tendo decolado por este atalho ([RN-135](../api.md#rn-135)).
+SEPARADA) já tendo decolado por este atalho ([RN-135](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-135)).
 
 **A rota continua exigindo `maintainer`** — DELIBERADAMENTE não alinhada ao
 `developer` que já basta pra aceitar o handoff no mesmo card. Quem ativa
@@ -306,7 +306,7 @@ dev escrevendo no chat do Criativo". Confirmado ao vivo: uma sessão real com
 35+ eventos de dev agent aparecia normal na lista, ao lado de sessões reais
 de ideação.
 
-A correção reusa o sinal que a [RN-139](../api.md#rn-139) já expõe —
+A correção reusa o sinal que a [RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139) já expõe —
 `useActiveExecutionSession`/`GET /projects/:projectId/execution/session` — em
 vez de o backend calcular um campo novo por sessão (`hasExecutionActivated`
 ou equivalente). A aba Criativo busca a sessão vigente e a exclui da lista
@@ -569,7 +569,7 @@ endereçar isso é fora do escopo desta entrega.
 O botão "Confirmar arquitetura pronta" (handoff Arquiteto→Dev Lead, via
 `confirmArchitectureReadiness`) nasce `disabled` até existir no backlog do
 projeto pelo menos 1 história com status diferente de `draft` — ou seja, já
-promovida por `PromoteStoriesUseCase`/`TransitionStoryUseCase` ([RN-048](../api.md#rn-048)),
+promovida por `PromoteStoriesUseCase`/`TransitionStoryUseCase` ([RN-048](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-048)),
 não bastando ter regra de negócio capturada. `in_progress`/`done` também
 contam, porque só se chega lá tendo passado por `ready`. A fonte é a MESMA
 que a aba Backlog já usa (`useBacklog`, `ProjectBacklogTab.tsx`, mesma
@@ -583,11 +583,11 @@ história promovida, o botão mostra a dica em `title` explicando o motivo.
   não tinha gate nenhum
 
 Só valia no CLIENTE: uma chamada HTTP direta ignorava a regra. Fechado por
-[RN-404](../api.md#rn-404) (ADR 0094), que revalida no backend.
+[RN-404](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-404) (ADR 0094), que revalida no backend.
 
 ### RN-161 — Aceitar o handoff pro Dev Lead encadeia a ativação de execução quando o papel efetivo já autoriza {#rn-161}
 
-> **Revisada pela [RN-677](../api.md#rn-677) (ADR 0194, decisão do
+> **Revisada pela [RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677) (ADR 0194, decisão do
 > dono em 01/10):** aceitar o handoff ao Dev Lead deixou de encadear a ativação
 > da execução, para TODO papel — o aceite só o traz para PLANEJAR, e quem ativa
 > é a APROVAÇÃO do plano dele (`propose_execution_plan`). O texto abaixo
@@ -596,7 +596,7 @@ Só valia no CLIENTE: uma chamada HTTP direta ignorava a regra. Fechado por
 `handleAcceptHandoff` (`SessionPage.tsx`) encadeia `activateExecution`
 automaticamente quando `toAgent === 'dev-lead'` E o papel EFETIVO de quem
 aceita — lido do mesmo `useCurrentWorkspaceWithRole()` que já autoriza o
-"Auto mode" ([RN-153](../api.md#rn-153)) e as telas de Aprovações/Configurações — é
+"Auto mode" ([RN-153](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-153)) e as telas de Aprovações/Configurações — é
 `owner` ou `maintainer`. Para `developer` (ou papel ainda não resolvido), o
 fluxo atual continua intocado: aceitar não ativa nada, e "Ativar execução"
 permanece como segundo botão. A checagem é só no cliente —
@@ -611,7 +611,7 @@ seja reportado como "não foi possível aceitar o handoff".
   (`podeFundirHandoffComExecucao`, `handleAcceptHandoff`)
 - **Teste:** `apps/web/src/routes/SessionPage.handoff-devlead-e-colapso.test.tsx`,
   describe "problema 4"
-- **Decisão arquitetural:** [ADR 0069](../../adr/0069-fusao-condicional-do-handoff-com-a-ativacao-de-execucao.md)
+- **Decisão arquitetural:** [ADR 0069](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0069-fusao-condicional-do-handoff-com-a-ativacao-de-execucao.md)
 - **Origem:** pedido do usuário (desenho aprovado)
 
 ### RN-172 — Handoff e aprovação são o DESFECHO do turno {#rn-172}
@@ -707,7 +707,7 @@ São duas, e nenhuma delas é o composer:
 
 1. **Responder o formulário de perguntas estruturadas** —
    `AnswerStructuredQuestionUseCase` reusa `SendAgentMessageUseCase`
-   ([RN-162](../engine.md#rn-162)), e a chamada só resolve depois do turno inteiro.
+   ([RN-162](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-162)), e a chamada só resolve depois do turno inteiro.
 2. **Devolver uma história ao PO** — `ReturnStoryUseCase` chama `reviseStory`,
    que é `handle_call({:revise, …})` no `po_server`: a resposta HTTP espera o
    PO reescrever a história.
@@ -883,7 +883,7 @@ vem ABAIXO da linha em vez de dentro do cabeçalho — cabeçalho de `Disclosure
 `<button>`, e um `<a>` dentro de um `<button>` é HTML inválido e alvo de clique
 ambíguo. O contador do cabeçalho da seção conta a árvore INTEIRA, não só as
 raízes: dizer "3" com dezoito tarefas dentro seria o mesmo tipo de número que
-não corresponde a nada que a [RN-151](../api.md#rn-151) tirou da sidebar.
+não corresponde a nada que a [RN-151](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-151) tirou da sidebar.
 
 - **Onde:** `apps/web/src/lib/session-backlog-tree.ts:68`
   (`montarArvoreDeBacklog`), `apps/web/src/routes/ContextAside.tsx:210` (as
@@ -905,7 +905,7 @@ nenhum.
 O painel passou a ler o mesmo histórico paginado que a aba de Atividade da
 Visão Geral já usava ([RN-099](parte-01.md#rn-099)), com a `queryKey` da cauda
 compartilhada com o fio — **zero requisição a mais** no ciclo de poll
-([RN-090](../api.md#rn-090)/[RN-091](../api.md#rn-091)). Duas coisas mudaram com isso:
+([RN-090](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-090)/[RN-091](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-091)). Duas coisas mudaram com isso:
 
 1. **O feed ganhou o pager que o componente sempre teve.** As props
    `onLoadOlder`/`hasOlder`/`loadingOlder` são opcionais desde a RN-099 e este
@@ -914,7 +914,7 @@ compartilhada com o fio — **zero requisição a mais** no ciclo de poll
 2. **Uma nota conta quantos eventos faltam.** O número sai de SUBTRAÇÃO sobre o
    `seq` (gapless e por sessão): `menor seq baixado − 1`. Nunca de uma
    requisição a mais — o mesmo mecanismo do "+ N mais antigos" do sino
-   ([RN-100](../api.md#rn-100)). Alcançando o começo da sessão a nota **desaparece**, em
+   ([RN-100](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-100)). Alcançando o começo da sessão a nota **desaparece**, em
    vez de afirmar um zero.
 
 As seções derivadas leem `baixados` (tudo que já veio) e não `events` (a janela
@@ -954,7 +954,7 @@ Lead QA Automação concluiu a delegação (qa)").
 
 O contrato externo da área **não muda** (ADR 0038): o fio não passa a endereçar
 subagente, só a narrar o que o lead já registrou. A origem da falha viaja junto
-em `delegation.failed`, pela mesma razão da [RN-059](../engine.md#rn-059) — é ela que diz
+em `delegation.failed`, pela mesma razão da [RN-059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-059) — é ela que diz
 se o próximo passo é trocar a chave, esperar o provider ou abrir um bug.
 
 - **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:754`
@@ -991,7 +991,7 @@ conhece e que renderizaria sem tema nenhum.
   `apps/web/index.html:53`
 - **Teste:** `apps/web/src/lib/tema.test.ts` (describe "contrato com o script
   de boot")
-- **ADR:** [0074](../../adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
+- **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
 ### RN-183 — A preferência de tema tem uma fonte, e o atributo do `<html>` é a verdade {#rn-183}
 
@@ -1019,7 +1019,7 @@ dois deixarem de bater.
 
 - **Onde:** `apps/web/src/lib/tema.ts:73`
 - **Teste:** `apps/web/src/lib/tema.test.ts`
-- **ADR:** [0074](../../adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
+- **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
 ### RN-184 — Contraste é medido nos DOIS temas {#rn-184}
 
@@ -1047,7 +1047,7 @@ existe. Era defeito, e o tema claro não tem por que ser pior que o primário.
 - **Teste:** `apps/web/src/lib/contraste.test.ts`,
   `apps/web/src/design-contraste.test.ts`,
   `apps/web/test/design-contraste.test.ts`
-- **ADR:** [0074](../../adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
+- **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
 ### RN-185 — Os oito papéis de sintaxe, e o valor do handoff só entra medido {#rn-185}
 
@@ -1078,7 +1078,7 @@ correção feita de um lado só.
 - **Onde:** `design/tokens.css:111`
 - **Teste:** `apps/web/src/lib/contraste.test.ts` (describe "contraste — paleta
   de sintaxe sobre --code-bg")
-- **ADR:** [0074](../../adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
+- **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
 ### RN-195 — A sidebar recolhe para uma trilha de ícones, com a preferência persistida {#rn-195}
 
@@ -1093,7 +1093,7 @@ A preferência é do usuário e sobrevive a reload: `brabo.sidebar.collapsed`
 (`'1'`/`'0'`) em `apps/web/src/lib/sidebar-state.ts`. Ela é **só manual**
 (`colapsadoManual`): havia um segundo estado, **automático**
 (`autoColapsado`), somado por OR pela aba de Código, e ele foi removido pelo
-[ADR 0126](../../adr/0126-trilho-vertical-de-navegacao-do-projeto.md) — ver
+[ADR 0126](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0126-trilho-vertical-de-navegacao-do-projeto.md) — ver
 [RN-201](#rn-201). Nenhuma tela recolhe a sidebar por conta própria; o que se
 vê recolhido foi o usuário quem pediu, e está gravado.
 
@@ -1124,7 +1124,7 @@ frente C entregou: `AbaDoProjeto` tem `key: string`, `label: string` e
 `ContagensDeAba = { promocoesPendentes, aprovacoesPendentes,
 hipotesesPendentes }`. A sidebar só consegue preencher
 `aprovacoesPendentes` de graça (`pendingApprovalsCount` já vem no resumo do
-dashboard, [RN-151](../api.md#rn-151)); `promocoesPendentes`/`hipotesesPendentes`
+dashboard, [RN-151](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-151)); `promocoesPendentes`/`hipotesesPendentes`
 entram como `0` — calculá-los exigiria uma consulta nova POR PROJETO
 ABERTO na sidebar, a mesma classe de N+1 que a RN-090/091 fechou no
 dashboard. Os dois selos continuam corretos dentro da régua da própria
@@ -1135,7 +1135,7 @@ O projeto da rota ATUAL sempre aparece expandido (`projetosAbertosEfetivo`),
 mesmo sem estar no `Set` persistido — abrir "de graça" pela rota não grava
 nada; só o clique explícito no chevron entra em `brabo.sidebar.open`.
 
-**Desde o [ADR 0211](../../adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md)
+**Desde o [ADR 0211](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md)
 (AT-404) esta lista é a ÚNICA navegação do projeto:** o trilho vertical saiu e
 ela recebeu tudo o que só ele tinha — os três grupos com cabeçalho, a aba
 ativa marcada, o `tablist` vertical nomeado pelo projeto, o teclado
@@ -1257,7 +1257,7 @@ do trilho do Código). Recolher manualmente continua possível e
 ainda produz trilho do Shell ao lado do trilho do projeto — a diferença é
 que agora quem escolheu foi o usuário, não o sistema.
 
-**Revisto pelo [ADR 0211](../../adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md)
+**Revisto pelo [ADR 0211](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md)
 (AT-404):** o trilho do projeto saiu, e a moldura da aba Código passou a
 **312px** com a sidebar expandida (264 + 48 do `CodeShell`) e **110px**
 recolhida (62 + 48) — sem trilho duplo em nenhum dos dois casos. O colapso
@@ -1277,7 +1277,7 @@ projeto (`publicarAbaAtiva`), não só de `brabo.tab`.
 - **Origem:** PROGRAMA 28, Onda 2, frente B —
   `design_handoff_brabo/CHECKLIST-CONFRONTO.md` seção 1; a metade do
   auto-colapso foi revista pelo
-  [ADR 0126](../../adr/0126-trilho-vertical-de-navegacao-do-projeto.md)
+  [ADR 0126](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0126-trilho-vertical-de-navegacao-do-projeto.md)
 
 ### RN-202 — A aba `sessions` continua "Chat", nunca "Chat RAG" {#rn-202}
 
@@ -1291,7 +1291,7 @@ CONSOME. A aba `sessions` de hoje é o Chat consultivo comum da
 produzir backlog, sem RAG nenhum por trás.
 
 Rotular a aba "Chat RAG" hoje anunciaria uma capacidade que não existe — o
-mesmo erro que o [ADR 0042](../../adr/0042-catalogo-vivo-ciclo-de-vida-do-modelo-e-preco-auditavel.md)
+mesmo erro que o [ADR 0042](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0042-catalogo-vivo-ciclo-de-vida-do-modelo-e-preco-auditavel.md)
 já recusa para modelo de catálogo ("não ativar modelo descoberto
 automaticamente"). O rótulo muda no dia em que a funcionalidade chegar, junto
 com o dado por trás dele — nunca antes.
@@ -1301,14 +1301,14 @@ com o dado por trás dele — nunca antes.
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (describe "abas do
   projeto derivam de um registro só", `'RN-202 — a aba \`sessions\` continua
   "Chat", nunca "Chat RAG"'`)
-- **ADR:** [0078](../../adr/0078-moldura-de-tela-e-o-registro-de-abas-diverge-do-handoff.md)
+- **ADR:** [0078](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0078-moldura-de-tela-e-o-registro-de-abas-diverge-do-handoff.md)
 
 ### RN-203 — O handoff é referência visual, não teto de quantas abas o produto tem {#rn-203}
 
 O handoff de design lista 7 abas de projeto (Visão geral, Criativo, Código,
 Chat RAG, Gastos, Aprovações, Configurações); o registro
 (`apps/web/src/routes/project-tabs.ts`) tem 10. As três a mais —
-`executores` ([RN-121](parte-01.md#rn-121)), `backlog` ([RN-048](../api.md#rn-048)) e
+`executores` ([RN-121](parte-01.md#rn-121)), `backlog` ([RN-048](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-048)) e
 `insights` (hipóteses do Psicólogo aguardando decisão) — nasceram DEPOIS do
 handoff ser desenhado, todas com dado real, contador derivado de consulta e
 pelo menos uma RN própria com teste.
@@ -1324,7 +1324,7 @@ errado.
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (describe "abas do
   projeto derivam de um registro só", `'RN-203 — as 3 abas que o handoff não
   previu continuam no registro'`)
-- **ADR:** [0078](../../adr/0078-moldura-de-tela-e-o-registro-de-abas-diverge-do-handoff.md)
+- **ADR:** [0078](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0078-moldura-de-tela-e-o-registro-de-abas-diverge-do-handoff.md)
 
 ### RN-210 — "Recomendado" é uso real e custo, nunca nota calculada {#rn-210}
 
@@ -1332,12 +1332,12 @@ O bloco "Melhores modelos por capacidade" (Configurações) não tem coluna de
 score. O handoff mostra uma nota por capacidade (código 9.4, imagem 9.1…), mas
 é dado FICTÍCIO do mock — nenhum provider publica "qualidade de código" e o
 produto não mede isso em lugar nenhum. Calcular um número aqui seria o mesmo
-"palpite vestido de dado" que o [ADR 0041](../../adr/0041-base-openai-compativel-e-contrato-de-llm-providers.md)
+"palpite vestido de dado" que o [ADR 0041](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0041-base-openai-compativel-e-contrato-de-llm-providers.md)
 proíbe para capability de MODELO, agora sobre qualidade.
 
 Em vez disso, "recomendado"/"alternativa" saem de dois sinais reais, entre os
 modelos que a curadoria DESTE workspace marcou para aquela capacidade (`uses`,
-[RN-057](../api.md#rn-057)): primeiro os mais usados por agentes DESTE projeto — a
+[RN-057](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-057)): primeiro os mais usados por agentes DESTE projeto — a
 mesma cascata que resolve o binding vigente de cada agente —, custo (do
 catálogo, ascendente) como desempate. "O que o time já escolheu" é o sinal
 mais honesto disponível sem inventar nota. Capacidade sem nenhum modelo curado
@@ -1347,7 +1347,7 @@ coluna Origem de `ModelsSection` já usa para o binding pulado.
 - **Onde:** `apps/web/src/routes/settings/MelhoresModelosPorCapacidadeSection.tsx`
 - **Teste:** `apps/web/src/routes/ProjectSettingsTab.test.tsx`
   (describe "MelhoresModelosPorCapacidadeSection")
-- **ADR:** [0077](../../adr/0077-ranking-de-modelos-por-capacidade-sem-nota-inventada.md)
+- **ADR:** [0077](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0077-ranking-de-modelos-por-capacidade-sem-nota-inventada.md)
 
 ### RN-211 — Gasto por provider na tela é Ranking, não paleta categórica inventada {#rn-211}
 
@@ -1371,7 +1371,7 @@ agregação cruzada dia×provider no backend desta onda.
 - **Teste:** `apps/web/src/routes/ProjectSpendTab.test.tsx` (describe "a
   audiência do owner" — `'mostra os cinco recortes do workspace,
   incluindo provider'`)
-- **ADR:** [0076](../../adr/0076-provider-volta-a-ser-dimensao-de-gasto.md)
+- **ADR:** [0076](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0076-provider-volta-a-ser-dimensao-de-gasto.md)
 
 ### RN-212 — Bloco "por projeto" é o TokenMeter plugado ao orçamento real {#rn-212}
 

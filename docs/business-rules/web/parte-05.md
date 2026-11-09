@@ -26,17 +26,17 @@ api, o engine e todo teto ficam como estão.
    `pending`) deixa os botões inertes com o motivo em texto até a lista trocar o
    card pela linha de desfecho. Quem chama devolve a promessa e refaz a lista
    MESMO na recusa (`finally`): é UMA invalidação por clique, sem poll novo, e a
-   invalidação usa o canal e o orçamento da [RN-579](../engine.md#rn-579).
+   invalidação usa o canal e o orçamento da [RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579).
 2. **Reabrir a sessão retoma o turno do log (AT-268).** O estado do turno da tela
    é `useState` local e se perdia ao sair. Na primeira leitura dos eventos de
    uma sessão `active`, `turnoEmCursoNoLog` olha o `agent.status` persistido
    mais recente de cada agente (a mesma leitura de `turnoTerminouNoLog`, da
-   [RN-578](../engine.md#rn-578)); o que estiver `working` reabre a faixa e trava o composer
+   [RN-578](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-578)); o que estiver `working` reabre a faixa e trava o composer
    pelas mesmas entradas de um turno aceito (`iniciarTurnoDoAgente` +
    `acompanharTurnoPeloLog`), e a leitura da cauda do log o fecha. Roda UMA vez
    por sessão montada (um efeito recorrente rearmaria a faixa com o `working`
    antigo ainda no cache). O `working` que o reinício do engine deixou é fechado
-   por evento novo no boot ([RN-586](../engine.md#rn-586)), então o que sobra é turno vivo.
+   por evento novo no boot ([RN-586](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-586)), então o que sobra é turno vivo.
    **Não enfileira mensagem:** mensagem com turno em curso segue recusada com
    409 nomeado — a fila é decisão pendente do dono (AT-267).
 3. **As pendências de OUTRAS sessões do projeto aparecem no chat (AT-265).**
@@ -59,11 +59,11 @@ api, o engine e todo teto ficam como estão.
    e o APROVA no mesmo gesto, pelos mesmos dois endpoints da aba PRs e do card, então
    a proposta e a aprovação ficam no log. **A confirmação é do humano** — o merge em
    branch protegida continua `require_approval` incondicional
-   ([RN-418](../api.md#rn-418)), sem auto-aprovar, sem "sempre permitir", sem o modo
+   ([RN-418](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-418)), sem auto-aprovar, sem "sempre permitir", sem o modo
    automático; o clique em Confirmar É a aprovação. O desfecho aparece na linha:
    "Mergeada", ou a causa da falha (a primeira frase de `error` mais os
    `conflictingFiles` de um `GitActionFailureResult`). As recusas da api (PR já
-   mergeada, merge já proposto — [RN-663](../api.md#rn-663)) chegam ao dono como a frase
+   mergeada, merge já proposto — [RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)) chegam ao dono como a frase
    da api; gate pendente não é recusa, é aviso em texto ao lado do botão. Merge
    proposto por agente mantém o `ApprovalCard`.
 5. **O papel é o do ENDPOINT, e a lacuna é declarada.** Decidir ação e propor
@@ -119,7 +119,7 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
 
 O destinatário da mensagem do composer era DERIVADO: "o `agent.activated` mais
 recente dentro da janela de 200 eventos" (achado 9-fix). Era um destinatário
-padrão do lado da TELA — a classe de defeito que a [RN-584](../engine.md#rn-584) fechou no
+padrão do lado da TELA — a classe de defeito que a [RN-584](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-584) fechou no
 engine — e era INVISÍVEL: o composer não dizia a quem a mensagem ia, e aceitar
 um handoff nesta tela não mudava nada além do log. No uso real de 29/09 a
 sessão teve `handoff.accepted` para a Infra e depois para o Arquiteto, e o "oi"
@@ -132,7 +132,7 @@ desde sempre (AT-251).
 
 1. **As OPÇÕES** são os agentes que conversam (`AGENTES_DE_CHAT`) e que já
    estão na sessão: `agent.activated` na janela, `roster.activatedAgents` do
-   resumo do projeto ([RN-630](../api.md#rn-630), sessão INTEIRA, só com o resumo da
+   resumo do projeto ([RN-630](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-630), sessão INTEIRA, só com o resumo da
    MESMA sessão, no molde da [RN-568](parte-04.md#rn-568)) ou handoff ACEITO (a lista de
    handoffs não tem janela). Os dois últimos termos são a [RN-180](parte-02.md#rn-180): o
    agente não some do seletor porque a ativação saiu dos 200 eventos. Na sessão
@@ -143,12 +143,12 @@ desde sempre (AT-251).
    agente; aceite que falha não troca nada). Nada do log escolhe por ela: um
    aceite feito em outra aba ou por outro caminho só acrescenta uma opção.
 3. **Opção ÚNICA é o destinatário, e o composer a nomeia antes do envio.** Não
-   é um padrão no sentido da [RN-584](../engine.md#rn-584) — não há outro agente a quem a
+   é um padrão no sentido da [RN-584](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-584) — não há outro agente a quem a
    mensagem pudesse ir.
 4. **Duas ou mais opções e nenhuma escolha válida: sem destinatário.** O
    "Enviar" (e o Enter) fica travado e a tela diz em TEXTO que é preciso
    escolher — nunca "a mais recente". Zero opções é o chat da sessão sem agente
-   (SSE), e a tela também o diz. **Revisado pela [RN-682](../api.md#rn-682):** zero
+   (SSE), e a tela também o diz. **Revisado pela [RN-682](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-682):** zero
    opções também trava o envio — a consultiva sem agente pede um agente, e o
    SSE ao modelo cru deixou de ser chamado pela tela.
 5. **A escolha é lembrada por sessão no `localStorage`** — conforto de quem vê
@@ -165,8 +165,8 @@ desde sempre (AT-251).
 
 8. **Toda oferta pendente é acionável, e nenhuma esconde outra** (AT-253). O
    card elegia UMA oferta (`handoffs.find`, a pendente mais antiga), e o
-   handoff MANUAL ([ADR 0109](../../adr/0109-handoff-manual-a-agente-a-escolha.md),
-   [RN-441](../api.md#rn-441)) — gravado com a PESSOA como ator, e por isso nunca
+   handoff MANUAL ([ADR 0109](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0109-handoff-manual-a-agente-a-escolha.md),
+   [RN-441](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-441)) — gravado com a PESSOA como ator, e por isso nunca
    casado pelo ator — ficava sem "Aceitar" e escondia as ofertas seguintes.
    Agora cada oferta pendente a um agente que conversa (fora a da Infra, que
    tem card próprio, [RN-499](parte-04.md#rn-499)) tem o botão no evento dela; duas
@@ -196,7 +196,7 @@ desde sempre (AT-251).
     janela vazia não afirma corte. A faixa tem só o aceite; o atalho "Ativar
     execução" do card do Dev Lead fica no fio.
 
-A guarda da [RN-584](../engine.md#rn-584) (`scripts/ci/destinos-do-composer.spec.ts`)
+A guarda da [RN-584](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-584) (`scripts/ci/destinos-do-composer.spec.ts`)
 passa a ler `DESTINATARIO_DA_SESSAO_CRIATIVA` em vez do literal de
 `SessionPage.tsx`: todo destino que o composer pode dar continua tendo
 cláusula própria no engine. Nenhuma mudança de api nem de engine.
@@ -226,7 +226,7 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
 
 ### RN-632 — Leitura de PROJETO polla no ritmo de projeto, e toda tela que ouve o canal da sessão invalida pela MESMA janela {#rn-632}
 
-O uso real de 29/09 bateu o teto de 300 req/min do usuário ([RN-579](../engine.md#rn-579))
+O uso real de 29/09 bateu o teto de 300 req/min do usuário ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579))
 com duas abas abertas: 192 × 429 às 07:14, 106 deles em
 `GET /projects/:id/sessions` e 20 em `GET /projects/:id`, e três cliques de
 `approve_always` recusados no meio (AT-278). A RN-579 tinha posto sob o canal
@@ -302,7 +302,7 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   ("confirmada a espera, a sonda PARA" e o caso de falha: sem confirmação ela
   segue); `apps/web/src/routes/ContainersPage.test.tsx` ("a linha lê a sessão
   mais recente SEM poll")
-- **Origem:** AT-278 (extensão da [RN-579](../engine.md#rn-579); não muda a RN-108 — o
+- **Origem:** AT-278 (extensão da [RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579); não muda a RN-108 — o
   ticket de uso único e a reconexão manual seguem como estão)
 
 ### RN-633 — O handoff manual não declara prontidão, e "já ativo" para a oferta é do projeto {#rn-633}
@@ -313,8 +313,8 @@ Duas leituras da tela de Sessão deixavam o handoff obsoleto (AT-293, AT-294):
    arquitetura pronta"** (AT-293). `prontidaoJaDeclarada` e
    `arquiteturaJaDeclarada` perguntavam só "existe handoff saindo do
    Criativo/Arquiteto?", e o handoff manual
-   ([ADR 0109](../../adr/0109-handoff-manual-a-agente-a-escolha.md),
-   [RN-441](../api.md#rn-441)) grava como `fromAgent` o ÚLTIMO agente ativado
+   ([ADR 0109](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0109-handoff-manual-a-agente-a-escolha.md),
+   [RN-441](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-441)) grava como `fromAgent` o ÚLTIMO agente ativado
    (`request-manual-handoff.use-case.ts`): pedir um handoff manual ao Staff com
    o Criativo ativo escondia o botão de prontidão sem prontidão nenhuma
    declarada. O manual se reconhece pelo ATOR humano do `handoff.offered`
@@ -481,7 +481,7 @@ serviço que não respondia.
    (`provisioned`) e quando a query erra (`pollQueParaNoErro`). A FALHA
    (`provision_failed`) é terminal na adoção e NÃO no provisionamento: ali o
    "Tentar novamente" dispara um bootstrap novo e a tela precisa ver o
-   progresso dele ([RN-477](../api.md#rn-477)).
+   progresso dele ([RN-477](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-477)).
 4. **O `/status` para no erro.** Serviço que responde — inclusive com 5xx, que
    vira `status: 'error'` num corpo resolvido — segue a cada 5 s. Serviço que
    não responde deixa de ser perguntado por timer; o foco da janela e a
@@ -537,7 +537,7 @@ medidos nos dois temas, com o mesmo piso —; o que muda é o que se cobra:
   deixou de existir"), `apps/web/src/lib/tokens-padrao.test.ts`,
   `apps/web/src/lib/agents.test.ts` ("cor de agente vem do design system"),
   `apps/web/src/design-tokens-existentes.test.ts`
-- **ADR:** [0181](../../adr/0181-tema-preto-neutro.md)
+- **ADR:** [0181](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0181-tema-preto-neutro.md)
 - **Origem:** AT-283, AT-284
 
 ## Acompanhar ao vivo sem martelar (RN-639)
@@ -584,7 +584,7 @@ componente (tabelas e rótulos das seções), assunto de tipografia e espaço, n
 de moldura. O `fora-da-viewport` que sobra na Visão geral e em Aprovações são
 abas da barra horizontal além da borda, onde a rolagem interna as alcança.
 
-**Revisto pelo [ADR 0211](../../adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md)
+**Revisto pelo [ADR 0211](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md)
 (AT-404):** o item 3 deixou de valer — o trilho do projeto saiu, e com ele a
 barra horizontal. No telefone as abas do projeto moram na GAVETA (item 2), com
 os grupos, a ativa e os contadores; escolher uma fecha a gaveta. O corpo do
@@ -668,7 +668,7 @@ cronológica — o painel de log segue oferecendo esse recorte.
 O levantamento visual da Rodada 29 (achado G1, AT-321) percorreu as seções de
 Configurações em ~40s e a página inteira do projeto virou "Limite de
 requisições excedido" — o teto de 300 req/min é do USUÁRIO
-([RN-579](../engine.md#rn-579)). O roteiro RECARREGAVA a página por seção, e uma carga da
+([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579)). O roteiro RECARREGAVA a página por seção, e uma carga da
 aba custava 55 requisições. Medido com as telas de verdade, o defeito tinha
 três partes, e nenhuma delas pede subir o teto:
 
@@ -708,16 +708,16 @@ aba Configurações sobre um `fetch` que conta por rota; `dev` → esta regra):
 | carga da aba (2,5s) | 53 | 50 |
 | um minuto parado na aba | 76 | 68 |
 | Configurações → Visão geral → volta (buscas de configuração) | 31 | 0 |
-| carga da aba, com os bindings resolvidos em LOTE ([RN-654](../api.md#rn-654), AT-334) | 49 | 30 |
+| carga da aba, com os bindings resolvidos em LOTE ([RN-654](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-654), AT-334) | 49 | 30 |
 
 Os "Depois" das três primeiras linhas foram medidos sobre a mesma base do
 "Antes"; integrada a `dev` com a [RN-638](#rn-638) (a moldura lê a fila do
 projeto uma vez só), a carga ficou em 49 e o minuto em 64. A quarta linha é a
-[RN-654](../api.md#rn-654), medida sobre a `dev` em 94e5dc721d: os 20 bindings
+[RN-654](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-654), medida sobre a `dev` em 94e5dc721d: os 20 bindings
 resolvidos por chave viraram UMA leitura, e o teste guarda a carga em 30 e o
 minuto em 64.
 
-**O que esta regra NÃO fecha:** até a [RN-654](../api.md#rn-654), 20 das requisições da
+**O que esta regra NÃO fecha:** até a [RN-654](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-654), 20 das requisições da
 carga eram o binding RESOLVIDO de cada agente (17) e de cada área (3), uma rota
 por chave (`GET projects/:projectId/agent-bindings/:agentSlug`) — essa parte
 fechou com a rota de LOTE. RECARREGAR a página por seção, como o roteiro do
@@ -740,7 +740,7 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
   caso de falha: invalidar busca na hora, e passado o minuto a volta busca de
   novo)
 - **Origem:** AT-321 (achados G1 e G2 do levantamento visual da Rodada 29;
-  extensão da [RN-579](../engine.md#rn-579) e da [RN-632](#rn-632))
+  extensão da [RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579) e da [RN-632](#rn-632))
 
 ## Decidir no chat, onde o dono está (RN-626)
 
@@ -752,7 +752,7 @@ AT-324 — achados P1 e K1/K2 do levantamento visual da Rodada 29).
 **A aba PRs e o portão da imagem.** O bloqueio é REAL e fica: a lista de PRs e
 o diff passam pelo MESMO funil da aba Código (`ReadProjectCodeUseCase.alvo` →
 `portaoDoContainer`), então sem imagem decidida (RN-105, nos três modos pela
-[RN-494](../broker.md#rn-494)) a api responde 409 também ali — medido, não suposto. O que
+[RN-494](https://github.com/viralabs-dev/brabo-broker/blob/dev/docs/business-rules/broker.md#rn-494)) a api responde 409 também ali — medido, não suposto. O que
 estava errado era o texto: a aba PRs mostrava "A aba Code ainda não está
 liberada", falando de OUTRA aba e com um nome ("Code") que não é o do trilho
 ("Código"). Agora `ContainerImageGateNotice` recebe a SUPERFÍCIE bloqueada
@@ -764,7 +764,7 @@ promete liberar sozinha: a aba Código pergunta o estado e revalida, a lista de
 PRs só descobre o 409 quando a query falha.
 
 **`/containers` sem container.** Parar e Remover já eram `disabled` com
-`registrado: null` ([RN-521](../api.md#rn-521), "nunca provisionado") e com `removed`,
+`registrado: null` ([RN-521](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-521), "nunca provisionado") e com `removed`,
 mas nada dizia por quê, e a variante `danger` do `Button` não tinha estado
 desabilitado — "Remover" saía em vermelho cheio, igual ao ativo. Agora a linha
 diz o motivo UMA vez em texto (`Nunca provisionado: não há container para
@@ -867,8 +867,8 @@ muda.
   `apps/web/src/routes/configuracoes.orcamento.test.tsx` e
   `apps/web/src/routes/duas-abas.orcamento.test.tsx` seguem nos tetos
 - **Origem:** AT-325 (achados S2/D2/X6 da AT-290). Não muda o escopo da
-  [RN-159](parte-02.md#rn-159) nem o resumo do workspace ([RN-090](../api.md#rn-090)); estende a
-  [RN-198](../api.md#rn-198) (qual sessão a sidebar lê) e aplica a [RN-470](parte-03.md#rn-470)
+  [RN-159](parte-02.md#rn-159) nem o resumo do workspace ([RN-090](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-090)); estende a
+  [RN-198](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-198) (qual sessão a sidebar lê) e aplica a [RN-470](parte-03.md#rn-470)
 
 ## Acompanhar ao vivo sem martelar (RN-639)
 
@@ -946,7 +946,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
   `apps/web/src/routes/ProjectSessionsTab.test.tsx` (cada um com o móvel e o
   caso de falha do desktop ou da faixa que cabe). A faixa de abas do projeto
   (`ProjectRail`, achado N8) saiu no
-  [ADR 0211](../../adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md): as abas
+  [ADR 0211](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0211-uma-navegacao-so-a-sidebar-absorve-o-trilho.md): as abas
   moram na gaveta
 - **Origem:** AT-328 (achado N1) e AT-330 (achados N3 a N8) da auditoria
   visual da Rodada 29; completa a [RN-643](#rn-643)
@@ -970,7 +970,7 @@ anexar evento aceita de qualquer espécie. Os desfechos não se colapsam:
    DUAS leituras compostas numa lista só (`comporMembros`), a de PROJETO antes
    da de WORKSPACE: `GET projects/:id/members` (mínimo `viewer`), sob a MESMA
    `queryKey` da aba de Configurações, e desde a AT-335
-   `GET workspaces/:id/members` ([RN-655](../api.md#rn-655)), do workspace DO PROJETO.
+   `GET workspaces/:id/members` ([RN-655](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-655)), do workspace DO PROJETO.
    Quem tem as duas linhas aparece uma vez, pela de projeto — a mesma ordem da
    sobreposição de papel ([RN-471](parte-03.md#rn-471)).
 3. **Outra pessoa que a tela NÃO sabe nomear** — "Outro membro": sem linha de
@@ -1046,19 +1046,19 @@ automático (RN-471).
 
 ### RN-687 — O painel do runner manda para o instalador; o navegador não gera chave, não baixa binário e não grava pasta {#rn-687}
 
-O fluxo do [ADR 0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
-([RN-464](../api.md#rn-464)..[466](../runner.md#rn-466)) foi APOSENTADO por decisão do dono
+O fluxo do [ADR 0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
+([RN-464](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-464)..[466](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-466)) foi APOSENTADO por decisão do dono
 (01/10, `BRB-031`): era o único caminho de instalação que terminava em
 `chmod +x` manual, e o `install.sh` já faz as três coisas dele do lado certo —
 baixa o binário conferido contra o `checksums.txt` assinado e o instala com
-`install -m 0755` ([RN-531](../produto.md#rn-531)), e cria a chave NA MÁQUINA e a registra
-([RN-547](../produto.md#rn-547), [RN-551](../runner.md#rn-551), [RN-552](../api.md#rn-552)).
+`install -m 0755` ([RN-531](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-531)), e cria a chave NA MÁQUINA e a registra
+([RN-547](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-547), [RN-551](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-551), [RN-552](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-552)).
 
 **A regra:**
 
 1. **O `RunnerOnboardingPanel` mostra o comando do instalador**
    (`curl -fsSLO …/install.sh && bash install.sh`, a MESMA frase do runbook e
-   do `install.sh`, [RN-526](../produto.md#rn-526)), copiável, com o que ele faz dito em
+   do `install.sh`, [RN-526](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-526)), copiável, com o que ele faz dito em
    texto, a ressalva de que ele serve a máquina da instalação, e a
    `EsperaDoRunner` ([RN-474](parte-03.md#rn-474)) embaixo. O comando no web é uma CÓPIA,
    e a cópia é conferida contra a constante do instalador.
@@ -1073,8 +1073,8 @@ baixa o binário conferido contra o `checksums.txt` assinado e o instala com
    ficou sem chamador. `GET` e `DELETE` ficam (listar e revogar); a rota
    interna de máquina (`POST /internal/machine-device-keys`) fica.
 5. **Chave de projeto JÁ registrada continua valendo e revogável**: nada no
-   banco muda, o `PatAuthGuard` segue aceitando-a ([RN-465](../api.md#rn-465)) e o CLI
-   segue lendo a pasta configurada ([RN-466](../runner.md#rn-466)). O runner configurado
+   banco muda, o `PatAuthGuard` segue aceitando-a ([RN-465](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-465)) e o CLI
+   segue lendo a pasta configurada ([RN-466](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-466)). O runner configurado
    pelo navegador antes do ADR 0203 não quebra.
 
 Fica de fora, declarado: instalação com TIME perde o caminho sem PAT para
@@ -1098,7 +1098,7 @@ sem consumidor de produção e NÃO foi removido — é decisão à parte.
   (o comando do painel é a frase do instalador);
   `scripts/ci/alvos-do-runner.spec.ts:70` (a lista de alvos do navegador não
   volta)
-- **Decisão arquitetural:** [ADR 0203](../../adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md)
+- **Decisão arquitetural:** [ADR 0203](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md)
 - **Origem:** AT-014 (`BRB-031`), decisão do dono em 01/10
 
 ## O teto da RN-418 vale também pela porta tipada (RN-689)
@@ -1335,7 +1335,7 @@ quando o turno termina entregando um formulário (`gravar_texto_do_turno(state,
 Query, e a aba Sessões gravava nela o resultado de outra pergunta: a PRIMEIRA
 página crescente (`listActions({ limit: 200 })`, sem `latest`), enquanto o fio
 da Sessão lê a cauda das 200 mais novas mais as pendentes que ela empurrou
-([RN-637](../api.md#rn-637)). As duas telas trocavam o recorte uma da outra — depois de
+([RN-637](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-637)). As duas telas trocavam o recorte uma da outra — depois de
 abrir a aba, o fio podia desenhar as 200 ações mais ANTIGAS da sessão, o
 defeito que a RN-637 fechou, reaberto pela porta do cache (AT-365).
 

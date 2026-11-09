@@ -41,7 +41,7 @@ depois, e por isso `ProposeActionUseCase` também executa no caminho
 `auto_approved`, mesma lição do comentário sobre `parallelize` nesse arquivo
 ("sem isto a ação nascia, era aprovada — e nada subia").
 
-**Revisado pela [RN-671](../api.md#rn-671) (ADR 0190, 01/10):** `container_start` passa
+**Revisado pela [RN-671](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-671) (ADR 0190, 01/10):** `container_start` passa
 a ser SEMEADO `auto_approve` no aceite do handoff da Infra, e o servidor do
 Infra Lead propõe a primeira subida sozinho quando há roteamento. O resto desta
 regra — a lista de candidatas, `maintainer`, fora dos tetos absolutos — segue.
@@ -91,7 +91,7 @@ antes de prometer isso.
   `apps/web/src/lib/aprovacoes.test.ts` (frase não promete dev agent dentro
   do container),
   `apps/engine/test/engine/infra/infra_lead_server_test.exs`
-- **ADR:** [0130](../../adr/0130-broker-de-container.md), [0133](../../adr/0133-infra-elege-imagem-do-roteamento.md)
+- **ADR:** [0130](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0130-broker-de-container.md), [0133](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0133-infra-elege-imagem-do-roteamento.md)
 - **Origem:** plano do dono do produto, Parte 1 / PR 1.5
 
 ### RN-499 — O handoff da Infra tem card acionável PRÓPRIO, fora do fio — sem alargar `AGENTES_DE_CHAT` {#rn-499}
@@ -115,12 +115,12 @@ em excluir `infra`: o `agent_command_controller.ex` do engine não tem cláusula
 de `message` pro Infra Lead, e a última cláusula (sem guarda) trataria
 `"infra"` como se fosse o Criativo — pôr `infra` na lista faria a tela
 oferecer um fio de conversa que não existe e o composer mandar mensagem pro
-agente errado. (Desde a [RN-584](../engine.md#rn-584) o engine recusa com nome em vez de
+agente errado. (Desde a [RN-584](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-584) o engine recusa com nome em vez de
 entregar ao Criativo; o filtro continua certo pelo mesmo motivo.) Aceitar a Infra é uma ação **propositiva**, não conversacional.
 
 O card acionável mora, então, **fora do fio**: na faixa fixa entre a área que
 rola e o composer, a mesma que hospeda o handoff manual
-([RN-440](../api.md#rn-440)) e que já se declara o lugar das ações de handoff que "não
+([RN-440](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-440)) e que já se declara o lugar das ações de handoff que "não
 são conversa, são redirecionamento". Três consequências que a escolha compra:
 o `handoff.offered` da Infra **continua narrado** no fio como divisor mudo
 (nada muda na timeline); nenhum handoff conversacional muda de forma; e o
@@ -220,7 +220,7 @@ da interface, o binário segue sendo refinado); o protocolo em
   `apps/api/test/interfaces/http/iam/workspaces-project-folders.controller.spec.ts`,
   `apps/web/src/lib/fs-browser.test.ts`,
   `apps/web/src/components/FolderBrowserModal.test.tsx`
-- **ADR:** [0141](../../adr/0141-base-unica-dos-projetos-montados.md) (a base que
+- **ADR:** [0141](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0141-base-unica-dos-projetos-montados.md) (a base que
   esta rota escopa)
 - **Origem:** plano do dono do produto, PR 4
 
@@ -228,7 +228,7 @@ da interface, o binário segue sendo refinado); o protocolo em
 
 ### RN-513 — Com base consentida, `mounted` é o pré-selecionado com `<base>/<slug>` sugerido; sem base, ou sem saber, ele não é oferecido {#rn-513}
 
-> **Revisada pela [RN-573](../api.md#rn-573) (ADR 0161):** a pré-seleção de `mounted`
+> **Revisada pela [RN-573](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-573) (ADR 0161):** a pré-seleção de `mounted`
 > passou a exigir TAMBÉM o broker de container confirmado. Com base e sem
 > broker (a instalação por Release), `runner` é o pré-selecionado e
 > `container`/`mounted` ficam inertes com o motivo em texto; com o broker
@@ -236,8 +236,8 @@ da interface, o binário segue sendo refinado); o protocolo em
 > está.
 
 Duas metades desta regra **já eram regra** e nunca tinham chegado ao cliente.
-"Não oferecer o modo sem base" é a [RN-500](../api.md#rn-500); "sugerir `<base>/<slug>`"
-é a [RN-501](../api.md#rn-501), e o ADR 0142 adiou a validação de disco justamente para
+"Não oferecer o modo sem base" é a [RN-500](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-500); "sugerir `<base>/<slug>`"
+é a [RN-501](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-501), e o ADR 0142 adiou a validação de disco justamente para
 que o assistente pudesse propor uma pasta que **ainda não existe**. Até aqui,
 `GET /workspaces/:workspaceId/projects-base` não tinha **chamador nenhum** no
 web, e o card "Pasta montada" era oferecido incondicionalmente — numa
@@ -248,7 +248,7 @@ fim do assistente.
 O que é **novo** é a **pré-seleção**: com base configurada, `mounted` nasce
 selecionado. Ela revisa o default do ADR 0072 (onde `container` é "a normal" e
 o modo local é escape hatch) e o revisa **só para a instalação local**, onde a
-base foi consentida por um humano no host ([RN-511](../infra.md#rn-511)). O enum
+base foi consentida por um humano no host ([RN-511](https://github.com/viralabs-dev/brabo-infra/blob/dev/deploy/docs/business-rules/infra.md#rn-511)). O enum
 `project_execution_mode` não muda, nenhum modo novo nasce, e a conversão de
 modo (ADR 0111) não é tocada.
 
@@ -283,7 +283,7 @@ pré-seleção não relaxou nenhuma régua de avanço.
 0141: dizia que o caminho era livre e que só funcionaria se o usuário o
 montasse. Hoje são **dois estados, e são os dois que o backend tem** — sob a
 base, nota neutra (a criação passa, e a pasta nem precisa existir: a Infra a
-cria ao subir o container, [RN-501](../api.md#rn-501)); fora da base, aviso dizendo que
+cria ao subir o container, [RN-501](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-501)); fora da base, aviso dizendo que
 a api **recusa a criação** (400, em `resolverWorkspacePath`) e **nomeando** a
 base, em vez de mandar procurar a variável. Campo vazio não é "fora da base":
 não há caminho para a api recusar ainda, e alarmar antes de a pessoa digitar
@@ -303,7 +303,7 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
   escolha humana antes de a base chegar, e os dois estados do aviso);
   `apps/web/src/lib/wizard.test.ts` (`describe('caminhoSugeridoNaBase')` e
   `describe('caminhoDentroDaBase')`)
-- **ADR:** [0146](../../adr/0146-base-consentida-no-bootstrap.md), ponto 4
+- **ADR:** [0146](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0146-base-consentida-no-bootstrap.md), ponto 4
 - **Origem:** FASE 28, sessão 3
 
 ---
@@ -319,7 +319,7 @@ declarou o preço por escrito: *"para `runner` a lista deixa de ser o disco da
 máquina do usuário e passa a ser a base"*. Aquilo foi aceito porque *"o modo
 `runner` sai da criação de projeto no PR seguinte"*, o que **não aconteceu**: o
 modo continua sendo oferecido, e a direção do
-[ADR 0151](../../adr/0151-base-consentida-no-runner.md) (ponto 7) é a oposta. Enquanto
+[ADR 0151](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0151-base-consentida-no-runner.md) (ponto 7) é a oposta. Enquanto
 durou, escolher `runner` e clicar "Procurar pasta…" navegava um disco que não é
 o daquele projeto — e **nada na tela dizia isso**, então o erro só apareceria
 pelo CONTEÚDO da lista.
@@ -344,11 +344,11 @@ PICKER, não o passo de modo.** A [RN-513](#rn-513) esconde `mounted` quando a
 base é desconhecida ou ausente, e está certa: ali a api TEM sinal
 (`GET .../projects-base`), e sem base a criação termina em 400 no fim do
 assistente, sem conserto na tela. Aqui nenhuma das duas coisas vale. Não existe
-sinal de presença de runner na api — a [RN-521](../api.md#rn-521) já declara isso por
+sinal de presença de runner na api — a [RN-521](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-521) já declara isso por
 escrito —, então esconder o modo ou apagar o botão seria decidir "não tem" a
 partir de "não sei", o colapso que a [RN-088](parte-01.md#rn-088)/[RN-468](parte-03.md#rn-468)
 proíbem; e o modo **não está quebrado** sem runner, porque o caminho é
-confirmado depois, pelo CLI ([RN-423](../runner.md#rn-423)) — o que falta é só a
+confirmado depois, pelo CLI ([RN-423](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-423)) — o que falta é só a
 NAVEGAÇÃO. Então a declaração vai para o único lugar que de fato pergunta: o
 picker, no instante em que pergunta.
 
@@ -358,7 +358,7 @@ conectado — um fato do servidor) ou `sem-resposta` (teto da requisição, sock
 caído, ticket recusado — ignorância, e dita como ignorância na tela). Antes
 desta regra quem decidia era `erro?.includes('Nenhum runner conectado')` no
 COMPONENTE — uma tela casando substring de uma frase em pt-BR que mora num
-`.ex` do engine, exatamente o que a [RN-532](../runner.md#rn-532) recusa por escrito do
+`.ex` do engine, exatamente o que a [RN-532](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-532) recusa por escrito do
 outro lado (*"o texto é para um humano ler, o motivo é para o outro lado
 DECIDIR"*). O casamento sobrou em **um** lugar, o módulo que é dono do
 protocolo do canal, e a degradação é nomeada: frase reescrita no engine cai em
@@ -407,7 +407,7 @@ duas devem.
   o carimbo muda); `apps/web/src/routes/NewProjectWizard.test.tsx` (o modo
   decidindo o transporte nos dois sentidos; a criação antecipada ancorando o
   canal; a criação que FALHA não abrindo navegador nenhum)
-- **ADR:** [0151](../../adr/0151-base-consentida-no-runner.md) ponto 7
+- **ADR:** [0151](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0151-base-consentida-no-runner.md) ponto 7
 - **Origem:** FASE 29, sessão 9. Fica declarado e NÃO feito: o picker **não**
   dispara `workspace_create` — escolher uma pasta é escolher, e criar é outra
   coisa. `Engine.Runners.PastaDoProjeto.criar/3` (RN-532) segue sem chamador, e
@@ -461,7 +461,7 @@ Isso deixa de ser borda e passa a ser o estado normal do começo de um projeto.
 **O gatilho é a próxima entrega**, e sem ele um projeto criado hoje ficaria sem
 repositório para sempre: o aceite do handoff Arquiteto → Dev Lead passa a
 provisionar `local`, o único provider que não pede credencial.
-Desde a [RN-582](../api.md#rn-582), esse gatilho é o aceite do handoff **ao Arquiteto**
+Desde a [RN-582](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-582), esse gatilho é o aceite do handoff **ao Arquiteto**
 (o do Dev Lead ficou como segunda porta), e ativar a execução sem repositório é
 recusado.
 
@@ -488,9 +488,9 @@ há mais provider escolhido.
 
 ### RN-548 — Com chave de MÁQUINA ativa, o painel do runner para de mandar parear e passa a dizer o que falta — sem nunca afirmar que o agente está de pé {#rn-548}
 
-Sessão 7 da [FASE 30](../../explanation/fase-30-runner-por-maquina.md), decidida pelo
-[ADR 0154](../../adr/0154-chave-de-dispositivo-de-maquina.md). É a metade de WEB da
-identidade de máquina: a [RN-543](../produto.md#rn-543) fez a listagem de chaves marcar a
+Sessão 7 da [FASE 30](https://github.com/viralabs-dev/brabo/blob/dev/docs/explanation/fase-30-runner-por-maquina.md), decidida pelo
+[ADR 0154](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0154-chave-de-dispositivo-de-maquina.md). É a metade de WEB da
+identidade de máquina: a [RN-543](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-543) fez a listagem de chaves marcar a
 ESPÉCIE (`projeto` | `maquina`) *"para que uma chave de máquina não ficasse
 invisível em toda tela"*, e ficou sem consumidor. Esta RN é o consumidor.
 
@@ -508,7 +508,7 @@ respondendo à pergunta errada, com um fluxo que termina no terminal dela.
 `verificando` (perguntamos e não voltou), `naoSei` (a pergunta falhou),
 `semChaveDeMaquina` (voltou e não há), `revogada` (houve e foi revogada),
 `pareadaNuncaUsada` (há chave ativa que agente nenhum usou — a ÓRFÃ da
-[RN-519](../api.md#rn-519) renascida na espécie nova) e `pareada`. **"Não sei" nunca
+[RN-519](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-519) renascida na espécie nova) e `pareada`. **"Não sei" nunca
 vira "não tem"**, e os dois vazios têm textos diferentes porque o gesto é
 diferente: um pede parear, o outro explica por que o agente parou de conectar.
 A falha é derivada de `isError` e não de haver `status` — erro de rede não tem
@@ -534,7 +534,7 @@ da CONTA, não deste navegador.** `runner_device_keys` não sabe de que máquina
 navegador está falando, então o mais forte que a tela pode afirmar é *"sua
 conta tem uma máquina pareada"* — nunca *"esta máquina está pareada"*. É por
 isso que o fluxo do navegador
-([ADR 0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)) **não é
+([ADR 0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)) **não é
 removido**: ele muda de LUGAR, para um `<details>` cujo rótulo nomeia o único
 caso em que ainda é a resposta ("estou em outra máquina"). Aposentá-lo é o
 `BRB-031`, decisão do mantenedor, e não consequência desta entrega.
@@ -544,11 +544,11 @@ chaves nem oferece revogação — isso é a tela que o web nunca ganhou, a meta
 aberta da RN-519, e é frente própria. O que
 ele diz é o que a espécie significa para quem lê: uma chave de máquina atende
 TODOS os projetos do dono em modo `runner`, e revogá-la derruba o agente local
-em todos eles ([RN-520](../api.md#rn-520), cujo alcance `{projeto, usuário}` não muda
+em todos eles ([RN-520](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-520), cujo alcance `{projeto, usuário}` não muda
 aqui). Sem essa frase, a marca da RN-543 seria decoração.
 
 **O papel é o do ENDPOINT, e a api é a autoridade.** O mínimo sai de
-`roleAtLeast` ([RN-102](../api.md#rn-102)) contra `developer`, o
+`roleAtLeast` ([RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102)) contra `developer`, o
 que `RunnerDeviceKeysController` exige nas três rotas — a tela deixa de
 perguntar o que a api negaria, e diz por quê UMA vez em TEXTO (`title` em
 elemento `disabled` não abre no Chromium). Isso **não é fronteira de
@@ -583,7 +583,7 @@ diferença não é escolha de desenho: é a forma do endpoint.
   parear, a consulta falhada dizendo que não sabe, o papel abaixo de
   `developer` sem chamar a rota, e o wizard sem `projectId` sem a quem
   perguntar
-- **Lacuna DECLARADA, FECHADA depois pela [RN-552](../api.md#rn-552):** quando esta RN
+- **Lacuna DECLARADA, FECHADA depois pela [RN-552](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-552):** quando esta RN
   fechou, ninguém CRIAVA chave de máquina (era o `install.sh`, ADR 0155 ponto
   4, sessão 6), então esta tela só era exercitável com uma chave registrada à
   mão — a mesma metade que as RN-543 e RN-544 já declaravam. O comando que o painel oferece é
@@ -591,7 +591,7 @@ diferença não é escolha de desenho: é a forma do endpoint.
   forma por máquina chega com a unit da sessão 4 — **FECHADO depois
   (AT-106)**: reconhecida a chave de MÁQUINA, o painel oferece
   `brabo-runner service status --machine` (a unit de máquina da
-  [RN-545](../runner.md#rn-545)), e o bloco da chave de PROJETO segue oferecendo
+  [RN-545](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-545)), e o bloco da chave de PROJETO segue oferecendo
   `--project <id>`; as duas espécies ativas mostram cada uma o seu. O comando
   continua sendo para a pessoa PERGUNTAR — a tela não afirma a resposta
   (chaves `agenteDeMaquina.comandoDeServico` e
@@ -605,14 +605,14 @@ diferença não é escolha de desenho: é a forma do endpoint.
   conferir o serviço — e o custo da ESPÉCIE dito: revogar derruba o agente
   NESTE projeto, não em todos. Chave de outro projeto e revogada não contam, e
   o `<details>` do ADR 0118 continua alcançável. E o web continua sem TELA onde listar ou revogar chave de
-  dispositivo (a metade aberta da [RN-519](../api.md#rn-519)) — esta entrega consome a
+  dispositivo (a metade aberta da [RN-519](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-519)) — esta entrega consome a
   listagem e não a constrói. **FECHADA depois pela [RN-561](#rn-561)**, que a
   constrói: a seção de Configurações reusa `podeLerChavesDeDispositivo` daqui
   e a MESMA `queryKey`, e por isso revogar por lá invalida o reconhecimento
   deste painel
-- **ADR:** [0154](../../adr/0154-chave-de-dispositivo-de-maquina.md)
+- **ADR:** [0154](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0154-chave-de-dispositivo-de-maquina.md)
 - **Origem:** FASE 30, sessão 7 —
-  [o recorte da fase](../../explanation/fase-30-runner-por-maquina.md)
+  [o recorte da fase](https://github.com/viralabs-dev/brabo/blob/dev/docs/explanation/fase-30-runner-por-maquina.md)
 
 ---
 
@@ -632,7 +632,7 @@ projeto que ainda não é `runner`, e `ConfirmProjectWorkspaceUseCase` recusa co
 monta o `FolderBrowserModal` com `origem: { tipo: 'api', workspaceId }` — a
 mesma união discriminada que `NewProjectWizard` usa para esse modo
 ([RN-533](#rn-533)), porque a pasta mora dentro da base do SERVIDOR
-([ADR 0141](../../adr/0141-base-unica-dos-projetos-montados.md)) e é o servidor quem a
+([ADR 0141](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0141-base-unica-dos-projetos-montados.md)) e é o servidor quem a
 enxerga. Não nasce navegador novo nem endpoint novo, e o navegador **não
 garante** caminho válido: quem valida continua sendo
 `validarExecutionModeEWorkspacePath` e o CHECK do banco.
@@ -643,11 +643,11 @@ ESTE projeto, e um projeto que ainda não é `runner` não tem nenhum — a espe
 terminaria num erro com cara de bug. A ordem *"converte, depois onboarda"* segue
 sendo decisão de produto à parte. O que muda é a tela passar a **dizer** isso em
 texto em vez de só não oferecer botão nenhum, que é a régua do
-[ADR 0064](../../adr/0064-escopo-de-area-na-cascata-e-o-binding-de-agente-global.md): tira-se o
+[ADR 0064](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0064-escopo-de-area-na-cascata-e-o-binding-de-agente-global.md): tira-se o
 controle, nunca a informação.
 
 **A base é um estado de QUATRO valores, e eles não colapsam.** A rota
-`GET workspaces/:workspaceId/projects-base` ([RN-500](../api.md#rn-500)) pode estar em
+`GET workspaces/:workspaceId/projects-base` ([RN-500](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-500)) pode estar em
 voo, ter falhado, ter respondido `null` ou ter respondido um caminho — e cada
 um desses tem texto PRÓPRIO, pela régua da [RN-088](parte-01.md#rn-088)/[RN-468](parte-03.md#rn-468):
 *"não sei"* nunca vira *"não tem"*. O botão fica na tela apagado nos três
@@ -669,7 +669,7 @@ consulta em voo. O que some é o NAVEGADOR, não a conversão.
 **O mínimo é o do ENDPOINT.** `PUT projects/:projectId/execution-mode` e
 `GET workspaces/:workspaceId/projects-base` pedem os dois `maintainer`, lido por
 `roleAtLeast` sobre a `ROLE_ORDER` e nunca por uma lista de papéis à mão
-([RN-102](../api.md#rn-102)) — a seção fazia
+([RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102)) — a seção fazia
 `role === 'owner' || role === 'maintainer'`, que acerta por acidente enquanto o
 mínimo é alto. Quem não alcança o mínimo não dispara a consulta da base: ela
 terminaria num 403 certo, e o *"não sei"* que ela produziria seria sobre a
@@ -702,8 +702,8 @@ vira autosave** ([RN-469](parte-03.md#rn-469)).
   parte e segue sem dono. *Atualização:* a ordem foi decidida e medida na
   [RN-612](#rn-612) — o ramo `runner` ganha o onboarding DEPOIS de salvar, e o
   navegador segue fora por outro motivo, dito lá
-- **ADR:** [0111](../../adr/0111-conversao-de-execution-mode-de-projeto-existente.md),
-  [0141](../../adr/0141-base-unica-dos-projetos-montados.md)
+- **ADR:** [0111](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0111-conversao-de-execution-mode-de-projeto-existente.md),
+  [0141](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0141-base-unica-dos-projetos-montados.md)
 - **Origem:** AT-049 (EP-021/HS-033)
 
 ### RN-560 — O aviso da conversão diz o que ela recusa, o que ela leva e o que ela NÃO leva — nomeando o caminho antigo {#rn-560}
@@ -711,15 +711,15 @@ vira autosave** ([RN-469](parte-03.md#rn-469)).
 O aviso fixo da seção afirmava *"isto migra a pasta de trabalho do agente"*, nos
 dois idiomas. `ConvertProjectExecutionModeUseCase` **não tem uma linha que copie
 ou mova conteúdo de pasta**: ele move o `permissions.json` (a POLÍTICA, com
-allow/deny/ask intactos — [RN-448](../api.md#rn-448)), zera `workspaceVerifiedAt`
-([RN-450](../api.md#rn-450)) e `mirrorPath` ([RN-515](../api.md#rn-515)), desprovisiona o
-container ao SAIR de `container` ([RN-449](../api.md#rn-449)) e grava o novo
+allow/deny/ask intactos — [RN-448](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-448)), zera `workspaceVerifiedAt`
+([RN-450](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-450)) e `mirrorPath` ([RN-515](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-515)), desprovisiona o
+container ao SAIR de `container` ([RN-449](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-449)) e grava o novo
 `workspacePath`. `materializarWorkspaceMontado` apenas CRIA a pasta nova
-([RN-501](../api.md#rn-501)). O que estiver na pasta antiga — **trabalho não commitado
+([RN-501](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-501)). O que estiver na pasta antiga — **trabalho não commitado
 incluído** — fica lá, órfão.
 
 O órfão já era lacuna declarada no `CLAUDE.md` desde a
-[RN-447](../api.md#rn-447)..[450](../api.md#rn-450). O que esta regra fecha não é o órfão: é a
+[RN-447](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-447)..[450](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-450). O que esta regra fecha não é o órfão: é a
 tela afirmando o CONTRÁRIO do que o servidor faz. Isto é correção de afirmação,
 não feature — migrar conteúdo entre modos segue fora, sem dono.
 
@@ -744,7 +744,7 @@ recusando nomear o que sabe. É o caso em que a pessoa tem MENOS como adivinhar.
 **Ele não promete detecção.** Perguntar ao disco *"há trabalho não commitado?"*
 é I/O por modo e impossível de responder para `runner` do lado da api: a pasta
 mora numa máquina que o servidor não enxerga. Não se mede, não se afirma
-(ADRs [0041](../../adr/0041-base-openai-compativel-e-contrato-de-llm-providers.md)/[0042](../../adr/0042-catalogo-vivo-ciclo-de-vida-do-modelo-e-preco-auditavel.md)).
+(ADRs [0041](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0041-base-openai-compativel-e-contrato-de-llm-providers.md)/[0042](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0042-catalogo-vivo-ciclo-de-vida-do-modelo-e-preco-auditavel.md)).
 E ele não bloqueia nada: a conversão continua sendo a mesma chamada, com as
 mesmas recusas.
 
@@ -759,7 +759,7 @@ interrupção sem causa.
   `apps/web/src/locales/pt-BR/settings.json:220` e
   `apps/web/src/locales/en/settings.json:220` (`executionMode.warning.*`, os
   quatro textos nos dois idiomas — `en` é o idioma default do app
-  ([RN-425](../api.md#rn-425)), e um aviso honesto só em português é a mesma mentira com
+  ([RN-425](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-425)), e um aviso honesto só em português é a mesma mentira com
   sotaque)
 - **Teste:** `apps/web/src/routes/settings/conversao-de-modo.test.tsx` — o
   caminho feliz (o aviso contendo o caminho antigo E as palavras "trabalho não
@@ -775,10 +775,10 @@ interrupção sem causa.
 
   | linha | quando aparece | a mesma condição do caso de uso |
   |---|---|---|
-  | o destino de espelho é zerado, NOMEADO | `mirrorPath` preenchido | toda conversão zera ([RN-515](../api.md#rn-515)) |
-  | o container registrado é parado e removido | o projeto é `container` HOJE e o ciclo de vida existe fora de `removed` | `removerContainerSeExistir` só roda ao SAIR de `container` ([RN-449](../api.md#rn-449)) |
+  | o destino de espelho é zerado, NOMEADO | `mirrorPath` preenchido | toda conversão zera ([RN-515](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-515)) |
+  | o container registrado é parado e removido | o projeto é `container` HOJE e o ciclo de vida existe fora de `removed` | `removerContainerSeExistir` só roda ao SAIR de `container` ([RN-449](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-449)) |
   | "não consegui ler se há container" | o projeto é `container` e a leitura do ciclo de vida FALHOU | — ("não sei" nunca vira "não tem", [RN-468](parte-03.md#rn-468)) |
-  | a pasta confirmada em `<data>` deixa de valer | `workspaceVerifiedAt` preenchido | toda conversão zera ([RN-450](../api.md#rn-450)) |
+  | a pasta confirmada em `<data>` deixa de valer | `workspaceVerifiedAt` preenchido | toda conversão zera ([RN-450](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-450)) |
 
   A linha do container **não** aparece em `mounted`/`runner` mesmo com container
   registrado, porque o caso de uso não o remove ali — o aviso diria o contrário
@@ -798,18 +798,18 @@ interrupção sem causa.
     não conta, leitura FALHANDO com texto próprio, `mounted` com espelho (a
     linha do espelho sim, a do container não, e a consulta nem sai), `runner`
     com pasta confirmada (com a data), e as três condicionais em `en`
-- **ADR:** [0111](../../adr/0111-conversao-de-execution-mode-de-projeto-existente.md)
+- **ADR:** [0111](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0111-conversao-de-execution-mode-de-projeto-existente.md)
 - **Origem:** AT-050 (EP-021/HS-034); as condicionais, AT-144 (EP-021/HS-034)
 
 ## A chave de dispositivo ganha tela, e a tela diz o alcance de revogar (RN-561)
 
 ### RN-561 — A aba Configurações lista e revoga chave de dispositivo, marcando a ESPÉCIE — porque revogar a de MÁQUINA derruba o agente local em TODOS os projetos do dono {#rn-561}
 
-A metade que faltava da [RN-519](../api.md#rn-519), declarada por escrito desde então no
+A metade que faltava da [RN-519](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-519), declarada por escrito desde então no
 `CLAUDE.md`: *"o que segue aberto é só a TELA: `apps/web` não tem onde listar
 nem revogar, então quem quiser revogar chama a rota"*. As duas rotas existem —
 o `DELETE` desde o
-[ADR 0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md) e o
+[ADR 0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md) e o
 `GET` desde a RN-519 —, e **tela nenhuma as usava**. Esta RN é a tela, e ela
 **não abre rota nova**: o que a listagem já devolve basta para desenhar tudo o
 que segue.
@@ -823,7 +823,7 @@ porque o endpoint é
 e o recorte é sobre a que existe.
 
 **A ESPÉCIE aparece, e não é enfeite — é o alcance da única ação irreversível
-da tela.** Desde a [RN-543](../produto.md#rn-543) a listagem marca `projeto` | `maquina`, e
+da tela.** Desde a [RN-543](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-543) a listagem marca `projeto` | `maquina`, e
 uma chave de MÁQUINA (`project_id` nulo) **serve todos os projetos do dono** e
 por isso aparece na lista de TODOS eles. Mostrá-la sem a marca faria a tela
 afirmar que é "a chave deste projeto", e quem clicasse em revogar acharia que
@@ -837,7 +837,7 @@ abre um diálogo com TRÊS frases, e a do meio é a que muda: a de máquina nome
 *todos os seus projetos em modo runner* (o laço de
 `RevokeRunnerDeviceKeyUseCase` sobre `listRunnerModeReachableBy`), a de projeto
 nomeia *o projeto dela*. Um texto só para as duas mentiria numa das metades. A
-terceira frase é o custo que a [RN-520](../api.md#rn-520) declarou e que esta entrega
+terceira frase é o custo que a [RN-520](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-520) declarou e que esta entrega
 **não muda**: o alvo da desconexão é `{projeto, usuário}` e nunca `{chave}`, então
 outro runner do mesmo usuário no mesmo projeto também cai — mesmo autenticado
 por PAT ou por outra chave — e reconecta sozinho se a credencial dele ainda
@@ -865,7 +865,7 @@ tem".**
 
 **O papel é o do ENDPOINT, e é o EFETIVO do projeto.** O mínimo é `developer`
 — o que `RunnerDeviceKeysController` exige nas TRÊS rotas
-([RN-102](../api.md#rn-102)) — e a comparação sai da MESMA função
+([RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102)) — e a comparação sai da MESMA função
 que a RN-548 criou (`podeLerChavesDeDispositivo`, sobre `roleAtLeast`), nunca
 uma segunda régua e nunca `role === 'x' || role === 'y'` à mão. O que muda em
 relação à RN-548 é o INSUMO: lá o painel lia o papel de WORKSPACE e **declarava**
@@ -878,7 +878,7 @@ de uso (`projectRole ?? workspaceRole`, uma SOBREPOSIÇÃO nos dois sentidos,
 está verificando, e não acusa quem lê de não alcançar `developer`. Quem não
 alcança **continua vendo** a seção inteira, o que uma chave de dispositivo é e o
 que revogar a de máquina custa — some o CONTROLE, nunca a INFORMAÇÃO
-([ADR 0064](../../adr/0064-escopo-de-area-na-cascata-e-o-binding-de-agente-global.md)) —, e o motivo é dito UMA vez
+([ADR 0064](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0064-escopo-de-area-na-cascata-e-o-binding-de-agente-global.md)) —, e o motivo é dito UMA vez
 em TEXTO (`title` em elemento `disabled` não abre no Chromium). Como as três
 rotas pedem o MESMO papel, quem não alcança também não vê a LISTA: a tela deixa
 de perguntar o que a api negaria, em vez de transformar um 403 previsível em
@@ -915,9 +915,9 @@ revogação mostra a frase da PRÓPRIA api e a linha **continua** na lista.
   `{projeto, usuário}` e nunca `{chave}` — a tela DIZ isso e não muda, porque
   mudar exige coluna nova em `runner_socket_tickets` e contrato novo de auth
   (RN-520), frente própria com ADR; (2) numa instalação **sem PROJETO**, a
-  chave de máquina recém-criada pela [RN-552](../api.md#rn-552) segue **inalcançável**:
+  chave de máquina recém-criada pela [RN-552](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-552) segue **inalcançável**:
   as duas rotas são de projeto, e sem projeto não há a quem perguntar — FECHOU
-  na [RN-611](../api.md#rn-611), com rota e seção por CONTA; (3) a
+  na [RN-611](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-611), com rota e seção por CONTA; (3) a
   visão de `maintainer` (listar/revogar de qualquer usuário) continua FORA por
   decisão da RN-519, não por omissão desta tela; (4) sem E2E de navegador — o
   que se prova aqui é o que a tela AFIRMA, e isso a suíte de componente prova
@@ -935,7 +935,7 @@ quando algum `pr.gate_changed`/`infra.gate_changed` já aconteceu) e
 eventos são dos primeiros de uma execução — numa sessão longa eles saem da
 janela, e QA, SecOps e `qa-automacao` **sumiam do painel** de uma execução que
 continuava rodando. É a mesma classe de defeito que já tinha sido fechada para
-`executionActivated`, e o resumo do workspace ([RN-090](../api.md#rn-090)) já agregava
+`executionActivated`, e o resumo do workspace ([RN-090](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-090)) já agregava
 os dois fatos sobre a sessão inteira (`bool_or` e `selectDistinct` em
 `projects-summary.repository.ts`) — as duas telas o carregavam e ignoravam
 esses dois campos.
@@ -956,7 +956,7 @@ resumo. Quatro decisões, cada uma com motivo:
 3. **Só vale quando o resumo é da MESMA sessão que a tela lê**
    (`latestSessionId === sessionId`). O resumo agrega a sessão mais RECENTE
    do projeto; a Visão geral lê essa mesma sessão, mas a aba Executores lê a
-   sessão de EXECUÇÃO vigente ([RN-139](../api.md#rn-139)). Uma ideação aberta depois
+   sessão de EXECUÇÃO vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)). Uma ideação aberta depois
    faz as duas divergirem, e aí o agregado seria de OUTRA sessão — a tela
    volta a decidir só pela janela.
 4. **Só a PRESENÇA muda.** `rosterFromFacts` (a regra única, compartilhada com
@@ -1003,12 +1003,12 @@ da guarda, o mesmo dos outros dois fatos.
 
 Numa instalação real (14/09) os dev agents "não saíram do *começou a task*".
 O event log tinha `dev.started` seguido de `dev.blocked_by_container`, com o
-`reason` por extenso ([RN-502](../engine.md#rn-502)). A árvore do time
+`reason` por extenso ([RN-502](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-502)). A árvore do time
 (`timeline-tree.ts`) não tinha tradução para o bloqueio — o que não está em
 `TRADUCAO` é descartado —, então o ramo parava no marco anterior e a frase do
 presente afirmava trabalho sobre um agente parado. O painel do time, na mesma
 tela de execução, já dizia `aguardando` para o mesmo evento
-(`DEV_STATUS_EVENTS`, [RN-411](../ci.md#rn-411)): duas telas, duas tabelas, e só uma
+(`DEV_STATUS_EVENTS`, [RN-411](https://github.com/viralabs-dev/brabo-ci/blob/dev/scripts/ci/docs/business-rules/ci.md#rn-411)): duas telas, duas tabelas, e só uma
 delas estava coberta pela comparação com o vocabulário do engine.
 
 **A regra**, em três partes:
@@ -1054,7 +1054,7 @@ delas estava coberta pela comparação com o vocabulário do engine.
   engine; só o TEXTO saiu, como CHAVE (`ChaveDeRotulo`) resolvida em
   `executors:timelineTree.label.*`, com a frase do presente em
   `timelineTree.now.*` e o detalhe de origem em `timelineTree.detail.origin`,
-  nos dois idiomas (`en` é o default, [RN-425](../api.md#rn-425)). `montarArvore`
+  nos dois idiomas (`en` é o default, [RN-425](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-425)). `montarArvore`
   recebe o idioma como argumento (`getFixedT`), e os dois consumidores
   (`AgentTimelineTree` e a seção Atividades do `Shell`) o passam do
   `useTranslation` — trocar de idioma refaz a árvore. Uma chave que a tabela
@@ -1116,7 +1116,7 @@ Três metades, todas na tela (a api está certa em recusar):
    clique; a ref é o que segura dois eventos no mesmo quadro do navegador.
 3. **A recusa na tela.** A falha 400 da criação antecipada passa a pôr a frase
    da api (`mensagemDaApi`, lista do `class-validator` juntada) no MESMO
-   `Alert` do passo que o "Provisionar" já usava ([RN-170](../api.md#rn-170)); outros
+   `Alert` do passo que o "Provisionar" já usava ([RN-170](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-170)); outros
    erros seguem só com o toast.
 
 **O que não foi medido:** o log da api do teste do dono não sobreviveu ao
@@ -1146,13 +1146,13 @@ O ramo `runner` da conversão era digitado no escuro ([RN-559](#rn-559)) porque 
 ordem estava indecidida: onboardar ANTES de salvar registra chave num projeto
 que ainda não é `runner`, e `ConfirmProjectWorkspaceUseCase` recusa a
 confirmação com 400. A decisão do mantenedor foi **medir** a outra ordem com a
-chave de MÁQUINA ([RN-543](../produto.md#rn-543)/[RN-548](#rn-548)) e implementar se o
+chave de MÁQUINA ([RN-543](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-543)/[RN-548](#rn-548)) e implementar se o
 atrito fosse aceitável. A medição foi feita no CÓDIGO (sem subir o ambiente) e
 deu isto:
 
 | quem vai atender o projeto | o que acontece depois de salvar | gestos |
 |---|---|---|
-| agente de MÁQUINA esperando (zero projetos `runner`, [RN-550](../runner.md#rn-550)) | a próxima consulta de `GET /runner/projects` o lista e o agente conecta sozinho — cadência 15/30/60 s de `espera-de-projetos.ts` | **zero**, em até 60 s |
+| agente de MÁQUINA esperando (zero projetos `runner`, [RN-550](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-550)) | a próxima consulta de `GET /runner/projects` o lista e o agente conecta sozinho — cadência 15/30/60 s de `espera-de-projetos.ts` | **zero**, em até 60 s |
 | agente de MÁQUINA já atendendo OUTRO projeto | a lista é lida UMA vez, no start, com conexão viva (RN-550) — o projeto novo **não** entra | **um**: reiniciar o serviço |
 | nenhuma chave de máquina | o mesmo pareamento da criação de projeto ([RN-473](parte-03.md#rn-473)) | parear + um comando |
 
@@ -1175,8 +1175,8 @@ ganha.
 
 **O caminho digitado é PROVISÓRIO, e a tela diz isso.** Quem decide a pasta de
 um projeto `runner` é o runner: a confirmação SOBRESCREVE `workspacePath`
-([RN-423](../runner.md#rn-423)), e o agente de máquina nem olha o valor digitado — ele usa
-`<base>/<workspaceDirName>` ([RN-544](../runner.md#rn-544)). O campo continua obrigatório
+([RN-423](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-423)), e o agente de máquina nem olha o valor digitado — ele usa
+`<base>/<workspaceDirName>` ([RN-544](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-544)). O campo continua obrigatório
 porque o CHECK do banco pede caminho não-nulo fora de `container`; a seção não
 inventa placeholder.
 
@@ -1186,7 +1186,7 @@ exige um runner conectado a ESTE projeto, e um runner conectado já confirmou a
 PRÓPRIA pasta (`--dir`, ou a derivada da base). Escolher outra ali seria uma
 segunda conversão `runner → runner` que a próxima reconexão desfaria. Oferecer o
 botão seria um controle que não controla nada; a seção diz isso em texto
-([ADR 0064](../../adr/0064-escopo-de-area-na-cascata-e-o-binding-de-agente-global.md)).
+([ADR 0064](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0064-escopo-de-area-na-cascata-e-o-binding-de-agente-global.md)).
 
 - **Código:** `apps/web/src/routes/settings/ExecutionModeSection.tsx:304`
   (`mostrarProximoPasso`), `:317` (`setConvertidoParaRunner`, a visita em que a
@@ -1207,8 +1207,8 @@ botão seria um controle que não controla nada; a seção diz isso em texto
   projeto continua sendo um gesto no terminal — repesquisar a lista com conexão
   viva foi recusado pela RN-550, e esta regra não reabre isso. E a medição é de
   CÓDIGO, não de tela: o ambiente não foi subido
-- **ADR:** [0111](../../adr/0111-conversao-de-execution-mode-de-projeto-existente.md),
-  [0154](../../adr/0154-chave-de-dispositivo-de-maquina.md)
+- **ADR:** [0111](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0111-conversao-de-execution-mode-de-projeto-existente.md),
+  [0154](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0154-chave-de-dispositivo-de-maquina.md)
 - **Origem:** AT-143 (EP-021/HS-033)
 
 ---
@@ -1217,8 +1217,8 @@ botão seria um controle que não controla nada; a seção diz isso em texto
 
 ### RN-614 — A tela mostra o motivo da política e a raiz do escopo, numa frase só, nos dois lugares {#rn-614}
 
-A [RN-567](../api.md#rn-567) pôs no `proposed_action.created` a regra que decidiu
-(`reason`) e a [RN-609](../api.md#rn-609) pôs a raiz do escopo (`scopeRoot`, só em
+A [RN-567](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-567) pôs no `proposed_action.created` a regra que decidiu
+(`reason`) e a [RN-609](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-609) pôs a raiz do escopo (`scopeRoot`, só em
 `terminal`) — e as duas declararam que a tela não mudava. Quem auditava pela
 tela uma ação que PASSOU continuava sem saber qual regra a deixou passar.
 
@@ -1229,7 +1229,7 @@ dizem a MESMA frase, montada por UMA função, `fraseDaDecisaoDaPolitica`:
   `proposed_action.created` (tipo `permission`, `bad` quando negada), com o
   desfecho da política e, depois do travessão, a frase;
 - o **`ApprovalCard`**, numa linha própria logo abaixo da frase do que
-  acontece ([RN-096](../produto.md#rn-096)) — nunca dentro do payload colapsado.
+  acontece ([RN-096](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/produto.md#rn-096)) — nunca dentro do payload colapsado.
 
 A ação (`proposed_actions`) não guarda nenhum dos dois campos: a tela os lê do
 EVENTO, que ela já carrega (`decisaoDaPoliticaDaAcao`, pelo `actionId`). Por
@@ -1240,7 +1240,7 @@ mais recente) e não achou o evento na janela carregada diz *"fora dos eventos
 carregados nesta tela"*; e o evento achado dá a frase. A aba Insights não tem
 `ApprovalCard` — hipótese do Psicólogo não é `proposed_action`.
 
-**Desde a AT-336 ([RN-656](../api.md#rn-656)), cada card da aba Aprovações tem o
+**Desde a AT-336 ([RN-656](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-656)), cada card da aba Aprovações tem o
 PRÓPRIO motivo**, lido pela ação quando o log carregado não o cobre; o
 parágrafo seguinte é o estado da AT-333, que ela substituiu — a nota única
 sobra só para a leitura que FALHA. Desde a AT-340 o mesmo vale para os cards
@@ -1296,7 +1296,7 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
 1. **Ao lado do seletor de modelo, em outro escopo.** O modelo da barra é da
    SESSÃO e vale para todos; o idioma é da PESSOA (`GET
    .../sessions/:sessionId/response-language`, resolvido para quem chama,
-   [RN-618](../api.md#rn-618)). Trocar ali é o override por sessão — decisão do
+   [RN-618](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-618)). Trocar ali é o override por sessão — decisão do
    mantenedor, AT-169 resposta 2 — e nunca mexe no de outro participante nem
    na Conta.
 2. **Nunca o valor sem a origem** (a régua da [RN-470](parte-03.md#rn-470)): "fixado
@@ -1317,7 +1317,7 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
    `project_members`). Abaixo dele o valor e a origem continuam na barra, o
    seletor fica inerte e o motivo vem em texto.
 5. **O que a barra NÃO afirma**: nunca "os agentes respondem em X" como fato
-   sobre a pessoa — só o efetivo e a origem. Desde a [RN-622](../engine.md#rn-622) esse
+   sobre a pessoa — só o efetivo e a origem. Desde a [RN-622](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-622) esse
    efetivo chega ao modelo nas mensagens de quem vê, e o aviso "ainda não
    chega aos agentes" saiu da linha de origem. A linha trunca nos 60px da
    barra e leva o texto inteiro no `title` — o texto está na tela, o `title`
@@ -1329,7 +1329,7 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
    controle cujo gatilho resume o modelo e o código do idioma (abaixo de 920px
    só o ícone, com nome acessível), e o painel dele traz o indicador inteiro
    com a origem QUEBRANDO em vez de cortar. A pergunta da detecção
-   ([RN-624](../api.md#rn-624)) mora no painel, e enquanto existe o gatilho ganha uma
+   ([RN-624](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-624)) mora no painel, e enquanto existe o gatilho ganha uma
    marca e o nome acessível a anuncia. O título da sessão é o único item que
    encolhe (com piso e o nome inteiro no `title`), e os botões não quebram
    linha — "Encerrar" vira ícone com nome acessível só na barra mínima.

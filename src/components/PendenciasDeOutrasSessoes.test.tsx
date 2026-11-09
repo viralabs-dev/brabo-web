@@ -13,11 +13,14 @@ const approveAction = vi.fn();
 const denyAction = vi.fn();
 const approveAlwaysAction = vi.fn();
 const listSessionEvents = vi.fn();
+const getOpenPullRequestsDoChat = vi.fn();
 const getCodePullRequests = vi.fn();
 const listBacklog = vi.fn();
 const proposeAction = vi.fn();
 const unblockTask = vi.fn();
 const getOpenQuestions = vi.fn();
+const getActiveExecutionSession = vi.fn();
+const rearmDevAgent = vi.fn();
 
 vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
@@ -28,11 +31,14 @@ vi.mock('../lib/api-client', async (importOriginal) => {
     denyAction: (...a: unknown[]) => denyAction(...a),
     approveAlwaysAction: (...a: unknown[]) => approveAlwaysAction(...a),
     listSessionEvents: (...a: unknown[]) => listSessionEvents(...a),
+    getOpenPullRequestsDoChat: (...a: unknown[]) => getOpenPullRequestsDoChat(...a),
     getCodePullRequests: (...a: unknown[]) => getCodePullRequests(...a),
     listBacklog: (...a: unknown[]) => listBacklog(...a),
     proposeAction: (...a: unknown[]) => proposeAction(...a),
     unblockTask: (...a: unknown[]) => unblockTask(...a),
     getOpenQuestions: (...a: unknown[]) => getOpenQuestions(...a),
+    getActiveExecutionSession: (...a: unknown[]) => getActiveExecutionSession(...a),
+    rearmDevAgent: (...a: unknown[]) => rearmDevAgent(...a),
   };
 });
 
@@ -93,9 +99,10 @@ beforeEach(() => {
   // O motivo da política de cada card é lido pela ação (AT-340); por padrão
   // o log responde sem o evento.
   listSessionEvents.mockResolvedValue({ items: [], nextCursor: null });
-  getCodePullRequests.mockResolvedValue({ items: [] });
+  getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
   listBacklog.mockResolvedValue([]);
   getOpenQuestions.mockResolvedValue({ itens: [], total: 0 });
+  getActiveExecutionSession.mockResolvedValue(null);
 });
 
 describe('PendenciasDeOutrasSessoes (AT-265)', () => {
@@ -411,7 +418,7 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
         payload: { pullRequestId: '1', sourceBranch: 'feature/task-aaaaaaaa', targetBranch: 'dev' },
       }),
     ]);
-    getCodePullRequests.mockResolvedValue({
+    getOpenPullRequestsDoChat.mockResolvedValue({
       items: [pr('1', 'feature/task-aaaaaaaa'), pr('2', 'feature/task-bbbbbbbb'), pr('3', 'docs/adr-0300')],
     });
     listBacklog.mockResolvedValue(
@@ -422,7 +429,10 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     );
 
     montar();
-    await abrir('PRs prontas para merge');
+    // RN-1063: a PR que entra na fila abre a aba sozinha.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /^PRs prontas para merge \d/ })).toHaveAttribute('aria-pressed', 'true'),
+    );
 
     const fila = await screen.findByTestId('fila-prs-prontas');
     expect(within(fila).getByText(/PR 1/)).toBeInTheDocument();
@@ -462,15 +472,28 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fio).queryByRole('button', { name: 'Aprovar' })).toBeNull();
   });
 
+  it('AT-843: com /code/pull-requests em 409 (sem imagem decidida), a fila "prontas" mostra a PR', async () => {
+    getCodePullRequests.mockRejectedValue(new Error('409 sem_decisao'));
+    getProjectPendingActions.mockResolvedValue([]);
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
+    listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
+    montar();
+    expect(await screen.findByTestId('fila-prs-prontas')).toBeInTheDocument();
+    expect(getCodePullRequests).not.toHaveBeenCalled();
+  });
+
   it('AT-753 (UX-2): Mergear confirma na própria linha; Confirmar propõe e aprova, Cancelar não chama nada', async () => {
     getProjectPendingActions.mockResolvedValue([]);
-    getCodePullRequests.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
     proposeAction.mockResolvedValue(acao('m-vis', { sessionId: AQUI, actionType: 'git_merge' }));
     approveAction.mockResolvedValue(acao('m-vis', { sessionId: AQUI, actionType: 'git_merge', status: 'executed' }));
     const user = userEvent.setup();
     montar();
-    await user.click(await screen.findByRole('button', { name: /^PRs prontas para merge \d/ }));
+    // RN-1063: a aba `prontas` abre sozinha quando a PR entra na fila.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: /^PRs prontas para merge \d/ })).toHaveAttribute('aria-pressed', 'true'),
+    );
     const fila = await screen.findByTestId('fila-prs-prontas');
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
     expect(within(fila).getByText('Mergear #1 em dev?')).toBeInTheDocument();
@@ -499,13 +522,13 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
 
   it('AT-753 (UX-7): a PR que sai da fila dá um aviso; a primeira leitura não avisa nada', async () => {
     getProjectPendingActions.mockResolvedValue([]);
-    getCodePullRequests.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     montar(true, client);
     await screen.findByTestId('fila-prs-prontas');
     expect(screen.queryByTestId('saidas-da-fila')).toBeNull();
-    getCodePullRequests.mockResolvedValue({ items: [] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
     await client.invalidateQueries({ queryKey: ['code-pull-requests'] });
     expect(await screen.findByTestId('saidas-da-fila')).toHaveTextContent('Saiu da fila: 1 PR pronta');
     fireEvent.click(screen.getByRole('button', { name: 'Dispensar' }));
@@ -514,17 +537,17 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
 
   it('RN-841: a tarefa que entra em awaiting_user relê as PRs, e a PR nova aparece sem remontar', async () => {
     getProjectPendingActions.mockResolvedValue([]);
-    getCodePullRequests.mockResolvedValueOnce({ items: [] });
+    getOpenPullRequestsDoChat.mockResolvedValueOnce({ items: [] });
     listBacklog.mockResolvedValueOnce(
       backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_qa' }]),
     );
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const invalidar = vi.spyOn(client, 'invalidateQueries');
     montar(true, client);
-    await waitFor(() => expect(getCodePullRequests).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getOpenPullRequestsDoChat).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(listBacklog).toHaveBeenCalledTimes(1));
 
-    getCodePullRequests.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(
       backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]),
     );
@@ -533,7 +556,7 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
 
     const fila = await screen.findByTestId('fila-prs-prontas');
     expect(within(fila).getByText(/PR 1/)).toBeInTheDocument();
-    expect(getCodePullRequests).toHaveBeenCalledTimes(2);
+    expect(getOpenPullRequestsDoChat).toHaveBeenCalledTimes(2);
     // RN-847 (AT-518): o resumo do contexto é invalidado junto.
     expect(
       invalidar.mock.calls.some(
@@ -550,11 +573,11 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     montar(true, client);
     await waitFor(() => expect(listBacklog).toHaveBeenCalledTimes(1));
-    await waitFor(() => expect(getCodePullRequests).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getOpenPullRequestsDoChat).toHaveBeenCalledTimes(1));
     await client.invalidateQueries({ queryKey: ['backlog'] });
     await waitFor(() => expect(listBacklog).toHaveBeenCalledTimes(2));
     await new Promise((r) => setTimeout(r, 20));
-    expect(getCodePullRequests).toHaveBeenCalledTimes(1);
+    expect(getOpenPullRequestsDoChat).toHaveBeenCalledTimes(1);
   });
 
   it('CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa', async () => {
@@ -602,5 +625,39 @@ describe('PendenciasDeOutrasSessoes — faixa de abas (AT-680, RN-975)', () => {
     montar();
     await waitFor(() => expect(getProjectPendingActions).toHaveBeenCalled());
     expect(screen.queryByRole('group', { name: 'Filas de pendências' })).toBeNull();
+  });
+});
+
+describe('AT-799: fila Agentes travados', () => {
+  const evento = (seq: number, type: string, id: string, payload = {}) => ({
+    id: `e${seq}`, sessionId: 'exec-1', seq, type, actor: { kind: 'agent', id }, payload,
+    createdAt: new Date().toISOString(),
+  });
+
+  it('mostra o agente travado com o motivo e Rearmar chama a rota com o agentId', async () => {
+    getActiveExecutionSession.mockResolvedValue({ id: 'exec-1', status: 'active' });
+    listSessionEvents.mockResolvedValue({
+      items: [
+        evento(1, 'dev.idle_tripped', 'dev-core', { consecutiveBlocked: 3 }),
+        evento(2, 'backlog.task_blocked', 'dev-core'),
+      ],
+      nextCursor: null,
+    });
+    rearmDevAgent.mockResolvedValue({ ok: true });
+    montar();
+    await abrir('Agentes travados');
+    const item = await screen.findByTestId('agente-travado');
+    expect(item).toHaveTextContent('dev-core');
+    fireEvent.click(within(item).getByRole('button', { name: 'Rearmar' }));
+    await waitFor(() => expect(rearmDevAgent).toHaveBeenCalledWith('proj-1', 'exec-1', 'dev-core'));
+    expect(await screen.findByTestId('retorno-rearme')).toHaveTextContent('Agente rearmado');
+  });
+
+  it('sem agente travado a fila não aparece', async () => {
+    getActiveExecutionSession.mockResolvedValue({ id: 'exec-1', status: 'active' });
+    getProjectPendingActions.mockResolvedValue([acao('a1')]);
+    montar();
+    await screen.findByRole('button', { name: /^Aprovações \d/ });
+    expect(screen.queryByTestId('fila-agentes-travados')).toBeNull();
   });
 });

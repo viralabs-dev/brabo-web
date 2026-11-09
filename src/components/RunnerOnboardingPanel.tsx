@@ -67,7 +67,7 @@ interface RunnerOnboardingPanelProps {
  * `bootstrap.sh`, e `scripts/dev/install-invocacao.spec.ts` reprova esta cópia
  * se ela divergir das outras.
  */
-const REPO_DO_PRODUTO = import.meta.env.VITE_BRABO_REPO || 'daneiel/brabo';
+const REPO_DO_PRODUTO = import.meta.env.VITE_BRABO_REPO || 'viralabs-dev/brabo';
 export const COMANDO_DO_INSTALADOR = `curl -fsSLO https://github.com/${REPO_DO_PRODUTO}/releases/latest/download/install.sh && bash install.sh`;
 
 /**

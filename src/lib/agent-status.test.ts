@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import {
+  agentesTravados,
   breakerReasonFor,
   deriveAgentRoster,
   groupRosterByArea,
@@ -737,5 +738,33 @@ describe('deriveAgentRoster — agregado da sessão inteira (RN-568)', () => {
     );
     expect(fatos.gatesEverOpened).toBe(true);
     expect(fatos.delegatedSubagents).toEqual(['qa-automacao', 'qa-performance-seguranca']);
+  });
+});
+
+describe('AT-799: travado vence falhou até o rearm', () => {
+  const trip = () => ev('dev.idle_tripped', 'dev-core', { consecutiveBlocked: 3 });
+  const bloq = () => ev('backlog.task_blocked', 'dev-core');
+  const rearm = (agentId: string) =>
+    ({ ...ev('dev.rearmed', 'user-1', { agentId }), actor: { kind: 'user', id: 'user-1' } }) as SessionEvent;
+  const status = (events: SessionEvent[]) =>
+    deriveAgentRoster(events, moduleMap, true, []).find((r) => r.def.name === 'dev-core')?.status;
+
+  it('idle_tripped seguido de task_blocked é travado', () => {
+    expect(status([trip(), bloq()])).toBe('travado');
+  });
+  it('task_blocked sem disparo segue falhou', () => {
+    expect(status([bloq()])).toBe('falhou');
+  });
+  it('rearm do agente e depois dev.working sai de travado', () => {
+    expect(status([trip(), bloq(), rearm('dev-core'), ev('dev.working', 'dev-core')])).toBe('trabalhando');
+  });
+  it('rearm de OUTRO agente não destrava', () => {
+    expect(status([trip(), bloq(), rearm('dev-outro')])).toBe('travado');
+  });
+  it('agentesTravados lista o agente com o motivo e some após o rearm', () => {
+    expect(agentesTravados([trip(), bloq()])).toEqual([
+      { agentId: 'dev-core', motivo: expect.stringContaining('3') },
+    ]);
+    expect(agentesTravados([trip(), bloq(), rearm('dev-core')])).toEqual([]);
   });
 });

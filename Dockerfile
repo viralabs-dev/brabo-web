@@ -9,7 +9,7 @@
 # Registrado como limitação no ADR 0024 (a saída é injeção em runtime, fora do
 # escopo desta sessão).
 # ---------------------------------------------------------------------------
-FROM node:26.13.0-alpine3.24@sha256:c6ad9e9c1d80f6eb607c26b4b0a132ff7a2344fad1c78ea3baa2a7d4c8de6d94 AS build
+FROM node:26.13.0-alpine3.24@sha256:8996bb5821d62a8fd9bb27c1cb07462f3fdce6e47d640c6a881ead0b064ce216 AS build
 
 ARG VITE_API_URL=http://localhost:3000
 ARG VITE_ENGINE_URL=http://localhost:4000
@@ -47,9 +47,11 @@ RUN npm pack "pnpm@${PNPM_VERSION}" --silent \
 WORKDIR /repo
 
 # Manifests primeiro: a camada de deps só invalida quando o lockfile muda.
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 
-RUN pnpm install --frozen-lockfile
+# O token do GitHub Packages entra só como secret do BuildKit (RN-1039, ADR 0270): nunca em
+# ARG, ENV nem camada. Build: `docker build --secret id=npmrc,src=$HOME/.npmrc .`
+RUN --mount=type=secret,id=npmrc,target=/root/.npmrc pnpm install --frozen-lockfile
 
 COPY index.html tsconfig.json tsconfig.app.json tsconfig.node.json vite.config.ts components.json ./
 COPY public public

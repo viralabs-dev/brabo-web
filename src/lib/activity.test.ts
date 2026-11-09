@@ -533,3 +533,20 @@ describe('classifyEvent — duplicata semântica (RN-681)', () => {
     expect(c.text).toContain('ollama');
   });
 });
+
+describe('classifyEvent — execução parada (AT-800, RN-1061)', () => {
+  it('execution.stalled sai em vermelho e nomeia a tarefa e o agente que seguram', () => {
+    const c = classifyEvent(
+      ev('execution.stalled', 'execucao', {
+        tarefasPendentes: 10,
+        tarefasBloqueadas: [{ taskId: 't1', title: 'Fundação do catálogo' }],
+        agentesTravados: [{ agentId: 'dev-catalogo' }],
+      }),
+    );
+    expect(c.bad).toBe(true);
+    expect(c.color).toBe('var(--danger)');
+    expect(c.text).toContain('10 tarefas pendentes');
+    expect(c.text).toContain('Fundação do catálogo');
+    expect(c.text).toContain('dev-catalogo');
+  });
+});

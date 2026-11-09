@@ -414,6 +414,30 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
                   : `bootstrap: ${alvo}`,
     };
   }
+  // RN-1061 (AT-800): a execução inteira parou atrás de tarefa bloqueada ou de
+  // agente travado — vermelho, como o disjuntor, e nomeando o que segura.
+  if (type === 'execution.stalled') {
+    const p = payload as {
+      tarefasPendentes?: number;
+      tarefasBloqueadas?: { title?: string }[];
+      agentesTravados?: { agentId?: string }[];
+    };
+    const atras = [
+      ...(p.tarefasBloqueadas ?? []).map((t) => `tarefa "${t.title ?? 'sem título'}"`),
+      ...(p.agentesTravados ?? []).map((a) => `agente ${a.agentId ?? '?'}`),
+    ];
+    const n = p.tarefasPendentes ?? 0;
+    return {
+      kind: 'session',
+      icon: StackIcon,
+      color: 'var(--danger)',
+      bad: true,
+      text:
+        `a execução parou: ${n} ${n === 1 ? 'tarefa pendente' : 'tarefas pendentes'}` +
+        (atras.length > 0 ? ` atrás de ${atras.join(', ')}` : '') +
+        '. Rearme ou desbloqueie para retomar.',
+    };
+  }
   if (type.startsWith('execution.')) {
     return {
       kind: 'session',

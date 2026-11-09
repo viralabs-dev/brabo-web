@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { deriveExecutionProgress, estadoDaTarefa, formatMicros } from './execution';
+import { deriveExecutionProgress, estadoDaTarefa, execucaoParadaDe, execucaoParadaVigente, formatMicros } from './execution';
 import type { SessionEvent } from './api-types';
 
 let seq = 0;
@@ -223,5 +223,30 @@ describe('estadoDaTarefa (RN-887)', () => {
   });
   it('sem bloqueio, o status', () => {
     expect(estadoDaTarefa({ status: 'todo', blocked: false })).toBe('todo');
+  });
+});
+
+describe('execucaoParadaVigente (RN-1061)', () => {
+  const parada = () =>
+    ev('execution.stalled', 'execucao', {
+      agentesTravados: [{ agentId: 'dev-catalogo', module: 'catalogo' }],
+      tarefasBloqueadas: [{ taskId: 't1', title: 'Fundação', reason: 'conflito' }],
+      tarefasPendentes: 10,
+    });
+
+  it('o stalled por último é vigente e traz o payload', () => {
+    const p = execucaoParadaDe([ev('dev.idle', 'dev-auth', {}), parada()]);
+    expect(p?.tarefasPendentes).toBe(10);
+    expect(p?.agentesTravados[0]?.agentId).toBe('dev-catalogo');
+    expect(execucaoParadaVigente([parada()])).toBe(true);
+  });
+
+  it.each(['dev.working', 'dev.rearmed', 'backlog.task_unblocked'])('%s depois do stalled encerra a parada', (tipo) => {
+    expect(execucaoParadaVigente([parada(), ev(tipo, 'dev-catalogo', {})])).toBe(false);
+  });
+
+  it('um novo stalled depois do destrave volta a valer; sem stalled é falso', () => {
+    expect(execucaoParadaVigente([parada(), ev('dev.rearmed', 'x', {}), parada()])).toBe(true);
+    expect(execucaoParadaVigente([ev('dev.idle', 'dev-auth', {})])).toBe(false);
   });
 });

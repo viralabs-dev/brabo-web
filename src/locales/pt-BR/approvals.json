@@ -211,7 +211,25 @@
       "cost": "Custo esperado: até {{total}} ({{perTask}} de teto por tarefa).",
       "autoPilot_zero": "Ligar o piloto automático para o time ({{count}} agentes; o merge continua com você)",
       "autoPilot_one": "Ligar o piloto automático para o time ({{count}} agente; o merge continua com você)",
-      "autoPilot_other": "Ligar o piloto automático para o time ({{count}} agentes; o merge continua com você)"
+      "autoPilot_other": "Ligar o piloto automático para o time ({{count}} agentes; o merge continua com você)",
+      "teto": {
+        "linha": "Teto: {{partes}}",
+        "projeto": "projeto {{limite}} (gastos {{gasto}})",
+        "area": "{{area}} {{limite}} (gastos {{gasto}})",
+        "semTeto": "{{quem}} sem teto",
+        "quemProjeto": "projeto",
+        "aviso": "A estimativa (até {{estimativa}}) passa do teto {{onde}} (resta {{resta}}). A execução para quando o teto for atingido; a estimativa é o teto por tarefa, não o preço.",
+        "ondeProjeto": "do projeto",
+        "ondeArea": "da área {{area}}",
+        "ajustar": "Ajustar teto",
+        "campo": "Teto da área dev, em dólar",
+        "placeholder": "sem teto",
+        "salvar": "Salvar",
+        "cancelar": "Cancelar",
+        "outros": "Outros tetos",
+        "semPapel": "Ajustar o teto exige o papel maintainer no projeto.",
+        "invalido": "Digite um valor em dólar maior ou igual a zero, ou deixe vazio para ficar sem teto."
+      }
     }
   },
   "prGateTimeline": {

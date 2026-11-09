@@ -2,6 +2,41 @@
 
 ## Unreleased
 
+- CI: repina o brabo-ci na release final `v1.4.0` (`5320046`), para a promoção `dev → main` de 09/11/2026.
+
+- Doc (AT-871): cada parte de RN (`docs/business-rules/*/parte-NN.md`) ganha `<a id="rn-NNN"></a>` antes de cada RN, pelo `ancorar-rn.mjs` do brabo, para o link `parte-NN.md#rn-NNN` abrir na RN também no GitHub. Só acréscimo de âncoras: o texto das RNs e as refs `caminho:N` ficam iguais.
+
+- Doc (AT-868): os links das páginas de RN que só resolviam no site (`../adr/…`, `../explanation/…`, `api.md`) apontam para o arquivo no GitHub do repo dono, na `dev` (`https://github.com/viralabs-dev/<repo>/blob/dev/<caminho>`). O site converte de volta para link relativo, então nada muda para quem lê por lá.
+- Docs (AT-873): a tabela "Onde se encaixa" do README linka cada repo no GitHub (o do próprio README fica sem link), gerada pelo `mapa-dos-repos.ts` do brabo-ci repinado em `a571e82` (`v1.4.0-dev.28`, ci#63).
+- Correção (AT-866): o comando do instalador do `RunnerOnboardingPanel` e o link de documentação do `AuthLayout` passam a usar `viralabs-dev/brabo` por padrão (antes `daneiel/brabo`, que redireciona para o `brabo-legacy` arquivado; o link de documentação dava 404). `fixados/openapi.json` e os tipos regenerados da `dev` do `brabo-api` (exemplo de PR do backlog).
+
+- Doc (AT-862): as RNs da web saem de `docs/business-rules/web.md` (480 KB) para `docs/business-rules/web/parte-01.md` a `parte-07.md`, cortadas por faixa de RN (orçamento de 90 KB de markdown por parte). O `web.md` vira índice por parte e uma grade congelada de âncoras `#rn-NNN`, para os links antigos seguirem valendo. As 209 RNs e seus números não mudam; as refs `caminho:N` ficam nas partes.
+
+- Doc (AT-867): a linha de badges logo abaixo do título separa o CI (`ci.yml`) e a versão da `dev` (última tag `-dev`) e da `main` (release final), e mantém licença, documentação e Ko-fi.
+
+- O aviso e a fila de PRs prontas do chat aparecem mesmo sem a decisão de imagem do projeto: `usePrsProntas` lê `GET /projects/:id/git/open-pull-requests` (api#80), com a `queryKey` `['code-pull-requests', projectId, 'open', 'chat']`. A aba PRs segue atrás do portão (AT-843, RN-825, RN-646). Tipos regenerados do `brabo-api` `dev` em `e3be45d`.
+- Doc (AT-848): o bloco "Onde se encaixa" do README é regenerado do `repos.yml` do brabo com o formato `{arquivo, trecho}` e a aresta `brabo → brabo-contracts` (brabo#84); o check `mapa-alinhado` volta a passar.
+- CI (AT-848): todos os `uses:` e `ci_ref` repinam em `6390ef5` (`v1.4.0-dev.17`, brabo-ci#53), que aceita a prova `{arquivo, trecho}` do `mapa-dos-repos.ts`.
+- Doc (AT-845): a ref `apps/api/src/application/use-cases/actions/propose-action.use-case.ts` (`execute`) de `docs/business-rules/web.md` passa de `:84` para `:88`, a linha atual no `brabo-api` `dev` (check `refs`).
+- Docs: o `README.md` segue o esqueleto de 8 seções do `brabo-ci` (`README.modelo.md`, AT-826), com o bloco "Onde se encaixa" gerado do `repos.yml` do brabo e a seção "Licença". Novo workflow `readme.yml` (informativo, não obrigatório) chama `readme-esqueleto.yml` e `mapa-alinhado.yml` pinados em `54dc896` (`v1.4.0-dev.13`).
+
+- Tipos da api: `fixados/openapi.json` e `src/lib/api-types.generated.ts` regenerados a partir do `brabo-api` `dev` em `ff2c2ac` (rota interna `POST /internal/sessions/:sessionId/tasks/:taskId/update` da AT-805, RN-1068, e o `UpdateTaskInternalDto`). Sem mudança de tela.
+
+- CI: o check `Dependências de merge` (AT-787) entra pelo `dependencias.yml`, que chama o reutilizável `dependencias-de-merge.yml` do `brabo-ci` pinado em `c6d9394` (`v1.4.0-dev.10`). A PR declara `Depende-de: viralabs-dev/<repo>#<n>` no corpo e o check fica amarelo (`esperando …`) até cada PR citada estar mergeada. Sem linha `Depende-de` o check fica verde ("Sem dependências declaradas"). Não é exigido por ruleset ainda.
+
+- CI: o passo do vitest do `ci.yml` passa a rodar com `--coverage` e cobra o piso já declarado no `vite.config.ts` (AT-834). Medido em 08/11/2026 com a suíte inteira (321 arquivos, 3232 testes): statements 88,56% / branches 84,27% / functions 80,96% / lines 89,99%, acima do piso 82/77/72/83.
+
+- CI: o `ci.yml` chama o reutilizável `cadeia.yml` do `brabo-ci` (actionlint e pins, `ci_ref` obrigatório, AT-819) e repina todos os `uses:` e `ci_ref` em `0a9eba8` (`v1.4.0-dev.5`, brabo-ci#39).
+
+- PR pronta para o dono mergear avisa: um aviso fixo na borda do fio (`AvisoDePrPronta`) com Mergear e o tempo de espera, o contador no título da aba ("(1) Brabo") e a aba "PRs prontas" do painel aberta sozinha quando uma PR entra na fila. "Agora não" dispensa; só uma PR nova o traz de volta. O hook `usePrsProntas` divide as leituras com o painel (AT-810, RN-1063).
+- O cartão do plano do Dev Lead mostra o teto do projeto e das áreas dev/qa junto do custo esperado (`TetoDoPlano`), avisa quando a estimativa passa do que resta do menor teto (sem travar o Aprovar) e ajusta o teto da área dev ali, com o link "Outros tetos" para Configurações (AT-808, RN-1062).
+- A execução parada atrás de uma tarefa bloqueada ou de um agente travado avisa: o `execution.stalled` do engine (RN-1059) aparece em vermelho no feed, vira uma mensagem na sessão de execução e um aviso na aba Executores, com Rearmar por agente travado e Desbloquear por tarefa bloqueada (`DestravarExecucao`) enquanto a parada vale (AT-800, RN-1061).
+- Corrigido: a instalação aberta por `127.0.0.1:8088` não parece mais fora do ar. A web vai para o loopback da `apiUrl` (`localhost`) antes de restaurar a sessão e montar a tela, porque o CORS e o cookie `SameSite=Strict` só valem no host da api; fora do loopback nada muda (AT-801, RN-1060).
+- Corrigido: o chat não repete o mesmo turno. Cada entrada do fio ganha a chave própria `TimelineEntry.chave` (um evento gera várias entradas com o mesmo `seq`, e a `key` por `seq` deixava nós órfãos a cada poll, até a aba travar); o `seq` fica só como eixo de ordem (AT-803, RN-974).
+- Disjuntor: o agente travado (`dev.idle_tripped`) segue `travado` mesmo com o `backlog.task_blocked` que vem logo depois, até o `dev.rearmed`; o card mostra Rearmar e as pendências do chat ganham a fila "Agentes travados" com Rearmar (AT-799, RN-826).
+- `@brabo/shared` passa a vir do GitHub Packages (AT-770, ADR 0270): alias `npm:@viralabs-dev/brabo-shared@1.2.0` no lugar da dependência git por tag, `.npmrc` com o registry do escopo (sem token), `pnpm-workspace.yaml` com `minimumReleaseAgeExclude` para a 1.2.0 recém-publicada, `scripts/baixar-areas.mjs` na tag `v1.2.0`. O lock muda só nas entradas do `@brabo/shared`.
+- Docker e CI: o `pnpm install` do `Dockerfile` usa o secret `npmrc` do BuildKit (RN-1039); o `ci.yml` e o `release.yml` passam `secret-files` com o `GITHUB_TOKEN`, e o `ci.yml` ganha `packages: read` e `setup-node` com o escopo. Spec `test/token-do-registry.test.ts`.
+- CI: `contracts-alinhado.yml` chama o reutilizável do `brabo-ci` (pin `4976af2`, RN-1038). Não é check obrigatório.
 - Segurança: o `js-yaml` sai da faixa vulnerável (4.3.1) para a 4.3.2 por `pnpm.overrides` (`js-yaml@>=4.0.0 <4.3.2`), só no caminho dev `openapi-typescript` > `@redocly/openapi-core` (que fixa a 4.3.1). Fecha o alerta do Dependabot e o erro do `Dependabot Updates` (AT-795).
 - CI: o regressivo do brabo-qa roda em toda PR para a `dev` (AT-769): o job `imagem-hotfix` do `ci.yml` publica a `sha-<12>` assinada também com `base_ref == 'dev'` (mesma guarda de fork, sem Dependabot); o `limpeza-ghcr.yml` apaga toda `sha-*` de PR fechada e as de mais de 7 dias (eram 14); o `qa-e2e.yml` passa a `branches: [dev, main]` (PR para a `dev` = `Regressivo do brabo-qa`, nunca exigido; PR para a `main` segue com o `E2E do brabo-qa`). CLAUDE.md e `.claude/agents/analista.md` ganham a regra do card.
 - CI: o run do `release.yml` ganha `run-name` com a origem e o passo `Vínculos` (helper do `brabo-ci`, origem pela linha `Carimbo:` da tag; AT-773, RN-1044).

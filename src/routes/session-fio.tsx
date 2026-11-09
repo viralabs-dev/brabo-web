@@ -66,7 +66,7 @@ export function agruparNarracoesDoTurno(
       ...primeira,
       node: (
         <Disclosure
-          key={`narracoes-${primeira.seq}`}
+          key={`narracoes-${primeira.chave}`}
           titulo={rotulos.titulo}
           trailing={rotulos.trailing(compactadas.length)}
           classNameCabecalho={styles.narracoesCabecalho}
@@ -74,7 +74,7 @@ export function agruparNarracoesDoTurno(
         >
           <div className={styles.narracoesRegiao}>
             {compactadas.map((e) => (
-              <div key={e.seq}>{e.node}</div>
+              <div key={e.chave}>{e.node}</div>
             ))}
           </div>
         </Disclosure>
@@ -140,7 +140,7 @@ export interface EntradaDoFio {
 // troca de agente quebra.
 function entradaSimples(e: TimelineEntry): EntradaDoFio {
   return {
-    key: String(e.seq),
+    key: e.chave,
     node: e.node,
     origem: e.origem,
     turno: e.turno,
@@ -196,7 +196,7 @@ export function agruparTimelinePorAgente(
     if (agentId && corrente.length >= 2 && colapsavel(agentId)) {
       const grupo = corrente;
       resultado.push({
-        key: `grupo-${agentId}-${grupo[0].seq}`,
+        key: `grupo-${agentId}-${grupo[0].chave}`,
         // Um colapso por agente é, por construção, fala de agente — mesmo
         // quando o que ele contém veio de origens diferentes.
         origem: 'agente',
@@ -219,7 +219,7 @@ export function agruparTimelinePorAgente(
             >
               <div className={styles.agentGroupRegiao}>
                 {grupo.map((e) => (
-                  <div key={e.seq}>{e.node}</div>
+                  <div key={e.chave}>{e.node}</div>
                 ))}
               </div>
             </Disclosure>

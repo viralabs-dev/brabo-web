@@ -1,25 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Ajuda } from '@/components/ui/Ajuda';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   approveAction,
   approveAlwaysAction,
   denyAction,
-  getCodePullRequests,
   mensagemDaApi,
+  rearmDevAgent,
   unblockTask,
 } from '../lib/api-client';
 import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
-import { useBacklog } from '../lib/hooks';
-import { assinaturaDoBacklog, prsProntasParaMerge, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
+import { usePrsProntas } from '../lib/prs-prontas';
+import { useAgentesTravados } from '../lib/agentes-travados-query';
+import { assinaturaDoBacklog, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
   CHAVE_DAS_PENDENCIAS_DO_PROJETO,
   separarPendenciasDeOutrasSessoes,
-  usePendenciasDoProjeto,
 } from '../lib/pendencias-do-projeto';
 import { hashtagDaSessao } from '../lib/session-label';
 import { formatRelativeTime } from '../lib/time';
@@ -29,13 +29,13 @@ import { useRegistrarAcoesNoBloco } from '../lib/acoes-no-bloco';
 import { Disclosure } from './ui/Disclosure';
 import { Alert } from './ui/Alert';
 import { MergearNoChat } from '../routes/MergearNoChat';
-import { saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
+import { entradasDaFila, saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
 
-type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas';
+type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados';
 
 /** Nenhum evento local: estas ações são sempre de OUTRA sessão (AT-340). */
 const SEM_EVENTOS_LOCAIS: readonly never[] = [];
@@ -79,19 +79,13 @@ export function PendenciasDeOutrasSessoes({
 }: PendenciasDeOutrasSessoesProps) {
   const { t } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
-  const consulta = usePendenciasDoProjeto(projectId, sessionId);
-  const { aprovacoes, merges } = separarPendenciasDeOutrasSessoes(consulta.data, sessionId);
   // RN-825/826 (AT-497): as PRs prontas e as tarefas bloqueadas, pelas MESMAS
   // leituras da aba PRs (`['code-pull-requests', id, 'open']`) e do backlog
   // (`['backlog', id]`) — cache compartilhado, sem poll novo apertado (o
   // backlog no ritmo de projeto, 15 s; a lista de PRs sem poll, o canal e a
   // mudança do backlog a invalidam — RN-841).
-  const prsQuery = useQuery({
-    queryKey: ['code-pull-requests', projectId, 'open'],
-    queryFn: () => getCodePullRequests(projectId, { state: 'open' }),
-    enabled: !!projectId && filasDoChat,
-  });
-  const backlogQuery = useBacklog(filasDoChat ? projectId : undefined, 15_000, sessionId);
+  const { prontas, consulta, backlogQuery } = usePrsProntas(projectId, sessionId, filasDoChat);
+  const { aprovacoes, merges } = separarPendenciasDeOutrasSessoes(consulta.data, sessionId);
   // RN-841 (AT-510): a lista de PRs não tem poll; a PR do dev nasce na sessão
   // de EXECUÇÃO, cujo canal esta página não ouve. A tarefa que muda de status
   // ou de gate (a PR aberta, os gates aprovando) aparece na leitura de 15 s do
@@ -112,13 +106,14 @@ export function PendenciasDeOutrasSessoes({
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
-  const prontas = prsProntasParaMerge(
-    prsQuery.data?.items,
-    backlogQuery.data,
-    consulta.data,
-    sessionId,
-  );
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
+  // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
+  // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
+  const { sessionId: execucaoId, travados } = useAgentesTravados(filasDoChat ? projectId : undefined);
+  const idsTravados = new Set(travados.map((a) => a.agentId));
+  const [rearme, setRearme] = useState<
+    Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
+  >({});
   // RN-861 (AT-521): a fila "Perguntas em aberto", só no chat; sem poll —
   // o canal da sessão a relê (alvo `perguntas`).
   const perguntasQuery = usePerguntasEmAberto(filasDoChat ? projectId : undefined);
@@ -171,6 +166,16 @@ export function PendenciasDeOutrasSessoes({
     const novas = saidasDaFila(anterior, atual, new Set(respondidasRef.current.map((p) => p.questionId)));
     if (Object.keys(novas).length > 0) setSaidas(novas);
   }, [assinaturaDeIds]);
+  // RN-1063 (AT-810): PR que ENTRA na fila de prontas abre a aba `prontas` sozinha
+  // quando nenhuma está aberta (na primeira leitura, as que já esperavam contam).
+  const prontasAnteriores = useRef<readonly string[] | null>(null);
+  const idsDasProntas = prontas.map((p) => p.pr.id).join(',');
+  useEffect(() => {
+    const atual = idsDasProntas === '' ? [] : idsDasProntas.split(',');
+    const novas = entradasDaFila(prontasAnteriores.current, atual);
+    prontasAnteriores.current = atual;
+    if (novas.length > 0) setAberta((a) => a ?? 'prontas');
+  }, [idsDasProntas]);
   const painel = (chave: ChaveDeFila, conteudo: React.ReactNode) => (
     <div hidden={aberta !== chave}>{conteudo}</div>
   );
@@ -182,6 +187,7 @@ export function PendenciasDeOutrasSessoes({
   const pMerges = paginar(merges, paginaDe('merges'));
   const pProntas = paginar(prontas, paginaDe('prontas'));
   const pBloqueadas = paginar(bloqueadas, paginaDe('bloqueadas'));
+  const pTravados = paginar(travados, paginaDe('travados'));
   const desenhadas = pAprovacoes.itens.length + pMerges.itens.length;
 
   // AT-340 (RN-656): o motivo da política de CADA card desenhado, lido pela
@@ -202,6 +208,7 @@ export function PendenciasDeOutrasSessoes({
     total === 0 &&
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
+    travados.length === 0 &&
     perguntas.length === 0 &&
     respondidas.length === 0
   )
@@ -217,6 +224,21 @@ export function PendenciasDeOutrasSessoes({
       setDesbloqueio((d) => ({
         ...d,
         [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.erro')) },
+      }));
+    }
+  }
+
+  async function rearmar(agentId: string) {
+    if (!execucaoId) return;
+    setRearme((d) => ({ ...d, [agentId]: 'enviando' }));
+    try {
+      await rearmDevAgent(projectId, execucaoId, agentId);
+      setRearme((d) => ({ ...d, [agentId]: { tom: 'ok', texto: t('pendencias.travados.ok') } }));
+      void queryClient.invalidateQueries({ queryKey: ['session-events', projectId, execucaoId] });
+    } catch (erro) {
+      setRearme((d) => ({
+        ...d,
+        [agentId]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.travados.erro')) },
       }));
     }
   }
@@ -333,9 +355,10 @@ export function PendenciasDeOutrasSessoes({
     merges: merges.length,
     prontas: prontas.length,
     bloqueadas: bloqueadas.length,
+    travados: travados.length,
     perguntas: totalDePerguntas,
   };
-  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas'] as const)
+  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
@@ -383,7 +406,7 @@ export function PendenciasDeOutrasSessoes({
           onValueChange={(v) => setAberta((v[0] as ChaveDeFila | undefined) ?? null)}
         >
           <Ajuda assunto={t('pendencias.abas')}>{t('pendencias.nota')}</Ajuda>
-          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas'] as const)
+          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
             .filter((chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0))
             .map((chave) => (
               <ToggleGroupItem key={chave} value={chave}>
@@ -480,6 +503,11 @@ export function PendenciasDeOutrasSessoes({
                   <div key={task.id} className={styles.grupo} data-testid="tarefa-bloqueada">
                     <div className={styles.origem}>{task.title}</div>
                     <p className={styles.nota}>{titulo}</p>
+                    {task.assignedTo && idsTravados.has(task.assignedTo) && (
+                      <p className={styles.erro} data-testid="bloqueada-agente-travado">
+                        {t('pendencias.bloqueadas.agenteTravado', { agente: task.assignedTo })}
+                      </p>
+                    )}
                     {diagnostico && (
                       <Disclosure titulo={t('pendencias.bloqueadas.diagnostico')}>
                         <p className={styles.nota}>{diagnostico}</p>
@@ -514,6 +542,54 @@ export function PendenciasDeOutrasSessoes({
                 fila={t('pendencias.filas.bloqueadas')}
                 pagina={pBloqueadas}
                 aoMudar={irParaPagina('bloqueadas')}
+              />
+            </section>
+          ))}
+          {painel('travados', travados.length > 0 && (
+            <section
+              className={styles.fila}
+              aria-label={t('pendencias.filas.travados')}
+              data-testid="fila-agentes-travados"
+            >
+              <h4 className={styles.filaTitulo}>
+                {t('pendencias.filas.travados')}
+                <span className={styles.contagem}>{travados.length}</span>
+              </h4>
+              {pTravados.itens.map(({ agentId, motivo }) => {
+                const estado = rearme[agentId];
+                return (
+                  <div key={agentId} className={styles.grupo} data-testid="agente-travado">
+                    <div className={styles.origem}>{agentId}</div>
+                    {motivo && <p className={styles.nota}>{motivo}</p>}
+                    <div className={styles.acoesDaLinha}>
+                      <Button
+                        variant="secondary"
+                        disabled={!podeDecidir}
+                        loading={estado === 'enviando'}
+                        onClick={() => void rearmar(agentId)}
+                      >
+                        {t('pendencias.travados.botao')}
+                      </Button>
+                      {!podeDecidir && (
+                        <span className={styles.nota}>{t('pendencias.travados.semPapel')}</span>
+                      )}
+                    </div>
+                    {estado && estado !== 'enviando' && (
+                      <p
+                        className={estado.tom === 'erro' ? styles.erro : styles.nota}
+                        role={estado.tom === 'erro' ? 'alert' : 'status'}
+                        data-testid="retorno-rearme"
+                      >
+                        {estado.texto}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+              <PaginadorDaFila
+                fila={t('pendencias.filas.travados')}
+                pagina={pTravados}
+                aoMudar={irParaPagina('travados')}
               />
             </section>
           ))}

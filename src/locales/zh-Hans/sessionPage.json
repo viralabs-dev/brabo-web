@@ -346,7 +346,8 @@
       "merges": "PR 合并",
       "prontas": "可合并的 PR",
       "bloqueadas": "被阻塞的任务",
-      "perguntas": "未回答的问题"
+      "perguntas": "未回答的问题",
+      "travados": "卡住的智能体"
     },
     "origem_other": "会话 {{hashtag}} 中的 {{count}} 个提议 · 最早的 {{tempo}}",
     "abas": "待处理队列",
@@ -366,7 +367,8 @@
       "erro": "无法解除任务阻塞。",
       "semMotivo": "未记录原因。",
       "semPapel": "解除阻塞需要项目中的 developer 角色。",
-      "diagnostico": "诊断"
+      "diagnostico": "诊断",
+      "agenteTravado": "{{agente}} 已卡住：请先重新启用，再解除阻塞。"
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",
@@ -396,6 +398,12 @@
       "merges_other": "{{count}} 个 PR 合并",
       "prontas_other": "{{count}} 个可合并的 PR",
       "bloqueadas_other": "{{count}} 个被阻塞的任务"
+    },
+    "travados": {
+      "botao": "重新启用",
+      "ok": "智能体已重新启用：它会再次领取任务。",
+      "erro": "无法重新启用该智能体。",
+      "semPapel": "重新启用需要项目中的 developer 角色。"
     }
   },
   "mergearNoChat": {
@@ -463,5 +471,24 @@
       "feito": "完成",
       "descartado": "已放弃"
     }
+  },
+  "execucaoParada": {
+    "aviso_other": "执行已停止：有 {{count}} 个待办任务，没有代理能接手。原因：{{atras}}。",
+    "tarefa": "被阻塞的任务“{{titulo}}”",
+    "agente": "已熔断的代理 {{agente}}",
+    "rearmar": "重新启用 {{agente}}",
+    "desbloquear": "解除阻塞“{{titulo}}”",
+    "nota": "重新启用会让代理脱离熔断；解除阻塞会把任务放回队列。",
+    "semPapel": "重新启用和解除阻塞需要项目中的 developer 角色。",
+    "feito": "完成——进展会显示在此对话中。",
+    "erroTitulo": "无法解除执行停滞"
+  },
+  "avisoDePrPronta": {
+    "uma": "PR #{{numero}}“{{titulo}}”已就绪，可以合并：检查已通过。",
+    "varias_other": "有 {{count}} 个 PR 已就绪，可以合并。",
+    "espera": "就绪于{{quando}}。",
+    "ver": "查看该 PR",
+    "verAs_other": "查看全部 {{count}} 个",
+    "agoraNao": "暂不处理"
   }
 }

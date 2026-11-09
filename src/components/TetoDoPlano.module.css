@@ -1,0 +1,41 @@
+/* AT-808 (RN-1062): o teto do projeto e das áreas, junto do custo esperado. */
+.teto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0 16px 12px;
+  font-family: var(--font-body);
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 0;
+}
+
+.ajuste {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.campo {
+  width: 120px;
+}
+
+.nota {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.erro {
+  font-size: var(--fs-meta);
+  color: var(--danger);
+}

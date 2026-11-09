@@ -37,7 +37,7 @@ Web do Brabo: React 19 + Vite + TanStack Query/Router, i18n pt-BR (fonte), en, r
   toda tela vão em `codeSplitting.groups` do `vite.config.ts` por lista de
   PERMITIDOS: um grupo genérico de `node_modules` puxaria `mermaid`/`xterm`
   para o bundle inicial (AT-300)
-- Contratos: `@brabo/shared` e `areas.json` vêm do `brabo-contracts` por TAG; o tipo do OpenAPI sai de `pnpm openapi:types` (confira com `openapi:types:check`) a partir do `openapi.json` da api. A raiz do repo é o app.
+- Contratos: `@brabo/shared` é o pacote `@viralabs-dev/brabo-shared` do GitHub Packages, por alias do pnpm com versão exata (ADR 0270); `areas.json` vem do `brabo-contracts` na TAG da mesma versão (`scripts/baixar-areas.mjs`). Troque a versão só com `scripts/ci/subir-contracts.sh` do `brabo-ci` (nunca edite o lock à mão); o check `contracts-alinhado` confere (RN-1038). O token do registry vive no `~/.npmrc` do host e, no Docker, só como secret do BuildKit (RN-1039); o `.npmrc` do repo não leva token; o tipo do OpenAPI sai de `pnpm openapi:types` (confira com `openapi:types:check`) a partir do `openapi.json` da api. A raiz do repo é o app.
 
 ## Repositório, branches e PR (vale para todo repo `brabo-*`)
 - Branches permanentes: dev, main — um branch, um ambiente; a esteira é

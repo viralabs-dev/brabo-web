@@ -51,6 +51,7 @@ import { sessaoTemExecucao } from '../lib/sessao-de-execucao';
 import { ModoAutomaticoNoChat } from '../components/ModoAutomaticoNoChat';
 import { useSessionReadiness } from '../lib/session-readiness';
 import { agruparTimelinePorAgente, dividirFio } from './session-fio';
+import { AvisoDePrPronta } from '../components/AvisoDePrPronta';
 import { montarTimeline } from './session-timeline-montagem';
 import { SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
@@ -819,6 +820,9 @@ export function SessionPage({
               plano={planoDoTurno(events, streamingAgent ?? statusAgent)}
             />
           )}
+
+          {/* AT-810 (RN-1063): PR pronta para o dono mergear, fixa na borda do fio. */}
+          <AvisoDePrPronta projectId={projectId} sessionId={sessionId} podeDecidir={podeDecidir} />
 
           <PainelDaFila projectId={projectId} sessionId={sessionId} events={events} autoria={autoria} isActive={isActive} />
 

@@ -370,7 +370,8 @@
       "merges": "Merges de PR",
       "prontas": "PRs prontas para merge",
       "bloqueadas": "Tarefas bloqueadas",
-      "perguntas": "Perguntas em aberto"
+      "perguntas": "Perguntas em aberto",
+      "travados": "Agentes travados"
     },
     "origem_zero": "{{count}} propostas na sessão {{hashtag}} · a mais antiga {{tempo}}",
     "origem_one": "Proposta na sessão {{hashtag}} · {{tempo}}",
@@ -396,7 +397,8 @@
       "erro": "Não foi possível desbloquear a tarefa.",
       "semMotivo": "Sem motivo registrado.",
       "semPapel": "Desbloquear exige o papel developer no projeto.",
-      "diagnostico": "Diagnóstico"
+      "diagnostico": "Diagnóstico",
+      "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear."
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",
@@ -442,6 +444,12 @@
       "bloqueadas_zero": "{{count}} tarefas bloqueadas",
       "bloqueadas_one": "{{count}} tarefa bloqueada",
       "bloqueadas_other": "{{count}} tarefas bloqueadas"
+    },
+    "travados": {
+      "botao": "Rearmar",
+      "ok": "Agente rearmado: ele volta a pegar tarefas.",
+      "erro": "Não foi possível rearmar o agente.",
+      "semPapel": "Rearmar exige o papel developer no projeto."
     }
   },
   "mergearNoChat": {
@@ -513,5 +521,30 @@
       "feito": "feito",
       "descartado": "descartado"
     }
+  },
+  "execucaoParada": {
+    "aviso_zero": "A execução parou: {{count}} tarefas pendentes e nenhum agente pode pegá-las. Atrás de: {{atras}}.",
+    "aviso_one": "A execução parou: {{count}} tarefa pendente e nenhum agente pode pegá-la. Atrás de: {{atras}}.",
+    "aviso_other": "A execução parou: {{count}} tarefas pendentes e nenhum agente pode pegá-las. Atrás de: {{atras}}.",
+    "tarefa": "tarefa bloqueada \"{{titulo}}\"",
+    "agente": "agente travado {{agente}}",
+    "rearmar": "Rearmar {{agente}}",
+    "desbloquear": "Desbloquear \"{{titulo}}\"",
+    "nota": "Rearmar tira o agente do disjuntor; desbloquear devolve a tarefa à fila.",
+    "semPapel": "Rearmar e desbloquear exigem o papel developer no projeto.",
+    "feito": "Feito — o andamento aparece neste fio.",
+    "erroTitulo": "Não foi possível destravar a execução"
+  },
+  "avisoDePrPronta": {
+    "uma": "PR #{{numero}} \"{{titulo}}\" está pronta para você mergear: os gates passaram.",
+    "varias_zero": "{{count}} PRs prontas para você mergear.",
+    "varias_one": "{{count}} PR pronta para você mergear.",
+    "varias_other": "{{count}} PRs prontas para você mergear.",
+    "espera": "Pronta {{quando}}.",
+    "ver": "Ver a PR",
+    "verAs_zero": "Ver as {{count}}",
+    "verAs_one": "Ver a {{count}}",
+    "verAs_other": "Ver as {{count}}",
+    "agoraNao": "Agora não"
   }
 }

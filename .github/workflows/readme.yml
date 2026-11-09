@@ -1,0 +1,23 @@
+name: readme
+
+# README no esqueleto de 8 seções e bloco "Onde se encaixa" em dia (AT-826). Reutilizáveis do brabo-ci.
+# NÃO são checks obrigatórios.
+run-name: "readme ← #${{ github.event.pull_request.number }} (${{ github.head_ref }})"
+
+on:
+  pull_request:
+    branches: [dev, main]
+
+permissions:
+  contents: read
+
+jobs:
+  esqueleto:
+    uses: viralabs-dev/brabo-ci/.github/workflows/readme-esqueleto.yml@53200467cadc73c5c23b90545474d4948764932f  # v1.4.0
+    with:
+      ci_ref: 53200467cadc73c5c23b90545474d4948764932f  # v1.4.0
+
+  mapa:
+    uses: viralabs-dev/brabo-ci/.github/workflows/mapa-alinhado.yml@53200467cadc73c5c23b90545474d4948764932f  # v1.4.0
+    with:
+      ci_ref: 53200467cadc73c5c23b90545474d4948764932f  # v1.4.0

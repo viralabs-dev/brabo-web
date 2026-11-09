@@ -1436,6 +1436,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/sessions/{sessionId}/tasks/{taskId}/update": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Corrects the title and/or description of a `todo` task
+         * @description Only a `todo` task; writes `backlog.task_updated` with the PO (default) or the Dev Lead as actor (RN-1068). A task of a `ready` story too when `questionId` cites an open question the user already answered (RN-859).
+         */
+        post: operations["InternalSessionsController_updateTaskRoute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/sessions/{sessionId}/tasks/claim": {
         parameters: {
             query?: never;
@@ -2360,6 +2380,26 @@ export interface paths {
          * @description Records the decision and doesn't touch the repository. The plan stays stored as evidence of what was deliberately not applied, and the bootstrap cursor is NOT tampered with — no step ran.
          */
         post: operations["GitController_skipPlan"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/git/open-pull-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists the open PRs/MRs for the chat, outside the image gate
+         * @description Feeds the ready-PR notice and queue in the chat (AT-843, RN-105). Unlike `/code/pull-requests`, it does NOT answer 409 while the Architect has not decided the container image. Open PRs only, no file content.
+         */
+        get: operations["GitController_openPullRequests"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4941,7 +4981,7 @@ export interface components {
             status: string;
             /**
              * @description `null` while the PR has not actually been opened.
-             * @example https://github.com/daneiel/brabo/pull/42
+             * @example https://github.com/viralabs-dev/brabo/pull/42
              */
             pullRequestUrl: Record<string, never> | null;
         };
@@ -11676,6 +11716,27 @@ export interface components {
              */
             title: string;
         };
+        UpdateTaskInternalDto: {
+            /**
+             * Format: uuid
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: string;
+            /**
+             * @default po
+             * @enum {string}
+             */
+            agentId: "po" | "dev-lead";
+            /** @example Return 200 for a past date */
+            title?: string;
+            /** @example The day agenda accepts a past date. */
+            description?: string;
+            /**
+             * Format: uuid
+             * @description RN-859: an open question the user ALREADY answered — only then a task of a `ready` story can be corrected.
+             */
+            questionId?: string;
+        };
         UpdateUserPreferencesDto: {
             /**
              * @description The interface language. Closed to the list — not free-form BCP-47.
@@ -14931,6 +14992,59 @@ export interface operations {
             };
         };
     };
+    InternalSessionsController_updateTaskRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTaskInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description No field, or an empty title. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `tarefa_em_execucao`, `historia_arquivada` or `historia_nao_draft`. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     InternalSessionsController_claimTask: {
         parameters: {
             query?: never;
@@ -17805,6 +17919,55 @@ export interface operations {
             };
             /** @description The plan was regenerated since you last saw it, or it had already been decided. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GitController_openPullRequests: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CodePullRequestListResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project does not exist. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -3,6 +3,12 @@ import type { OrigemDeEvento } from './activity';
 import type { ProposedAction, SessionEvent, SessionStatus } from './api-types';
 
 export interface TimelineEntry {
+  /**
+   * Chave React ÚNICA da entrada (RN-974). O `seq` NÃO serve: um evento gera
+   * várias entradas (passos, raciocínio, consultado, bolha) e todas herdam o
+   * mesmo `seq`, que é só o eixo de ORDEM (RN-155).
+   */
+  chave: string;
   seq: number;
   node: ReactNode;
   /**

@@ -20,6 +20,7 @@ import { ApiError } from './lib/api-client';
 import { OPCOES_PADRAO_DAS_QUERIES } from './lib/query-policy';
 import i18n from './lib/i18n';
 import { sincronizarIdiomaDaSessao } from './lib/idioma';
+import { enderecoNoLoopbackDaApi, runtimeConfig } from './lib/runtime-config';
 
 /**
  * Captura global de erro (Fase 5, item 6).
@@ -90,7 +91,12 @@ onMudancaDeSessao((autenticado) => {
   if (autenticado) sincronizarIdiomaDaSessao(i18n);
 });
 
-void restaurarSessao().finally(() => {
+// RN-1060 (AT-801): aberta por um loopback diferente do da api, a página vai para
+// o da api ANTES de montar — senão o CORS recusa tudo e a tela parece fora do ar.
+const noLoopbackDaApi = enderecoNoLoopbackDaApi(window.location.href, runtimeConfig.apiUrl);
+if (noLoopbackDaApi) {
+  window.location.replace(noLoopbackDaApi);
+} else void restaurarSessao().finally(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>

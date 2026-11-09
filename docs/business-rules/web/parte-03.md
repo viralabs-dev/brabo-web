@@ -10,6 +10,8 @@ keywords: [regras de negócio, web]
 
 ## PROGRAMA 28 — Onda 4, frente E2: virtualização de linha e minimapa na aba Code (RN-239..242)
 
+<a id="rn-239"></a>
+
 ### RN-239 — Virtualização de linha: só a janela visível vira nó de DOM {#rn-239}
 
 `CodeEditor.tsx` renderiza só as linhas dentro da janela visível (mais
@@ -29,6 +31,8 @@ Code.
   `[data-line-row]`) e "rolar para o meio do arquivo troca a janela —
   linha 1 some, linhas do meio aparecem"
 
+<a id="rn-240"></a>
+
 ### RN-240 — Sem medição de altura, degrada para janela padrão generosa, nunca renderiza tudo {#rn-240}
 
 Quando `containerHeight` ainda não foi medido (1º render, ou jsdom sem
@@ -42,6 +46,8 @@ grande de verdade.
   sem medição de altura (jsdom sem ResizeObserver, clientHeight 0),
   degrada para uma janela padrão em vez de não renderizar nada"
 
+<a id="rn-241"></a>
+
 ### RN-241 — Minimapa reusa a MESMA tokenização da virtualização — zero segundo passe sobre o arquivo {#rn-241}
 
 `minimap.ts` não tokeniza nada: ele resume a saída que `highlight.ts` já
@@ -53,6 +59,8 @@ virtualização estar de pé, nunca antes.
 
 - **Onde:** `apps/web/src/routes/code/minimap.ts` (linhas 1-18, 39)
 - **Teste:** `apps/web/src/routes/code/minimap.test.ts`
+
+<a id="rn-242"></a>
 
 ### RN-242 — Minimapa é CANVAS, um nó de DOM só, nunca um `<div>` por linha {#rn-242}
 
@@ -71,6 +79,8 @@ funcionando — só o desenho é pulado, nunca a interação.
 
 ## PROGRAMA 28 — Onda 4, frente H4: os colapsos ad-hoc restantes migram para o `Disclosure` (RN-249..251)
 
+<a id="rn-249"></a>
+
 ### RN-249 — Alvo de clique do marco com detalhe sobe de 20px para o piso de 24px do `Disclosure` {#rn-249}
 
 O marco COM detalhe de `AgentTimelineTree` tinha `min-height: 20px` no
@@ -84,6 +94,8 @@ cada novo consumidor.
   (linhas 135-155, `.marcoLinha`)
 - **Teste:** `apps/web/src/components/AgentTimelineTree.test.tsx`
 - **ADR:** nenhum — correção pontual de a11y, mesmo padrão do ADR 0036
+
+<a id="rn-250"></a>
 
 ### RN-250 — Faixa de arquivo do diff em `ApprovalCard` NÃO migra para o `Disclosure` — a animação própria é a razão {#rn-250}
 
@@ -100,6 +112,8 @@ sem trocar de componente.
 
 - **Onde:** `apps/web/src/components/ApprovalCard.tsx` (linhas 511-539)
 - **Teste:** `apps/web/src/components/ApprovalCard.test.tsx`
+
+<a id="rn-251"></a>
 
 ### RN-251 — Cinco call sites migram para o `Disclosure` compartilhado; o componente ganha `testId` como único hook novo {#rn-251}
 
@@ -129,6 +143,8 @@ ninguém está vendo.
 
 ## PROGRAMA 28 — Onda 5, frente G3: a tela do Chat RAG (RN-252..254, ADR 0082)
 
+<a id="rn-252"></a>
+
 ### RN-252 — A tela do Chat RAG mostra as duas degradações honestas que o backend já declara, nunca as esconde {#rn-252}
 
 `HybridSearchUseCase` já devolve `vectorAvailable: false` quando o provider
@@ -150,6 +166,8 @@ modelo).
   — "CASO DE FALHA (degradação honesta): nunca escreve..."
 - **ADR:** [0082](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0082-chat-rag-aba-de-busca-hibrida.md)
 
+<a id="rn-253"></a>
+
 ### RN-253 — Citação de origem `session` navega até o EVENTO exato, reusando o mecanismo do Psicólogo {#rn-253}
 
 `RagCitationCard` não inventa um segundo caminho de navegação: origem
@@ -167,6 +185,8 @@ frente.
 - **Teste:** `apps/web/src/components/rag/RagCitationCard.test.tsx` —
   "caminho feliz: origem de sessão navega até o evento exato ao clicar"
 - **ADR:** [0082](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0082-chat-rag-aba-de-busca-hibrida.md)
+
+<a id="rn-254"></a>
 
 ### RN-254 — O botão de reindexar é maintainer/owner na TELA, espelhando a régua da rota {#rn-254}
 
@@ -187,6 +207,8 @@ ignorar o 403.
   reindexar só aparece para maintainer/owner..."; "maintainer vê e pode
   disparar a reindexação"
 - **ADR:** [0082](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0082-chat-rag-aba-de-busca-hibrida.md)
+
+<a id="rn-268"></a>
 
 ### RN-268 — A aba Terminal mostra o estado REAL do container, nunca finge um terminal que não existe {#rn-268}
 
@@ -220,6 +242,8 @@ o status com um `Badge` (`provisioning`/`running`/`stopped`/`failed`/
 - **ADR:** [0083](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0083-terminal-mostra-estado-real-do-container.md)
 
 ## UX Designer — o quinto agente conversacional (RN-285..287, ADR 0087)
+
+<a id="rn-287"></a>
 
 ### RN-287 — `uxDesignerActive` no roster, nas DUAS fontes (RN-090) {#rn-287}
 
@@ -257,6 +281,8 @@ que `projects-summary.repository.spec.ts` prova não cresce.
 
 ## Onda 1 do ADR 0104 — `execution_mode` em três valores, workspace verificado pelo runner
 
+<a id="rn-428"></a>
+
 ### RN-428 — Carrossel de promoção de histórias sobrevive à janela de eventos {#rn-428}
 
 `promocoesPendentes`/o carrossel de promoção do PO (RN-148) não depende mais
@@ -281,6 +307,8 @@ corte de leitura.
 
 ---
 
+<a id="rn-431"></a>
+
 ### RN-431 — O selo da aba Arquitetura conta pendência de validação, nunca "diagrama não gerado" {#rn-431}
 
 `contagens.arquiteturaPendente` (régua de abas) vem de
@@ -298,6 +326,8 @@ badigar por isso seria ruído.
   Visão Geral
 
 ---
+
+<a id="rn-432"></a>
 
 ### RN-432 — Preferência de idioma vem no payload de login/refresh, nunca numa chamada extra {#rn-432}
 
@@ -348,6 +378,8 @@ pasta..." não funcionava na TELA DE CRIAÇÃO do projeto — só depois de
 criado — porque o ticket do canal do Runner (ADR 0107) é ancorado a um
 `projectId` que, até esta correção, só nascia na confirmação.
 
+<a id="rn-436"></a>
+
 ### RN-436 — `FolderBrowserModal` vira um explorador de três colunas: atalhos, lista com um clique seleciona/duplo clique entra, e um painel de detalhes {#rn-436}
 
 O layout de lista única virou três colunas dentro do `Modal size="full"`:
@@ -388,6 +420,8 @@ continua navegável/selecionável.
   projeto real e achar o navegador de pasta pouco parecido com um
   explorador de arquivos de verdade — referência visual enviada por ele
   (picker de três colunas, estilo GNOME Files/GTK)
+
+<a id="rn-437"></a>
 
 ### RN-437 — No modo `runner`, "Procurar pasta..." cria o projeto ANTECIPADAMENTE, e a confirmação final reusa por SNAPSHOT de identidade {#rn-437}
 
@@ -444,6 +478,8 @@ mecanismo (a criação antecipada, o transporte pelo agente local) não mudou.
   projeto real no modo Runner e não conseguir navegar pastas antes de
   confirmar — a lacuna que o ADR 0107 já tinha declarado e adiado
 
+<a id="rn-438"></a>
+
 ### RN-438 — `fs-browser-channel.ts` tinha o MESMO bug de path duplicado que a RN-433 já tinha corrigido no `terminal-channel.ts` irmão {#rn-438}
 
 Achado ao verificar a RN-437 ponta a ponta no Chrome, contra o engine real:
@@ -485,6 +521,8 @@ o resultado esperado sem um runner de verdade conectado.
 
 ## Pasta local anexada vira o quarto escopo do índice RAG, lido pelo NAVEGADOR (RN-455..457, ADR 0113)
 
+<a id="rn-456"></a>
+
 ### RN-456 — Teto agregado REJEITA (400) o upload inteiro; arquivo individual grande/binário só é PULADO {#rn-456}
 
 Diferente de `docs`/`adr` (uma varredura em background, sem ninguém
@@ -511,6 +549,8 @@ garante de verdade é o servidor.
   pulado; caminho com `..`/barra inicial é recusado)
 - **ADR:** [0113](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0113-pasta-local-anexada-via-navegador-vira-chunks-scope-local.md)
 - **Origem:** pedido do dono do produto
+
+<a id="rn-460"></a>
 
 ### RN-460 — A faixa de atividade do turno narra em tempo real, e o fio só recebe a resposta no fim {#rn-460}
 
@@ -573,6 +613,8 @@ si não muda.
 - **Origem:** pedido do dono do produto
 
 ## Painel "precisa de você" (RN-467)
+
+<a id="rn-467"></a>
 
 ### RN-467 — O painel das cinco filas de decisão NUNCA soma e NUNCA executa: separa por fila e encaminha para a decisão {#rn-467}
 
@@ -640,6 +682,8 @@ na api resolveria de verdade e é decisão à parte, fora do escopo desta.
   melhorias de UI)
 
 ## Estado de ambiente na tela (RN-468)
+
+<a id="rn-468"></a>
 
 ### RN-468 — Sinal de ambiente diz o que SABE: `workspaceVerifiedAt` é registro de confirmação, nunca garantia de que o runner está vivo {#rn-468}
 
@@ -710,6 +754,8 @@ campo é nulo por definição (a conversão de modo o zera, RN-450) e uma linha
 - **Origem:** revisão de design do dono do produto (item #6 do canvas de
   melhorias de UI)
 
+<a id="rn-469"></a>
+
 ### RN-469 — Salvar uma seção são N chamadas, e a tela nunca afirma o desfecho que não obteve {#rn-469}
 
 Nas seções de Configurações cujas linhas são um ajuste ESCALAR por chave
@@ -776,6 +822,8 @@ da linha.
   mostra a mensagem da API e não a contagem)
 - **Origem:** revisão de design do dono do produto (item #7 do canvas de
   melhorias de UI — "salvar por seção em vez de por linha")
+
+<a id="rn-470"></a>
 
 ### RN-470 — A origem do modelo distingue binding próprio de herança do Criativo, e nenhum vazio da cascata usa o mesmo símbolo de outro {#rn-470}
 
@@ -902,6 +950,8 @@ consegue nomear.
 
 ## A seção de Membros respeita o papel, e o papel é o EFETIVO do projeto (RN-471)
 
+<a id="rn-471"></a>
+
 ### RN-471 — Papel na seção de Membros: `maintainer`, e derivado da linha do projeto sobre a do workspace {#rn-471}
 
 `MembersSection` não checava papel nenhum. As TRÊS ações da seção — convidar,
@@ -1026,6 +1076,8 @@ Uniformizar a forma pioraria o conteúdo no caminho mais provável da caixa.
 
 ## A pasta vem primeiro, e o binário não é bloqueio (RN-473/474)
 
+<a id="rn-473"></a>
+
 ### RN-473 — A configuração do runner pelo navegador começa pela PASTA, e a falha do binário nunca descarta o que já foi configurado {#rn-473}
 
 > **Revisada pela [RN-687](parte-05.md#rn-687) ([ADR 0203](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md), 01/10):**
@@ -1117,6 +1169,8 @@ existe, quando for pedido.
   — esta RN revisa a ORDEM do fluxo que ele estabeleceu, não o mecanismo
 - **Origem:** pedido do dono do produto
 
+<a id="rn-474"></a>
+
 ### RN-474 — Depois da instrução, a tela ESPERA o runner: três estados, teto, e o caminho que vale é o que o runner reportou {#rn-474}
 
 Configurar a pasta e mostrar o comando deixava a pessoa sem saber se tinha dado
@@ -1163,6 +1217,8 @@ antes seria anunciado como recém-conectado no instante em que a tela abrisse.
 - **Origem:** pedido do dono do produto
 
 ## O `kid` é o vínculo, e a recusa tem nome (RN-475)
+
+<a id="rn-475"></a>
 
 ### RN-475 — A JWK privada gravada pelo navegador carrega o `kid` do registro; e o CLI distingue "não há chave" de "há chave e ela não serve" {#rn-475}
 
@@ -1249,6 +1305,8 @@ asserções antigas ganharam a metade que faltava.
 - **Origem:** uso real do fluxo contra o ambiente local pelo dono do produto
 
 ## Estado de ambiente na tela (RN-468)
+
+<a id="rn-476"></a>
 
 ### RN-476 — Aplicar um modelo a TODOS os agentes: um valor, N chamadas, e um botão apesar do valor ser nomeado {#rn-476}
 

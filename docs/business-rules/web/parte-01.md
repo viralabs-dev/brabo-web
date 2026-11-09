@@ -18,6 +18,8 @@ Mesmo motivo da seção de Autenticação abaixo: tamanho, não assunto.
 
 ## Cost
 
+<a id="rn-039"></a>
+
 ### RN-039 — Dot de status do projeto: risco sempre vence inatividade {#rn-039}
 
 A sidebar do dashboard mostra um dot de saúde por projeto, derivado de três
@@ -32,6 +34,8 @@ olhar, não algo a esconder atrás de "sem atividade".
 - **Onde:** `apps/web/src/lib/project-status.ts` (`deriveProjectStatus`)
 - **Teste:** `apps/web/src/lib/project-status.test.ts`
 - **Origem:** fidelidade do dashboard de projetos ao design aprovado
+
+<a id="rn-064"></a>
 
 ### RN-064 — Heartbeat não encerra sessão com trabalho pendente {#rn-064}
 
@@ -124,6 +128,8 @@ a ação pendente já cobre o caminho deles.
   [backlog](https://github.com/viralabs-dev/brabo/blob/dev/docs/explanation/backlog.md); bug real do encadeamento
   Criativo→PO→Arquiteto
 
+<a id="rn-088"></a>
+
 ### RN-088 — Falha de carregamento é dita na tela; 429 não se retenta {#rn-088}
 
 Toda tela que carrega dado da api distingue três estados, e nunca dois:
@@ -166,6 +172,8 @@ tentativas, onde repetir é a reação certa.
   de ficar vazia)
 - **Origem:** navegação real em `/projects/:id` com 1128 erros 429 no console
 
+<a id="rn-089"></a>
+
 ### RN-089 — Projeto de nome repetido se desempata na barra lateral {#rn-089}
 
 Nome de projeto **não é único** — nada no domínio impede. Quando dois ou mais
@@ -184,6 +192,8 @@ Origem concreta: uma execução de validação criou vinte projetos chamados
 - **Origem:** navegação real com a sidebar cheia de projetos de validação
 
 ## Session
+
+<a id="rn-098"></a>
 
 ### RN-098 — O nome da sessão soma à hashtag, nunca a substitui {#rn-098}
 
@@ -217,6 +227,8 @@ fora da cauda de 200 eventos.
 - **Origem:** [ADR 0061](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0061-tipo-da-sessao-na-criacao.md)
 
 ## Painel de projetos
+
+<a id="rn-099"></a>
 
 ### RN-099 — Atividades pagina o passado sem repolar o que não muda {#rn-099}
 
@@ -279,6 +291,8 @@ coluna dizia "nenhuma atividade" quando a api tinha recusado.
 
 ## Session
 
+<a id="rn-104"></a>
+
 ### RN-104 — A aba deriva do tipo gravado, e cria nesse tipo {#rn-104}
 
 O projeto tem **duas** abas de sessão — **Criativo** e **Chat** — e cada
@@ -336,6 +350,8 @@ com `key`, e quem escreve `active` recebe a chave crua do
   informação, não erro.
 - **Origem:** [ADR 0061](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0061-tipo-da-sessao-na-criacao.md)
 
+<a id="rn-107"></a>
+
 ### RN-107 — A aba Code tem um QUARTO estado: bloqueada por decisão pendente {#rn-107}
 
 Os três estados da [RN-088](#rn-088) (carregando/erro/vazio) não descrevem
@@ -385,6 +401,8 @@ sem pré-checagem própria (reage ao 409 da query que já ia rodar).
   há árvore/arquivo nenhum ali para o instante "vazio" que a pré-checagem da
   aba Code evita.
 - **Origem:** [ADR 0065](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0065-container-por-projeto-a-fronteira-deixa-de-ser-politica.md)
+
+<a id="rn-108"></a>
 
 ### RN-108 — O socket da sessão exige um ticket opaco de uso único, não o JWT reaproveitado {#rn-108}
 
@@ -483,6 +501,8 @@ deixava mais um objeto vivo tentando com o ticket morto.
   decodificar o access token existente.
 - **Origem:** sem ADR — extração/hardening pontual, não mudança estrutural.
 
+<a id="rn-113"></a>
+
 ### RN-113 — Blame no editor é anotação SOB DEMANDA — um toggle, nunca embutida na leitura do arquivo {#rn-113}
 
 A UI que consome a fundação da [RN-110](https://github.com/viralabs-dev/brabo-contracts/blob/dev/packages/docs/business-rules/contracts.md#rn-110) entra aqui: o editor da aba
@@ -507,6 +527,8 @@ commit em qualquer linha do bloco).
   lista de PRs são UI de outros dois agentes, sem risco de colisão)
 
 ## Painel de projetos
+
+<a id="rn-118"></a>
 
 ### RN-118 — A árvore do time expõe detalhe de execução por marco, e abre os "5 últimos" {#rn-118}
 
@@ -561,6 +583,8 @@ event log.
 
 ## Session
 
+<a id="rn-119"></a>
+
 ### RN-119 — O agente ATIVO da sessão é o do `agent.activated` mais recente — nunca uma cadeia fixa {#rn-119}
 
 `SessionPage` decide duas coisas a partir do MESMO agente: para quem vai a
@@ -605,6 +629,8 @@ uma.
   da definição de "agente ativo" — ele é proativo (Fase 4), não
   conversacional pelo composer.
 
+<a id="rn-120"></a>
+
 ### RN-120 — O poll de eventos da sessão pausa durante um turno em andamento {#rn-120}
 
 `useSessionEvents` buscava eventos a cada poucos segundos SEM saber de um
@@ -628,6 +654,8 @@ ficam como estavam.
   explícita segue funcionando, e a correção depende dela para nunca perder dado.
 
 ## Painel de projetos
+
+<a id="rn-121"></a>
 
 ### RN-121 — Dev agent e QA são "executores": aba própria, fora do "Time de agentes" {#rn-121}
 
@@ -684,6 +712,8 @@ mudam de lugar.
 ---
 
 ## Session
+
+<a id="rn-123"></a>
 
 ### RN-123 — Sessão criativa sem agente Criativo ativo: a primeira mensagem TAMBÉM o ativa {#rn-123}
 

@@ -99,7 +99,9 @@ describe('RunnerOnboardingPanel — o caminho é o instalador (ADR 0203)', () =>
     renderComI18n(<RunnerOnboardingPanel projectId="proj-1" />);
 
     expect(await screen.findByText(COMANDO_DO_INSTALADOR)).toBeInTheDocument();
-    expect(COMANDO_DO_INSTALADOR).toMatch(/^curl -fsSLO .+\/install\.sh && bash install\.sh$/);
+    expect(COMANDO_DO_INSTALADOR).toBe(
+      'curl -fsSLO https://github.com/viralabs-dev/brabo/releases/latest/download/install.sh && bash install.sh',
+    );
     expect(screen.getByText(/instalador do Brabo/i)).toBeInTheDocument();
     // O passo humano é dito ao lado do comando, não escondido.
     expect(

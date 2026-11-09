@@ -4981,7 +4981,7 @@ export interface components {
             status: string;
             /**
              * @description `null` while the PR has not actually been opened.
-             * @example https://github.com/daneiel/brabo/pull/42
+             * @example https://github.com/viralabs-dev/brabo/pull/42
              */
             pullRequestUrl: Record<string, never> | null;
         };

@@ -92,6 +92,7 @@ describe('AuthLayout', () => {
     montar();
 
     const link = screen.getByRole('link', { name: 'Documentação' });
+    expect(link).toHaveAttribute('href', 'https://viralabs-dev.github.io/brabo/');
     expect(link).toHaveAttribute('target', '_blank');
     // Sem `noreferrer` a página aberta recebe o `Referer` da tela de login.
     expect(link).toHaveAttribute('rel', expect.stringContaining('noreferrer'));

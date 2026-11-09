@@ -11,7 +11,7 @@ keywords: [regras de negócio, web]
 ## Painel de projetos
 
 As RNs de orçamento, metering e teto de custo moram em
-**[Regras de negócio — Custo](../custo.md)**.
+**[Regras de negócio — Custo](https://github.com/viralabs-dev/brabo/blob/dev/docs/business-rules/custo.md)**.
 
 Mesmo motivo da seção de Autenticação abaixo: tamanho, não assunto.
 Âncoras `#rn-NNN` inalteradas.
@@ -35,7 +35,7 @@ olhar, não algo a esconder atrás de "sem atividade".
 
 ### RN-064 — Heartbeat não encerra sessão com trabalho pendente {#rn-064}
 
-> **Estendida pela [RN-581](../api.md#rn-581) (AT-072):** um agente
+> **Estendida pela [RN-581](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-581) (AT-072):** um agente
 > conversacional esperando o usuário passou a ser o QUINTO sinal, e o único com
 > teto (8h, causa `conversation_idle_timeout`); a resposta ganhou
 > `aguardandoUsuarioDesde`. O resto desta regra vale como está.
@@ -62,7 +62,7 @@ terceiro pelo bug real do Criativo→PO→Arquiteto:
 1. **handoff `offered`** — o caso original acima;
 2. **`proposed_action` com status `pending`** — alguém está esperando a SUA
    decisão, e um agente pode estar suspenso esperando o desfecho
-   ([RN-073](../engine.md#rn-073));
+   ([RN-073](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-073));
 3. **agente ATIVADO ainda em turno** — o último `agent.status` de cada ator
    que já falou na sessão é `working` sem um `idle` posterior.
 
@@ -90,7 +90,7 @@ acabava sendo oferecido numa sessão já `closed`, que não aceita mais nada.
 `agent.status` (`working`/`idle`) é o que todo agente conversacional
 (Criativo/PO/Arquiteto/Dev Lead/Infra) já narra nos limites de turno, e é
 PERSISTIDO no event log, não só broadcastado no canal
-(`Engine.Sessions.LiveBroadcast.agent_status/4`, [ADR 0021](../../adr/0021-fechamento-4a-infra-e-painel.md))
+(`Engine.Sessions.LiveBroadcast.agent_status/4`, [ADR 0021](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0021-fechamento-4a-infra-e-painel.md))
 — o mesmo sinal que o painel do time já lê para derivar o roster
 (`conversationalStatus` em `apps/web/src/lib/agent-status.ts`). Reaproveitá-lo
 aqui não exigiu evento novo nenhum: o terceiro sinal é o último `agent.status`
@@ -121,7 +121,7 @@ a ação pendente já cobre o caminho deles.
   isolamento por ator, a genericidade por tipo de agente e o escopo por
   sessão)
 - **Origem:** execução real da FASE 13b; achado V, Fase H do
-  [backlog](../../explanation/backlog.md); bug real do encadeamento
+  [backlog](https://github.com/viralabs-dev/brabo/blob/dev/docs/explanation/backlog.md); bug real do encadeamento
   Criativo→PO→Arquiteto
 
 ### RN-088 — Falha de carregamento é dita na tela; 429 não se retenta {#rn-088}
@@ -136,7 +136,7 @@ o motivo existia só no console. No dashboard era pior que branco: `!projects`
 também era verdadeiro no erro, então a tela convidava a criar o **primeiro**
 projeto de um workspace que podia ter vinte.
 
-É a [RN-059](../engine.md#rn-059) do outro lado do fio: falha nunca vira resposta vazia.
+É a [RN-059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-059) do outro lado do fio: falha nunca vira resposta vazia.
 Quem falha, diz.
 
 A frase é a **da api**, extraída por `mensagemDaApi` — a mesma função que o
@@ -214,7 +214,7 @@ fora da cauda de 200 eventos.
 - **Teste:** `apps/web/src/lib/session-label.test.ts`,
   `apps/api/test/application/use-cases/sessions/session-kind-e-nome.spec.ts`,
   `apps/web/src/routes/ProjectSessionsTab.test.tsx`
-- **Origem:** [ADR 0061](../../adr/0061-tipo-da-sessao-na-criacao.md)
+- **Origem:** [ADR 0061](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0061-tipo-da-sessao-na-criacao.md)
 
 ## Painel de projetos
 
@@ -242,7 +242,7 @@ Query serve as duas com UMA busca), e cada clique desce uma janela fixa com
 `afterSeq`.
 
 **O que a paginação não pode custar.** Uma requisição por ciclo de poll — a
-mesma de antes, e a economia da [RN-090](../api.md#rn-090)/[RN-091](../api.md#rn-091) não
+mesma de antes, e a economia da [RN-090](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-090)/[RN-091](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-091) não
 regride. Três peças garantem isso:
 
 - a cauda é a query que a tela já tinha, compartilhada por `queryKey`;
@@ -286,7 +286,7 @@ uma é um `kind`: lista as sessões cujo `sessions.kind` é o seu, e o
 CTA dela cria nesse `kind`, **sem perguntar de novo**. Não há terceira
 aba listando as duas juntas.
 
-O tipo já era imutável ([RN-097](../api.md#rn-097)), e é isso que o torna
+O tipo já era imutável ([RN-097](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-097)), e é isso que o torna
 uma coordenada de navegação legítima em vez de um filtro salvo: uma sessão nunca
 troca de aba. A aba lê o campo **gravado** — não deriva o
 tipo de evento nenhum, pelo mesmo motivo da RN-097: `execution.activated`
@@ -302,11 +302,11 @@ Duas consequências que a regra fixa, e que não são detalhe de tela:
   que segue opcional ([RN-098](#rn-098)).
 - **Uma ação, um lugar de cada vez.** "Iniciar ideação" continua existindo — é
   o que traz o agente Criativo para a sessão, e dali em diante a
-  chave do dono começa a ser gasta ([RN-058](../api.md#rn-058)); ninguém entra sozinho.
+  chave do dono começa a ser gasta ([RN-058](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-058)); ninguém entra sozinho.
   O que mudou é onde ela mora: **dentro do convite** enquanto o convite está
   na tela, e na topbar quando não está. O convite APONTAVA para a
   topbar ("use Iniciar ideação, no topo da tela"), que é a
-  versão literal do problema que originou a [RN-097](../api.md#rn-097) — a
+  versão literal do problema que originou a [RN-097](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-097) — a
   ação num lugar e a explicação em outro. A topbar não pode
   simplesmente perder o botão: dá para digitar numa sessão criativa
   sem nunca ter chamado o agente Criativo, e aí o convite sai
@@ -334,12 +334,12 @@ com `key`, e quem escreve `active` recebe a chave crua do
 - **Caso de borda:** projeto sem sessão daquele tipo mostra o estado vazio
   DAQUELE TIPO, mesmo quando tem sessões do outro tipo — é
   informação, não erro.
-- **Origem:** [ADR 0061](../../adr/0061-tipo-da-sessao-na-criacao.md)
+- **Origem:** [ADR 0061](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0061-tipo-da-sessao-na-criacao.md)
 
 ### RN-107 — A aba Code tem um QUARTO estado: bloqueada por decisão pendente {#rn-107}
 
 Os três estados da [RN-088](#rn-088) (carregando/erro/vazio) não descrevem
-`sem_decisao` ([RN-105](../api.md#rn-105)): não é carregando (a api já respondeu), não é
+`sem_decisao` ([RN-105](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-105)): não é carregando (a api já respondeu), não é
 erro (ela respondeu CERTO) e não é vazio (não falta dado — falta uma DECISÃO,
 que é outra coisa). Tratar `sem_decisao` como "vazio" mostraria um editor sem
 arquivos, convidando a pensar que o repositório está vazio; tratar como "erro"
@@ -384,7 +384,7 @@ sem pré-checagem própria (reage ao 409 da query que já ia rodar).
   pré-checagem: ela descobre o bloqueio quando a query já falhou, porque não
   há árvore/arquivo nenhum ali para o instante "vazio" que a pré-checagem da
   aba Code evita.
-- **Origem:** [ADR 0065](../../adr/0065-container-por-projeto-a-fronteira-deixa-de-ser-politica.md)
+- **Origem:** [ADR 0065](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0065-container-por-projeto-a-fronteira-deixa-de-ser-politica.md)
 
 ### RN-108 — O socket da sessão exige um ticket opaco de uso único, não o JWT reaproveitado {#rn-108}
 
@@ -485,7 +485,7 @@ deixava mais um objeto vivo tentando com o ticket morto.
 
 ### RN-113 — Blame no editor é anotação SOB DEMANDA — um toggle, nunca embutida na leitura do arquivo {#rn-113}
 
-A UI que consome a fundação da [RN-110](../contracts.md#rn-110) entra aqui: o editor da aba
+A UI que consome a fundação da [RN-110](https://github.com/viralabs-dev/brabo-contracts/blob/dev/packages/docs/business-rules/contracts.md#rn-110) entra aqui: o editor da aba
 Code (`CodeEditor.tsx`) só chama `getCodeBlame` quando o usuário liga o toggle
 "Blame" — nunca junto da leitura de arquivo, que já dispara sozinha ao abrir
 uma aba. O motivo é o mesmo dos orçamentos de leitura composta (ADR 0060):
@@ -687,7 +687,7 @@ mudam de lugar.
 
 ### RN-123 — Sessão criativa sem agente Criativo ativo: a primeira mensagem TAMBÉM o ativa {#rn-123}
 
-Numa sessão `kind: 'criativa'` ([RN-097](../api.md#rn-097)) ainda sem `agent.activated`,
+Numa sessão `kind: 'criativa'` ([RN-097](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-097)) ainda sem `agent.activated`,
 mandar a primeira mensagem pelo composer ativa antes o agente
 Criativo (esperando a ativação terminar) e só então entrega aquela
 mensagem a ele pelo caminho real (`sendAgentMessage` — histórico, prompt de
@@ -698,7 +698,7 @@ não registrava nada no domínio.
 
 O clique em "Iniciar ideação" continua existindo ([RN-104](#rn-104)) — ainda é
 o que dispara a ativação quando a pessoa prefere o gesto explícito, e
-é a partir dele que a chave do dono ([RN-058](../api.md#rn-058)) começa a ser gasta em
+é a partir dele que a chave do dono ([RN-058](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-058)) começa a ser gasta em
 qualquer dos dois caminhos. O que mudou é que a PRIMEIRA MENSAGEM agora também
 conta como esse gesto: ninguém deveria precisar de um clique à parte antes de falar
 com quem a tela já o convidou a falar.

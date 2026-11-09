@@ -148,7 +148,7 @@ modelo).
 - **Teste:** `apps/web/src/routes/ProjectRagTab.test.tsx` — "CASO DE FALHA
   (degradação honesta): vectorAvailable false avisa..."; `apps/web/src/components/rag/RagCoveragePanel.test.tsx`
   — "CASO DE FALHA (degradação honesta): nunca escreve..."
-- **ADR:** [0082](../../adr/0082-chat-rag-aba-de-busca-hibrida.md)
+- **ADR:** [0082](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0082-chat-rag-aba-de-busca-hibrida.md)
 
 ### RN-253 — Citação de origem `session` navega até o EVENTO exato, reusando o mecanismo do Psicólogo {#rn-253}
 
@@ -166,7 +166,7 @@ frente.
   32-38, 49-56)
 - **Teste:** `apps/web/src/components/rag/RagCitationCard.test.tsx` —
   "caminho feliz: origem de sessão navega até o evento exato ao clicar"
-- **ADR:** [0082](../../adr/0082-chat-rag-aba-de-busca-hibrida.md)
+- **ADR:** [0082](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0082-chat-rag-aba-de-busca-hibrida.md)
 
 ### RN-254 — O botão de reindexar é maintainer/owner na TELA, espelhando a régua da rota {#rn-254}
 
@@ -186,7 +186,7 @@ ignorar o 403.
 - **Teste:** `apps/web/src/routes/ProjectRagTab.test.tsx` — "botão de
   reindexar só aparece para maintainer/owner..."; "maintainer vê e pode
   disparar a reindexação"
-- **ADR:** [0082](../../adr/0082-chat-rag-aba-de-busca-hibrida.md)
+- **ADR:** [0082](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0082-chat-rag-aba-de-busca-hibrida.md)
 
 ### RN-268 — A aba Terminal mostra o estado REAL do container, nunca finge um terminal que não existe {#rn-268}
 
@@ -217,7 +217,7 @@ o status com um `Badge` (`provisioning`/`running`/`stopped`/`failed`/
 - **Borda:** o terminal interativo em si NÃO nasce aqui — é FASE 25b, que
   segue cortada e depende da parede física do container (o worktree do
   agente vivendo lá dentro), não desta rota de leitura.
-- **ADR:** [0083](../../adr/0083-terminal-mostra-estado-real-do-container.md)
+- **ADR:** [0083](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0083-terminal-mostra-estado-real-do-container.md)
 
 ## UX Designer — o quinto agente conversacional (RN-285..287, ADR 0087)
 
@@ -251,7 +251,7 @@ que `projects-summary.repository.spec.ts` prova não cresce.
   `ux_designer_tools_test.exs`; `apps/web/src/lib/agent-status.test.ts`;
   `apps/api/test/infrastructure/persistence/drizzle/projects-summary.repository.spec.ts`
   (describe com os dois `toAgent` na mesma sessão)
-- **ADR:** [0087](../../adr/0087-ux-designer-agente.md)
+- **ADR:** [0087](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0087-ux-designer-agente.md)
 
 ---
 
@@ -301,7 +301,7 @@ badigar por isso seria ruído.
 
 ### RN-432 — Preferência de idioma vem no payload de login/refresh, nunca numa chamada extra {#rn-432}
 
-> Revisada pela [RN-891](../api.md#rn-891): a coluna aceita também `ru` e `zh-Hans`,
+> Revisada pela [RN-891](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-891): a coluna aceita também `ru` e `zh-Hans`,
 > e o padrão do web passou de `en` para `pt-BR` (ADR 0216).
 
 Fundação de i18n da interface (Onda 6a de um programa maior — a extração em
@@ -395,7 +395,7 @@ O ADR 0107 já tinha declarado esta lacuna na própria seção de Consequências
 sem projeto ainda, o ticket do canal (RN-429) não tem a quem se ancorar, e
 "Procurar pasta..." caía sempre no estado "disponível depois que o projeto
 existir" — mesmo no modo `runner`, onde a criação NÃO depende de validar
-disco (ADR 0104, item 2). Fechado pelo [ADR 0108](../../adr/0108-projeto-runner-nasce-ao-navegar-pasta-no-wizard.md):
+disco (ADR 0104, item 2). Fechado pelo [ADR 0108](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0108-projeto-runner-nasce-ao-navegar-pasta-no-wizard.md):
 `NewProjectWizard.tsx` (`handleProcurarPasta`) chama `createProject` ao
 clicar "Procurar pasta..." quando `modoDeWorkspace === 'runner'` — usando o
 caminho já digitado, ou um placeholder lexicalmente válido e claramente
@@ -435,7 +435,7 @@ mecanismo (a criação antecipada, o transporte pelo agente local) não mudou.
   cria um projeto diferente; `handleConfirm` reusa em vez de duplicar. O
   teste preexistente "'Procurar pasta...' mostra o estado declarado" (modo
   `mounted`) continua verde, sem alteração — prova que o escopo não vazou
-- **ADR:** [0108](../../adr/0108-projeto-runner-nasce-ao-navegar-pasta-no-wizard.md)
+- **ADR:** [0108](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0108-projeto-runner-nasce-ao-navegar-pasta-no-wizard.md)
   — mudança estrutural (QUANDO um projeto passa a existir no fluxo de
   criação), com o efeito colateral aceito de projeto "não provisionado"
   órfão quando o wizard é fechado sem terminar (o MESMO estado que qualquer
@@ -509,7 +509,7 @@ garante de verdade é o servidor.
 - **Teste:** `apps/api/test/application/use-cases/rag/index-local-folder.use-case.spec.ts`
   (tetos de quantidade e bytes somados rejeitam; arquivo grande/binário é
   pulado; caminho com `..`/barra inicial é recusado)
-- **ADR:** [0113](../../adr/0113-pasta-local-anexada-via-navegador-vira-chunks-scope-local.md)
+- **ADR:** [0113](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0113-pasta-local-anexada-via-navegador-vira-chunks-scope-local.md)
 - **Origem:** pedido do dono do produto
 
 ### RN-460 — A faixa de atividade do turno narra em tempo real, e o fio só recebe a resposta no fim {#rn-460}
@@ -521,7 +521,7 @@ visual: a linha de status do Claude Code. O fio só recebe a bolha de
 resposta DEPOIS que o turno termina; a regra é do CHAT (canal Phoenix) e
 vale só para os seis agentes conversacionais — o chat consultivo sem
 agente ativo (SSE, `streamChatMessage`) continua com a bolha de streaming
-de sempre, intocada. (Desde a [RN-682](../api.md#rn-682) a tela não chama mais esse
+de sempre, intocada. (Desde a [RN-682](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-682) a tela não chama mais esse
 SSE: a consultiva sem agente pede um agente antes de enviar.)
 
 **Mecanismo (engine)**: os seis servers já emitem `tool.call` DURÁVEL no
@@ -782,7 +782,7 @@ da linha.
 `origin: 'agent'` na resposta da api significa **duas coisas diferentes**, e a
 api está certa em não separá-las: o agente tem uma linha de escopo `agent` em
 `model_bindings`, **ou** a cascata pousou em `workspace` e
-[`herdarModeloDeStart`](../api.md#rn-102) trocou o valor pelo modelo do Criativo — quem
+[`herdarModeloDeStart`](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102) trocou o valor pelo modelo do Criativo — quem
 lê "de onde veio" precisa ver que veio de um AGENTE, não de um escopo que não
 existe no banco. Quem tem de separá-las é a **tela**, e até aqui ela não
 separava: a coluna Origem imprimia o enum cru, e num projeto com 3 linhas de
@@ -793,7 +793,7 @@ agente` com quatro estados por nó, e os quatro existem porque dizem coisas
 diferentes: **vigente** (é daqui que sai o modelo em uso — o único nó em
 `Badge`), **definido** (este nível tem valor próprio, mas um mais específico
 venceu), **vazio** (nenhum valor aqui) e **pulado** (tinha valor e a cascata o
-descartou por `unavailable`/`sem_tool_calling`, [RN-043](../api.md#rn-043)). Colapsar
+descartou por `unavailable`/`sem_tool_calling`, [RN-043](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-043)). Colapsar
 `definido` em `vazio` devolveria o problema do enum cru um nível abaixo.
 
 **Na herança, o nó `agente` fica VAZIO e um nó extra nomeia o Criativo.** O
@@ -835,7 +835,7 @@ por sete caminhos, e **nenhum status identifica um deles sozinho**
 (`SetModelBindingUseCase`): 400 para `scope_id` malformado ou `modelId`
 reprovado no DTO, 403 para papel abaixo de `developer`, **404 para duas causas
 indistinguíveis** ("Modelo não encontrado" e "Projeto não encontrado") e 422
-para três ([RN-040](../api.md#rn-040) sem tool calling; [RN-043](../api.md#rn-043) desativado no
+para três ([RN-040](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-040) sem tool calling; [RN-043](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-043) desativado no
 workspace ou sumido do provider). Ali o cliente NÃO pode nomear o 404 —
 escolher uma das duas frases seria a tela afirmando o que não sabe —, então
 toda recusa segue a gramática normal, com a frase da api e tom `danger`. As
@@ -910,7 +910,7 @@ incluído, e a api recusava com 403. Duas delas nem chegavam a dizer isso:
 `handleRoleChange` e `handleRemove` não tinham `try/catch` e eram chamadas de um
 `onChange`/`onClick`, então toda recusa virava `unhandled promise rejection` —
 silêncio na tela e ruído no console, a mesma classe de defeito que a
-[RN-102](../api.md#rn-102) fechou na tabela de modelos. Remover um
+[RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102) fechou na tabela de modelos. Remover um
 membro em silêncio é o pior dos três: é ação consequente e sem volta pela tela,
 porque repor exige o UUID que a linha removida levava junto.
 
@@ -1018,7 +1018,7 @@ Uniformizar a forma pioraria o conteúdo no caminho mais provável da caixa.
   tem os dados para fechá-la
 - **Adendo (aditivo, o texto acima não mudou):** as três descrições de OpenAPI
   que a tabela marca como "não corrigida" FORAM corrigidas depois, pela
-  [RN-472](../api.md#rn-472) / [ADR 0127](../../adr/0127-tetos-de-rebaixamento-em-project-members.md),
+  [RN-472](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-472) / [ADR 0127](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0127-tetos-de-rebaixamento-em-project-members.md),
   na mesma mudança que pôs os dois tetos de rebaixamento na api. Não reabra
   essa linha da tabela.
 
@@ -1028,12 +1028,12 @@ Uniformizar a forma pioraria o conteúdo no caminho mais provável da caixa.
 
 ### RN-473 — A configuração do runner pelo navegador começa pela PASTA, e a falha do binário nunca descarta o que já foi configurado {#rn-473}
 
-> **Revisada pela [RN-687](parte-05.md#rn-687) ([ADR 0203](../../adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md), 01/10):**
+> **Revisada pela [RN-687](parte-05.md#rn-687) ([ADR 0203](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md), 01/10):**
 > o fluxo que esta RN ordena SAIU — `runner-bootstrap.ts` e o teste dele foram
 > removidos com o fluxo do navegador. O que sobrevive dela é a régua do passo
 > humano dito ANTES, que o painel aplica ao comando do instalador.
 
-O fluxo da [RN-464](../api.md#rn-464)..[466](../runner.md#rn-466) rodava na ordem `chave → registro
+O fluxo da [RN-464](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-464)..[466](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-466) rodava na ordem `chave → registro
 → binário → pasta` (`configurarPastaAutomaticamente`,
 `apps/web/src/lib/runner-bootstrap.ts`). Os quatro passos não têm o mesmo risco:
 o download do binário é o ÚNICO que depende de uma release publicada no GitHub
@@ -1049,7 +1049,7 @@ binário`, e o último passo é **best-effort**:
 | passo | falha derruba o fluxo? | por quê |
 |---|---|---|
 | 1. `showDirectoryPicker` | **sim** | sem pasta não há onde gravar nada. Cancelar (`AbortError`/`NotAllowedError`) NÃO é falha — volta ao estado inicial, sem alerta |
-| 2. `brabo-runner.config.json` | **sim** | é metade do par que a [RN-466](../runner.md#rn-466) lê |
+| 2. `brabo-runner.config.json` | **sim** | é metade do par que a [RN-466](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-466) lê |
 | 3. par Ed25519 + `registerRunnerDeviceKey` + `…device-key.jwk.json` | **sim** | privada em disco sem contraparte no servidor não autentica; por isso o registro vem ANTES da gravação, e as duas são adjacentes |
 | 4. binário | **não** | devolve `falhaDoBinario` preenchido; a pessoa fica sem o agente local e a instrução final diz isso e aponta a issue em `https://github.com/viralabs-dev/brabo-runner/issues` (o runner sai só como binário, AT-774) |
 
@@ -1113,7 +1113,7 @@ existe, quando for pedido.
   mesmo com o binário em 502),
   `apps/web/src/components/RunnerOnboardingPanel.test.tsx` (a pasta é anunciada
   com o motivo da falha ao lado; cancelar não vira alerta)
-- **ADR:** [0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
+- **ADR:** [0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
   — esta RN revisa a ORDEM do fluxo que ele estabeleceu, não o mecanismo
 - **Origem:** pedido do dono do produto
 
@@ -1127,7 +1127,7 @@ certo. O quarto passo é uma espera que resolve sozinha
 
 **O mecanismo é o que já existia.** O sinal é `project.workspaceVerifiedAt`, o
 carimbo que `ConfirmProjectWorkspaceUseCase` grava quando o runner conecta
-([RN-423](../runner.md#rn-423)) e que o engine usa como PORTÃO (`terminal_executor.ex`
+([RN-423](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-423)) e que o engine usa como PORTÃO (`terminal_executor.ex`
 recusa executar em projeto `runner` com `workspace_verified_at` nulo) — a
 definição do próprio produto de "este projeto tem runner". É o mesmo dado que
 `AmbienteDoProjeto` já lê ([RN-468](#rn-468)), na mesma chave de cache
@@ -1159,21 +1159,21 @@ antes seria anunciado como recém-conectado no instante em que a tela abrisse.
   estados, um a um, cada um afirmando que os outros dois NÃO estão na tela; o
   carimbo preexistente que não conta como conexão nova; o teto estourando com
   temporizador falso e o botão que recomeça)
-- **ADR:** [0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
+- **ADR:** [0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
 - **Origem:** pedido do dono do produto
 
 ## O `kid` é o vínculo, e a recusa tem nome (RN-475)
 
 ### RN-475 — A JWK privada gravada pelo navegador carrega o `kid` do registro; e o CLI distingue "não há chave" de "há chave e ela não serve" {#rn-475}
 
-> **Revisada pela [RN-687](parte-05.md#rn-687) ([ADR 0203](../../adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md), 01/10):**
+> **Revisada pela [RN-687](parte-05.md#rn-687) ([ADR 0203](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0203-aposenta-o-fluxo-do-runner-pelo-navegador.md), 01/10):**
 > a metade do NAVEGADOR saiu com o fluxo (e o e2e que a provava num Chromium);
 > o `kid` carimbado continua valendo para a chave criada no terminal
 > (`device-key finish --id`, RN-551), e a metade do CLI — ausente × recusada —
 > continua inteira.
 
-O modo automático do [ADR 0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
-([RN-464](../api.md#rn-464)..[466](../runner.md#rn-466)) **nunca autenticou nenhuma vez** desde que
+O modo automático do [ADR 0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
+([RN-464](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-464)..[466](https://github.com/viralabs-dev/brabo-runner/blob/dev/docs/business-rules/runner.md#rn-466)) **nunca autenticou nenhuma vez** desde que
 nasceu. As duas metades desta RN são o defeito e o que o escondeu.
 
 **O `kid` não é decoração — é o único vínculo entre os dois lados.** O `id` que
@@ -1184,7 +1184,7 @@ inteira o carrega: `lerChaveDeDispositivo` só REPASSA `jwk.kid` (nunca inventa
 nem deriva um id),
 `assinarTicketComChaveDeDispositivo` o põe no header protegido do JWT de
 ticket, e o `PatAuthGuard` usa exatamente esse `kid` para achar a pública e
-verificar a assinatura ([RN-465](../api.md#rn-465)).
+verificar a assinatura ([RN-465](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-465)).
 
 O navegador **descartava o retorno** de `registerRunnerDeviceKey` nos DOIS
 caminhos (`configurarPastaAutomaticamente` e `baixarKitManual`), e
@@ -1243,7 +1243,7 @@ asserções antigas ganharam a metade que faltava.
   `apps/runner/src/index.spec.ts` (o CLI DE VERDADE, em processo separado: a
   pasta sem chave cai no bloco de uso, a pasta com chave sem `kid` cai na
   recusa nomeada, e as duas saídas não são iguais — o defeito era elas serem)
-- **ADR:** [0118](../../adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
+- **ADR:** [0118](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0118-configuracao-automatica-do-runner-pelo-navegador.md)
   — esta RN não revisa o mecanismo dele, fecha o contrato que ele deixou
   implícito entre as duas pontas
 - **Origem:** uso real do fluxo contra o ambiente local pelo dono do produto
@@ -1266,7 +1266,7 @@ concretos: `PUT projects/:id/model-binding` e os endpoints de área exigem
 `maintainer`, enquanto o binding de agente exige `developer` — a mesma pessoa
 que pode trocar linha a linha passaria a não poder fazê-lo de uma vez —, e o
 binding de projeto é também o default da SESSÃO, que a
-[RN-040](../api.md#rn-040) deixa livre de propósito. A escolha
+[RN-040](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-040) deixa livre de propósito. A escolha
 tem preço declarado: as 17 linhas passam a divergir, com origem `agent` na
 coluna Origem, e voltar a herdar continua sendo linha a linha.
 
@@ -1290,12 +1290,12 @@ apagaria da tela a diferença que o relatório parcial acabou de contar.
 
 **O gate é o do ENDPOINT, e o endpoint é o mesmo dos controles de linha.**
 `developer`, por `PUT projects/:projectId/agent-bindings/:agentSlug` — não o
-`maintainer` da seção vizinha de área ([RN-102](../api.md#rn-102)).
+`maintainer` da seção vizinha de área ([RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102)).
 O botão fica inerte para quem não alcança, e o motivo é dito UMA vez, em TEXTO,
 na legenda da seção, junto com as outras duas ações que ficam inertes: `title`
 em elemento `disabled` não abre no Chromium (ADR 0064). O filtro "aptos para
 agentes" do seletor abre MARCADO, como no picker de linha e pelo mesmo motivo
-([RN-040](../api.md#rn-040)) — com mais força aqui, porque um
+([RN-040](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-040)) — com mais força aqui, porque um
 modelo chat-only escolhido na barra não produziria um 422, e sim 17, e o
 relatório parcial contaria a mesma recusa dezessete vezes.
 

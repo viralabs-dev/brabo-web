@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Doc (AT-868): os links das páginas de RN que só resolviam no site (`../adr/…`, `../explanation/…`, `api.md`) apontam para o arquivo no GitHub do repo dono, na `dev` (`https://github.com/viralabs-dev/<repo>/blob/dev/<caminho>`). O site converte de volta para link relativo, então nada muda para quem lê por lá.
 - Correção (AT-866): o comando do instalador do `RunnerOnboardingPanel` e o link de documentação do `AuthLayout` passam a usar `viralabs-dev/brabo` por padrão (antes `daneiel/brabo`, que redireciona para o `brabo-legacy` arquivado; o link de documentação dava 404). `fixados/openapi.json` e os tipos regenerados da `dev` do `brabo-api` (exemplo de PR do backlog).
 
 - Doc (AT-862): as RNs da web saem de `docs/business-rules/web.md` (480 KB) para `docs/business-rules/web/parte-01.md` a `parte-07.md`, cortadas por faixa de RN (orçamento de 90 KB de markdown por parte). O `web.md` vira índice por parte e uma grade congelada de âncoras `#rn-NNN`, para os links antigos seguirem valendo. As 209 RNs e seus números não mudam; as refs `caminho:N` ficam nas partes.

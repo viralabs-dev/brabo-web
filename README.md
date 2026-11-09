@@ -106,7 +106,7 @@ Os workflows ficam em `.github/workflows/`:
 
 ## Documentação
 
-- `docs/business-rules/web.md`: regras de negócio da interface (RN-web).
+- `docs/business-rules/web.md`: índice das regras de negócio da interface (RN-web); as RNs moram em `docs/business-rules/web/parte-NN.md`.
 - `docs/explanation/tanstack-ai.md`: por que o TanStack AI não foi adotado.
 - `design/`: tokens (`tokens.css`), componentes (`COMPONENTS.md`) e telas (`SCREENS.md`).
 - `CLAUDE.md`: regras de desenvolvimento deste repo, e `CHANGELOG.md`.

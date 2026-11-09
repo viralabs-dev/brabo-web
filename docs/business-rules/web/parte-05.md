@@ -10,6 +10,8 @@ keywords: [regras de negócio, web]
 
 ## Decidir no chat, onde o dono está (RN-626)
 
+<a id="rn-626"></a>
+
 ### RN-626 — O chat da sessão decide o que os agentes propuseram noutra sessão, mostra o turno que estava em curso e propõe o merge — sem mudar teto nenhum {#rn-626}
 
 O uso real de 2026-09-29 mediu o custo de o dono conversar numa sessão e os dev
@@ -114,6 +116,8 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   caso de falha), `:134` (papel — caso de falha)
 - **Origem:** AT-256, AT-268, AT-265, AT-266 e AT-753 (UX-2, UX-7, UX-9), da análise do uso real de
   2026-09-29 (itens 4, 5 e 10a), rodada 27, lane web-sessao
+
+<a id="rn-631"></a>
 
 ### RN-631 — O destinatário do chat é escolhido e visível, e a oferta de handoff é casada pelo `handoffId` {#rn-631}
 
@@ -224,6 +228,8 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
   agente viram um botão)
 - **Origem:** AT-251, AT-253
 
+<a id="rn-632"></a>
+
 ### RN-632 — Leitura de PROJETO polla no ritmo de projeto, e toda tela que ouve o canal da sessão invalida pela MESMA janela {#rn-632}
 
 O uso real de 29/09 bateu o teto de 300 req/min do usuário ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579))
@@ -305,6 +311,8 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
 - **Origem:** AT-278 (extensão da [RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579); não muda a RN-108 — o
   ticket de uso único e a reconexão manual seguem como estão)
 
+<a id="rn-633"></a>
+
 ### RN-633 — O handoff manual não declara prontidão, e "já ativo" para a oferta é do projeto {#rn-633}
 
 Duas leituras da tela de Sessão deixavam o handoff obsoleto (AT-293, AT-294):
@@ -351,6 +359,8 @@ Nenhuma mudança de api nem de engine.
   sem ele, a oferta segue acionável — caso de falha)
 - **Origem:** AT-293, AT-294
 
+<a id="rn-634"></a>
+
 ### RN-634 — Depois de "Ativar execução", a tela vai à sessão de execução {#rn-634}
 
 A execução roda numa sessão NOVA (RN-135, RN-139), e a de chat de onde o
@@ -370,6 +380,8 @@ ROTA (`irParaSessao`, o `navigate` do router): a tela não depende do router.
   (navega para o `sessionId` devolvido, com aviso; recusa não navega — caso de
   falha; sem quem navegue, só avisa)
 - **Origem:** AT-295
+
+<a id="rn-638"></a>
 
 ### RN-638 — Quem pergunta "o que espera decisão" lê a fila do PROJETO, nunca a sessão mais recente {#rn-638}
 
@@ -460,6 +472,8 @@ o do chat.
 
 ## Acompanhar ao vivo sem martelar (RN-639)
 
+<a id="rn-639"></a>
+
 ### RN-639 — O que muda por token não re-renderiza a tela, e o que acompanha o bootstrap polla a 3 s e para no fim {#rn-639}
 
 Três telas faziam trabalho que ninguém via (AT-301/AT-302). A tela de Sessão
@@ -502,6 +516,8 @@ serviço que não respondia.
 
 ## Decidir no chat, onde o dono está (RN-626)
 
+<a id="rn-640"></a>
+
 ### RN-640 — A paleta neutra fecha a dívida de contraste, e cor da UI só vem de token {#rn-640}
 
 O tema escuro deixa de ser azul-petróleo e vira preto neutro com o acento
@@ -541,6 +557,8 @@ medidos nos dois temas, com o mesmo piso —; o que muda é o que se cobra:
 - **Origem:** AT-283, AT-284
 
 ## Acompanhar ao vivo sem martelar (RN-639)
+
+<a id="rn-643"></a>
 
 ### RN-643 — Abaixo de 768px a sidebar vira gaveta e o trilho do projeto vira barra horizontal; a página nunca rola de lado {#rn-643}
 
@@ -616,6 +634,8 @@ barra) fechou no ADR 0211.
 
 ## Decidir no chat, onde o dono está (RN-626)
 
+<a id="rn-644"></a>
+
 ### RN-644 — O fio corta por MENSAGEM, nunca parte uma troca e recolhe o histórico na ordem em que aconteceu {#rn-644}
 
 O levantamento visual da Rodada 29 (achado X3, AT-319) mediu três defeitos no
@@ -662,6 +682,8 @@ cronológica — o painel de log segue oferecendo esse recorte.
 - **Origem:** AT-319, achado X3 do levantamento visual "antes" da Rodada 29
 
 ## Acompanhar ao vivo sem martelar (RN-639)
+
+<a id="rn-645"></a>
 
 ### RN-645 — Configuração não se busca de novo a cada montagem, não polla, e a aba Configurações tem três faixas de moldura, não quatro {#rn-645}
 
@@ -744,6 +766,8 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
 
 ## Decidir no chat, onde o dono está (RN-626)
 
+<a id="rn-646"></a>
+
 ### RN-646 — Bloqueio e controle inerte dizem o motivo de QUEM está na tela: a aba PRs fala da lista de PRs, e Parar/Remover sem container dizem que não há container {#rn-646}
 
 Duas telas mostravam um estado certo com o texto de outro lugar (AT-323,
@@ -798,6 +822,8 @@ só terminariam em falha"), com os dois detalhes atrás do mesmo `<details>`.
 - **Origem:** AT-323, AT-324. Não muda o portão da RN-105/RN-494 (a lista da aba
   PRs segue bloqueada sem imagem decidida; só a fila do chat e o aviso de PR
   pronta escapam do portão, AT-843, decisão do dono de 08/11/2026), nem a régua de subida da RN-521/RN-574.
+
+<a id="rn-648"></a>
 
 ### RN-648 — A sidebar, o card do Dashboard e o painel de artefatos não se contradizem: cada estado vazio diz QUAL sessão leu, e contador e lista contam na mesma unidade {#rn-648}
 
@@ -871,6 +897,8 @@ muda.
   [RN-198](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-198) (qual sessão a sidebar lê) e aplica a [RN-470](parte-03.md#rn-470)
 
 ## Acompanhar ao vivo sem martelar (RN-639)
+
+<a id="rn-651"></a>
 
 ### RN-651 — No telefone, o painel da Sessão é gaveta, a barra quebra linha, e a tabela vira cartões {#rn-651}
 
@@ -953,6 +981,8 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 
 ## O autor de cada fala do fio é o ator do evento (RN-652)
 
+<a id="rn-652"></a>
+
 ### RN-652 — `chat.message` é desenhado sob o ATOR do evento — pessoa, agente ou desconhecido —, nunca sob quem vê a tela {#rn-652}
 
 Até aqui todo `chat.message` saía com o nome e o avatar de quem estava logado:
@@ -1009,6 +1039,8 @@ sempre dele.
 
 ## O motivo da política em cada cartão de Aprovações (RN-656)
 
+<a id="rn-661"></a>
+
 ### RN-661 — O modo automático é OFERECIDO em lote para o time no início da execução, e a oferta diz o que ele não libera {#rn-661}
 
 Na aba Executores, com a execução ativa e o time de execução na tela, um cartão
@@ -1043,6 +1075,8 @@ automático (RN-471).
 - **Origem:** AT-315 (levantamento da AT-309, linha "Modo automático")
 
 ## O fluxo do runner pelo navegador é aposentado (RN-687, ADR 0203)
+
+<a id="rn-687"></a>
 
 ### RN-687 — O painel do runner manda para o instalador; o navegador não gera chave, não baixa binário e não grava pasta {#rn-687}
 
@@ -1103,6 +1137,8 @@ sem consumidor de produção e NÃO foi removido — é decisão à parte.
 
 ## O teto da RN-418 vale também pela porta tipada (RN-689)
 
+<a id="rn-693"></a>
+
 ### RN-693 — Ativar o agente não é conversa: a dica de abertura fica no fio até a primeira mensagem, e os campos de texto da sessão não convidam o autofill {#rn-693}
 
 Medido no uso real da v7.0.0: "Iniciar ideação" grava `agent.activated` (e
@@ -1132,6 +1168,8 @@ E o composer e os campos de texto das perguntas estruturadas levam
   atributos do composer); `apps/web/src/routes/SessionPage.perguntas-estruturadas.test.tsx:201`
   (atributos dos campos das perguntas)
 - **Origem:** AT-353
+
+<a id="rn-694"></a>
 
 ### RN-694 — O catálogo de modelos tem busca, a credencial oferece o sync, e o primeiro modelo vai ao time num clique {#rn-694}
 
@@ -1163,6 +1201,8 @@ Três atalhos sobre ações que já existiam, nenhum endpoint novo (AT-357):
 
 ## O instalador oferece os modelos locais, e não confunde o dev com uma instalação (RN-691, RN-692)
 
+<a id="rn-701"></a>
+
 ### RN-701 — O painel de contexto não afirma "0" sobre regras que saíram da janela {#rn-701}
 
 O painel "Contexto da sessão" lê os eventos já baixados (RN-180). Numa sessão
@@ -1192,6 +1232,8 @@ momento em que ele aparecer, antes de qualquer correção.
   ("RN-701 (AT-365): com as regras fora da janela, o contador não afirma 0";
   o caso de falha evitado é o "alcançando o começo da sessão" ao lado)
 - **Origem:** AT-365
+
+<a id="rn-708"></a>
 
 ### RN-708 — O projeto novo diz o próximo passo, derivado do que já se lê {#rn-708}
 
@@ -1228,6 +1270,8 @@ de `/providers`.
   não lido não vira pendente") e `apps/web/src/routes/ProjectOverviewTab.test.tsx`
   ("primeiros passos (RN-708, AT-372)")
 - **Origem:** AT-372
+
+<a id="rn-709"></a>
 
 ### RN-709 — O cartão diz o tempo certo do verbo, o teto não oferece "sempre permitir", e o plano diz quanto custa e só sobe agente com tarefa {#rn-709}
 
@@ -1279,6 +1323,8 @@ decisão, fechados juntos:
   `apps/engine/test/engine/agents/dev_lead_tools_test.exs` (`resumo_do_plano/1`)
 - **Origem:** AT-371, AT-381
 
+<a id="rn-712"></a>
+
 ### RN-712 — O fio da sessão mostra o que acabou de acontecer, uma vez e legível {#rn-712}
 
 Medido no teste real de 02/10 (`loja-teste`): a faixa do turno mostrava
@@ -1328,6 +1374,8 @@ quando o turno termina entregando um formulário (`gravar_texto_do_turno(state,
 - **Origem:** AT-375
 
 ## Uma chave de cache, uma pergunta (RN-718)
+
+<a id="rn-718"></a>
 
 ### RN-718 — Quem grava as ações de uma sessão no cache faz a MESMA leitura do fio {#rn-718}
 

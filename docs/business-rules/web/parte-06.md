@@ -10,6 +10,8 @@ keywords: [regras de negócio, web]
 
 ## A Anamnese não paga duas vezes pela mesma janela, e o resgate de gate não reinicia ciclo que espera alguém (RN-722)
 
+<a id="rn-728"></a>
+
 ### RN-728 — A mensagem do usuário tem uma bolha só, e o card do Dev Lead tem um primário só {#rn-728}
 
 - **Regra:** (1) a bolha OTIMISTA da mensagem enviada a um agente sai do fio
@@ -36,6 +38,8 @@ keywords: [regras de negócio, web]
 - **Origem:** AT-409 e AT-410 (TP-01 de 03/10); a forma do card é decisão do
   dono ("Secundário com aviso")
 
+<a id="rn-736"></a>
+
 ### RN-736 — O campo "Nome do projeto" não ganha foco sozinho nem se chama "name" {#rn-736}
 
 - **Regra:** no passo de detalhes do assistente de projeto, o campo "Nome do
@@ -55,6 +59,8 @@ keywords: [regras de negócio, web]
   confere os quatro atributos)
 - **Origem:** AT-418 (TP-01, 2ª rodada de 03/10)
 
+<a id="rn-740"></a>
+
 ### RN-740 — O campo "Nome do projeto" declara que não sugere nada, e o resto da lacuna é da extensão {#rn-740}
 
 - **Regra:** `SEM_AUTOFILL` acrescenta `aria-autocomplete="none"` (a árvore
@@ -69,6 +75,8 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:29` (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx` ("RN-740: …")
 - **Origem:** AT-425 (TP-01, 3ª rodada de 03/10)
+
+<a id="rn-747"></a>
 
 ### RN-747 — O plano do Dev Lead diz quantos dev agents sobem, não quantos pede {#rn-747}
 
@@ -90,6 +98,8 @@ keywords: [regras de negócio, web]
   ("agente a mais no plano é dito como NÃO subindo")
 - **Origem:** AT-437 (08/10: o plano aprovado prometia "2 agentes no módulo
   único… ~40% de ganho" e a execução subiu 1 dev)
+
+<a id="rn-748"></a>
 
 ### RN-748 — A espera por aprovação fecha a faixa do turno e leva o cartão à vista {#rn-748}
 
@@ -113,6 +123,8 @@ keywords: [regras de negócio, web]
 - **Origem:** AT-432 (TP-01: o Dev Lead em `awaiting_approval` com a faixa
   "Montando o plano de execução" ativa e o cartão fora da vista)
 
+<a id="rn-749"></a>
+
 ### RN-749 — A resposta cortada pelo teto oferece a continuação num clique {#rn-749}
 
 - **Regra:** a bolha do agente cujo fecho termina na linha que o engine
@@ -133,6 +145,8 @@ keywords: [regras de negócio, web]
 - **Origem:** AT-434 (TP-01: a resposta cortada não oferecia ação, e o usuário
   teve de adivinhar "continue")
 
+<a id="rn-750"></a>
+
 ### RN-750 — O colapso por agente deixa o fecho de cada agente aberto {#rn-750}
 
 - **Regra:** o colapso de mensagens por agente depois que ele passa o bastão
@@ -150,6 +164,8 @@ keywords: [regras de negócio, web]
   não vira grupo`)
 - **Origem:** AT-435 (TP-01: no handoff o fio recolhia a resposta inteira do
   Criativo, "Criativo · 2 mensagens", escondendo o resumo)
+
+<a id="rn-751"></a>
 
 ### RN-751 — A Sessão e o catálogo não saltam: composer, aba ativa, barra de lote e rolagem {#rn-751}
 
@@ -180,6 +196,8 @@ keywords: [regras de negócio, web]
   quem rolou pra cima`)
 - **Origem:** AT-442 (TP-01, levantamento visual)
 
+<a id="rn-755"></a>
+
 ### RN-755 — Ligar o modo automático não aprova o cartão onde foi ligado {#rn-755}
 
 - **Regra:** no `ApprovalCard` (o mesmo nas quatro superfícies), o botão
@@ -200,6 +218,8 @@ keywords: [regras de negócio, web]
   não sai)
 - **Origem:** AT-443 (TP-01: o modo ligado num cartão pendente não o
   aprovava, e nada na tela dizia por quê)
+
+<a id="rn-766"></a>
 
 ### RN-766 — O gate parado esperando clique é dito, e a oferta em lote cobre os subagentes de QA {#rn-766}
 
@@ -224,6 +244,8 @@ keywords: [regras de negócio, web]
   automático, e ficou 25 min pendente com só o contador de Aprovações como
   sinal)
 
+<a id="rn-768"></a>
+
 ### RN-768 — Na aba PRs, o texto ao lado do Merge diz a verdade do botão {#rn-768}
 
 - **Regra:** gate pendente continua AVISO e não trava o merge
@@ -239,6 +261,8 @@ keywords: [regras de negócio, web]
   bloqueada com gate pendente NÃO diz que o merge segue disponível")
 - **Origem:** AT-451 (TP-01 de 09/10: "O merge segue disponível — a decisão é
   sua" ao lado de um "Merge" desabilitado)
+
+<a id="rn-769"></a>
 
 ### RN-769 — Encerrar sessão com execução ativa pergunta antes, e o estado aparece traduzido {#rn-769}
 
@@ -264,6 +288,8 @@ keywords: [regras de negócio, web]
   em 3 s com o dev agent no meio de um `npm install`, e a barra disse "Sessão
   closed")
 
+<a id="rn-788"></a>
+
 ### RN-788 — Decisões e linha do tempo do time não afirmam sobre o que não leram {#rn-788}
 
 - **Regra:** no painel "Contexto da sessão", "Decisões registradas" segue o
@@ -284,6 +310,8 @@ keywords: [regras de negócio, web]
   (a carga da Visão geral segue no teto)
 - **Origem:** AT-463 (TP-01 de 09/10)
 
+<a id="rn-789"></a>
+
 ### RN-789 — Na tela de Sessão, a sidebar marca a aba onde a sessão está listada {#rn-789}
 
 - **Regra:** a tela de Sessão publica a aba que o TIPO da sessão implica —
@@ -297,6 +325,8 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/lib/session-rolagem-fim.test.ts` (criativa marca
   "Criativo"; aba de outro projeto ou inválida não vale)
 - **Origem:** AT-463 (TP-01 de 09/10)
+
+<a id="rn-794"></a>
 
 ### RN-794 — Sem execução vigente, a tela diz o que ficou pendente e religa pelo mesmo caminho {#rn-794}
 
@@ -322,6 +352,8 @@ keywords: [regras de negócio, web]
   execução encerrada)
 - **Origem:** AT-469
 
+<a id="rn-800"></a>
+
 ### RN-800 — A linha do tempo do time filtra por família, não pela roster da sessão mais recente {#rn-800}
 
 - **Regra:** a árvore "Linha do tempo do time" da Visão geral lê a sessão de
@@ -338,6 +370,8 @@ keywords: [regras de negócio, web]
   a mais recente)
 - **Origem:** AT-471 (TP-01 de 10/10)
 
+<a id="rn-801"></a>
+
 ### RN-801 — O nome da nova sessão não convida o gerenciador de senhas {#rn-801}
 
 - **Regra:** o campo "Nome (opcional)" do formulário de nova sessão (aba
@@ -352,6 +386,8 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` ("AT-472: o nome
   da nova ideação não convida o gerenciador de senhas")
 - **Origem:** AT-472 (TP-01 de 10/10)
+
+<a id="rn-803"></a>
 
 ### RN-803 — A oferta em lote do modo automático fica inerte até saber quem já está ligado {#rn-803}
 
@@ -370,6 +406,8 @@ keywords: [regras de negócio, web]
   (RN-803): antes de a leitura de agent_autonomy chegar, o botão fica inerte e
   diz por quê")
 - **Origem:** AT-477 (TP-01 de 10/10)
+
+<a id="rn-804"></a>
 
 ### RN-804 — O cartão do plano do Dev Lead oferece o modo automático em lote antes de aprovar {#rn-804}
 
@@ -395,6 +433,8 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/components/ApprovalCard.modo-automatico-do-plano.test.tsx`
 - **Origem:** AT-476 (TP-01 de 10/10); AT-753 (checkbox no lugar da oferta separada)
 
+<a id="rn-815"></a>
+
 ### RN-815 — O "Parar execução" conta as tarefas em curso E em revisão, lidas do backlog {#rn-815}
 
 - **Regra:** a confirmação de "Parar execução" ([RN-763](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-763)) conta as
@@ -417,6 +457,8 @@ keywords: [regras de negócio, web]
   `apps/web/src/components/ModoAutomaticoDoTime.test.tsx` ("RN-816 (AT-488): no
   cartão do plano não afirma que a execução começou")
 - **Origem:** AT-488 (TP-01 de 10/10)
+
+<a id="rn-816"></a>
 
 ### RN-816 — O botão não muda de lugar quando um bloco tardio chega {#rn-816}
 
@@ -441,6 +483,8 @@ keywords: [regras de negócio, web]
   muda de lugar quando o backlog chega")
 - **Origem:** AT-480 (TP-01 de 10/10)
 
+<a id="rn-821"></a>
+
 ### RN-821 — Registrado rodando e observado parado oferece "Subir de novo" {#rn-821}
 
 - **Regra:** na `/containers`, a linha com registro `running` e estado
@@ -457,6 +501,8 @@ keywords: [regras de negócio, web]
   e "AT-494: registrado running e observado running (ou não observado) continua
   já de pé")
 - **Origem:** AT-494
+
+<a id="rn-822"></a>
 
 ### RN-822 — O primeiro clique em Merge abre o cartão sem esperar a fila {#rn-822}
 
@@ -476,6 +522,8 @@ keywords: [regras de negócio, web]
   o 1º clique em Merge abre o cartão sem esperar a fila do projeto voltar" e
   "RN-822: a fila lida DEPOIS da proposta, sem ela, vence o cartão local")
 - **Origem:** AT-493 (TP-01 de 10/10)
+
+<a id="rn-824"></a>
 
 ### RN-824 — Depois do mapa de módulos, o composer diz que o próximo passo é confirmar a arquitetura {#rn-824}
 
@@ -498,6 +546,8 @@ keywords: [regras de negócio, web]
   motivo vem em texto visível")
 - **Origem:** AT-491 (opção a: o gesto humano é desenho, o defeito era a tela
   não avisar)
+
+<a id="rn-825"></a>
 
 ### RN-825 — O chat mostra as PRs prontas para merge e propõe o merge ali {#rn-825}
 
@@ -522,6 +572,8 @@ keywords: [regras de negócio, web]
   mostra o cartão ali")
 - **Origem:** AT-497 (TP-01 conduzido pelo chat do Criativo)
 
+<a id="rn-826"></a>
+
 ### RN-826 — O chat lista as tarefas bloqueadas e desbloqueia ali {#rn-826}
 
 - **Regra:** na mesma área, a fila "Tarefas bloqueadas" lista as tarefas
@@ -543,6 +595,8 @@ keywords: [regras de negócio, web]
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
 
+<a id="rn-829"></a>
+
 ### RN-829 — O avatar de quem fala no fio é o do agente, no streaming e depois dele {#rn-829}
 
 - **Regra:** a bolha do agente em streaming e a bolha persistida da resposta
@@ -561,6 +615,8 @@ keywords: [regras de negócio, web]
   identificado, degrada para o avatar genérico")
 - **Origem:** AT-503 (TP-01 11ª, nota de UX do chat §2.1)
 
+<a id="rn-830"></a>
+
 ### RN-830 — O composer respeita a composição de acento, e o fio fala com o leitor de tela {#rn-830}
 
 - **Regra:** Enter só envia quando não há composição em curso
@@ -576,6 +632,8 @@ keywords: [regras de negócio, web]
   composição chega ao handler de envio", "a faixa do turno é uma região de
   status educada"; falha: "Enter no meio da composição de acento NÃO envia")
 - **Origem:** AT-503 (nota de UX do chat §3)
+
+<a id="rn-831"></a>
 
 ### RN-831 — A mensagem que não foi enviada fica no fio, com "tentar de novo" {#rn-831}
 
@@ -595,6 +653,8 @@ keywords: [regras de negócio, web]
   FALHA: erro no envio desarma o turno e a mensagem fica \"não enviada\"
   (RN-831)")
 - **Origem:** AT-503 (nota de UX do chat §3)
+
+<a id="rn-833"></a>
 
 ### RN-833 — Todo socket Phoenix do web se descarta, e o substituído não age {#rn-833}
 
@@ -621,6 +681,8 @@ keywords: [regras de negócio, web]
   `apps/web/src/lib/canal-vivo.test.ts`
 - **Origem:** AT-500
 
+<a id="rn-834"></a>
+
 ### RN-834 — O nome do projeto no assistente não se chama "title" {#rn-834}
 
 - **Regra:** o campo "Nome do projeto" do assistente de criação usa `id`/`name`
@@ -636,6 +698,8 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx` ("RN-834: id e
   name do nome do projeto não parecem dado de contato…")
 - **Origem:** AT-501 (TP-01 de 10/10)
+
+<a id="rn-835"></a>
 
 ### RN-835 — O "Desbloquear" da Visão geral não se move e diz o que aconteceu {#rn-835}
 
@@ -661,6 +725,8 @@ keywords: [regras de negócio, web]
   geral — as tarefas bloqueadas vêm antes…")
 - **Origem:** AT-502 (TP-01 de 10/10)
 
+<a id="rn-836"></a>
+
 ### RN-836 — O fio oferece "ir ao fim" quando chega conteúdo para quem subiu {#rn-836}
 
 - **Regra:** com a pessoa longe do fim do fio (a guarda dos 120px da
@@ -679,6 +745,8 @@ keywords: [regras de negócio, web]
   do fim e com mensagens novas, mostra o contador…", "aprovação nova realça o
   botão", "pendente decidida apaga o realce", "troca de uma pendente por outra realça"; falha: "no fim, conteúdo novo não mostra botão")
 - **Origem:** AT-506 (Melhorias de UX do Chat, item 1.3)
+
+<a id="rn-837"></a>
 
 ### RN-837 — Markdown do fio: blocos novos e prefixo de stream sem marcador cru {#rn-837}
 
@@ -704,6 +772,8 @@ keywords: [regras de negócio, web]
   emCurso) não é alterado")
 - **Origem:** AT-507 (Melhorias de UX do Chat, 10/10, item 1.2-a)
 
+<a id="rn-841"></a>
+
 ### RN-841 — A fila "PRs prontas" se relê sem recarregar a página {#rn-841}
 
 - **Regra:** extensão da [RN-825](#rn-825). A lista de PRs abertas continua
@@ -726,6 +796,8 @@ keywords: [regras de negócio, web]
   RN-841…"), `apps/web/src/lib/acoes-da-sessao.test.ts`
 - **Origem:** AT-510
 
+<a id="rn-842"></a>
+
 ### RN-842 — O rótulo do nome do projeto não diz "Nome" {#rn-842}
 
 - **Regra:** o rótulo visível do campo de nome do assistente de criação é
@@ -744,6 +816,8 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx` ("RN-842: o
   rótulo visível do campo não traz \"nome\"…")
 - **Origem:** AT-511 (TP-01 de 11/10)
+
+<a id="rn-843"></a>
 
 ### RN-843 — Um cartão de decisão por ação no chat {#rn-843}
 
@@ -766,6 +840,8 @@ keywords: [regras de negócio, web]
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
 - **Origem:** AT-512
+
+<a id="rn-855"></a>
 
 ### RN-855 — A Visão geral mostra como rodar o entregável, declarado e não verificado {#rn-855}
 
@@ -790,6 +866,8 @@ keywords: [regras de negócio, web]
   (null) o cartão não aparece"; "só localhost/127.0.0.1 com porta vira link";
   "infra.pr_opened relê o cartão; outro evento não")
 - **Origem:** AT-517 (ADR 0213)
+
+<a id="rn-861"></a>
 
 ### RN-861 — As perguntas em aberto são fila própria no chat, e o aviso de prontidão não bloqueia {#rn-861}
 
@@ -819,6 +897,8 @@ keywords: [regras de negócio, web]
   cartão com o controle inerte e o motivo em texto")
 - **Origem:** AT-521
 
+<a id="rn-867"></a>
+
 ### RN-867 — O aviso do gate estacionado diz o motivo gravado, e a pergunta em aberto aponta o cartão dela {#rn-867}
 
 - **Regra:** o `gate.rescue_parked` tem dois emissores: o resgate por tempo
@@ -836,6 +916,8 @@ keywords: [regras de negócio, web]
   resgate por tempo grava idadeSegundos e lê como tempo"; falha: "a pergunta
   em aberto não tem idadeSegundos e não fala em 2 h")
 - **Origem:** AT-528
+
+<a id="rn-882"></a>
 
 ### RN-882 — O composer da Sessão não perde tecla na digitação rápida {#rn-882}
 
@@ -858,6 +940,8 @@ keywords: [regras de negócio, web]
   teclas com a página atrasada chega inteira")
 - **Origem:** AT-533, AT-539
 
+<a id="rn-883"></a>
+
 ### RN-883 — A oferta em lote do modo automático também no chat da Sessão {#rn-883}
 
 - **Regra:** com a sessão ativa e com execução (`sessaoTemExecucao`), o chat
@@ -874,6 +958,8 @@ keywords: [regras de negócio, web]
   feliz: com execução, a oferta aparece e só o clique grava"; falha: "sem
   execução, nada aparece e nem a leitura acontece")
 - **Origem:** AT-537
+
+<a id="rn-884"></a>
 
 ### RN-884 — A pergunta respondida oferece "Corrigir a história" {#rn-884}
 
@@ -895,6 +981,8 @@ keywords: [regras de negócio, web]
   dito em texto")
 - **Origem:** AT-538
 
+<a id="rn-887"></a>
+
 ### RN-887 — O bloqueio da tarefa é ortogonal ao status, e quem mostra lê os dois {#rn-887}
 
 - **Regra:** tarefa bloqueada continua `todo`/`in_progress` com
@@ -914,6 +1002,8 @@ keywords: [regras de negócio, web]
   `apps/engine/test/engine/agents/dev_lead_tools_test.exs` ("a tarefa
   bloqueada diz BLOQUEADA e o motivo; a todo normal não")
 - **Origem:** AT-536
+
+<a id="rn-889"></a>
 
 ### RN-889 — A oferta em lote do modo automático aparece no chat de qualquer sessão ativa do projeto em execução {#rn-889}
 
@@ -941,6 +1031,8 @@ keywords: [regras de negócio, web]
   aparece", "sem execução no projeto: nada aparece e nem a leitura acontece")
 - **Origem:** AT-540
 
+<a id="rn-901"></a>
+
 ### RN-901 — A oferta de modo automático do chat inclui os dev agents do plano aprovado {#rn-901}
 
 - **Regra:** estende a RN-889. `roster.activatedAgents` do resumo de projetos
@@ -964,12 +1056,16 @@ keywords: [regras de negócio, web]
 - **Origem:** AT-573 (TP-01 18ª, 19/10: a 1ª tarefa parou em `dev.awaiting_approval`
   porque o dev não estava no modo automático)
 
+<a id="rn-911"></a>
+
 ### RN-911 — Provider é global; Configurações do projeto só escolhem modelo; a matriz mora na Conta {#rn-911}
 
 - **Regra:** credencial de LLM, catálogo de modelos (curadoria, preços, sync e o navegador do Hugging Face) e o relatório de gasto por chave saíram das Configurações do projeto. Moram em `/providers` (as três peças) e o gasto por chave também na aba Gastos, só para `owner` (RN-060). O projeto guarda só a ESCOLHA: modelo por agente e por área, o "aplicar a todos" (RN-476), o critério de roteamento e "melhores modelos". A matriz "Quem pode aprovar o quê" saiu das Configurações e é uma seção da Conta (`/account`), para qualquer pessoa logada. O atalho "Ativar e aplicar aos N agentes" (RN-694 item 3) deixou de existir. Link antigo `?section=credentials`, `model-catalog`, `key-spend` ou `approval-matrix` abre a aba no topo, sem erro. O vazio de "Modelos por agente", o subtítulo de "melhores modelos" e os Primeiros passos (RN-708) apontam para `/providers`. Revisa a RN-694 (item 3) e a RN-708 (destinos). Sem ADR: é fronteira de tela.
 - **Onde:** `apps/web/src/routes/settings/sumario.ts:48` (`SECOES_DE_CONFIGURACOES`), `apps/web/src/routes/ProjectSettingsTab.tsx:62` (`ProjectSettingsTab`), `apps/web/src/routes/AccountPage.tsx:36` (`AccountPage`)
 - **Teste:** `apps/web/src/routes/settings/sumario.test.ts` (as quatro chaves não existem); `apps/web/src/routes/settings/SumarioDeConfiguracoes.test.tsx` (a aba não monta as quatro seções, nem para `owner`); `apps/web/src/routes/AccountPage.test.tsx` (a matriz, e o caso de falha no idioma); `apps/web/src/routes/configuracoes.orcamento.test.tsx` (a volta à aba não busca credencial); `apps/web/src/components/catalogo-com-busca.test.tsx` (sem atalho)
 - **Origem:** AT-597 e AT-598 (EP-031), pedidos do dono de 22/10.
+
+<a id="rn-912"></a>
 
 ### RN-912 — O modelo da área é uma caixa na linha do lead, em "Modelos por agente" {#rn-912}
 
@@ -978,12 +1074,16 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/routes/settings/ModelsSection.caixa-da-area.test.tsx` (AT-601: motivo sem vigente no lead); `apps/web/src/routes/ProjectSettingsTab.test.tsx` (marcar, a área recusando, FALHA PARCIAL, desmarcar com e sem 404, seletor do lead na área, não-seguidores, `developer` inerte); `apps/web/src/routes/settings/papel-na-tabela-de-agentes.test.tsx` (os dois mínimos); `bindings-em-lote.test.tsx` (lote único); `cascata.test.tsx`; `heranca.test.tsx`; `filtro-de-aptos.test.tsx` (RN-040); `preferencia-de-roteamento.test.tsx` (ADR 0166)
 - **Origem:** AT-600 (EP-031), pedido do dono de 22/10.
 
+<a id="rn-925"></a>
+
 ### RN-925 — Cada container tem página de detalhe com o estado registrado e o observado separados e as URLs declaradas {#rn-925}
 
 - **Regra:** `/containers/$projectId` (carregada sob demanda) abre a partir de cada linha de `/containers`. Só lê o que já existe: a linha da visão geral (a [RN-486](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-486): registrado e observado nunca se fundem; projeto "nunca provisionado" tem texto próprio, a imagem/versão, os recursos, a postura de rede da decisão vigente e o modo de execução) e as URLs de `GET projects/:projectId/run-instructions`, que a tela diz serem declaradas pela Infra e não verificadas, nunca verdes ([RN-855](#rn-855)); sem declaração, texto próprio. A leitura da página polla no ritmo de projeto (15 s, [RN-632](parte-05.md#rn-632)), nunca nos 5 s da lista. Subir, parar e remover são o MESMO componente da lista (`AcoesDoContainer`), com as mesmas recusas locais em texto ([RN-521](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-521), [RN-574](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-574), [RN-610](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-610)) e o papel do endpoint por `roleAtLeast`.
 - **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:24` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:34` (`AcoesDoContainer`)
 - **Teste:** `apps/web/src/routes/ContainerDetalhePage.test.tsx:92` (caminho feliz com ritmo de 15 s, nunca provisionado com URLs vazias, projeto fora da lista); `apps/web/src/routes/ContainersPage.test.tsx` cobre as ações extraídas
 - **Origem:** AT-609 (EP-030), fatia da AT-608.
+
+<a id="rn-931"></a>
 
 ### RN-931 — As telas de providers e do catálogo mostram só o que tem chave do TITULAR, com a cor do provider {#rn-931}
 
@@ -992,12 +1092,16 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/routes/ProvidersPage.test.tsx:102` (só os com chave do titular, e a falha que mostra todos), `apps/web/src/components/ModelCatalogSection.test.tsx:399` (aba "sem chave" com modelo ativo; seleção entre abas; busca nomeia a aba que casa), `apps/web/src/lib/models.test.ts:126` (`providerAtivo`)
 - **Origem:** AT-607 (EP-026), tela; a rota é a RN-926.
 
+<a id="rn-939"></a>
+
 ### RN-939 — A página do container edita a rede só para `maintainer`, valida antes e recria por `container_recreate` {#rn-939}
 
 - **Regra:** a seção "Rede" da página de detalhe lê `GET projects/:projectId/container/network` (sem poll, `staleTime` de configuração; `null` tem texto próprio) e salva num PUT só, por botão. O controle fica inerte abaixo de `maintainer` (papel efetivo, `roleAtLeast`) com o motivo dito uma vez em texto. O cliente espelha a régua da api (RN-932) só para poupar a ida e volta; a recusa `400 rede_invalida` aparece com o campo e a mensagem da api e `409 sem_sessao` tem texto próprio. A tela diz que a porta é publicada só em `127.0.0.1` e que a configuração só vale com o container recriado. "Aplicar e subir de novo" PROPÕE `container_recreate` (RN-934: teto absoluto, sempre pede aprovação humana) e fica inerte em `runner` ("runner depois"), sem container registrado, sem sessão e com rede editada e não salva. As portas publicadas que o daemon observa (`portasPublicadas`) saem como `http://127.0.0.1:<porta>` com a ressalva de que nada garante que algo escute (RN-468): sem sonda e nunca verde.
 - **Onde:** `apps/web/src/components/RedeDoContainer.tsx:25` (`RedeDoContainer`), `apps/web/src/lib/rede-do-container.ts:30` (`validarRedeEmTexto`).
 - **Teste:** `apps/web/src/components/RedeDoContainer.test.tsx` (rede nula, salvar, recusa no cliente, 400 com campo, 409, papel, `container_recreate`, `runner`, portas observadas).
 - **Origem:** AT-608 (EP-030), ADR 0228.
+
+<a id="rn-943"></a>
 
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
@@ -1006,12 +1110,16 @@ keywords: [regras de negócio, web]
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 
+<a id="rn-951"></a>
+
 ### RN-951 — O fio da Sessão acompanha SEMPRE a última mensagem {#rn-951}
 
 - **Regra:** revê a [RN-173](parte-02.md#rn-173), o item 4 da [RN-751](#rn-751) e a [RN-836](#rn-836) (decisão do dono de 31/10). Cada evento ou ação nova no fio o leva à última mensagem, mesmo que a pessoa tenha rolado para cima: a guarda dos 120 px e a "intenção de estar no fim" saíram, e o botão "↓ N novas" (com o realce de aprovação) foi aposentado. O acompanhamento dispara por IDENTIDADE (`seq` do último evento e ids das ações, não pelo tamanho das listas, que não muda no teto de 200), pelo texto do streaming e por `ResizeObserver` no CONTEÚDO e no CONTAINER (faixa de atividade, composer e pendências mudam a altura). `?highlightEvent` segue levando ao evento citado na abertura, mas não desliga o acompanhamento: a primeira mudança depois o devolve ao fim. A rolagem é instantânea (`block: 'end'`) e o foco não se move. Entre duas mensagens a pessoa pode rolar e ler; a próxima a traz de volta.
 - **Onde:** `apps/web/src/lib/session-rolagem.ts:20` (`identidadeDoFio`), `apps/web/src/lib/session-rolagem.ts:36` (`useRolagemDoFio`).
 - **Teste:** `apps/web/src/lib/session-rolagem.test.tsx` (mensagem nova com a pessoa acima, `length` igual com `seq` novo, ação nova, container que encolhe, `highlightEvent`, rajada, streaming, sem conteúdo).
 - **Origem:** AT-635 (EP-031).
+
+<a id="rn-963"></a>
 
 ### RN-963 — O gasto tem página GLOBAL e aba do PROJETO, e o orçamento tem editor {#rn-963}
 
@@ -1026,12 +1134,16 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 - **Teste:** `apps/web/src/routes/SpendPage.test.tsx` (owner × não-owner, sem provider para quem não é owner); `apps/web/src/routes/ProjectSpendTab.test.tsx` (owner só do projeto, membro por agente e área, editor grava, teto inválido e papel baixo recusados)
 - **Origem:** AT-632
 
+<a id="rn-967"></a>
+
 ### RN-967 — A faixa do turno mostra o plano que o agente registrou no turno em curso {#rn-967}
 
 - **Regra:** a faixa de atividade do turno (RN-460) mostra, acima dos passos, o último `agent.plan` do agente do turno com `seq` posterior à abertura dele (o último `agent.status: working`), derivado dos eventos JÁ carregados: nenhuma requisição nova (RN-632) e nenhum estado por token (RN-639). Ferramentas e plano seguem os padrões Tool e Plan; a fila de uma mensagem segue o Queue, com o cancelar inerte enquanto cancela (RN-673, não otimista).
 - **Onde:** `apps/web/src/lib/plano-do-turno.ts:9` (`planoDoTurno`), `apps/web/src/components/TurnActivityStrip.tsx:47` (`TurnActivityStrip`).
 - **Teste:** `apps/web/src/lib/plano-do-turno.test.ts`, `apps/web/src/components/ai-elements/passos.test.tsx`.
 - **Origem:** AT-652 (EP-031).
+
+<a id="rn-968"></a>
 
 ### RN-968 — O formulário de perguntas estruturadas é um questionário passo a passo {#rn-968}
 
@@ -1040,12 +1152,16 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 - **Teste:** `apps/web/src/routes/SessionPage.perguntas-estruturadas.test.tsx`, `apps/web/src/components/shadcn/registro.test.tsx`.
 - **Origem:** AT-653 (EP-031).
 
+<a id="rn-970"></a>
+
 ### RN-970 — Na árvore do time, cada delegação de um lead aparece como subagente {#rn-970}
 
 - **Regra:** na árvore do time (Visão geral/Executores), cada delegação gravada por um lead (`delegation.*`) aparece no ramo dele como subagente — nome, desfecho (efetivada/falhou/dispensada, falha com a origem) e se o subagente está trabalhando agora —, derivada dos eventos já carregados, sem requisição nova; delegação fora da janela não aparece. O ramo próprio do subagente continua.
 - **Onde:** `apps/web/src/lib/timeline-tree.ts:293` (`subagenteDoMarco`), `apps/web/src/components/AgentTimelineTree.tsx:51` (`AgentTimelineTree`).
 - **Teste:** `apps/web/src/lib/timeline-tree.test.ts`, `apps/web/src/components/ai-elements/passos.test.tsx`.
 - **Origem:** AT-655 (EP-031).
+
+<a id="rn-971"></a>
 
 ### RN-971 — A paleta de comandos Ctrl+K/⌘K busca projetos, sessões e ações só do que já está em memória {#rn-971}
 
@@ -1054,12 +1170,16 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 - **Teste:** `apps/web/src/lib/paleta-de-comandos.test.ts`, `apps/web/src/components/PaletaDeComandos.test.tsx` (zero `fetch`).
 - **Origem:** AT-656 (EP-031).
 
+<a id="rn-972"></a>
+
 ### RN-972 — O código no chat e na aba Código é realçado pelo shiki {#rn-972}
 
 - **Regra:** o bloco de código do chat (`CodeFence`, agora o Code Block do shadcn com botão Copiar) e o arquivo da aba Código são realçados pelo shiki com o tema próprio dos `--syntax-*` (sem hex; os dois temas saem do `data-theme` e o contraste dos oito papéis segue medido, RN-185). O shiki é carregado sob demanda (`import()` dinâmico, motor de regex em JS, gramática por linguagem) e fica fora do JS inicial; enquanto carrega, e para linguagem sem gramática, vale o realce por regex da RN-158. Só o tokenizador troca: o recolher de 20/8 linhas (RN-712), a virtualização e o minimapa da aba Código (RN-239..242) não mudam. Copiar diz "Copiado" por 2 s e a falha da área de transferência vira texto, nunca silêncio.
 - **Onde:** `apps/web/src/lib/realce-shiki.ts:61` (`carregarRealce`), `apps/web/src/lib/tema-shiki-brabo.ts:19` (`temaShikiBrabo`).
 - **Teste:** `apps/web/src/lib/realce-shiki.test.ts`.
 - **Origem:** AT-657 (EP-031).
+
+<a id="rn-973"></a>
 
 ### RN-973 — A série diária do gasto é desenhada pelo Chart, carregado sob demanda, e também existe como tabela {#rn-973}
 
@@ -1073,12 +1193,16 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Teste:** `apps/web/src/components/GraficoDeGastoPorDia.test.tsx` (figura com janela, tabela com os dias, série vazia)
 - **Origem:** AT-658
 
+<a id="rn-974"></a>
+
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
 - **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
 - **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:973` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
 - **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
 - **Origem:** AT-675 (EP-031); AT-803 (EP-031).
+
+<a id="rn-975"></a>
 
 ### RN-975 — O painel de pendências do chat é uma faixa de abas, e cada fila pagina de 3 em 3 {#rn-975}
 
@@ -1087,12 +1211,16 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 - **Teste:** `apps/web/src/lib/paginacao-de-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`, `apps/web/src/components/PerguntasEmAberto.test.tsx`.
 - **Origem:** AT-680 (EP-031).
 
+<a id="rn-976"></a>
+
 ### RN-976 — As ações de passo da conversa são sugestões acima do destinatário, com o mesmo predicado e o mesmo endpoint, e a inércia é dita em texto {#rn-976}
 
 - **Regra:** "Estou pronto", "Confirmar arquitetura pronta", "Responder N perguntas em aberto" e "Endereçar handoff a outro agente…" saem de dentro e de cima do composer e viram uma fileira de sugestões fixa, ACIMA da linha "Para". O predicado de cada uma e o handler (e o endpoint) são os de antes (RN-142, RN-657, RN-672, RN-861, RN-712); a caixa de mensagem fica sozinha na linha e ocupa a largura do fio (780px, antes ~448px). O clique só chama o handler da página, nunca escreve no campo (RN-882), e nada é clicado sozinho; merge nunca vira sugestão. Ação inerte diz o motivo em TEXTO visível, nunca em `title` (RN-102, ADR 0064); as de prontidão e o handoff manual ficam inertes sem o papel `developer`, o mínimo do endpoint, com o motivo de papel dito uma vez. A ordem no DOM (a fileira antes do "Para", e o Enviar como primeiro botão do composer) é contrato do E2E `turno-pelo-canal`.
 - **Onde:** `apps/web/src/routes/SessionComposer.tsx:150` (`acoes`), `apps/web/src/components/ai-elements/suggestion.tsx:50` (`SugestoesDeAcao`).
 - **Teste:** `apps/web/src/routes/SessionPage.sugestoes-no-chat.test.tsx`, `apps/web/src/components/ai-elements/suggestion.test.tsx`.
 - **Origem:** AT-681 (EP-031).
+
+<a id="rn-977"></a>
 
 ### RN-977 — O fio da Sessão para de seguir quando a pessoa sobe e oferece "Ir ao fim" {#rn-977}
 

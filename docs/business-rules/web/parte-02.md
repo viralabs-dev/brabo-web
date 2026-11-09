@@ -10,6 +10,8 @@ keywords: [regras de negócio, web]
 
 ## Painel de projetos
 
+<a id="rn-124"></a>
+
 ### RN-124 — O PO narra épico/história criados no fio, com link direto pro Backlog {#rn-124}
 
 `backlog.epic_created`/`backlog.story_created` — que o PO já gravava no
@@ -33,6 +35,8 @@ tenta realçar a história recém-criada dentro da aba, que é fora de escopo.
   título, e o link navega pra `?tab=backlog` de verdade.
 - **Origem:** pedido do usuário — link do PO pras histórias criadas, direto
   pro Backlog.
+
+<a id="rn-125"></a>
 
 ### RN-125 — O aceite de handoff é INLINE no fio, com CTA pro Dev Lead apontando pra Executores {#rn-125}
 
@@ -77,6 +81,8 @@ não há "onde mais olhar".
 - **Origem:** pedido do usuário — aceite de handoff também inline no fio,
   não só na topbar.
 
+<a id="rn-126"></a>
+
 ### RN-126 — Promoção de história é decidível INLINE no fio, com o mesmo mecanismo da aba Backlog {#rn-126}
 
 `backlog.story_promotion_proposed` (RN-048) ganha o mesmo tratamento que
@@ -111,6 +117,8 @@ usava só no log colapsado da sidebar.
   narra com o motivo)
 - **Origem:** pedido do usuário — promoção de história inline no fio, opção
   barata reusando RN-048 em vez de gatear a criação da história.
+
+<a id="rn-131"></a>
 
 ### RN-131 — Três corridas confirmadas AO VIVO no fio da sessão: convite por cima do histórico, indicador ansioso e turno preso em `handleReadiness` {#rn-131}
 
@@ -173,6 +181,8 @@ de fora dessa correção, e sem ela a bolha do agente ficava presa vazia
 - **Origem:** investigação AO VIVO do produto no Chrome — os três reproduzidos
   manualmente antes da correção.
 
+<a id="rn-136"></a>
+
 ### RN-136 — O card acionável de handoff no chat só considera quem CONVERSA nesta tela {#rn-136}
 
 > **Desde o [ADR 0185](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0185-estou-pronto-fecha-os-dois-gates.md)
@@ -207,6 +217,8 @@ precisa ter) um jeito de ser aceito por aqui.
   nenhum
 - **Origem:** investigação de código + teste ao vivo no Chrome — o handoff
   pro Dev Lead nunca ficava acionável depois da FASE 14d
+
+<a id="rn-137"></a>
 
 ### RN-137 — "Ativar execução" tem atalho inline no card do Dev Lead, sem baixar a exigência de papel {#rn-137}
 
@@ -250,6 +262,8 @@ então replicar o `disabled={!hasModuleMap}` da Visão Geral travaria o botão
   atalho, com a divergência de papel confirmada e mantida por decisão
   (não corrigida por alinhamento automático)
 
+<a id="rn-138"></a>
+
 ### RN-138 — Mensagens de um agente colapsam depois que ele passa o bastão {#rn-138}
 
 A timeline do chat mostrava tudo sempre expandido, sem agrupar por autor —
@@ -292,6 +306,8 @@ de agente quebra — só agrupa o que é realmente consecutivo.
   timeline heterogênea intercalada do chat
 
 ---
+
+<a id="rn-144"></a>
 
 ### RN-144 — A aba Criativo não lista a sessão de execução vigente {#rn-144}
 
@@ -337,6 +353,8 @@ front por sessão antiga.
 - **Origem:** achado de investigação de código + teste ao vivo — sessão real
   com execução ativa aparecendo misturada na aba Criativo
 
+<a id="rn-147"></a>
+
 ### RN-147 — O cabeçalho do grupo colapsado mostra o ícone do agente, não só o nome {#rn-147}
 
 O `Disclosure` de `timelineAgrupada` ([RN-138](#rn-138)) recebia só a STRING
@@ -363,6 +381,8 @@ estável para isso. Sem `id`, ou agente fora do roster, degrada para
   (`UserIcon`), não só um SVG decorativo genérico
 - **Origem:** investigação de código — `Disclosure` já aceitava `ReactNode`
   em `titulo`; faltava passar o avatar junto do nome
+
+<a id="rn-148"></a>
 
 ### RN-148 — Histórias com promoção pendente ao mesmo tempo viram carrossel, não N cards {#rn-148}
 
@@ -419,6 +439,8 @@ pedido.
 - **Origem:** pedido do usuário — histórias produzidas em lote pelo PO
   ficavam difíceis de decidir uma por uma no fio
 
+<a id="rn-152"></a>
+
 ### RN-152 — A branch de uma task diz de qual dev agent e módulo ela é, no dropdown da aba Code {#rn-152}
 
 `CodeBranchPicker` já listava toda branch do repositório, inclusive as dos
@@ -466,6 +488,8 @@ usa pro roster ao vivo: módulo sem chave fixa em `AGENTS` herda ícone/cor de
 - **Origem:** pedido do usuário — nenhuma pista visual de quem criou a
   branch no dropdown rico da FASE 26b
 
+<a id="rn-156"></a>
+
 ### RN-156 — indicador de espera de 5s tem texto fixo, sem interpolar o agente {#rn-156}
 
 O indicador que aparece depois de 5s sem resposta (`pensandoVisivel`) mostra
@@ -479,6 +503,8 @@ no indicador de espera não ajudava a leitura.
   `apps/web/src/routes/SessionPage.ordenacao-e-avisos.test.tsx`
 - **Origem:** achado de PR #286 — o texto anterior nomeava um agente que já
   estava visível no cabeçalho
+
+<a id="rn-157"></a>
 
 ### RN-157 — criação de épico/história pelo PO vira aviso compacto, não bolha completa {#rn-157}
 
@@ -497,6 +523,8 @@ dele, e segue elegível ao colapso por agente ([RN-138](#rn-138)).
   `apps/web/src/routes/SessionPage.ordenacao-e-avisos.test.tsx`
 - **Origem:** achado de PR #286 — a bolha completa tinha peso visual igual a
   uma resposta de agente de verdade, para uma ação de metadado do PO
+
+<a id="rn-158"></a>
 
 ### RN-158 — Markdown leve com highlight no chat {#rn-158}
 
@@ -534,6 +562,8 @@ comentário de linha `#` mapeado e caíam no fallback de JS). Fences
 - **Origem:** PR #288 — respostas de agente com listas, código e links
   chegavam como texto cru no fio, sem estrutura nenhuma
 
+<a id="rn-159"></a>
+
 ### RN-159 — Artefatos Gerados agrupados por agente {#rn-159}
 
 O painel "Artefatos gerados" da Sessão (`ContextAside` em
@@ -564,6 +594,8 @@ endereçar isso é fora do escopo desta entrega.
 - **Origem:** PR #288 — o painel não distinguia quem gerou cada artefato
   nem cobria PR de ADR e épico/história, só PR de dev
 
+<a id="rn-160"></a>
+
 ### RN-160 — "Confirmar arquitetura pronta" exige pelo menos 1 história promovida {#rn-160}
 
 O botão "Confirmar arquitetura pronta" (handoff Arquiteto→Dev Lead, via
@@ -584,6 +616,8 @@ história promovida, o botão mostra a dica em `title` explicando o motivo.
 
 Só valia no CLIENTE: uma chamada HTTP direta ignorava a regra. Fechado por
 [RN-404](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-404) (ADR 0094), que revalida no backend.
+
+<a id="rn-161"></a>
 
 ### RN-161 — Aceitar o handoff pro Dev Lead encadeia a ativação de execução quando o papel efetivo já autoriza {#rn-161}
 
@@ -613,6 +647,8 @@ seja reportado como "não foi possível aceitar o handoff".
   describe "problema 4"
 - **Decisão arquitetural:** [ADR 0069](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0069-fusao-condicional-do-handoff-com-a-ativacao-de-execucao.md)
 - **Origem:** pedido do usuário (desenho aprovado)
+
+<a id="rn-172"></a>
 
 ### RN-172 — Handoff e aprovação são o DESFECHO do turno {#rn-172}
 
@@ -662,6 +698,8 @@ decisão de quem conversa.
 
 ---
 
+<a id="rn-173"></a>
+
 ### RN-173 — O fio acompanha tudo que cresce, e só quem já estava no fim {#rn-173}
 
 O chat rola para o fim quando o conteúdo cresce — **e não só quando chega
@@ -694,6 +732,8 @@ quem aplica o teto e a centralização no fio é o contêiner dele
   ter rolado para cima)
 - **Origem:** uso real no `exp001` — "o scroll do chat deve ficar sempre no
   final seguindo o chat" e "aprovação mal diagramado deve ficar ao centro"
+
+<a id="rn-174"></a>
 
 ### RN-174 — Ação que dispara turno de agente arma o indicador do fio {#rn-174}
 
@@ -736,6 +776,8 @@ prazo de 5s não muda: turno que responde rápido continua sem mostrar nada.
   5s para ter uma resposta, a web deve apresentar uma animação no chat
   mostrando que o agente está pensando"
 
+<a id="rn-176"></a>
+
 ### RN-176 — Tabela em Markdown no fio vira tabela de verdade {#rn-176}
 
 O Markdown leve do chat ([RN-158](#rn-158)) passa a reconhecer **tabela GFM** e
@@ -771,6 +813,8 @@ No balão, a tabela **rola na horizontal** em vez de espremer coluna: o fio tem
 - **Origem:** uso real no `exp001` — "a tabela dentro da mensagem do Mapa de
   Módulos do arquiteto tem que ficar bem estruturada em formato tabela,
   utilizar design system do próprio Brabo"
+
+<a id="rn-177"></a>
 
 ### RN-177 — O log mostra tudo, e o histórico se recolhe por ORIGEM {#rn-177}
 
@@ -832,6 +876,8 @@ descrito aqui.
   mensagens mas abaixo vira o grupo de log de eventos, sistema, llm, harness,
   agente, usuário"
 
+<a id="rn-178"></a>
+
 ### RN-178 — O painel da sessão lê do último para o primeiro, e a lista de regras pagina {#rn-178}
 
 As quatro seções do painel de contexto (regras de negócio, artefatos gerados,
@@ -863,6 +909,8 @@ nada é ruído ocupando altura.
   e regras de negócio sempre em ordem do último para o primeiro de acordo com
   a data" e "caso as regras de negócio ficar acima de 5, deve-se paginar"
 
+<a id="rn-179"></a>
+
 ### RN-179 — O artefato do PO é uma ÁRVORE: épico → história → tarefa {#rn-179}
 
 O painel "Artefatos gerados" ([RN-159](#rn-159)) listava épico e história lado
@@ -893,6 +941,8 @@ não corresponde a nada que a [RN-151](https://github.com/viralabs-dev/brabo-api
   aparece na raiz")
 - **Origem:** uso real no `exp001` — "mostrar também as tarefas criadas no
   artefato do PO, mas abaixo do épico e ter opção de colapsar"
+
+<a id="rn-180"></a>
 
 ### RN-180 — O painel diz o que NÃO está mostrando {#rn-180}
 
@@ -937,6 +987,8 @@ streaming.
 - **Origem:** revisão da própria rodada — o teto de 200 existia em silêncio nas
   quatro seções
 
+<a id="rn-181"></a>
+
 ### RN-181 — Delegação de área aparece no fio {#rn-181}
 
 Quando uma área (QA, Infra) delega a subagentes e consolida o veredito, os três
@@ -962,6 +1014,8 @@ se o próximo passo é trocar a chave, esperar o provider ou abrir um bug.
   (describe "RN-181")
 - **Origem:** uso real no `exp001` — "quando houver uma nova tentativa e
   consolidação de algum agente deve apresentar no chat"
+
+<a id="rn-182"></a>
 
 ### RN-182 — O tema é escolhido, persistido e aplicado antes do primeiro paint {#rn-182}
 
@@ -993,6 +1047,8 @@ conhece e que renderizaria sem tema nenhum.
   de boot")
 - **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
+<a id="rn-183"></a>
+
 ### RN-183 — A preferência de tema tem uma fonte, e o atributo do `<html>` é a verdade {#rn-183}
 
 Ler, gravar, alternar e observar o tema é `apps/web/src/lib/tema.ts` — o botão
@@ -1021,6 +1077,8 @@ dois deixarem de bater.
 - **Teste:** `apps/web/src/lib/tema.test.ts`
 - **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
+<a id="rn-184"></a>
+
 ### RN-184 — Contraste é medido nos DOIS temas {#rn-184}
 
 Enquanto o tema claro era inalcançável ([RN-182](#rn-182)), medir só o escuro
@@ -1048,6 +1106,8 @@ existe. Era defeito, e o tema claro não tem por que ser pior que o primário.
   `apps/web/src/design-contraste.test.ts`,
   `apps/web/test/design-contraste.test.ts`
 - **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
+
+<a id="rn-185"></a>
 
 ### RN-185 — Os oito papéis de sintaxe, e o valor do handoff só entra medido {#rn-185}
 
@@ -1080,6 +1140,8 @@ correção feita de um lado só.
   de sintaxe sobre --code-bg")
 - **ADR:** [0074](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0074-tema-alcancavel-e-o-boot-sob-csp.md)
 
+<a id="rn-195"></a>
+
 ### RN-195 — A sidebar recolhe para uma trilha de ícones, com a preferência persistida {#rn-195}
 
 `Shell.tsx` tinha largura fixa (248px) e nenhum jeito de encolher. Passa a
@@ -1105,6 +1167,8 @@ vê recolhido foi o usuário quem pediu, e está gravado.
   `apps/web/src/routes/Shell.test.tsx`
 - **Origem:** PROGRAMA 28, Onda 2, frente B —
   `design_handoff_brabo/README.md` seção "Navigation shell"
+
+<a id="rn-196"></a>
 
 ### RN-196 — Projetos expansíveis revelam as abas do projeto, N ao mesmo tempo {#rn-196}
 
@@ -1164,6 +1228,8 @@ projeto aberto abre um flyout com as mesmas abas.
   teclado, roving tabindex, link por projeto), `apps/web/src/routes/project-tabs.test.tsx`
 - **Origem:** PROGRAMA 28, Onda 2, frente B; ADR 0211 (AT-404)
 
+<a id="rn-197"></a>
+
 ### RN-197 — Duas cores de projeto, dois propósitos: identidade não é status {#rn-197}
 
 O handoff pede um "ponto de cor do projeto" na linha expandida e o mesmo
@@ -1193,6 +1259,8 @@ continua valendo, e é o handoff que diverge aqui.
 - **Origem:** PROGRAMA 28, Onda 2, frente B — divergência entre
   `design_handoff_brabo/CHECKLIST-CONFRONTO.md` e RN-151
 
+<a id="rn-199"></a>
+
 ### RN-199 — Botão de tema no rodapé, funcional recolhido {#rn-199}
 
 O rodapé da sidebar ganha um botão sol/lua que consome a API de
@@ -1205,6 +1273,8 @@ continuam descrevendo o tema atual e o clique continua alternando.
 - **Teste:** `apps/web/src/lib/tema.test.ts` (a API, inalterada por esta RN)
   — `Shell.test.tsx` não duplica a suite do tema, só monta o Shell
 - **Origem:** PROGRAMA 28, Onda 2, frente B
+
+<a id="rn-200"></a>
 
 ### RN-200 — Só Projetos e Atividades como itens globais {#rn-200}
 
@@ -1220,6 +1290,8 @@ expandida — o que sai é o item solto sem destino.
   globais inertes")
 - **Origem:** PROGRAMA 28, Onda 2, frente B —
   `design_handoff_brabo/README.md` seção "Navigation shell"
+
+<a id="rn-201"></a>
 
 ### RN-201 — Projeto/aba ativos persistem entre páginas; o colapso da sidebar é SÓ do usuário {#rn-201}
 
@@ -1279,6 +1351,8 @@ projeto (`publicarAbaAtiva`), não só de `brabo.tab`.
   auto-colapso foi revista pelo
   [ADR 0126](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0126-trilho-vertical-de-navegacao-do-projeto.md)
 
+<a id="rn-202"></a>
+
 ### RN-202 — A aba `sessions` continua "Chat", nunca "Chat RAG" {#rn-202}
 
 O handoff de design mais recente do PROGRAMA 28 chama a aba consultiva de
@@ -1303,6 +1377,8 @@ com o dado por trás dele — nunca antes.
   "Chat", nunca "Chat RAG"'`)
 - **ADR:** [0078](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0078-moldura-de-tela-e-o-registro-de-abas-diverge-do-handoff.md)
 
+<a id="rn-203"></a>
+
 ### RN-203 — O handoff é referência visual, não teto de quantas abas o produto tem {#rn-203}
 
 O handoff de design lista 7 abas de projeto (Visão geral, Criativo, Código,
@@ -1326,6 +1402,8 @@ errado.
   previu continuam no registro'`)
 - **ADR:** [0078](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0078-moldura-de-tela-e-o-registro-de-abas-diverge-do-handoff.md)
 
+<a id="rn-210"></a>
+
 ### RN-210 — "Recomendado" é uso real e custo, nunca nota calculada {#rn-210}
 
 O bloco "Melhores modelos por capacidade" (Configurações) não tem coluna de
@@ -1348,6 +1426,8 @@ coluna Origem de `ModelsSection` já usa para o binding pulado.
 - **Teste:** `apps/web/src/routes/ProjectSettingsTab.test.tsx`
   (describe "MelhoresModelosPorCapacidadeSection")
 - **ADR:** [0077](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0077-ranking-de-modelos-por-capacidade-sem-nota-inventada.md)
+
+<a id="rn-211"></a>
 
 ### RN-211 — Gasto por provider na tela é Ranking, não paleta categórica inventada {#rn-211}
 
@@ -1373,6 +1453,8 @@ agregação cruzada dia×provider no backend desta onda.
   incluindo provider'`)
 - **ADR:** [0076](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0076-provider-volta-a-ser-dimensao-de-gasto.md)
 
+<a id="rn-212"></a>
+
 ### RN-212 — Bloco "por projeto" é o TokenMeter plugado ao orçamento real {#rn-212}
 
 A aba de Gastos ganha um bloco por PROJETO (não por audiência):
@@ -1391,6 +1473,8 @@ compacto de `ProjectPage.tsx`).
 - **Teste:** `apps/web/src/routes/ProjectSpendTab.test.tsx` (describe "o
   orçamento do projeto")
 
+<a id="rn-214"></a>
+
 ### RN-214 — KPI de economia com modelo local fica de fora por falta de preço contrafactual {#rn-214}
 
 `TokenMeter` já tem `savingsBRL`/`savingsPct` prontos para receber o
@@ -1406,6 +1490,8 @@ existir um preço contrafactual defensável e versionado.
 - **Onde:** `apps/web/src/routes/ProjectSpendTab.tsx` (comentário "KPI de
   economia com modelos locais — CORTE DECLARADO", fim do arquivo)
 
+<a id="rn-215"></a>
+
 ### RN-215 — Aba Problemas nasce com estado vazio honesto {#rn-215}
 
 Não há lint nem teste integrado sobre o código do projeto gerido; a aba
@@ -1419,6 +1505,8 @@ badge "3"). Mesmo padrão já usado pelo Terminal (FASE 25b) e pelo item
   "Problemas diz honestamente que não há lint/teste integrado, sem
   contagem inventada"
 
+<a id="rn-216"></a>
+
 ### RN-216 — Aba Saída nasce com estado vazio honesto {#rn-216}
 
 Não há stream de comando de build/deploy nesta aba — ele dependeria do
@@ -1428,6 +1516,8 @@ que `git push`/PR/deploy não saem pelo terminal de qualquer forma (RN-106).
 - **Onde:** `apps/web/src/routes/code/CodeBottomPanel.tsx`
 - **Teste:** `apps/web/src/routes/code/CodeBottomPanel.test.tsx` — "Saída
   diz honestamente que não há stream de comando, sem simular execução"
+
+<a id="rn-217"></a>
 
 ### RN-217 — Status bar da aba Código só mostra dado real {#rn-217}
 
@@ -1443,6 +1533,8 @@ rastreável e não há lint/teste integrado (mesma decisão da RN-215).
   mostra ↑/↓ real da branch atual" e "sem ahead/behind (branch em dia), a
   status bar não mostra o par vazio"
 
+<a id="rn-218"></a>
+
 ### RN-218 — Foco visível nas abas próprias do painel inferior {#rn-218}
 
 As abas de `CodeBottomPanel.tsx` são implementação própria (não o `Tabs` do
@@ -1451,6 +1543,8 @@ design system) e não herdavam o `:focus-visible` calibrado que
 `Input.module.css` (ADR 0036), incluindo `forced-colors`.
 
 - **Onde:** `apps/web/src/routes/code/CodeBottomPanel.module.css`
+
+<a id="rn-227"></a>
 
 ### RN-227 — Selo de status da sessão cobre os 5 estados reais, não os 4 do handoff {#rn-227}
 
@@ -1466,6 +1560,8 @@ mentiria sobre isso.
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` — describe
   "ProjectSessionsTab — selo de status (RN-227)"
 
+<a id="rn-228"></a>
+
 ### RN-228 — Filtro pill agrupa os 2 estados sem pill própria por TRAJETÓRIA {#rn-228}
 
 Os filtros pill do handoff (todas/ativas/fechadas/abortadas) só cobrem 4
@@ -1478,6 +1574,8 @@ chegou a lugar nenhum, é "sessão em jogo". `closing` entra no pill
   (`correspondeAoFiltro`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` — describe
   "filtro pill agrupa os 2 estados sem pill própria (RN-228)"
+
+<a id="rn-229"></a>
 
 ### RN-229 — KPI "custo do mês" da aba Criativo é o consumo do ATOR, não o total do projeto {#rn-229}
 
@@ -1492,6 +1590,8 @@ autoriza a ver.
 - **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx` (`CriativoKpis`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` — describe
   "KPIs da aba Criativo", casos "caminho feliz" e "CASO DE FALHA"
+
+<a id="rn-230"></a>
 
 ### RN-230 — KPI "taxa ideação → commit" é declarado ausente, nunca calculado {#rn-230}
 

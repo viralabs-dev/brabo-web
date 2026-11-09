@@ -10,6 +10,8 @@ keywords: [regras de negócio, web]
 
 ## A busca do RAG deixa rastro, e o rastro congela os pesos (RN-479..481)
 
+<a id="rn-491"></a>
+
 ### RN-491 — A Infra elege entre as candidatas do Arquiteto, e a eleição vira uma NOVA versão de `artifact.project_image` {#rn-491}
 
 `propose_container_start` fecha a metade que a RN-487 deixou declarada em
@@ -94,6 +96,8 @@ antes de prometer isso.
 - **ADR:** [0130](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0130-broker-de-container.md), [0133](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0133-infra-elege-imagem-do-roteamento.md)
 - **Origem:** plano do dono do produto, Parte 1 / PR 1.5
 
+<a id="rn-499"></a>
+
 ### RN-499 — O handoff da Infra tem card acionável PRÓPRIO, fora do fio — sem alargar `AGENTES_DE_CHAT` {#rn-499}
 
 `OfferInfraHandoffUseCase` oferece o handoff pro Infra Lead
@@ -151,6 +155,8 @@ aceite.
   só depois do container de pé" equivalente a "dev agent nunca começa"
 
 ## O navegador de pastas servido pela api (RN-504)
+
+<a id="rn-504"></a>
 
 ### RN-504 — O navegador de pastas é escopado à base de projetos e NUNCA sai dela {#rn-504}
 
@@ -225,6 +231,8 @@ da interface, o binário segue sendo refinado); o protocolo em
 - **Origem:** plano do dono do produto, PR 4
 
 ## A base decide o que a criação de projeto oferece (RN-513)
+
+<a id="rn-513"></a>
 
 ### RN-513 — Com base consentida, `mounted` é o pré-selecionado com `<base>/<slug>` sugerido; sem base, ou sem saber, ele não é oferecido {#rn-513}
 
@@ -309,6 +317,8 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
 ---
 
 ## O picker do modo Runner volta a ler o disco de QUEM ESCOLHE (RN-533)
+
+<a id="rn-533"></a>
 
 ### RN-533 — Em modo `runner` o navegador de pastas pergunta ao agente local, e a tela diz de quem é o disco {#rn-533}
 
@@ -420,6 +430,8 @@ duas devem.
 
 ## Criar projeto não provisiona repositório (RN-541)
 
+<a id="rn-541"></a>
+
 ### RN-541 — Criar um projeto NÃO cria repositório git; o bootstrap é adiado até o handoff do Arquiteto {#rn-541}
 
 Criar um projeto e provisionar o git eram, na prática, o mesmo gesto — e o que
@@ -485,6 +497,8 @@ há mais provider escolhido.
 ---
 
 ## A tela reconhece um agente local de MÁQUINA já pareado (RN-548, FASE 30)
+
+<a id="rn-548"></a>
 
 ### RN-548 — Com chave de MÁQUINA ativa, o painel do runner para de mandar parear e passa a dizer o que falta — sem nunca afirmar que o agente está de pé {#rn-548}
 
@@ -618,6 +632,8 @@ diferença não é escolha de desenho: é a forma do endpoint.
 
 ## A conversão de modo deixa de ser um salto no escuro (RN-559, RN-560)
 
+<a id="rn-559"></a>
+
 ### RN-559 — A conversão para `mounted` abre o MESMO navegador de pastas do wizard; o ramo `runner` continua digitado, e a tela diz por quê {#rn-559}
 
 `ExecutionModeSection` era o **único dos cinco lugares** do produto em que se
@@ -705,6 +721,8 @@ vira autosave** ([RN-469](parte-03.md#rn-469)).
 - **ADR:** [0111](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0111-conversao-de-execution-mode-de-projeto-existente.md),
   [0141](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0141-base-unica-dos-projetos-montados.md)
 - **Origem:** AT-049 (EP-021/HS-033)
+
+<a id="rn-560"></a>
 
 ### RN-560 — O aviso da conversão diz o que ela recusa, o que ela leva e o que ela NÃO leva — nomeando o caminho antigo {#rn-560}
 
@@ -802,6 +820,8 @@ interrupção sem causa.
 - **Origem:** AT-050 (EP-021/HS-034); as condicionais, AT-144 (EP-021/HS-034)
 
 ## A chave de dispositivo ganha tela, e a tela diz o alcance de revogar (RN-561)
+
+<a id="rn-561"></a>
 
 ### RN-561 — A aba Configurações lista e revoga chave de dispositivo, marcando a ESPÉCIE — porque revogar a de MÁQUINA derruba o agente local em TODOS os projetos do dono {#rn-561}
 
@@ -925,6 +945,8 @@ revogação mostra a frase da PRÓPRIA api e a linha **continua** na lista.
 
 ---
 
+<a id="rn-568"></a>
+
 ### RN-568 — A presença de QA, SecOps e dos membros de área no painel do time é decidida pela sessão INTEIRA, não pela janela de 200 eventos {#rn-568}
 
 A Visão geral e a aba Executores montam a roster com `deriveAgentRoster` sobre
@@ -998,6 +1020,8 @@ da guarda, o mesmo dos outros dois fatos.
   pelo resumo)
 - **Origem:** AT-047 — a lacuna declarada no `CLAUDE.md` e nos comentários das
   duas telas
+
+<a id="rn-572"></a>
 
 ### RN-572 — A árvore do time traduz todo tipo `dev.*` que o engine emite, e só diz trabalho em curso onde o painel diz `trabalhando` {#rn-572}
 
@@ -1083,6 +1107,8 @@ delas estava coberta pela comparação com o vocabulário do engine.
 
 ## O repositório nasce no aceite do handoff ao Arquiteto, e a execução não começa sem ele (RN-582)
 
+<a id="rn-600"></a>
+
 ### RN-600 — A criação de projeto pela tela não manda o corpo que a api já se sabe que recusa, uma criação por vez, e a recusa aparece na tela {#rn-600}
 
 No teste do dono em 26/09 a api registrou 11 `POST /workspaces/:id/projects →
@@ -1139,6 +1165,8 @@ runner ao conectar (RN-423).
 - **Origem:** AT-215 (teste do dono, 26/09), irmã da AT-214
 
 ## A conversão de modo deixa de ser um salto no escuro (RN-559, RN-560)
+
+<a id="rn-612"></a>
 
 ### RN-612 — Converter para `runner` é converte, DEPOIS onboarda: salvar monta o painel de onboarding do projeto agora `runner`, e o navegador de pastas fica fora por construção {#rn-612}
 
@@ -1215,6 +1243,8 @@ botão seria um controle que não controla nada; a seção diz isso em texto
 
 ## O repositório nasce no aceite do handoff ao Arquiteto, e a execução não começa sem ele (RN-582)
 
+<a id="rn-614"></a>
+
 ### RN-614 — A tela mostra o motivo da política e a raiz do escopo, numa frase só, nos dois lugares {#rn-614}
 
 A [RN-567](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-567) pôs no `proposed_action.created` a regra que decidiu
@@ -1290,6 +1320,8 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
 ---
 
 ## O idioma das respostas dos agentes (RN-618..620, RN-622..624, ADR 0177)
+
+<a id="rn-620"></a>
 
 ### RN-620 — A barra da sessão mostra o idioma das respostas de QUEM VÊ, com a origem, e trocar ali é o override só daquela pessoa naquela sessão {#rn-620}
 

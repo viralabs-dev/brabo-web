@@ -151,7 +151,7 @@ export function CarrosselDeExecutores({ projectId, sessionId }: Props) {
   }
 
   return (
-    <section className={styles.faixa} aria-label={t('carrossel.regiao')}>
+    <section className={styles.faixa} aria-label={t('carrossel.regiao')} data-testid="carrossel-executores">
       <div className={styles.cabecalho}>
         <strong>{t('carrossel.titulo')}</strong>
         <span>{t('carrossel.progresso', { done, total })}</span>
@@ -178,6 +178,7 @@ export function CarrosselDeExecutores({ projectId, sessionId }: Props) {
         <Button
           type="button"
           variant="ghost"
+          data-testid="carrossel-minimizar"
           aria-expanded={!minimizado}
           aria-label={t(minimizado ? 'carrossel.restaurar' : 'carrossel.minimizar')}
           onClick={alternar}
@@ -189,7 +190,7 @@ export function CarrosselDeExecutores({ projectId, sessionId }: Props) {
       {minimizado ? (
         <ul className={styles.chips} aria-label={t('carrossel.minimizadoLista')}>
           {dados.cartoes.map((c) => (
-            <li key={c.agentId} className={styles.chip}>
+            <li key={c.agentId} className={styles.chip} data-testid={`carrossel-cartao-${c.agentId}`}>
               <span className={styles.nome}>{c.agentId}</span>
               <Estado cartao={c} />
               <span className={styles.meta}>{desde(c.desde)}</span>
@@ -225,6 +226,7 @@ function Cartao({
   return (
     <article
       className={styles.cartao}
+      data-testid={`carrossel-cartao-${cartao.agentId}`}
       role="group"
       aria-label={t('carrossel.cartaoRotulo', {
         posicao,

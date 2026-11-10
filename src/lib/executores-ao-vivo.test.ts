@@ -191,6 +191,18 @@ describe('motivoDoOcio', () => {
   });
 });
 
+describe('motivoDoOcio sem module na tarefa (AT-881)', () => {
+  it('herda os moduleIds da história: dev-web espera a fundação de api', () => {
+    const e = [
+      { id: 'ep', stories: [{ id: 's1', moduleIds: ['api'], tasks: [task(T1, 'api', { module: null })] }, { id: 's2', moduleIds: ['web'], tasks: [task(T2, 'web', { module: null })] }] },
+    ] as unknown as Epic[];
+    expect(motivoDoOcio('web', undefined, { eventos: [], epics: e, moduleMap: M, prs: [] })).toEqual({
+      key: 'esperaFundacaoTarefa',
+      params: { modulo: 'api', titulo: `tarefa ${T1}` },
+    });
+  });
+});
+
 describe('progressoDaExecucao', () => {
   it('conta done sobre o total do backlog', () => {
     expect(progressoDaExecucao(epics([task(T1, 'a', { status: 'done' }), task(T2, 'a')]))).toEqual({ done: 1, total: 2 });

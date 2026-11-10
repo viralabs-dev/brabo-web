@@ -63,13 +63,14 @@ function prDaTarefa(taskId: string | undefined, c: Contexto): number | undefined
  * O porquê do ócio. Ordem da tabela da AT-880: (a) pausa de rede, (b)/(c)
  * dependência aberta (o predicado da RN-1005 relido no web), (d) tarefas
  * bloqueadas, (e) sem causa achada → "sem tarefa disponível agora".
- * shortcut: a tarefa SEM `module` não entra (a api também olha `module_ids` da
- * história); sem causa, cai em (e) sem mentir. Replicar se virar queixa.
+ * AT-881: a tarefa SEM `module` (ainda não pega) herda os `moduleIds` da história.
  */
 export function motivoDoOcio(modulo: string, reason: string | undefined, c: Contexto): Texto {
   if (reason && reason !== SEM_TASK_PEGAVEL) return { key: 'ociosoPausa', params: { reason } };
-  const tarefas = todasAsTarefas(c.epics);
-  const abertasDe = (m: string) => tarefas.filter((t) => t.module === m && t.status !== 'done');
+  const tarefas = (c.epics ?? []).flatMap((e) =>
+    e.stories.flatMap((s) => s.tasks.map((t) => ({ t, mods: t.module ? [t.module] : (s.moduleIds ?? []) }))),
+  );
+  const abertasDe = (m: string) => tarefas.filter((x) => x.mods.includes(m) && x.t.status !== 'done').map((x) => x.t);
   const deps = (c.moduleMap?.modules.find((m) => m.name === modulo)?.dependsOn ?? []).filter(
     (d) => abertasDe(d).length > 0,
   );

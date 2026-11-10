@@ -188,5 +188,73 @@
     "tarefasNaoLidas": "Could not read the backlog: tasks in progress and in review could not be counted.",
     "ficaRevisao_one": "{{count}} task in QA review: its gate stops and the task is blocked, with its pull request left open; it returns to the queue when you release it.",
     "ficaRevisao_other": "{{count}} tasks in QA review: their gates stop and the tasks are blocked, with their pull requests left open; they return to the queue when you release them."
+  },
+  "carrossel": {
+    "regiao": "Execution in progress",
+    "titulo": "Execution",
+    "progresso": "{{done}} of {{total}} tasks",
+    "minimizar": "Minimize the executors carousel",
+    "restaurar": "Show the executors details",
+    "minimizadoLista": "Executors (summary)",
+    "verExecutores": "Executors",
+    "verNoFio": "View in thread",
+    "dispensar": "Dismiss the execution summary",
+    "ultimaAcao": "Last action: {{acao}}",
+    "cartaoRotulo": "{{posicao}} of {{total}}: {{nome}}, {{estado}}",
+    "haSeg": "{{n}} s ago",
+    "haMin": "{{n}} min ago",
+    "haH": "{{n}} h ago",
+    "estado": {
+      "trabalhando": "working",
+      "aguardando": "waiting",
+      "ocioso": "idle",
+      "bloqueado": "blocked",
+      "travado": "stuck",
+      "falhou": "failed",
+      "concluido": "done"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} working",
+      "aguardando": "{{n}} at a gate",
+      "ocioso": "{{n}} waiting",
+      "atencao": "{{n}} needing attention"
+    },
+    "fim": {
+      "concluida": "execution complete",
+      "parada": "execution stopped"
+    },
+    "texto": {
+      "trabalhando": "Working on the task.",
+      "corrigindo": "Fixing what QA asked for.",
+      "corrigindoPr": "Fixing what QA asked for on PR #{{pr}}.",
+      "aguardandoQa": "At the QA gate.",
+      "aguardandoQaPr": "PR #{{pr}} at the QA gate.",
+      "aguardandoSecops": "At the SecOps gate.",
+      "aguardandoSecopsPr": "PR #{{pr}} at SecOps.",
+      "aguardandoUsuario": "Waiting for your merge.",
+      "aguardandoUsuarioPr": "Waiting for your merge (PR #{{pr}}).",
+      "aguardandoAprovacao": "Waiting for your approval.",
+      "aguardandoGate": "Waiting for the gate.",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "No task available right now.",
+      "esperaFundacaoPr": "Waiting for the foundation of {{modulo}} ({{agente}}, PR #{{pr}}).",
+      "esperaFundacaoTarefa": "Waiting for the foundation of {{modulo}}: task “{{titulo}}” in progress.",
+      "esperaModulos": "Waiting for {{n}} modules; the first to unblock is {{primeiro}}.",
+      "tarefaBloqueada": "Task blocked: {{motivo}}",
+      "bloqueado": "The project container is not running. Infra proposes to start it; the agent retries on its own.",
+      "travado": "{{motivo}} Rearm in Executors.",
+      "falhou": "Failed: {{motivo}}",
+      "falhouSemMotivo": "Failed.",
+      "concluido": "{{done}} of {{total}} module tasks done.",
+      "gateJulga": "Judging “{{tarefa}}”.",
+      "gateJulgaPr": "Judging “{{tarefa}}” (PR #{{pr}}).",
+      "gateJulgaSemTarefa": "Judging a PR.",
+      "gateFalhou": "The gate cycle failed.",
+      "gateOcioso": "No PR to judge right now.",
+      "gateUltimoAprovado": "Last verdict: approved.",
+      "gateUltimoAprovadoPr": "Last verdict: approved (PR #{{pr}}).",
+      "gateUltimoMudancas": "Last verdict: changes requested.",
+      "gateUltimoMudancasPr": "Last verdict: changes requested (PR #{{pr}})."
+    }
   }
 }

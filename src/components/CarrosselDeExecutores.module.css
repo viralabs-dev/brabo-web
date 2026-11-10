@@ -1,0 +1,136 @@
+/* AT-880: faixa do carrossel de executores, acima do fio (RN-816). Tokens do design system. */
+.faixa {
+  margin: 8px 16px 0;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  font-size: var(--fs-meta, 12px);
+}
+
+.cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.barra {
+  flex: 0 1 120px;
+  min-width: 60px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  overflow: hidden;
+}
+
+.barraPreenchida {
+  height: 100%;
+  background: var(--accent);
+}
+
+.resumo,
+.custo,
+.meta {
+  color: var(--text-secondary);
+}
+
+.custo,
+.meta,
+.rodape {
+  font-family: var(--font-mono);
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.girado {
+  transform: rotate(180deg);
+}
+
+.pagina {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cartao {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.nome {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.tarefa {
+  margin: 0;
+  font-weight: 600;
+}
+
+.texto,
+.acao {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.rodape {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--surface-2);
+}
+
+@media (max-width: 639px) {
+  .faixa {
+    margin: 8px 12px 0;
+  }
+
+  .pagina {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -143,4 +143,21 @@ describe('Carousel', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Aprovar todas' }));
     expect(onClick).toHaveBeenCalledOnce();
   });
+
+  it('Home/End vão às pontas e `anunciar={false}` tira a região viva', () => {
+    const { container } = renderComI18n(
+      <Carousel ariaLabel="Execução" slides={[slide(1), slide(2), slide(3)]} anunciar={false} />,
+    );
+    const viewport = container.querySelector('[tabindex="0"]')!;
+    expect(viewport).not.toHaveAttribute('aria-live');
+    fireEvent.keyDown(viewport, { key: 'End' });
+    expect(screen.getByText('Conteúdo 3')).toBeInTheDocument();
+    fireEvent.keyDown(viewport, { key: 'Home' });
+    expect(screen.getByText('Conteúdo 1')).toBeInTheDocument();
+  });
+
+  it('por padrão a região é viva (polite)', () => {
+    const { container } = renderComI18n(<Carousel ariaLabel="Histórias" slides={[slide(1)]} />);
+    expect(container.querySelector('[tabindex="0"]')).toHaveAttribute('aria-live', 'polite');
+  });
 });

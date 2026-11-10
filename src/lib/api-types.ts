@@ -1071,6 +1071,8 @@ export interface Task {
   blockedReason: string | null;
   gateStatus: PrGateStatus | null;
   gateCorrectionCount: number;
+  /** Módulo do `module_map` a que a tarefa pertence (AT-880); `null` para a sem módulo. */
+  module?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1192,6 +1194,8 @@ export interface InfraArtifact {
   prActionId: string;
   gateStatus: PrGateStatus;
   gateCorrectionCount: number;
+  /** Módulo do `module_map` a que a tarefa pertence (AT-880); `null` para a sem módulo. */
+  module?: string | null;
   blocked: boolean;
   blockedReason: string | null;
   createdAt: string;

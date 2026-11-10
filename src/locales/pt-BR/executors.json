@@ -199,5 +199,73 @@
     "ficaRevisao_zero": "Nenhuma tarefa está em revisão.",
     "ficaRevisao_one": "{{count}} tarefa em revisão de QA: o gate dela para e a tarefa é bloqueada, com a PR aberta; volta à fila quando você a liberar.",
     "ficaRevisao_other": "{{count}} tarefas em revisão de QA: os gates delas param e as tarefas são bloqueadas, com as PRs abertas; voltam à fila quando você as liberar."
+  },
+  "carrossel": {
+    "regiao": "Execução em andamento",
+    "titulo": "Execução",
+    "progresso": "{{done}} de {{total}} tarefas",
+    "minimizar": "Minimizar o carrossel de executores",
+    "restaurar": "Mostrar os detalhes dos executores",
+    "minimizadoLista": "Executores (resumo)",
+    "verExecutores": "Executores",
+    "verNoFio": "Ver no fio",
+    "dispensar": "Dispensar o resumo da execução",
+    "ultimaAcao": "Última ação: {{acao}}",
+    "cartaoRotulo": "{{posicao}} de {{total}}: {{nome}}, {{estado}}",
+    "haSeg": "há {{n}} s",
+    "haMin": "há {{n}} min",
+    "haH": "há {{n}} h",
+    "estado": {
+      "trabalhando": "trabalhando",
+      "aguardando": "aguardando",
+      "ocioso": "ocioso",
+      "bloqueado": "bloqueado",
+      "travado": "travado",
+      "falhou": "falhou",
+      "concluido": "concluído"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} trabalhando",
+      "aguardando": "{{n}} aguardando gate",
+      "ocioso": "{{n}} esperando",
+      "atencao": "{{n}} pedindo atenção"
+    },
+    "fim": {
+      "concluida": "execução concluída",
+      "parada": "execução parada"
+    },
+    "texto": {
+      "trabalhando": "Trabalhando na tarefa.",
+      "corrigindo": "Corrigindo o que o QA pediu.",
+      "corrigindoPr": "Corrigindo o que o QA pediu na PR #{{pr}}.",
+      "aguardandoQa": "No gate de QA.",
+      "aguardandoQaPr": "PR #{{pr}} no gate de QA.",
+      "aguardandoSecops": "No gate de SecOps.",
+      "aguardandoSecopsPr": "PR #{{pr}} no SecOps.",
+      "aguardandoUsuario": "Esperando o seu merge.",
+      "aguardandoUsuarioPr": "Esperando o seu merge (PR #{{pr}}).",
+      "aguardandoAprovacao": "Esperando a sua aprovação.",
+      "aguardandoGate": "Esperando o gate.",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "Sem tarefa disponível agora.",
+      "esperaFundacaoPr": "Esperando a fundação de {{modulo}} ({{agente}}, PR #{{pr}}).",
+      "esperaFundacaoTarefa": "Esperando a fundação de {{modulo}}: tarefa “{{titulo}}” em andamento.",
+      "esperaModulos": "Esperando {{n}} módulos; o primeiro a destravar é {{primeiro}}.",
+      "tarefaBloqueada": "Tarefa bloqueada: {{motivo}}",
+      "bloqueado": "O container do projeto não está rodando. A Infra propõe subir; o agente tenta de novo sozinho.",
+      "travado": "{{motivo}} Rearme em Executores.",
+      "falhou": "Falhou: {{motivo}}",
+      "falhouSemMotivo": "Falhou.",
+      "concluido": "{{done}} de {{total}} tarefas do módulo concluídas.",
+      "gateJulga": "Julgando “{{tarefa}}”.",
+      "gateJulgaPr": "Julgando “{{tarefa}}” (PR #{{pr}}).",
+      "gateJulgaSemTarefa": "Julgando uma PR.",
+      "gateFalhou": "O ciclo do gate falhou.",
+      "gateOcioso": "Sem PR para julgar agora.",
+      "gateUltimoAprovado": "Último veredito: aprovado.",
+      "gateUltimoAprovadoPr": "Último veredito: aprovado (PR #{{pr}}).",
+      "gateUltimoMudancas": "Último veredito: mudanças solicitadas.",
+      "gateUltimoMudancasPr": "Último veredito: mudanças solicitadas (PR #{{pr}})."
+    }
   }
 }

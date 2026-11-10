@@ -18,6 +18,12 @@ interface CarouselProps {
   /** Ação extra no cabeçalho, ao lado da contagem — ex.: "Aprovar todas". */
   headerActions?: ReactNode;
   className?: string;
+  /**
+   * `aria-live={anunciar ? 'polite' : undefined}` no viewport (padrão). Desligue quando o conteúdo do
+   * slide muda sozinho a cada evento (AT-880: cartões de executores) — senão o
+   * leitor de tela fala sem parar; quem chama anuncia só o que importa.
+   */
+  anunciar?: boolean;
 }
 
 /**
@@ -38,7 +44,7 @@ interface CarouselProps {
  * (uma história do meio é promovida e sai da leva) sem deixar o índice
  * apontando pro vazio.
  */
-export function Carousel({ ariaLabel, slides, headerActions, className }: CarouselProps) {
+export function Carousel({ ariaLabel, slides, headerActions, className, anunciar = true }: CarouselProps) {
   const { t } = useTranslation('ui');
   const [indiceBruto, setIndiceBruto] = useState(0);
 
@@ -58,6 +64,12 @@ export function Carousel({ ariaLabel, slides, headerActions, className }: Carous
     } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
       ir(indice - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      ir(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      ir(slides.length - 1);
     }
   }
 
@@ -81,7 +93,7 @@ export function Carousel({ ariaLabel, slides, headerActions, className }: Carous
         className={styles.viewport}
         tabIndex={0}
         onKeyDown={onKeyDown}
-        aria-live="polite"
+        aria-live={anunciar ? 'polite' : undefined}
         aria-label={
           atual?.label
             ? t('carousel.slideLabelNamed', { index: indice + 1, label: atual.label })

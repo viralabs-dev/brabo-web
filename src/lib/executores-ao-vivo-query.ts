@@ -9,7 +9,8 @@ import {
   listSessionEvents,
 } from './api-client';
 import { connectSessionHeartbeat } from './session-channel';
-import { criarInvalidadorDoCanal } from './canal-vivo';
+import { criarInvalidadorDoCanal, intervaloDaSessao, useCanalDaSessaoVivo } from './canal-vivo';
+import { pollQueParaNoErro } from './query-policy';
 import { cartoesDaExecucao, progressoDaExecucao } from './executores-ao-vivo';
 
 /**
@@ -29,29 +30,30 @@ export function useExecutoresAoVivo(projectId: string, sessionId: string) {
     refetchInterval: 5000,
   });
   const execId = sessao.data?.status === 'active' ? sessao.data.id : undefined;
+  const canalVivo = useCanalDaSessaoVivo(execId);
   const eventos = useQuery({
     queryKey: ['session-events', projectId, execId],
     queryFn: () => listSessionEvents(projectId, execId!, { limit: 200, latest: true }),
     enabled: !!execId,
-    refetchInterval: 5000,
+    refetchInterval: pollQueParaNoErro(intervaloDaSessao(15_000, canalVivo)),
   });
   const backlog = useQuery({
     queryKey: ['backlog', projectId],
     queryFn: () => listBacklog(projectId),
     enabled: !!execId,
-    refetchInterval: 15_000,
+    refetchInterval: pollQueParaNoErro(15_000),
   });
   const arquitetura = useQuery({
     queryKey: ['architecture', projectId],
     queryFn: () => getArchitecture(projectId),
     enabled: !!execId,
-    refetchInterval: 10_000,
+    refetchInterval: pollQueParaNoErro(30_000),
   });
   const custo = useQuery({
     queryKey: ['session-token-usage', projectId, execId],
     queryFn: () => getSessionTokenUsage(projectId, execId!),
     enabled: !!execId,
-    refetchInterval: 5000,
+    refetchInterval: pollQueParaNoErro(intervaloDaSessao(15_000, canalVivo)),
   });
   const prs = useQuery({
     queryKey: ['code-pull-requests', projectId, 'open', 'chat'],

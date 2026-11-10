@@ -255,7 +255,7 @@ function awaitingApproval(pendingActionAgentIds: Set<string>, agentId: string): 
 // RECENTE (dev OU infra) diz qual dos dois está com a bola: awaiting_qa =
 // QA trabalhando, awaiting_secops = SecOps trabalhando, awaiting_user/blocked
 // = nenhum dos dois.
-function gateStatus(events: SessionEvent[], gate: 'qa' | 'secops'): AgentStatus {
+export function gateStatus(events: SessionEvent[], gate: 'qa' | 'secops'): AgentStatus {
   const last = lastEventFor(
     events,
     (e) => e.type === 'pr.gate_changed' || e.type === 'infra.gate_changed',

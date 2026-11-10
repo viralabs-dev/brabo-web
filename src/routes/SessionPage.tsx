@@ -12,6 +12,7 @@ import {
   sendAgentMessage,
   startAgent,
 } from '../lib/api-client';
+import { CarrosselDeExecutores } from '../components/CarrosselDeExecutores';
 import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSessoes';
 import { roleAtLeast } from '../lib/roles';
 import { useRetomarTurnoDoLog, useTurnoDoAgente } from '../lib/session-turno';
@@ -770,6 +771,8 @@ export function SessionPage({
             sessionId={sessionId}
             podeDecidir={podeDecidir}
           />
+          {/* AT-880 (RN-1072): os executores da execução vigente, acima do fio (RN-816). */}
+          {sessaoCriativa && <CarrosselDeExecutores projectId={projectId} sessionId={sessionId} />}
           <ModoAutomaticoNoChat
             projectId={projectId}
             comExecucao={isActive && sessaoTemExecucao(events, ativadosNaSessaoInteira)}

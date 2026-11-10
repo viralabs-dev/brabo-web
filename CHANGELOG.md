@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-880, RN-1072/RN-1073): o chat do Criativo mostra os executores da execução vigente num carrossel manual acima do fio, com devs, QA e SecOps em cartões próprios, "x de N tarefas", custo, o motivo do ócio derivado do `module_map` e um botão para minimizar (só nome, estado, tempo e gasto; a escolha fica no navegador). `ui/Carousel` ganha `anunciar` e Home/End; `Task` ganha `module`.
+
 - CI: repina o brabo-ci na release final `v1.4.0` (`5320046`), para a promoção `dev → main` de 09/11/2026.
 
 - Doc (AT-871): cada parte de RN (`docs/business-rules/*/parte-NN.md`) ganha `<a id="rn-NNN"></a>` antes de cada RN, pelo `ancorar-rn.mjs` do brabo, para o link `parte-NN.md#rn-NNN` abrir na RN também no GitHub. Só acréscimo de âncoras: o texto das RNs e as refs `caminho:N` ficam iguais.

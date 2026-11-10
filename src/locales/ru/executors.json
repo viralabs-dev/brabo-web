@@ -210,5 +210,73 @@
     "ficaRevisao_few": "{{count}} задачи на проверке QA: их gates останавливаются, задачи блокируются, PR остаются открытыми; они вернутся в очередь, когда вы их разблокируете.",
     "ficaRevisao_many": "{{count}} задач на проверке QA: их gates останавливаются, задачи блокируются, PR остаются открытыми; они вернутся в очередь, когда вы их разблокируете.",
     "ficaRevisao_other": "{{count}} задачи на проверке QA: их gates останавливаются, задачи блокируются, PR остаются открытыми; они вернутся в очередь, когда вы их разблокируете."
+  },
+  "carrossel": {
+    "regiao": "Выполнение идёт",
+    "titulo": "Выполнение",
+    "progresso": "{{done}} из {{total}} задач",
+    "minimizar": "Свернуть карусель исполнителей",
+    "restaurar": "Показать подробности исполнителей",
+    "minimizadoLista": "Исполнители (сводка)",
+    "verExecutores": "Исполнители",
+    "verNoFio": "Открыть в ленте",
+    "dispensar": "Закрыть сводку выполнения",
+    "ultimaAcao": "Последнее действие: {{acao}}",
+    "cartaoRotulo": "{{posicao}} из {{total}}: {{nome}}, {{estado}}",
+    "haSeg": "{{n}} с назад",
+    "haMin": "{{n}} мин назад",
+    "haH": "{{n}} ч назад",
+    "estado": {
+      "trabalhando": "работает",
+      "aguardando": "ожидает",
+      "ocioso": "простаивает",
+      "bloqueado": "заблокирован",
+      "travado": "остановлен",
+      "falhou": "сбой",
+      "concluido": "готово"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} работают",
+      "aguardando": "{{n}} на gate",
+      "ocioso": "{{n}} ждут",
+      "atencao": "{{n}} требуют внимания"
+    },
+    "fim": {
+      "concluida": "выполнение завершено",
+      "parada": "выполнение остановлено"
+    },
+    "texto": {
+      "trabalhando": "Работает над задачей.",
+      "corrigindo": "Исправляет замечания QA.",
+      "corrigindoPr": "Исправляет замечания QA в PR #{{pr}}.",
+      "aguardandoQa": "На gate QA.",
+      "aguardandoQaPr": "PR #{{pr}} на gate QA.",
+      "aguardandoSecops": "На gate SecOps.",
+      "aguardandoSecopsPr": "PR #{{pr}} на SecOps.",
+      "aguardandoUsuario": "Ждёт вашего merge.",
+      "aguardandoUsuarioPr": "Ждёт вашего merge (PR #{{pr}}).",
+      "aguardandoAprovacao": "Ждёт вашего одобрения.",
+      "aguardandoGate": "Ждёт gate.",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "Сейчас нет доступных задач.",
+      "esperaFundacaoPr": "Ждёт основу модуля {{modulo}} ({{agente}}, PR #{{pr}}).",
+      "esperaFundacaoTarefa": "Ждёт основу модуля {{modulo}}: задача «{{titulo}}» в работе.",
+      "esperaModulos": "Ждёт модулей: {{n}}; первым разблокируется {{primeiro}}.",
+      "tarefaBloqueada": "Задача заблокирована: {{motivo}}",
+      "bloqueado": "Контейнер проекта не запущен. Infra предлагает его запустить; агент повторит попытку сам.",
+      "travado": "{{motivo}} Перезапуск в разделе «Исполнители».",
+      "falhou": "Сбой: {{motivo}}",
+      "falhouSemMotivo": "Сбой.",
+      "concluido": "{{done}} из {{total}} задач модуля выполнено.",
+      "gateJulga": "Проверяет «{{tarefa}}».",
+      "gateJulgaPr": "Проверяет «{{tarefa}}» (PR #{{pr}}).",
+      "gateJulgaSemTarefa": "Проверяет PR.",
+      "gateFalhou": "Цикл gate завершился сбоем.",
+      "gateOcioso": "Сейчас нет PR для проверки.",
+      "gateUltimoAprovado": "Последний вердикт: одобрено.",
+      "gateUltimoAprovadoPr": "Последний вердикт: одобрено (PR #{{pr}}).",
+      "gateUltimoMudancas": "Последний вердикт: нужны изменения.",
+      "gateUltimoMudancasPr": "Последний вердикт: нужны изменения (PR #{{pr}})."
+    }
   }
 }

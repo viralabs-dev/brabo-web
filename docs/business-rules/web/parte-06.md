@@ -25,7 +25,7 @@ keywords: [regras de negócio, web]
   pegam as tarefas como estão ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
-  `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
+  `apps/web/src/routes/SessionPage.tsx:795` (`otimistaJaNoLog`),
   `apps/web/src/routes/session-timeline-montagem.tsx:644`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log

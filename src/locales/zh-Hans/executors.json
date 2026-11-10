@@ -177,5 +177,73 @@
     "lendoTarefas": "正在读取待办列表以统计进行中和审查中的任务……",
     "tarefasNaoLidas": "无法读取待办列表：无法统计进行中和审查中的任务。",
     "ficaRevisao_other": "{{count}} 个任务处于 QA 审查中：其 gate 将停止，任务被阻塞，PR 保持打开；待你放行后重新回到队列。"
+  },
+  "carrossel": {
+    "regiao": "正在执行",
+    "titulo": "执行",
+    "progresso": "{{done}} / {{total}} 个任务",
+    "minimizar": "最小化执行者轮播",
+    "restaurar": "显示执行者详情",
+    "minimizadoLista": "执行者（摘要）",
+    "verExecutores": "执行者",
+    "verNoFio": "在对话中查看",
+    "dispensar": "关闭执行摘要",
+    "ultimaAcao": "最近操作：{{acao}}",
+    "cartaoRotulo": "第 {{posicao}} / {{total}}：{{nome}}，{{estado}}",
+    "haSeg": "{{n}} 秒前",
+    "haMin": "{{n}} 分钟前",
+    "haH": "{{n}} 小时前",
+    "estado": {
+      "trabalhando": "工作中",
+      "aguardando": "等待中",
+      "ocioso": "空闲",
+      "bloqueado": "已阻塞",
+      "travado": "已停滞",
+      "falhou": "失败",
+      "concluido": "已完成"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} 个工作中",
+      "aguardando": "{{n}} 个在 gate",
+      "ocioso": "{{n}} 个在等待",
+      "atencao": "{{n}} 个需要关注"
+    },
+    "fim": {
+      "concluida": "执行已完成",
+      "parada": "执行已停止"
+    },
+    "texto": {
+      "trabalhando": "正在处理任务。",
+      "corrigindo": "正在修复 QA 提出的问题。",
+      "corrigindoPr": "正在修复 QA 在 PR #{{pr}} 提出的问题。",
+      "aguardandoQa": "在 QA gate。",
+      "aguardandoQaPr": "PR #{{pr}} 在 QA gate。",
+      "aguardandoSecops": "在 SecOps gate。",
+      "aguardandoSecopsPr": "PR #{{pr}} 在 SecOps。",
+      "aguardandoUsuario": "等待你合并。",
+      "aguardandoUsuarioPr": "等待你合并（PR #{{pr}}）。",
+      "aguardandoAprovacao": "等待你的批准。",
+      "aguardandoGate": "等待 gate。",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "目前没有可用任务。",
+      "esperaFundacaoPr": "正在等待 {{modulo}} 的基础（{{agente}}，PR #{{pr}}）。",
+      "esperaFundacaoTarefa": "正在等待 {{modulo}} 的基础：任务“{{titulo}}”进行中。",
+      "esperaModulos": "正在等待 {{n}} 个模块；最先解锁的是 {{primeiro}}。",
+      "tarefaBloqueada": "任务已阻塞：{{motivo}}",
+      "bloqueado": "项目容器未运行。Infra 会提议启动；代理会自行重试。",
+      "travado": "{{motivo}} 请在“执行者”中重新启用。",
+      "falhou": "失败：{{motivo}}",
+      "falhouSemMotivo": "失败。",
+      "concluido": "模块的 {{done}} / {{total}} 个任务已完成。",
+      "gateJulga": "正在评审“{{tarefa}}”。",
+      "gateJulgaPr": "正在评审“{{tarefa}}”（PR #{{pr}}）。",
+      "gateJulgaSemTarefa": "正在评审一个 PR。",
+      "gateFalhou": "gate 周期失败。",
+      "gateOcioso": "目前没有待评审的 PR。",
+      "gateUltimoAprovado": "最近结论：已通过。",
+      "gateUltimoAprovadoPr": "最近结论：已通过（PR #{{pr}}）。",
+      "gateUltimoMudancas": "最近结论：需要修改。",
+      "gateUltimoMudancasPr": "最近结论：需要修改（PR #{{pr}}）。"
+    }
   }
 }

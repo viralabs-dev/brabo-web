@@ -1298,6 +1298,8 @@ export interface Story {
   businessRuleIds: string[];
   dod: string[];
   dor: string[];
+  /** Módulos do `module_map` que a história toca (AT-881); a tarefa sem `module` herda daqui. */
+  moduleIds?: string[];
   status: StoryStatus;
   // Fase 12c (RN-048). Convive com `status: 'draft'` — é uma PROPOSTA, não um
   // estado: o PO terminou a história e ela aguarda a decisão do usuário.

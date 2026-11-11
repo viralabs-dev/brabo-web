@@ -158,6 +158,20 @@ describe('classifyEvent — Psicólogo (Fase 4b)', () => {
     expect(c.text).toContain('orçamento excedido');
   });
 
+  it('sinal de plataforma (AT-898) é narrado como sinal interno do TP-01, sem virar hipótese', () => {
+    const c = classifyEvent(
+      ev('psychologist.platform_signal', 'psicologo', {
+        agenteAlvo: 'dev-api',
+      }),
+    );
+
+    expect(c.kind).toBe('hypothesis');
+    expect(c.bad).toBe(false);
+    expect(c.text).toBe('sinal interno de plataforma (TP-01) sobre dev-api');
+    expect(c.text).not.toContain('nova hipótese');
+    expect(c.text).not.toContain('psychologist.platform_signal');
+  });
+
   it('tipo psychologist.* desconhecido não quebra a narração, e não vaza o tipo cru', () => {
     const c = classifyEvent(ev('psychologist.algo_novo', 'psicologo', {}));
 

@@ -4815,10 +4815,14 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
         /**
-         * Turns the Jev tool routing on or off for the workspace
-         * @description On by default. When on AND the turn model is from OpenRouter, an agent step with two or more tools first asks the Jev which tool fits, and the chat model is offered only that tool and the previous one. The Jev never approves or denies anything: an action that needs approval still does. Any failure of the Jev falls back to the whole catalog. Turning it off stops every call to the Jev, and its cost with them.
+         * Reads who routes the tool of each agent step, and the Laya state
+         * @description The workspace choice (`jev`, `laya` or `desligado`) and the state of the local Laya service: `nao_configurado`, `sem_resposta`, `sem_gpu`, `lento` or `proficiente`, with the reason and since when. Cached for 30 s with a 1 s cap; an agent turn never calls it.
+         */
+        get: operations["WorkspacesController_getToolRouter"];
+        /**
+         * Chooses who routes the tool of each agent step
+         * @description Send `roteador`: `jev` (default), `laya` or `desligado`. `laya` is recorded only if the local service is proficient right now (409 `roteador_local_indisponivel`); with it, every provider is routed and a Laya failure leaves the whole catalog. The legacy `enabled` boolean still works (`true` is `jev`). With `jev`: when on AND the turn model is from OpenRouter, an agent step with two or more tools first asks the Jev which tool fits, and the chat model is offered only that tool and the previous one. The Jev never approves or denies anything: an action that needs approval still does. Any failure of the Jev falls back to the whole catalog. Turning it off stops every call to the Jev, and its cost with them.
          */
         put: operations["WorkspacesController_setToolRouter"];
         post?: never;
@@ -7456,6 +7460,12 @@ export interface components {
             vectorUnavailableReason?: string;
         };
         HypothesisDraftDto: {
+            /**
+             * @description RN-1076: `produto` becomes a hypothesis; `plataforma` never does — it becomes `psychologist.platform_signal` in a test session and is dropped otherwise.
+             * @example produto
+             * @enum {string}
+             */
+            escopo: "produto" | "plataforma";
             /** @example dev-api */
             agenteAlvo: string;
             /** @example The agent reopened the same task three times. */
@@ -7863,6 +7873,26 @@ export interface components {
              * @example 128000
              */
             contextWindow: number | null;
+        };
+        LayaSituacaoResponseDto: {
+            /**
+             * @example proficiente
+             * @enum {string}
+             */
+            estado: "nao_configurado" | "sem_resposta" | "sem_gpu" | "lento" | "proficiente";
+            /** @example vram_insuficiente */
+            motivo: string | null;
+            /**
+             * Format: date-time
+             * @example 2026-11-09T12:00:00.000Z
+             */
+            desde: string;
+            /** @example cuda */
+            dispositivo: string | null;
+            /** @example 5673 */
+            vramLivreMiB: number | null;
+            /** @example 59 */
+            p95Ms: number | null;
         };
         LlmMessageResponseDto: {
             /**
@@ -9644,6 +9674,9 @@ export interface components {
              * @enum {string}
              */
             cause?: "normal" | "timeout" | "kill" | "crash" | "node_shutdown" | "unknown";
+            /** @description Project marked as a TP-01 test project (`projects.sessao_de_teste`). Only then are platform items recorded as signals. */
+            sessaoDeTeste: boolean;
+            /** @description May be empty: an analysis with zero hypotheses is valid. */
             hypotheses: components["schemas"]["HypothesisDraftDto"][];
         };
         ProposeHypothesesResponseDto: {
@@ -9847,6 +9880,11 @@ export interface components {
             sessionStatus: "created" | "active" | "closing" | "closed" | "closed_abnormally";
             /** @example heartbeat_timeout */
             terminationReason: Record<string, never> | null;
+            /**
+             * @description The project is marked as a TP-01 test project (`projects.sessao_de_teste`, RN-1076). Only then does the engine turn platform items into signals.
+             * @example false
+             */
+            sessaoDeTeste: boolean;
             businessRules: components["schemas"]["PsychologistContextBusinessRuleResponseDto"][];
             /** @description What was already proposed before, so the round doesn't repeat itself. */
             priorHypotheses: components["schemas"]["PriorHypothesisResponseDto"][];
@@ -11125,10 +11163,16 @@ export interface components {
         };
         SetToolRouterDto: {
             /**
-             * @description Whether the Jev chooses the tool of each agent step. On by default; it only acts when the turn model is from OpenRouter.
+             * @description Who chooses the tool of each agent step. `laya` needs the local GPU service to be proficient right now (409 `roteador_local_indisponivel` otherwise).
+             * @example jev
+             * @enum {string}
+             */
+            roteador?: "jev" | "laya" | "desligado";
+            /**
+             * @description Legacy switch (AT-236): `true` is `jev`, `false` is `desligado`. `roteador` wins when both are sent.
              * @example false
              */
-            enabled: boolean;
+            enabled?: boolean;
         };
         SkippedBindingResponseDto: {
             /**
@@ -11558,6 +11602,14 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        ToolRouterResponseDto: {
+            /**
+             * @example jev
+             * @enum {string}
+             */
+            roteador: "jev" | "laya" | "desligado";
+            laya: components["schemas"]["LayaSituacaoResponseDto"];
+        };
         ToolRoutingResponseDto: {
             /** @example typesafe/jev-1.13 */
             modelo: string;
@@ -11912,6 +11964,12 @@ export interface components {
              * @example true
              */
             toolRouterEnabled: boolean;
+            /**
+             * @description Who chooses the tool of each agent step (ADR 0179, ADR 0290): `jev` (default, OpenRouter turns only), `laya` (the local ensemble, any provider; needs the GPU service) or `desligado`.
+             * @example jev
+             * @enum {string}
+             */
+            toolRouter: "jev" | "laya" | "desligado";
             /**
              * Format: date-time
              * @example 2026-07-20T09:12:00.000Z
@@ -25336,6 +25394,55 @@ export interface operations {
             };
         };
     };
+    WorkspacesController_getToolRouter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ToolRouterResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role in the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Workspace doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     WorkspacesController_setToolRouter: {
         parameters: {
             query?: never;
@@ -25382,6 +25489,13 @@ export interface operations {
             };
             /** @description Workspace doesn't exist or is invisible to the caller. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description `roteador_local_indisponivel`: `laya` was asked for but the service is not proficient now (the body names the state). */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

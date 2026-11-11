@@ -63,6 +63,7 @@ ItemMedia,
   ItemTitle,
 } from '../components/shadcn/item';
 import { Button } from '../components/ui/Button';
+import { Textarea } from '../components/ui/Textarea';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { AgentAutonomyActionType, Architecture, ProposedAction, SessionEvent } from '../lib/api-types';
 import { Card } from '../components/ui/Card';
@@ -505,12 +506,14 @@ function ExecutionSection({
     Record<string, { estado: 'em_voo' | 'ok' } | { estado: 'erro'; mensagem: string }>
   >({});
 
+  const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
+
   async function handleUnblock(taskId: string) {
     if (!sessionId) return;
     if (desbloqueio[taskId]?.estado === 'em_voo') return;
     setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'em_voo' } }));
     try {
-      await unblockTask(projectId, sessionId, taskId);
+      await unblockTask(projectId, sessionId, taskId, orientacoes[taskId]);
       setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'ok' } }));
       await queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
       // RN-794 (AT-469): desbloquear acorda o dev do módulo só se houver
@@ -651,6 +654,16 @@ function ExecutionSection({
                         <ItemDescription className={styles.pendReason}>
                           {t('executionSection.unblockNeedsSession')}
                         </ItemDescription>
+                      )}
+                      {desbloqueio[t2.id]?.estado !== 'ok' && (
+                        <Textarea
+                          label={t('executionSection.unblockGuidance')}
+                          placeholder={t('executionSection.unblockGuidanceHint')}
+                          maxLength={2000}
+                          value={orientacoes[t2.id] ?? ''}
+                          disabled={!sessionId || desbloqueio[t2.id]?.estado === 'em_voo'}
+                          onChange={(e) => setOrientacoes((o) => ({ ...o, [t2.id]: e.target.value }))}
+                        />
                       )}
                       {desbloqueio[t2.id]?.estado === 'erro' && (
                         <span role="alert" className={styles.pendReason}>

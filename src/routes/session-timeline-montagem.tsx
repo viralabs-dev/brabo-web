@@ -1334,7 +1334,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
           onApprove={() =>
             approveAction(projectId, sessionId, action.id).finally(invalidateActions)
           }
-          onDeny={() => denyAction(projectId, sessionId, action.id).finally(invalidateActions)}
+          onDeny={(motivo) => denyAction(projectId, sessionId, action.id, motivo).finally(invalidateActions)}
           onAlwaysAllow={() =>
             approveAlwaysAction(projectId, sessionId, action.id)
               .then(() => {

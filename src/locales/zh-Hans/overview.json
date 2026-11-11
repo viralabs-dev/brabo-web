@@ -104,7 +104,9 @@
     "requestDeniedTitle": "请求被拒绝",
     "requestError": "无法发起请求",
     "unblocking": "正在解除阻塞…",
-    "unblockNeedsSession": "会话仍在加载：解除阻塞依赖于它。"
+    "unblockNeedsSession": "会话仍在加载：解除阻塞依赖于它。",
+    "unblockGuidance": "给开发者的指引（可选）",
+    "unblockGuidanceHint": "例如：入口由组装方注入；不要单独启动该模块。"
   },
   "architectureSummary": {
     "title": "架构",

@@ -110,7 +110,9 @@
     "requestDeniedTitle": "Request denied",
     "requestError": "Could not request",
     "unblocking": "Unblocking…",
-    "unblockNeedsSession": "The session is still loading: unblocking needs it."
+    "unblockNeedsSession": "The session is still loading: unblocking needs it.",
+    "unblockGuidance": "Guidance for the dev (optional)",
+    "unblockGuidanceHint": "E.g. the entry point is injected by the composer; do not start the module on its own."
   },
   "architectureSummary": {
     "title": "Architecture",

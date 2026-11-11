@@ -15,6 +15,7 @@ import { usePrsProntas } from '../lib/prs-prontas';
 import { useAgentesTravados } from '../lib/agentes-travados-query';
 import { assinaturaDoBacklog, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
+import { Textarea } from './ui/Textarea';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
@@ -106,6 +107,7 @@ export function PendenciasDeOutrasSessoes({
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
+  const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
   // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
   // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
@@ -215,9 +217,10 @@ export function PendenciasDeOutrasSessoes({
     return null;
 
   async function desbloquear(task: Task) {
+    if (desbloqueio[task.id] === 'enviando') return;
     setDesbloqueio((d) => ({ ...d, [task.id]: 'enviando' }));
     try {
-      await unblockTask(projectId, sessionId, task.id);
+      await unblockTask(projectId, sessionId, task.id, orientacoes[task.id]);
       setDesbloqueio((d) => ({ ...d, [task.id]: { tom: 'ok', texto: t('pendencias.bloqueadas.ok') } }));
       void queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
     } catch (erro) {
@@ -252,7 +255,7 @@ export function PendenciasDeOutrasSessoes({
         decisaoDaPolitica={decisoes.get(acao.id)}
         bloqueio={podeDecidir ? undefined : t('pendencias.semPapel')}
         onApprove={() => decidir(acao, () => approveAction(projectId, acao.sessionId, acao.id))}
-        onDeny={() => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id))}
+        onDeny={(motivo) => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id, motivo))}
         onAlwaysAllow={() =>
           decidir(acao, async () => {
             await approveAlwaysAction(projectId, acao.sessionId, acao.id);
@@ -329,7 +332,7 @@ export function PendenciasDeOutrasSessoes({
                 decisaoDaPolitica={decisoes.get(acao.id)}
                 bloqueio={podeDecidir ? undefined : t('pendencias.semPapel')}
                 onApprove={() => decidir(acao, () => approveAction(projectId, acao.sessionId, acao.id))}
-                onDeny={() => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id))}
+                onDeny={(motivo) => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id, motivo))}
                 onAlwaysAllow={() =>
                   decidir(acao, async () => {
                     await approveAlwaysAction(projectId, acao.sessionId, acao.id);
@@ -513,10 +516,18 @@ export function PendenciasDeOutrasSessoes({
                         <p className={styles.nota}>{diagnostico}</p>
                       </Disclosure>
                     )}
+                    <Textarea
+                      label={t('pendencias.bloqueadas.orientacao')}
+                      placeholder={t('pendencias.bloqueadas.orientacaoDica')}
+                      maxLength={2000}
+                      value={orientacoes[task.id] ?? ''}
+                      disabled={!podeDecidir || estado === 'enviando'}
+                      onChange={(e) => setOrientacoes((o) => ({ ...o, [task.id]: e.target.value }))}
+                    />
                     <div className={styles.acoesDaLinha}>
                       <Button
                         variant="secondary"
-                        disabled={!podeDecidir}
+                        disabled={!podeDecidir || estado === 'enviando'}
                         loading={estado === 'enviando'}
                         onClick={() => void desbloquear(task)}
                       >

@@ -329,8 +329,8 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
     await approveAction(projectId, action.sessionId, action.id);
     invalidateActions([action.sessionId]);
   }
-  async function handleDeny(action: ProposedAction) {
-    await denyAction(projectId, action.sessionId, action.id);
+  async function handleDeny(action: ProposedAction, motivo?: string) {
+    await denyAction(projectId, action.sessionId, action.id, motivo);
     invalidateActions([action.sessionId]);
   }
   async function handleAlwaysAllow(action: ProposedAction) {
@@ -507,7 +507,7 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
                           selected={selected.has(action.id)}
                           onToggleSelect={() => toggleSelect(action.id)}
                           onApprove={() => handleApprove(action)}
-                          onDeny={() => handleDeny(action)}
+                          onDeny={(motivo) => handleDeny(action, motivo)}
                           onAlwaysAllow={() => handleAlwaysAllow(action)}
                           onActivateAutoMode={
                             podeAtivarAutoMode && action.actor.kind === 'agent'

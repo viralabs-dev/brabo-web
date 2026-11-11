@@ -594,10 +594,33 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
     expect(within(fila).getByText('ciclo de correção esgotado')).toBeInTheDocument();
     fireEvent.click(within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' }));
-    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8'));
+    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8', undefined));
     expect(await within(fila).findByTestId('retorno-desbloqueio')).toHaveTextContent(
       'a tarefa não está bloqueada',
     );
+  });
+
+  it('AT-909: a orientação digitada vai no desbloqueio e o botão fica inerte durante o envio (um clique, uma chamada)', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 't9', title: 'Tarefa 9', blocked: true, blockedReason: 'x' }]));
+    let liberar: (v: unknown) => void = () => {};
+    unblockTask.mockReturnValue(new Promise((r) => (liberar = r)));
+
+    montar();
+    await abrir('Tarefas bloqueadas');
+
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    fireEvent.change(within(fila).getByLabelText('Orientação para o dev (opcional)'), {
+      target: { value: '  suba pelo start  ' },
+    });
+    const botao = within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' });
+    fireEvent.click(botao);
+    fireEvent.click(botao);
+    await waitFor(() => expect(botao).toBeDisabled());
+    expect(unblockTask).toHaveBeenCalledTimes(1);
+    expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't9', '  suba pelo start  ');
+    liberar({ ok: true });
+    expect(await within(fila).findByTestId('retorno-desbloqueio')).toBeInTheDocument();
   });
 });
 

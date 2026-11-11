@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.
+
 - Feat (AT-898, RN-1076): o log da sessão narra `psychologist.platform_signal` como "sinal interno de plataforma (TP-01) sobre <agente>", em vez de "atividade em psicólogo". É sinal interno do TP-01, não hipótese: não aparece em Percepções. `fixados/openapi.json` regenerado da `dev` do brabo-api (`46d41b5`, api#96: POST interno de hipóteses e contexto do Psicólogo) e `api-types.generated.ts` refeito.
 
 - Fix (AT-881, RN-1073): o carrossel diz "esperando a fundação de X" também para a tarefa ainda não pega (sem `module`), que herda os `moduleIds` da história; `Story` ganha `moduleIds`. O carrossel ganha `data-testid` (`carrossel-executores`, `carrossel-cartao-<agentId>`, `carrossel-minimizar`).

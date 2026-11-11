@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-898, RN-1076): o log da sessão narra `psychologist.platform_signal` como "sinal interno de plataforma (TP-01) sobre <agente>", em vez de "atividade em psicólogo". É sinal interno do TP-01, não hipótese: não aparece em Percepções. `fixados/openapi.json` regenerado da `dev` do brabo-api (`46d41b5`, api#96: POST interno de hipóteses e contexto do Psicólogo) e `api-types.generated.ts` refeito.
+
 - Fix (AT-881, RN-1073): o carrossel diz "esperando a fundação de X" também para a tarefa ainda não pega (sem `module`), que herda os `moduleIds` da história; `Story` ganha `moduleIds`. O carrossel ganha `data-testid` (`carrossel-executores`, `carrossel-cartao-<agentId>`, `carrossel-minimizar`).
 
 - Feat (AT-880, RN-1072/RN-1073): o chat do Criativo mostra os executores da execução vigente num carrossel manual acima do fio, com devs, QA e SecOps em cartões próprios, "x de N tarefas", custo, o motivo do ócio derivado do `module_map` e um botão para minimizar (só nome, estado, tempo e gasto; a escolha fica no navegador). `ui/Carousel` ganha `anunciar` e Home/End; `Task` ganha `module`.

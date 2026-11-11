@@ -784,6 +784,10 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
             ? `hipótese sobre ${alvo ?? 'um agente'} descartada`
             : type === 'psychologist.hypothesis_accepted_for_anamnese'
               ? `hipótese encaminhada para a Anamnese`
+              : // AT-898: sinal interno de falha da plataforma (só sessão do TP-01).
+                // Não é hipótese de produto e não aparece em Percepções.
+                type === 'psychologist.platform_signal'
+                ? `sinal interno de plataforma (TP-01) sobre ${alvo ?? 'um agente'}`
               : type === 'psychologist.analysis_completed'
                 ? `análise do Psicólogo concluída (${payloadField(payload, 'tier') ?? 'triagem'})`
                 : // Dispensada NÃO é falha: a sessão não tinha o que analisar.

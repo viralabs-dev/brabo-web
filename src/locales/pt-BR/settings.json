@@ -395,6 +395,7 @@
     },
     "toast": {
       "saved": "Credencial salva",
+      "catalogRefreshed": "O catálogo de modelos deste provider foi atualizado.",
       "saveErrorTitle": "Não deu para salvar",
       "testOk": "O provider aceitou a chave",
       "testRefused": "O provider recusou a chave",

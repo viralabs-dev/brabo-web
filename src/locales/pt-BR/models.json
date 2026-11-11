@@ -151,7 +151,9 @@
     "noModelsRegistered": "Nenhum modelo cadastrado",
     "noToolCallingModels": "Nenhum modelo faz tool calling nativo. Desmarque o filtro para ver os demais.",
     "currentHiddenByFilter": "O modelo vigente ({{model}}) não faz tool calling nativo e está fora desta lista.",
-    "selectModel": "Selecionar modelo"
+    "selectModel": "Selecionar modelo",
+    "catalogEmptyHint": "Nenhum modelo deste workspace veio do catálogo. Atualize o catálogo para buscar os modelos do provider.",
+    "updateCatalog": "Atualizar catálogo"
   },
   "spend": {
     "title": "Gasto das suas chaves",

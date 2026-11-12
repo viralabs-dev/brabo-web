@@ -1339,6 +1339,12 @@ export const setProjectBudget = (
   projectId: string,
   input: { limitUsd: number; policy: BudgetPolicy },
 ) => put<Budget>(`/projects/${projectId}/budget`, input);
+export const getWorkspaceBudget = (workspaceId: string) =>
+get<Budget | null>(`/workspaces/${workspaceId}/budget`);
+export const setWorkspaceBudget = (
+workspaceId: string,
+input: { limitUsd: number; policy: BudgetPolicy },
+) => put<Budget>(`/workspaces/${workspaceId}/budget`, input);
 export const getSessionBudget = (projectId: string, sessionId: string) =>
   get<Budget | null>(`/projects/${projectId}/sessions/${sessionId}/budget`);
 export const getSessionTokenUsage = (projectId: string, sessionId: string) =>

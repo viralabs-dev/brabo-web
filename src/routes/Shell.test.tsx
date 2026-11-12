@@ -589,8 +589,8 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
   it('as 8 seções, a ativa marcada, um contador por fila e Decisões só com o ponto', () => {
     abrirNoProjeto('code');
     estado.pendentes = [
-      { status: 'pending', actionType: 'terminal' },
-      { status: 'pending', actionType: 'git_merge' },
+      { status: 'pending', actionType: 'terminal', actor: { id: 'dev-backend' } },
+      { status: 'pending', actionType: 'git_merge', actor: { id: 'dev-backend' } },
     ];
     estado.hipoteses = [{ status: 'proposed' }, { status: 'proposed' }, { status: 'accepted' }];
     estado.backlog = [{ stories: [{ proposedReady: true }, { proposedReady: false }] }];
@@ -697,112 +697,73 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
 });
 
 /**
- * RN-198: Atividades escopada ao projeto da ROTA ATUAL — fora de um
- * projeto ela diz isso em vez de ficar vazia (mesmo espírito da RN-088).
+ * RN-1205: "Agentes agora" substitui Atividades — até 5 agentes por urgência,
+ * avatar, nome e ponto de status, sem contagem de eventos.
  */
-describe('Shell — Atividades', () => {
+describe('Shell — Agentes agora', () => {
+  const ev = (seq: number, id: string, type = 'agent.response') => ({
+    id: `ev-${seq}`,
+    sessionId: 's1',
+    seq,
+    type,
+    actor: { kind: 'agent', id },
+    payload: { content: 'x' },
+    createdAt: new Date().toISOString(),
+  });
+
   it('fora de um projeto, pede para abrir um', () => {
     estado.pathname = '/';
-
     renderShell();
-
-    expect(
-      screen.getByText('Abra um projeto para ver as atividades dos agentes.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText('Abra um projeto para ver os agentes.')).toBeInTheDocument();
   });
 
-  it('dentro de um projeto cuja sessão mais recente não tem evento de agente, diz isso nomeando a sessão', () => {
-    estado.pathname = `/projects/${PROJECT.id}`;
-    estado.latestSession = { id: 's-vazia' };
-    estado.eventosPorSessao = { 's-vazia': [] };
-
-    renderShell();
-
-    expect(
-      screen.getByText('Nenhum agente entrou em ação na sessão mais recente ainda.'),
-    ).toBeInTheDocument();
-  });
-
-  /**
-   * RN-648 (AT-325) — a contradição do levantamento visual: projeto só com
-   * sessões de CONVERSA (nenhuma de execução), o Criativo agindo na sessão que
-   * a Visão geral lê, e a sidebar dizendo que nenhum agente entrou em ação.
-   * Ela lia a sessão de EXECUÇÃO, que ali é `null`.
-   */
-  it('lê a MESMA sessão da Visão geral: sem execução, o Criativo da sessão mais recente aparece', () => {
+  it('lê a sessão mais recente: o Criativo aparece com nome e status, sem contagem', () => {
     estado.pathname = `/projects/${PROJECT.id}`;
     estado.execSession = null;
-    estado.latestSession = { id: 's-criativa' };
-    estado.eventosPorSessao = {
-      's-criativa': [
-        {
-          id: 'ev-1',
-          sessionId: 's-criativa',
-          seq: 1,
-          type: 'agent.response',
-          actor: { kind: 'agent', id: 'criativo' },
-          payload: { content: 'Vamos lá' },
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    };
+    estado.latestSession = { id: 's1' };
+    estado.eventosPorSessao = { s1: [ev(1, 'criativo')] };
 
     renderShell();
 
-    expect(screen.getByTestId('atividades-grupo-criativo')).toBeInTheDocument();
-    expect(screen.queryByText(/Nenhum agente entrou em ação/)).toBeNull();
+    const item = screen.getByTestId('agente-agora-criativo');
+    expect(item).toHaveAttribute('aria-label', expect.stringContaining('Criativo'));
+    expect(item.textContent).not.toMatch(/\d/);
+    expect(screen.getByText('ver todos')).toBeInTheDocument();
   });
 
-  it('com execução vigente, lê a sessão de EXECUÇÃO (a da aba Executores), e o vazio diz qual', () => {
+  it('mostra no máximo 5 agentes', () => {
     estado.pathname = `/projects/${PROJECT.id}`;
-    estado.execSession = { id: 's-exec' };
-    estado.latestSession = { id: 's-criativa' };
+    estado.execSession = { id: 's1' };
     estado.eventosPorSessao = {
-      's-exec': [
-        {
-          id: 'ev-dev',
-          sessionId: 's-exec',
-          seq: 4,
-          type: 'agent.response',
-          actor: { kind: 'agent', id: 'dev-backend' },
-          payload: { content: 'feito' },
-          createdAt: new Date().toISOString(),
-        },
-      ],
-      's-criativa': [],
+      s1: ['criativo', 'po', 'arquiteto', 'dev-lead', 'ux-designer', 'staff', 'infra'].map((id, i) => ev(i + 1, id)),
     };
 
-    const { unmount } = renderShell();
-    expect(screen.getByTestId('atividades-grupo-dev-backend')).toBeInTheDocument();
-    unmount();
-
-    estado.eventosPorSessao = { 's-exec': [], 's-criativa': [] };
     renderShell();
-    expect(
-      screen.getByText('Nenhum agente entrou em ação na sessão de execução ainda.'),
-    ).toBeInTheDocument();
+
+    expect(screen.getByTestId('agentes-agora').querySelectorAll('[data-testid^="agente-agora-"]').length).toBeLessThanOrEqual(5);
   });
 
-  it('projeto sem sessão nenhuma diz isso, e não que nenhum agente agiu', () => {
+  it('projeto sem sessão diz isso', () => {
     estado.pathname = `/projects/${PROJECT.id}`;
     estado.latestSession = undefined;
-
     renderShell();
-
     expect(screen.getByText('Este projeto ainda não tem sessão.')).toBeInTheDocument();
-    expect(screen.queryByText(/Nenhum agente entrou em ação/)).toBeNull();
   });
 
-  it('falha ao listar as sessões vira erro nomeado, nunca "nenhum agente"', () => {
+  it('falha ao listar as sessões vira erro nomeado', () => {
     estado.pathname = `/projects/${PROJECT.id}`;
     estado.latestSessionQuery = { isError: true };
 
     renderShell();
 
-    expect(screen.getByTestId('atividades-erro')).toHaveTextContent(
-      'Não foi possível carregar as atividades.',
-    );
-    expect(screen.queryByText(/Nenhum agente entrou em ação/)).toBeNull();
+    expect(screen.getByTestId('agentes-agora-erro')).toHaveTextContent('Não foi possível carregar os agentes.');
+  });
+
+  it('o Status entra na sidebar sob o rótulo Workspace', () => {
+    estado.pathname = '/';
+    renderShell();
+    expect(screen.getByText('Workspace')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Status' })).toHaveAttribute('href', '/status');
   });
 });
 

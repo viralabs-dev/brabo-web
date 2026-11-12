@@ -28,7 +28,12 @@
   },
   "status": {
     "heading": "Brabo —— 平台状态",
-    "resumo": { "ok": "一切正常", "erro": "有服务不可用", "checking": "正在检查服务…", "detalhe": "上次检查 {{instante}} · 每 {{segundos}} 秒刷新" },
+    "resumo": {
+      "ok": "一切正常",
+      "erro": "有服务不可用",
+      "checking": "正在检查服务…",
+      "detalhe": "上次检查 {{instante}} · 每 {{segundos}} 秒刷新"
+    },
     "latenciaValor": "{{ms}} 毫秒",
     "columns": {
       "service": "服务",
@@ -59,12 +64,35 @@
       "failed": "失败",
       "awaitingPlanDecision": "等待您的决定"
     },
-    "online": "{{count}} 在线"
+    "online": "{{count}} 在线",
+    "aguardandoVoce": "{{agente}} 在等你"
   },
   "projectStatus": {
     "saudavel": "活跃",
     "atencao": "预算 ≥70%",
     "risco": "需要关注",
     "inativo": "近期无活动"
+  },
+  "inicio": {
+    "indisponivel": "不可用",
+    "projetos": {
+      "rotulo": "活跃项目"
+    },
+    "agentes": {
+      "rotulo": "当前智能体",
+      "trabalhando_other": "{{count}} 个工作中",
+      "aguardando_other": "{{count}} 个在等你"
+    },
+    "gasto": {
+      "rotulo": "本月支出",
+      "soOwner": "上限仅所有者可见",
+      "tetoIndisponivel": "上限不可用",
+      "teto": "上限 {{valor}}"
+    },
+    "caixa": {
+      "rotulo": "决策收件箱",
+      "aprovacoes_other": "{{n}} 项审批",
+      "demais": "PR {{prs}} · 晋升 {{promocoes}} · 架构 {{arquitetura}} · 假设 {{hipoteses}}"
+    }
   }
 }

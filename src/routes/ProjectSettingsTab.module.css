@@ -842,3 +842,15 @@
   flex-wrap: wrap;
   gap: 8px;
 }
+
+/* O Salvar do cabeçalho de Configurações (RN-1265): só aparece com algo sujo. */
+.barraDeSalvar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+}

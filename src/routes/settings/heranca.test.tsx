@@ -52,6 +52,9 @@ vi.mock('../../lib/api-client', async () => {
     updateProject: vi.fn(),
     listAgentAreas: (...args: unknown[]) => listAgentAreas(...args),
     setAreaBudget: vi.fn(),
+    listWorkspaces: () => Promise.resolve([]),
+    getProjectBudget: () => Promise.resolve(null),
+    setProjectBudget: vi.fn(),
     listModels: (...args: unknown[]) => listModels(...args),
     // Nenhum provider com a capability de roteamento (ADR 0166): o estado de
     // produção enquanto o smoke do OpenRouter não rodar.

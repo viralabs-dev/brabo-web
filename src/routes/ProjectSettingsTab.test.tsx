@@ -108,6 +108,9 @@ vi.mock('../lib/api-client', async () => {
     listAgentAreas: (...args: unknown[]) => listAgentAreas(...args),
     setAreaMaxParallel: (...args: unknown[]) => setAreaMaxParallel(...args),
     setAreaBudget: (...args: unknown[]) => setAreaBudget(...args),
+    listWorkspaces: () => Promise.resolve([]),
+    getProjectBudget: () => Promise.resolve(null),
+    setProjectBudget: vi.fn(),
     runAnamnese: (...args: unknown[]) => runAnamnese(...args),
     listPersonalAccessTokens: (...args: unknown[]) =>
       listPersonalAccessTokens(...args),

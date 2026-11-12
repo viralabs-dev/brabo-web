@@ -807,7 +807,7 @@ da linha.
 
 - **Onde:** `apps/web/src/routes/settings/secao-salvavel.helpers.ts:64`
   (`useSecaoSalvavel` — o laço em série, o desfecho por linha e os três toasts),
-  `:89` (sujo por valor interpretado), `apps/web/src/routes/settings/secao-salvavel.tsx:66` (`MarcaDeNaoSalvo` — a contagem,
+  `:89` (sujo por valor interpretado), `apps/web/src/routes/settings/secao-salvavel.tsx:74` (`MarcaDeNaoSalvo` — a contagem,
   e o inválido substituindo-a),
   `apps/web/src/routes/settings/ParallelismSection.tsx:31`,
   `apps/web/src/routes/settings/BudgetSection.tsx:37` (os dois consumidores),

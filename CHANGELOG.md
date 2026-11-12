@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-894, RN-1220): Trabalho junta Backlog e Execução. Execução: cartão de chamada com a ação "Ativar execução" e o teto do projeto (sem estimativa), uma linha por área com paralelismo, fila de prontas/rodando/bloqueadas, e o desbloqueio, o aceite de paralelização e as PRs de dev vindos da Visão geral (cuja cópia sai na AT-890). Backlog: ação "Ativar execução", busca e filtros locais, épico com progresso, módulos e perguntas por história, e o seletor Por épico | Quadro (colunas pelo estado da tarefa, só leitura). Nenhuma leitura nova com a execução de pé. i18n nos quatro idiomas.
+
 - Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
 
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.

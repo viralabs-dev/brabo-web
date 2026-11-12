@@ -14,7 +14,8 @@
     "epics": "Эпиков пока нет. Примите handoff от Criativo в сессии, чтобы PO сформировал бэклог.",
     "rules": "Бизнес-правил пока нет.",
     "epicsTitle": "Бэклог пуст",
-    "rulesTitle": "Правил нет"
+    "rulesTitle": "Правил нет",
+    "filtrado": "Нет историй по этому фильтру."
   },
   "coverage": {
     "uncoveredBadge_one": "{{count}} не покрыта",
@@ -136,5 +137,34 @@
       "archived": "Задача архивирована",
       "archiveError": "Не удалось архивировать задачу"
     }
+  },
+  "visao": {
+    "label": "Вид бэклога",
+    "epico": "По эпикам",
+    "quadro": "Доска"
+  },
+  "busca": {
+    "label": "Поиск истории, задачи или RN"
+  },
+  "filtro": {
+    "comPergunta_one": "С открытым вопросом · {{count}}",
+    "comPergunta_few": "С открытым вопросом · {{count}}",
+    "comPergunta_many": "С открытым вопросом · {{count}}",
+    "comPergunta_other": "С открытым вопросом · {{count}}",
+    "modulo": "Модуль",
+    "todosModulos": "Все модули",
+    "recorte": "Счётчик вопросов — срез: учтены только первые 50 из {{total}}."
+  },
+  "epico": {
+    "progresso_one": "{{count}} история · {{prontas}} из {{count}} готово",
+    "progresso_few": "{{count}} истории · {{prontas}} из {{count}} готово",
+    "progresso_many": "{{count}} историй · {{prontas}} из {{count}} готово",
+    "progresso_other": "{{count}} истории · {{prontas}} из {{count}} готово"
+  },
+  "historia": {
+    "perguntas_one": "{{count}} вопрос",
+    "perguntas_few": "{{count}} вопроса",
+    "perguntas_many": "{{count}} вопросов",
+    "perguntas_other": "{{count}} вопроса"
   }
 }

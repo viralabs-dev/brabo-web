@@ -958,7 +958,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
   (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
-  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:139`
+  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:146`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)

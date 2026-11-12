@@ -979,7 +979,7 @@ tela pausa durante o turno — e com ele a duplicata visual da bolha em
 streaming.
 
 - **Onde:** `apps/web/src/lib/hooks.ts:262` (o `pausarPoll` do histórico),
-  `:388` (`baixados`); `apps/web/src/routes/ContextAside.tsx:154`
+  `:411` (`baixados`); `apps/web/src/routes/ContextAside.tsx:154`
   (`eventosAnteriores`) e o `ActivityFeed` com o pager, no fim do mesmo
   arquivo
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`

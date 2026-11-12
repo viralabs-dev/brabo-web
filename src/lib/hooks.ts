@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { getActiveExecutionSession, getArchitecture, getContainersOverview, getCoverage, getProjectPendingActions, getProjectsStatus, getProjectsSummary, getPsychologistStatus, getSessionEvent, getWorkspaceSummary, listBacklog, listHandoffs, listHypotheses, listInfraArtifacts, listProficiency, listProjects, listPsychologistAnalyses, listSessionEvents, listSessions, listWorkspaces, getSessionTokenUsage } from './api-client';
+import { getActiveExecutionSession, getArchitecture, getContainersOverview, getDecisionInbox, getWorkspaceBudget, getCoverage, getProjectPendingActions, getProjectsStatus, getProjectsSummary, getPsychologistStatus, getSessionEvent, getWorkspaceSummary, listBacklog, listHandoffs, listHypotheses, listInfraArtifacts, listProficiency, listProjects, listPsychologistAnalyses, listSessionEvents, listSessions, listWorkspaces, getSessionTokenUsage } from './api-client';
 import type { ActionType, SessionEvent } from './api-types';
 // Todo poll deste arquivo passa por aqui: um `refetchInterval` numérico não
 // sabe parar, e a api limita 300 req/min por usuário (ver `query-policy.ts`).
@@ -52,6 +52,26 @@ export function useWorkspaceSummary(workspaceId: string | undefined) {
     queryKey: ['workspace-summary', workspaceId],
     queryFn: () => getWorkspaceSummary(workspaceId!),
     enabled: !!workspaceId,
+  });
+}
+
+// Caixa de decisões do Início. Poll curto como a grade de cards; erro aqui não derruba o resto.
+export function useDecisionInbox(workspaceId: string | undefined) {
+  return useQuery({
+    queryKey: ['decision-inbox', workspaceId],
+    queryFn: () => getDecisionInbox(workspaceId!),
+    enabled: !!workspaceId,
+    refetchInterval: 30_000,
+  });
+}
+
+// Teto do workspace: só o owner lê (RN-060), então fora dele a consulta nem sai.
+export function useWorkspaceBudget(workspaceId: string | undefined, ehOwner: boolean) {
+  return useQuery({
+    queryKey: ['workspace-budget', workspaceId],
+    queryFn: () => getWorkspaceBudget(workspaceId!),
+    enabled: !!workspaceId && ehOwner,
+    retry: false,
   });
 }
 

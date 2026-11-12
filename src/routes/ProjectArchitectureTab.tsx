@@ -8,8 +8,9 @@ import type { Architecture } from '../lib/api-types';
 // `ProjectInsightsTab.tsx`, achado #15): a seção saiu de lá inteira e
 // precisa continuar IDÊNTICA visualmente. Duplicar as classes só para ter
 // arquivo de CSS próprio abriria a porta para as duas versões divergirem.
-import { Card } from '../components/ui/Card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/shadcn/table';
 import { Network } from 'lucide-react';
+import { Alert } from '../components/ui/Alert';
 import { EmptyState } from '../components/ui/EmptyState';
 import styles from './ProjectOverviewTab.module.css';
 
@@ -53,6 +54,11 @@ function ArchitectureContent({ architecture }: { architecture?: Architecture }) 
     // é de SEÇÃO que vem depois de outra, e deixava o título 29px abaixo.
     <div>
       <div className={styles.sectionHeader}>{t('architectureTab.title')}</div>
+      {adrs.some((a) => a.status === 'pending') && (
+        <Alert tone="warning">
+          {t('architectureTab.adrWaiting', { count: adrs.filter((a) => a.status === 'pending').length })}
+        </Alert>
+      )}
       {isEmpty ? (
         <EmptyState icone={<Network />} titulo={t('architectureTab.emptyTitle')}>
           {t('architectureTab.emptyState')}
@@ -70,24 +76,34 @@ function ArchitectureContent({ architecture }: { architecture?: Architecture }) 
             <>
             {/* Grafo derivado do mesmo module_map (RN-149), acima dos cartões. */}
             <GrafoDeModulos modulos={moduleMap.modules} />
-            <div className={styles.moduleGrid}>
-              {moduleMap.modules.map((m) => (
-                <Card key={m.name} radius="md" padding="sm">
-                  <div className={styles.moduleName}>{m.name}</div>
-                  <div className={styles.moduleStack}>{m.stack}</div>
-                  <div className={styles.moduleResp}>{m.responsibility}</div>
-                  {m.dependsOn.length > 0 && (
-                    <div className={styles.deps}>
-                      {m.dependsOn.map((d) => (
-                        <Badge key={d} tone="neutral">
-                          {d}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </Card>
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead scope="col">{t('architectureTab.cols.module')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.stack')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.responsibility')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.dependsOn')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {moduleMap.modules.map((m) => (
+                  <TableRow key={m.name}>
+                    <TableHead scope="row">{m.name}</TableHead>
+                    <TableCell>{m.stack}</TableCell>
+                    <TableCell>{m.responsibility}</TableCell>
+                    <TableCell>
+                      {m.dependsOn.length === 0
+                        ? '—'
+                        : m.dependsOn.map((d) => (
+                            <Badge key={d} tone="neutral">
+                              {d}
+                            </Badge>
+                          ))}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
             </>
           )}
 

@@ -295,11 +295,11 @@ não dizia quais abas estavam abertas, e a leitura de que `/containers` estava
 numa delas é inferência pelos 106 ≈ 9 × 12.
 
 - **Código:** `apps/web/src/lib/canal-vivo.ts:54` (`INTERVALO_DO_PROJETO_MS`),
-  `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:127`
-  (`useProjectSessions`), `:158` (`useLatestSession`);
+  `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:147`
+  (`useProjectSessions`), `:178` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
   `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:207` (`invalidador`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:221` (`invalidador`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:206` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
 - **Teste:** `apps/web/src/routes/duas-abas.orcamento.test.tsx` (as duas abas
@@ -444,7 +444,7 @@ o do chat.
   `apps/web/src/routes/ProjectApprovalsTab.tsx:106` (`pendentesQuery`), `:112`
   (`sessaoDeTrabalho`), `:312` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:111` (`pendentesQuery`), `:290`
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:114` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
@@ -751,7 +751,7 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
 
 - **Código:** `apps/web/src/lib/query-policy.ts:111`
   (`FRESCOR_DA_CONFIGURACAO_MS`); `apps/web/src/lib/hooks.ts:29`
-  (`useCurrentWorkspaceWithRole`), `:535` (`useProficiency`);
+  (`useCurrentWorkspaceWithRole`), `:555` (`useProficiency`);
   `apps/web/src/routes/settings/InstructionVersionsSection.tsx:31`
   (`instruction-versions`, sem poll); as seções de `apps/web/src/routes/settings/`
   e `apps/web/src/components/ModelCatalogSection.tsx`;
@@ -877,8 +877,8 @@ muda.
 
 - **Código:** `apps/web/src/routes/Shell.tsx:435` (`execucao`), `:449`
   (`estadoDaAtividade`);
-  `apps/web/src/lib/hooks.ts:127` (`useProjectSessions`, `frescorMs`);
-  `apps/web/src/routes/Dashboard.tsx:75` (`lastActivityText`);
+  `apps/web/src/lib/hooks.ts:147` (`useProjectSessions`, `frescorMs`);
+  `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);
   `apps/web/src/routes/ContextAside.tsx:47` (`quantos`), `:340`
   (`totalDeArtefatos`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — Atividades": sem
@@ -960,7 +960,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
   (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
   (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:134`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
-  `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:165` (`movel`);
+  `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:153` (`movel`)
 - **Teste:** `apps/web/src/routes/SessionPage.layout-movel.test.tsx` (a gaveta
   nasce fechada, abre com o foco no X e o Esc fecha devolvendo o foco; X e
@@ -1397,8 +1397,8 @@ resumo ganha — a pendente nova de uma sessão longa passa a contar em
 vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 - **Onde:** `apps/web/src/lib/acoes-da-sessao.ts:76` (`chaveDasAcoesDaSessao`),
-  `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:432`
-  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:236`
+  `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:455`
+  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:230`
   (`acoesPorSessao`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` (describe "a
   leitura de ações é a mesma do fio": com o fio tendo gravado a cauda, montar a

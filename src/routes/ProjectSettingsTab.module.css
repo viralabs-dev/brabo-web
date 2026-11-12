@@ -830,3 +830,15 @@
 .quebraLinha { flex-wrap: wrap; }
 .rolagemHorizontal { overflow-x: auto; }
 .larguraMinima { min-width: 56rem; }
+
+.conectorSubtitulo {
+  margin: 16px 0 4px;
+  font-size: var(--fs-sm, 13px);
+  color: var(--text-muted);
+}
+
+.conectorGrade {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -28,7 +28,12 @@
   },
   "status": {
     "heading": "Brabo — platform status",
-    "resumo": { "ok": "All systems operational", "erro": "A service is down", "checking": "Checking services…", "detalhe": "Last checked {{instante}} · refreshes every {{segundos}} s" },
+    "resumo": {
+      "ok": "All systems operational",
+      "erro": "A service is down",
+      "checking": "Checking services…",
+      "detalhe": "Last checked {{instante}} · refreshes every {{segundos}} s"
+    },
     "latenciaValor": "{{ms}} ms",
     "columns": {
       "service": "Service",
@@ -59,12 +64,38 @@
       "failed": "Failed",
       "awaitingPlanDecision": "Awaiting your decision"
     },
-    "online": "{{count}} online"
+    "online": "{{count}} online",
+    "aguardandoVoce": "{{agente}} waiting for you"
   },
   "projectStatus": {
     "saudavel": "active",
     "atencao": "budget ≥70%",
     "risco": "needs attention",
     "inativo": "no recent activity"
+  },
+  "inicio": {
+    "indisponivel": "unavailable",
+    "projetos": {
+      "rotulo": "Active projects"
+    },
+    "agentes": {
+      "rotulo": "Agents now",
+      "trabalhando_one": "{{count}} working",
+      "trabalhando_other": "{{count}} working",
+      "aguardando_one": "{{count}} waiting for you",
+      "aguardando_other": "{{count}} waiting for you"
+    },
+    "gasto": {
+      "rotulo": "Spend this month",
+      "soOwner": "cap visible to the owner",
+      "tetoIndisponivel": "cap unavailable",
+      "teto": "cap {{valor}}"
+    },
+    "caixa": {
+      "rotulo": "Decision inbox",
+      "aprovacoes_one": "{{n}} approval",
+      "aprovacoes_other": "{{n}} approvals",
+      "demais": "PRs {{prs}} · promotions {{promocoes}} · architecture {{arquitetura}} · hypotheses {{hipoteses}}"
+    }
   }
 }

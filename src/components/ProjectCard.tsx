@@ -62,6 +62,8 @@ interface ProjectCardProps {
    * não um "0 online" que sugeriria equipe vazia.
    */
   onlineAgentCount?: number;
+  /** "<Agente> aguardando você" (Caixa de decisões); texto já traduzido. */
+  aguardandoVoce?: string;
   onClick: () => void;
 }
 
@@ -79,6 +81,7 @@ export function ProjectCard({
   lastActivityText,
   pendingApprovalsCount,
   onlineAgentCount,
+  aguardandoVoce,
   onClick,
 }: ProjectCardProps) {
   const { t } = useTranslation('dashboard');
@@ -129,6 +132,11 @@ export function ProjectCard({
         )}
         {/* RN-409 — só desenha com pelo menos 1: "0 online" sugeriria uma
             equipe (vazia), não a AUSÊNCIA de trabalho ao vivo agora. */}
+        {aguardandoVoce && (
+          <Badge tone="accent" className={styles.unreadBadge}>
+            {aguardandoVoce}
+          </Badge>
+        )}
         {!!onlineAgentCount && (
           <Badge tone="success" dot className={styles.unreadBadge}>
             {t('projectCard.online', { count: onlineAgentCount })}

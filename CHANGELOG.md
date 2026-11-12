@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-934, AT-935, RN-1200, RN-1201): o teto do projeto vira "Teto do mês" (gasto do mês em UTC, dias restantes, previsão de fim de mês e a legenda da virada em hora local), e o workspace ganha o teto mensal na S06, só para o owner (`GET/PUT workspaces/:id/budget`); quem não é owner vê o motivo em texto. Componente único `TetoDoMes`. O cartão do plano e os alertas 70/90 falam "do mês". `fixados/openapi.json` atualizado da `dev` do brabo-api (api#108).
 - Feat (AT-891, RN-1185): `PassosDoTurno` recolhe os passos numa linha (N passos, 3 ferramentas mais usadas, custo e duração do turno) e, aberto, alterna Agrupados (por intenção, mapa tipado, resto em Outros) e Em ordem; os turnos anteriores ao último viram uma linha `ResumoDeTurno` que expande; o raciocínio mostra tokens quando o fecho os traz; texto do agente em 62ch.
 - Feat (AT-887, RN-1205): a sidebar troca Atividades por "Agentes agora" (até 5 agentes por urgência, avatar, nome e ponto de status, sem contagem de eventos; recolhida, só avatar com tooltip), rotula Containers, Providers, Gastos e Status (link novo) como Workspace e passa a usar os oito `--ag-*` do v9 nos dois temas (qa verde, infra azul, dev-backend teal). Sem requisição nova. A Caixa de decisões vai para a AT-889.
 

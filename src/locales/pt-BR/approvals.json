@@ -219,7 +219,7 @@
         "semTeto": "{{quem}} sem teto",
         "quemProjeto": "projeto",
         "aviso": "A estimativa (até {{estimativa}}) passa do teto {{onde}} (resta {{resta}}). A execução para quando o teto for atingido; a estimativa é o teto por tarefa, não o preço.",
-        "ondeProjeto": "do projeto",
+        "ondeProjeto": "do mês do projeto",
         "ondeArea": "da área {{area}}",
         "ajustar": "Ajustar teto",
         "campo": "Teto da área dev, em dólar",

@@ -197,7 +197,7 @@
         "semTeto": "{{quem}}无上限",
         "quemProjeto": "项目",
         "aviso": "预估（最多 {{estimativa}}）超过{{onde}}上限（剩余 {{resta}}）。达到上限时执行会停止；预估是每个任务的上限，不是价格。",
-        "ondeProjeto": "项目",
+        "ondeProjeto": "项目本月",
         "ondeArea": "{{area}} 区域",
         "ajustar": "调整上限",
         "campo": "dev 区域的上限（美元）",

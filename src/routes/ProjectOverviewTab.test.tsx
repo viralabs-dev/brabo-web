@@ -698,3 +698,56 @@ describe('religar a execução encerrada (RN-794)', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('A sessão é consultiva.');
   });
 });
+
+describe('próximo passo (RN-1162, AT-936)', () => {
+  const MODELO_DO_TIME = {
+    agents: [
+      { key: 'criativo', binding: { modelId: 'm-1', origin: 'project', routingPreference: null, skipped: [] } },
+    ],
+    areas: [],
+  };
+  const tarefas = (n: number, extra: Record<string, unknown> = {}) =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `t-${i}`, storyId: 's-1', title: `Tarefa ${i}`, description: '', status: 'todo', assignedTo: null,
+      blocked: false, blockedReason: null, gateStatus: null, gateCorrectionCount: 0, module: 'Backend',
+      createdAt: '', updatedAt: '', ...extra,
+    }));
+  const epicos = (ts: unknown[]) => [
+    { id: 'e-1', projectId: 'proj-1', sessionId: 'sess-1', title: 'E', description: '', createdAt: '', updatedAt: '',
+      stories: [{ id: 's-1', epicId: 'e-1', title: 'H', moduleIds: ['Backend'], tasks: ts }] },
+  ];
+
+  beforeEach(() => {
+    getResolvedModelBindings.mockResolvedValue(MODELO_DO_TIME);
+    listSessionEvents.mockResolvedValue({ items: [], nextCursor: null });
+  });
+
+  it('fixture da P10: 8 tarefas prontas e execução inativa dizem "Ativar a execução"', async () => {
+    listBacklog.mockResolvedValue(epicos(tarefas(8)));
+    montar();
+
+    const cartao = await screen.findByTestId('proximo-passo');
+    expect(cartao).toHaveAttribute('data-passo', 'ativar_execucao');
+    expect(within(cartao).getByText('Ativar a execução')).toBeInTheDocument();
+    expect(within(cartao).getByText('8 tarefas prontas no backlog.')).toBeInTheDocument();
+  });
+
+  it('com uma tarefa bloqueada a mais, diz "Desbloquear 1 tarefa"', async () => {
+    listBacklog.mockResolvedValue(epicos([...tarefas(8), ...tarefas(1, { id: 'b-1', blocked: true })]));
+    montar();
+
+    const cartao = await screen.findByTestId('proximo-passo');
+    expect(cartao).toHaveAttribute('data-passo', 'desbloquear');
+    expect(within(cartao).getByText('Desbloquear 1 tarefa')).toBeInTheDocument();
+  });
+
+  it('CASO DE FALHA: sem situação verdadeira o cartão não aparece', async () => {
+    // Execução ativa e nada em andamento, com tarefa a fazer: nenhuma linha vale.
+    getActiveExecutionSession.mockResolvedValue({ ...SESSAO, id: 'sess-exec' });
+    listBacklog.mockResolvedValue(epicos([...tarefas(1, { status: 'done' }), ...tarefas(1, { id: 'x' })]));
+    montar();
+
+    await screen.findAllByText(/Execução/);
+    expect(screen.queryByTestId('proximo-passo')).toBeNull();
+  });
+});

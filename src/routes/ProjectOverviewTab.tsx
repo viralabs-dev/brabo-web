@@ -67,7 +67,8 @@ import { Button } from '../components/ui/Button';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { AgentAutonomyActionType, Architecture, ProposedAction, SessionEvent } from '../lib/api-types';
 import { Card } from '../components/ui/Card';
-import { nomeDoAgente } from '../lib/agents';
+import { addressableAgents, nomeDoAgente } from '../lib/agents';
+import { ProximoPasso } from '../components/ProximoPasso';
 import styles from './ProjectOverviewTab.module.css';
 
 interface ProjectOverviewTabProps {
@@ -293,6 +294,8 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
     (e) => e.actor.kind !== 'agent' || !isExecutorAgentId(e.actor.id),
   );
   const workingCount = overviewRoster.filter((r) => r.status === 'trabalhando').length;
+  const conversacionais = new Set<string>(addressableAgents());
+  const agenteTrabalhando = overviewRoster.find((r) => r.status === 'trabalhando' && conversacionais.has(r.id));
   const waitingCount = overviewRoster.filter((r) => r.status === 'aguardando').length;
 
   return (
@@ -302,6 +305,14 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
         <PrimeirosPassos
           projectId={projectId}
           temSessao={sessoesQuery.data ? !!latestSession : undefined}
+        />
+        {/* RN-1162: o próximo passo do projeto, da tabela ordenada. */}
+        <ProximoPasso
+          projectId={projectId}
+          temSessao={sessoesQuery.data ? !!latestSession : undefined}
+          agenteTrabalhando={agenteTrabalhando ? nomeDoAgente(agenteTrabalhando.id) : null}
+          execucaoAtiva={execucao.isSuccess ? !!execucao.session : undefined}
+          architecture={architecture}
         />
         {/* RN-855: como rodar o entregável, declarado pela Infra. */}
         <RodarNaSuaMaquina projectId={projectId} />

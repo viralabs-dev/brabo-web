@@ -136,6 +136,49 @@
       "link": "打开 Criativo →"
     }
   },
+  "proximoPasso": {
+    "titulo": "下一步",
+    "agente": "请稍候：{{agente}}正在工作",
+    "agente_trabalhando": {
+      "texto": "此会话中有智能体正在工作。",
+      "link": "打开会话 →"
+    },
+    "continuar_ideacao": {
+      "titulo": "在会话中继续对话",
+      "texto": "待办中还没有故事。",
+      "link": "打开 Criativo →"
+    },
+    "confirmar_arquitetura": {
+      "titulo": "确认架构",
+      "texto": "已有故事，但模块图缺失或有待处理项。",
+      "link": "打开架构 →"
+    },
+    "ligar_modulo": {
+      "titulo_other": "将 {{count}} 个任务关联到模块",
+      "texto": "任务没有模块时无人领取。",
+      "link": "打开架构 →"
+    },
+    "desbloquear": {
+      "titulo_other": "解除 {{count}} 个任务的阻塞",
+      "texto": "被阻塞的任务不会自行推进。",
+      "link": "查看执行 →"
+    },
+    "ativar_execucao": {
+      "titulo": "启动执行",
+      "texto_other": "待办中有 {{count}} 个任务已就绪。",
+      "link": "查看执行 →"
+    },
+    "acompanhar_execucao": {
+      "titulo": "跟进执行",
+      "texto_other": "{{count}} 个任务进行中。",
+      "link": "查看执行 →"
+    },
+    "rodar_entregavel": {
+      "titulo": "在你的机器上运行交付物",
+      "texto": "所有任务均已完成。",
+      "link": "查看运行方法 →"
+    }
+  },
   "rodarNaSuaMaquina": {
     "title": "在你的机器上运行",
     "envExample": "先复制示例环境文件：cp .env.example .env",

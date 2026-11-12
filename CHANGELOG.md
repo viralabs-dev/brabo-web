@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-936, RN-1162): a Visão geral ganha o cartão "Próximo passo", abaixo dos Primeiros passos: UMA situação, a primeira verdadeira de uma tabela tipada e ordenada (`lib/proximo-passo.ts`: primeiro passo, agente trabalhando, continuar a ideação, confirmar a arquitetura, ligar a módulo, desbloquear, ativar a execução, acompanhar a execução, rodar o entregável); sem situação verdadeira o cartão some. Decisões pendentes ficam na faixa "Precisa de você"; nenhuma leitura nova. `usePrimeirosPassos` sai do cartão da RN-708 para ser reusado. Prévia em `13-design/proximo-passo`.
+
 - Feat (AT-906, AT-912, AT-913): o cartão do dev ocioso ganha "Procurar tarefa de novo" (`POST .../agents/:agentId/wake`; o 409 do engine aparece com a frase dele, e `dev.wake_requested` encerra a parada vigente). A tarefa `todo` ganha "Arquivar" com motivo obrigatório, só para o dono (`POST /projects/:id/tasks/:taskId/archive`), e a arquivada fica no histórico, riscada e com o motivo, fora das pendentes e das bloqueadas. As pendências ganham a fila "Tarefas sem módulo" (todo, sem módulo, história de vários módulos). A execução parada nomeia o ciclo de dependência (`ciclosDeDependencia`). O log narra `dev.wake_requested` e `backlog.task_archived`. `fixados/openapi.json` regenerado da `dev` do brabo-api (api#97). Prévia em `13-design/acordar-e-arquivar`.
 
 - Feat (AT-898, RN-1076): o log da sessão narra `psychologist.platform_signal` como "sinal interno de plataforma (TP-01) sobre <agente>", em vez de "atividade em psicólogo". É sinal interno do TP-01, não hipótese: não aparece em Percepções. `fixados/openapi.json` regenerado da `dev` do brabo-api (`46d41b5`, api#96: POST interno de hipóteses e contexto do Psicólogo) e `api-types.generated.ts` refeito.

@@ -431,7 +431,10 @@ export interface Session {
  * `repo_bootstraps`, nunca o nome). O GET de uma sessão não o carrega.
  */
 export type SessaoListada = Session &
-  Pick<components['schemas']['SessionListItemResponseDto'], 'technical'>;
+  Pick<
+    components['schemas']['SessionListItemResponseDto'],
+    'technical' | 'costMicros' | 'chamadas' | 'agentes' | 'passos'
+  >;
 
 export type ActorKind = 'user' | 'agent' | 'system';
 

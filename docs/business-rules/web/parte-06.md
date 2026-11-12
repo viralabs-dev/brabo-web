@@ -1130,7 +1130,7 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 3. **Orçamento.** A aba traz o editor do teto (`PUT projects/:projectId/budget`, `maintainer` pela `roleAtLeast`); abaixo do papel o controle fica inerte e o motivo é dito em texto. O botão "Definir orçamento" do card do projeto abre `?tab=spend` (antes `?tab=settings`, onde nenhuma tela gravava o orçamento).
 4. **Assinatura.** `assinaturaMicros` aparece num destaque separado; linha de modelo marcado `subscription` com custo zero mostra "assinatura — sem preço registrado", nunca "US$ 0".
 
-- **Código:** `apps/web/src/components/SpendPaineis.tsx:181` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:382` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:93` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:104` (`onDefineBudget`)
+- **Código:** `apps/web/src/components/SpendPaineis.tsx:189` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:398` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:93` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:104` (`onDefineBudget`)
 - **Teste:** `apps/web/src/routes/SpendPage.test.tsx` (owner × não-owner, sem provider para quem não é owner); `apps/web/src/routes/ProjectSpendTab.test.tsx` (owner só do projeto, membro por agente e área, editor grava, teto inválido e papel baixo recusados)
 - **Origem:** AT-632
 
@@ -1189,7 +1189,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 2. **Carga sob demanda.** O gráfico mora em `GraficoDeGastoPorDia.tsx`, carregado por `React.lazy` em `GastoPorDia.tsx`, com o SVG de `BarrasPorDia` como fallback. `SpendCharts.tsx` não importa o recharts, porque a aba Sessões importa o `Destaque` dali.
 3. **Recorte dito e alternativa em texto** ([RN-180](parte-02.md#rn-180)): o título diz a janela, a figura tem `aria-label` igual a ele, e `<details>` "Ver como tabela" traz dia, gasto e chamadas. Zero requisição nova ([RN-632](parte-05.md#rn-632)).
 
-- **Código:** `apps/web/src/components/GraficoDeGastoPorDia.tsx:13` (`GraficoDeGastoPorDia`); `apps/web/src/components/GastoPorDia.tsx:16` (`GastoPorDia`)
+- **Código:** `apps/web/src/components/GraficoDeGastoPorDia.tsx:13` (`GraficoDeGastoPorDia`); `apps/web/src/components/GastoPorDia.tsx:5` (`GastoPorDia`)
 - **Teste:** `apps/web/src/components/GraficoDeGastoPorDia.test.tsx` (figura com janela, tabela com os dias, série vazia)
 - **Origem:** AT-658
 

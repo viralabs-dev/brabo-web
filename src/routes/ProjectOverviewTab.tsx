@@ -1,5 +1,4 @@
-import { Ajuda } from '../components/ui/Ajuda';
-import { Info, Play, ThumbsUp } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
@@ -7,12 +6,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useBindingsDosAgentes } from '../lib/bindings-resolvidos';
 import {
   useArchitecture,
-  useBacklog,
   useCurrentWorkspace,
   useHandoffs,
   useActiveExecutionSession,
   useLatestSession,
-  usePendingActions,
   useProjectPendingActions,
   useProjectsSummary,
   useSessionEventHistory,
@@ -21,27 +18,22 @@ import {
 } from '../lib/hooks';
 import {
   mensagemDaApi,
-  requestParallelization,
   listAgentAutonomy,
   listModels,
   rearmDevAgent,
   setAgentAutonomy,
-  unblockTask,
   wakeDevAgent,
 } from '../lib/api-client';
 import {
   deriveAgentRoster,
   groupRosterByArea,
-  isExecutorAgentId,
   isExecutorGroup,
 } from '../lib/agent-status';
-import { contarTarefasPendentes, deriveExecutionProgress, formatMicros } from '../lib/execution';
-import { ReligarExecucao } from '../components/ReligarExecucao';
+import { deriveExecutionProgress } from '../lib/execution';
 import { connectSessionHeartbeat } from '../lib/session-channel';
 import { INTERVALO_DO_PROJETO_MS, criarInvalidadorDoCanal } from '../lib/canal-vivo';
 import type { AutonomyMode } from '../components/AgentCard';
 import { AgentTeamGrid } from '../components/AgentTeamGrid';
-import { AgentTimelineTree } from '../components/AgentTimelineTree';
 import { ActivityFeed } from '../components/ActivityFeed';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { AmbienteDoProjeto } from '../components/AmbienteDoProjeto';
@@ -51,23 +43,21 @@ import { releSeInfraAbriuPr } from '../components/RodarNaSuaMaquina.helpers';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { Skeleton } from '../components/ui/Skeleton';
-import { Badge } from '../components/ui/Badge';
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
 ItemMedia,
-  ItemGroup,
-  ItemTitle,
 } from '../components/shadcn/item';
 import { Button } from '../components/ui/Button';
-import { Textarea } from '../components/ui/Textarea';
 import { useToast } from '../components/ui/ToastProvider.helpers';
-import { useAtivarExecucao } from '../lib/use-ativar-execucao';
-import type { AgentAutonomyActionType, Architecture, ProposedAction, SessionEvent } from '../lib/api-types';
-import { Card } from '../components/ui/Card';
+import type { AgentAutonomyActionType, Architecture } from '../lib/api-types';
 import { addressableAgents, nomeDoAgente } from '../lib/agents';
+import { FaixaPrecisaDeVoce } from '../components/FaixaPrecisaDeVoce';
+import { ResumoDeTurno } from '../components/ResumoDeTurno';
+import { custoDoPayload, gravadoDoPayload } from '../lib/resumo-de-turno';
+import { passosDoTurno } from '../lib/passos-do-turno';
+import { formatRelativeTime } from '../lib/time';
 import { ProximoPasso } from '../components/ProximoPasso';
 import styles from './ProjectOverviewTab.module.css';
 
@@ -93,19 +83,7 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
   // HISTÓRICO — o que a coluna de Atividade mostra, em páginas (RN-099).
   // Mesma `queryKey` da cauda por dentro: nenhuma requisição a mais por ciclo.
   const historico = useSessionEventHistory(projectId, sessionId);
-  // AT-463: a linha do tempo do time lê a sessão de EXECUÇÃO quando ela
-  // existe — a mais recente pode ser uma ideação aberta depois, e a árvore
-  // dizia "nenhum agente" sobre um time que já tinha entregado. As duas
-  // queries são as MESMAS chaves que a sidebar já assina (Shell, RN-632):
-  // nenhuma requisição a mais por ciclo.
   const execucao = useActiveExecutionSession(projectId);
-  const sessaoDaLinhaDoTempo = execucao.session?.id ?? sessionId;
-  const linhaDoTempoNaExecucao = !!execucao.session && execucao.session.id !== sessionId;
-  const eventosDaExecucao = useSessionEvents(projectId, sessaoDaLinhaDoTempo);
-  const eventosDaLinhaDoTempo =
-    sessaoDaLinhaDoTempo === sessionId ? events : (eventosDaExecucao.data?.items ?? []);
-  const actionsQuery = usePendingActions(projectId, sessionId);
-  const actions = actionsQuery.data?.items ?? [];
   const { data: architecture } = useArchitecture(projectId);
   const handoffsQuery = useHandoffs(projectId, sessionId);
   const handoffs = handoffsQuery.data ?? [];
@@ -286,13 +264,8 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
     ),
   );
   const overviewRoster = roster.filter((r) => overviewRosterIds.has(r.id));
-  // AT-471: o filtro da árvore é por FAMÍLIA (sem dev/QA, RN-121), nunca pela
-  // roster — a roster é da sessão mais recente, e a árvore lê a de execução:
-  // filtrar por ela apagava o Infra Lead (e todo agente que só agiu na
-  // execução) e a árvore dizia "nenhum agente" sobre um time trabalhando.
-  const overviewEvents = eventosDaLinhaDoTempo.filter(
-    (e) => e.actor.kind !== 'agent' || !isExecutorAgentId(e.actor.id),
-  );
+  const [modo, setModo] = useState<'turnos' | 'eventos'>('turnos');
+  const turnos = events.filter((e) => e.type === 'agent.response').slice(-10).reverse();
   const workingCount = overviewRoster.filter((r) => r.status === 'trabalhando').length;
   const conversacionais = new Set<string>(addressableAgents());
   const agenteTrabalhando = overviewRoster.find((r) => r.status === 'trabalhando' && conversacionais.has(r.id));
@@ -301,18 +274,11 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
   return (
     <div className={[styles.layout, movel && styles.layoutMovel].filter(Boolean).join(' ')}>
       <div className={styles.main}>
+        <FaixaPrecisaDeVoce projectId={projectId} />
         {/* RN-708: o próximo passo de um projeto novo, enquanto faltar. */}
         <PrimeirosPassos
           projectId={projectId}
           temSessao={sessoesQuery.data ? !!latestSession : undefined}
-        />
-        {/* RN-1162: o próximo passo do projeto, da tabela ordenada. */}
-        <ProximoPasso
-          projectId={projectId}
-          temSessao={sessoesQuery.data ? !!latestSession : undefined}
-          agenteTrabalhando={agenteTrabalhando ? nomeDoAgente(agenteTrabalhando.id) : null}
-          execucaoAtiva={execucao.isSuccess ? !!execucao.session : undefined}
-          architecture={architecture}
         />
         {/* RN-855: como rodar o entregável, declarado pela Infra. */}
         <RodarNaSuaMaquina projectId={projectId} />
@@ -342,38 +308,18 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           onWake={handleWake}
         />
 
-        {/* A árvore vem LOGO ABAIXO dos cards do time, e não na coluna de
-            atividade: os cards dizem quem existe e em que estado está; a
-            árvore diz o que cada um fez e está fazendo. São a mesma pergunta
-            em duas profundidades, e separá-las em colunas diferentes obrigava
-            a olhar duas vezes.
-            Os eventos vão FILTRADOS (sem dev/QA — RN-121): a aba Executores
-            tem a própria árvore, e mostrar os mesmos ramos nas duas telas
-            era duplicar a mesma pergunta sem ganhar nada. */}
-        <h2 className={styles.sectionHeader}>
-          {t('timeline.title')}
-          <Ajuda assunto={t('timeline.title')}>{t('timeline.description')}</Ajuda>
-        </h2>
-        {linhaDoTempoNaExecucao && <div className={styles.sectionSub}>{t('timeline.lendoExecucao')}</div>}
-        <AgentTimelineTree events={overviewEvents} projectId={projectId} compactarChamadas />
-
-        <ExecutionSection
-          projectId={projectId}
-          sessionId={sessionId}
-          hasModuleMap={!!architecture?.moduleMap}
-          events={events}
-          actions={actions}
-          executionActivated={executionActivated}
-          executionActivatedPending={summaryQuery.isPending}
-          executionActivatedError={summaryQuery.isError ? summaryQuery.error : null}
-          onRetryExecutionActivated={() => void summaryQuery.refetch()}
-          semExecucaoVigente={execucao.isSuccess && !execucao.session}
-        />
-
-        <ArchitectureSummary projectId={projectId} architecture={architecture} />
       </div>
 
       <aside className={styles.aside}>
+        {/* RN-1162: o próximo passo do projeto, da tabela ordenada. */}
+        <ProximoPasso
+          projectId={projectId}
+          temSessao={sessoesQuery.data ? !!latestSession : undefined}
+          agenteTrabalhando={agenteTrabalhando ? nomeDoAgente(agenteTrabalhando.id) : null}
+          execucaoAtiva={execucao.isSuccess ? !!execucao.session : undefined}
+          architecture={architecture}
+        />
+        <ArchitectureSummary projectId={projectId} architecture={architecture} />
         {/* Estado de ambiente ANTES da atividade: a atividade responde "o que
             aconteceu", e ela só se lê direito depois de saber onde o código
             roda e o que está de pé em volta. As duas consultas do bloco reusam
@@ -384,6 +330,9 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
 
         <div className={styles.sectionRow}>
           <h2 className={styles.sectionHeader}>{t('activity.title')}</h2>
+          <Button size="sm" variant="secondary" aria-pressed={modo === 'turnos'} onClick={() => setModo(modo === 'turnos' ? 'eventos' : 'turnos')}>
+            {modo === 'turnos' ? t('activity.verEventos') : t('activity.verTurnos')}
+          </Button>
           <span className={styles.sectionCount}>
             {t('activity.count', { count: historico.carregados })}
           </span>
@@ -402,6 +351,26 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           // o `isPending` dela é eterno: o esqueleto ficava parado ao lado de
           // "0 eventos". Sem sessão o vazio é um fato, e se diz (AT-372).
           <EmptyState>{t('activity.emptyNoSession')}</EmptyState>
+        ) : modo === 'turnos' ? (
+          <div className={styles.turnos}>
+            {turnos.length === 0 && <EmptyState>{t('activity.turnosVazio')}</EmptyState>}
+            {turnos.map((e) => (
+              <Link
+                key={e.id}
+                to="/projects/$projectId/sessions/$sessionId"
+                params={{ projectId, sessionId: e.sessionId }}
+                search={{ highlightEvent: e.id }}
+              >
+                <ResumoDeTurno
+                  agente={nomeDoAgente(e.actor.id)}
+                  passos={passosDoTurno(events, e).length}
+                  gravado={gravadoDoPayload(e.payload)}
+                  custo={custoDoPayload(e.payload)}
+                  hora={formatRelativeTime(e.createdAt)}
+                />
+              </Link>
+            ))}
+          </div>
         ) : historico.isPending ? (
           <Skeleton height={180} />
         ) : (
@@ -418,365 +387,6 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
   );
 }
 
-function ExecutionSection({
-  projectId,
-  sessionId,
-  hasModuleMap,
-  events,
-  actions,
-  executionActivated,
-  executionActivatedPending,
-  executionActivatedError,
-  onRetryExecutionActivated,
-  semExecucaoVigente,
-}: {
-  projectId: string;
-  sessionId?: string;
-  hasModuleMap: boolean;
-  events: SessionEvent[];
-  actions: ProposedAction[];
-  /** Agregado do resumo do workspace — ver comentário no componente pai. */
-  executionActivated: boolean;
-  executionActivatedPending: boolean;
-  executionActivatedError: unknown;
-  onRetryExecutionActivated: () => void;
-  /**
-   * RN-794 (AT-469): a leitura da sessão de execução VIGENTE (RN-139, a
-   * mesma chave que a sidebar assina) CONFIRMOU que não há nenhuma. Só a
-   * ausência confirmada conta — carregando ou com erro, nada muda.
-   */
-  semExecucaoVigente: boolean;
-}) {
-  const { t } = useTranslation('overview');
-  const queryClient = useQueryClient();
-  const { showToast } = useToast();
-  const { data: epics } = useBacklog(projectId);
-
-  const activated = executionActivated;
-  const tarefasPendentes = contarTarefasPendentes(epics);
-
-  // RN-582 e o toast da causa real moram no hook (AT-888, RN-1210).
-  const { ativar: handleActivate, semRepositorio } = useAtivarExecucao(projectId);
-
-  // Dev agents a partir do event log: módulo/branch/task (dev.started/
-  // dev.working) + iteração/custo ao vivo do ÚLTIMO agent.response do agente
-  // (emitido pelo ToolLoop a cada turno de LLM). A redução é pura e vive em
-  // lib/execution.ts, testada lá.
-  const agents = deriveExecutionProgress(events);
-
-  const blockedTasks = (epics ?? []).flatMap((epic) =>
-    epic.stories.flatMap((story) =>
-      story.tasks
-        .filter((t) => t.blocked)
-        .map((t) => ({ id: t.id, title: t.title, storyTitle: story.title, blockedReason: t.blockedReason })),
-    ),
-  );
-
-  // Sugestões de paralelização ainda não aceitas.
-  const acceptedModules = new Set(
-    events
-      .filter((e) => e.type === 'execution.parallelization_accepted')
-      .map((e) => (e.payload as { module?: string }).module),
-  );
-  const suggestions = events
-    .filter((e) => e.type === 'execution.parallelization_suggested')
-    .map((e) => (e.payload as { module?: string }).module)
-    .filter((m): m is string => !!m && !acceptedModules.has(m));
-
-  const prs = actions
-    .filter((a) => a.actionType === 'pr_open')
-    .map((a) => ({
-      id: a.id,
-      status: a.status,
-      url:
-        (a.executionResult as { pullRequestUrl?: string } | null)?.pullRequestUrl ?? null,
-    }));
-
-  // RN-835 (AT-502): o desbloqueio tem retorno visível POR TAREFA — em voo o
-  // botão fica inerte e diz "Desbloqueando…" (um clique, uma chamada), o
-  // sucesso diz "desbloqueada" até o backlog relido tirar a linha, e a recusa
-  // mostra a frase da api na própria linha. Sem sessão lida o botão fica
-  // inerte com o motivo, em vez de um clique que não fazia nada calado.
-  const [desbloqueio, setDesbloqueio] = useState<
-    Record<string, { estado: 'em_voo' | 'ok' } | { estado: 'erro'; mensagem: string }>
-  >({});
-
-  const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
-
-  async function handleUnblock(taskId: string) {
-    if (!sessionId) return;
-    if (desbloqueio[taskId]?.estado === 'em_voo') return;
-    setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'em_voo' } }));
-    try {
-      await unblockTask(projectId, sessionId, taskId, orientacoes[taskId]);
-      setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'ok' } }));
-      await queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
-      // RN-794 (AT-469): desbloquear acorda o dev do módulo só se houver
-      // execução vigente (RN-777). Sem ela, a tela diz que nada volta a
-      // rodar até religar — o botão está nesta mesma seção.
-      if (semExecucaoVigente) {
-        showToast({
-          title: t('executionSection.unblockedTitle'),
-          message: t('executionSection.unblockedWithoutExecution'),
-          tone: 'warning',
-        });
-      }
-    } catch (erro) {
-      const mensagem = mensagemDaApi(erro, t('executionSection.unblockError'));
-      setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'erro', mensagem } }));
-      showToast({
-        title: t('executionSection.errorTitle'),
-        message: mensagem,
-        tone: 'danger',
-      });
-    }
-  }
-
-  async function handleAccept(module: string) {
-    if (!sessionId) return;
-    try {
-      const r = await requestParallelization(projectId, sessionId, module);
-      await queryClient.invalidateQueries({ queryKey: ['session-events', projectId, sessionId] });
-
-      // Acima do teto NADA subiu (RN-083). Sem esta distinção a tela diria que
-      // o agente entrou, e o usuário só descobriria que não pelo trabalho que
-      // não anda — que é exatamente o modo de falha que o pipeline de
-      // aprovação existe para tornar visível.
-      if (r.estado === 'aguardando_autorizacao') {
-        showToast({
-          title: t('executionSection.authorizationNeededTitle'),
-          message: t('executionSection.authorizationNeededMessage', {
-            count: r.ativosNaSessao,
-            max: r.maxParallel,
-          }),
-          tone: 'warning',
-        });
-      } else if (r.estado === 'recusado') {
-        showToast({
-          title: t('executionSection.requestDeniedTitle'),
-          message: r.motivo,
-          tone: 'danger',
-        });
-      }
-    } catch {
-      showToast({
-        title: t('executionSection.errorTitle'),
-        message: t('executionSection.requestError'),
-        tone: 'danger',
-      });
-    }
-  }
-
-  return (
-    <div className={styles.arch}>
-      <h2 className={styles.sectionHeader}>{t('executionSection.title')}</h2>
-      {/* Os três estados da RN-088: sem eles, "resumo ainda não chegou"
-          (`executionActivatedPending`) ficava indistinguível de "nunca
-          ativou" e oferecia "Ativar execução" de novo para uma execução que
-          já está rodando. */}
-      {executionActivatedError ? (
-        <ErroDeCarregamento
-          titulo={t('executionSection.activationErrorTitle')}
-          erro={executionActivatedError}
-          onTentarDeNovo={onRetryExecutionActivated}
-        />
-      ) : executionActivatedPending ? (
-        <div className={styles.sectionSub} aria-busy="true">
-          <Skeleton width={220} height={18} />
-        </div>
-      ) : !activated ? (
-        <Item variant="outline" className={styles.execIntro}>
-          <ItemMedia variant="icon"><Info aria-hidden="true" /></ItemMedia>
-          <ItemContent>
-          <ItemDescription>
-            {!hasModuleMap
-              ? t('executionSection.introNeedsModuleMap')
-              : semRepositorio
-                ? t('executionSection.introNeedsRepository')
-                : t('executionSection.introReady')}
-          </ItemDescription>
-          {hasModuleMap && semRepositorio && (
-            <Link
-              to="/projects/$projectId/provisioning"
-              params={{ projectId }}
-              search={{ provider: 'local' }}
-              data-testid="provisionar-repositorio"
-            >
-              {t('executionSection.provisionNow')}
-            </Link>
-          )}
-          </ItemContent>
-          {/* AT-372: sem mapa de módulos não há o que ativar — o botão some e
-              fica o motivo em texto, acima. Com o mapa e sem repositório ele
-              segue inerte ao lado do link que resolve. */}
-          {hasModuleMap && (
-            <ItemActions>
-              <Button
-                variant="primary"
-                legenda={t('executionSection.activate')}
-                onClick={handleActivate}
-                disabled={semRepositorio}
-              >
-                <Play aria-hidden="true" />
-              </Button>
-            </ItemActions>
-          )}
-        </Item>
-      ) : (
-        <>
-          {/* RN-835 (AT-502): as tarefas bloqueadas vêm PRIMEIRO na seção,
-              antes do "Religar execução" (depende da leitura da execução
-              vigente) e do grid dos dev agents (depende dos eventos) — blocos
-              que chegam depois do primeiro paint e empurravam o
-              "Desbloquear" sob o cursor (mesmo molde da RN-816). */}
-          {blockedTasks.length > 0 && (
-            <>
-              <div className={styles.archLabel}>
-                {t('executionSection.blockedTasksLabel')}
-                <Badge tone="danger">{blockedTasks.length}</Badge>
-              </div>
-              <ItemGroup className={styles.pendList}>
-                {blockedTasks.map((t2) => (
-                  <Item key={t2.id} variant="outline" size="sm" className={styles.pendItem}>
-                    <ItemContent>
-                      <ItemTitle className={styles.pendTitle}>
-                        {t2.title} <span className={styles.moduleStack}>({t2.storyTitle})</span>
-                      </ItemTitle>
-                      <ItemDescription className={styles.pendReason}>
-                        {t2.blockedReason ?? t('executionSection.noDiagnosis')}
-                      </ItemDescription>
-                      {!sessionId && (
-                        <ItemDescription className={styles.pendReason}>
-                          {t('executionSection.unblockNeedsSession')}
-                        </ItemDescription>
-                      )}
-                      {desbloqueio[t2.id]?.estado !== 'ok' && (
-                        <Textarea
-                          label={t('executionSection.unblockGuidance')}
-                          placeholder={t('executionSection.unblockGuidanceHint')}
-                          maxLength={2000}
-                          value={orientacoes[t2.id] ?? ''}
-                          disabled={!sessionId || desbloqueio[t2.id]?.estado === 'em_voo'}
-                          onChange={(e) => setOrientacoes((o) => ({ ...o, [t2.id]: e.target.value }))}
-                        />
-                      )}
-                      {desbloqueio[t2.id]?.estado === 'erro' && (
-                        <span role="alert" className={styles.pendReason}>
-                          {(desbloqueio[t2.id] as { mensagem: string }).mensagem}
-                        </span>
-                      )}
-                    </ItemContent>
-                    <ItemActions>
-                      {desbloqueio[t2.id]?.estado === 'ok' ? (
-                        <span role="status" data-testid="desbloqueada">
-                          {t('executionSection.unblockedTitle')}
-                        </span>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          onClick={() => handleUnblock(t2.id)}
-                          disabled={!sessionId || desbloqueio[t2.id]?.estado === 'em_voo'}
-                          aria-busy={desbloqueio[t2.id]?.estado === 'em_voo'}
-                        >
-                          {desbloqueio[t2.id]?.estado === 'em_voo'
-                            ? t('executionSection.unblocking')
-                            : t('executionSection.unblock')}
-                        </Button>
-                      )}
-                    </ItemActions>
-                  </Item>
-                ))}
-              </ItemGroup>
-            </>
-          )}
-
-          {semExecucaoVigente && tarefasPendentes > 0 && (
-            <ReligarExecucao projectId={projectId} tarefasPendentes={tarefasPendentes} />
-          )}
-          <div className={styles.archLabel}>{t('executionSection.devAgentsLabel')}</div>
-          {agents.size === 0 ? (
-            <div className={styles.sectionSub}>{t('executionSection.spinningUp')}</div>
-          ) : (
-            <div className={styles.moduleGrid}>
-              {[...agents.entries()].map(([agentId, a]) => (
-                <Card key={agentId} radius="md" padding="sm">
-                  <div className={styles.moduleName}>{agentId}</div>
-                  <div className={styles.moduleStack}>
-                    {t('executionSection.devAgentModule', { module: a.module })}
-                  </div>
-                  {a.taskTitle && (
-                    <div className={styles.moduleResp}>
-                      {t('executionSection.devAgentTask', { task: a.taskTitle })}
-                    </div>
-                  )}
-                  {a.branch && <Badge tone="neutral">{a.branch}</Badge>}
-                  {a.iteration !== undefined && (
-                    <div className={styles.moduleResp}>
-                      {t('executionSection.devAgentProgress', {
-                        iteration: a.iteration,
-                        cost: formatMicros(a.tokensSpentMicros ?? 0),
-                      })}
-                    </div>
-                  )}
-                </Card>
-              ))}
-            </div>
-          )}
-
-          {suggestions.map((module) => (
-            <Item key={module} variant="outline" size="sm" className={styles.suggestion}>
-              <ItemContent>
-                <span>
-                  {t('executionSection.suggestionBefore')}
-                  <strong>{module}</strong>
-                  {t('executionSection.suggestionAfter')}
-                </span>
-              </ItemContent>
-              <ItemActions>
-                <Button
-                  variant="secondary"
-                  legenda={t('executionSection.accept')}
-                  onClick={() => handleAccept(module)}
-                >
-                  <ThumbsUp aria-hidden="true" />
-                </Button>
-              </ItemActions>
-            </Item>
-          ))}
-
-          <div className={styles.archLabel}>{t('executionSection.pullRequestsLabel')}</div>
-          {prs.length === 0 ? (
-            <div className={styles.sectionSub}>{t('executionSection.noPullRequests')}</div>
-          ) : (
-            <ItemGroup className={styles.adrList}>
-              {prs.map((pr) => (
-                <Item key={pr.id} size="xs" className={styles.adrItem}>
-                  <Badge tone={pr.status === 'executed' ? 'success' : 'warning'}>{pr.status}</Badge>
-                  {pr.url ? (
-                    <a href={pr.url} target="_blank" rel="noreferrer" className={styles.adrLink}>
-                      {pr.url}
-                    </a>
-                  ) : (
-                    <span>{t('executionSection.pullRequestFallback')}</span>
-                  )}
-                </Item>
-              ))}
-            </ItemGroup>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-/**
- * Resumo condensado (PROGRAMA de abas agrupadas — Onda 3): a seção INTEIRA
- * (módulos, diagrama, ADRs, pendências) virou aba própria
- * (`ProjectArchitectureTab.tsx`, extraída 1:1 daqui) — repeti-la aqui seria
- * duplicar o corpo inteiro, o mesmo erro que a Onda 1 já evitou para PRs.
- * O que fica é o suficiente para decidir se vale abrir a aba: quantos
- * módulos existem e se o diagrama já foi gerado.
- */
 function ArchitectureSummary({
   projectId,
   architecture,

@@ -20,6 +20,7 @@ import {
   listAgentAutonomy,
   listModels,
   mensagemDaApi,
+  listBacklog,
   rearmDevAgent,
   setAgentAutonomy,
   wakeDevAgent,
@@ -39,6 +40,8 @@ import type { AutonomyMode } from '../components/AgentCard';
 import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { AgentTimelineTree } from '../components/AgentTimelineTree';
 import { Alert } from '../components/ui/Alert';
+import { AcoesDaExecucao } from './AcoesDaExecucao';
+import { ResumoDaExecucao } from './ResumoDaExecucao';
 import { DestravarExecucao } from './DestravarExecucao';
 import { textoDaExecucaoParada } from './DestravarExecucao.helpers';
 import { Badge } from '../components/ui/Badge';
@@ -104,6 +107,14 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   // e no ritmo de projeto quando ligada.
   const semExecucaoVigente = executionSessionQuery.isSuccess && !executionSession;
   const backlogQuery = useBacklog(semExecucaoVigente ? projectId : undefined, INTERVALO_DO_PROJETO_MS);
+  // Com a execução de pé o backlog NÃO é lido aqui (RN-794, RN-632): o que a tela mostra vem do
+  // cache que o trilho do projeto já mantém na MESMA chave, sem requisição nova.
+  const backlogEmCache = useQuery({
+    queryKey: ['backlog', projectId],
+    queryFn: () => listBacklog(projectId),
+    enabled: false,
+  });
+  const epicsDaTela = backlogQuery.data ?? backlogEmCache.data;
   const tarefasPendentes = contarTarefasPendentes(backlogQuery.data);
   const eventsQuery = useSessionEvents(projectId, sessionId);
   const events = eventsQuery.data?.items ?? [];
@@ -327,6 +338,16 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
         </div>
       )}
 
+      {executionSessionQuery.isSuccess && (
+        <ResumoDaExecucao
+          projectId={projectId}
+          epics={epicsDaTela}
+          parada={semExecucaoVigente}
+          grupos={executorGroups}
+          budget={projectSummary?.budget}
+        />
+      )}
+
       {sessionId && (
         <>
 
@@ -391,6 +412,8 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
             // aqui o backlog só é lido sem execução vigente (RN-794).
             filasDoChat={false}
           />
+
+          <AcoesDaExecucao projectId={projectId} sessionId={sessionId} epics={epicsDaTela} acoes={pendentes} events={events} podeDecidir={podeDecidir} />
 
           {/* `executionActivated` vem do resumo agregado — os três estados
               da RN-088 aqui: sem eles, um "nenhum dev agent" de CARREGANDO

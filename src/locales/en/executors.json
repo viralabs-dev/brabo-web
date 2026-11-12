@@ -259,5 +259,59 @@
       "gateUltimoMudancas": "Last verdict: changes requested.",
       "gateUltimoMudancasPr": "Last verdict: changes requested (PR #{{pr}})."
     }
+  },
+  "acoes": {
+    "blockedTasksLabel": "Blocked tasks",
+    "noDiagnosis": "no diagnosis",
+    "unblock": "Unblock",
+    "unblocking": "Unblocking…",
+    "unblockError": "Could not unblock the task",
+    "unblockedTitle": "Task unblocked",
+    "unblockGuidance": "Guidance for the dev (optional)",
+    "unblockGuidanceHint": "E.g. the entry point is injected by the composer; do not start the module on its own.",
+    "suggestionBefore": "There are independent tasks in ",
+    "suggestionAfter": " — spin up an extra dev?",
+    "accept": "Accept",
+    "pullRequestsLabel": "Pull requests waiting for you",
+    "noPullRequests": "No PR waiting for you.",
+    "pullRequestFallback": "PR",
+    "errorTitle": "Error",
+    "requestError": "Could not request",
+    "requestDeniedTitle": "Request denied",
+    "authorizationNeededTitle": "Needs your authorization",
+    "authorizationNeededMessage_one": "The session already has {{count}} agent, the lead's cap is {{max}}. The request is in Approvals.",
+    "authorizationNeededMessage_other": "The session already has {{count}} agents, the lead's cap is {{max}}. The request is in Approvals."
+  },
+  "chamada": {
+    "activate": "Activate execution",
+    "activateError": "Could not activate the execution",
+    "needsMaintainer": "Activating the execution requires the maintainer role.",
+    "title_one": "Execution is off · {{count}} task ready",
+    "title_other": "Execution is off · {{count}} tasks ready",
+    "explain_one": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",
+    "explain_other": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",
+    "teto": "Project cap {{valor}}"
+  },
+  "areas": {
+    "title": "Areas",
+    "working": "working",
+    "stopped": "stopped",
+    "parallelism": "Parallelism {{ativos}} / {{max}}",
+    "lead": "lead: {{nome}}",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members"
+  },
+  "fila": {
+    "title": "Task queue",
+    "ready_one": "{{count}} ready",
+    "ready_other": "{{count}} ready",
+    "running_one": "{{count}} running",
+    "running_other": "{{count}} running",
+    "blocked_one": "{{count}} blocked",
+    "blocked_other": "{{count}} blocked",
+    "semModulo_one": "{{count}} without module",
+    "semModulo_other": "{{count}} without module",
+    "more_one": "+ {{count}} task, see in the backlog",
+    "more_other": "+ {{count}} tasks, see in the backlog"
   }
 }

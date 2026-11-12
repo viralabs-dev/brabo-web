@@ -14,7 +14,8 @@
     "epics": "还没有史诗。在会话中接受 Criativo 的 handoff，PO 就会生成待办列表。",
     "rules": "还没有业务规则。",
     "epicsTitle": "待办为空",
-    "rulesTitle": "暂无规则"
+    "rulesTitle": "暂无规则",
+    "filtrado": "没有符合此筛选的故事。"
   },
   "coverage": {
     "uncoveredBadge_other": "{{count}} 条未覆盖",
@@ -100,5 +101,25 @@
       "archived": "任务已归档",
       "archiveError": "无法归档任务"
     }
+  },
+  "visao": {
+    "label": "待办视图",
+    "epico": "按史诗",
+    "quadro": "看板"
+  },
+  "busca": {
+    "label": "搜索故事、任务或 RN"
+  },
+  "filtro": {
+    "comPergunta_other": "有未决问题 · {{count}}",
+    "modulo": "模块",
+    "todosModulos": "所有模块",
+    "recorte": "问题计数只是片段：{{total}} 个中仅包含前 50 个。"
+  },
+  "epico": {
+    "progresso_other": "{{count}} 个故事 · {{prontas}}/{{count}} 已完成"
+  },
+  "historia": {
+    "perguntas_other": "{{count}} 个问题"
   }
 }

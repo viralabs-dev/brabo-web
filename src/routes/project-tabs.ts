@@ -18,8 +18,9 @@ function painel<K extends string>(
 }
 
 const ProjectOverviewTab = painel(() => import('./ProjectOverviewTab'), 'ProjectOverviewTab');
+const ProjectTodasTab = painel(() => import('./ProjectSessionsTab'), 'ProjectTodasTab');
 const ProjectCriativoTab = painel(() => import('./ProjectSessionsTab'), 'ProjectCriativoTab');
-const ProjectChatShell = painel(() => import('./ProjectChatShell'), 'ProjectChatShell');
+const ProjectChatTab = painel(() => import('./ProjectSessionsTab'), 'ProjectChatTab');
 const ProjectCodeTab = painel(() => import('./ProjectCodeTab'), 'ProjectCodeTab');
 const ProjectPrsTab = painel(() => import('./ProjectPrsTab'), 'ProjectPrsTab');
 const ProjectExecutorsTab = painel(() => import('./ProjectExecutorsTab'), 'ProjectExecutorsTab');
@@ -66,7 +67,7 @@ const ProjectSettingsTab = painel(() => import('./ProjectSettingsTab'), 'Project
  * tempo — desde o ADR 0211 na lista do projeto da sidebar, `routes/AbasDoProjeto.tsx`) e duas chaves novas ainda em placeholder (`prs`,
  * `arquitetura` — Ondas 2/3 entregam o conteúdo real). A fusão mais visível
  * desta onda: `sessions` ("Chat") e `rag` ("Chat RAG") viraram UMA aba só,
- * `chat`, com um controle segmentado por dentro (`ProjectChatShell.tsx`) —
+ * `chat`, com um controle segmentado por dentro (removido na AT-893) —
  * fusão de CONTÊINER DE UI, não de lógica. `ProjectChatTab` (ativa agente,
  * gasta a chave do owner — RN-058) e `ProjectRagTab` (busca read-only sobre
  * o índice, sem agente — RN-202/ADR 0082) continuam os dois caminhos de
@@ -160,7 +161,7 @@ const REGISTRO = [
   // Grupo "Agentes" — as quatro abas que giram em torno de conversar com um
   // agente ou acompanhar o que ele fez: acompanhamento de execução
   // (Executores), os dois lugares de sessão (Criativo e o Chat fundido,
-  // ver `ProjectChatShell.tsx`) e as hipóteses do Psicólogo (Insights).
+  // AT-893 o desfez) e as hipóteses do Psicólogo (Insights).
   {
     key: 'executores',
     secao: 'trabalho',
@@ -172,6 +173,16 @@ const REGISTRO = [
   },
   // Criativo vem antes de Chat pelo mesmo motivo que `KIND_PRE_SELECIONADO` é
   // `criativa`: é o caminho que produz, e o outro é o de tirar dúvidas.
+  {
+    // AT-893: a união das duas listas; `?tab=rag` abre aqui em modo RAG.
+    key: 'todas',
+    secao: 'sessoes',
+    get label() {
+      return i18n.t('tabs.todas.label', { ns: 'nav' });
+    },
+    component: ProjectTodasTab,
+    ordem: 21.5,
+  },
   {
     key: 'criativo',
     secao: 'sessoes',
@@ -202,7 +213,7 @@ const REGISTRO = [
     get label() {
       return i18n.t('tabs.chat.label', { ns: 'nav' });
     },
-    component: ProjectChatShell,
+    component: ProjectChatTab,
     ordem: 23,
   },
   {
@@ -370,7 +381,7 @@ export function abaPorChave(chave: string | undefined): AbaDoProjeto {
 /** Chaves de deep-link aposentadas; abrem a sub-aba de hoje. */
 const ALIASES_DE_ABA: Readonly<Record<string, ChaveDeAba>> = {
   sessions: 'chat',
-  rag: 'chat',
+  rag: 'todas',
   // AT-394: o rótulo da aba é "Histórias", e é isso que se digita na URL.
   historias: 'backlog',
 };
@@ -388,7 +399,7 @@ export interface SecaoDoProjeto {
 
 const SECOES_BASE = [
   { chave: 'overview', subs: ['overview'] },
-  { chave: 'sessoes', subs: ['criativo', 'chat'] },
+  { chave: 'sessoes', subs: ['todas', 'criativo', 'chat'] },
   { chave: 'trabalho', subs: ['backlog', 'executores'] },
   { chave: 'codigo', subs: ['code', 'prs'] },
   { chave: 'decisoes', subs: ['approvals', 'insights', 'permissoes'] },

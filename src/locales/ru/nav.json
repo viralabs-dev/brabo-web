@@ -36,6 +36,9 @@
     "settings": {
       "label": "Настройки"
     },
+    "todas": {
+      "label": "Все"
+    },
     "permissoes": {
       "label": "Разрешения"
     }
@@ -63,6 +66,7 @@
     "arquitetura": "Архитектура",
     "spend": "Расходы",
     "settings": "Настройки",
+    "todas": "Все",
     "permissoes": "Разрешения"
   }
 }

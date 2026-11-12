@@ -76,17 +76,10 @@ vi.mock('./ProjectOverviewTab', () => ({
   ProjectOverviewTab: () => <div>painel de overview</div>,
 }));
 vi.mock('./ProjectSessionsTab', () => ({
-  // FASE 24: `ProjectCriativoTab` continua vindo daqui. `ProjectChatTab`
-  // também continua exportado daqui (o Chat RAG que consome
-  // `./ProjectChatShell`, mockado abaixo, é quem o monta agora — este
-  // registro não importa `ProjectChatTab` mais diretamente).
+  // AT-893: as três sub-abas de Sessões vêm do mesmo módulo.
   ProjectCriativoTab: () => <div>painel de criativo</div>,
-}));
-vi.mock('./ProjectChatShell', () => ({
-  // A fusão da Onda 1: `chat` é UMA aba, controlando por dentro o segmento
-  // Conversar/Buscar — ver `ProjectChatShell.test.tsx` para o comportamento
-  // do segmento. Aqui só importa que a chave `chat` tem painel.
-  ProjectChatShell: () => <div>painel de chat</div>,
+  ProjectTodasTab: () => <div>painel de todas</div>,
+  ProjectChatTab: () => <div>painel de chat</div>,
 }));
 vi.mock('./ProjectCodeTab', () => ({
   ProjectCodeTab: () => <div>painel de code</div>,
@@ -301,7 +294,7 @@ describe('abas do projeto derivam de um registro só', () => {
    * Ondas 2/3.
    */
   it('as abas que o handoff não previu continuam no registro, e a fusão Chat/RAG tirou uma chave', () => {
-    expect(ABAS_DO_PROJETO).toHaveLength(13);
+    expect(ABAS_DO_PROJETO).toHaveLength(14);
     const chaves = ABAS_DO_PROJETO.map((aba) => aba.key);
     expect(chaves).toEqual(
       expect.arrayContaining([
@@ -344,10 +337,11 @@ describe('abas do projeto derivam de um registro só', () => {
       spend: ['spend', 'spend'],
       settings: ['settings', 'settings'],
       sessions: ['sessoes', 'chat'],
-      rag: ['sessoes', 'chat'],
+      rag: ['sessoes', 'todas'],
+      todas: ['sessoes', 'todas'],
       historias: ['trabalho', 'backlog'],
       // chave de seção abre a primeira sub-aba
-      sessoes: ['sessoes', 'criativo'],
+      sessoes: ['sessoes', 'todas'],
       trabalho: ['trabalho', 'backlog'],
       codigo: ['codigo', 'code'],
       decisoes: ['decisoes', 'approvals'],

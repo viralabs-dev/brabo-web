@@ -1,11 +1,4 @@
 {
-  "chatShell": {
-    "segments": {
-      "chat": "Chat",
-      "search": "Search"
-    },
-    "ariaLabel": "Chat mode"
-  },
   "rag": {
     "scopes": {
       "docs": "Docs",
@@ -161,6 +154,11 @@
         "openButton": "New conversation",
         "confirmButton": "Open consultative session",
         "empty": "No conversation yet. Open one to ask questions and get context without activating any agent."
+      },
+      "todas": {
+        "title": "Sessions",
+        "explanation": "Every session of the project, ideation and conversation. Open a new one in the sub-tab of the type you want.",
+        "empty": "No sessions yet. Open an ideation or a conversation."
       }
     },
     "cancelButton": "Cancel",
@@ -220,6 +218,17 @@
         "errorDetail": "could not load",
         "detail": "project total, 30 days"
       }
+    },
+    "search": {
+      "label": "Search sessions and the project RAG",
+      "placeholder": "Search sessions and the project RAG",
+      "ragButton": "Search the RAG (Enter)",
+      "noMatch": "No session matches the search. Enter searches the RAG."
+    },
+    "row": {
+      "system": "system",
+      "passos_one": "{{count}} step",
+      "passos_other": "{{count}} steps"
     }
   }
 }

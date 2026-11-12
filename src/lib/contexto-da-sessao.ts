@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getSessionContextSummary } from './api-client';
-import type { ResumoDoContextoDaSessao } from './api-types';
+import type { ProductBriefPayload, ResumoDoContextoDaSessao, SessionEvent } from './api-types';
 
 /**
  * RN-827 (AT-498) — o agregado da sessão INTEIRA do painel "Contexto da
@@ -47,4 +47,24 @@ export function artefatosDoAgenteNoAgregado(
 ): number | undefined {
   if (!resumo) return undefined;
   return resumo.artefatosPorAgente.find((a) => a.actorId === actorId)?.quantos ?? 0;
+}
+
+/** O `summary` do `artifact.product_brief` mais recente; sem brief, null e a seção sai (AT-892). */
+export function objetivoDaSessao(events: SessionEvent[]): string | null {
+  let achado: SessionEvent | null = null;
+  for (const e of events) {
+    if (e.type === 'artifact.product_brief' && (!achado || e.seq > achado.seq)) achado = e;
+  }
+  const resumo = (achado?.payload as Partial<ProductBriefPayload> | undefined)?.summary;
+  return typeof resumo === 'string' && resumo.trim() ? resumo : null;
+}
+
+/** Custo por agente somado do `custoMicros` dos eventos já baixados: nenhuma leitura nova (RN-632). */
+export function gastoPorAgente(events: SessionEvent[]): { actorId: string; usd: number }[] {
+  const por = new Map<string, number>();
+  for (const e of events) {
+    const c = (e.payload as { custoMicros?: unknown } | null)?.custoMicros;
+    if (typeof c === 'number') por.set(e.actor.id, (por.get(e.actor.id) ?? 0) + c / 1_000_000);
+  }
+  return [...por].map(([actorId, usd]) => ({ actorId, usd }));
 }

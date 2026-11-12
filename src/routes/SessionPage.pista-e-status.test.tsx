@@ -228,6 +228,7 @@ describe('SessionPage — achado A: contador de regras de negócio', () => {
 
     montar();
 
+    fireEvent.click(await screen.findByRole('button', { name: /Detalhes da sessão/ }));
     const cabecalho = await screen.findByRole('button', {
       name: /Regras de negócio/,
     });

@@ -93,6 +93,9 @@ export interface SessionTopbarProps {
   ideacaoComecou?: boolean;
   handleStartIdeation: () => Promise<void>;
   handleClose: () => Promise<void>;
+  /** Há turno em curso: o botão vira "Parar turno" (o mesmo cancelamento do composer, RN-122). */
+  streaming?: boolean;
+  handleCancel?: () => Promise<void>;
   asideOpen: boolean;
   setAsideOpen: Dispatch<SetStateAction<boolean>>;
 }
@@ -120,6 +123,8 @@ export function SessionTopbar({
   ideacaoComecou = false,
   handleStartIdeation,
   handleClose,
+  streaming = false,
+  handleCancel,
   asideOpen,
   setAsideOpen,
 }: SessionTopbarProps) {
@@ -336,7 +341,7 @@ export function SessionTopbar({
       <Button
         variant="danger"
         className={styles.acaoDaBarra}
-        onClick={handleClose}
+        onClick={streaming && handleCancel ? handleCancel : handleClose}
         disabled={!session || sessaoEhTerminal(session.status)}
         // Na barra mínima o botão fica só com o ícone; o nome acessível e o
         // `title` devolvem o verbo, que é o que um botão destrutivo deve dizer.
@@ -344,7 +349,7 @@ export function SessionTopbar({
         title={modo === 'minima' ? t('topbar.encerrarSessao') : undefined}
       >
         <StopSquareIcon size={15} />
-        {modo !== 'minima' && t('topbar.encerrar')}
+        {modo !== 'minima' && t(streaming && handleCancel ? 'topbar.pararTurno' : 'topbar.encerrar')}
       </Button>
       {/* Aberto é `secondary` (fundo e borda), fechado é `ghost`: o controle diz
           se o painel está aberto — antes ele tinha uma aparência só. */}

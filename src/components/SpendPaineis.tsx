@@ -15,7 +15,7 @@ import {
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
 import { numberFmt } from '../lib/currency';
 import { hashtagDaSessao } from '../lib/session-label';
-import { rotuloDoAtor } from '../lib/spend';
+import { custoMedioPorChamada, linhasParaCsv, rotuloDoAtor, type SpendPorDia } from '../lib/spend';
 import { JANELAS, comoRanking, rotuloDoProvider } from '../lib/spend-ranking';
 import { Select } from './ui/Select';
 import { Shimmer } from './ui/Shimmer';
@@ -70,6 +70,28 @@ function useModelosDeAssinatura(workspaceId: string | undefined) {
   return nomes;
 }
 
+/** Exporta a série por dia que a tela já tem, no cliente. */
+function ExportarCsv({ serie }: { serie: SpendPorDia[] }) {
+  const { t } = useTranslation('spend');
+  const baixar = () => {
+    const csv = linhasParaCsv(
+      ['dia', 'costMicros', 'chamadas'],
+      serie.map((d) => [d.dia, d.costMicros, d.chamadas]),
+    );
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'gastos.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  return (
+    <Button variant="secondary" onClick={baixar}>
+      {t('shared.exportCsv')}
+    </Button>
+  );
+}
+
 function Estado({
   q,
   carregando,
@@ -115,6 +137,7 @@ function DestaquesDoTotal({
   rotuloTotal: string;
 }) {
   const { t } = useTranslation('spend');
+  const media = custoMedioPorChamada(total, chamadas);
   return (
     <SectionCards
       metricas={[
@@ -132,6 +155,10 @@ function DestaquesDoTotal({
             input: numberFmt.format(entrada),
             output: numberFmt.format(saida),
           }),
+        },
+        {
+          rotulo: t('shared.avgCallLabel'),
+          valor: media === null ? '—' : formatarUsd(media),
         },
         ...((assinatura ?? 0) > 0
           ? [
@@ -185,7 +212,7 @@ export function GastoDoWorkspace({
               components={{ strong: <strong /> }}
             />
           )}
-        acoes={<SeletorDeJanela dias={dias} onChange={setDias} />}
+        acoes={<><SeletorDeJanela dias={dias} onChange={setDias} />{r && <ExportarCsv serie={r.porDia} />}</>}
       />
 
       <Estado
@@ -320,7 +347,7 @@ export function MeuConsumoNoWorkspace({ workspaceId }: { workspaceId: string }) 
         nivel="h2"
         titulo={t('global.memberTitle')}
         descricao={t('global.memberSubtitle')}
-        acoes={<SeletorDeJanela dias={dias} onChange={setDias} />}
+        acoes={<><SeletorDeJanela dias={dias} onChange={setDias} />{d && <ExportarCsv serie={d.porDia} />}</>}
       />
       <Estado q={meu} carregando={t('shared.summing')} erro={t('global.memberError')} />
       {d && (
@@ -395,6 +422,18 @@ titulo={t('team.byAgentTitle')}
                 t,
               )}
               vazio={t('team.byAreaEmpty')}
+            />
+            <Ranking
+              icone={<Cpu aria-hidden="true" size={12} />}
+              titulo={t('workspace.byModelTitle')}
+              linhas={comoRanking(d.porModelo ?? [], (l) => l.chave, t)}
+              vazio={t('workspace.byModelEmpty')}
+            />
+            <Ranking
+              icone={<MessageSquare aria-hidden="true" size={12} />}
+              titulo={t('team.bySessionTitle')}
+              linhas={comoRanking(d.porSessao ?? [], (l) => hashtagDaSessao(l.chave), t)}
+              vazio={t('project.bySessionEmpty')}
             />
           </div>
         </>

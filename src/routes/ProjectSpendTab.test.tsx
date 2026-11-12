@@ -318,7 +318,7 @@ describe('ProjectSpendTab — a audiência do membro', () => {
     expect(getWorkspaceSpendReport).not.toHaveBeenCalled();
     expect(getCredentialSpend).not.toHaveBeenCalled();
     expect(screen.queryByText('Por provider')).not.toBeInTheDocument();
-    expect(screen.queryByText('Por modelo')).not.toBeInTheDocument();
+    expect(screen.getByText('Por modelo')).toBeInTheDocument(); // RN-1152: modelo sim, provider nunca
     expect(screen.queryByText('Gasto das suas chaves')).not.toBeInTheDocument();
     expect(getMySpend).toHaveBeenCalledWith('p-1', 30);
   });

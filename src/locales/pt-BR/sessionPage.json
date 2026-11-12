@@ -367,7 +367,10 @@
       "desenhou": "Desenhou",
       "registrou": "Registrou",
       "outros": "Outros"
-    }
+    },
+    "raciocinioTokens_zero": "{{count}} tokens",
+    "raciocinioTokens_one": "{{count}} token",
+    "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" acima.",

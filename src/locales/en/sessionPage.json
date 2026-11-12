@@ -355,7 +355,9 @@
       "desenhou": "Designed",
       "registrou": "Recorded",
       "outros": "Other"
-    }
+    },
+    "raciocinioTokens_one": "{{count}} token",
+    "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",

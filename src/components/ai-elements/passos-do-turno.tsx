@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { SegmentedControl } from '../ui/SegmentedControl';
 import { agruparPorIntencao, maisUsadas } from '../../lib/grupos-de-ferramenta';
 import type { PassoDeFerramenta } from '../../lib/passos-do-turno';
-import { formatarCusto } from '../../lib/resumo-de-turno';
+import { formatarCusto, formatarDuracao } from '../../lib/resumo-de-turno';
 import { ChainOfThought } from './chain-of-thought';
 import { Tool } from './tool';
 
 /* RN-974/RN-1185: passos do turno ENCERRADO; nunca os args (RN-096). */
-export function PassosDoTurno({ passos, custo = null }: { passos: PassoDeFerramenta[]; custo?: number | null }) {
+export function PassosDoTurno({ passos, custo = null, duracaoMs = null }: { passos: PassoDeFerramenta[]; custo?: number | null; duracaoMs?: number | null }) {
   const { t } = useTranslation('sessionPage');
   const [modo, setModo] = useState<'agrupados' | 'ordem'>('agrupados');
   const chips = maisUsadas(passos).map((c) => `${c.tool} ×${c.vezes}`).join(' · ');
@@ -26,7 +26,7 @@ export function PassosDoTurno({ passos, custo = null }: { passos: PassoDeFerrame
     <div data-testid="passos-do-turno-encerrado">
       <ChainOfThought
         titulo={t('turno.passosDoTurno')}
-        contagem={`${t('turno.passosCount', { count: passos.length })} · ${chips} · ${formatarCusto(custo)}`}
+        contagem={`${t('turno.passosCount', { count: passos.length })} · ${chips} · ${formatarCusto(custo)}${duracaoMs === null ? '' : ` · ${formatarDuracao(duracaoMs)}`}`}
       >
         <SegmentedControl
           rotulo={t('turno.visao')}

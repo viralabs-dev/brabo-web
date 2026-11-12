@@ -31,3 +31,13 @@ export function custoDoPayload(payload: unknown): number | null {
 export function formatarCusto(usd: number | null): string {
   return usd === null ? '—' : `US$ ${usd.toFixed(4)}`;
 }
+
+/** `payload.raciocinioTokens` (o provider contou), ou null; `duracaoMs` do TURNO idem. */
+export function numeroDoPayload(payload: unknown, campo: 'raciocinioTokens' | 'duracaoMs'): number | null {
+  const v = (payload as Record<string, unknown> | null)?.[campo];
+  return typeof v === 'number' ? v : null;
+}
+
+export function formatarDuracao(ms: number | null): string | null {
+  return ms === null ? null : `${(ms / 1000).toFixed(1)} s`;
+}

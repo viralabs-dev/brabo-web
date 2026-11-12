@@ -379,7 +379,11 @@
       "desenhou": "Спроектировал",
       "registrou": "Записал",
       "outros": "Другое"
-    }
+    },
+    "raciocinioTokens_one": "{{count}} токен",
+    "raciocinioTokens_few": "{{count}} токена",
+    "raciocinioTokens_many": "{{count}} токенов",
+    "raciocinioTokens_other": "{{count}} токена"
   },
   "pendencias": {
     "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» выше.",

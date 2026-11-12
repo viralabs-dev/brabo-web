@@ -343,7 +343,8 @@
       "desenhou": "设计了",
       "registrou": "记录了",
       "outros": "其他"
-    }
+    },
+    "raciocinioTokens_other": "{{count}} 个 token"
   },
   "pendencias": {
     "referenciaNoFio": "已提出合并 — 请在上方“可合并的 PR”队列中决定。",

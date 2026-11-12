@@ -26,9 +26,25 @@ describe('passos do turno encerrado (RN-974)', () => {
     const events = [tr(1, 'x', false, { resultadoTotal: 5000 }), ev(2, 'agent.response')];
     render(<PassosDoTurno passos={passosDoTurno(events, events[1]!)} />);
     fireEvent.click(screen.getByRole('button'));
-    fireEvent.click(screen.getAllByRole('button')[1]!);
+    fireEvent.click(screen.getByRole('button', { name: /^x/ }));
     expect(screen.getByRole('alert').textContent).toContain('r-x');
     expect(document.querySelector('[data-slot="ai-tool-truncated"]')).toBeTruthy();
+  });
+
+  it('seletor Agrupados | Em ordem: mesmo conjunto, ordem original e grupos (RN-1185)', () => {
+    const events = [tr(1, 'create_epic'), tr(2, 'listar_backlog'), tr(3, 'read_file'), ev(4, 'agent.response')];
+    const passos = passosDoTurno(events, events[3]!);
+    const { container } = render(<PassosDoTurno passos={passos} duracaoMs={2500} />);
+    expect(container.textContent).toContain('—');
+    expect(container.textContent).toContain('2.5 s');
+    fireEvent.click(screen.getByRole('button', { name: /Turn steps|Passos do turno/ }));
+    const nomes = () => [...container.querySelectorAll('[data-slot="ai-tool"]')].length;
+    expect(container.querySelector('[data-testid="grupo-leu"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="grupo-outros"]')).toBeTruthy();
+    expect(nomes()).toBe(3);
+    fireEvent.click(screen.getByRole('button', { name: /Em ordem|In order/ }));
+    expect(container.querySelector('[data-testid^="grupo-"]')).toBeNull();
+    expect(nomes()).toBe(3);
   });
 
   it('turno sem ferramenta não ganha passos', () => {

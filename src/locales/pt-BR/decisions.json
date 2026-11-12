@@ -1,0 +1,34 @@
+{
+  "titulo": "Caixa de decisões",
+  "subtitulo": "As filas de todos os projetos, separadas.",
+  "seletor": "Pendentes ou decididas",
+  "modo": {
+    "pending": "Pendentes",
+    "decided": "Decididas"
+  },
+  "erro": "Não foi possível carregar a Caixa de decisões.",
+  "carregando": "Carregando…",
+  "filas": {
+    "aprovacoes": "Aprovações de ação",
+    "prs": "Merges de PR",
+    "promocoes": "Promoções de história",
+    "arquitetura": "Pendências de arquitetura",
+    "hipoteses": "Hipóteses do Psicólogo"
+  },
+  "vazio": {
+    "aprovacoes": "Nenhuma ação esperando decisão.",
+    "prs": "Nenhum merge de PR esperando decisão.",
+    "promocoes": "Nenhuma história esperando promoção.",
+    "arquitetura": "Nenhuma pendência de arquitetura.",
+    "hipoteses": "Nenhuma hipótese do Psicólogo esperando decisão."
+  },
+  "vazioArquiteturaDecididas": "A arquitetura é uma pendência derivada: não há decisão humana a listar aqui.",
+  "truncada": "Mostrando {{mostrados}} de {{total}}; o resto está na aba do projeto.",
+  "gateParado": "O gate de {{gate}} está parado até você decidir esta ação.",
+  "abrir": "Abrir",
+  "dataEmprestada": "história atualizada {{tempo}}",
+  "motivo": {
+    "no_module": "A história não tem módulo.",
+    "missing_module": "Módulos faltando no mapa: {{modulos}}."
+  }
+}

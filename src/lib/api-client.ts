@@ -319,8 +319,8 @@ export const listProjectFolders = (workspaceId: string, path?: string) =>
 export const getWorkspaceSummary = (workspaceId: string) =>
   get<WorkspaceSummary>(`/workspaces/${workspaceId}/summary`);
 /** Caixa de decisões (RN-1195..1199): uma contagem por fila, nunca somadas (RN-467). Papel `viewer`. */
-export const getDecisionInbox = (workspaceId: string) =>
-  get<DecisionInbox>(`/workspaces/${workspaceId}/decision-inbox?status=pending`);
+export const getDecisionInbox = (workspaceId: string, status: 'pending' | 'decided' = 'pending') =>
+  get<DecisionInbox>(`/workspaces/${workspaceId}/decision-inbox?status=${status}`);
 export const getProjectsStatus = (workspaceId: string) =>
   get<ProjectBlockedStatus[]>(`/workspaces/${workspaceId}/projects-status`);
 export const getProjectsSummary = (workspaceId: string) =>

@@ -77,6 +77,7 @@ const ProvidersPageLazy = lazyRouteComponent(
   'ProvidersPage',
 );
 const SpendPageLazy = lazyRouteComponent(() => import('./routes/SpendPage'), 'SpendPage');
+const DecisionsPageLazy = lazyRouteComponent(() => import('./routes/DecisionsPage'), 'DecisionsPage');
 const ContainersPageLazy = lazyRouteComponent(
   () => import('./routes/ContainersPage'),
   'ContainersPage',
@@ -286,6 +287,12 @@ const providersRoute = createRoute({
   component: ProvidersPageLazy,
 });
 
+const decisionsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/decisions',
+  component: DecisionsPageLazy,
+});
+
 const spendRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/spend',
@@ -466,6 +473,7 @@ const routeTree = rootRoute.addChildren([
 containerDetalheRoute,
     providersRoute,
     spendRoute,
+    decisionsRoute,
     projectRoute,
     sessionRoute,
     provisioningRoute,

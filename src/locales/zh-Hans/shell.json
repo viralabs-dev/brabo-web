@@ -46,7 +46,8 @@
     "footer": {
       "accountFallback": "账户",
       "logout": "退出"
-    }
+    },
+    "caixa": "Decision inbox"
   },
   "notificationBell": {
     "label": "通知",

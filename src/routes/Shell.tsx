@@ -17,6 +17,7 @@ import {
   useActiveExecutionSession,
   useCurrentWorkspace,
   useCurrentWorkspaceWithRole,
+  useDecisionInbox,
   useProjects,
   useProjectsStatus,
   useProjectsSummary,
@@ -51,7 +52,9 @@ import {
   lerProjetosAbertos,
 } from '../lib/sidebar-state';
 import type { ProjectCardSummary } from '../lib/api-types';
-import { Activity, CircleUser, Container, Folder, FolderOpen, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
+import { Activity, Inbox, CircleUser, Container, Folder, FolderOpen, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
+import { caixaTemAlgo } from '../lib/caixa-de-decisoes';
+import caixaStyles from '../components/CaixaDeDecisoes.module.css';
 import { deveAbrirPaleta } from '../lib/paleta-de-comandos';
 import { ABA_PADRAO, abaDaRota, type ContagensDeAba } from './project-tabs';
 import { Badge } from '../components/ui/Badge';
@@ -223,6 +226,22 @@ function LinkDoRodape({
       <SidebarMenuButton render={<Link to={to} className={styles.linkRodape} />} title={rotulo} aria-label={rotulo}>
         {icone}
         {!colapsado && <span>{rotulo}</span>}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+/** "Caixa de decisões": ponto de PRESENÇA, nunca número (RN-467). */
+function ItemDaCaixa({ workspaceId, colapsado }: { workspaceId: string | undefined; colapsado: boolean }) {
+  const { t } = useTranslation('shell');
+  const temAlgo = caixaTemAlgo(useDecisionInbox(workspaceId, 'pending', true).data);
+  const rotulo = t('sidebar.caixa');
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton render={<Link to="/decisions" />} title={rotulo} aria-label={rotulo}>
+        <Inbox size={16} aria-hidden="true" />
+        {!colapsado && <span>{rotulo}</span>}
+        {temAlgo && <span className={caixaStyles.ponto} data-testid="ponto-da-caixa" aria-hidden="true" />}
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
@@ -506,6 +525,11 @@ export function Shell() {
       </SidebarHeader>
 
       <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            <ItemDaCaixa workspaceId={workspace?.id} colapsado={colapsado} />
+          </SidebarMenu>
+        </SidebarGroup>
         {colapsado ? (
           <SidebarGroup>
             <SidebarMenu aria-label={t('sidebar.nav.trilhaAriaLabel')}>

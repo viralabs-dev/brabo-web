@@ -46,7 +46,8 @@
     "footer": {
       "accountFallback": "аккаунт",
       "logout": "выйти"
-    }
+    },
+    "caixa": "Decision inbox"
   },
   "notificationBell": {
     "label": "Уведомления",

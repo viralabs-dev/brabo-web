@@ -218,3 +218,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/lib/agentes-agora.ts` (`agentesAgora`), `src/components/AgentesAgora.tsx` (`AgentesAgora`), `src/routes/Shell.tsx` (`Shell`), `design/tokens.css`, `src/lib/agents.ts` (`AGENTS`).
 - **Teste:** `src/lib/agentes-agora.test.ts`, `src/routes/Shell.test.tsx` (Agentes agora), `src/lib/contraste.test.ts`.
 - **Origem:** AT-887 (EP-035), ADR 0294. Revoga a RN-198 e a chave `brabo.sidebar.agents`.
+
+<a id="rn-1275"></a>
+
+### RN-1275 — A Caixa de decisões (`/decisions`) lê as cinco filas de todos os projetos numa leitura, sem somá-las, com Pendentes | Decididas {#rn-1275}
+
+- **Regra:** a rota global `/decisions` (S07) lê `GET /workspaces/:workspaceId/decision-inbox?status=pending|decided` UMA vez por intervalo (nenhuma leitura por projeto) e mostra cinco cartões, um por fila (aprovações, PRs, promoções, arquitetura, hipóteses do Psicólogo), cada um com o próprio total e "N+" quando truncada (RN-180); as filas nunca se somam (RN-467). Aprovações e PRs usam o MESMO `ApprovalCard` e os mesmos endpoints, decidindo pelo `sessionId` da própria ação (RN-638); o merge em branch protegida segue manual (RN-418). A arquitetura diz que a data é emprestada da história e, em Decididas, mostra vazio com texto próprio. A sidebar ganha "Caixa de decisões" com ponto de presença (nunca número), lido do cache que o Início e a Caixa já buscaram (sem requisição própria, para não gastar o orçamento da moldura). O chip "Precisa de você" sai do cabeçalho do projeto.
+- **Onde:** `src/routes/DecisionsPage.tsx` (`DecisionsPage`), `src/components/CaixaDeDecisoes.tsx` (`CaixaDeDecisoes`), `src/lib/caixa-de-decisoes.ts` (`caixaTemAlgo`), `src/routes/Shell.tsx` (`ItemDaCaixa`), `src/routes/ProjectPage.tsx`.
+- **Teste:** `src/routes/DecisionsPage.test.tsx`, `src/routes/DecisionsPage.orcamento.test.tsx`.
+- **Origem:** AT-889 (EP-035), ADR 0294, contrato da AT-928.

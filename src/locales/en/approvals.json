@@ -271,7 +271,7 @@
     "genericLoading": "Loading…",
     "pending": {
       "title": "Pending",
-      "eyebrow": "sorted by urgency",
+      "eyebrow": "oldest first",
       "selectedCount_one": "{{count}} selected",
       "selectedCount_other": "{{count}} selected",
       "approveSelected": "Approve selected",
@@ -324,6 +324,24 @@
     "toast": {
       "autoModeOnTitle": "Auto mode turned on",
       "autoModeOnErrorTitle": "Couldn't turn on auto mode"
+    },
+    "decided": {
+      "title": "Recently decided",
+      "eyebrow_24h": "last 24 h, newest first",
+      "eyebrow_30d": "last 30 days, newest first",
+      "seeAll": "See all",
+      "error": "Could not load recent decisions.",
+      "empty_24h": "Nothing was decided in the last 24 h.",
+      "empty_30d": "Nothing was decided in the last 30 days.",
+      "byPolicy": "by policy",
+      "reason": "reason: {{reason}}",
+      "status": {
+        "approved": "Approved",
+        "denied": "Denied",
+        "auto_approved": "Automatic",
+        "executed": "Executed",
+        "failed": "Failed"
+      }
     }
   },
   "prsTab": {
@@ -341,7 +359,16 @@
     "mergeRecusado": "The last merge attempt was refused: {{reason}}",
     "mergeRecusadoArquivos_one": "Conflicting file: {{files}}",
     "mergeRecusadoArquivos_other": "Conflicting files: {{files}}",
-    "mergeResolverAntes": "Resolve the conflict first (rebase the PR branch on dev), then merge again."
+    "mergeResolverAntes": "Resolve the conflict first (rebase the PR branch on dev), then merge again.",
+    "vazio": {
+      "verAprovacao": "See the approval",
+      "ativarExecucao": "Activate execution"
+    },
+    "fluxo": {
+      "titulo": "How a PR moves here:",
+      "passos": "opened by the agent, QA, SecOps, waits for you, merged.",
+      "mergeManual": "Merge into a protected branch is always manual."
+    }
   },
   "politica": {
     "motivo": "Policy decided by: {{motivo}}",

@@ -35,6 +35,9 @@
     },
     "settings": {
       "label": "设置"
+    },
+    "permissoes": {
+      "label": "权限"
     }
   },
   "sections": {
@@ -59,6 +62,7 @@
     "insights": "假设",
     "arquitetura": "架构",
     "spend": "支出",
-    "settings": "设置"
+    "settings": "设置",
+    "permissoes": "权限"
   }
 }

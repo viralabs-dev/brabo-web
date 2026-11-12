@@ -186,3 +186,27 @@
   margin-bottom: 12px;
 }
 
+
+/* AT-893: busca da seção, cadeia de avatares e meta (passos · custo). */
+.busca {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.busca > :first-child {
+  flex: 1;
+  min-width: 0;
+}
+
+.rowAvatares {
+  display: flex;
+  gap: 2px;
+}
+
+.rowMeta {
+  font-size: var(--fs-meta, 11px);
+  color: var(--text-muted);
+  white-space: nowrap;
+}

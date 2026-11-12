@@ -584,7 +584,7 @@ diferença não é escolha de desenho: é a forma do endpoint.
   (as duas consultas e o `ReconhecimentoDeMaquina`),
   `apps/web/src/components/RunnerOnboardingPanel.module.css`
   (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:451`
-  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:807`
+  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:812`
   (`RunnerDeviceKeyListItem`, `RunnerDeviceKeyEspecie`),
   `apps/web/src/locales/{en,pt-BR}/terminal.json` (`agenteDeMaquina.*`)
 - **Teste:** `apps/web/src/lib/agente-de-maquina.test.ts` — o caminho feliz

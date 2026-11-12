@@ -235,3 +235,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/DecisionsPage.tsx` (`DecisionsPage`), `src/components/CaixaDeDecisoes.tsx` (`CaixaDeDecisoes`), `src/lib/caixa-de-decisoes.ts` (`caixaTemAlgo`), `src/routes/Shell.tsx` (`ItemDaCaixa`), `src/routes/ProjectPage.tsx`.
 - **Teste:** `src/routes/DecisionsPage.test.tsx`, `src/routes/DecisionsPage.orcamento.test.tsx`.
 - **Origem:** AT-889 (EP-035), ADR 0294, contrato da AT-928.
+
+<a id="rn-1270"></a>
+
+### RN-1270 — Instruções e ferramentas dos agentes moram em Configurações › Modelos, só leitura, e saem do cartão {#rn-1270}
+
+- **Regra:** desde a AT-937 o catálogo de cada agente (identidade, instrução vigente do projeto e lista de ferramentas) é a seção `agent-catalog` do grupo Modelos, lida de `GET /projects/:projectId/agent-catalog` (`viewer`, sem controle de escrita nem `disabled` por papel, RN-102). A leitura só liga ao abrir um agente (RN-645) e usa a mesma `queryKey ['agent-catalog', projectId]` do composer. O histórico e a reversão de instruções continuam em Avançado (`maintainer`), com um botão na seção que leva até lá. O `AgentCard` perdeu os dois blocos, na Visão geral e na Executores (decisão do dono de 12/11/2026). Sem prévia nova: a divergência da v9 (que não tem a tela de Modelos) fica registrada na AT-897.
+- **Onde:** `src/routes/settings/AgentCatalogSection.tsx:18` (`AgentCatalogSection`), `src/routes/settings/sumario.ts` (`SECOES_DE_CONFIGURACOES`), `src/routes/ProjectSettingsTab.tsx` (`ProjectSettingsTab`), `src/components/AgentCard.tsx` (`AgentCard`).
+- **Teste:** `src/routes/settings/AgentCatalogSection.test.tsx` (lê só ao abrir; `ferramentas: null` não vira "sem ferramentas").
+- **Origem:** AT-937 (EP-035), depende da AT-896 lane F.

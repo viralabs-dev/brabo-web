@@ -35,8 +35,6 @@ import styles from '../routes/ProjectOverviewTab.module.css';
  * evita a requisição em dobro quando as duas correm na mesma sessão).
  */
 export interface AgentTeamGridProps {
-  /** Habilita as seções de instruções e ferramentas dos cards (AT-686). */
-  projectId?: string;
   /** A roster INTEIRA da sessão. */
   roster: RosterEntry[];
   /** Os grupos a desenhar, já filtrados por quem chama. */
@@ -60,7 +58,6 @@ export interface AgentTeamGridProps {
 
 export function AgentTeamGrid({
   roster,
-  projectId,
   groups,
   events,
   bindingDoAgente,
@@ -100,8 +97,6 @@ export function AgentTeamGrid({
       <AgentCard
         key={r.id}
         agent={r.def}
-        projectId={projectId}
-        agentSlug={r.id}
         status={r.status}
         badge={badge}
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
@@ -148,8 +143,6 @@ export function AgentTeamGrid({
       <AgentCard
         key={r.id}
         agent={r.def}
-        projectId={projectId}
-        agentSlug={r.id}
         status={r.status}
         compact
         model={model ? { name: model.displayName, provider: model.provider } : undefined}

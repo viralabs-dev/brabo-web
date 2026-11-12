@@ -32,6 +32,7 @@ import { PromotionSection } from './settings/PromotionSection';
 import { ProjectLanguageSection } from './settings/ProjectLanguageSection';
 import { MelhoresModelosPorCapacidadeSection } from './settings/MelhoresModelosPorCapacidadeSection';
 import { ModelsSection } from './settings/ModelsSection';
+import { AgentCatalogSection } from './settings/AgentCatalogSection';
 import { MembersSection } from './settings/MembersSection';
 import { PersonalAccessTokensSection } from './settings/PersonalAccessTokensSection';
 import { RunnerDeviceKeysSection } from './settings/RunnerDeviceKeysSection';
@@ -73,6 +74,7 @@ export function ProjectSettingsTab({ projectId }: ProjectSettingsTabProps) {
     modelos: (
       <>
         <ModelsSection {...p} />
+        <AgentCatalogSection {...p} />
         <MelhoresModelosPorCapacidadeSection {...p} />
       </>
     ),

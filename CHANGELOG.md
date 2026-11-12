@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-937, RN-1270): Configurações › Modelos ganha a seção "Instruções e ferramentas dos agentes" (só leitura, `viewer`, lê `agent-catalog` ao abrir um agente, com botão para o histórico e a reversão em Avançado); os dois blocos saem do cartão de agente na Visão geral e na Executores.
 - Feat (AT-896, lane F, RN-1265): Configurações ganha a linha de configuração (rótulo e descrição à esquerda, controle à direita) em paralelismo e teto por área, a linha "Teto de gasto do mês" (`TetoDoMes`) e o Salvar do cabeçalho com "N alterações não salvas · Descartar · Salvar", em série e sem abortar, com desfecho parcial nomeado (RN-469). i18n nos quatro idiomas. O regressivo do qa fica para a lane do qa.
 - Feat (AT-892): a barra da Sessão ganha a trilha "Sessões / título" e a cadeia de agentes (do primeiro ao último a falar, derivada dos eventos já baixados, sem leitura nova, RN-632). O medidor "N chamadas" e o gasto oficial seguem de fora. O regressivo `chat-e-pendencias` fica para a lane do qa.
 - Feat (AT-889, RN-1275): a Caixa de decisões (`/decisions`, S07) reúne as cinco filas de todos os projetos numa leitura, com o seletor Pendentes | Decididas, o item na sidebar com ponto de presença e sem somar filas. O chip "Precisa de você" sai do cabeçalho do projeto. i18n nos quatro idiomas. O regressivo de `aprovacoes` fica para a lane do qa.

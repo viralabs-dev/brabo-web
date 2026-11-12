@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeAll } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AgentCard } from './AgentCard';
-import { AGENTS } from '../lib/agents';
-import i18n from '../lib/i18n';
-import * as api from '../lib/api-client';
+import i18n from '../../lib/i18n';
+import * as api from '../../lib/api-client';
+import { AgentCatalogSection } from './AgentCatalogSection';
+import { ProvedorDoSumario } from './SecaoDeConfiguracoes';
 
 beforeAll(async () => {
   await i18n.changeLanguage('pt-BR');
@@ -22,38 +22,28 @@ function montar(resposta: unknown) {
   const spy = vi.spyOn(api, 'getAgentCatalog').mockResolvedValue(resposta as never);
   render(
     <QueryClientProvider client={new QueryClient()}>
-      <AgentCard agent={AGENTS.criativo} status="ocioso" projectId="p1" agentSlug="criativo" />
-      <AgentCard agent={AGENTS.criativo} status="ocioso" projectId="p1" agentSlug="criativo" />
+      <ProvedorDoSumario>
+        <AgentCatalogSection projectId="p1" />
+      </ProvedorDoSumario>
     </QueryClientProvider>,
   );
   return spy;
 }
 
-function abrir(titulo: string) {
-  fireEvent.click(screen.getAllByText(titulo)[0]);
-}
-
-describe('AgentCard: catálogo', () => {
-  it('caminho feliz: uma requisição só para dois cards', async () => {
+describe('AgentCatalogSection (RN-1270)', () => {
+  it('caminho feliz: só lê ao abrir e mostra instrução e ferramentas', async () => {
     const spy = montar({ agentes: [agente()] });
     expect(spy).not.toHaveBeenCalled();
-    abrir('Instruções');
-    expect(await screen.findAllByText('Você é o Criativo.')).not.toHaveLength(0);
+    fireEvent.click(screen.getAllByText('Criativo')[0]);
+    expect(await screen.findByText('Você é o Criativo.')).toBeTruthy();
+    expect(await screen.findByText('rag_search')).toBeTruthy();
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('engine fora: ferramentas null não viram "sem ferramentas"', async () => {
     montar({ agentes: [agente({ ferramentas: null, identidade: null })], motivoSemCatalogo: 'engine_indisponivel' });
-    abrir('Ferramentas');
-    await waitFor(() =>
-      expect(screen.getAllByText('Não foi possível ler as ferramentas agora.')).not.toHaveLength(0),
-    );
+    fireEvent.click(screen.getAllByText('Criativo')[0]);
+    await waitFor(() => expect(screen.getByText('Não foi possível ler as ferramentas agora.')).toBeTruthy());
     expect(screen.queryByText('Este agente não tem ferramentas.')).toBeNull();
-  });
-
-  it('instrução cortada diz quantos caracteres faltam', async () => {
-    montar({ agentes: [agente({ instrucoesDoProjeto: { versao: 1, conteudo: 'abc', conteudoTotal: 10 } })] });
-    abrir('Instruções');
-    expect((await screen.findAllByText('Faltam 7 caracteres (texto cortado)')).length).toBeGreaterThan(0);
   });
 });

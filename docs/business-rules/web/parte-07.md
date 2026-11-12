@@ -151,7 +151,6 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (os 15 deep-links, as chaves de seção, desconhecida e a faixa com o selo de cada fila), `apps/web/src/routes/AbasDoProjeto.test.tsx` (8 itens, teclado com volta, Decisões sem número), `apps/web/src/routes/Shell.test.tsx` (sidebar, flyout e gaveta).
 - **Origem:** AT-886 (EP-035), ADR 0294. Revisa a RN-196 e o ADR 0211 no que diz respeito aos três grupos: a lista passa a ter oito itens.
 
-<<<<<<< HEAD
 <a id="rn-1210"></a>
 
 ### RN-1210 — O cabeçalho do projeto tem trilha, chips, medidor de gasto do mês e UMA ação primária por seção {#rn-1210}
@@ -160,7 +159,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/routes/ProjectPage.tsx` (`ProjectPage`), `apps/web/src/components/MedidorDeGasto.tsx:14` (`MedidorDeGasto`), `apps/web/src/lib/use-criar-sessao.ts:17` (`useCriarSessao`), `apps/web/src/lib/use-ativar-execucao.ts:12` (`useAtivarExecucao`).
 - **Teste:** `apps/web/src/components/MedidorDeGasto.test.tsx` (com teto, faixa e previsão; sem teto).
 - **Origem:** AT-888 (EP-035), ADR 0294 e 0296 (previsão: AT-934).
-=======
+
 <a id="rn-1205"></a>
 
 ### RN-1205 — A sidebar mostra "Agentes agora" (até 5, por urgência, sem contagem de eventos) no lugar de Atividades, e as cores `--ag-*` do v9 entram nos dois temas {#rn-1205}
@@ -169,4 +168,3 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/lib/agentes-agora.ts` (`agentesAgora`), `src/components/AgentesAgora.tsx` (`AgentesAgora`), `src/routes/Shell.tsx` (`Shell`), `design/tokens.css`, `src/lib/agents.ts` (`AGENTS`).
 - **Teste:** `src/lib/agentes-agora.test.ts`, `src/routes/Shell.test.tsx` (Agentes agora), `src/lib/contraste.test.ts`.
 - **Origem:** AT-887 (EP-035), ADR 0294. Revoga a RN-198 e a chave `brabo.sidebar.agents`.
->>>>>>> origin/dev

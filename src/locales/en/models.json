@@ -144,7 +144,9 @@
     "noModelsRegistered": "No model registered",
     "noToolCallingModels": "No model does native tool calling. Uncheck the filter to see the rest.",
     "currentHiddenByFilter": "The current model ({{model}}) doesn't do native tool calling and is out of this list.",
-    "selectModel": "Select model"
+    "selectModel": "Select model",
+    "catalogEmptyHint": "No model in this workspace came from the catalog yet. Update the catalog to fetch the provider's models.",
+    "updateCatalog": "Update catalog"
   },
   "spend": {
     "title": "Spend on your keys",

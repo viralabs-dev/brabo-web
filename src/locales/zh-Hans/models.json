@@ -137,7 +137,9 @@
     "noModelsRegistered": "尚未添加模型",
     "noToolCallingModels": "没有模型支持原生 tool calling。取消勾选筛选条件以查看其他模型。",
     "currentHiddenByFilter": "当前模型（{{model}}）不支持原生 tool calling，未出现在此列表中。",
-    "selectModel": "选择模型"
+    "selectModel": "选择模型",
+    "catalogEmptyHint": "此工作区尚无来自目录的模型。请更新目录以获取提供方的模型。",
+    "updateCatalog": "更新目录"
   },
   "spend": {
     "title": "你的密钥的花费",

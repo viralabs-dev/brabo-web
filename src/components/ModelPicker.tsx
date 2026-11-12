@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { Model, ModelsByCategory } from '../lib/api-types';
 import { agruparModelos, formatarJanela, formatarPreco } from '../lib/models';
 import { Badge } from './ui/Badge';
+import { Button } from './ui/Button';
 import { ChevronDownIcon, ModelIcon } from './ui/icons';
 import styles from './ModelPicker.module.css';
 import { Checkbox } from './shadcn/checkbox';
@@ -68,6 +69,12 @@ interface ModelPickerProps {
    * num overlay do chamador, porque o overlay não bloquearia o teclado.
    */
   disabled?: boolean;
+  /**
+   * Atalho "Atualizar catálogo" (RN-694, AT-900). Só o chamador que tem papel
+   * `owner` passa isto; sem ele, o catálogo vazio segue só com a mensagem.
+   */
+  aoAtualizarCatalogo?: () => void;
+  atualizandoCatalogo?: boolean;
 }
 
 export function ModelPicker({
@@ -77,6 +84,8 @@ export function ModelPicker({
   variant = 'standalone',
   filtroDeAgentesPadrao = false,
   disabled = false,
+  aoAtualizarCatalogo,
+  atualizandoCatalogo = false,
 }: ModelPickerProps) {
   const { t } = useTranslation('models');
   const [open, setOpen] = useState(false);
@@ -171,6 +180,19 @@ export function ModelPicker({
 
           {todosOsModelos.length === 0 && (
             <div className={styles.groupHeader}>{t('picker.noModelsRegistered')}</div>
+          )}
+          {todosOsModelos.length === 0 && aoAtualizarCatalogo && (
+            <div className={styles.vazio}>
+              <p>{t('picker.catalogEmptyHint')}</p>
+              <Button
+                variant="secondary"
+                size="sm"
+                loading={atualizandoCatalogo}
+                onClick={aoAtualizarCatalogo}
+              >
+                {t('picker.updateCatalog')}
+              </Button>
+            </div>
           )}
           {todosOsModelos.length > 0 && grupos.length === 0 && (
             <div className={styles.vazio}>{t('picker.noToolCallingModels')}</div>

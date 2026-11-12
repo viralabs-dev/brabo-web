@@ -157,8 +157,13 @@ export function CredentialsSection() {
     setEmVoo(provider);
     try {
       await aposMudarChave(queryClient, () => upsertCredential({ provider, apiKey }));
+      void queryClient.invalidateQueries({ queryKey: ['models'] });
       setDrafts((d) => ({ ...d, [provider]: '' }));
-      showToast({ title: t('credentials.toast.saved'), tone: 'success' });
+      showToast({
+        title: t('credentials.toast.saved'),
+        message: t('credentials.toast.catalogRefreshed'),
+        tone: 'success',
+      });
     } catch (erro) {
       showToast({
         title: t('credentials.toast.saveErrorTitle'),
@@ -181,7 +186,12 @@ export function CredentialsSection() {
     try {
       const { resultado, motivo } = await testCredential(provider);
       if (resultado === 'ok') {
-        showToast({ title: t('credentials.toast.testOk'), tone: 'success' });
+        void queryClient.invalidateQueries({ queryKey: ['models'] });
+        showToast({
+          title: t('credentials.toast.testOk'),
+          message: t('credentials.toast.catalogRefreshed'),
+          tone: 'success',
+        });
       } else if (resultado === 'recusado') {
         showToast({ title: t('credentials.toast.testRefused'), message: motivo, tone: 'danger' });
       } else {

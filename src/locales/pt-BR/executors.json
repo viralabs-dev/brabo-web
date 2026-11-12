@@ -270,5 +270,68 @@
       "gateUltimoMudancas": "Último veredito: mudanças solicitadas.",
       "gateUltimoMudancasPr": "Último veredito: mudanças solicitadas (PR #{{pr}})."
     }
+  },
+  "acoes": {
+    "blockedTasksLabel": "Tarefas bloqueadas",
+    "noDiagnosis": "sem diagnóstico",
+    "unblock": "Desbloquear",
+    "unblocking": "Desbloqueando…",
+    "unblockError": "Não foi possível desbloquear a tarefa",
+    "unblockedTitle": "Tarefa desbloqueada",
+    "unblockGuidance": "Orientação para o dev (opcional)",
+    "unblockGuidanceHint": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho.",
+    "suggestionBefore": "Há tarefas independentes em ",
+    "suggestionAfter": " — subir um dev extra?",
+    "accept": "Aceitar",
+    "pullRequestsLabel": "Pull requests aguardando você",
+    "noPullRequests": "Nenhuma PR aguardando você.",
+    "pullRequestFallback": "PR",
+    "errorTitle": "Erro",
+    "requestError": "Não foi possível pedir",
+    "requestDeniedTitle": "Pedido recusado",
+    "authorizationNeededTitle": "Precisa da sua autorização",
+    "authorizationNeededMessage_zero": "A sessão já tem {{count}} agentes, o teto do lead é {{max}}. O pedido está em Aprovações.",
+    "authorizationNeededMessage_one": "A sessão já tem {{count}} agente, o teto do lead é {{max}}. O pedido está em Aprovações.",
+    "authorizationNeededMessage_other": "A sessão já tem {{count}} agentes, o teto do lead é {{max}}. O pedido está em Aprovações."
+  },
+  "chamada": {
+    "activate": "Ativar execução",
+    "activateError": "Não foi possível ativar a execução",
+    "needsMaintainer": "Ativar a execução pede o papel maintainer.",
+    "title_zero": "A execução está desligada · nenhuma tarefa pronta",
+    "title_one": "A execução está desligada · {{count}} tarefa pronta",
+    "title_other": "A execução está desligada · {{count}} tarefas prontas",
+    "explain_zero": "Ao ativar, o Dev Lead distribui entre os dev agents. Cada PR passa por QA e SecOps e espera você para mergear.",
+    "explain_one": "Ao ativar, o Dev Lead distribui entre os dev agents (até {{count}} em paralelo na área dev). Cada PR passa por QA e SecOps e espera você para mergear.",
+    "explain_other": "Ao ativar, o Dev Lead distribui entre os dev agents (até {{count}} em paralelo na área dev). Cada PR passa por QA e SecOps e espera você para mergear.",
+    "teto": "Teto do projeto {{valor}}"
+  },
+  "areas": {
+    "title": "Áreas",
+    "working": "trabalhando",
+    "stopped": "parada",
+    "parallelism": "Paralelismo {{ativos}} / {{max}}",
+    "lead": "lead: {{nome}}",
+    "members_zero": "nenhum membro",
+    "members_one": "{{count}} membro",
+    "members_other": "{{count}} membros"
+  },
+  "fila": {
+    "title": "Fila de tarefas",
+    "ready_zero": "nenhuma pronta",
+    "ready_one": "{{count}} pronta",
+    "ready_other": "{{count}} prontas",
+    "running_zero": "nenhuma rodando",
+    "running_one": "{{count}} rodando",
+    "running_other": "{{count}} rodando",
+    "blocked_zero": "nenhuma bloqueada",
+    "blocked_one": "{{count}} bloqueada",
+    "blocked_other": "{{count}} bloqueadas",
+    "semModulo_zero": "nenhuma sem módulo",
+    "semModulo_one": "{{count}} sem módulo",
+    "semModulo_other": "{{count}} sem módulo",
+    "more_zero": "ver no backlog",
+    "more_one": "+ {{count}} tarefa, ver no backlog",
+    "more_other": "+ {{count}} tarefas, ver no backlog"
   }
 }

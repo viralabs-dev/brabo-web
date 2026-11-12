@@ -345,7 +345,7 @@ keywords: [regras de negócio, web]
   com execução de pé, ritmo de projeto quando ligada, [RN-632](parte-05.md#rn-632)).
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:544` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
@@ -973,7 +973,7 @@ keywords: [regras de negócio, web]
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:400`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:464`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba

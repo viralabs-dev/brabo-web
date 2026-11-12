@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
+
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.
 - Feat (AT-936, RN-1162): a Visão geral ganha o cartão "Próximo passo", abaixo dos Primeiros passos: UMA situação, a primeira verdadeira de uma tabela tipada e ordenada (`lib/proximo-passo.ts`: primeiro passo, agente trabalhando, continuar a ideação, confirmar a arquitetura, ligar a módulo, desbloquear, ativar a execução, acompanhar a execução, rodar o entregável); sem situação verdadeira o cartão some. Decisões pendentes ficam na faixa "Precisa de você"; nenhuma leitura nova. `usePrimeirosPassos` sai do cartão da RN-708 para ser reusado. Prévia em `13-design/proximo-passo`.
 

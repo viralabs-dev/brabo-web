@@ -1092,10 +1092,10 @@ export const denyAction = (
 // `status=pending` é suportado hoje.
 export const getProjectPendingActions = (
   projectId: string,
-  opts: { actionType?: ActionType; status?: 'pending' | 'failed' } = {},
+  opts: { actionType?: ActionType; status?: 'pending' | 'failed' | 'decided'; since?: string } = {},
 ) =>
   get<ProposedAction[]>(
-    `/projects/${projectId}/actions${qs({ status: opts.status ?? 'pending', actionType: opts.actionType })}`,
+    `/projects/${projectId}/actions${qs({ status: opts.status ?? 'pending', actionType: opts.actionType, since: opts.since })}`,
   );
 
 // --- LLM: modelos, bindings, credenciais, budgets ---
@@ -1339,6 +1339,12 @@ export const setProjectBudget = (
   projectId: string,
   input: { limitUsd: number; policy: BudgetPolicy },
 ) => put<Budget>(`/projects/${projectId}/budget`, input);
+export const getWorkspaceBudget = (workspaceId: string) =>
+get<Budget | null>(`/workspaces/${workspaceId}/budget`);
+export const setWorkspaceBudget = (
+workspaceId: string,
+input: { limitUsd: number; policy: BudgetPolicy },
+) => put<Budget>(`/workspaces/${workspaceId}/budget`, input);
 export const getSessionBudget = (projectId: string, sessionId: string) =>
   get<Budget | null>(`/projects/${projectId}/sessions/${sessionId}/budget`);
 export const getSessionTokenUsage = (projectId: string, sessionId: string) =>

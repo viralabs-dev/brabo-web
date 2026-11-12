@@ -6,7 +6,8 @@
     "account": "Conta",
     "containers": "Containers",
     "providers": "Providers",
-    "spend": "Gastos"
+    "spend": "Gastos",
+    "status": "Status"
   },
   "account": {
     "title": "Conta",

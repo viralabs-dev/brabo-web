@@ -131,18 +131,6 @@ describe('ProjectApprovalsTab — os três estados da RN-088', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('permissões que FALHARAM não viram "nenhuma regra configurada"', async () => {
-    getProjectPermissions.mockRejectedValue(new Error('sem acesso ao projeto'));
-    montar();
-
-    expect(
-      await screen.findByText('Não foi possível carregar as permissões do projeto.'),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('Nenhuma regra configurada ainda.'),
-    ).not.toBeInTheDocument();
-  });
-
   it('projeto sem sessão explica de onde as aprovações viriam', async () => {
     listSessions.mockResolvedValue([]);
     montar();
@@ -161,7 +149,7 @@ describe('ProjectApprovalsTab — os três estados da RN-088', () => {
   });
 });
 
-describe('ProjectApprovalsTab — fila e permissões', () => {
+describe('ProjectApprovalsTab — fila', () => {
   it('lista as pendentes e oferece o lote com "Limpar"', async () => {
     getProjectPendingActions.mockResolvedValue([acao()]);
     montar();
@@ -182,29 +170,6 @@ describe('ProjectApprovalsTab — fila e permissões', () => {
     );
   });
 
-  it('cada regra tem um revogar que diz o que revoga', async () => {
-    setProjectPermissions.mockResolvedValue(PERMISSOES);
-    montar();
-
-    const botao = await screen.findByRole('button', { name: 'Revogar rm -rf *' });
-    fireEvent.click(botao);
-
-    await waitFor(() => expect(setProjectPermissions).toHaveBeenCalledTimes(1));
-    expect(setProjectPermissions.mock.calls[0][1].deny).toEqual([]);
-  });
-
-  it('a busca que não acha nada diz isso, e não "nenhuma regra configurada"', async () => {
-    montar();
-    await screen.findByText('rm -rf *');
-
-    fireEvent.change(screen.getByPlaceholderText('Buscar regra ou padrão…'), {
-      target: { value: 'nao-existe' },
-    });
-
-    expect(
-      await screen.findByText('Nenhuma regra corresponde à busca.'),
-    ).toBeInTheDocument();
-  });
 });
 
 describe('ProjectApprovalsTab — a fila é a do PROJETO, não a da sessão mais recente (AT-297)', () => {

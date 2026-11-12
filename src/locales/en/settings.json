@@ -383,7 +383,10 @@
       "updateCatalog": "Refresh catalog",
       "updateCatalogAria": "Refresh the {{label}} model catalog",
       "noModels": "No model from this provider in the catalog yet — saving the key does not discover models.",
-      "noCatalogSource": "This provider does not publish a model list, so there is nothing to sync — its models come from the seed."
+      "noCatalogSource": "This provider does not publish a model list, so there is nothing to sync — its models come from the seed.",
+      "openSwapAria": "Enter a new key for {{label}}",
+      "calls_one": "1 call",
+      "calls_other": "{{count}} calls"
     },
     "toast": {
       "saved": "Credential saved",
@@ -396,7 +399,11 @@
       "testErrorTitle": "Couldn't test",
       "removed": "Credential removed",
       "removeErrorTitle": "Couldn't remove"
-    }
+    },
+    "connected_one": "Connected (1)",
+    "connected_other": "Connected ({{count}})",
+    "addTitle": "Add provider",
+    "dialogTitle": "{{label}} key"
   },
   "proficiency": {
     "title": "Proficiency profile",

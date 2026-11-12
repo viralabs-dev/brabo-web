@@ -13,7 +13,15 @@
     "noAdrs": "No ADR proposed yet.",
     "pendenciesLabel": "Cross-validation pendencies",
     "reasonNoModule": "no module linked",
-    "reasonMissingModule": "missing module: {{missing}}"
+    "reasonMissingModule": "missing module: {{missing}}",
+    "cols": {
+      "module": "Module",
+      "stack": "Stack",
+      "responsibility": "Responsibility",
+      "dependsOn": "Depends on"
+    },
+    "adrWaiting_one": "One ADR proposal is waiting for your approval.",
+    "adrWaiting_other": "{{count}} ADR proposals are waiting for your approval."
   },
   "c4": {
     "titleContext": "Context",

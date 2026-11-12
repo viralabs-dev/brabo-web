@@ -6,6 +6,7 @@ import { Input } from '../components/ui/Input';
 import { GitHubIcon, GitLabIcon } from '../components/ui/icons';
 import { SinaisDoAmbiente } from '../components/SinaisDoAmbiente';
 import { runtimeConfig } from '../lib/runtime-config';
+import { AGENT_LIST } from '../lib/agents';
 import { AuthLayout } from './AuthLayout';
 import styles from './AuthLayout.module.css';
 
@@ -106,6 +107,15 @@ export function LoginPage({ onEntrar, irPara, erroOAuth }: LoginPageProps) {
       colunaDeIdentidade={
         <>
           <p className={styles.pitch}>{t('loginPage.identity.pitch')}</p>
+          <ul className={styles.promessas}>
+            {(t('loginPage.identity.promessas', { returnObjects: true }) as string[]).map((p) => (
+              <li key={p}>{p}</li>
+            ))}
+          </ul>
+          {/* Derivado do catálogo: o número nunca é digitado à mão. */}
+          <p className={styles.papeis}>
+            {t('loginPage.identity.papeis', { count: AGENT_LIST.length })}
+          </p>
           <SinaisDoAmbiente />
         </>
       }

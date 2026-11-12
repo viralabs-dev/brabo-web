@@ -1369,8 +1369,8 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
 - **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:72`
   (`SessionLanguageIndicator`), `:29` (`idiomaSemOverride`), `:163`
   (`origemPorExtenso`), `:215` (`podeTrocar`);
-  `apps/web/src/routes/SessionTopbar.tsx:260` (`SessionLanguageIndicator`),
-  `:128` (`modoDaBarra`), `:377` (`AjustesAgrupados`);
+  `apps/web/src/routes/SessionTopbar.tsx:265` (`SessionLanguageIndicator`),
+  `:133` (`modoDaBarra`), `:382` (`AjustesAgrupados`);
   `apps/web/src/lib/modo-da-barra-da-sessao.ts:35` (`modoDaBarra`)
 - **Teste:** `apps/web/src/routes/SessionTopbar.test.tsx:174` (a barra de
   1440px não é completa), `:191` (agrupa, e o painel traz idioma com origem),

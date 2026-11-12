@@ -6,6 +6,20 @@
   },
   "adopted": "принят",
   "repositoryNotProvisioned": "репозиторий не подготовлен",
+  "medidor": {
+    "semTeto": "без лимита",
+    "definir": "Задать лимит",
+    "gasto": "расход за месяц {{gasto}} из {{teto}}",
+    "previsao_one": "прогноз на месяц {{valor}} · остался {{count}} день",
+    "previsao_few": "прогноз на месяц {{valor}} · осталось {{count}} дня",
+    "previsao_many": "прогноз на месяц {{valor}} · осталось {{count}} дней",
+    "previsao_other": "прогноз на месяц {{valor}} · осталось {{count}} дня"
+  },
+  "acao": {
+    "novaSessao": "Новая сессия",
+    "ativarExecucao": "Запустить выполнение",
+    "semRepositorio": "Без репозитория выполнение запустить негде."
+  },
   "precisaDeVoce": {
     "chip": "Нужно ваше решение",
     "titulo": "Нужно ваше решение",

@@ -6,6 +6,17 @@
   },
   "adopted": "已接管",
   "repositoryNotProvisioned": "仓库尚未创建",
+  "medidor": {
+    "semTeto": "无上限",
+    "definir": "设置上限",
+    "gasto": "本月已用 {{gasto}} / {{teto}}",
+    "previsao_other": "本月预测 {{valor}} · 剩余 {{count}} 天"
+  },
+  "acao": {
+    "novaSessao": "新会话",
+    "ativarExecucao": "启动执行",
+    "semRepositorio": "没有仓库，无法启动执行。"
+  },
   "precisaDeVoce": {
     "chip": "需要您处理",
     "titulo": "需要您处理",

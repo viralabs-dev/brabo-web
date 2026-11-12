@@ -101,7 +101,7 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
   `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:266`
-  (`useRetomarTurnoDoLog`), `:767` (`PendenciasDeOutrasSessoes`)
+  (`useRetomarTurnoDoLog`), `:771` (`PendenciasDeOutrasSessoes`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -615,9 +615,9 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
-  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:291`
+  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:312`
   (`movel`), `:311` (`fecharAoSeguirLink`);
-  `apps/web/src/routes/ProjectPage.tsx:84` (`movel`);
+  `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;
@@ -879,7 +879,7 @@ muda.
   (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:147` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);
-  `apps/web/src/routes/ContextAside.tsx:47` (`quantos`), `:340`
+  `apps/web/src/routes/ContextAside.tsx:51` (`quantos`), `:350`
   (`totalDeArtefatos`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — Atividades": sem
   execução lê a sessão da Visão geral e o Criativo aparece; com execução lê a
@@ -958,7 +958,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
   (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
-  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:134`
+  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:139`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)
@@ -1226,7 +1226,7 @@ cartão pendente apareceu só DURANTE a sessão ao vivo — estado transitório 
 tela, não da api nem da janela. A próxima rodada da AT-015 captura a rede no
 momento em que ele aparecer, antes de qualquer correção.
 
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`), `:415`
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`), `:515`
   (`nadaNaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   ("RN-701 (AT-365): com as regras fora da janela, o contador não afirma 0";
@@ -1398,7 +1398,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 - **Onde:** `apps/web/src/lib/acoes-da-sessao.ts:76` (`chaveDasAcoesDaSessao`),
   `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:455`
-  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:305`
+  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:260`
   (`acoesPorSessao`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` (describe "a
   leitura de ações é a mesma do fio": com o fio tendo gravado a cauda, montar a

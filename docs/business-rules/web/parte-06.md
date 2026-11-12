@@ -346,7 +346,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
   `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:533` (`semExecucaoVigente`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:544` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
   execução encerrada)
@@ -716,8 +716,8 @@ keywords: [regras de negócio, web]
   altura reservada, e jsdom não faz layout — o teste prova a ORDEM, não o
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:513` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:648` (`blockedTasks`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:524` (`desbloqueio`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:659` (`blockedTasks`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),

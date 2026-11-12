@@ -295,8 +295,8 @@ não dizia quais abas estavam abertas, e a leitura de que `/containers` estava
 numa delas é inferência pelos 106 ≈ 9 × 12.
 
 - **Código:** `apps/web/src/lib/canal-vivo.ts:54` (`INTERVALO_DO_PROJETO_MS`),
-  `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:147`
-  (`useProjectSessions`), `:178` (`useLatestSession`);
+  `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:153`
+  (`useProjectSessions`), `:184` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
   `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:221` (`invalidador`),
@@ -375,7 +375,7 @@ fica. Ativação recusada não navega e mostra a frase da api. Quem navega é a
 ROTA (`irParaSessao`, o `navigate` do router): a tela não depende do router.
 
 - **Onde:** `apps/web/src/lib/session-acoes-de-handoff.ts:147`
-  (`handleActivateExecution`); `apps/web/src/router.tsx:376` (`irParaSessao`)
+  (`handleActivateExecution`); `apps/web/src/router.tsx:383` (`irParaSessao`)
 - **Teste:** `apps/web/src/routes/SessionPage.handoff-obsoleto.test.tsx`
   (navega para o `sessionId` devolvido, com aviso; recusa não navega — caso de
   falha; sem quem navegue, só avisa)
@@ -616,7 +616,7 @@ barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:312`
-  (`movel`), `:311` (`fecharAoSeguirLink`);
+  (`movel`), `:330` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
@@ -751,7 +751,7 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
 
 - **Código:** `apps/web/src/lib/query-policy.ts:111`
   (`FRESCOR_DA_CONFIGURACAO_MS`); `apps/web/src/lib/hooks.ts:29`
-  (`useCurrentWorkspaceWithRole`), `:555` (`useProficiency`);
+  (`useCurrentWorkspaceWithRole`), `:561` (`useProficiency`);
   `apps/web/src/routes/settings/InstructionVersionsSection.tsx:31`
   (`instruction-versions`, sem poll); as seções de `apps/web/src/routes/settings/`
   e `apps/web/src/components/ModelCatalogSection.tsx`;
@@ -875,9 +875,9 @@ genérico, que ao lado de um brief ou de uma regra da mesma sessão parecia nega
 que eles existissem — o escopo da seção (PR e backlog, [RN-159](parte-02.md#rn-159)) não
 muda.
 
-- **Código:** `apps/web/src/routes/Shell.tsx:435` (`execucao`), `:449`
+- **Código:** `apps/web/src/routes/Shell.tsx:454` (`execucao`), `:468`
   (`estadoDaAtividade`);
-  `apps/web/src/lib/hooks.ts:147` (`useProjectSessions`, `frescorMs`);
+  `apps/web/src/lib/hooks.ts:153` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);
   `apps/web/src/routes/ContextAside.tsx:51` (`quantos`), `:350`
   (`totalDeArtefatos`)
@@ -1397,7 +1397,7 @@ resumo ganha — a pendente nova de uma sessão longa passa a contar em
 vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 - **Onde:** `apps/web/src/lib/acoes-da-sessao.ts:76` (`chaveDasAcoesDaSessao`),
-  `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:455`
+  `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:461`
   (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:260`
   (`acoesPorSessao`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` (describe "a

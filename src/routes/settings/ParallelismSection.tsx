@@ -14,7 +14,7 @@ import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
-import { usePublicarNoCabecalho } from './salvar-do-cabecalho';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
 
 /**
  * O teto de paralelismo de cada lead (FASE 14d — RN-083, ADR 0053).

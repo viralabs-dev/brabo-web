@@ -16,7 +16,7 @@ import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
-import { usePublicarNoCabecalho } from './salvar-do-cabecalho';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
 import { TetoDoMes } from '../../components/TetoDoMes';
 import { getProjectBudget, setProjectBudget } from '../../lib/api-client';
 import { useCurrentWorkspaceWithRole } from '../../lib/hooks';

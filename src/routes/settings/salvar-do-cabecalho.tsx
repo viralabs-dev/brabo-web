@@ -1,8 +1,7 @@
 import {
-  createContext,
   useCallback,
   useContext,
-  useEffect,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -10,7 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../components/ui/Button';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
-import type { SecaoSalvavel } from './secao-salvavel';
+import { Contexto, ContextoDaBarra, type Resumo, type Secao } from './salvar-do-cabecalho.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 
 /**
@@ -19,30 +18,6 @@ import styles from '../ProjectSettingsTab.module.css';
  * (RN-469). Gestos com confirmação própria (modo de execução, chaves) não se
  * registram aqui.
  */
-type Secao = Pick<SecaoSalvavel<never>, 'sujas' | 'invalidas' | 'salvarSecao' | 'descartar'>;
-interface Resumo {
-  sujas: number;
-  invalidas: number;
-}
-interface Registro {
-  publicar: (id: string, rotulo: string, secao: Secao) => void;
-  retirar: (id: string) => void;
-}
-interface Barra extends Resumo {
-  salvando: boolean;
-  salvar: () => void;
-  descartar: () => void;
-}
-
-const Contexto = createContext<Registro | null>(null);
-const ContextoDaBarra = createContext<Barra>({
-  sujas: 0,
-  invalidas: 0,
-  salvando: false,
-  salvar: () => {},
-  descartar: () => {},
-});
-
 export function ProvedorDoSalvarDoCabecalho({ children }: { children: ReactNode }) {
   const { t } = useTranslation('settings');
   const { showToast } = useToast();
@@ -66,6 +41,8 @@ export function ProvedorDoSalvarDoCabecalho({ children }: { children: ReactNode 
     });
   }, []);
 
+  // Estável: um objeto novo a cada render refaria o efeito de `usePublicarNoCabecalho` em laço.
+  const registro = useMemo(() => ({ publicar, retirar }), [publicar, retirar]);
   const lista = Object.values(resumos);
   const sujas = lista.reduce((n, r) => n + r.sujas, 0);
   const invalidas = lista.reduce((n, r) => n + r.invalidas, 0);
@@ -110,7 +87,7 @@ export function ProvedorDoSalvarDoCabecalho({ children }: { children: ReactNode 
   }
 
   return (
-    <Contexto.Provider value={{ publicar, retirar }}>
+    <Contexto.Provider value={registro}>
       <ContextoDaBarra.Provider
         value={{ sujas, invalidas, salvando, salvar: () => void salvar(), descartar }}
       >
@@ -118,13 +95,6 @@ export function ProvedorDoSalvarDoCabecalho({ children }: { children: ReactNode 
       </ContextoDaBarra.Provider>
     </Contexto.Provider>
   );
-}
-
-/** A seção se oferece ao cabeçalho; sem provedor (testes isolados) não faz nada. */
-export function usePublicarNoCabecalho(id: string, rotulo: string, secao: Secao) {
-  const registro = useContext(Contexto);
-  useEffect(() => registro?.publicar(id, rotulo, secao));
-  useEffect(() => () => registro?.retirar(id), [registro, id]);
 }
 
 export function BarraDeSalvar() {

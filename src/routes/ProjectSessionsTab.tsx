@@ -1,17 +1,14 @@
 import { Ajuda } from '../components/ui/Ajuda';
 import { Item } from '../components/shadcn/item';
 import { Input as CampoDeRenomear } from '../components/shadcn/input';
-import { useState, type KeyboardEvent, type MouseEvent } from 'react';
+import { useState, type FormEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { SEM_AUTOFILL } from '../lib/conversa-comecou';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  createSession,
   getProjectSpendTeam,
-  mensagemDaApi,
   renameSession,
-  transitionSession,
 } from '../lib/api-client';
 import { useActiveExecutionSession, useProjectSessions } from '../lib/hooks';
 import { consultaDasAcoesDaSessao } from '../lib/acoes-da-sessao';
@@ -21,20 +18,24 @@ import {
   type ResumoDeAprovacoes,
 } from '../lib/approvals';
 import { Button } from '../components/ui/Button';
+import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
+import { ProjectRagTab } from './ProjectRagTab';
 import { SegmentedControl } from '../components/ui/SegmentedControl';
 import { EmptyState } from '../components/ui/EmptyState';
 import { Badge, type BadgeTone } from '../components/ui/Badge';
 import { Input } from '../components/ui/Input';
+import { SearchIcon } from '../components/ui/icons';
 import { Skeleton } from '../components/ui/Skeleton';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import { PencilIcon, PlusIcon } from '../components/ui/icons';
 import { LIMITE_DO_NOME, hashtagDaSessao, rotuloDaSessao } from '../lib/session-label';
 import { TIPOS_DE_SESSAO } from '../lib/session-kind';
+import { useCriarSessao } from '../lib/use-criar-sessao';
 import { Destaque } from '../components/SpendCharts';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 import { useLayoutMovel } from '../lib/layout-movel';
-import type { Session, SessionKind, SessionStatus } from '../lib/api-types';
+import type { SessaoListada, Session, SessionKind, SessionStatus } from '../lib/api-types';
 import styles from './ProjectSessionsTab.module.css';
 
 /**
@@ -125,7 +126,22 @@ interface ProjectSessionsTabProps {
    * O tipo que esta aba É. Não é filtro de conveniência: é a identidade do
    * lugar — o que ele lista e o que ele cria.
    */
-  kind: SessionKind;
+  kind: SessionKind | 'todas';
+}
+
+/**
+ * A busca da seção (AT-893, RN-1215): digitar filtra a lista, local, por
+ * título e id; o RAG só abre com Enter ou com o botão, e `?tab=rag` já abre
+ * nesse modo. É o MESMO `ProjectRagTab` de antes — a busca segue explícita e
+ * medida (RN-479..481), nunca a cada tecla.
+ */
+function casaComABusca(s: SessaoListada, termo: string): boolean {
+  const q = termo.trim().toLowerCase();
+  return !q || rotuloDaSessao(s.id, s.name).toLowerCase().includes(q) || s.id.toLowerCase().includes(q);
+}
+
+function abreEmModoRag(): boolean {
+  return typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'rag';
 }
 
 /**
@@ -145,21 +161,33 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
   // `useActiveExecutionSession(undefined)` fica `enabled: false` na aba Chat,
   // então não dispara requisição nenhuma ali.
   const executionSessionQuery = useActiveExecutionSession(
-    kind === 'criativa' ? projectId : undefined,
+    kind === 'criativa' || kind === 'todas' ? projectId : undefined,
   );
   // AT-330 (achado N7): em 390px a linha cabia status, aprovações e data ao
   // lado do nome, e o nome — o que IDENTIFICA a sessão — ficava com 0px. No
   // móvel ele ganha a primeira linha inteira e o resto desce para a segunda.
   const movel = useLayoutMovel();
-  const [creating, setCreating] = useState(false);
   const [abrindoForm, setAbrindoForm] = useState(false);
   const [nome, setNome] = useState('');
+  const { criar, criando: creating } = useCriarSessao(projectId);
+  const handleCreate = () => (kind === 'todas' ? undefined : criar(kind, nome)); // sem CTA de criar em Todas
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
 
-  const copy = CHAVE_DA_ABA[kind];
-  const tipo = TIPOS_DE_SESSAO[kind];
+  const todas = kind === 'todas';
+  const copy = todas ? null : CHAVE_DA_ABA[kind];
+  const tipo = todas ? null : TIPOS_DE_SESSAO[kind];
+  const [busca, setBusca] = useState('');
+  const [ragAberto, setRagAberto] = useState(abreEmModoRag);
+  const [termoRag, setTermoRag] = useState<string | undefined>(undefined);
+
+  function buscarNoRag(e?: FormEvent) {
+    e?.preventDefault();
+    const limpo = busca.trim();
+    setTermoRag(limpo.length >= 2 ? limpo : undefined);
+    setRagAberto(true);
+  }
 
   // Renomear DIRETO da lista, sem abrir a sessão (RN-098 já existia só dentro
   // dela). Mesmo mecanismo de `SessionPage.tsx`: rascunho por id, Enter
@@ -189,49 +217,6 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
     }
   }
 
-  async function handleCreate() {
-    setCreating(true);
-    try {
-      const session = await createSession(projectId, {
-        // O `kind` vem da ABA, não de um controle na tela: é isto que fecha o
-        // item 3 da fase — o CTA cria o tipo do lugar, sem perguntar de novo.
-        kind,
-        // Nome em branco não vai no corpo: ausência é `null` no banco, e a
-        // tela degrada para a hashtag sozinha (RN-098).
-        name: nome.trim() || undefined,
-      });
-
-      // Os DOIS passos têm desfecho próprio de propósito. Antes eram um `try`
-      // com `finally` só, e uma ativação que falhava (a api sem alcançar o
-      // engine devolve 500) deixava a tela EXATAMENTE como estava: nenhum
-      // toast, nenhuma navegação, a sessão criada e invisível. O botão parecia
-      // não fazer nada, e a cada clique nascia outra sessão `created`.
-      //
-      // Falhar em ativar não desfaz a criação — a sessão existe —, então a
-      // navegação acontece de todo modo: é lá que mora o "Ativar sessão", que
-      // é o segundo caminho para o mesmo passo.
-      try {
-        await transitionSession(projectId, session.id, 'active');
-      } catch (erro) {
-        showToast({
-          title: mensagemDaApi(erro, t('sessionsTab.createActivationFailed.title')),
-          message: t('sessionsTab.createActivationFailed.message'),
-          tone: 'danger',
-        });
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['sessions', projectId] });
-      navigate({ to: '/projects/$projectId/sessions/$sessionId', params: { projectId, sessionId: session.id } });
-    } catch (erro) {
-      showToast({
-        title: mensagemDaApi(erro, t('sessionsTab.createFailed.title')),
-        tone: 'danger',
-      });
-    } finally {
-      setCreating(false);
-    }
-  }
-
   // O filtro pelo tipo GRAVADO. A aba não infere o tipo de evento nenhum: ela
   // lê `sessions.kind`, que é a intenção de criação e não muda (RN-097).
   //
@@ -244,11 +229,12 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
   // `doKind` é a base para os KPIs (contam TODOS os estados, não só os que o
   // pill selecionado mostra); `sorted` é o que a lista renderiza.
   const doKind = (sessionsQuery.data ?? [])
-    .filter((session) => session.kind === kind)
+    .filter((session) => todas || session.kind === kind)
     .filter((session) => session.id !== executionSessionQuery.session?.id);
 
   const sorted = doKind
     .filter((session) => kind !== 'criativa' || correspondeAoFiltro(session.status, filtro))
+    .filter((session) => casaComABusca(session, busca))
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
   // Aprovações POR SESSÃO (achado #16 do primeiro dogfooding). Tudo o que
@@ -285,19 +271,22 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
       <div className={styles.header}>
         <div className={styles.headerTexto}>
           <span className={styles.title}>
-            {t(copy.titulo)}
-            <Ajuda assunto={t(copy.titulo)}>{tipo.explicacao}</Ajuda>
+            {t(copy ? copy.titulo : 'sessionsTab.kindCopy.todas.title')}
+            <Ajuda assunto={t(copy ? copy.titulo : 'sessionsTab.kindCopy.todas.title')}>
+              {tipo ? tipo.explicacao : t('sessionsTab.kindCopy.todas.explanation')}
+            </Ajuda>
           </span>
           {/* A explicação do tipo mora AQUI agora, permanente. Antes ela só
               existia dentro do rádio do formulário — visível no instante da
               escolha e nunca mais. */}
         </div>
+        {copy && (
         <Button
           className={styles.acaoDoCabecalho}
           onClick={() => setAbrindoForm((v) => !v)}
           variant={abrindoForm ? 'ghost' : 'primary'}
           aria-expanded={abrindoForm}
-          legenda={abrindoForm ? undefined : t(copy.abrir)}
+          legenda={abrindoForm ? undefined : t(copy!.abrir)}
         >
           {/* AT-327: o CTA de criar é ícone + verbo, como "Novo projeto" no
               Dashboard — nunca o caractere "+" dentro do texto. */}
@@ -309,9 +298,25 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
             </>
           )}
         </Button>
+        )}
       </div>
 
-      {abrindoForm && (
+      <form className={styles.busca} role="search" onSubmit={buscarNoRag}>
+        <Input
+          aria-label={t('sessionsTab.search.label')}
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+          placeholder={t('sessionsTab.search.placeholder')}
+          {...SEM_AUTOFILL}
+        />
+        <Button type="submit" variant="secondary" legenda={t('sessionsTab.search.ragButton')}>
+          <SearchIcon size={14} aria-hidden="true" />
+        </Button>
+      </form>
+
+      {ragAberto && <ProjectRagTab key={termoRag ?? ''} projectId={projectId} consultaInicial={termoRag} />}
+
+      {copy && abrindoForm && (
         <div className={styles.novaSessao}>
           <Input
             label={t('sessionsTab.newSessionForm.nameLabel')}
@@ -327,7 +332,7 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
 
           <div className={styles.novaSessaoAcoes}>
             <Button onClick={handleCreate} disabled={creating}>
-              {creating ? t('sessionsTab.openingButton') : t(copy.confirmar)}
+              {creating ? t('sessionsTab.openingButton') : t(copy!.confirmar)}
             </Button>
           </div>
         </div>
@@ -384,7 +389,7 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
               seria a mesma mentira que a RN-088 já corrigiu para erro. */}
           {kind === 'criativa' && filtro !== 'todas' && doKind.length > 0
             ? t('sessionsTab.filterEmpty')
-            : t(copy.vazio)}
+            : busca.trim() ? t('sessionsTab.search.noMatch') : t(copy ? copy.vazio : 'sessionsTab.kindCopy.todas.empty')}
         </EmptyState>
       ) : (
         <div
@@ -443,6 +448,16 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
                     <PencilIcon size={12} className={styles.rowIdPencil} />
                   </button>
                 )}
+                <Badge tone={session.technical ? 'muted' : TIPOS_DE_SESSAO[session.kind].tom}>
+                  {session.technical ? t('sessionsTab.row.system') : TIPOS_DE_SESSAO[session.kind].rotulo}
+                </Badge>
+                {session.agentes && session.agentes.length > 0 && (
+                  <span className={styles.rowAvatares}>
+                    {session.agentes.map((id) => (
+                      <AvatarDoAgente key={id} id={id} />
+                    ))}
+                  </span>
+                )}
                 <Badge
                   tone={SELO_DO_STATUS[session.status].tone}
                   dot
@@ -471,6 +486,11 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
                     ).join(' · ')}
                   </span>
                 )}
+                <span className={styles.rowMeta}>
+                  {t('sessionsTab.row.passos', { count: session.passos ?? 0 })}
+                  {' · '}
+                  {session.costMicros === undefined ? '—' : formatarUsd(session.costMicros)}
+                </span>
                 <span className={styles.rowDate}>{new Date(session.createdAt).toLocaleString('pt-BR')}</span>
               </Item>
             );
@@ -565,4 +585,8 @@ export function ProjectCriativoTab({ projectId }: { projectId: string }) {
 
 export function ProjectChatTab({ projectId }: { projectId: string }) {
   return <ProjectSessionsTab projectId={projectId} kind="consultiva" />;
+}
+
+export function ProjectTodasTab({ projectId }: { projectId: string }) {
+  return <ProjectSessionsTab projectId={projectId} kind="todas" />;
 }

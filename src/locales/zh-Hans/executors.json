@@ -248,5 +248,50 @@
       "gateUltimoMudancas": "最近结论：需要修改。",
       "gateUltimoMudancasPr": "最近结论：需要修改（PR #{{pr}}）。"
     }
+  },
+  "acoes": {
+    "blockedTasksLabel": "被阻塞的任务",
+    "noDiagnosis": "无诊断",
+    "unblock": "解除阻塞",
+    "unblocking": "正在解除阻塞…",
+    "unblockError": "无法解除任务阻塞",
+    "unblockedTitle": "任务已解除阻塞",
+    "unblockGuidance": "给开发者的指引（可选）",
+    "unblockGuidanceHint": "例如：入口由组装方注入；不要单独启动该模块。",
+    "suggestionBefore": "存在相互独立的任务于 ",
+    "suggestionAfter": " —— 要再启动一个 dev 吗？",
+    "accept": "接受",
+    "pullRequestsLabel": "等待你处理的 Pull request",
+    "noPullRequests": "没有等待你的 PR。",
+    "pullRequestFallback": "PR",
+    "errorTitle": "错误",
+    "requestError": "无法发起请求",
+    "requestDeniedTitle": "请求被拒绝",
+    "authorizationNeededTitle": "需要你的授权",
+    "authorizationNeededMessage_other": "会话已有 {{count}} 个智能体，lead 的上限为 {{max}}。请求已放入“审批”。"
+  },
+  "chamada": {
+    "activate": "启动执行",
+    "activateError": "无法启动执行",
+    "needsMaintainer": "启动执行需要 maintainer 角色。",
+    "title_other": "执行已关闭 · {{count}} 个任务就绪",
+    "explain_other": "启动后 Dev Lead 会在 dev agent 之间分配工作（dev 区域最多并行 {{count}} 个）。每个 PR 都经过 QA 和 SecOps，等你来合并。",
+    "teto": "项目上限 {{valor}}"
+  },
+  "areas": {
+    "title": "区域",
+    "working": "工作中",
+    "stopped": "已停止",
+    "parallelism": "并行度 {{ativos}} / {{max}}",
+    "lead": "lead：{{nome}}",
+    "members_other": "{{count}} 名成员"
+  },
+  "fila": {
+    "title": "任务队列",
+    "ready_other": "{{count}} 个就绪",
+    "running_other": "{{count}} 个运行中",
+    "blocked_other": "{{count}} 个已阻塞",
+    "semModulo_other": "{{count}} 个无模块",
+    "more_other": "+ {{count}} 个任务，在待办中查看"
   }
 }

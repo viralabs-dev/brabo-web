@@ -43,6 +43,9 @@ import {
   ModelIcon,
   StopSquareIcon,
 } from '../components/ui/icons';
+import { cadeiaDeAgentes } from '../lib/contexto-da-sessao';
+import { AGENTS } from '../lib/agents';
+import type { SessionEvent } from '../lib/api-types';
 import { pontoDaSessao } from '../lib/session-timeline';
 import { sessaoEhTerminal } from '../lib/sessao-encerrada';
 import styles from './SessionPage.module.css';
@@ -93,6 +96,11 @@ export interface SessionTopbarProps {
   ideacaoComecou?: boolean;
   handleStartIdeation: () => Promise<void>;
   handleClose: () => Promise<void>;
+  /** Há turno em curso: o botão vira "Parar turno" (o mesmo cancelamento do composer, RN-122). */
+  streaming?: boolean;
+  /** Eventos já baixados: a cadeia de agentes sai deles (RN-632, nenhuma leitura nova). */
+  events?: readonly SessionEvent[];
+  handleCancel?: () => Promise<void>;
   asideOpen: boolean;
   setAsideOpen: Dispatch<SetStateAction<boolean>>;
 }
@@ -120,6 +128,9 @@ export function SessionTopbar({
   ideacaoComecou = false,
   handleStartIdeation,
   handleClose,
+  streaming = false,
+  events = [],
+  handleCancel,
   asideOpen,
   setAsideOpen,
 }: SessionTopbarProps) {
@@ -127,6 +138,7 @@ export function SessionTopbar({
   const barraRef = useRef<HTMLDivElement>(null);
   const modo = modoDaBarra(useLarguraObservada(barraRef));
   const emLinha = modo === 'completa';
+  const cadeia = cadeiaDeAgentes(events, (id) => AGENTS[id as keyof typeof AGENTS]?.name ?? null);
   // AT-328: no telefone a barra QUEBRA — saída, estado e título na primeira
   // linha, o resto (tipo, ajustes, ideação, Encerrar, painel) na segunda, e
   // de novo se precisar. Em 390px "Iniciar ideação" e "Encerrar" saíam pela
@@ -199,6 +211,14 @@ export function SessionTopbar({
           com reticências quando a barra aperta. `title` porque texto
           truncado sem forma de ler o resto é informação perdida. */}
       <div className={styles.titleBlock}>
+        {/* Trilha (v9 C30): "Sessões" volta à lista do projeto, o título é a página atual. */}
+        <nav className={styles.trilha} aria-label={t('topbar.trilha')}>
+          <Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'chat' }}>
+            {t('topbar.sessoes')}
+          </Link>
+          <span aria-hidden="true"> / </span>
+          <span>{rotulo}</span>
+        </nav>
         {rascunhoDoNome !== null ? (
           /* Renomear no LUGAR do título, e não num diálogo: o campo ocupa a
              posição exata do texto que ele muda. Enter confirma, Esc
@@ -230,6 +250,7 @@ export function SessionTopbar({
         )}
         <div className={styles.meta} title={metaDaSessao}>
           {metaDaSessao}
+          {cadeia.length > 0 && ` · ${cadeia.join(' → ')}`}
         </div>
       </div>
       {/* A quebra de linha do layout móvel: tudo depois dela começa embaixo. */}
@@ -336,7 +357,7 @@ export function SessionTopbar({
       <Button
         variant="danger"
         className={styles.acaoDaBarra}
-        onClick={handleClose}
+        onClick={streaming && handleCancel ? handleCancel : handleClose}
         disabled={!session || sessaoEhTerminal(session.status)}
         // Na barra mínima o botão fica só com o ícone; o nome acessível e o
         // `title` devolvem o verbo, que é o que um botão destrutivo deve dizer.
@@ -344,7 +365,7 @@ export function SessionTopbar({
         title={modo === 'minima' ? t('topbar.encerrarSessao') : undefined}
       >
         <StopSquareIcon size={15} />
-        {modo !== 'minima' && t('topbar.encerrar')}
+        {modo !== 'minima' && t(streaming && handleCancel ? 'topbar.pararTurno' : 'topbar.encerrar')}
       </Button>
       {/* Aberto é `secondary` (fundo e borda), fechado é `ghost`: o controle diz
           se o painel está aberto — antes ele tinha uma aparência só. */}

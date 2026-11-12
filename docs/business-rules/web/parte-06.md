@@ -183,8 +183,8 @@ keywords: [regras de negócio, web]
   cima não é arrastado. A causa do topo no aceite do handoff da Infra não foi
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
-- **Onde:** `apps/web/src/routes/project-tabs.ts:331` (`abaDaRota`),
-  `apps/web/src/routes/Shell.tsx:358` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
+  `apps/web/src/routes/Shell.tsx:377` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
   `apps/web/src/components/ModelCatalogSection.module.css` (`.barraDeLote`),
@@ -301,7 +301,7 @@ keywords: [regras de negócio, web]
   não é a mais recente. Nenhuma requisição a mais: as chaves são as que a
   sidebar já assina, e `useActiveExecutionSession` ganha `staleTime` igual ao
   intervalo, para o segundo assinante não refazer a busca ([RN-632](parte-05.md#rn-632)).
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`),
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:101` (`linhaDoTempoNaExecucao`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (decisão fora da janela não vira 0; sessão inteira na janela diz vazio),
@@ -320,7 +320,7 @@ keywords: [regras de negócio, web]
   lista onde a sessão aparece, que é o caminho de volta a ela. Sessão ainda
   carregando, ou aba publicada de outro projeto, cai em "Chat". Sem leitura
   nova: o tipo já veio com a sessão.
-- **Onde:** `apps/web/src/routes/project-tabs.ts:331` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
   `apps/web/src/lib/session-kind.ts:94` (`usePublicarAbaDaSessao`)
 - **Teste:** `apps/web/src/lib/session-rolagem-fim.test.ts` (criativa marca
   "Criativo"; aba de outro projeto ou inválida não vale)
@@ -345,8 +345,8 @@ keywords: [regras de negócio, web]
   com execução de pé, ritmo de projeto quando ligada, [RN-632](parte-05.md#rn-632)).
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:544` (`semExecucaoVigente`)
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
   execução encerrada)
@@ -381,7 +381,7 @@ keywords: [regras de negócio, web]
   Proton Pass. O composer da Sessão já o tinha. A constante NÃO tem atributo de
   ignore do NordPass, e nenhum foi inventado: se o NordPass segue se anexando,
   o resto da lacuna é da extensão, como na RN-740.
-- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:325` (`SEM_AUTOFILL`),
+- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:310` (`SEM_AUTOFILL`),
   `apps/web/src/lib/conversa-comecou.ts:29` (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` ("AT-472: o nome
   da nova ideação não convida o gerenciador de senhas")
@@ -716,8 +716,8 @@ keywords: [regras de negócio, web]
   altura reservada, e jsdom não faz layout — o teste prova a ORDEM, não o
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:524` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:659` (`blockedTasks`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:509` (`desbloqueio`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:640` (`blockedTasks`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),
@@ -973,7 +973,7 @@ keywords: [regras de negócio, web]
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:400`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:464`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba
@@ -1130,7 +1130,7 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 3. **Orçamento.** A aba traz o editor do teto (`PUT projects/:projectId/budget`, `maintainer` pela `roleAtLeast`); abaixo do papel o controle fica inerte e o motivo é dito em texto. O botão "Definir orçamento" do card do projeto abre `?tab=spend` (antes `?tab=settings`, onde nenhuma tela gravava o orçamento).
 4. **Assinatura.** `assinaturaMicros` aparece num destaque separado; linha de modelo marcado `subscription` com custo zero mostra "assinatura — sem preço registrado", nunca "US$ 0".
 
-- **Código:** `apps/web/src/components/SpendPaineis.tsx:153` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:354` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:93` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:104` (`onDefineBudget`)
+- **Código:** `apps/web/src/components/SpendPaineis.tsx:189` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:398` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:93` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:104` (`onDefineBudget`)
 - **Teste:** `apps/web/src/routes/SpendPage.test.tsx` (owner × não-owner, sem provider para quem não é owner); `apps/web/src/routes/ProjectSpendTab.test.tsx` (owner só do projeto, membro por agente e área, editor grava, teto inválido e papel baixo recusados)
 - **Origem:** AT-632
 
@@ -1189,7 +1189,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 2. **Carga sob demanda.** O gráfico mora em `GraficoDeGastoPorDia.tsx`, carregado por `React.lazy` em `GastoPorDia.tsx`, com o SVG de `BarrasPorDia` como fallback. `SpendCharts.tsx` não importa o recharts, porque a aba Sessões importa o `Destaque` dali.
 3. **Recorte dito e alternativa em texto** ([RN-180](parte-02.md#rn-180)): o título diz a janela, a figura tem `aria-label` igual a ele, e `<details>` "Ver como tabela" traz dia, gasto e chamadas. Zero requisição nova ([RN-632](parte-05.md#rn-632)).
 
-- **Código:** `apps/web/src/components/GraficoDeGastoPorDia.tsx:13` (`GraficoDeGastoPorDia`); `apps/web/src/components/GastoPorDia.tsx:16` (`GastoPorDia`)
+- **Código:** `apps/web/src/components/GraficoDeGastoPorDia.tsx:13` (`GraficoDeGastoPorDia`); `apps/web/src/components/GastoPorDia.tsx:5` (`GastoPorDia`)
 - **Teste:** `apps/web/src/components/GraficoDeGastoPorDia.test.tsx` (figura com janela, tabela com os dias, série vazia)
 - **Origem:** AT-658
 

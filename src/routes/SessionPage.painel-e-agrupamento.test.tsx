@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import type { Session, SessionEvent } from '../lib/api-types';
@@ -137,8 +137,16 @@ function montar() {
   );
 }
 
+
+/** AT-892: as seções antigas moram em "Detalhes da sessão", recolhido por padrão. */
+async function abrirDetalhes() {
+  const b = await screen.findByRole('button', { name: /Detalhes da sessão/ });
+  if (b.getAttribute('aria-expanded') !== 'true') fireEvent.click(b);
+}
+
 /** A região do `Disclosure` de uma seção do painel, pelo nome do cabeçalho. */
 async function regiao(nome: RegExp) {
+  await abrirDetalhes();
   const botao = await screen.findByRole('button', { name: nome });
   return within(document.getElementById(botao.getAttribute('aria-controls')!)!);
 }
@@ -218,6 +226,7 @@ describe('RN-180 — o painel diz o que não está mostrando', () => {
 
     montar();
 
+    await abrirDetalhes();
     expect(
       await screen.findByRole('button', { name: /Regras de negócio.*0 na janela · há mais antes/ }),
     ).toBeTruthy();
@@ -236,6 +245,7 @@ describe('RN-180 — o painel diz o que não está mostrando', () => {
 
     montar();
 
+    await abrirDetalhes();
     expect(
       await screen.findByRole('button', { name: /Decisões registradas.*0 na janela · há mais antes/ }),
     ).toBeTruthy();
@@ -269,6 +279,7 @@ describe('RN-180 — o painel diz o que não está mostrando', () => {
     eventos.mockReturnValue({ items: [regra(1, 'Primeira regra')] });
 
     montar();
+    await abrirDetalhes();
     await screen.findByText('Primeira regra');
 
     expect(screen.queryByText(/anteriores —/)).toBeNull();
@@ -281,6 +292,7 @@ describe('RN-180 — o painel diz o que não está mostrando', () => {
     );
 
     montar();
+    await abrirDetalhes();
     await userEvent.setup().click(
       await screen.findByRole('button', { name: /Log de eventos/ }),
     );

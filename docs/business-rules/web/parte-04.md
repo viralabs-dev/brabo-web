@@ -584,7 +584,7 @@ diferença não é escolha de desenho: é a forma do endpoint.
   (as duas consultas e o `ReconhecimentoDeMaquina`),
   `apps/web/src/components/RunnerOnboardingPanel.module.css`
   (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:451`
-  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:807`
+  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:812`
   (`RunnerDeviceKeyListItem`, `RunnerDeviceKeyEspecie`),
   `apps/web/src/locales/{en,pt-BR}/terminal.json` (`agenteDeMaquina.*`)
 - **Teste:** `apps/web/src/lib/agente-de-maquina.test.ts` — o caminho feliz
@@ -1369,8 +1369,8 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
 - **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:72`
   (`SessionLanguageIndicator`), `:29` (`idiomaSemOverride`), `:163`
   (`origemPorExtenso`), `:215` (`podeTrocar`);
-  `apps/web/src/routes/SessionTopbar.tsx:260` (`SessionLanguageIndicator`),
-  `:128` (`modoDaBarra`), `:377` (`AjustesAgrupados`);
+  `apps/web/src/routes/SessionTopbar.tsx:281` (`SessionLanguageIndicator`),
+  `:139` (`modoDaBarra`), `:398` (`AjustesAgrupados`);
   `apps/web/src/lib/modo-da-barra-da-sessao.ts:35` (`modoDaBarra`)
 - **Teste:** `apps/web/src/routes/SessionTopbar.test.tsx:174` (a barra de
   1440px não é completa), `:191` (agrupa, e o painel traz idioma com origem),

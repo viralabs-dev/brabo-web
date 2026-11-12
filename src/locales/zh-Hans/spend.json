@@ -1,5 +1,7 @@
 {
   "shared": {
+    "exportCsv": "导出 CSV",
+    "avgCallLabel": "每次调用平均成本",
     "loading": "加载中…",
     "summing": "汇总中…",
     "retry": "重试",
@@ -65,6 +67,7 @@
     "budgetWarning": "已超过月度上限的 {{pct}}%。"
   },
   "window": {
+    "month": "本月",
     "label": "时间范围",
     "option": "{{n}} 天"
   },
@@ -97,6 +100,7 @@
     "bySessionEmpty": "此时间范围内没有会话产生支出。"
   },
   "team": {
+    "bySessionTitle": "按项目会话",
     "title": "项目支出",
     "subtitle": "最近 {{dias}} 天：智能体在此项目上的支出。不含提供方和密钥——账单属于工作区所有者。",
     "error": "暂时无法加载项目支出。",

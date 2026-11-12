@@ -132,6 +132,7 @@ vi.mock('../lib/hooks', () => ({
   useCurrentWorkspaceWithRole: () => ({ data: WORKSPACE_WITH_ROLE }),
   useProjects: () => ({ data: estado.projects, ...estado.projectsQuery }),
   useProjectsStatus: () => ({ data: [] }),
+  useDecisionInbox: () => ({ data: undefined }),
   useProjectsSummary: () => ({ data: estado.summaries }),
   // Atividades (RN-198) — só o projeto CORRENTE (`pathname`) as consulta;
   // vazio por padrão é suficiente para os testes que não miram a seção.
@@ -632,7 +633,7 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
       screen.getByRole('tab', { name: 'Visão geral' }).focus();
       fireEvent.keyDown(screen.getByRole('tab', { name: 'Visão geral' }), { key: 'ArrowDown' });
       expect(navigate).toHaveBeenLastCalledWith(
-        expect.objectContaining({ search: { tab: 'criativo' } }),
+        expect.objectContaining({ search: { tab: 'todas' } }),
       );
     } finally {
       parar();

@@ -46,7 +46,8 @@
     "footer": {
       "accountFallback": "conta",
       "logout": "sair"
-    }
+    },
+    "caixa": "Caixa de decisões"
   },
   "notificationBell": {
     "label": "Notificações",

@@ -1,5 +1,7 @@
 {
   "shared": {
+    "exportCsv": "Exportar CSV",
+    "avgCallLabel": "Custo médio por chamada",
     "loading": "Carregando…",
     "summing": "Somando…",
     "retry": "Tentar de novo",
@@ -75,6 +77,7 @@
     "budgetWarning": "Já passou de {{pct}}% do teto do mês."
   },
   "window": {
+    "month": "Mês",
     "label": "Janela",
     "option": "{{n}} dias"
   },
@@ -107,6 +110,7 @@
     "bySessionEmpty": "Nenhuma sessão gastou nesta janela."
   },
   "team": {
+    "bySessionTitle": "Por sessão do projeto",
     "title": "Gastos do projeto",
     "subtitle": "Últimos {{dias}} dias: o que os agentes gastaram neste projeto. Sem provider nem chave — a fatura é do dono do workspace.",
     "error": "Não consegui carregar o gasto do projeto agora.",

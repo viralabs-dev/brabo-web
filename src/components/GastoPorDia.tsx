@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import type { SpendPorDia } from '../lib/spend';
+import type { SpendDiaDoAgente, SpendPorDia } from '../lib/spend';
 import { BarrasPorDia } from './SpendCharts';
 import { Card } from './shadcn/card';
 import styles from './GastoPorDia.module.css';
@@ -12,6 +12,21 @@ const Chamadas = lazy(() =>
 const Tokens = lazy(() =>
   import('./GraficoDeGastoPorDia').then((m) => ({ default: m.GraficoDeTokens })),
 );
+
+const Empilhado = lazy(() =>
+  import('./GraficoDeGastoPorDia').then((m) => ({ default: m.GraficoEmpilhadoPorAgente })),
+);
+
+/** Gasto por dia empilhado por agente (RN-1153), na visão do time do projeto. */
+export function GastoPorDiaEAgente(props: { linhas: SpendDiaDoAgente[]; dias: number; titulo: string }) {
+  return (
+    <Card className={styles.cartao}>
+      <Suspense fallback={null}>
+        <Empilhado {...props} />
+      </Suspense>
+    </Card>
+  );
+}
 
 /** Gasto por dia em 2/3; chamadas por dia e a rosca de tokens em 1/3 (AT-720). */
 export function GastoPorDia(props: {

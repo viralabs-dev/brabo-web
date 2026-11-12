@@ -261,7 +261,7 @@ describe('ProjectSpendTab — a audiência do owner', () => {
     expect(screen.getByText('Por agente e pessoa')).toBeInTheDocument();
     expect(screen.getByText('Gasto por dia')).toBeInTheDocument();
 
-    expect(screen.getByText('caro/modelo')).toBeInTheDocument();
+    expect(screen.getAllByText('caro/modelo')[0]).toBeInTheDocument();
     // RN-211: o rótulo humano do provider, não o slug cru.
     expect(screen.getByText('Anthropic')).toBeInTheDocument();
     expect(screen.getByText('criativo')).toBeInTheDocument();
@@ -318,7 +318,7 @@ describe('ProjectSpendTab — a audiência do membro', () => {
     expect(getWorkspaceSpendReport).not.toHaveBeenCalled();
     expect(getCredentialSpend).not.toHaveBeenCalled();
     expect(screen.queryByText('Por provider')).not.toBeInTheDocument();
-    expect(screen.queryByText('Por modelo')).not.toBeInTheDocument();
+    expect(screen.getByText('Por modelo')).toBeInTheDocument(); // RN-1152: modelo sim, provider nunca
     expect(screen.queryByText('Gasto das suas chaves')).not.toBeInTheDocument();
     expect(getMySpend).toHaveBeenCalledWith('p-1', 30);
   });

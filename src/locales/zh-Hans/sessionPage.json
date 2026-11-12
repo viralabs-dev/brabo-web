@@ -33,7 +33,10 @@
     "ajustes": "模型与语言",
     "ajustesAria": "本会话的模型、回复语言与预算",
     "perguntaDeIdiomaPendente": "有一个关于回复语言的问题",
-    "encerrarSessao": "结束会话"
+    "encerrarSessao": "结束会话",
+    "pararTurno": "停止本轮",
+    "trilha": "会话路径",
+    "sessoes": "会话"
   },
   "convite": {
     "criativa": {
@@ -306,7 +309,12 @@
     "arquivosNaoLidos": "尚未读取整个会话的文件。",
     "recorteMaisRecentes": "显示 {{total}} 条中最近的 {{mostradas}} 条。",
     "arquivosVazio": "本会话及其关联执行的 PR 和提交中没有任何文件。",
-    "prsNaoLidas_other": "{{count}} 个 PR 未列入此列表（超出读取上限，或无法读取 diff）— PR 标签页显示全部。"
+    "prsNaoLidas_other": "{{count}} 个 PR 未列入此列表（超出读取上限，或无法读取 diff）— PR 标签页显示全部。",
+    "objetivo": "目标",
+    "perguntasAbertas": "未决问题",
+    "gastoPorAgente": "按智能体统计的花费",
+    "gastoVazio": "暂无花费。",
+    "detalhes": "会话详情"
   },
   "turno": {
     "artefato": {

@@ -36,6 +36,9 @@
     "settings": {
       "label": "Configurações"
     },
+    "todas": {
+      "label": "Todas"
+    },
     "permissoes": {
       "label": "Permissões"
     }
@@ -63,6 +66,7 @@
     "arquitetura": "Arquitetura",
     "spend": "Gastos",
     "settings": "Configurações",
+    "todas": "Todas",
     "permissoes": "Permissões"
   }
 }

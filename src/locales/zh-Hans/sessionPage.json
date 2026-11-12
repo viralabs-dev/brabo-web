@@ -334,7 +334,16 @@
     "consultado": "本轮已查阅",
     "fonteN": "来源 {{n}}：{{rotulo}}",
     "consultadoCorte": "显示 {{shown}} / {{total}}",
-    "passosCount_other": "{{count}} 步"
+    "passosCount_other": "{{count}} 步",
+    "visao": "步骤视图",
+    "agrupados": "分组",
+    "emOrdem": "按顺序",
+    "grupos": {
+      "leu": "读取了上下文",
+      "desenhou": "设计了",
+      "registrou": "记录了",
+      "outros": "其他"
+    }
   },
   "pendencias": {
     "referenciaNoFio": "已提出合并 — 请在上方“可合并的 PR”队列中决定。",
@@ -495,5 +504,31 @@
     "ver": "查看该 PR",
     "verAs_other": "查看全部 {{count}} 个",
     "agoraNao": "暂不处理"
+  },
+  "resumo": {
+    "gravado": "本轮记录:{{itens}}",
+    "tipos": {
+      "regra": "业务规则",
+      "decisao": "决定",
+      "pergunta": "未决问题",
+      "epico": "史诗",
+      "historia": "故事",
+      "historia_corrigida": "已修正的故事",
+      "historia_arquivada": "已归档的故事",
+      "tarefa": "任务",
+      "tarefa_corrigida": "已修正的任务",
+      "nota": "笔记",
+      "artefato": "其他产物",
+      "adr": "已提议的 ADR",
+      "module_map": "模块图",
+      "modulos_de_historia": "模块分配",
+      "imagem": "已决定的镜像",
+      "c4": "C4 图",
+      "roteamento": "基础设施路由",
+      "contratos": "模块契约",
+      "insight": "洞察",
+      "rfc": "已提议的 RFC",
+      "prototipo": "已提议的原型"
+    }
   }
 }

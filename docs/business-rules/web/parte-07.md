@@ -141,3 +141,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:18` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
 - **Teste:** `apps/web/src/lib/proximo-passo.test.ts` (um caso por situação, precedência, "nenhuma" e tarefa arquivada), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (describe "próximo passo": fixture da P10, bloqueada, cartão que some).
 - **Origem:** AT-936 (EP-035); prévia em `13-design/proximo-passo`. Revisa a RN-708: o primeiro passo pendente dela é a situação 1 desta tabela.
+
+<a id="rn-1185"></a>
+
+### RN-1185 — Os passos do turno se recolhem numa linha e se agrupam por INTENÇÃO, num mapa tipado; nenhum passo some {#rn-1185}
+
+- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N e o custo do turno (`custoMicros` do `agent.response`, RN-1158; traço quando o evento não traz, nunca zero). Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). `ResumoDeTurno` e `lib/resumo-de-turno.ts` expõem a linha de um turno com o `gravadoNoTurno` do engine (RN-1158), nunca texto montado no web. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; o colapso dos turnos anteriores em `ResumoDeTurno` e os 62ch ficam para a continuação.
+- **Onde:** `src/lib/grupos-de-ferramenta.ts:1` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:1` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:1` (`gravadoDoPayload`), `src/components/ResumoDeTurno.tsx:1` (`ResumoDeTurno`).
+- **Teste:** `src/lib/grupos-de-ferramenta.test.ts`.
+- **Origem:** AT-891 (EP-035), ADR 0290/0294.

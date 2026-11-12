@@ -27,7 +27,8 @@ import { Alert as AlertShadcn } from '../components/shadcn/alert';
 import { MensagemDeConversa } from '../components/ai-elements/message';
 import { Reasoning } from '../components/ai-elements/reasoning';
 import { ArtifactCard } from '../components/ai-elements/artifact';
-import { PassosEncerrados } from '../components/ai-elements/passos-encerrados';
+import { PassosDoTurno } from '../components/ai-elements/passos-do-turno';
+import { custoDoPayload } from '../lib/resumo-de-turno';
 import { passosDoTurno } from '../lib/passos-do-turno';
 import { citacoesDoTurno, fontesDoTurno } from '../lib/fontes-do-turno';
 import { ConsultadoNesteTurno } from '../components/ai-elements/sources';
@@ -972,7 +973,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       // RN-974: sem `mensagem: true`, o bloco não conta no corte (RN-644).
       const ferramentas = passosDoTurno(events, event);
       if (ferramentas.length > 0) {
-        empurrar({ node: <PassosEncerrados key={`${event.id}-cadeia`} passos={ferramentas} /> });
+        empurrar({ node: <PassosDoTurno key={`${event.id}-cadeia`} passos={ferramentas} custo={custoDoPayload(payload)} /> });
       }
       const rac = payload as { raciocinio?: unknown; raciocinioTotal?: unknown };
       if (typeof rac.raciocinio === 'string' && rac.raciocinio !== '') {

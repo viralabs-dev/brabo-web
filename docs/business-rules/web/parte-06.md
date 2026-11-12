@@ -183,7 +183,7 @@ keywords: [regras de negócio, web]
   cima não é arrastado. A causa do topo no aceite do handoff da Infra não foi
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
-- **Onde:** `apps/web/src/routes/project-tabs.ts:331` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
   `apps/web/src/routes/Shell.tsx:358` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
@@ -320,7 +320,7 @@ keywords: [regras de negócio, web]
   lista onde a sessão aparece, que é o caminho de volta a ela. Sessão ainda
   carregando, ou aba publicada de outro projeto, cai em "Chat". Sem leitura
   nova: o tipo já veio com a sessão.
-- **Onde:** `apps/web/src/routes/project-tabs.ts:331` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
   `apps/web/src/lib/session-kind.ts:94` (`usePublicarAbaDaSessao`)
 - **Teste:** `apps/web/src/lib/session-rolagem-fim.test.ts` (criativa marca
   "Criativo"; aba de outro projeto ou inválida não vale)
@@ -381,7 +381,7 @@ keywords: [regras de negócio, web]
   Proton Pass. O composer da Sessão já o tinha. A constante NÃO tem atributo de
   ignore do NordPass, e nenhum foi inventado: se o NordPass segue se anexando,
   o resto da lacuna é da extensão, como na RN-740.
-- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:325` (`SEM_AUTOFILL`),
+- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:355` (`SEM_AUTOFILL`),
   `apps/web/src/lib/conversa-comecou.ts:29` (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` ("AT-472: o nome
   da nova ideação não convida o gerenciador de senhas")

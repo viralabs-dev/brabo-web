@@ -375,7 +375,9 @@
       "updateCatalog": "更新目录",
       "updateCatalogAria": "更新 {{label}} 的模型目录",
       "noModels": "目录中暂无此 provider 的模型——登记密钥不会发现模型。",
-      "noCatalogSource": "此 provider 不提供模型列表，因此无需同步——其模型通过 seed 导入。"
+      "noCatalogSource": "此 provider 不提供模型列表，因此无需同步——其模型通过 seed 导入。",
+      "openSwapAria": "输入 {{label}} 的新密钥",
+      "calls_other": "{{count}} 次调用"
     },
     "toast": {
       "saved": "凭据已保存",
@@ -388,7 +390,10 @@
       "testErrorTitle": "无法测试",
       "removed": "凭据已移除",
       "removeErrorTitle": "无法移除"
-    }
+    },
+    "connected_other": "已连接（{{count}}）",
+    "addTitle": "添加提供商",
+    "dialogTitle": "{{label}} 密钥"
   },
   "proficiency": {
     "title": "熟练度画像",

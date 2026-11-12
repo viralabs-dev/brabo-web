@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-896, lanes D e E): Providers/Configurações separam "Conectados" (lista, com chamadas por provider só para o owner) de "Adicionar provider" (grade de botões); a chave só existe no diálogo, que descarta o rascunho ao fechar ou salvar (write-only, ADR 0050). Arquitetura mostra os módulos em tabela (módulo, stack, responsabilidade, depende de) e a faixa "proposta de ADR espera sua aprovação". Sem RN nova; i18n nos quatro idiomas com `_zero`.
+
 - Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
 
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.

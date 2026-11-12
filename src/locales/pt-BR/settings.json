@@ -391,7 +391,11 @@
       "updateCatalog": "Atualizar catálogo",
       "updateCatalogAria": "Atualizar o catálogo de modelos de {{label}}",
       "noModels": "Nenhum modelo deste provider no catálogo ainda — cadastrar a chave não descobre modelo.",
-      "noCatalogSource": "Este provider não publica lista de modelos, então não há o que sincronizar — os modelos dele entram por seed."
+      "noCatalogSource": "Este provider não publica lista de modelos, então não há o que sincronizar — os modelos dele entram por seed.",
+      "openSwapAria": "Informar nova chave de {{label}}",
+      "calls_zero": "nenhuma chamada",
+      "calls_one": "1 chamada",
+      "calls_other": "{{count}} chamadas"
     },
     "toast": {
       "saved": "Credencial salva",
@@ -404,7 +408,12 @@
       "testErrorTitle": "Não deu para testar",
       "removed": "Credencial removida",
       "removeErrorTitle": "Não deu para remover"
-    }
+    },
+    "connected_zero": "Conectados: nenhum",
+    "connected_one": "Conectado (1)",
+    "connected_other": "Conectados ({{count}})",
+    "addTitle": "Adicionar provider",
+    "dialogTitle": "Chave de {{label}}"
   },
   "proficiency": {
     "title": "Perfil de proficiência",

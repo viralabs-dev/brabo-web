@@ -28,9 +28,12 @@
   },
   "status": {
     "heading": "Brabo — platform status",
+    "resumo": { "ok": "All systems operational", "erro": "A service is down", "checking": "Checking services…", "detalhe": "Last checked {{instante}} · refreshes every {{segundos}} s" },
+    "latenciaValor": "{{ms}} ms",
     "columns": {
       "service": "Service",
       "status": "Status",
+      "latency": "Latency",
       "lastCheck": "Last checked"
     },
     "services": {

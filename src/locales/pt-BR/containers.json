@@ -10,6 +10,17 @@
     "next": "Próxima",
     "status": "{{page}} / {{total}}"
   },
+  "metrics": {
+    "running": "Rodando",
+    "decided": "Imagem decidida",
+    "never": "Nunca provisionado",
+    "resources": "Recursos em uso",
+    "nothing": "nada para medir",
+    "resourcesValue": "{{cpus}} CPU · {{memoryMb}} MB",
+    "de_zero": "nenhum projeto",
+    "de_one": "de {{count}} projeto",
+    "de_other": "de {{count}} projetos"
+  },
   "table": {
     "project": "Projeto",
     "image": "Imagem",

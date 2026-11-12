@@ -24,7 +24,7 @@ keywords: [regras de negócio, web]
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
 - **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:138` (`ARTEFATOS_DO_FIO`).
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:135` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:140` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
 
@@ -141,6 +141,15 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:18` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
 - **Teste:** `apps/web/src/lib/proximo-passo.test.ts` (um caso por situação, precedência, "nenhuma" e tarefa arquivada), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (describe "próximo passo": fixture da P10, bloqueada, cartão que some).
 - **Origem:** AT-936 (EP-035); prévia em `13-design/proximo-passo`. Revisa a RN-708: o primeiro passo pendente dela é a situação 1 desta tabela.
+
+<a id="rn-1185"></a>
+
+### RN-1185 — Os passos do turno se recolhem numa linha e se agrupam por INTENÇÃO, num mapa tipado; nenhum passo some {#rn-1185}
+
+- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Os turnos ANTERIORES ao último `agent.response` mostram o bloco de passos como UMA linha (`ResumoDeTurno`: agente, passos, `gravadoNoTurno` do engine, custo) que expande no lugar; a mensagem do agente continua inteira no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
+- **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ResumoDeTurno.tsx:17` (`ResumoDeTurno`), `src/routes/session-timeline-montagem.tsx:443` (`ultimaRespostaId`).
+- **Teste:** `src/lib/grupos-de-ferramenta.test.ts`, `src/components/ai-elements/passos-do-turno.test.tsx` (seletor Agrupados | Em ordem).
+- **Origem:** AT-891 (EP-035), ADR 0290/0294.
 
 <a id="rn-1180"></a>
 

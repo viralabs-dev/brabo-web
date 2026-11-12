@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-891, RN-1185): `PassosDoTurno` recolhe os passos numa linha (N passos, 3 ferramentas mais usadas, custo e duração do turno) e, aberto, alterna Agrupados (por intenção, mapa tipado, resto em Outros) e Em ordem; os turnos anteriores ao último viram uma linha `ResumoDeTurno` que expande; o raciocínio mostra tokens quando o fecho os traz; texto do agente em 62ch.
 - Feat (AT-887, RN-1205): a sidebar troca Atividades por "Agentes agora" (até 5 agentes por urgência, avatar, nome e ponto de status, sem contagem de eventos; recolhida, só avatar com tooltip), rotula Containers, Providers, Gastos e Status (link novo) como Workspace e passa a usar os oito `--ag-*` do v9 nos dois temas (qa verde, infra azul, dev-backend teal). Sem requisição nova. A Caixa de decisões vai para a AT-889.
 
 - Feat (AT-896, lanes A e C): Login ganha a coluna de marca (três promessas e o número de papéis derivado do catálogo `AGENT_LIST`, nunca digitado); Status ganha o cartão de resumo e a latência por serviço; Containers ganha quatro cartões de métrica (rodando, imagem decidida, nunca provisionado, recursos em uso). i18n nos quatro idiomas. Conta já estava em lista (`Item*`), sem mudança.

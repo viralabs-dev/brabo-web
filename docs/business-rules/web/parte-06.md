@@ -346,7 +346,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
   `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:533` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
   execução encerrada)
@@ -364,7 +364,7 @@ keywords: [regras de negócio, web]
   Infra Lead cujo handoff foi aceito lá), e com uma ideação aberta depois a
   árvore dizia "Nenhum agente entrou em ação nesta sessão ainda" sobre um time
   trabalhando. Sem leitura nova.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:279` (`overviewEvents`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:292` (`overviewEvents`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("AT-471: agente
   que só agiu na execução aparece na árvore…"; o caso sem execução segue lendo
   a mais recente)
@@ -716,8 +716,8 @@ keywords: [regras de negócio, web]
   altura reservada, e jsdom não faz layout — o teste prova a ORDEM, não o
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:498` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:634` (`blockedTasks`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:513` (`desbloqueio`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:648` (`blockedTasks`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),
@@ -833,7 +833,7 @@ keywords: [regras de negócio, web]
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:604` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:625` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
   `apps/web/src/routes/session-timeline-montagem.tsx:1325` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
@@ -973,7 +973,7 @@ keywords: [regras de negócio, web]
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:391`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:400`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba

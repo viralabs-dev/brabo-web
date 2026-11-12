@@ -973,7 +973,7 @@ keywords: [regras de negócio, web]
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:400`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:464`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba

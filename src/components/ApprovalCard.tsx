@@ -23,6 +23,7 @@ import {
 } from '../lib/decisao-da-politica';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
+import { Textarea } from './ui/Textarea';
 import { Confirmacao } from './ai-elements/confirmation';
 import { Disclosure } from './ui/Disclosure';
 import {
@@ -244,6 +245,9 @@ export function ApprovalCard({
   // AT-753 (UX-4, decisão P3): a oferta do modo automático é um checkbox JÁ
   // MARCADO no cartão do plano; vale ao aprovar.
   const [ligarPiloto, setLigarPiloto] = useState(true);
+  // AT-910: negar um PLANO pede o motivo (o Dev Lead o lê), em vez de negar mudo.
+  const [negando, setNegando] = useState(false);
+  const [motivo, setMotivo] = useState('');
   const queryClient = useContext(QueryClientContext);
 
   async function decidir(chamada: () => void | Promise<unknown>) {
@@ -471,7 +475,11 @@ export function ApprovalCard({
               <Check aria-hidden="true" />
               {t(ehPlano ? 'approvalCard.actions.approvePlan' : 'approvalCard.actions.approve')}
             </Button>
-            <Button variant="danger" disabled={inerte} onClick={() => void decidir(() => onDeny())}>
+            <Button
+              variant="danger"
+              disabled={inerte || (ehPlano && negando)}
+              onClick={() => (ehPlano ? setNegando(true) : void decidir(() => onDeny()))}
+            >
               <X aria-hidden="true" />
               {t('approvalCard.actions.deny')}
             </Button>
@@ -499,6 +507,29 @@ export function ApprovalCard({
               </Button>
             )}
           </div>
+          {ehPlano && negando && (
+            <div data-testid="motivo-da-negacao">
+              <Textarea
+                label={t('approvalCard.denyReason.label')}
+                placeholder={t('approvalCard.denyReason.placeholder')}
+                value={motivo}
+                disabled={inerte}
+                onChange={(e) => setMotivo(e.target.value)}
+              />
+              <div className={styles.acoesDoCard}>
+                <Button
+                  variant="danger"
+                  disabled={inerte || !motivo.trim()}
+                  onClick={() => void decidir(() => onDeny(motivo.trim()))}
+                >
+                  {t('approvalCard.denyReason.confirm')}
+                </Button>
+                <Button variant="secondary" disabled={inerte} onClick={() => setNegando(false)}>
+                  {t('approvalCard.denyReason.cancel')}
+                </Button>
+              </div>
+            </div>
+          )}
         </>
       ) : null}
     >

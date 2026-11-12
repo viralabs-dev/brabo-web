@@ -387,6 +387,7 @@
     },
     "toast": {
       "saved": "Credential saved",
+      "catalogRefreshed": "This provider's model catalog was updated.",
       "saveErrorTitle": "Couldn't save",
       "testOk": "The provider accepted the key",
       "testRefused": "The provider refused the key",

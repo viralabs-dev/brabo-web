@@ -1214,8 +1214,8 @@ projeto aberto abre um flyout com as mesmas abas.
 - **Onde:** `apps/web/src/routes/Shell.tsx:564` (`projetosAbertosEfetivo`),
   `:504` (`useContagensDoProjeto`), `:519` (`irParaAba`), `:546`
   (`flyoutAberto`), `:243` (`contagensDoResumo`);
-  `apps/web/src/routes/AbasDoProjeto.tsx:69` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
-  (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:86` (`aoTeclar`);
+  `apps/web/src/routes/AbasDoProjeto.tsx:63` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
+  (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:80` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),
   `:70` (`publicarAbaAtiva`), `:86` (`pedirAba`);
   `apps/web/src/lib/sidebar-state.ts` (`lerProjetosAbertos`/`gravarProjetosAbertos`)

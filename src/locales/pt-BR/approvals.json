@@ -230,6 +230,12 @@
         "semPapel": "Ajustar o teto exige o papel maintainer no projeto.",
         "invalido": "Digite um valor em dólar maior ou igual a zero, ou deixe vazio para ficar sem teto."
       }
+    },
+    "denyReason": {
+      "label": "Por que você nega este plano?",
+      "placeholder": "O Dev Lead lê este motivo e pergunta o que mudar antes de propor de novo.",
+      "confirm": "Confirmar e negar",
+      "cancel": "Cancelar"
     }
   },
   "prGateTimeline": {

@@ -48,6 +48,8 @@ const PARES: { texto: string; fundo: string; piso: number; onde: string }[] = [
   { texto: '--text-primary', fundo: '--surface-0', piso: AA_TEXTO_NORMAL, onde: 'corpo sobre o fundo da página' },
   { texto: '--text-primary', fundo: '--surface-1', piso: AA_TEXTO_NORMAL, onde: 'corpo dentro de card' },
   { texto: '--text-primary', fundo: '--surface-2', piso: AA_TEXTO_NORMAL, onde: 'corpo em cabeçalho de tabela' },
+  { texto: '--text-primary', fundo: '--surface-3', piso: AA_TEXTO_NORMAL, onde: 'corpo em hover/item ativo (v9)' },
+  { texto: '--text-secondary', fundo: '--surface-3', piso: AA_TEXTO_NORMAL, onde: 'apoio em hover/item ativo (v9)' },
   { texto: '--text-secondary', fundo: '--surface-0', piso: AA_TEXTO_NORMAL, onde: 'texto de apoio na página' },
   { texto: '--text-secondary', fundo: '--surface-1', piso: AA_TEXTO_NORMAL, onde: 'texto de apoio em card' },
   { texto: '--accent', fundo: '--surface-0', piso: AA_NAO_TEXTO, onde: 'link e realce' },

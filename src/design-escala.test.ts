@@ -64,10 +64,18 @@ describe('escala tipográfica, de espaço e de raio (AT-288)', () => {
   it('os detectores reprovam o que dizem reprovar (caso de falha)', () => {
     expect(meiosDegraus('.a { font-size: 11.5px; }')).toHaveLength(1);
     expect(meiosDegraus('/* font-size: 12.5px */ .a { font-size: var(--fs-mono); }')).toEqual([]);
-    expect(tamanhosQueTemToken('.a { font-size: 13px; } .b { font-size: 14px; }')).toEqual([
+    expect(tamanhosQueTemToken('.a { font-size: 13px; } .b { font-size: 15px; }')).toEqual([
       'font-size: 13px',
     ]);
     expect(semComentario('.a { border-radius: 7px; }').match(RAIOS_COM_TOKEN)).toHaveLength(1);
+  });
+
+  it('a escala de tipo da v9 (AT-884): 24/20/16/14/13/12,5/12/11', () => {
+    expect(
+      ['--fs-h1', '--fs-title', '--fs-h2', '--fs-body', '--fs-sm', '--fs-mono', '--fs-meta', '--fs-label'].map(
+        (n) => TOKENS[n],
+      ),
+    ).toEqual(['24px', '20px', '16px', '14px', '13px', '12.5px', '12px', '11px']);
   });
 
   it('nenhum módulo tem meio-degrau de fonte', () => {

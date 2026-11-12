@@ -10,7 +10,7 @@ import { CHAVE_COLAPSADO, CHAVE_PROJETOS_ABERTOS } from '../lib/sidebar-state';
 import { simularLayoutMovel } from '../test/match-media';
 // Real module, não mockado — RN-196 lê a LISTA de abas dela, nunca hardcoda
 // rótulos, então o teste também lê daqui em vez de repetir uma string.
-import { ABAS_DO_PROJETO } from './project-tabs';
+import { SECOES_DO_PROJETO } from './project-tabs';
 import { ouvirPedidosDeAba, publicarAbaAtiva } from '../lib/contagens-do-projeto';
 // Os RÓTULOS das abas vêm do singleton do app (`project-tabs.ts`).
 import i18nDoApp from '../lib/i18n';
@@ -516,14 +516,14 @@ describe('Shell — colapso da sidebar', () => {
 
 /**
  * RN-196: a linha do projeto expande revelando as abas dele, lidas de
- * `ABAS_DO_PROJETO` (`project-tabs.ts`, dona da FRENTE C) — nunca
+ * `SECOES_DO_PROJETO` (`project-tabs.ts`, dona da FRENTE C) — nunca
  * hardcoded aqui.
  */
 describe('Shell — projetos expansíveis', () => {
   it('projeto fechado não mostra nenhuma aba', () => {
     renderShell();
 
-    for (const aba of ABAS_DO_PROJETO) {
+    for (const aba of SECOES_DO_PROJETO) {
       expect(screen.queryByText(aba.label)).toBeNull();
     }
   });
@@ -533,14 +533,14 @@ describe('Shell — projetos expansíveis', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Expandir Core API' }));
 
-    for (const aba of ABAS_DO_PROJETO) {
-      expect(screen.getByText(aba.label)).toBeInTheDocument();
+    for (const secao of SECOES_DO_PROJETO) {
+      expect(screen.getByText(secao.label)).toBeInTheDocument();
     }
     expect(screen.getByRole('button', { name: 'Recolher Core API' })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Recolher Core API' }));
 
-    expect(screen.queryByText(ABAS_DO_PROJETO[0].label)).toBeNull();
+    expect(screen.queryByText(SECOES_DO_PROJETO[1].label)).toBeNull();
   });
 
   it('RN-729: abrir um projeto recolhe o visitado antes e rola até o aberto', () => {
@@ -586,7 +586,7 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
     publicarAbaAtiva({ projectId: PROJECT.id, tab });
   }
 
-  it('as 12 abas em três grupos, a ativa marcada e os cinco contadores SEPARADOS', () => {
+  it('as 8 seções, a ativa marcada, um contador por fila e Decisões só com o ponto', () => {
     abrirNoProjeto('code');
     estado.pendentes = [
       { status: 'pending', actionType: 'terminal' },
@@ -600,23 +600,19 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
 
     const lista = screen.getByRole('tablist', { name: 'Abas de Core API' });
     expect(lista).toHaveAttribute('aria-orientation', 'vertical');
-    expect(within(lista).getAllByRole('tab')).toHaveLength(ABAS_DO_PROJETO.length);
-    for (const grupo of ['Agentes', 'Dev', 'Documentação']) {
-      expect(within(lista).getByText(grupo).textContent).toBe(grupo);
-    }
-    // Cada fila no SEU número — Aprovações conta as duas pendentes, PRs só o
-    // merge; nenhum cabeçalho de grupo soma.
-    expect(within(lista).getByRole('tab', { name: /^Aprovações\s*2$/ })).toBeInTheDocument();
-    expect(within(lista).getByRole('tab', { name: /^PRs\s*1$/ })).toBeInTheDocument();
-    expect(within(lista).getByRole('tab', { name: /^Percepções\s*2$/ })).toBeInTheDocument();
-    expect(within(lista).getByRole('tab', { name: /^Histórias\s*1$/ })).toBeInTheDocument();
+    expect(within(lista).getAllByRole('tab')).toHaveLength(8);
+    // Seção de UMA fila mostra o número dela (PRs, promoções, arquitetura);
+    // Decisões junta aprovações e hipóteses e mostra só o ponto (RN-467).
+    expect(within(lista).getByRole('tab', { name: /^Código\s*1$/ })).toBeInTheDocument();
+    expect(within(lista).getByRole('tab', { name: /^Trabalho\s*1$/ })).toBeInTheDocument();
     expect(within(lista).getByRole('tab', { name: /^Arquitetura\s*3$/ })).toBeInTheDocument();
+    expect(within(lista).getByRole('tab', { name: 'Decisões' }).textContent).toBe('Decisões');
     expect(
       within(lista)
         .getAllByRole('tab')
         .filter((a) => a.getAttribute('aria-selected') === 'true')
         .map((a) => a.textContent),
-    ).toEqual(['Código']);
+    ).toEqual(['Código1']);
   });
 
   it('clicar ou andar com a seta pede a aba à moldura e navega com `?tab=`', () => {
@@ -625,7 +621,7 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
     const parar = ouvirPedidosDeAba((p) => pedidos.push(p));
     try {
       renderShell();
-      fireEvent.click(screen.getByRole('tab', { name: 'Código' }));
+      fireEvent.click(screen.getByRole('tab', { name: /^Código/ }));
       expect(pedidos).toEqual([{ projectId: PROJECT.id, tab: 'code' }]);
       expect(navigate).toHaveBeenLastCalledWith({
         to: '/projects/$projectId',
@@ -636,7 +632,7 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
       screen.getByRole('tab', { name: 'Visão geral' }).focus();
       fireEvent.keyDown(screen.getByRole('tab', { name: 'Visão geral' }), { key: 'ArrowDown' });
       expect(navigate).toHaveBeenLastCalledWith(
-        expect.objectContaining({ search: { tab: 'executores' } }),
+        expect.objectContaining({ search: { tab: 'criativo' } }),
       );
     } finally {
       parar();
@@ -651,10 +647,11 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
     renderShell();
 
     const lista = screen.getByRole('tablist', { name: 'Abas de Core API' });
-    expect(within(lista).getByRole('tab', { name: /^Aprovações\s*4$/ })).toBeInTheDocument();
+    // Decisões junta duas filas: o número do resumo vira só o ponto.
+    expect(within(lista).getByRole('tab', { name: 'Decisões' }).textContent).toBe('Decisões');
     // Nenhuma aba marcada pela moldura: na tela de Sessão a rota implica o
     // Chat (AT-442) — antes a lista assumia a padrão, "Visão geral".
-    expect(within(lista).getByRole('tab', { name: 'Chat' })).toHaveAttribute(
+    expect(within(lista).getByRole('tab', { name: 'Sessões' })).toHaveAttribute(
       'aria-selected',
       'true',
     );
@@ -670,8 +667,8 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Core API' }));
     const flyout = screen.getByTestId('flyout-do-projeto');
     const lista = within(flyout).getByRole('tablist', { name: 'Abas de Core API' });
-    expect(within(lista).getAllByRole('tab')).toHaveLength(ABAS_DO_PROJETO.length);
-    expect(within(lista).getByRole('tab', { name: 'PRs' })).toHaveAttribute('aria-selected', 'true');
+    expect(within(lista).getAllByRole('tab')).toHaveLength(8);
+    expect(within(lista).getByRole('tab', { name: /^Código/ })).toHaveAttribute('aria-selected', 'true');
     // Recolhida continua recolhida: o flyout não expande a sidebar.
     expect(window.localStorage.getItem(CHAVE_COLAPSADO)).toBe('1');
 
@@ -687,7 +684,7 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Abrir navegação' }));
       const dialogo = screen.getByRole('dialog');
       const lista = within(dialogo).getByRole('tablist', { name: 'Abas de Core API' });
-      expect(within(lista).getAllByRole('tab')).toHaveLength(ABAS_DO_PROJETO.length);
+      expect(within(lista).getAllByRole('tab')).toHaveLength(8);
       fireEvent.click(within(lista).getByRole('tab', { name: 'Gastos' }));
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       expect(navigate).toHaveBeenLastCalledWith(

@@ -1,21 +1,64 @@
 {
   "tabs": {
-    "overview": { "label": "Visão geral" },
-    "executors": { "label": "Executores" },
-    "criativo": { "label": "Criativo" },
-    "chat": { "label": "Chat" },
-    "insights": { "label": "Percepções" },
-    "code": { "label": "Código" },
-    "prs": { "label": "PRs" },
-    "approvals": { "label": "Aprovações" },
-    "backlog": { "label": "Histórias" },
-    "architecture": { "label": "Arquitetura" },
-    "spend": { "label": "Gastos" },
-    "settings": { "label": "Configurações" }
+    "overview": {
+      "label": "Visão geral"
+    },
+    "executors": {
+      "label": "Executores"
+    },
+    "criativo": {
+      "label": "Criativo"
+    },
+    "chat": {
+      "label": "Chat"
+    },
+    "insights": {
+      "label": "Percepções"
+    },
+    "code": {
+      "label": "Código"
+    },
+    "prs": {
+      "label": "PRs"
+    },
+    "approvals": {
+      "label": "Aprovações"
+    },
+    "backlog": {
+      "label": "Histórias"
+    },
+    "architecture": {
+      "label": "Arquitetura"
+    },
+    "spend": {
+      "label": "Gastos"
+    },
+    "settings": {
+      "label": "Configurações"
+    }
   },
-  "groups": {
-    "agentes": { "label": "Agentes" },
-    "dev": { "label": "Dev" },
-    "documentacao": { "label": "Documentação" }
+  "sections": {
+    "overview": "Visão geral",
+    "sessoes": "Sessões",
+    "trabalho": "Trabalho",
+    "codigo": "Código",
+    "decisoes": "Decisões",
+    "arquitetura": "Arquitetura",
+    "spend": "Gastos",
+    "settings": "Configurações"
+  },
+  "subs": {
+    "overview": "Visão geral",
+    "criativo": "Ideação",
+    "chat": "Conversa",
+    "backlog": "Histórias",
+    "executores": "Execução",
+    "code": "Arquivos",
+    "prs": "PRs",
+    "approvals": "Aprovações",
+    "insights": "Hipóteses",
+    "arquitetura": "Arquitetura",
+    "spend": "Gastos",
+    "settings": "Configurações"
   }
 }

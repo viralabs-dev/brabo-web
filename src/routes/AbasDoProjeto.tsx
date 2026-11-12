@@ -2,38 +2,32 @@ import { useEffect, useMemo, useRef, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
-  Bot, Code2, GitPullRequest, Lightbulb, LayoutDashboard, ListTodo,
-  MessagesSquare, Network, Settings, ShieldCheck, Sparkles, Wallet, type LucideIcon,
+  Code2, LayoutDashboard, Layers, ListTodo, MessagesSquare, Settings, ShieldCheck, Wallet,
+  type LucideIcon,
 } from 'lucide-react';
 import styles from './AbasDoProjeto.module.css';
 
+// Um ícone por seção (prévia P10).
 const ICONES: Record<string, LucideIcon> = {
-  overview: LayoutDashboard, executores: Bot, criativo: Lightbulb, backlog: ListTodo,
-  chat: MessagesSquare, approvals: ShieldCheck, prs: GitPullRequest, arquitetura: Network,
-  insights: Sparkles, code: Code2, spend: Wallet, settings: Settings,
+  overview: LayoutDashboard, sessoes: MessagesSquare, trabalho: ListTodo, codigo: Code2,
+  decisoes: ShieldCheck, arquitetura: Layers, spend: Wallet, settings: Settings,
 };
 
-/** Uma folha da lista — sempre uma ABA de verdade, nunca um grupo, e já com
- * o `count` RESOLVIDO (número, não função). */
+/** Um item da lista: uma SEÇÃO. `key` é a primeira sub-aba (o destino do link). */
 export interface FolhaDaLista {
   key: string;
+  /** A chave da seção (ícone). */
+  secao: string;
   label: string;
+  /** Todas as sub-abas da seção: o item é o ativo quando `active` é uma delas. */
+  chaves: string[];
+  /** Só quando UMA fila alimenta a seção; nunca soma de filas (RN-467). */
   count?: number;
+  /** Ponto de presença: seção alimentada por mais de uma fila. */
+  presenca?: boolean;
 }
 
-export interface GrupoDaLista {
-  tipo: 'grupo';
-  chave: string;
-  label: string;
-  abas: FolhaDaLista[];
-}
-
-export interface AbaSoltaDaLista {
-  tipo: 'aba';
-  aba: FolhaDaLista;
-}
-
-export type ItemDaLista = GrupoDaLista | AbaSoltaDaLista;
+export type ItemDaLista = FolhaDaLista;
 
 interface AbasDoProjetoProps {
   projectId: string;
@@ -71,7 +65,7 @@ export function AbasDoProjeto({ projectId, nomeDoProjeto, itens, active, onChang
   const refs = useRef(new Map<string, HTMLAnchorElement | null>());
 
   const folhas = useMemo<FolhaDaLista[]>(
-    () => itens.flatMap((item) => (item.tipo === 'grupo' ? item.abas : [item.aba])),
+    () => itens,
     [itens],
   );
 
@@ -87,7 +81,7 @@ export function AbasDoProjeto({ projectId, nomeDoProjeto, itens, active, onChang
     if (!TECLAS.includes(e.key) || folhas.length === 0) return;
     const focado = folhas.findIndex((f) => refs.current.get(f.key) === document.activeElement);
     const ancora =
-      focado === -1 ? Math.max(0, folhas.findIndex((f) => f.key === active)) : focado;
+      focado === -1 ? Math.max(0, folhas.findIndex((f) => active !== undefined && f.chaves.includes(active))) : focado;
     let proximo = ancora;
     if (e.key === 'Home') proximo = 0;
     else if (e.key === 'End') proximo = folhas.length - 1;
@@ -100,7 +94,7 @@ export function AbasDoProjeto({ projectId, nomeDoProjeto, itens, active, onChang
   }
 
   function folha(item: FolhaDaLista) {
-    const ativo = item.key === active;
+    const ativo = active !== undefined && item.chaves.includes(active);
     return (
       <a
         key={item.key}
@@ -121,13 +115,14 @@ export function AbasDoProjeto({ projectId, nomeDoProjeto, itens, active, onChang
         }}
       >
         {(() => {
-          const Icone = ICONES[item.key];
+          const Icone = ICONES[item.secao];
           return Icone ? <Icone size={16} aria-hidden="true" className={styles.itemIcone} /> : null;
         })()}
         <span className={styles.itemLabel}>{item.label}</span>
         {item.count !== undefined && item.count > 0 && (
           <span className={styles.contador}>{item.count}</span>
         )}
+        {item.presenca && <span className={styles.presenca} aria-hidden="true" />}
       </a>
     );
   }
@@ -143,20 +138,7 @@ export function AbasDoProjeto({ projectId, nomeDoProjeto, itens, active, onChang
       aria-label={t('sidebar.projects.tabsAriaLabel', { name: nomeDoProjeto })}
       onKeyDown={aoTeclar}
     >
-      {itens.map((item) =>
-        item.tipo === 'grupo' ? (
-          <div key={`grupo:${item.chave}`} className={styles.grupo} role="presentation">
-            <span className={styles.grupoLabel} role="presentation">
-              {item.label}
-            </span>
-            {item.abas.map(folha)}
-          </div>
-        ) : (
-          <div key={`aba:${item.aba.key}`} className={styles.solta} role="presentation">
-            {folha(item.aba)}
-          </div>
-        ),
-      )}
+      {itens.map(folha)}
     </div>
   );
 }

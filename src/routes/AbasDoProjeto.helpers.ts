@@ -1,22 +1,28 @@
-import { GRUPOS_DO_PROJETO, type AbaDoProjeto, type ContagensDeAba } from './project-tabs';
+import { SECOES_DO_PROJETO, type ContagensDeAba } from './project-tabs';
 
 import type { FolhaDaLista, ItemDaLista } from './AbasDoProjeto';
 
 /**
- * A estrutura sai de `GRUPOS_DO_PROJETO`; o `count` é resolvido contra as
- * cinco contagens. Sem `contagens` (um projeto que NÃO é o aberto), nenhuma
- * aba ganha selo — buscar as cinco filas de cada projeto da lista seria o
- * N+1 que a RN-090/091 fechou.
+ * Os oito itens da sidebar (ADR 0294). O contador do item é de UMA fila só
+ * (Trabalho, Código, Arquitetura); Decisões junta duas filas e mostra só o
+ * PONTO de presença, com os números nas sub-abas (RN-467). Sem `contagens`
+ * (projeto que NÃO é o aberto) nada ganha selo: seria o N+1 da RN-090/091.
  */
 export function itensDasAbas(contagens: ContagensDeAba | undefined): ItemDaLista[] {
-  const folha = (aba: AbaDoProjeto): FolhaDaLista => ({
-    key: aba.key,
-    label: aba.label,
-    count: contagens ? aba.count?.(contagens) : undefined,
-  });
-  return GRUPOS_DO_PROJETO.map((item) =>
-    item.tipo === 'grupo'
-      ? { tipo: 'grupo' as const, chave: item.chave, label: item.label, abas: item.abas.map(folha) }
-      : { tipo: 'aba' as const, aba: folha(item.aba) },
+  const c = contagens;
+  const unico: Record<string, number | undefined> = {
+    trabalho: c?.promocoesPendentes,
+    codigo: c?.prsPendentes,
+    arquitetura: c?.arquiteturaPendente,
+  };
+  return SECOES_DO_PROJETO.map(
+    (s): FolhaDaLista => ({
+      key: s.subs[0],
+      secao: s.chave,
+      label: s.label,
+      chaves: [...s.subs],
+      count: unico[s.chave] || undefined,
+      presenca: s.chave === 'decisoes' && !!c && (c.aprovacoesPendentes > 0 || c.hipotesesPendentes > 0),
+    }),
   );
 }

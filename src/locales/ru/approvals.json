@@ -301,7 +301,7 @@
     "genericLoading": "Загрузка…",
     "pending": {
       "title": "Ожидают",
-      "eyebrow": "по срочности",
+      "eyebrow": "сначала старые",
       "selectedCount_one": "Выбрано: {{count}}",
       "selectedCount_few": "Выбрано: {{count}}",
       "selectedCount_many": "Выбрано: {{count}}",
@@ -360,6 +360,24 @@
     "toast": {
       "autoModeOnTitle": "Автоматический режим включён",
       "autoModeOnErrorTitle": "Не удалось включить автоматический режим"
+    },
+    "decided": {
+      "title": "Недавние решения",
+      "eyebrow_24h": "последние 24 ч, сначала новые",
+      "eyebrow_30d": "последние 30 дней, сначала новые",
+      "seeAll": "Показать все",
+      "error": "Не удалось загрузить недавние решения.",
+      "empty_24h": "За последние 24 ч ничего не решено.",
+      "empty_30d": "За последние 30 дней ничего не решено.",
+      "byPolicy": "по политике",
+      "reason": "причина: {{reason}}",
+      "status": {
+        "approved": "Одобрено",
+        "denied": "Отклонено",
+        "auto_approved": "Автоматически",
+        "executed": "Выполнено",
+        "failed": "Сбой"
+      }
     }
   },
   "prsTab": {
@@ -379,7 +397,16 @@
     "mergeRecusadoArquivos_few": "Файлы в конфликте: {{files}}",
     "mergeRecusadoArquivos_many": "Файлы в конфликте: {{files}}",
     "mergeRecusadoArquivos_other": "Файлы в конфликте: {{files}}",
-    "mergeResolverAntes": "Сначала разрешите конфликт (rebase ветки PR на dev) и попробуйте merge снова."
+    "mergeResolverAntes": "Сначала разрешите конфликт (rebase ветки PR на dev) и попробуйте merge снова.",
+    "vazio": {
+      "verAprovacao": "Открыть согласование",
+      "ativarExecucao": "Включить выполнение"
+    },
+    "fluxo": {
+      "titulo": "Как PR проходит здесь:",
+      "passos": "открыт агентом, QA, SecOps, ждёт вас, слит.",
+      "mergeManual": "Слияние в защищённую ветку всегда ручное."
+    }
   },
   "politica": {
     "motivo": "Политика решила по причине: {{motivo}}",

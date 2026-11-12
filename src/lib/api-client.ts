@@ -1092,10 +1092,10 @@ export const denyAction = (
 // `status=pending` é suportado hoje.
 export const getProjectPendingActions = (
   projectId: string,
-  opts: { actionType?: ActionType; status?: 'pending' | 'failed' } = {},
+  opts: { actionType?: ActionType; status?: 'pending' | 'failed' | 'decided'; since?: string } = {},
 ) =>
   get<ProposedAction[]>(
-    `/projects/${projectId}/actions${qs({ status: opts.status ?? 'pending', actionType: opts.actionType })}`,
+    `/projects/${projectId}/actions${qs({ status: opts.status ?? 'pending', actionType: opts.actionType, since: opts.since })}`,
   );
 
 // --- LLM: modelos, bindings, credenciais, budgets ---

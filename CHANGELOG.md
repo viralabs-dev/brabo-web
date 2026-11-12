@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-895, RN-1225): Decisões ganha "Decididas recentemente" na sub-aba Aprovações (`status=decided`, 24 h com "Ver todas" para 30 dias, automáticas com origem "pela política", sem poll próprio) e a sub-aba Permissões (a tabela do `permissions.json` extraída da aba Aprovações, sem mudar comportamento). A aba PRs diz as próximas ações no vazio e como uma PR anda, com o merge em branch protegida sempre manual. O rótulo da fila vira "mais antigas primeiro". i18n nos quatro idiomas. O regressivo de `aprovacoes` fica para a lane do qa.
+
 - Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
 
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.

@@ -256,7 +256,7 @@
     "genericLoading": "加载中…",
     "pending": {
       "title": "待处理",
-      "eyebrow": "按紧急程度排序",
+      "eyebrow": "最早在前",
       "selectedCount_other": "已选 {{count}} 项",
       "approveSelected": "批准所选",
       "clear": "清除",
@@ -306,6 +306,24 @@
     "toast": {
       "autoModeOnTitle": "自动模式已开启",
       "autoModeOnErrorTitle": "无法开启自动模式"
+    },
+    "decided": {
+      "title": "最近已决定",
+      "eyebrow_24h": "最近 24 小时，最新在前",
+      "eyebrow_30d": "最近 30 天，最新在前",
+      "seeAll": "查看全部",
+      "error": "无法加载最近的决定。",
+      "empty_24h": "最近 24 小时没有已决定的操作。",
+      "empty_30d": "最近 30 天没有已决定的操作。",
+      "byPolicy": "按策略",
+      "reason": "原因：{{reason}}",
+      "status": {
+        "approved": "已批准",
+        "denied": "已拒绝",
+        "auto_approved": "自动",
+        "executed": "已执行",
+        "failed": "失败"
+      }
     }
   },
   "prsTab": {
@@ -322,7 +340,16 @@
     "gatePendente": "此 PR 的 gate {{gate}} 仍待处理。合并仍然可用——由你决定。",
     "mergeRecusado": "上一次合并尝试被拒绝：{{reason}}",
     "mergeRecusadoArquivos_other": "冲突文件：{{files}}",
-    "mergeResolverAntes": "请先解决冲突（将 PR 分支 rebase 到 dev 上），然后重试合并。"
+    "mergeResolverAntes": "请先解决冲突（将 PR 分支 rebase 到 dev 上），然后重试合并。",
+    "vazio": {
+      "verAprovacao": "查看审批",
+      "ativarExecucao": "启用执行"
+    },
+    "fluxo": {
+      "titulo": "PR 在这里的流程：",
+      "passos": "由智能体打开，QA，SecOps，等待你，已合并。",
+      "mergeManual": "合并到受保护分支始终需要手动操作。"
+    }
   },
   "politica": {
     "motivo": "策略的决定原因：{{motivo}}",

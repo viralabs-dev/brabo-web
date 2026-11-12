@@ -286,7 +286,7 @@
     "genericLoading": "Carregando…",
     "pending": {
       "title": "Pendentes",
-      "eyebrow": "ordenadas por urgência",
+      "eyebrow": "mais antigas primeiro",
       "selectedCount_zero": "{{count}} selecionadas",
       "selectedCount_one": "{{count}} selecionada",
       "selectedCount_other": "{{count}} selecionadas",
@@ -342,6 +342,24 @@
     "toast": {
       "autoModeOnTitle": "Modo automático ligado",
       "autoModeOnErrorTitle": "Não foi possível ligar o modo automático"
+    },
+    "decided": {
+      "title": "Decididas recentemente",
+      "eyebrow_24h": "últimas 24 h, mais novas primeiro",
+      "eyebrow_30d": "últimos 30 dias, mais novas primeiro",
+      "seeAll": "Ver todas",
+      "error": "Não foi possível carregar as decisões recentes.",
+      "empty_24h": "Nada foi decidido nas últimas 24 h.",
+      "empty_30d": "Nada foi decidido nos últimos 30 dias.",
+      "byPolicy": "pela política",
+      "reason": "motivo: {{reason}}",
+      "status": {
+        "approved": "Aprovada",
+        "denied": "Negada",
+        "auto_approved": "Automática",
+        "executed": "Executada",
+        "failed": "Falhou"
+      }
     }
   },
   "prsTab": {
@@ -360,7 +378,16 @@
     "mergeRecusadoArquivos_one": "Arquivo em conflito: {{files}}",
     "mergeRecusadoArquivos_other": "Arquivos em conflito: {{files}}",
     "mergeRecusadoArquivos_zero": "Nenhum arquivo em conflito identificado",
-    "mergeResolverAntes": "Resolva o conflito antes (rebase da branch da PR sobre a dev) e tente o merge de novo."
+    "mergeResolverAntes": "Resolva o conflito antes (rebase da branch da PR sobre a dev) e tente o merge de novo.",
+    "vazio": {
+      "verAprovacao": "Ver a aprovação",
+      "ativarExecucao": "Ativar execução"
+    },
+    "fluxo": {
+      "titulo": "Como uma PR anda aqui:",
+      "passos": "aberta pelo agente, QA, SecOps, espera você, mesclada.",
+      "mergeManual": "Merge em branch protegida é sempre manual."
+    }
   },
   "politica": {
     "motivo": "A política decidiu por: {{motivo}}",

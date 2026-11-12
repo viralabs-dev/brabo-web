@@ -3,6 +3,10 @@
 ## Unreleased
 
 - Feat (AT-891, RN-1185): `PassosDoTurno` recolhe os passos numa linha (N passos, 3 ferramentas mais usadas, custo e duração do turno) e, aberto, alterna Agrupados (por intenção, mapa tipado, resto em Outros) e Em ordem; os turnos anteriores ao último viram uma linha `ResumoDeTurno` que expande; o raciocínio mostra tokens quando o fecho os traz; texto do agente em 62ch.
+- Feat (AT-887, RN-1205): a sidebar troca Atividades por "Agentes agora" (até 5 agentes por urgência, avatar, nome e ponto de status, sem contagem de eventos; recolhida, só avatar com tooltip), rotula Containers, Providers, Gastos e Status (link novo) como Workspace e passa a usar os oito `--ag-*` do v9 nos dois temas (qa verde, infra azul, dev-backend teal). Sem requisição nova. A Caixa de decisões vai para a AT-889.
+
+- Feat (AT-896, lanes A e C): Login ganha a coluna de marca (três promessas e o número de papéis derivado do catálogo `AGENT_LIST`, nunca digitado); Status ganha o cartão de resumo e a latência por serviço; Containers ganha quatro cartões de métrica (rodando, imagem decidida, nunca provisionado, recursos em uso). i18n nos quatro idiomas. Conta já estava em lista (`Item*`), sem mudança.
+
 - Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
 
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.

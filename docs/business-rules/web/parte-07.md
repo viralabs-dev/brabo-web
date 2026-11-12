@@ -159,3 +159,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/routes/project-tabs.ts:390` (`SECOES_DO_PROJETO`), `apps/web/src/routes/project-tabs.ts:412` (`resolverChaveDeAba`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11` (`itensDasAbas`), `apps/web/src/components/FaixaDeSubAbas.tsx:22` (`FaixaDeSubAbas`), `apps/web/src/routes/ProjectPage.tsx` (`trocarSub`).
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (os 15 deep-links, as chaves de seção, desconhecida e a faixa com o selo de cada fila), `apps/web/src/routes/AbasDoProjeto.test.tsx` (8 itens, teclado com volta, Decisões sem número), `apps/web/src/routes/Shell.test.tsx` (sidebar, flyout e gaveta).
 - **Origem:** AT-886 (EP-035), ADR 0294. Revisa a RN-196 e o ADR 0211 no que diz respeito aos três grupos: a lista passa a ter oito itens.
+
+<a id="rn-1205"></a>
+
+### RN-1205 — A sidebar mostra "Agentes agora" (até 5, por urgência, sem contagem de eventos) no lugar de Atividades, e as cores `--ag-*` do v9 entram nos dois temas {#rn-1205}
+
+- **Regra:** "Atividades" (a árvore de eventos por agente, RN-198) sai; entra "Agentes agora": até 5 agentes do roster do projeto aberto, ordenados por urgência (aguardando, falhou, trabalhando, ocioso), cada um com avatar na cor do papel, nome e ponto de status (`travado` conta como falhou), sem contagem de eventos (RN-467), mais "ver todos" para a sub-aba Executores. Recolhida (48 px), só o avatar com `title`/`aria-label`. O roster sai de `deriveAgentRoster` sobre os eventos que a sidebar já lê, com a moldura do projeto como fonte de pendências e `moduleMap`, sem handoffs e sem requisição nova. WORKSPACE passa a rotular Containers, Providers, Gastos e Status (link novo para `/status`). Os oito `--ag-*` (criativo, po, arquiteto, dev, qa, secops, infra, psi) entram em `design/tokens.css` nos dois temas, com o piso de elemento (3:1) medido; qa passa a verde, infra a azul e dev-backend a teal. A Caixa de decisões fica para a AT-889 e o seletor de projeto para a AT-888.
+- **Onde:** `src/lib/agentes-agora.ts` (`agentesAgora`), `src/components/AgentesAgora.tsx` (`AgentesAgora`), `src/routes/Shell.tsx` (`Shell`), `design/tokens.css`, `src/lib/agents.ts` (`AGENTS`).
+- **Teste:** `src/lib/agentes-agora.test.ts`, `src/routes/Shell.test.tsx` (Agentes agora), `src/lib/contraste.test.ts`.
+- **Origem:** AT-887 (EP-035), ADR 0294. Revoga a RN-198 e a chave `brabo.sidebar.agents`.

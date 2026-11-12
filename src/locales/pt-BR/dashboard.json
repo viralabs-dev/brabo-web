@@ -28,9 +28,12 @@
   },
   "status": {
     "heading": "Brabo — status da plataforma",
+    "resumo": { "ok": "Tudo funcionando", "erro": "Algum serviço fora do ar", "checking": "Verificando os serviços…", "detalhe": "Última verificação {{instante}} · atualiza a cada {{segundos}} s" },
+    "latenciaValor": "{{ms}} ms",
     "columns": {
       "service": "Serviço",
       "status": "Status",
+      "latency": "Latência",
       "lastCheck": "Última verificação"
     },
     "services": {

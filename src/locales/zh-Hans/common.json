@@ -6,7 +6,8 @@
     "account": "账户",
     "containers": "容器",
     "providers": "提供商",
-    "spend": "支出"
+    "spend": "支出",
+    "status": "状态"
   },
   "account": {
     "title": "账户",

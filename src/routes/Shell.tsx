@@ -31,9 +31,8 @@ import {
 } from '../lib/project-status';
 import { ROLE_LABEL } from '../lib/roles';
 import { desempateDoProjeto, nomesRepetidos } from '../lib/project-label';
-import { AGENTS } from '../lib/agents';
-import { agruparPorInstancia, montarArvore, type GrupoDeAgente, type RamoDeAgente } from '../lib/timeline-tree';
-import { getAgentLastSeenSeq, setAgentLastSeenSeq } from '../lib/read-state';
+import { deriveAgentRoster } from '../lib/agent-status';
+import { AgentesAgora } from '../components/AgentesAgora';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { INTERVALO_DO_PROJETO_MS } from '../lib/canal-vivo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
@@ -45,11 +44,9 @@ import { useTranslation } from 'react-i18next';
 import {
   corDoProjeto,
   gravarAbaAtiva,
-  gravarAgentesAbertos,
   gravarColapsado,
   gravarProjetoAtivo,
   gravarProjetosAbertos,
-  lerAgentesAbertos,
   lerColapsado,
   lerProjetosAbertos,
 } from '../lib/sidebar-state';
@@ -67,7 +64,6 @@ import {
   PlusIcon,
   XIcon,
 } from '../components/ui/icons';
-import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import {
   Sidebar,
   SidebarContent,
@@ -113,14 +109,6 @@ function iniciaisDoProjeto(nome: string): string {
   const letras =
     partes.length >= 2 ? [partes[0]?.[0], partes[1]?.[0]] : [nome[0], nome[1]];
   return letras.filter((c): c is string => !!c).join('').toUpperCase();
-}
-
-function rotuloDoAgente(agente: string): string {
-  return AGENTS[agente as keyof typeof AGENTS]?.name ?? agente;
-}
-
-function corDoAgente(agente: string): string {
-  return AGENTS[agente as keyof typeof AGENTS]?.color ?? 'var(--text-muted)';
 }
 
 /**
@@ -251,149 +239,8 @@ function contagensDoResumo(aprovacoesPendentes: number): ContagensDeAba {
   };
 }
 
-/** As instâncias/eventos de UM grupo de agente, dentro de Atividades (RN-198). */
-function InstanciaDeAgente({
-  projectId,
-  ramo,
-  aberta,
-  onAlternar,
-}: {
-  projectId: string;
-  ramo: RamoDeAgente;
-  aberta: boolean;
-  onAlternar: () => void;
-}) {
-  const { t } = useTranslation('shell');
-  const naoVistos = aberta
-    ? 0
-    : ramo.marcos.filter((m) => m.seq > getAgentLastSeenSeq(projectId, ramo.agente)).length;
-
-  useEffect(() => {
-    if (aberta) setAgentLastSeenSeq(projectId, ramo.agente, ramo.ultimoSeq);
-  }, [aberta, projectId, ramo.agente, ramo.ultimoSeq]);
-
-  return (
-    <div className={styles.instancia}>
-      <button
-        type="button"
-        className={styles.instanciaCabecalho}
-        aria-expanded={aberta}
-        onClick={onAlternar}
-      >
-        <span className={styles.chevronPequeno} aria-hidden="true">
-          {aberta ? <ChevronDownIcon size={11} /> : <ChevronRightIcon size={11} />}
-        </span>
-        <span className={styles.instanciaNome}>{ramo.agente}</span>
-        <span className={[styles.contagem, naoVistos > 0 && styles.contagemNova].filter(Boolean).join(' ')}>
-          {naoVistos > 0 ? `+${naoVistos}` : ramo.marcos.length}
-        </span>
-      </button>
-      {aberta && (
-        <ol className={styles.marcos}>
-          {ramo.marcos.length === 0 && (
-            <li className={styles.marcoVazio}>{t('sidebar.activities.noMarksYet')}</li>
-          )}
-          {ramo.marcos.map((m) => (
-            <li key={m.eventId} className={styles.marco}>
-              <span className={styles.bolinha} />
-              <span className={styles.marcoRotulo}>{m.rotulo}</span>
-              {m.detalhe && <span className={styles.marcoDetalhe}>{m.detalhe}</span>}
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
-
-/** Um grupo de agente (1 ou 2 instâncias) na seção Atividades (RN-198). */
-function GrupoDeAtividade({
-  projectId,
-  grupo,
-  agentesAbertos,
-  onAlternar,
-}: {
-  projectId: string;
-  grupo: GrupoDeAgente;
-  agentesAbertos: Set<string>;
-  onAlternar: (chave: string) => void;
-}) {
-  const { t } = useTranslation('shell');
-  const multiplasInstancias = grupo.instancias.length > 1;
-  const abertoNoGrupo = agentesAbertos.has(grupo.agenteBase);
-  const totalInteracoes = grupo.instancias.reduce((soma, r) => soma + r.marcos.length, 0);
-  const totalNaoVistos = grupo.instancias.reduce((soma, r) => {
-    if (agentesAbertos.has(`${grupo.agenteBase}/${r.agente}`) || (!multiplasInstancias && abertoNoGrupo)) {
-      return soma;
-    }
-    return soma + r.marcos.filter((m) => m.seq > getAgentLastSeenSeq(projectId, r.agente)).length;
-  }, 0);
-
-  return (
-    <div className={styles.grupoAgente}>
-      <button
-        type="button"
-        className={styles.grupoCabecalho}
-        aria-expanded={abertoNoGrupo}
-        data-testid={`atividades-grupo-${grupo.agenteBase}`}
-        onClick={() => onAlternar(grupo.agenteBase)}
-        style={{ ['--msg-color' as string]: corDoAgente(grupo.agenteBase) } as CSSProperties}
-      >
-        <span className={styles.chevronPequeno} aria-hidden="true">
-          {abertoNoGrupo ? <ChevronDownIcon size={12} /> : <ChevronRightIcon size={12} />}
-        </span>
-        <AvatarDoAgente id={grupo.agenteBase} />
-        <span className={styles.grupoNome}>{rotuloDoAgente(grupo.agenteBase)}</span>
-        {multiplasInstancias && (
-          <Badge
-            tone="muted"
-            square
-            title={t('sidebar.activities.instancesCount', { count: grupo.instancias.length })}
-          >
-            {grupo.instancias.length}×
-          </Badge>
-        )}
-        <span
-          className={[styles.contagem, totalNaoVistos > 0 && styles.contagemNova].filter(Boolean).join(' ')}
-        >
-          {totalNaoVistos > 0 ? `+${totalNaoVistos}` : totalInteracoes}
-        </span>
-      </button>
-
-      {abertoNoGrupo && !multiplasInstancias && (
-        <InstanciaDeAgente
-          projectId={projectId}
-          ramo={grupo.instancias[0]}
-          aberta
-          onAlternar={() => onAlternar(grupo.agenteBase)}
-        />
-      )}
-
-      {abertoNoGrupo && multiplasInstancias && (
-        <div className={styles.instancias}>
-          {grupo.instancias.map((ramo) => {
-            const chaveInstancia = `${grupo.agenteBase}/${ramo.agente}`;
-            return (
-              <InstanciaDeAgente
-                key={ramo.agente}
-                projectId={projectId}
-                ramo={ramo}
-                aberta={agentesAbertos.has(chaveInstancia)}
-                onAlternar={() => onAlternar(chaveInstancia)}
-              />
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function Shell() {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation('shell');
+  const { t } = useTranslation('shell');
   // Os rótulos dos links globais do rodapé moram no namespace comum.
   const { t: tComum } = useTranslation();
   const navigate = useNavigate();
@@ -502,7 +349,8 @@ export function Shell() {
   // fica com o número do resumo, como num projeto fechado.
   const abaPublicada = useAbaPublicada();
   const abaDaSessao = useAbaDaSessao();
-  const { contagens: contagensDaMoldura } = useContagensDoProjeto(abaPublicada?.projectId);
+  const moldura = useContagensDoProjeto(abaPublicada?.projectId);
+  const contagensDaMoldura = moldura.contagens;
   const abaAtivaDoAtual =
     currentProject && abaPublicada?.projectId === currentProject.id
       ? abaPublicada.tab
@@ -592,7 +440,6 @@ export function Shell() {
     INTERVALO_DO_PROJETO_MS,
   );
   const sessaoDaAtividade = execucao.session ?? (semExecucao ? sessoes.latest : undefined);
-  const origemDaAtividade: 'execucao' | 'recente' = execucao.session ? 'execucao' : 'recente';
   const eventosDaAtividade = useSessionEvents(currentProject?.id, sessaoDaAtividade?.id);
   const eventsPage = eventosDaAtividade.data;
   const events = useMemo(() => eventsPage?.items ?? [], [eventsPage]);
@@ -609,21 +456,22 @@ export function Shell() {
           : eventosDaAtividade.isPending
             ? 'carregando'
             : 'pronto';
-  // `language` na dependência: os rótulos da árvore saem traduzidos de
-  // `montarArvore` (AT-134), e trocar o idioma tem de refazê-los.
-  const { ramos } = useMemo(() => montarArvore(events, language), [events, language]);
-  const grupos = useMemo(() => agruparPorInstancia(ramos), [ramos]);
-
-  const [agentesAbertos, setAgentesAbertos] = useState(lerAgentesAbertos);
-  function alternarAgente(chave: string) {
-    setAgentesAbertos((atual) => {
-      const proximo = new Set(atual);
-      if (proximo.has(chave)) proximo.delete(chave);
-      else proximo.add(chave);
-      gravarAgentesAbertos(proximo);
-      return proximo;
-    });
-  }
+  // "Agentes agora" (AT-887, RN-1205): o roster sai dos MESMOS eventos e das
+  // MESMAS filas já lidas (nenhuma requisição nova). Sem handoffs (`[]`): Infra,
+  // UX e Staff só aparecem quando a janela já os mostra.
+  const pendentesDaMoldura =
+    abaPublicada?.projectId === currentProject?.id ? moldura.pendentesDoProjeto : undefined;
+  const roster = useMemo(
+    () =>
+      deriveAgentRoster(
+        events,
+        moldura.moduleMap,
+        false,
+        [],
+        new Set((pendentesDaMoldura ?? []).map((a) => a.actor.id)),
+      ),
+    [events, moldura.moduleMap, pendentesDaMoldura],
+  );
 
   const rotuloDoColapso = colapsado
     ? t('sidebar.collapseButton.expand')
@@ -686,17 +534,10 @@ export function Shell() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className={styles.trilhaItemAtividades}
-                  title={t('sidebar.activities.label')}
-                  aria-label={t('sidebar.activities.label')}
-                  onClick={() => definirColapso(false)}
-                >
-                  <Activity size={16} aria-hidden="true" />
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
+            {currentProject && (
+              <AgentesAgora roster={roster} colapsado onVerTodos={() => irParaAba(currentProject.id, 'executores')} />
+            )}
             {flyoutAberto && currentProject && (
               <div
                 className={styles.flyout}
@@ -825,37 +666,30 @@ export function Shell() {
 
             <SidebarGroup>
               <SidebarGroupLabel className={styles.rotulo}>
-                {t('sidebar.activities.label')}
+                {t('sidebar.agentsNow.label')}
               </SidebarGroupLabel>
               <SidebarGroupContent className={styles.atividadesSecao}>
                 {!currentProject && (
-                  <p className={styles.atividadesVazio}>{t('sidebar.activities.openProjectHint')}</p>
+                  <p className={styles.atividadesVazio}>{t('sidebar.agentsNow.openProjectHint')}</p>
                 )}
                 {currentProject && estadoDaAtividade === 'erro' && (
-                  <p className={styles.atividadesVazio} data-testid="atividades-erro">
-                    {t('sidebar.activities.loadError')}
+                  <p className={styles.atividadesVazio} data-testid="agentes-agora-erro">
+                    {t('sidebar.agentsNow.loadError')}
                   </p>
                 )}
                 {currentProject && estadoDaAtividade === 'sem-sessao' && (
-                  <p className={styles.atividadesVazio}>{t('sidebar.activities.noSession')}</p>
+                  <p className={styles.atividadesVazio}>{t('sidebar.agentsNow.noSession')}</p>
                 )}
-                {currentProject && estadoDaAtividade === 'pronto' && grupos.length === 0 && (
-                  <p className={styles.atividadesVazio}>
-                    {origemDaAtividade === 'execucao'
-                      ? t('sidebar.activities.emptyExecution')
-                      : t('sidebar.activities.empty')}
-                  </p>
+                {currentProject && estadoDaAtividade === 'pronto' && roster.length === 0 && (
+                  <p className={styles.atividadesVazio}>{t('sidebar.agentsNow.empty')}</p>
                 )}
-                {currentProject &&
-                  grupos.map((grupo) => (
-                    <GrupoDeAtividade
-                      key={grupo.agenteBase}
-                      projectId={currentProject.id}
-                      grupo={grupo}
-                      agentesAbertos={agentesAbertos}
-                      onAlternar={alternarAgente}
-                    />
-                  ))}
+                {currentProject && estadoDaAtividade === 'pronto' && roster.length > 0 && (
+                  <AgentesAgora
+                    roster={roster}
+                    colapsado={false}
+                    onVerTodos={() => irParaAba(currentProject.id, 'executores')}
+                  />
+                )}
               </SidebarGroupContent>
             </SidebarGroup>
           </>
@@ -864,9 +698,11 @@ export function Shell() {
 
       <SidebarFooter>
         <SidebarMenu>
+          {!colapsado && <p className={styles.rotuloDoRodape}>{t('sidebar.workspaceLabel')}</p>}
           <LinkDoRodape to="/containers" icone={<Container size={15} aria-hidden="true" />} rotulo={tComum('sidebar.containers')} colapsado={colapsado} />
           <LinkDoRodape to="/providers" icone={<KeyRound size={15} aria-hidden="true" />} rotulo={tComum('sidebar.providers')} colapsado={colapsado} />
           <LinkDoRodape to="/spend" icone={<Wallet size={15} aria-hidden="true" />} rotulo={tComum('sidebar.spend')} colapsado={colapsado} />
+          <LinkDoRodape to="/status" icone={<Activity size={15} aria-hidden="true" />} rotulo={tComum('sidebar.status')} colapsado={colapsado} />
           {/* Na gaveta não há o que recolher — ela já some inteira. */}
           {!movel && (
             <SidebarMenuItem>

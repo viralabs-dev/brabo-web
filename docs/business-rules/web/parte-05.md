@@ -615,9 +615,9 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
-  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:291`
+  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:312`
   (`movel`), `:311` (`fecharAoSeguirLink`);
-  `apps/web/src/routes/ProjectPage.tsx:84` (`movel`);
+  `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;
@@ -1398,7 +1398,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 - **Onde:** `apps/web/src/lib/acoes-da-sessao.ts:76` (`chaveDasAcoesDaSessao`),
   `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:455`
-  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:305`
+  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:260`
   (`acoesPorSessao`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` (describe "a
   leitura de ações é a mesma do fio": com o fio tendo gravado a cauda, montar a

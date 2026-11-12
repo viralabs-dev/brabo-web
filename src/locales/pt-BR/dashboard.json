@@ -28,7 +28,12 @@
   },
   "status": {
     "heading": "Brabo — status da plataforma",
-    "resumo": { "ok": "Tudo funcionando", "erro": "Algum serviço fora do ar", "checking": "Verificando os serviços…", "detalhe": "Última verificação {{instante}} · atualiza a cada {{segundos}} s" },
+    "resumo": {
+      "ok": "Tudo funcionando",
+      "erro": "Algum serviço fora do ar",
+      "checking": "Verificando os serviços…",
+      "detalhe": "Última verificação {{instante}} · atualiza a cada {{segundos}} s"
+    },
     "latenciaValor": "{{ms}} ms",
     "columns": {
       "service": "Serviço",
@@ -59,12 +64,41 @@
       "failed": "Falha",
       "awaitingPlanDecision": "Aguardando sua decisão"
     },
-    "online": "{{count}} online"
+    "online": "{{count}} online",
+    "aguardandoVoce": "{{agente}} aguardando você"
   },
   "projectStatus": {
     "saudavel": "ativo",
     "atencao": "orçamento ≥70%",
     "risco": "requer atenção",
     "inativo": "sem atividade recente"
+  },
+  "inicio": {
+    "indisponivel": "indisponível",
+    "projetos": {
+      "rotulo": "Projetos ativos"
+    },
+    "agentes": {
+      "rotulo": "Agentes agora",
+      "trabalhando_zero": "nenhum trabalhando",
+      "trabalhando_one": "{{count}} trabalhando",
+      "trabalhando_other": "{{count}} trabalhando",
+      "aguardando_one": "{{count}} aguardando você",
+      "aguardando_other": "{{count}} aguardando você",
+      "aguardando_zero": "nenhum aguardando você"
+    },
+    "gasto": {
+      "rotulo": "Gasto do mês",
+      "soOwner": "teto visível ao owner",
+      "tetoIndisponivel": "teto indisponível",
+      "teto": "teto {{valor}}"
+    },
+    "caixa": {
+      "rotulo": "Caixa de decisões",
+      "aprovacoes_one": "{{n}} aprovação",
+      "aprovacoes_other": "{{n}} aprovações",
+      "aprovacoes_zero": "nenhuma aprovação",
+      "demais": "PRs {{prs}} · promoções {{promocoes}} · arquitetura {{arquitetura}} · hipóteses {{hipoteses}}"
+    }
   }
 }

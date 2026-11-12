@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts';
-import { diaCurto, type SpendPorDia } from '../lib/spend';
+import { AGENTS, type AgentKey } from '../lib/agents';
+import { densificarPorAgente, diaCurto, type SpendDiaDoAgente, type SpendPorDia } from '../lib/spend';
 import { formatarUsd } from './CredentialSpendSection.helpers';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from './shadcn/chart';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './shadcn/table';
@@ -145,6 +146,72 @@ export function GraficoDeTokens({ entrada, saida }: { entrada: number; saida: nu
           </li>
         ))}
       </ul>
+    </figure>
+  );
+}
+
+/** Gasto por dia empilhado por agente (RN-1153); a série chega esparsa e é densificada aqui. */
+export function GraficoEmpilhadoPorAgente({
+  linhas,
+  dias,
+  titulo,
+}: {
+  linhas: SpendDiaDoAgente[];
+  dias: number;
+  titulo: string;
+}) {
+  const { t } = useTranslation('spend');
+  const { agentes, dados } = densificarPorAgente(linhas, dias);
+  const cor = (a: string) => AGENTS[a as AgentKey]?.color ?? 'var(--accent)';
+  const config: ChartConfig = Object.fromEntries(
+    agentes.map((a) => [a, { label: AGENTS[a as AgentKey]?.name ?? a, color: cor(a) }]),
+  );
+  const completo = `${titulo} — ${t('charts.window', { count: dias })}`;
+  return (
+    <figure className={styles.figura}>
+      <figcaption className={styles.legenda}>{completo}</figcaption>
+      {agentes.length === 0 ? (
+        <p className={styles.vazio}>{t('charts.noSpendInWindow')}</p>
+      ) : (
+        <div role="img" aria-label={completo}>
+          <ChartContainer config={config} className={styles.grafico}>
+            <BarChart data={dados.map((d) => ({ ...d, rotulo: diaCurto(String(d.dia)) }))} accessibilityLayer>
+              <CartesianGrid vertical={false} />
+              <XAxis dataKey="rotulo" tickLine={false} axisLine={false} minTickGap={16} />
+              <YAxis tickLine={false} axisLine={false} width={64} tickFormatter={(v: number) => formatarUsd(v)} />
+              <ChartTooltip content={<ChartTooltipContent valueFormatter={(v) => formatarUsd(Number(v))} />} />
+              {agentes.map((a) => (
+                <Bar key={a} dataKey={a} stackId="agentes" fill={`var(--color-${a})`} />
+              ))}
+            </BarChart>
+          </ChartContainer>
+        </div>
+      )}
+      <details>
+        <summary className={styles.resumo}>{t('charts.viewAsTable')}</summary>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t('charts.colDay')}</TableHead>
+              {agentes.map((a) => (
+                <TableHead key={a}>{AGENTS[a as AgentKey]?.name ?? a}</TableHead>
+              ))}
+              <TableHead>{t('charts.colSpend')}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {dados.map((d) => (
+              <TableRow key={String(d.dia)}>
+                <TableCell>{diaCurto(String(d.dia))}</TableCell>
+                {agentes.map((a) => (
+                  <TableCell key={a}>{formatarUsd(Number(d[a]))}</TableCell>
+                ))}
+                <TableCell>{formatarUsd(agentes.reduce((soma, a) => soma + Number(d[a]), 0))}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </details>
     </figure>
   );
 }

@@ -94,6 +94,10 @@ export interface LinhaDeRanking {
   detalhe: string;
   /** Substitui o US$ da linha (ex.: assinatura sem preço registrado). */
   valor?: string;
+  /** Ponto de cor (cor do agente) antes do rótulo. */
+  cor?: string;
+  /** Rótulo como nó (ex.: link do projeto); `rotulo` segue sendo o texto. */
+  rotuloNo?: ReactNode;
 }
 
 /**
@@ -133,7 +137,22 @@ export function Ranking({
             <li key={linha.chave} className={styles.rankingItem}>
               {/* Sem `title`: o rótulo quebra em vez de truncar, então um
                   tooltip repetiria o texto visível — ruído para leitor de tela. */}
-              <span className={styles.rankingRotulo}>{linha.rotulo}</span>
+              <span className={styles.rankingRotulo}>
+                {linha.cor && (
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      display: 'inline-block',
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      background: linha.cor,
+                      marginRight: 6,
+                    }}
+                  />
+                )}
+                {linha.rotuloNo ?? linha.rotulo}
+              </span>
               <span className={styles.rankingTrilho}>
                 <span
                   className={styles.rankingBarra}

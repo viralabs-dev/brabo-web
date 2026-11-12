@@ -67,6 +67,7 @@
     "budgetWarning": "已超过月度上限的 {{pct}}%。"
   },
   "window": {
+    "month": "本月",
     "label": "时间范围",
     "option": "{{n}} 天"
   },

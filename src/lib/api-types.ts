@@ -837,10 +837,6 @@ export interface Budget {
   spentMicros: number;
   policy: BudgetPolicy;
   lastThresholdNotified: number;
-<<<<<<< HEAD
-  /** O mês de UTC e a previsão linear (AT-934); ausente em teto de sessão. */
-  periodo?: { inicio: string; fim: string; diasRestantes: number; previsaoMicros: number };
-=======
   /** Só nos tetos mensais; a sessão não tem (RN-1168). */
   periodo?: PeriodoDoTeto | null;
 }
@@ -850,7 +846,6 @@ export interface PeriodoDoTeto {
   fim: string;
   diasRestantes: number;
   previsaoMicros: number;
->>>>>>> origin/dev
 }
 
 export type GitProviderName = 'local' | 'github' | 'gitlab';

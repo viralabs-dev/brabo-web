@@ -60,8 +60,12 @@ describe('custom properties usadas nos módulos CSS existem', () => {
     expect(achados).toEqual([]);
   });
 
+  it('v9 (AT-884): --surface-3 agora existe nos dois temas', () => {
+    expect(definidos.has('--surface-3')).toBe(true);
+  });
+
   it('falha: os dois tokens que não existiam seriam pegos', () => {
-    const css = '.a { background: var(--surface-3, var(--surface-1)); border-radius: var(--radius-pill, 999px); }';
-    expect(tokensIndefinidos(css, definidos)).toEqual(['--surface-3', '--radius-pill']);
+    const css = '.a { background: var(--surface-9, var(--surface-1)); border-radius: var(--radius-pill, 999px); }';
+    expect(tokensIndefinidos(css, definidos)).toEqual(['--surface-9', '--radius-pill']);
   });
 });

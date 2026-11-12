@@ -6,6 +6,18 @@
   },
   "adopted": "adopted",
   "repositoryNotProvisioned": "repository not provisioned",
+  "medidor": {
+    "semTeto": "no cap",
+    "definir": "Set cap",
+    "gasto": "spent this month {{gasto}} of {{teto}}",
+    "previsao_one": "month forecast {{valor}} · {{count}} day left",
+    "previsao_other": "month forecast {{valor}} · {{count}} days left"
+  },
+  "acao": {
+    "novaSessao": "New session",
+    "ativarExecucao": "Activate execution",
+    "semRepositorio": "Without a repository there is nowhere to activate execution."
+  },
   "precisaDeVoce": {
     "chip": "Needs you",
     "titulo": "Needs you",

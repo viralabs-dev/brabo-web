@@ -7,11 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
-  createSession,
   getProjectSpendTeam,
-  mensagemDaApi,
   renameSession,
-  transitionSession,
 } from '../lib/api-client';
 import { useActiveExecutionSession, useProjectSessions } from '../lib/hooks';
 import { consultaDasAcoesDaSessao } from '../lib/acoes-da-sessao';
@@ -34,6 +31,7 @@ import { useToast } from '../components/ui/ToastProvider.helpers';
 import { PencilIcon, PlusIcon } from '../components/ui/icons';
 import { LIMITE_DO_NOME, hashtagDaSessao, rotuloDaSessao } from '../lib/session-label';
 import { TIPOS_DE_SESSAO } from '../lib/session-kind';
+import { useCriarSessao } from '../lib/use-criar-sessao';
 import { Destaque } from '../components/SpendCharts';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 import { useLayoutMovel } from '../lib/layout-movel';
@@ -169,9 +167,10 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
   // lado do nome, e o nome — o que IDENTIFICA a sessão — ficava com 0px. No
   // móvel ele ganha a primeira linha inteira e o resto desce para a segunda.
   const movel = useLayoutMovel();
-  const [creating, setCreating] = useState(false);
   const [abrindoForm, setAbrindoForm] = useState(false);
   const [nome, setNome] = useState('');
+  const { criar, criando: creating } = useCriarSessao(projectId);
+  const handleCreate = () => (kind === 'todas' ? undefined : criar(kind, nome)); // sem CTA de criar em Todas
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useToast();
@@ -215,50 +214,6 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
         message: t('sessionsTab.renameError.message'),
         tone: 'danger',
       });
-    }
-  }
-
-  async function handleCreate() {
-    if (kind === 'todas') return; // sem CTA de criar em Todas
-    setCreating(true);
-    try {
-      const session = await createSession(projectId, {
-        // O `kind` vem da ABA, não de um controle na tela: é isto que fecha o
-        // item 3 da fase — o CTA cria o tipo do lugar, sem perguntar de novo.
-        kind,
-        // Nome em branco não vai no corpo: ausência é `null` no banco, e a
-        // tela degrada para a hashtag sozinha (RN-098).
-        name: nome.trim() || undefined,
-      });
-
-      // Os DOIS passos têm desfecho próprio de propósito. Antes eram um `try`
-      // com `finally` só, e uma ativação que falhava (a api sem alcançar o
-      // engine devolve 500) deixava a tela EXATAMENTE como estava: nenhum
-      // toast, nenhuma navegação, a sessão criada e invisível. O botão parecia
-      // não fazer nada, e a cada clique nascia outra sessão `created`.
-      //
-      // Falhar em ativar não desfaz a criação — a sessão existe —, então a
-      // navegação acontece de todo modo: é lá que mora o "Ativar sessão", que
-      // é o segundo caminho para o mesmo passo.
-      try {
-        await transitionSession(projectId, session.id, 'active');
-      } catch (erro) {
-        showToast({
-          title: mensagemDaApi(erro, t('sessionsTab.createActivationFailed.title')),
-          message: t('sessionsTab.createActivationFailed.message'),
-          tone: 'danger',
-        });
-      }
-
-      await queryClient.invalidateQueries({ queryKey: ['sessions', projectId] });
-      navigate({ to: '/projects/$projectId/sessions/$sessionId', params: { projectId, sessionId: session.id } });
-    } catch (erro) {
-      showToast({
-        title: mensagemDaApi(erro, t('sessionsTab.createFailed.title')),
-        tone: 'danger',
-      });
-    } finally {
-      setCreating(false);
     }
   }
 

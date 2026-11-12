@@ -1,5 +1,7 @@
 {
   "shared": {
+    "exportCsv": "Export CSV",
+    "avgCallLabel": "Average cost per call",
     "loading": "Loading…",
     "summing": "Adding up…",
     "retry": "Try again",
@@ -102,6 +104,7 @@
     "bySessionEmpty": "No session spent in this window."
   },
   "team": {
+    "bySessionTitle": "By project session",
     "title": "Project spend",
     "subtitle": "Last {{dias}} days: what the agents spent on this project. No provider or key — the bill belongs to the workspace owner.",
     "error": "I could not load the project spend right now.",

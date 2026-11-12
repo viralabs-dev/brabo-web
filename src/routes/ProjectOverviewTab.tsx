@@ -20,10 +20,8 @@ import {
   useSessionTokenUsage,
 } from '../lib/hooks';
 import {
-  activateExecution,
   mensagemDaApi,
   requestParallelization,
-  getRepository,
   listAgentAutonomy,
   listModels,
   rearmDevAgent,
@@ -66,6 +64,7 @@ ItemMedia,
 import { Button } from '../components/ui/Button';
 import { Textarea } from '../components/ui/Textarea';
 import { useToast } from '../components/ui/ToastProvider.helpers';
+import { useAtivarExecucao } from '../lib/use-ativar-execucao';
 import type { AgentAutonomyActionType, Architecture, ProposedAction, SessionEvent } from '../lib/api-types';
 import { Card } from '../components/ui/Card';
 import { addressableAgents, nomeDoAgente } from '../lib/agents';
@@ -457,18 +456,8 @@ function ExecutionSection({
   const activated = executionActivated;
   const tarefasPendentes = contarTarefasPendentes(epics);
 
-  // RN-582 (ADR 0165): sem repositório, `POST .../execution/activate` responde
-  // 409 — os dev agents trabalham em worktrees dele. A tela tira o CONTROLE e
-  // diz o motivo uma vez, em texto (RN-102/ADR 0064). Mesma `queryKey` que
-  // `ProjectPage`, `CodeShell` e Configurações já usam: nenhuma requisição a
-  // mais. Só a ausência CONFIRMADA tranca — carregando ou com erro o botão
-  // fica como estava ("não sei" não vira "não tem"), e o backend recusa de
-  // qualquer forma, com a frase que nomeia o handoff que falta.
-  const repositorioQuery = useQuery({
-    queryKey: ['repository', projectId],
-    queryFn: () => getRepository(projectId),
-  });
-  const semRepositorio = repositorioQuery.isSuccess && repositorioQuery.data === null;
+  // RN-582 e o toast da causa real moram no hook (AT-888, RN-1210).
+  const { ativar: handleActivate, semRepositorio } = useAtivarExecucao(projectId);
 
   // Dev agents a partir do event log: módulo/branch/task (dev.started/
   // dev.working) + iteração/custo ao vivo do ÚLTIMO agent.response do agente
@@ -503,24 +492,6 @@ function ExecutionSection({
       url:
         (a.executionResult as { pullRequestUrl?: string } | null)?.pullRequestUrl ?? null,
     }));
-
-  async function handleActivate() {
-    try {
-      await activateExecution(projectId);
-      await queryClient.invalidateQueries({ queryKey: ['sessions', projectId] });
-    } catch (erro) {
-      // A causa REAL, e não a constante — o mesmo `mensagemDaApi` que o
-      // botão gêmeo do chat da sessão já usava (`SessionPage.tsx`). Mesmo
-      // botão com dois diagnósticos era o que fazia um 400 que ensina
-      // ("o Arquiteto precisa definir os módulos", "a pasta do projeto está
-      // incoerente" — RN-478) chegar à tela como "não foi possível".
-      showToast({
-        title: t('executionSection.errorTitle'),
-        message: mensagemDaApi(erro, t('executionSection.activateError')),
-        tone: 'danger',
-      });
-    }
-  }
 
   // RN-835 (AT-502): o desbloqueio tem retorno visível POR TAREFA — em voo o
   // botão fica inerte e diz "Desbloqueando…" (um clique, uma chamada), o

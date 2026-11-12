@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { ProjectPage } from './ProjectPage';
+import { ToastProvider } from '../components/ui/ToastProvider';
 import { AbasDoProjeto } from './AbasDoProjeto';
 import { itensDasAbas } from './AbasDoProjeto.helpers';
 import {
@@ -60,6 +61,8 @@ const useProjectPendingActions = vi.fn(() => ({ data: undefined as unknown }));
 // os dois ficarem em `undefined` fixo — sem `vi.fn()` próprio, ninguém aqui
 // varia o retorno.
 vi.mock('../lib/hooks', () => ({
+  useCurrentWorkspaceWithRole: () => ({ data: { role: 'owner', workspace: { id: 'ws-1' } } }),
+  useActiveExecutionSession: () => ({ session: undefined }),
   useBacklog: () => useBacklog(),
   useHypotheses: () => useHypotheses(),
   useLatestSession: () => ({ latest: undefined }),
@@ -153,7 +156,7 @@ function montar(initialTab?: Parameters<typeof ProjectPage>[0]['initialTab']) {
   return render(
     <QueryClientProvider client={client}>
       <AbasDaSidebar />
-      <ProjectPage projectId="proj-1" initialTab={initialTab} />
+      <ToastProvider><ProjectPage projectId="proj-1" initialTab={initialTab} /></ToastProvider>
     </QueryClientProvider>,
   );
 }

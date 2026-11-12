@@ -10,6 +10,7 @@ import { I18nextProvider } from 'react-i18next';
 // `project-tabs.test.tsx`).
 import i18n from '../lib/i18n';
 import { ProjectPage } from './ProjectPage';
+import { ToastProvider } from '../components/ui/ToastProvider';
 import { ApiError } from '../lib/api-client';
 import type { Project } from '../lib/api-types';
 
@@ -35,7 +36,11 @@ vi.mock('../lib/api-client', async () => {
   };
 });
 
+let papelDoTeste: string | undefined = 'developer';
+vi.mock('@tanstack/react-router', () => ({ useNavigate: () => vi.fn() }));
 vi.mock('../lib/hooks', () => ({
+  useCurrentWorkspaceWithRole: () => ({ data: { role: papelDoTeste, workspace: { id: 'ws-1' } } }),
+  useActiveExecutionSession: () => ({ session: undefined }),
   useArchitecture: () => ({ data: undefined }),
   useBacklog: () => ({ data: [] }),
   useHypotheses: () => ({ data: [] }),
@@ -83,7 +88,7 @@ function montar() {
   return render(
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={client}>
-        <ProjectPage projectId="proj-1" />
+        <ToastProvider><ProjectPage projectId="proj-1" /></ToastProvider>
       </QueryClientProvider>
     </I18nextProvider>,
   );
@@ -165,7 +170,7 @@ describe('ProjectPage — falha de carga não vira tela branca', () => {
 
     montar();
 
-    expect(await screen.findByText('Checkout')).toBeInTheDocument();
+    expect(await screen.findByText('Checkout / Visão geral')).toBeInTheDocument();
     // O painel é um chunk sob demanda (AT-300): chega depois do cabeçalho.
     expect(await screen.findByText('aba visão geral')).toBeInTheDocument();
     expect(screen.queryByRole('alert')).toBeNull();
@@ -187,6 +192,24 @@ describe('ProjectPage — falha de carga não vira tela branca', () => {
     const conta = readFileSync(resolve(__dirname, 'AccountPage.module.css'), 'utf8');
     expect(conta).not.toMatch(/\.page\s*\{[^}]*max-width/m);
     expect(css).not.toMatch(/\.body\s*\{[^}]*max-width/m);
+  });
+
+  // RN-1210: a ação primária da seção, com o papel mínimo do endpoint (RN-102).
+  it('Visão geral oferece "Nova sessão" a quem é developer', async () => {
+    papelDoTeste = 'developer';
+    getProject.mockResolvedValue(PROJETO);
+    montar();
+    const botao = await screen.findByRole('button', { name: 'Nova sessão' });
+    expect(botao).toBeEnabled();
+    expect(screen.getByText('Checkout / Visão geral')).toBeInTheDocument();
+  });
+
+  it('quem não tem o papel mínimo vê "Nova sessão" inerte', async () => {
+    papelDoTeste = 'viewer';
+    getProject.mockResolvedValue(PROJETO);
+    montar();
+    expect(await screen.findByRole('button', { name: 'Nova sessão' })).toBeDisabled();
+    papelDoTeste = 'developer';
   });
 
   it('a utilidade no-scrollbar existe no CSS do shadcn', () => {

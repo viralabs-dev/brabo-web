@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-893, RN-1215): Sessões ganha a sub-aba "Todas" (união de Ideação e Conversa, sem fonte nova) e a linha por sessão mostra tipo, avatares da cadeia, passos e custo (RN-1151). O campo de busca filtra a lista digitando; Enter ou o botão abre a busca do RAG (explícita e medida), e `?tab=rag` abre Todas em modo RAG. O segmento Conversar/Buscar da aba Chat sai (`ProjectChatShell`). i18n nos quatro idiomas. O resumo de uma linha da P13 fica de fora (sem fonte). Regressivo do brabo-qa na lane do qa.
+
 - Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
 
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.

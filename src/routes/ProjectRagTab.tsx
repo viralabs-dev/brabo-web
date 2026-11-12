@@ -48,15 +48,22 @@ const CHAVE_DO_ESCOPO: Record<RagChunkScope, string> = {
  * esta é busca sobre o que já foi indexado, sem agente nenhum no meio
  * (RN-202/ADR 0078 continuam valendo para a outra aba).
  */
-export function ProjectRagTab({ projectId }: { projectId: string }) {
+export function ProjectRagTab({
+  projectId,
+  consultaInicial,
+}: {
+  projectId: string;
+  /** A busca que a seção Sessões já digitou: roda UMA vez, ao montar (RN-1215). */
+  consultaInicial?: string;
+}) {
   const { t } = useTranslation('sessions');
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const { data: comPapel } = useCurrentWorkspaceWithRole();
   const podeReindexar = comPapel?.role === 'owner' || comPapel?.role === 'maintainer';
 
-  const [termo, setTermo] = useState('');
-  const [buscado, setBuscado] = useState<string | null>(null);
+  const [termo, setTermo] = useState(consultaInicial ?? '');
+  const [buscado, setBuscado] = useState<string | null>(consultaInicial ?? null);
   const [escopos, setEscopos] = useState<Set<RagChunkScope>>(new Set());
   const [anexandoPasta, setAnexandoPasta] = useState(false);
 

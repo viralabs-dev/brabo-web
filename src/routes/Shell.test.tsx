@@ -632,7 +632,7 @@ describe('Shell — abas do projeto aberto (ADR 0211)', () => {
       screen.getByRole('tab', { name: 'Visão geral' }).focus();
       fireEvent.keyDown(screen.getByRole('tab', { name: 'Visão geral' }), { key: 'ArrowDown' });
       expect(navigate).toHaveBeenLastCalledWith(
-        expect.objectContaining({ search: { tab: 'criativo' } }),
+        expect.objectContaining({ search: { tab: 'todas' } }),
       );
     } finally {
       parar();

@@ -1,11 +1,4 @@
 {
-  "chatShell": {
-    "segments": {
-      "chat": "对话",
-      "search": "搜索"
-    },
-    "ariaLabel": "聊天模式"
-  },
   "rag": {
     "scopes": {
       "docs": "文档",
@@ -149,6 +142,11 @@
         "openButton": "新对话",
         "confirmButton": "开启咨询会话",
         "empty": "还没有对话。开启一个来提问和获取背景信息，不会激活任何智能体。"
+      },
+      "todas": {
+        "title": "会话",
+        "explanation": "项目的所有会话，包括构思和对话。请在对应类型的子标签中新建。",
+        "empty": "还没有会话。请新建构思或对话。"
       }
     },
     "cancelButton": "取消",
@@ -205,6 +203,16 @@
         "errorDetail": "无法加载",
         "detail": "项目总计，30 天"
       }
+    },
+    "search": {
+      "label": "搜索会话和项目 RAG",
+      "placeholder": "搜索会话和项目 RAG",
+      "ragButton": "在 RAG 中搜索 (Enter)",
+      "noMatch": "没有匹配的会话。按 Enter 在 RAG 中搜索。"
+    },
+    "row": {
+      "system": "系统",
+      "passos_other": "{{count}} 步"
     }
   }
 }

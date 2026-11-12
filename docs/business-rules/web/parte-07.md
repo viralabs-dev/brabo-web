@@ -150,3 +150,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/routes/project-tabs.ts:390` (`SECOES_DO_PROJETO`), `apps/web/src/routes/project-tabs.ts:412` (`resolverChaveDeAba`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11` (`itensDasAbas`), `apps/web/src/components/FaixaDeSubAbas.tsx:22` (`FaixaDeSubAbas`), `apps/web/src/routes/ProjectPage.tsx` (`trocarSub`).
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (os 15 deep-links, as chaves de seção, desconhecida e a faixa com o selo de cada fila), `apps/web/src/routes/AbasDoProjeto.test.tsx` (8 itens, teclado com volta, Decisões sem número), `apps/web/src/routes/Shell.test.tsx` (sidebar, flyout e gaveta).
 - **Origem:** AT-886 (EP-035), ADR 0294. Revisa a RN-196 e o ADR 0211 no que diz respeito aos três grupos: a lista passa a ter oito itens.
+
+<a id="rn-1215"></a>
+
+### RN-1215 — Sessões junta Chat e Criativo: "Todas" é a união das duas listas, e a busca filtra localmente e só consulta o RAG com Enter {#rn-1215}
+
+- **Regra:** a seção Sessões tem as sub-abas Todas, Ideação e Conversa (AT-893). "Todas" lê a MESMA lista de hoje (`useProjectSessions`, sem endpoint novo) e não traz o botão de criar (o tipo é escolhido na sub-aba). A linha mostra tipo (ou "sistema" para a sessão técnica), a cadeia de avatares de `agentes[]`, estado, "N aguardando", passos e custo, todos da lista (RN-1151); custo zero aparece como zero. O resumo de uma linha da P13 não existe (a lista não traz o último "Gravado neste turno"). O campo de busca filtra a lista por título e id, localmente; Enter ou o botão abre o RAG (`ProjectRagTab`, a mesma busca medida das RN-479..481) abaixo, UMA consulta por gesto, nunca a cada tecla. `?tab=rag` abre Sessões › Todas já em modo RAG; `?tab=sessions` abre Conversa. O segmento Conversar/Buscar da antiga aba Chat sai (`ProjectChatShell`).
+- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx` (`ProjectSessionsTab`, `ProjectTodasTab`, `casaComABusca`), `apps/web/src/routes/ProjectRagTab.tsx` (`consultaInicial`), `apps/web/src/routes/project-tabs.ts` (`REGISTRO`, `ALIASES_DE_ABA`).
+- **Teste:** `apps/web/src/routes/ProjectSessionsTab.todas.test.tsx` (união, filtro local sem RAG, Enter com termo curto e longo, `?tab=rag`), `apps/web/src/routes/project-tabs.test.tsx` (deep-links).
+- **Origem:** AT-893 (EP-035), decisão do dono de 12/11/2026. Revisa a RN-1180 (a seção ganha a sub-aba `todas`; o alias `rag` aponta para ela).

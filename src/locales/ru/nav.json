@@ -35,6 +35,9 @@
     },
     "settings": {
       "label": "Настройки"
+    },
+    "todas": {
+      "label": "Все"
     }
   },
   "sections": {
@@ -59,6 +62,7 @@
     "insights": "Гипотезы",
     "arquitetura": "Архитектура",
     "spend": "Расходы",
-    "settings": "Настройки"
+    "settings": "Настройки",
+    "todas": "Все"
   }
 }

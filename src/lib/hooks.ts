@@ -56,12 +56,18 @@ export function useWorkspaceSummary(workspaceId: string | undefined) {
 }
 
 // Caixa de decisões do Início. Poll curto como a grade de cards; erro aqui não derruba o resto.
-export function useDecisionInbox(workspaceId: string | undefined) {
+// `somenteCache`: quem só ANUNCIA presença (o ponto da sidebar) lê o que a Caixa e o Início já
+// buscaram e não faz requisição própria (RN-632, orçamento).
+export function useDecisionInbox(
+  workspaceId: string | undefined,
+  status: 'pending' | 'decided' = 'pending',
+  somenteCache = false,
+) {
   return useQuery({
-    queryKey: ['decision-inbox', workspaceId],
-    queryFn: () => getDecisionInbox(workspaceId!),
-    enabled: !!workspaceId,
-    refetchInterval: 30_000,
+    queryKey: ['decision-inbox', workspaceId, status],
+    queryFn: () => getDecisionInbox(workspaceId!, status),
+    enabled: !!workspaceId && !somenteCache,
+    refetchInterval: somenteCache ? false : 30_000,
   });
 }
 

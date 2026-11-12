@@ -17,8 +17,6 @@ import {
 } from '../lib/contagens-do-projeto';
 import { setLastSeenSeq } from '../lib/read-state';
 import { MedidorDeGasto } from '../components/MedidorDeGasto';
-import { PainelPrecisaDeVoce } from '../components/PainelPrecisaDeVoce';
-import { montarFilas } from '../lib/precisa-de-voce';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { Skeleton } from '../components/ui/Skeleton';
 import { CarregandoRota } from '../components/CarregandoRota';
@@ -81,8 +79,7 @@ interface ProjectPageProps {
 export function ProjectPage({ projectId, initialTab, initialSection, initialGroup, initialStory }: ProjectPageProps) {
   const { t } = useTranslation('projectPage');
   const [tab, setTab] = useState<ChaveDeAba>(initialTab ?? ABA_PADRAO);
-  const [painelAberto, setPainelAberto] = useState(false);
-  // RN-980: o grupo de Configurações é estado local semeado pela URL; trocar escreve `?group=`.
+    // RN-980: o grupo de Configurações é estado local semeado pela URL; trocar escreve `?group=`.
   const [grupo, setGrupo] = useState(initialGroup);
   useEffect(() => setGrupo(initialGroup), [initialGroup]);
   function trocarGrupo(g: GrupoDoSumario) {
@@ -156,19 +153,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
   const { criar, criando } = useCriarSessao(projectId);
 
   const { latest: latestSession } = useLatestSession(projectId);
-  // As cinco filas de decisão, lidas pelo MESMO hook que a sidebar usa para os
-  // contadores das abas (ADR 0211) — mesmas `queryKey`s, deduplicadas. Aqui
-  // elas viram as cinco FILAS do painel "precisa de você" (RN-467), SEPARADAS:
-  // sem soma nem no painel nem no chip.
   const filasDoProjeto = useContagensDoProjeto(projectId);
-  const filasPrecisaDeVoce = montarFilas({
-    acoesPendentes: filasDoProjeto.pendentesDoProjeto,
-    merges: filasDoProjeto.merges,
-    epicos: filasDoProjeto.epicos,
-    pendenciasDeArquitetura: filasDoProjeto.pendenciasDeArquitetura,
-    hipoteses: filasDoProjeto.hipoteses,
-  });
-
   useEffect(() => {
     // Literal de propósito: quem marca o projeto como lido é a Visão geral —
     // não "a aba padrão, seja ela qual for".
@@ -267,26 +252,6 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         }
         acoes={
           <>
-            <PainelPrecisaDeVoce
-              projectId={projectId}
-              filas={filasPrecisaDeVoce}
-              open={painelAberto}
-              onOpenChange={setPainelAberto}
-              // O painel não conhece `ChaveDeAba` de propósito; é aqui que o destino vira aba.
-              onIrParaAba={(destino) => {
-                setTab(destino satisfies ChaveDeAba);
-                // O endereço acompanha a aba (AT-394).
-                try {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('tab', destino);
-                  url.searchParams.delete('section');
-                  url.searchParams.delete('group');
-                  window.history.replaceState(window.history.state, '', url);
-                } catch {
-                  // sem `window` (teste/SSR): só a troca local
-                }
-              }}
-            />
             {budget !== undefined && (
               <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('settings')} />
             )}

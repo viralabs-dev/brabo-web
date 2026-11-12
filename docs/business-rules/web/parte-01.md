@@ -647,7 +647,7 @@ OPCIONAL, padrão `false`: os outros consumidores do hook (Overview, Code,
 Provisioning, AdoptionPlan) não têm turno conversacional em andamento e
 ficam como estavam.
 
-- **Onde:** `apps/web/src/lib/hooks.ts:244` (`useSessionEvents`),
+- **Onde:** `apps/web/src/lib/hooks.ts:250` (`useSessionEvents`),
   `apps/web/src/routes/SessionPage.tsx:269` (`eventsQuery`)
 - **Teste:** `apps/web/src/lib/hooks.pausar-poll.test.tsx`
 - **Caso de borda:** pausar o timer não é desabilitar a query — a invalidação

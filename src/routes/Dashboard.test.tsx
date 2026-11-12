@@ -32,6 +32,12 @@ const SUMMARY: WorkspaceSummary = { activeProjects: 1, agentCount: 2, spentMicro
 const useProjectsMock = vi.fn();
 const useWorkspaceSummaryMock = vi.fn();
 const useProjectsSummaryMock = vi.fn();
+const useDecisionInboxMock = vi.fn();
+const fila = (total: number, truncada = false) => ({ total, truncada, itens: [] });
+const CAIXA = {
+  filas: { aprovacoes: fila(2), prs: fila(1), promocoes: fila(0), arquitetura: fila(0), hipoteses: fila(3, true) },
+  projetos: [{ projectId: 'project-1', nome: 'Core API', aprovacoes: 2, prs: 1, promocoes: 0, arquitetura: 0, hipoteses: 3, agentesAguardando: ['arquiteto'] }],
+};
 
 function cardDoProjeto(over: Partial<ProjectCardSummary> = {}): ProjectCardSummary {
   return {
@@ -65,6 +71,9 @@ vi.mock('@tanstack/react-router', () => ({
 
 vi.mock('../lib/hooks', () => ({
   useCurrentWorkspace: () => ({ data: { id: 'ws-1', name: 'Acme', slug: 'acme' } }),
+  useCurrentWorkspaceWithRole: () => ({ data: { role: 'viewer' } }),
+  useDecisionInbox: () => useDecisionInboxMock(),
+  useWorkspaceBudget: () => ({ data: undefined, isError: false }),
   useProjects: () => useProjectsMock(),
   useWorkspaceSummary: () => useWorkspaceSummaryMock(),
   useProjectsSummary: () => useProjectsSummaryMock(),
@@ -112,6 +121,8 @@ beforeEach(async () => {
   useWorkspaceSummaryMock.mockReset();
   useWorkspaceSummaryMock.mockReturnValue({ data: SUMMARY, isError: false });
   useProjectsSummaryMock.mockReset();
+  useDecisionInboxMock.mockReset();
+  useDecisionInboxMock.mockReturnValue({ data: CAIXA, isError: false });
   useProjectsSummaryMock.mockReturnValue({ data: [], isLoading: false });
 });
 
@@ -182,7 +193,7 @@ describe('Dashboard — estados', () => {
 
     renderDashboard();
 
-    expect(screen.getByText('resumo indisponível')).toBeInTheDocument();
+    expect(screen.getAllByText('indisponível').length).toBeGreaterThan(0);
     expect(screen.getByText('Core API')).toBeInTheDocument();
   });
 });
@@ -302,5 +313,26 @@ describe('Dashboard — layout estreito (AT-330)', () => {
 
     act(() => largura!.mudar(true));
     expect(barra).toHaveAttribute('data-layout', 'movel');
+  });
+});
+
+describe('Dashboard — cartões do Início (AT-896, RN-467)', () => {
+  it('mostra uma contagem por fila, nunca somadas, e marca a fila cortada', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false, isError: false });
+    renderDashboard();
+    const cartoes = screen.getByTestId('cartoes-do-inicio');
+    expect(cartoes.textContent).toContain('2 aprovações');
+    expect(cartoes.textContent).toContain('PRs 1 · promoções 0 · arquitetura 0 · hipóteses 3+');
+    expect(cartoes.textContent).toContain('1 aguardando você');
+    expect(cartoes.textContent).toContain('teto visível ao owner');
+    expect(screen.getByText('Arquiteto aguardando você')).toBeTruthy();
+  });
+
+  it('erro na Caixa vira "indisponível" só no cartão, sem derrubar a grade', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false, isError: false });
+    useDecisionInboxMock.mockReturnValue({ data: undefined, isError: true });
+    renderDashboard();
+    expect(screen.getByTestId('cartoes-do-inicio').textContent).toContain('indisponível');
+    expect(screen.getByText('Core API')).toBeTruthy();
   });
 });

@@ -5403,7 +5403,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BudgetResponseDto"
+                  "$ref": "#/components/schemas/BudgetMensalResponseDto"
                 }
               }
             }
@@ -5460,7 +5460,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/BudgetResponseDto"
+                  "$ref": "#/components/schemas/BudgetMensalResponseDto"
                 }
               }
             }
@@ -13524,6 +13524,115 @@
         ]
       }
     },
+    "/workspaces/{workspaceId}/budget": {
+      "get": {
+        "description": "Owner only (RN-060): the bill is the owner's. Sums every LLM call of every project of the workspace, any actor. Month is UTC (ADR 0296).",
+        "operationId": "BudgetsController_getWorkspaceBudget",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetMensalResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No token, expired token, or invalid signature."
+          },
+          "403": {
+            "description": "Requires `owner` on the workspace."
+          },
+          "404": {
+            "description": "Project or session not found."
+          },
+          "429": {
+            "description": "Rate limit per user or per IP."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reads the workspace monthly spend cap and the month spend",
+        "tags": [
+          "llm"
+        ]
+      },
+      "put": {
+        "description": "Dollars in, micro-USD stored. Independent of the project, session and area caps: any one at its limit with `policy=block` refuses the call.",
+        "operationId": "BudgetsController_setWorkspaceBudget",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertBudgetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BudgetMensalResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails."
+          },
+          "401": {
+            "description": "No token, expired token, or invalid signature."
+          },
+          "403": {
+            "description": "Requires `owner` on the workspace."
+          },
+          "404": {
+            "description": "Project or session not found."
+          },
+          "429": {
+            "description": "Rate limit per user or per IP."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Sets the workspace monthly spend cap",
+        "tags": [
+          "llm"
+        ]
+      }
+    },
     "/workspaces/{workspaceId}/containers": {
       "get": {
         "description": "One row per project of the workspace — since RN-521 a project that never provisioned a container is PRESENT with `registrado: null` instead of absent, because this page is the human path to start the first one. The observed state is asked of the broker only for rows `provisioning`/`running`, and only up to a per-load budget — see `naoVerificado` on rows that were skipped, and ADR 0136 for the reasoning.",
@@ -13630,6 +13739,70 @@
         "summary": "How much the owner's keys spent, by provider and by month",
         "tags": [
           "llm"
+        ]
+      }
+    },
+    "/workspaces/{workspaceId}/decision-inbox": {
+      "get": {
+        "description": "Approvals (all pending actions except `git_merge`), PRs (`git_merge`), story promotions, architecture pendencies and Psychologist hypotheses. Each queue is separate and carries its own real `total`; there is no total at the root (RN-467). A queue holds at most `tetoPorFila` items (oldest first for `pending`, newest first for `decided`) and says `truncada` when it cuts. `status=decided` lists what was decided since `since` (ISO date, default 24 h ago), the mold of RN-1154; architecture has no decided side. A project only contributes to a queue when the caller's effective role there is enough to DECIDE it (`developer`; architecture needs `viewer`).",
+        "operationId": "DecisionInboxController_get",
+        "parameters": [
+          {
+            "name": "workspaceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "pending",
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "example": "2026-11-11T12:00:00Z",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DecisionInboxResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "No token, expired token, or invalid signature."
+          },
+          "403": {
+            "description": "No role on the workspace."
+          },
+          "429": {
+            "description": "Rate limit per user or per IP."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "The five decision queues of every project, in one read",
+        "tags": [
+          "actions"
         ]
       }
     },
@@ -16951,6 +17124,90 @@
           "payload"
         ]
       },
+      "BudgetMensalResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "01JC4Z0000ORCAMENTO000000001"
+          },
+          "projectId": {
+            "type": "object",
+            "example": "01JC4Z0000PROJETO0000000001",
+            "nullable": true,
+            "description": "Filled in for a project budget; `null` for a session one."
+          },
+          "sessionId": {
+            "type": "object",
+            "example": null,
+            "nullable": true,
+            "description": "The opposite of the above."
+          },
+          "workspaceId": {
+            "type": "object",
+            "example": null,
+            "nullable": true,
+            "description": "Filled in for a workspace budget (ADR 0296)."
+          },
+          "periodoInicio": {
+            "type": "object",
+            "example": "2026-11-01",
+            "nullable": true,
+            "description": "First day (UTC) of the month `spentMicros` refers to; `null` for a session budget."
+          },
+          "limitMicros": {
+            "type": "number",
+            "example": 50000000,
+            "description": "Cap in micro-USD (50 USD)."
+          },
+          "spentMicros": {
+            "type": "number",
+            "example": 12400000,
+            "description": "Spend in the current month (UTC) in micro-USD; accumulated for a session budget. A stale period reads as 0."
+          },
+          "policy": {
+            "type": "string",
+            "enum": [
+              "block",
+              "allow"
+            ],
+            "example": "block",
+            "description": "`block` refuses the call when it would exceed the cap; `allow` lets it through and only warns."
+          },
+          "lastThresholdNotified": {
+            "type": "number",
+            "example": 70,
+            "description": "Highest threshold (70/90/100) already notified. It, not the previous spend, serves as the floor — using the spend would make the same warning fire again on every call after it was crossed."
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2026-07-12T08:00:00.000Z",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2026-07-27T15:00:00.000Z",
+            "format": "date-time"
+          },
+          "periodo": {
+            "$ref": "#/components/schemas/PeriodoDoTetoResponseDto"
+          }
+        },
+        "required": [
+          "id",
+          "projectId",
+          "sessionId",
+          "workspaceId",
+          "periodoInicio",
+          "limitMicros",
+          "spentMicros",
+          "policy",
+          "lastThresholdNotified",
+          "createdAt",
+          "updatedAt",
+          "periodo"
+        ]
+      },
       "BudgetResponseDto": {
         "type": "object",
         "properties": {
@@ -16970,6 +17227,18 @@
             "nullable": true,
             "description": "The opposite of the above."
           },
+          "workspaceId": {
+            "type": "object",
+            "example": null,
+            "nullable": true,
+            "description": "Filled in for a workspace budget (ADR 0296)."
+          },
+          "periodoInicio": {
+            "type": "object",
+            "example": "2026-11-01",
+            "nullable": true,
+            "description": "First day (UTC) of the month `spentMicros` refers to; `null` for a session budget."
+          },
           "limitMicros": {
             "type": "number",
             "example": 50000000,
@@ -16978,7 +17247,7 @@
           "spentMicros": {
             "type": "number",
             "example": 12400000,
-            "description": "Accumulated spend, in micro-USD."
+            "description": "Spend in the current month (UTC) in micro-USD; accumulated for a session budget. A stale period reads as 0."
           },
           "policy": {
             "type": "string",
@@ -17009,6 +17278,8 @@
           "id",
           "projectId",
           "sessionId",
+          "workspaceId",
+          "periodoInicio",
           "limitMicros",
           "spentMicros",
           "policy",
@@ -19443,6 +19714,47 @@
           "resources"
         ]
       },
+      "DecisionInboxResponseDto": {
+        "type": "object",
+        "properties": {
+          "geradoEm": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "decided"
+            ]
+          },
+          "desde": {
+            "type": "string",
+            "nullable": true,
+            "description": "Início da janela, só no modo `decided`."
+          },
+          "tetoPorFila": {
+            "type": "number",
+            "example": 50
+          },
+          "filas": {
+            "$ref": "#/components/schemas/FilasDto"
+          },
+          "projetos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjetoDaCaixaDto"
+            }
+          }
+        },
+        "required": [
+          "geradoEm",
+          "status",
+          "desde",
+          "tetoPorFila",
+          "filas",
+          "projetos"
+        ]
+      },
       "DeclararRedeDto": {
         "type": "object",
         "properties": {
@@ -20223,6 +20535,168 @@
         "required": [
           "nome",
           "descricao"
+        ]
+      },
+      "FilaDeAcoesDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total REAL da fila, mesmo quando `itens` é truncada (RN-1197)."
+          },
+          "truncada": {
+            "type": "boolean",
+            "description": "`true` quando `total` passa do teto de itens."
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDeAcaoDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "truncada",
+          "itens"
+        ]
+      },
+      "FilaDeArquiteturaDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total REAL da fila, mesmo quando `itens` é truncada (RN-1197)."
+          },
+          "truncada": {
+            "type": "boolean",
+            "description": "`true` quando `total` passa do teto de itens."
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDeArquiteturaDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "truncada",
+          "itens"
+        ]
+      },
+      "FilaDeHipotesesDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total REAL da fila, mesmo quando `itens` é truncada (RN-1197)."
+          },
+          "truncada": {
+            "type": "boolean",
+            "description": "`true` quando `total` passa do teto de itens."
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDeHipoteseDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "truncada",
+          "itens"
+        ]
+      },
+      "FilaDePromocoesDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total REAL da fila, mesmo quando `itens` é truncada (RN-1197)."
+          },
+          "truncada": {
+            "type": "boolean",
+            "description": "`true` quando `total` passa do teto de itens."
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDePromocaoDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "truncada",
+          "itens"
+        ]
+      },
+      "FilaDePrsDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total REAL da fila, mesmo quando `itens` é truncada (RN-1197)."
+          },
+          "truncada": {
+            "type": "boolean",
+            "description": "`true` quando `total` passa do teto de itens."
+          },
+          "itens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ItemDeAcaoDto"
+            }
+          }
+        },
+        "required": [
+          "total",
+          "truncada",
+          "itens"
+        ]
+      },
+      "FilasDto": {
+        "type": "object",
+        "properties": {
+          "aprovacoes": {
+            "description": "Ações pendentes EXCETO `git_merge`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FilaDeAcoesDto"
+              }
+            ]
+          },
+          "prs": {
+            "description": "Só `git_merge`.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FilaDePrsDto"
+              }
+            ]
+          },
+          "promocoes": {
+            "$ref": "#/components/schemas/FilaDePromocoesDto"
+          },
+          "arquitetura": {
+            "description": "Derivada: vazia no modo `decided` (não há decisão humana a listar).",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/FilaDeArquiteturaDto"
+              }
+            ]
+          },
+          "hipoteses": {
+            "$ref": "#/components/schemas/FilaDeHipotesesDto"
+          }
+        },
+        "required": [
+          "aprovacoes",
+          "prs",
+          "promocoes",
+          "arquitetura",
+          "hipoteses"
         ]
       },
       "FirstAccountInternalDto": {
@@ -21629,6 +22103,73 @@
           "token"
         ]
       },
+      "ItemDeAcaoDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "acao": {
+            "$ref": "#/components/schemas/ProposedActionResponseDto"
+          }
+        },
+        "required": [
+          "projectId",
+          "projectName",
+          "acao"
+        ]
+      },
+      "ItemDeArquiteturaDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "storyId": {
+            "type": "string"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "motivo": {
+            "type": "string",
+            "enum": [
+              "no_module",
+              "missing_module"
+            ]
+          },
+          "faltando": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "desde": {
+            "type": "string",
+            "description": "Emprestada da história (`updatedAt`): a pendência é derivada e não tem data."
+          },
+          "dataEmprestada": {
+            "type": "boolean",
+            "example": true
+          }
+        },
+        "required": [
+          "projectId",
+          "projectName",
+          "storyId",
+          "titulo",
+          "motivo",
+          "faltando",
+          "desde",
+          "dataEmprestada"
+        ]
+      },
       "ItemDeContratoInternalDto": {
         "type": "object",
         "properties": {
@@ -21717,6 +22258,82 @@
           "actorId",
           "escolha",
           "contexto"
+        ]
+      },
+      "ItemDeHipoteseDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "hipoteseId": {
+            "type": "string"
+          },
+          "hipotese": {
+            "type": "string"
+          },
+          "agenteAlvo": {
+            "type": "string"
+          },
+          "situacao": {
+            "type": "string",
+            "example": "proposed",
+            "description": "`proposed`, ou o desfecho no modo `decided`."
+          },
+          "desde": {
+            "type": "string"
+          },
+          "decididaEm": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "projectId",
+          "projectName",
+          "hipoteseId",
+          "hipotese",
+          "agenteAlvo",
+          "situacao",
+          "desde",
+          "decididaEm"
+        ]
+      },
+      "ItemDePromocaoDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "projectName": {
+            "type": "string"
+          },
+          "storyId": {
+            "type": "string"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "desde": {
+            "type": "string",
+            "description": "Data da última alteração da história (a promoção não grava data própria)."
+          },
+          "decididaEm": {
+            "type": "string",
+            "nullable": true,
+            "description": "Só no modo `decided`: quando o usuário recusou (devolveu ao PO)."
+          }
+        },
+        "required": [
+          "projectId",
+          "projectName",
+          "storyId",
+          "titulo",
+          "desde",
+          "decididaEm"
         ]
       },
       "ItemDeRegraResponseDto": {
@@ -23755,6 +24372,35 @@
           "optedOut"
         ]
       },
+      "PeriodoDoTetoResponseDto": {
+        "type": "object",
+        "properties": {
+          "inicio": {
+            "type": "string",
+            "example": "2026-11-01"
+          },
+          "fim": {
+            "type": "string",
+            "example": "2026-12-01",
+            "description": "First day of the next month (UTC)."
+          },
+          "diasRestantes": {
+            "type": "number",
+            "example": 18
+          },
+          "previsaoMicros": {
+            "type": "number",
+            "example": 31000000,
+            "description": "Linear forecast of the month-end spend (micro-USD); derived, never stored."
+          }
+        },
+        "required": [
+          "inicio",
+          "fim",
+          "diasRestantes",
+          "previsaoMicros"
+        ]
+      },
       "PermissionsFileResponseDto": {
         "type": "object",
         "properties": {
@@ -24956,6 +25602,49 @@
           "projectId",
           "sessionId",
           "events"
+        ]
+      },
+      "ProjetoDaCaixaDto": {
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "aprovacoes": {
+            "type": "number"
+          },
+          "prs": {
+            "type": "number"
+          },
+          "promocoes": {
+            "type": "number"
+          },
+          "arquitetura": {
+            "type": "number"
+          },
+          "hipoteses": {
+            "type": "number"
+          },
+          "agentesAguardando": {
+            "description": "Agentes com ação pendente (aprovações + PRs); não afetado pelo teto de itens.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "projectId",
+          "nome",
+          "aprovacoes",
+          "prs",
+          "promocoes",
+          "arquitetura",
+          "hipoteses",
+          "agentesAguardando"
         ]
       },
       "PromocaoRecusadaResponseDto": {

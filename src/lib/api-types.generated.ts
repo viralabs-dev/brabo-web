@@ -4355,6 +4355,30 @@ export interface paths {
         patch: operations["WorkspacesController_update"];
         trace?: never;
     };
+    "/workspaces/{workspaceId}/budget": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Reads the workspace monthly spend cap and the month spend
+         * @description Owner only (RN-060): the bill is the owner's. Sums every LLM call of every project of the workspace, any actor. Month is UTC (ADR 0296).
+         */
+        get: operations["BudgetsController_getWorkspaceBudget"];
+        /**
+         * Sets the workspace monthly spend cap
+         * @description Dollars in, micro-USD stored. Independent of the project, session and area caps: any one at its limit with `policy=block` refuses the call.
+         */
+        put: operations["BudgetsController_setWorkspaceBudget"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspaceId}/containers": {
         parameters: {
             query?: never;
@@ -4387,6 +4411,26 @@ export interface paths {
          * @description Exists because the key agents spend is the workspace OWNER's (RN-058) — whoever pays the bill needs to see the bill. Groups by provider because that is the unit of the credential, and separates what went out by AGENT from what went out by a person in chat: the two come out of the same key and answer different questions. Returns no secret at all.
          */
         get: operations["BudgetsController_getCredentialSpend"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspaceId}/decision-inbox": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The five decision queues of every project, in one read
+         * @description Approvals (all pending actions except `git_merge`), PRs (`git_merge`), story promotions, architecture pendencies and Psychologist hypotheses. Each queue is separate and carries its own real `total`; there is no total at the root (RN-467). A queue holds at most `tetoPorFila` items (oldest first for `pending`, newest first for `decided`) and says `truncada` when it cuts. `status=decided` lists what was decided since `since` (ISO date, default 24 h ago), the mold of RN-1154; architecture has no decided side. A project only contributes to a queue when the caller's effective role there is enough to DECIDE it (`developer`; architecture needs `viewer`).
+         */
+        get: operations["DecisionInboxController_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5723,6 +5767,62 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        BudgetMensalResponseDto: {
+            /** @example 01JC4Z0000ORCAMENTO000000001 */
+            id: string;
+            /**
+             * @description Filled in for a project budget; `null` for a session one.
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: Record<string, never> | null;
+            /**
+             * @description The opposite of the above.
+             * @example null
+             */
+            sessionId: Record<string, never> | null;
+            /**
+             * @description Filled in for a workspace budget (ADR 0296).
+             * @example null
+             */
+            workspaceId: Record<string, never> | null;
+            /**
+             * @description First day (UTC) of the month `spentMicros` refers to; `null` for a session budget.
+             * @example 2026-11-01
+             */
+            periodoInicio: Record<string, never> | null;
+            /**
+             * @description Cap in micro-USD (50 USD).
+             * @example 50000000
+             */
+            limitMicros: number;
+            /**
+             * @description Spend in the current month (UTC) in micro-USD; accumulated for a session budget. A stale period reads as 0.
+             * @example 12400000
+             */
+            spentMicros: number;
+            /**
+             * @description `block` refuses the call when it would exceed the cap; `allow` lets it through and only warns.
+             * @example block
+             * @enum {string}
+             */
+            policy: "block" | "allow";
+            /**
+             * @description Highest threshold (70/90/100) already notified. It, not the previous spend, serves as the floor — using the spend would make the same warning fire again on every call after it was crossed.
+             * @example 70
+             */
+            lastThresholdNotified: number;
+            /**
+             * Format: date-time
+             * @example 2026-07-12T08:00:00.000Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @example 2026-07-27T15:00:00.000Z
+             */
+            updatedAt: string;
+            periodo: components["schemas"]["PeriodoDoTetoResponseDto"];
+        };
         BudgetResponseDto: {
             /** @example 01JC4Z0000ORCAMENTO000000001 */
             id: string;
@@ -5737,12 +5837,22 @@ export interface components {
              */
             sessionId: Record<string, never> | null;
             /**
+             * @description Filled in for a workspace budget (ADR 0296).
+             * @example null
+             */
+            workspaceId: Record<string, never> | null;
+            /**
+             * @description First day (UTC) of the month `spentMicros` refers to; `null` for a session budget.
+             * @example 2026-11-01
+             */
+            periodoInicio: Record<string, never> | null;
+            /**
              * @description Cap in micro-USD (50 USD).
              * @example 50000000
              */
             limitMicros: number;
             /**
-             * @description Accumulated spend, in micro-USD.
+             * @description Spend in the current month (UTC) in micro-USD; accumulated for a session budget. A stale period reads as 0.
              * @example 12400000
              */
             spentMicros: number;
@@ -7022,6 +7132,17 @@ export interface components {
             network: "none" | "egress";
             resources: components["schemas"]["RecursosDoContainerResponseDto"];
         };
+        DecisionInboxResponseDto: {
+            geradoEm: string;
+            /** @enum {string} */
+            status: "pending" | "decided";
+            /** @description Início da janela, só no modo `decided`. */
+            desde: string | null;
+            /** @example 50 */
+            tetoPorFila: number;
+            filas: components["schemas"]["FilasDto"];
+            projetos: components["schemas"]["ProjetoDaCaixaDto"][];
+        };
         DeclararRedeDto: {
             /** @description Up to 10 TCP ports published on 127.0.0.1 only. `host` 1024-65535, never an installation port, no duplicates. */
             ports?: components["schemas"]["PortaDto"][];
@@ -7332,6 +7453,51 @@ export interface components {
             nome: string;
             /** @description Description the model reads (pt-BR), cut at 1000 chars. */
             descricao: string;
+        };
+        FilaDeAcoesDto: {
+            /** @description Total REAL da fila, mesmo quando `itens` é truncada (RN-1197). */
+            total: number;
+            /** @description `true` quando `total` passa do teto de itens. */
+            truncada: boolean;
+            itens: components["schemas"]["ItemDeAcaoDto"][];
+        };
+        FilaDeArquiteturaDto: {
+            /** @description Total REAL da fila, mesmo quando `itens` é truncada (RN-1197). */
+            total: number;
+            /** @description `true` quando `total` passa do teto de itens. */
+            truncada: boolean;
+            itens: components["schemas"]["ItemDeArquiteturaDto"][];
+        };
+        FilaDeHipotesesDto: {
+            /** @description Total REAL da fila, mesmo quando `itens` é truncada (RN-1197). */
+            total: number;
+            /** @description `true` quando `total` passa do teto de itens. */
+            truncada: boolean;
+            itens: components["schemas"]["ItemDeHipoteseDto"][];
+        };
+        FilaDePromocoesDto: {
+            /** @description Total REAL da fila, mesmo quando `itens` é truncada (RN-1197). */
+            total: number;
+            /** @description `true` quando `total` passa do teto de itens. */
+            truncada: boolean;
+            itens: components["schemas"]["ItemDePromocaoDto"][];
+        };
+        FilaDePrsDto: {
+            /** @description Total REAL da fila, mesmo quando `itens` é truncada (RN-1197). */
+            total: number;
+            /** @description `true` quando `total` passa do teto de itens. */
+            truncada: boolean;
+            itens: components["schemas"]["ItemDeAcaoDto"][];
+        };
+        FilasDto: {
+            /** @description Ações pendentes EXCETO `git_merge`. */
+            aprovacoes: components["schemas"]["FilaDeAcoesDto"];
+            /** @description Só `git_merge`. */
+            prs: components["schemas"]["FilaDePrsDto"];
+            promocoes: components["schemas"]["FilaDePromocoesDto"];
+            /** @description Derivada: vazia no modo `decided` (não há decisão humana a listar). */
+            arquitetura: components["schemas"]["FilaDeArquiteturaDto"];
+            hipoteses: components["schemas"]["FilaDeHipotesesDto"];
         };
         FirstAccountInternalDto: {
             /**
@@ -7969,6 +8135,24 @@ export interface components {
              */
             token: string;
         };
+        ItemDeAcaoDto: {
+            projectId: string;
+            projectName: string;
+            acao: components["schemas"]["ProposedActionResponseDto"];
+        };
+        ItemDeArquiteturaDto: {
+            projectId: string;
+            projectName: string;
+            storyId: string;
+            titulo: string;
+            /** @enum {string} */
+            motivo: "no_module" | "missing_module";
+            faltando: string[];
+            /** @description Emprestada da história (`updatedAt`): a pendência é derivada e não tem data. */
+            desde: string;
+            /** @example true */
+            dataEmprestada: boolean;
+        };
         ItemDeContratoInternalDto: {
             /**
              * @description How another module uses the item: call a function, hit a route, subscribe to an event, or build a data shape.
@@ -8005,6 +8189,30 @@ export interface components {
             /** @example SQLite em arquivo */
             escolha: string | null;
             contexto: string | null;
+        };
+        ItemDeHipoteseDto: {
+            projectId: string;
+            projectName: string;
+            hipoteseId: string;
+            hipotese: string;
+            agenteAlvo: string;
+            /**
+             * @description `proposed`, ou o desfecho no modo `decided`.
+             * @example proposed
+             */
+            situacao: string;
+            desde: string;
+            decididaEm: string | null;
+        };
+        ItemDePromocaoDto: {
+            projectId: string;
+            projectName: string;
+            storyId: string;
+            titulo: string;
+            /** @description Data da última alteração da história (a promoção não grava data própria). */
+            desde: string;
+            /** @description Só no modo `decided`: quando o usuário recusou (devolveu ao PO). */
+            decididaEm: string | null;
         };
         ItemDeRegraResponseDto: {
             /** @example evt_01JC4Z */
@@ -9100,6 +9308,22 @@ export interface components {
             /** @example false */
             optedOut: boolean;
         };
+        PeriodoDoTetoResponseDto: {
+            /** @example 2026-11-01 */
+            inicio: string;
+            /**
+             * @description First day of the next month (UTC).
+             * @example 2026-12-01
+             */
+            fim: string;
+            /** @example 18 */
+            diasRestantes: number;
+            /**
+             * @description Linear forecast of the month-end spend (micro-USD); derived, never stored.
+             * @example 31000000
+             */
+            previsaoMicros: number;
+        };
         PermissionsFileResponseDto: {
             /**
              * @description Automatically approved patterns.
@@ -9684,6 +9908,17 @@ export interface components {
             sessionId: string;
             /** @description In DESCENDING `seq` order — the first item is the most recent (RN-100). At most 50 per project, the same cap `GET .../events` applies without `limit`, and when there are more unread than that the ones returned are the NEWEST. How many were left out comes from `latestSeq` minus the cutoff, without another request. */
             events: components["schemas"]["SessionEventResponseDto"][];
+        };
+        ProjetoDaCaixaDto: {
+            projectId: string;
+            nome: string;
+            aprovacoes: number;
+            prs: number;
+            promocoes: number;
+            arquitetura: number;
+            hipoteses: number;
+            /** @description Agentes com ação pendente (aprovações + PRs); não afetado pelo teto de itens. */
+            agentesAguardando: string[];
         };
         PromocaoRecusadaResponseDto: {
             /** @example 01JC2XK9Q7 */
@@ -16854,7 +17089,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BudgetResponseDto"];
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
                 };
             };
             /** @description No token, expired token, or invalid signature. */
@@ -16907,7 +17142,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BudgetResponseDto"];
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
                 };
             };
             /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
@@ -24367,6 +24602,115 @@ export interface operations {
             };
         };
     };
+    BudgetsController_getWorkspaceBudget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Requires `owner` on the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project or session not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_setWorkspaceBudget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertBudgetDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Requires `owner` on the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project or session not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ContainersOverviewController_list: {
         parameters: {
             query?: never;
@@ -24453,6 +24797,51 @@ export interface operations {
             };
             /** @description Project or session not found. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DecisionInboxController_get: {
+        parameters: {
+            query?: {
+                status?: string;
+                since?: string;
+            };
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DecisionInboxResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No role on the workspace. */
+            403: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -17,6 +17,9 @@ import type { components } from './api-types.generated';
 
 export type CatalogoDeAgentes = components['schemas']['CatalogoDeAgentesResponseDto'];
 
+export type DecisionInbox = components['schemas']['DecisionInboxResponseDto'];
+export type WorkspaceBudget = components['schemas']['BudgetMensalResponseDto'];
+
 export type Role = 'owner' | 'maintainer' | 'developer' | 'viewer';
 
 /**

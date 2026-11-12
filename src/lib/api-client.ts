@@ -1,6 +1,7 @@
 import { renovarSessao, tokenAtual } from './auth';
 import { runtimeConfig } from './runtime-config';
 import { childSpan, logger, newTraceContext } from './logger';
+import type { DecisionInbox, WorkspaceBudget } from './api-types';
 import type { LlmCredentialProvider } from './models';
 import type {
   MySpend,
@@ -317,6 +318,12 @@ export const listProjectFolders = (workspaceId: string, path?: string) =>
   get<ProjectFolders>(`/workspaces/${workspaceId}/project-folders${qs({ path })}`);
 export const getWorkspaceSummary = (workspaceId: string) =>
   get<WorkspaceSummary>(`/workspaces/${workspaceId}/summary`);
+/** Caixa de decisões (RN-1195..1199): uma contagem por fila, nunca somadas (RN-467). Papel `viewer`. */
+export const getDecisionInbox = (workspaceId: string) =>
+  get<DecisionInbox>(`/workspaces/${workspaceId}/decision-inbox?status=pending`);
+/** Teto de gasto do workspace (api#108): só o `owner` lê (RN-060). */
+export const getWorkspaceBudget = (workspaceId: string) =>
+  get<WorkspaceBudget>(`/workspaces/${workspaceId}/budget`);
 export const getProjectsStatus = (workspaceId: string) =>
   get<ProjectBlockedStatus[]>(`/workspaces/${workspaceId}/projects-status`);
 export const getProjectsSummary = (workspaceId: string) =>

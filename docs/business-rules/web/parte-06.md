@@ -301,7 +301,7 @@ keywords: [regras de negócio, web]
   não é a mais recente. Nenhuma requisição a mais: as chaves são as que a
   sidebar já assina, e `useActiveExecutionSession` ganha `staleTime` igual ao
   intervalo, para o segundo assinante não refazer a busca ([RN-632](parte-05.md#rn-632)).
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`),
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:101` (`linhaDoTempoNaExecucao`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (decisão fora da janela não vira 0; sessão inteira na janela diz vazio),

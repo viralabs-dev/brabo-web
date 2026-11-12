@@ -1398,7 +1398,7 @@ vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 - **Onde:** `apps/web/src/lib/acoes-da-sessao.ts:76` (`chaveDasAcoesDaSessao`),
   `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:432`
-  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:274`
+  (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:236`
   (`acoesPorSessao`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` (describe "a
   leitura de ações é a mesma do fio": com o fio tendo gravado a cauda, montar a

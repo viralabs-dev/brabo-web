@@ -31,7 +31,9 @@
     "summary_other": "{{count}} agents · {{working}} working · {{waiting}} waiting",
     "autonomyErrorTitle": "Could not change autonomy",
     "rearmSuccess": "Agent rearmed",
-    "rearmErrorTitle": "Could not rearm the agent"
+    "rearmErrorTitle": "Could not rearm the agent",
+    "wakeSuccess": "Looking for a task",
+    "wakeErrorTitle": "Could not wake the agent"
   },
   "timeline": {
     "title": "Team timeline",
@@ -141,6 +143,53 @@
       "titulo": "Start the first ideation",
       "pendente": "Tell the Creative agent your idea — that is where the stories come from.",
       "link": "Open the Creative agent →"
+    }
+  },
+  "proximoPasso": {
+    "titulo": "Next step",
+    "agente": "Wait: {{agente}} is working",
+    "agente_trabalhando": {
+      "texto": "An agent is working in this session.",
+      "link": "Open the session →"
+    },
+    "continuar_ideacao": {
+      "titulo": "Continue the conversation in the session",
+      "texto": "There are no stories in the backlog yet.",
+      "link": "Open the Criativo →"
+    },
+    "confirmar_arquitetura": {
+      "titulo": "Confirm the architecture",
+      "texto": "There are stories, but the module map is missing or has pendencies.",
+      "link": "Open the architecture →"
+    },
+    "ligar_modulo": {
+      "titulo_one": "Link {{count}} task to a module",
+      "titulo_other": "Link {{count}} tasks to a module",
+      "texto": "Nobody picks up a task until it has a module.",
+      "link": "Open the architecture →"
+    },
+    "desbloquear": {
+      "titulo_one": "Unblock {{count}} task",
+      "titulo_other": "Unblock {{count}} tasks",
+      "texto": "A blocked task does not move on its own.",
+      "link": "See the execution →"
+    },
+    "ativar_execucao": {
+      "titulo": "Activate the execution",
+      "texto_one": "{{count}} task ready in the backlog.",
+      "texto_other": "{{count}} tasks ready in the backlog.",
+      "link": "See the execution →"
+    },
+    "acompanhar_execucao": {
+      "titulo": "Follow the execution",
+      "texto_one": "{{count}} task in progress.",
+      "texto_other": "{{count}} tasks in progress.",
+      "link": "See the execution →"
+    },
+    "rodar_entregavel": {
+      "titulo": "Run the deliverable on your machine",
+      "texto": "All tasks are done.",
+      "link": "See how to run →"
     }
   },
   "rodarNaSuaMaquina": {

@@ -1073,6 +1073,9 @@ export interface Task {
   gateCorrectionCount: number;
   /** Módulo do `module_map` a que a tarefa pertence (AT-880); `null` para a sem módulo. */
   module?: string | null;
+  /** AT-912: quando e por quê a tarefa `todo` foi arquivada; a arquivada fica no histórico. */
+  archivedAt?: string | null;
+  archivedReason?: string | null;
   createdAt: string;
   updatedAt: string;
 }

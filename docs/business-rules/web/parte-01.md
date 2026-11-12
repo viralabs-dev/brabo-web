@@ -618,7 +618,7 @@ uma.
 
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:290`
   (`useDestinatarioDoChat`, desde a RN-631),
-  `apps/web/src/lib/api-client.ts:1197` (`getSessionModelBinding`, o
+  `apps/web/src/lib/api-client.ts:1201` (`getSessionModelBinding`, o
   `agentId`), `apps/api/src/interfaces/http/llm/model-bindings.controller.ts:166`
   (`getSessionBinding`, `@Query('agentId')`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`

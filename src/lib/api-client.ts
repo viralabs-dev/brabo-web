@@ -20,6 +20,7 @@ import type {
   Architecture,
   StoryPromotionMode,
   Story,
+  Task,
   AgentArea,
   ParallelizationRequest,
   InfraArtifact,
@@ -1036,6 +1037,13 @@ export const rearmDevAgent = (
   post<{ ok: true }>(
     `/projects/${projectId}/sessions/${sessionId}/agents/${agentId}/rearm`,
   );
+// AT-906: faz o dev ocioso procurar tarefa de novo. 202; fora de `idle` é 409
+// com a frase do engine (`mensagemDaApi` a mostra).
+export const wakeDevAgent = (projectId: string, sessionId: string, agentId: string) =>
+  post<{ ok: true }>(`/projects/${projectId}/sessions/${sessionId}/agents/${agentId}/wake`);
+// AT-912: arquiva tarefa `todo` com motivo obrigatório (409 nomeado se estiver em execução).
+export const archiveTask = (projectId: string, taskId: string, reason: string) =>
+  post<Task>(`/projects/${projectId}/tasks/${taskId}/archive`, { reason });
 
 // --- Proposed actions ---
 

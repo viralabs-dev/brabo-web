@@ -132,3 +132,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/lib/executores-ao-vivo.ts:68` (`motivoDoOcio`), `apps/web/src/lib/api-types.ts:1075` (`Task.module`).
 - **Teste:** `apps/web/src/lib/executores-ao-vivo.test.ts`.
 - **Origem:** AT-880 (EP-031); levantamento de 09/11/2026 (TP-01 28ª).
+
+<a id="rn-1162"></a>
+
+### RN-1162 — A Visão geral diz UM próximo passo do projeto, tirado de uma tabela tipada e ordenada; sem situação verdadeira, o cartão some {#rn-1162}
+
+- **Regra:** depois dos "Primeiros passos" (RN-708) a Visão geral não dizia mais o que fazer. Desde a AT-936 o cartão "Próximo passo" mostra UMA situação, a primeira verdadeira de uma tabela ordenada: (1) primeiro passo pendente da RN-708, (2) agente conversacional trabalhando, (3) continuar a ideação (há sessão e o backlog não tem histórias), (4) confirmar a arquitetura (há histórias e o mapa de módulos falta ou tem pendência), (5) ligar tarefas a um módulo (RN-1085), (6) desbloquear tarefas, (7) ativar a execução (tarefas prontas e execução inativa), (8) acompanhar a execução (execução ativa com tarefa em andamento), (9) rodar o entregável (todas as tarefas não arquivadas concluídas). O passo 1 reusa o texto e o destino da RN-708, sem duplicar a regra. A regra só ORDENA fatos que a aba já lê: nenhuma leitura nova (o orçamento de carga da Visão geral não muda), e insumo ainda não lido é "não sei" (RN-470), então o cartão espera. Decisões pendentes (aprovações, PRs, hipóteses, promoções) ficam de fora de propósito: já são a faixa "Precisa de você" (RN-467). Tarefa arquivada não conta. Sem situação verdadeira o cartão não aparece, sem texto inventado. "Mapa de módulos sem confirmação" não existe como dado no web: vale "mapa ausente ou com pendência".
+- **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:18` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
+- **Teste:** `apps/web/src/lib/proximo-passo.test.ts` (um caso por situação, precedência, "nenhuma" e tarefa arquivada), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (describe "próximo passo": fixture da P10, bloqueada, cartão que some).
+- **Origem:** AT-936 (EP-035); prévia em `13-design/proximo-passo`. Revisa a RN-708: o primeiro passo pendente dela é a situação 1 desta tabela.

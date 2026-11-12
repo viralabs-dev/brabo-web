@@ -27,6 +27,23 @@ inline-only). Nenhum asset binário: todo ícone é SVG inline, e o único asset
 marca é o monograma documentado abaixo — que é **componente, nunca imagem
 rasterizada**.
 
+## v9 — peças novas (ADR 0294)
+
+Cada peça é conferida contra a prévia `13-design/v9-estrutura/`. Decisão: [ADR 0294](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0294-a-estrutura-v9-oito-secoes-com-sub-abas-caixa-de-decisoes-e-agentes-agora.md).
+
+| peça | onde | o que é | não faz |
+|---|---|---|---|
+| `CaixaDeDecisoes` | S07 | filas de vários projetos, um cartão por fila (5) | não soma filas |
+| `FaixaPrecisaDeVoce` | P10 | o item mais urgente e a contagem por fila | não decide sozinha; usa o `ApprovalCard` |
+| `ResumoDeTurno` | P10, C30 | uma linha por turno: agente, passos, "Gravado neste turno", custo | não usa texto do modelo |
+| `PassosDoTurno` | C30, C31 | linha recolhida e lista agrupada ou em ordem | o grupo vem do mapa tipado |
+| `MedidorDeGasto` | cabeçalho, P21 | gasto contra o teto, barra, teto | não estima sem fonte |
+| `AgentesAgora` | sidebar | até 5 agentes com status | não mostra contagem de eventos |
+| `FaixaDeSubAbas` | todas as seções | a mesma de Configurações (ADR 0241) | não vira segundo trilho |
+| `AvatarDeAgente` | todo lugar | quadrado com a cor `--ag-<papel>` | não pinta chip de status |
+
+**Tokens novos:** escala de tipo 14/11/12 e títulos 24/20, `--surface-3` (degrau de hover e item ativo) e `--ag-*` (oito papéis, nos dois temas). Aplicação em `tokens.css`: AT-884.
+
 ## Tipografia — a escala do handoff
 
 As três famílias e o que cada uma carrega. A carga é auto-hospedada

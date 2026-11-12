@@ -19,8 +19,10 @@ import {
 import {
   listAgentAutonomy,
   listModels,
+  mensagemDaApi,
   rearmDevAgent,
   setAgentAutonomy,
+  wakeDevAgent,
 } from '../lib/api-client';
 import { deriveAgentRoster, groupRosterByArea, isExecutorAgentId, isExecutorGroup } from '../lib/agent-status';
 import { contarTarefasPendentes, deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
@@ -253,6 +255,18 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     }
   }
 
+  // AT-906: o 409 do engine (agente fora de `idle`) chega com a frase dele.
+  async function handleWake(agentId: string) {
+    if (!sessionId) return;
+    try {
+      await wakeDevAgent(projectId, sessionId, agentId);
+      await queryClient.invalidateQueries({ queryKey: ['session-events', projectId, sessionId] });
+      showToast({ title: t('tab.toast.woken'), tone: 'success' });
+    } catch (erro) {
+      showToast({ title: t('tab.toast.wakeError'), message: mensagemDaApi(erro), tone: 'danger' });
+    }
+  }
+
   // Sem `semRespiro` no registro: a moldura do `ProjectPage` já dá os 24px de
   // respiro e a rolagem própria (`.body`, `ProjectPage.module.css`) — reusar
   // `styles.main` aqui (que tem os MESMOS dois ajustes, pensados para dentro
@@ -408,6 +422,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
               onToggleArea={toggleArea}
               onAutonomyChange={handleAutonomyChange}
               onRearm={handleRearm}
+              onWake={handleWake}
             />
           )}
 

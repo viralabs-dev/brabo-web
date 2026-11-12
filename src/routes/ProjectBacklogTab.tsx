@@ -9,6 +9,7 @@ import {
 } from '../lib/hooks';
 import {
   archiveStory,
+  archiveTask,
   mensagemDaApi,
   promoteStories,
   returnStory,
@@ -21,7 +22,7 @@ import { useHistoriaInicial } from '../lib/historia-inicial';
 import { Checkbox } from '../components/shadcn/checkbox';
 import { Item, ItemGroup } from '../components/shadcn/item';
 import { Input } from '../components/ui/Input';
-import type { Epic, Story, StoryStatus } from '../lib/api-types';
+import type { Epic, Story, StoryStatus, Task } from '../lib/api-types';
 import { Badge, type BadgeTone } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Ajuda } from '../components/ui/Ajuda';
@@ -75,6 +76,8 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   // WORKSPACE, com a lacuna declarada da RN-471 (o de projeto pode sobrepor).
   const { data: workspaceComPapel } = useCurrentWorkspaceWithRole();
   const podeEscrever = roleAtLeast(workspaceComPapel?.role, 'developer');
+  // AT-912: arquivar tarefa é gesto do dono (o Dev Lead arquiva a que ele criou, pela ferramenta).
+  const podeArquivarTarefa = roleAtLeast(workspaceComPapel?.role, 'owner');
   const { data: coverage } = useCoverage(projectId);
   const propostas = aguardandoPromocao(epics);
 
@@ -95,6 +98,7 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
               epic={epic}
               projectId={projectId}
               podeEscrever={podeEscrever}
+              podeArquivarTarefa={podeArquivarTarefa}
             />
           ))
         )}
@@ -331,10 +335,12 @@ function EpicNode({
   epic,
   projectId,
   podeEscrever,
+  podeArquivarTarefa,
 }: {
   epic: Epic;
   projectId: string;
   podeEscrever: boolean;
+  podeArquivarTarefa: boolean;
 }) {
   const { t } = useTranslation('backlog');
   const [open, setOpen] = useState(true);
@@ -366,6 +372,7 @@ function EpicNode({
               story={story}
               projectId={projectId}
               podeEscrever={podeEscrever}
+              podeArquivarTarefa={podeArquivarTarefa}
             />
           ))}
         </div>
@@ -378,10 +385,12 @@ function StoryNode({
   story,
   projectId,
   podeEscrever,
+  podeArquivarTarefa,
 }: {
   story: Story;
   projectId: string;
   podeEscrever: boolean;
+  podeArquivarTarefa: boolean;
 }) {
   const { t } = useTranslation('backlog');
   const queryClient = useQueryClient();
@@ -497,15 +506,7 @@ function StoryNode({
           {story.tasks.length > 0 && (
             <ItemGroup className={styles.tasks}>
               {story.tasks.map((task) => (
-                <Item key={task.id} size="sm" className={styles.task} data-task-state={estadoDaTarefa(task)}>
-                  <Badge tone={TASK_STATE_TONE[estadoDaTarefa(task)]}>
-                    {t(TASK_STATE_LABEL_KEY[estadoDaTarefa(task)])}
-                  </Badge>{' '}
-                  {task.title}
-                  {task.blocked && task.blockedReason && (
-                    <div className={styles.taskBlockedReason}>{task.blockedReason}</div>
-                  )}
-                </Item>
+                <TarefaDoBacklog key={task.id} task={task} projectId={projectId} podeArquivar={podeArquivarTarefa} />
               ))}
             </ItemGroup>
           )}
@@ -612,5 +613,89 @@ function FieldList({ label, items }: { label: string; items: string[] }) {
         ))}
       </ul>
     </div>
+  );
+}
+
+/**
+ * AT-912: a tarefa do backlog. A `todo` ganha "Arquivar" com motivo obrigatório (só para o dono);
+ * a arquivada fica no histórico, riscada e com o motivo. A api recusa a que tem agente (409 nomeado).
+ */
+function TarefaDoBacklog({
+  task,
+  projectId,
+  podeArquivar,
+}: {
+  task: Task;
+  projectId: string;
+  podeArquivar: boolean;
+}) {
+  const { t } = useTranslation('backlog');
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const [arquivando, setArquivando] = useState(false);
+  const [motivo, setMotivo] = useState('');
+  const [ocupado, setOcupado] = useState(false);
+  const arquivada = Boolean(task.archivedAt);
+  const estado = arquivada ? 'archived' : estadoDaTarefa(task);
+
+  async function confirmar() {
+    if (ocupado || motivo.trim() === '') return;
+    setOcupado(true);
+    try {
+      await archiveTask(projectId, task.id, motivo.trim());
+      setArquivando(false);
+      await queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
+      showToast({ title: t('taskNode.toast.archived'), tone: 'success' });
+    } catch (erro) {
+      showToast({ title: t('taskNode.toast.archiveError'), message: mensagemDaApi(erro), tone: 'danger' });
+    } finally {
+      setOcupado(false);
+    }
+  }
+
+  return (
+    <Item size="sm" className={styles.task} data-task-state={estado}>
+      <Badge tone={arquivada ? 'muted' : TASK_STATE_TONE[estadoDaTarefa(task)]}>
+        {t(arquivada ? 'taskState.archived' : TASK_STATE_LABEL_KEY[estadoDaTarefa(task)])}
+      </Badge>{' '}
+      {arquivada ? <s>{task.title}</s> : task.title}
+      {arquivada && task.archivedReason && (
+        <div className={styles.taskBlockedReason}>{t('taskNode.archivedReason', { motivo: task.archivedReason })}</div>
+      )}
+      {!arquivada && task.blocked && task.blockedReason && (
+        <div className={styles.taskBlockedReason}>{task.blockedReason}</div>
+      )}
+      {!arquivada && podeArquivar && task.status === 'todo' && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setMotivo('');
+            setArquivando(true);
+          }}
+        >
+          <Archive aria-hidden="true" />
+          {t('taskNode.archive')}
+        </Button>
+      )}
+      {arquivando && (
+        <Modal title={t('taskNode.archiveModalTitle', { title: task.title })} onClose={() => setArquivando(false)}>
+          <p className={styles.description}>{t('taskNode.archiveExplain')}</p>
+          <Textarea
+            label={t('taskNode.archiveReasonLabel')}
+            value={motivo}
+            onChange={(e) => setMotivo(e.target.value)}
+            placeholder={t('taskNode.archiveReasonPlaceholder')}
+          />
+          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+            <Button variant="danger" loading={ocupado} disabled={motivo.trim() === ''} onClick={confirmar}>
+              {t('taskNode.archiveConfirm')}
+            </Button>
+            <Button variant="ghost" onClick={() => setArquivando(false)}>
+              {t('storyNode.cancel')}
+            </Button>
+          </div>
+        </Modal>
+      )}
+    </Item>
   );
 }

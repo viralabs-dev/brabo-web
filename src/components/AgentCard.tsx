@@ -1,7 +1,7 @@
 import { Disclosure } from './ui/Disclosure';
 import { useState, type CSSProperties } from 'react';
 import { useCatalogoDeAgentes } from '../lib/agent-catalog-queries';
-import { Hand, Plane, RotateCcw } from 'lucide-react';
+import { Hand, Plane, RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentDef } from '../lib/agents';
 import { BranchIcon, ModelIcon } from './ui/icons';
@@ -69,6 +69,8 @@ interface AgentCardProps {
    * toggle de autonomia, a única precedente, aparece incondicional).
    */
   onRearm?: () => void;
+  /** AT-906: faz o dev ocioso procurar tarefa de novo; só renderiza com `status === 'ocioso'`. */
+  onWake?: () => void;
   /** Liga as seções de instruções e ferramentas (AT-686); sem elas, o card fica como era. */
   projectId?: string;
   agentSlug?: string;
@@ -90,6 +92,7 @@ export function AgentCard({
   badge,
   compact,
   onRearm,
+  onWake,
   projectId,
   agentSlug,
 }: AgentCardProps) {
@@ -187,6 +190,14 @@ export function AgentCard({
         <div className={styles.autonomy}>
           <BotaoDeIcone type="button" variant="secondary" legenda={t('agentCard.rearm')} onClick={onRearm}>
             <RotateCcw aria-hidden="true" />
+          </BotaoDeIcone>
+        </div>
+      )}
+      {status === 'ocioso' && onWake && (
+        <div className={styles.autonomy}>
+          <BotaoDeIcone type="button" variant="secondary" onClick={onWake}>
+            <Search aria-hidden="true" />
+            {t('agentCard.wake')}
           </BotaoDeIcone>
         </div>
       )}

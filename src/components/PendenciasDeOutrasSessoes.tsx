@@ -13,7 +13,7 @@ import {
 import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
 import { usePrsProntas } from '../lib/prs-prontas';
 import { useAgentesTravados } from '../lib/agentes-travados-query';
-import { assinaturaDoBacklog, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
+import { assinaturaDoBacklog, tarefasBloqueadas, tarefasSemModulo } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
@@ -36,7 +36,7 @@ import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
 
-type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados';
+type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados' | 'semModulo';
 
 /** Nenhum evento local: estas ações são sempre de OUTRA sessão (AT-340). */
 const SEM_EVENTOS_LOCAIS: readonly never[] = [];
@@ -109,6 +109,7 @@ export function PendenciasDeOutrasSessoes({
   >({});
   const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
+  const semModulo = filasDoChat ? tarefasSemModulo(backlogQuery.data) : [];
   // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
   // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
   const { sessionId: execucaoId, travados } = useAgentesTravados(filasDoChat ? projectId : undefined);
@@ -211,6 +212,7 @@ export function PendenciasDeOutrasSessoes({
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
     travados.length === 0 &&
+    semModulo.length === 0 &&
     perguntas.length === 0 &&
     respondidas.length === 0
   )
@@ -359,9 +361,10 @@ export function PendenciasDeOutrasSessoes({
     prontas: prontas.length,
     bloqueadas: bloqueadas.length,
     travados: travados.length,
+    semModulo: semModulo.length,
     perguntas: totalDePerguntas,
   };
-  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
+  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
@@ -409,7 +412,7 @@ export function PendenciasDeOutrasSessoes({
           onValueChange={(v) => setAberta((v[0] as ChaveDeFila | undefined) ?? null)}
         >
           <Ajuda assunto={t('pendencias.abas')}>{t('pendencias.nota')}</Ajuda>
-          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
+          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
             .filter((chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0))
             .map((chave) => (
               <ToggleGroupItem key={chave} value={chave}>
@@ -554,6 +557,24 @@ export function PendenciasDeOutrasSessoes({
                 pagina={pBloqueadas}
                 aoMudar={irParaPagina('bloqueadas')}
               />
+            </section>
+          ))}
+          {painel('semModulo', semModulo.length > 0 && (
+            <section
+              className={styles.fila}
+              aria-label={t('pendencias.filas.semModulo')}
+              data-testid="fila-tarefas-sem-modulo"
+            >
+              <h4 className={styles.filaTitulo}>
+                {t('pendencias.filas.semModulo')}
+                <span className={styles.contagem}>{semModulo.length}</span>
+              </h4>
+              {semModulo.map((task) => (
+                <div key={task.id} className={styles.grupo} data-testid="tarefa-sem-modulo">
+                  <div className={styles.origem}>{task.title}</div>
+                  <p className={styles.nota}>{t('pendencias.semModulo.motivo')}</p>
+                </div>
+              ))}
             </section>
           ))}
           {painel('travados', travados.length > 0 && (

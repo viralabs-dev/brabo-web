@@ -301,6 +301,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/graph/projects/{projectId}/modules/{nome}/impacto": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Impact of a module, from the project memory graph
+         * @description Who depends on the module, what it depends on, what it exposes, which decisions cite it and the contract version (RN-1166). 404 if the module is not in the graph; 503 if the graph is off.
+         */
+        get: operations["InternalGraphController_impactoDoModulo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/graph/prompt-templates": {
         parameters: {
             query?: never;
@@ -1359,6 +1379,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/sessions/{sessionId}/tasks/{taskId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archives a `todo` task the Dev Lead created
+         * @description Required reason; writes `backlog.task_archived` with the Dev Lead as actor. A task created by someone else (the PO, the user) is a named 409.
+         */
+        post: operations["InternalSessionsController_archiveTaskRoute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/sessions/{sessionId}/tasks/{taskId}/block": {
         parameters: {
             query?: never;
@@ -1607,7 +1647,7 @@ export interface paths {
         };
         /**
          * Lists the PENDING actions of the whole project, across any session
-         * @description `status` is `pending` (the default) or `failed`. `actionType` filters by type — e.g. `git_merge`, for the PRs tab to find the merge proposal for a PR without knowing which session created it. `status=failed` REQUIRES `actionType` and lists the actions whose execution failed — the PRs tab reads the last refused merge of each PR from it (a merge conflict carries `executionResult.conflictingFiles`).
+         * @description `status` is `pending` (the default), `failed` or `decided`. `decided` lists what is no longer pending (approved, denied with `rejectionReason`, `auto_approved`, executed, failed) changed since `since` (ISO date, default 24 h ago), newest first, max 100 (RN-1154). `actionType` filters by type — e.g. `git_merge`, for the PRs tab to find the merge proposal for a PR without knowing which session created it. `status=failed` REQUIRES `actionType` and lists the actions whose execution failed — the PRs tab reads the last refused merge of each PR from it (a merge conflict carries `executionResult.conflictingFiles`).
          */
         get: operations["ProjectActionsController_list"];
         put?: never;
@@ -1692,7 +1732,7 @@ export interface paths {
         get: operations["AgentAutonomyController_list"];
         /**
          * Sets an agent's autonomy for an action type
-         * @description Upsert by (agent, type). It does NOT override `permissions.json`: a pattern already in `deny` stays blocked no matter how much autonomy is granted here. `actionType: "*"` is "auto mode" (RN-153) — autonomy for ANY action type of this agent; a specific rule recorded afterwards still wins over the wildcard for that type.
+         * @description Upsert by (agent, type). It does NOT override `permissions.json`: a pattern already in `deny` stays blocked no matter how much autonomy is granted here. `actionType: "*"` is "auto mode" (RN-153) — autonomy for ANY action type of this agent; a specific rule recorded afterwards still wins over the wildcard for that type. Turning on the wildcard `auto_approve` re-evaluates the agent's pending actions (RN-1103).
          */
         put: operations["AgentAutonomyController_set"];
         post?: never;
@@ -3365,6 +3405,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/projects/{projectId}/sessions/{sessionId}/agents/{agentId}/wake": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Makes an idle dev agent look for a task again
+         * @description The engine delivers the wake to the agent and `dev.wake_requested` is recorded. Only an `idle` agent: any other state is a named 409 with the engine's sentence (never a 500).
+         */
+        post: operations["ExecutionController_wake"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/projects/{projectId}/sessions/{sessionId}/agents/arquiteto/handoff-infra": {
         parameters: {
             query?: never;
@@ -3775,7 +3835,7 @@ export interface paths {
         put?: never;
         /**
          * Unblocks a blocked task
-         * @description Resets the gate correction counter and hands the task back to the agent. It is the human escape hatch for the correction cap — there is no automatic unblock.
+         * @description Resets the gate correction counter and hands the task back to the agent. It is the human escape hatch for the correction cap — there is no automatic unblock. The optional body `orientacao` (up to 2000 characters, RN-1124) goes to the dev with the task and wins over the last gate report.
          */
         post: operations["ExecutionController_unblock"];
         delete?: never;
@@ -3958,6 +4018,26 @@ export interface paths {
          * @description The human step that `manual` mode (default since Phase 12c) hands back to the user: until promotion, NO task from the story is pickable by any dev agent. Promoting releases the batch of tasks at once and wakes up the idle agents of the module (Phase 12b). The batch is NOT all-or-nothing — whatever didn't pass comes back as `failed` with the reason, and whatever passed is promoted.
          */
         post: operations["BacklogController_promote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/tasks/{taskId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archives a `todo` task, with a required reason (AT-912)
+         * @description The task leaves the claim, the parallelization count, the stalled-execution check and the dependencies; nothing is deleted and `backlog.task_archived` records who and why. Only a `todo` task (blocked or not).
+         */
+        post: operations["BacklogController_archiveTaskRoute"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5414,6 +5494,22 @@ export interface components {
             /** @example Duplicate of "Register a user". */
             reason?: string;
         };
+        ArchiveTaskDto: {
+            /**
+             * @description Required; recorded in `backlog.task_archived`.
+             * @example Duplicate foundation task.
+             */
+            reason: string;
+        };
+        ArchiveTaskInternalDto: {
+            /**
+             * Format: uuid
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: string;
+            /** @example Duplicate foundation task. */
+            reason: string;
+        };
         AreaDeAgentesResponseDto: {
             /** @example 01JC4Z8QK3M7YV2N5T9B0PXHRA */
             id: string;
@@ -6641,6 +6737,13 @@ export interface components {
              * @example pt-BR
              */
             language?: string;
+            /**
+             * @description Cap per dev agent task, in micro-USD. Changing it on PATCH also reaches the live dev agents, from the next lap of each task, with no reactivation (RN-1142). The engine call is best-effort: if it fails the project change stands.
+             * @example 500000
+             */
+            taskBudgetMicros?: number;
+            /** @description Model ladder of the project (RN-1143). Omitted uses the default (Haiku 5.5 → Sonnet 5). */
+            modelEscalation?: components["schemas"]["EscadaDeModelosDto"];
         };
         CreateSessionDto: {
             /**
@@ -6725,6 +6828,11 @@ export interface components {
             title: string;
             /** @example Accepts SKU and quantity; validates stock. */
             description?: string;
+            /**
+             * @description Module of the task; must be one of the story modules (400 otherwise). Omitted, a story with a single module lends it; with several the task is born without a module and waits for the execution plan.
+             * @example api
+             */
+            module?: string;
             /**
              * @description Agent creating the task; becomes the actor of the event.
              * @default po
@@ -6889,6 +6997,12 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        DecisaoCitandoDto: {
+            /** @example 0123 */
+            id: string;
+            /** @example ADR 0123 — pedidos em fila */
+            titulo: string;
+        };
         DecisaoDeImagemResponseDto: {
             /**
              * @description OCI reference with an explicit TAG or digest. `latest` is refused: the artifact needs to say the same thing six months from now.
@@ -6921,6 +7035,15 @@ export interface components {
             projectId: string;
             /** @description The WHOLE contract list: each call is a new version that replaces the previous one. What a module CONSUMES is not here — it is derived from the current module_map's `dependsOn` when read. */
             contratos: components["schemas"]["ContratoDeModuloInternalDto"][];
+        };
+        DegrauDaEscadaDto: {
+            /** @example claude-sonnet-5 */
+            modelId: string;
+            /**
+             * @description Fixed per-task cap (micro-USD) while the agent is on this step.
+             * @example 2000000
+             */
+            taskBudgetMicros: number;
         };
         DelegationResponseDto: {
             /**
@@ -7007,6 +7130,11 @@ export interface components {
             /** Format: date-time */
             decididaEm: string;
         };
+        DevContextDesbloqueioResponseDto: {
+            orientacao: string;
+            /** Format: date-time */
+            em: string;
+        };
         DevContextModuleOpenTaskResponseDto: {
             /** @example 01J0000000000000000000000 */
             id: string;
@@ -7024,6 +7152,14 @@ export interface components {
             title: string;
             /** @example todo */
             status: string;
+        };
+        DevContextUltimoParecerResponseDto: {
+            /** @enum {string} */
+            gate: "qa" | "secops";
+            veredito: string;
+            resumo: string;
+            itens: string[];
+            melhorias: string[];
         };
         DevTaskContextResponseDto: {
             task: components["schemas"]["TaskResponseDto"];
@@ -7045,6 +7181,10 @@ export interface components {
             decisoes: components["schemas"]["DevContextDecisaoResponseDto"][];
             /** @description RN-872 (ADR 0215): the project's OTHER decisions — those whose `afeta` does not touch this task. Separate section, inside the SAME cap of 10 as `decisoes` (task decisions take the cap first), newest first. */
             decisoesDoProjeto: components["schemas"]["DevContextDecisaoResponseDto"][];
+            /** @description The last unblock WITH guidance for this task (RN-1124). The dev follows it over the last gate report. `null` without one. */
+            desbloqueio: components["schemas"]["DevContextDesbloqueioResponseDto"] | null;
+            /** @description The task's last QA/SecOps report with its items (RN-1125/1127); the Dev Lead reads it here. `null` without a report. */
+            ultimoParecer: components["schemas"]["DevContextUltimoParecerResponseDto"] | null;
         };
         DiffLineResponseDto: {
             /**
@@ -7112,6 +7252,10 @@ export interface components {
              * @example 2026-07-25T08:30:00.000Z
              */
             updatedAt: string;
+        };
+        EscadaDeModelosDto: {
+            /** @description Steps from the smallest model to the largest. The agent climbs one step after 2 iteration-limit blocks on the same task (RN-1143). */
+            ladder: components["schemas"]["DegrauDaEscadaDto"][];
         };
         EstadoDoC4DiagramaResponseDto: {
             /**
@@ -7595,6 +7739,22 @@ export interface components {
             network: "none" | "egress";
             resources: components["schemas"]["RecursosDoContainerResponseDto"];
         };
+        ImpactoDoModuloResponseDto: {
+            projectId: string;
+            /** @example pedidos */
+            modulo: string;
+            /** @example node-ts */
+            stack: string | null;
+            commit: string | null;
+            /** @description Versão do contrato (do banco); null sem contrato declarado. */
+            contratoVersao: number | null;
+            /** @description Módulos que dependem deste. */
+            dependentes: string[];
+            /** @description Módulos de que este depende. */
+            dependeDe: string[];
+            expoe: components["schemas"]["InterfaceExpostaDto"][];
+            decisoes: components["schemas"]["DecisaoCitandoDto"][];
+        };
         ImportLlmCredentialDto: {
             /**
              * @example anthropic
@@ -7760,6 +7920,12 @@ export interface components {
             isCurrent: boolean;
             /** @description Diff of this version against the previous one, computed server-side so the UI does not need its own differ. The oldest one is diffed against empty, so it shows up as all-addition. */
             diff: components["schemas"]["TextDiffResponseDto"];
+        };
+        InterfaceExpostaDto: {
+            /** @example criarPedido */
+            assinatura: string;
+            /** @example function */
+            tipo: string | null;
         };
         IssuePatRequestDto: {
             /**
@@ -8022,6 +8188,11 @@ export interface components {
              * @example false
              */
             estimated: boolean;
+            /**
+             * @description Reasoning tokens of the step, when the provider counted them (`token_usage.reasoning_tokens`, RN-1150). Absent otherwise: the screen shows a dash, never zero.
+             * @example 4120
+             */
+            reasoningTokens?: number;
         };
         LocalFolderFileDto: {
             /**
@@ -9443,6 +9614,8 @@ export interface components {
              * @example 3
              */
             maxConsecutiveBlocked: Record<string, never> | null;
+            /** @description Model ladder (RN-1143). `null` uses the default Haiku 5.5 → Sonnet 5. */
+            modelEscalation: components["schemas"]["EscadaDeModelosDto"] | null;
             /**
              * @description Who promotes a story to `ready` (Phase 12c — RN-048). `manual`: the PO proposes and the user decides. `auto`: automatic promotion on creation — the new-project default since RN-659; projects created before it keep whatever value they had.
              * @example auto
@@ -9494,6 +9667,12 @@ export interface components {
             porAgente: components["schemas"]["SpendLinhaResponseDto"][];
             /** @description By catalog AREA of the agent; `sem-area` when none. */
             porArea: components["schemas"]["SpendLinhaResponseDto"][];
+            /** @description By MODEL name (RN-1152). Never by provider (RN-186). */
+            porModelo: components["schemas"]["SpendLinhaResponseDto"][];
+            /** @description By SESSION of the whole project (RN-1152). */
+            porSessao: components["schemas"]["SpendLinhaResponseDto"][];
+            /** @description By day and AGENT (RN-1153). Sparse: only days with a call; the client densifies. */
+            porDiaEAgente: components["schemas"]["SpendDiaDoAgenteResponseDto"][];
         };
         ProjectUnreadEventsResponseDto: {
             /** @example 01JC4Z0000PROJETO0000000001 */
@@ -10113,6 +10292,13 @@ export interface components {
              *     ]
              */
             itens: string[];
+            /**
+             * @description Non-blocking suggestions (RN-1126): they do not reject the PR and do not count as a correction.
+             * @example [
+             *       "Extract the date parsing into a helper"
+             *     ]
+             */
+            melhorias?: string[];
             /**
              * @description With `needs_user_decision`: the new open question (up to 500 chars).
              * @example Should a nonexistent code answer 404?
@@ -10807,6 +10993,11 @@ export interface components {
             inputTokens: number;
             /** @example 14200 */
             outputTokens: number;
+            /**
+             * @description The agent's LLM calls in the session (RN-1151).
+             * @example 35
+             */
+            chamadas: number;
             /** @description The agent's latest call in the session (Jev excluded); null when none. */
             lastCall: components["schemas"]["LastCallResponseDto"] | null;
         };
@@ -10932,6 +11123,29 @@ export interface components {
              * @example false
              */
             technical: boolean;
+            /**
+             * @description Total cost of the session in micro-USD (`token_usage`, RN-1151). 0 when it never spent.
+             * @example 47000
+             */
+            costMicros: number;
+            /**
+             * @description LLM calls of the session.
+             * @example 35
+             */
+            chamadas: number;
+            /**
+             * @description Ids of the agents that spent in the session.
+             * @example [
+             *       "criativo",
+             *       "po"
+             *     ]
+             */
+            agentes: string[];
+            /**
+             * @description Tool-call steps (`tool.call` events) of the session.
+             * @example 12
+             */
+            passos: number;
         };
         SessionPendingWorkResponseDto: {
             /**
@@ -11217,6 +11431,19 @@ export interface components {
         SourceClickResponseDto: {
             /** Format: uuid */
             id: string;
+        };
+        SpendDiaDoAgenteResponseDto: {
+            /**
+             * @description UTC day.
+             * @example 2026-11-11
+             */
+            dia: string;
+            /** @example criativo */
+            agente: string;
+            /** @example 52700 */
+            costMicros: number;
+            /** @example 4 */
+            chamadas: number;
         };
         SpendLinhaResponseDto: {
             /**
@@ -11571,6 +11798,22 @@ export interface components {
             module: Record<string, never> | null;
             /**
              * Format: date-time
+             * @description When the task was archived (AT-912). An archived task leaves the claim, the parallelization count and the dependencies, and stays in the history.
+             * @example null
+             */
+            archivedAt: Record<string, never> | null;
+            /**
+             * @description Why the task was archived (required when archiving).
+             * @example null
+             */
+            archivedReason: Record<string, never> | null;
+            /**
+             * @description The module FOUNDATION task (AT-901, RN-1138): created by the Dev Lead; the claim hands it out before the other tasks of the module.
+             * @example false
+             */
+            fundacao: boolean;
+            /**
+             * Format: date-time
              * @example 2026-07-25T10:00:00.000Z
              */
             createdAt: string;
@@ -11673,6 +11916,13 @@ export interface components {
              */
             status: "created" | "active" | "closing" | "closed" | "closed_abnormally";
         };
+        UnblockTaskDto: {
+            /**
+             * @description Guidance for the dev that takes the task back. It reaches the dev in the task context and wins over the last gate report.
+             * @example The module is composed by another one: do not boot it alone.
+             */
+            orientacao?: string;
+        };
         UnblockTaskInternalDto: {
             /**
              * Format: uuid
@@ -11744,6 +11994,13 @@ export interface components {
              * @example pt-BR
              */
             language?: string;
+            /**
+             * @description Cap per dev agent task, in micro-USD. Changing it on PATCH also reaches the live dev agents, from the next lap of each task, with no reactivation (RN-1142). The engine call is best-effort: if it fails the project change stands.
+             * @example 500000
+             */
+            taskBudgetMicros?: number;
+            /** @description Model ladder of the project (RN-1143). Omitted uses the default (Haiku 5.5 → Sonnet 5). */
+            modelEscalation?: components["schemas"]["EscadaDeModelosDto"];
         };
         UpdateStoryInternalDto: {
             /**
@@ -11778,7 +12035,7 @@ export interface components {
              * @default po
              * @enum {string}
              */
-            agentId: "po" | "dev-lead";
+            agentId: "po" | "dev-lead" | "arquiteto";
             /** @example Return 200 for a past date */
             title?: string;
             /** @example The day agenda accepts a past date. */
@@ -12507,6 +12764,49 @@ export interface operations {
             };
             /** @description Service token missing or different from the shared one. */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalGraphController_impactoDoModulo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                nome: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImpactoDoModuloResponseDto"];
+                };
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Module not in the project graph. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Neo4j not configured or unreachable — no fallback possible for reading/writing a template. */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -14855,6 +15155,59 @@ export interface operations {
             };
         };
     };
+    InternalSessionsController_archiveTaskRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArchiveTaskInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description Invalid body. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `tarefa_arquivada`, `tarefa_em_execucao` or `tarefa_de_outro_autor`. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     InternalSessionsController_blockTask: {
         parameters: {
             query?: never;
@@ -15484,6 +15837,7 @@ export interface operations {
             query?: {
                 status?: string;
                 actionType?: string;
+                since?: string;
             };
             header?: never;
             path: {
@@ -20983,6 +21337,64 @@ export interface operations {
             };
         };
     };
+    ExecutionController_wake: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                sessionId: string;
+                agentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project, session, or task not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The agent is not idle. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     AgentsController_handoffInfra: {
         parameters: {
             query?: never;
@@ -22409,7 +22821,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UnblockTaskDto"];
+            };
+        };
         responses: {
             201: {
                 headers: {
@@ -22418,6 +22834,13 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkResponseDto"];
                 };
+            };
+            /** @description `orientacao` is over 2000 characters. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description No token, expired token, or invalid signature. */
             401: {
@@ -22960,6 +23383,74 @@ export interface operations {
             };
             /** @description Project does not exist. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BacklogController_archiveTaskRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArchiveTaskDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description Empty reason. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `tarefa_arquivada`, `tarefa_em_execucao` (the task has an agent: unblock it or wait for the gate). */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

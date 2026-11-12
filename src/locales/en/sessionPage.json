@@ -359,7 +359,8 @@
       "prontas": "PRs ready to merge",
       "bloqueadas": "Blocked tasks",
       "perguntas": "Open questions",
-      "travados": "Stuck agents"
+      "travados": "Stuck agents",
+      "semModulo": "Tasks without a module"
     },
     "origem_one": "Proposed in session {{hashtag}} · {{tempo}}",
     "origem_other": "{{count}} proposed in session {{hashtag}} · oldest {{tempo}}",
@@ -429,6 +430,9 @@
       "ok": "Agent re-armed: it picks up tasks again.",
       "erro": "Could not re-arm the agent.",
       "semPapel": "Re-arming requires the developer role on the project."
+    },
+    "semModulo": {
+      "motivo": "No module: nobody will pick it up. Assign it through the plan or archive the task in the Backlog tab."
     }
   },
   "mergearNoChat": {
@@ -509,7 +513,8 @@
     "nota": "Rearming takes the agent out of the circuit breaker; unblocking puts the task back in the queue.",
     "semPapel": "Rearming and unblocking require the developer role on the project.",
     "feito": "Done — progress shows up in this thread.",
-    "erroTitulo": "Could not unstick the run"
+    "erroTitulo": "Could not unstick the run",
+    "ciclo": "Deadlock: {{modulo}} waits for {{esperaPor}}, which depends on {{modulo}}. Only the contract or dependsOn changing unblocks it."
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}} \"{{titulo}}\" is ready for you to merge: the gates passed.",

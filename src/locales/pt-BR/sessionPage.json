@@ -326,7 +326,12 @@
     "arquivosVazio": "Nenhum arquivo nas PRs nem nos commits desta sessão ou da execução ligada a ela.",
     "prsNaoLidas_zero": "Todas as PRs foram lidas.",
     "prsNaoLidas_one": "{{count}} PR ficou de fora desta lista (além do limite de leitura, ou o diff não pôde ser lido) — a aba PRs mostra todas.",
-    "prsNaoLidas_other": "{{count}} PRs ficaram de fora desta lista (além do limite de leitura, ou o diff não pôde ser lido) — a aba PRs mostra todas."
+    "prsNaoLidas_other": "{{count}} PRs ficaram de fora desta lista (além do limite de leitura, ou o diff não pôde ser lido) — a aba PRs mostra todas.",
+    "objetivo": "Objetivo",
+    "perguntasAbertas": "Perguntas abertas",
+    "gastoPorAgente": "Gasto por agente",
+    "gastoVazio": "Sem gasto ainda.",
+    "detalhes": "Detalhes da sessão"
   },
   "turno": {
     "artefato": {

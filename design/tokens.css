@@ -139,6 +139,15 @@
   --agent-leve: #b8acdf;
   --agent-frontend: #5fb3a8;
   --agent-secops: #8f9ba3;
+  /* Uma cor por papel (v9, AT-887). qa verde, infra azul, dev teal. */
+  --ag-criativo: #d4a13a;
+  --ag-po: #9d8ad6;
+  --ag-arquiteto: #c8744f;
+  --ag-dev: #5fb3a8;
+  --ag-qa: #3fb68b;
+  --ag-secops: #8f9ba3;
+  --ag-infra: #6aa7d8;
+  --ag-psi: #b8acdf;
   --border: var(--neutro-750);
   --border-strong: var(--neutro-700);
   --code-bg: var(--neutro-950);
@@ -300,6 +309,14 @@
   --agent-leve: #8671c9;
   --agent-frontend: #1f766c;
   --agent-secops: #5f6b73;
+  --ag-criativo: #8a5a0a;
+  --ag-po: #6a50b8;
+  --ag-arquiteto: #a4502c;
+  --ag-dev: #1f766c;
+  --ag-qa: #137a55;
+  --ag-secops: #5f6b73;
+  --ag-infra: #2b6aa0;
+  --ag-psi: #8671c9;
   --border: var(--neutro-200);
   --border-strong: var(--neutro-300);
   --code-bg: var(--neutro-100);

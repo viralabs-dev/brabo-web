@@ -1,16 +1,12 @@
-import { Field, FieldLabel } from '@/components/shadcn/field';
 import { Ajuda } from '../components/ui/Ajuda';
 import { Shimmer } from '../components/ui/Shimmer';
-import { Coins, MessageSquare, Save, Wallet } from 'lucide-react';
+import { Coins, MessageSquare, Wallet } from 'lucide-react';
 import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
+import { TetoDoMes } from '../components/TetoDoMes';
 import { CabecalhoDePagina } from '../components/shadcn/cabecalho-de-pagina';
 import { SectionCards } from '../components/shadcn/section-cards';
-import { Badge } from '../components/shadcn/badge';
 import { Alert, AlertTexto } from '../components/shadcn/alert';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   getMySpend,
@@ -20,14 +16,10 @@ import {
 } from '../lib/api-client';
 import { useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
-import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
 import { hashtagDaSessao } from '../lib/session-label';
 import { numberFmt } from '../lib/currency';
-import type { BudgetPolicy } from '../lib/api-types';
-import { alertaDeOrcamento } from '../lib/spend';
 import { GastoPorDia } from '../components/GastoPorDia';
 import { Ranking } from '../components/SpendCharts';
-import { TokenMeter } from '../components/TokenMeter';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 import { GastoDoTimeNoProjeto, GastoDoWorkspace } from '../components/SpendPaineis';
 import { comoRanking } from '../lib/spend-ranking';
@@ -99,18 +91,7 @@ export function ProjectSpendTab({ projectId }: { projectId: string }) {
   );
 }
 
-/**
- * O bloco "por projeto" (RN-212) — `TokenMeter` PLUGADO, não reimplementado.
- * `tokenThreshold` (`TokenMeter.tsx`) já faz 70/90 virar cor; este bloco só
- * alimenta o componente com o orçamento REAL do projeto.
- *
- * Três leituras, e SILENCIOSA na terceira: carregando (nada, evita piscar
- * antes do papel resolver a audiência de baixo), sem orçamento definido
- * (`data === null` — nota text, sem CTA: esta aba não navega para
- * Configurações), e erro — que aqui é quase sempre 403 de quem não é
- * `maintainer` no PROJETO (papel de WORKSPACE não implica papel de projeto),
- * e por isso não vira banner: seria alarme falso pra maioria dos membros.
- */
+/** O teto do mês do projeto (RN-1200); o do workspace é do owner, na S06. */
 function OrcamentoDoProjeto({
   projectId,
   podeEditar,
@@ -118,130 +99,14 @@ function OrcamentoDoProjeto({
   projectId: string;
   podeEditar: boolean;
 }) {
-  const { t } = useTranslation('spend');
-  const budget = useQuery({
-    queryKey: ['budget', projectId],
-    queryFn: () => getProjectBudget(projectId),
-    staleTime: FRESCOR_DA_CONFIGURACAO_MS,
-  });
-
-  // O editor aparece mesmo sem orçamento (é onde ele nasce) e mesmo sem papel
-  // (inerte, com o motivo em texto — o papel lido é o do WORKSPACE, a lacuna
-  // declarada de RN-471; quem recusa de verdade é a api).
-  const editor = (
-    <EditorDoOrcamento
-      projectId={projectId}
+  return (
+    <TetoDoMes
+      escopo="projeto"
+      queryKey={['budget', projectId]}
+      ler={() => getProjectBudget(projectId)}
+      gravar={(input) => setProjectBudget(projectId, input)}
       podeEditar={podeEditar}
-      atual={budget.data ?? null}
     />
-  );
-
-  if (budget.isLoading) return null;
-  if (budget.isError) return podeEditar ? editor : null;
-  if (!budget.data) {
-    return (
-      <div className={styles.orcamentoProjeto}>
-        <Badge variant="outline">{t('budget.notConfigured')}</Badge>
-        <p className={styles.nota}>{t('budget.notSet')}</p>
-        {editor}
-      </div>
-    );
-  }
-
-  const alerta = alertaDeOrcamento(budget.data);
-
-  return (
-    <div className={styles.orcamentoProjeto}>
-      <TokenMeter
-        unitLabel="USD"
-        used={budget.data.spentMicros / 1_000_000}
-        limit={budget.data.limitMicros / 1_000_000}
-        costBRL={0}
-        costUSD={budget.data.spentMicros / 1_000_000}
-      />
-      {alerta && (
-        <Alert variant={alerta.nivel === 'danger' ? 'danger' : 'warning'} role="alert">
-          <AlertTexto>{alerta.mensagem}</AlertTexto>
-        </Alert>
-      )}
-      {editor}
-    </div>
-  );
-}
-
-/** Grava o teto do projeto (`PUT projects/:pid/budget`, `maintainer`). */
-function EditorDoOrcamento({
-  projectId,
-  podeEditar,
-  atual,
-}: {
-  projectId: string;
-  podeEditar: boolean;
-  atual: { limitMicros: number; policy: BudgetPolicy } | null;
-}) {
-  const { t } = useTranslation('spend');
-  const qc = useQueryClient();
-  const [limite, setLimite] = useState(atual ? String(atual.limitMicros / 1_000_000) : '');
-  const [politica, setPolitica] = useState<BudgetPolicy>(atual?.policy ?? 'block');
-  const [invalido, setInvalido] = useState(false);
-  const salvar = useMutation({
-    mutationFn: (limitUsd: number) => setProjectBudget(projectId, { limitUsd, policy: politica }),
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['budget', projectId] });
-      void qc.invalidateQueries({ queryKey: ['projects-summary'] });
-    },
-  });
-
-  return (
-    <form
-      className={styles.formulario}
-      aria-label={t('budgetEditor.title')}
-      onSubmit={(e) => {
-        e.preventDefault();
-        const valor = Number(limite.replace(',', '.'));
-        if (!Number.isFinite(valor) || valor <= 0) {
-          setInvalido(true);
-          return;
-        }
-        setInvalido(false);
-        salvar.mutate(valor);
-      }}
-    >
-      <Input
-        label={t('budgetEditor.limitLabel')}
-        inputMode="decimal"
-        value={limite}
-        disabled={!podeEditar}
-        onChange={(e) => setLimite(e.target.value)}
-      />
-      <div className={styles.grupoTeto}>
-      <Field>
-        <FieldLabel htmlFor="politica-do-teto">{t('budgetEditor.policyLabel')}</FieldLabel>
-        <Select
-          id="politica-do-teto"
-          value={politica}
-          disabled={!podeEditar}
-          onChange={(e) => setPolitica(e.target.value as BudgetPolicy)}
-        >
-          <option value="block">{t('budgetEditor.block')}</option>
-          <option value="allow">{t('budgetEditor.allow')}</option>
-        </Select>
-      </Field>
-      <div className={styles.acoes}>
-        <Button
-          type="submit"
-          disabled={!podeEditar || salvar.isPending}
-          legenda={salvar.isPending ? t('budgetEditor.saving') : t('budgetEditor.save')}
-        >
-          <Save aria-hidden="true" />
-        </Button>
-      </div>
-      </div>
-      {!podeEditar && <p className={styles.nota}>{t('budgetEditor.noRole')}</p>}
-      {invalido && <Alert variant="danger" role="alert"><AlertTexto>{t('budgetEditor.invalid')}</AlertTexto></Alert>}
-      {salvar.isError && <Alert variant="danger" role="alert"><AlertTexto>{t('budgetEditor.error')}</AlertTexto></Alert>}
-      {salvar.isSuccess && <p className={styles.nota} role="status">{t('budgetEditor.saved')}</p>}
-    </form>
   );
 }
 

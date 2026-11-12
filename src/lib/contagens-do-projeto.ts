@@ -53,6 +53,7 @@ export function useContagensDoProjeto(projectId: string | undefined) {
     merges,
     epicos: backlogQuery.data,
     pendenciasDeArquitetura: architectureQuery.data?.pendencies,
+    moduleMap: architectureQuery.data?.moduleMap,
     hipoteses: hypothesesQuery.data,
   };
 }

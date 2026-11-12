@@ -19,6 +19,7 @@ import type { ContainerOverviewItem } from '../lib/api-types';
 import { AcoesDoContainer, EstadoObservadoCelula } from '../components/AcoesDoContainer';
 import { TOM_DO_STATUS } from '../components/AcoesDoContainer.helpers';
 import { Table, type TableColumn } from '../components/ui/Table';
+import { SectionCards } from '@/components/shadcn/section-cards';
 import { Ajuda } from '../components/ui/Ajuda';
 import { podeDecidirCicloDeVida } from './containers-subida';
 import { Badge } from '../components/ui/Badge';
@@ -72,6 +73,22 @@ export function ContainersPage() {
     if (!coluna) return {};
     return { ordem: coluna.getIsSorted(), onOrdenar: () => coluna.toggleSorting() };
   };
+
+  const itens = query.data ?? [];
+  const rodando = itens.filter((i) => i.registrado?.status === 'running');
+  const cpus = rodando.reduce((a, i) => a + (i.registrado?.resources.cpus ?? 0), 0);
+  const memoryMb = rodando.reduce((a, i) => a + (i.registrado?.resources.memoryMb ?? 0), 0);
+  const deTotal = t('metrics.de', { count: itens.length });
+  const metricas = [
+    { rotulo: t('metrics.running'), valor: rodando.length, nota: deTotal },
+    { rotulo: t('metrics.decided'), valor: itens.filter((i) => i.temImagemDecidida).length, nota: deTotal },
+    { rotulo: t('metrics.never'), valor: itens.filter((i) => !i.registrado).length, nota: deTotal },
+    {
+      rotulo: t('metrics.resources'),
+      valor: rodando.length ? t('metrics.resourcesValue', { cpus, memoryMb }) : '—',
+      nota: rodando.length ? undefined : t('metrics.nothing'),
+    },
+  ];
 
   const columns: TableColumn<ContainerOverviewItem>[] = [
     {
@@ -216,6 +233,7 @@ export function ContainersPage() {
 
       {!query.isError && !query.isPending && (
         <>
+          <SectionCards metricas={metricas} />
           <Table
             columns={columns}
             rows={tabela.getRowModel().rows.map((r) => r.original)}

@@ -346,7 +346,18 @@
     "fonteN": "Source {{n}}: {{rotulo}}",
     "consultadoCorte": "showing {{shown}} of {{total}}",
     "passosCount_one": "{{count}} step",
-    "passosCount_other": "{{count}} steps"
+    "passosCount_other": "{{count}} steps",
+    "visao": "Steps view",
+    "agrupados": "Grouped",
+    "emOrdem": "In order",
+    "grupos": {
+      "leu": "Read the context",
+      "desenhou": "Designed",
+      "registrou": "Recorded",
+      "outros": "Other"
+    },
+    "raciocinioTokens_one": "{{count}} token",
+    "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",
@@ -525,5 +536,31 @@
     "verAs_one": "View {{count}}",
     "verAs_other": "View all {{count}}",
     "agoraNao": "Not now"
+  },
+  "resumo": {
+    "gravado": "Recorded this turn: {{itens}}",
+    "tipos": {
+      "regra": "business rule",
+      "decisao": "decision",
+      "pergunta": "open question",
+      "epico": "epic",
+      "historia": "story",
+      "historia_corrigida": "story corrected",
+      "historia_arquivada": "story archived",
+      "tarefa": "task",
+      "tarefa_corrigida": "task corrected",
+      "nota": "note",
+      "artefato": "other artifact",
+      "adr": "ADR proposed",
+      "module_map": "module map",
+      "modulos_de_historia": "module assignment",
+      "imagem": "image decided",
+      "c4": "C4 diagram",
+      "roteamento": "infra routing",
+      "contratos": "module contract",
+      "insight": "insight",
+      "rfc": "RFC proposed",
+      "prototipo": "prototype proposed"
+    }
   }
 }

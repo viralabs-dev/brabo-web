@@ -35,6 +35,9 @@
     },
     "settings": {
       "label": "Configurações"
+    },
+    "permissoes": {
+      "label": "Permissões"
     }
   },
   "sections": {
@@ -59,6 +62,7 @@
     "insights": "Hipóteses",
     "arquitetura": "Arquitetura",
     "spend": "Gastos",
-    "settings": "Configurações"
+    "settings": "Configurações",
+    "permissoes": "Permissões"
   }
 }

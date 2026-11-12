@@ -1,0 +1,8 @@
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+  cursor: pointer;
+}

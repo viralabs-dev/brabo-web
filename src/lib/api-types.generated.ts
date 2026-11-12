@@ -4355,6 +4355,30 @@ export interface paths {
         patch: operations["WorkspacesController_update"];
         trace?: never;
     };
+    "/workspaces/{workspaceId}/budget": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Reads the workspace monthly spend cap and the month spend
+         * @description Owner only (RN-060): the bill is the owner's. Sums every LLM call of every project of the workspace, any actor. Month is UTC (ADR 0296).
+         */
+        get: operations["BudgetsController_getWorkspaceBudget"];
+        /**
+         * Sets the workspace monthly spend cap
+         * @description Dollars in, micro-USD stored. Independent of the project, session and area caps: any one at its limit with `policy=block` refuses the call.
+         */
+        put: operations["BudgetsController_setWorkspaceBudget"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspaceId}/containers": {
         parameters: {
             query?: never;
@@ -5723,6 +5747,62 @@ export interface components {
                 [key: string]: unknown;
             };
         };
+        BudgetMensalResponseDto: {
+            /** @example 01JC4Z0000ORCAMENTO000000001 */
+            id: string;
+            /**
+             * @description Filled in for a project budget; `null` for a session one.
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: Record<string, never> | null;
+            /**
+             * @description The opposite of the above.
+             * @example null
+             */
+            sessionId: Record<string, never> | null;
+            /**
+             * @description Filled in for a workspace budget (ADR 0296).
+             * @example null
+             */
+            workspaceId: Record<string, never> | null;
+            /**
+             * @description First day (UTC) of the month `spentMicros` refers to; `null` for a session budget.
+             * @example 2026-11-01
+             */
+            periodoInicio: Record<string, never> | null;
+            /**
+             * @description Cap in micro-USD (50 USD).
+             * @example 50000000
+             */
+            limitMicros: number;
+            /**
+             * @description Spend in the current month (UTC) in micro-USD; accumulated for a session budget. A stale period reads as 0.
+             * @example 12400000
+             */
+            spentMicros: number;
+            /**
+             * @description `block` refuses the call when it would exceed the cap; `allow` lets it through and only warns.
+             * @example block
+             * @enum {string}
+             */
+            policy: "block" | "allow";
+            /**
+             * @description Highest threshold (70/90/100) already notified. It, not the previous spend, serves as the floor — using the spend would make the same warning fire again on every call after it was crossed.
+             * @example 70
+             */
+            lastThresholdNotified: number;
+            /**
+             * Format: date-time
+             * @example 2026-07-12T08:00:00.000Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @example 2026-07-27T15:00:00.000Z
+             */
+            updatedAt: string;
+            periodo: components["schemas"]["PeriodoDoTetoResponseDto"];
+        };
         BudgetResponseDto: {
             /** @example 01JC4Z0000ORCAMENTO000000001 */
             id: string;
@@ -5737,12 +5817,22 @@ export interface components {
              */
             sessionId: Record<string, never> | null;
             /**
+             * @description Filled in for a workspace budget (ADR 0296).
+             * @example null
+             */
+            workspaceId: Record<string, never> | null;
+            /**
+             * @description First day (UTC) of the month `spentMicros` refers to; `null` for a session budget.
+             * @example 2026-11-01
+             */
+            periodoInicio: Record<string, never> | null;
+            /**
              * @description Cap in micro-USD (50 USD).
              * @example 50000000
              */
             limitMicros: number;
             /**
-             * @description Accumulated spend, in micro-USD.
+             * @description Spend in the current month (UTC) in micro-USD; accumulated for a session budget. A stale period reads as 0.
              * @example 12400000
              */
             spentMicros: number;
@@ -9099,6 +9189,22 @@ export interface components {
         PerfilOptInResponseDto: {
             /** @example false */
             optedOut: boolean;
+        };
+        PeriodoDoTetoResponseDto: {
+            /** @example 2026-11-01 */
+            inicio: string;
+            /**
+             * @description First day of the next month (UTC).
+             * @example 2026-12-01
+             */
+            fim: string;
+            /** @example 18 */
+            diasRestantes: number;
+            /**
+             * @description Linear forecast of the month-end spend (micro-USD); derived, never stored.
+             * @example 31000000
+             */
+            previsaoMicros: number;
         };
         PermissionsFileResponseDto: {
             /**
@@ -16854,7 +16960,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BudgetResponseDto"];
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
                 };
             };
             /** @description No token, expired token, or invalid signature. */
@@ -16907,7 +17013,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["BudgetResponseDto"];
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
                 };
             };
             /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
@@ -24353,6 +24459,115 @@ export interface operations {
             };
             /** @description A workspace with this slug already exists. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_getWorkspaceBudget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Requires `owner` on the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project or session not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BudgetsController_setWorkspaceBudget: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpsertBudgetDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BudgetMensalResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Requires `owner` on the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project or session not found. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

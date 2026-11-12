@@ -29,6 +29,7 @@ const ProjectArchitectureTab = painel(
   'ProjectArchitectureTab',
 );
 const ProjectApprovalsTab = painel(() => import('./ProjectApprovalsTab'), 'ProjectApprovalsTab');
+const PermissoesDoProjeto = painel(() => import('./PermissoesDoProjeto'), 'PermissoesDoProjeto');
 const ProjectInsightsTab = painel(() => import('./ProjectInsightsTab'), 'ProjectInsightsTab');
 const ProjectSpendTab = painel(() => import('./ProjectSpendTab'), 'ProjectSpendTab');
 const ProjectSettingsTab = painel(() => import('./ProjectSettingsTab'), 'ProjectSettingsTab');
@@ -253,6 +254,15 @@ const REGISTRO = [
     count: (c: ContagensDeAba) => c.aprovacoesPendentes || undefined,
     ordem: 33,
   },
+  {
+    key: 'permissoes',
+    secao: 'decisoes',
+    get label() {
+      return i18n.t('tabs.permissoes.label', { ns: 'nav' });
+    },
+    component: PermissoesDoProjeto,
+    ordem: 34,
+  },
   // Grupo "Documentação" — o que registra intenção e conhecimento do
   // produto: Backlog (histórias/épicos) e Arquitetura (Onda 3 — hoje
   // placeholder; é onde o C4 do Arquiteto e o Mapa de Módulos devem
@@ -381,7 +391,7 @@ const SECOES_BASE = [
   { chave: 'sessoes', subs: ['criativo', 'chat'] },
   { chave: 'trabalho', subs: ['backlog', 'executores'] },
   { chave: 'codigo', subs: ['code', 'prs'] },
-  { chave: 'decisoes', subs: ['approvals', 'insights'] },
+  { chave: 'decisoes', subs: ['approvals', 'insights', 'permissoes'] },
   { chave: 'arquitetura', subs: ['arquitetura'] },
   { chave: 'spend', subs: ['spend'] },
   { chave: 'settings', subs: ['settings'] },

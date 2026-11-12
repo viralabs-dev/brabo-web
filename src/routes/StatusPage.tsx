@@ -7,6 +7,7 @@ import { API_URL, ENGINE_URL, fetchHealth } from '../lib/health';
 import { pollQueParaNoErro } from '../lib/query-policy';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
+import { Card } from '../components/ui/Card';
 import { Table, type TableColumn } from '../components/ui/Table';
 
 /**
@@ -51,15 +52,27 @@ function UltimaChecagem({ query }: { query: LinhaDoStatus['query'] }) {
   return <>{formatarInstanteDoStatus(data?.timestamp, i18n.language) ?? t('status.noTimestamp')}</>;
 }
 
+function Latencia({ query }: { query: LinhaDoStatus['query'] }) {
+  const { t } = useTranslation('dashboard');
+  const ms = query.data?.latenciaMs;
+  return <>{ms === undefined ? '—' : t('status.latenciaValor', { ms })}</>;
+}
+
+const INTERVALO_DO_POLL_MS = 5000;
+
 function useHealthQuery(name: string, baseUrl: string) {
   return useQuery({
     queryKey: ['health', name],
-    queryFn: () => fetchHealth(baseUrl),
+    queryFn: async () => {
+      const inicio = performance.now();
+      const saude = await fetchHealth(baseUrl);
+      return { ...saude, latenciaMs: Math.round(performance.now() - inicio) };
+    },
     // AT-302: o poll PARA no erro, como toda query da app — sem isso, um
     // serviço fora virava uma requisição a cada 5 s para sempre. A página
     // volta a perguntar no foco da janela e na remontagem, e o primeiro
     // sucesso retoma o ritmo sozinho.
-    refetchInterval: pollQueParaNoErro(5000),
+    refetchInterval: pollQueParaNoErro(INTERVALO_DO_POLL_MS),
     retry: false,
   });
 }
@@ -82,7 +95,7 @@ export function StatusPage({
   irPara: (rota: string) => void;
   voltarPara: string;
 }) {
-  const { t } = useTranslation('dashboard');
+  const { t, i18n } = useTranslation('dashboard');
   const apiHealth = useHealthQuery('api', API_URL);
   const engineHealth = useHealthQuery('engine', ENGINE_URL);
   const linhas: LinhaDoStatus[] = [
@@ -100,8 +113,20 @@ export function StatusPage({
       ),
     },
     { key: 'estado', label: t('status.columns.status'), render: (l) => <EstadoDoServico query={l.query} /> },
+    { key: 'latencia', label: t('status.columns.latency'), render: (l) => <Latencia query={l.query} /> },
     { key: 'checagem', label: t('status.columns.lastCheck'), render: (l) => <UltimaChecagem query={l.query} /> },
   ];
+
+  const consultas = [apiHealth, engineHealth];
+  const resumo = consultas.some((q) => q.isLoading)
+    ? 'checking'
+    : consultas.every((q) => !q.isError && q.data?.status === 'ok')
+      ? 'ok'
+      : 'erro';
+  const instante = formatarInstanteDoStatus(
+    apiHealth.data?.timestamp ?? engineHealth.data?.timestamp,
+    i18n.language,
+  );
 
   return (
     <main
@@ -114,6 +139,14 @@ export function StatusPage({
       <h1 style={{ fontSize: 28, marginBottom: 'var(--space-4)' }}>
         {t('status.heading')}
       </h1>
+      <Card padding="md" aria-live="polite" style={{ marginBottom: 'var(--space-4)' }}>
+        <strong>{t(`status.resumo.${resumo}`)}</strong>
+        {instante && (
+          <p style={{ margin: 0, color: 'var(--text-secondary)' }}>
+            {t('status.resumo.detalhe', { instante, segundos: INTERVALO_DO_POLL_MS / 1000 })}
+          </p>
+        )}
+      </Card>
       {/* AT-330 (achado N5): em 390px esta era a única página que rolava de
           lado — a tabela empurrava 413px. A rolagem horizontal, se ainda for
           preciso, fica DENTRO deste invólucro, nunca na página; e as células

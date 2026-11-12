@@ -6,7 +6,8 @@
     "account": "Аккаунт",
     "containers": "Контейнеры",
     "providers": "Провайдеры",
-    "spend": "Расходы"
+    "spend": "Расходы",
+    "status": "Статус"
   },
   "account": {
     "title": "Аккаунт",

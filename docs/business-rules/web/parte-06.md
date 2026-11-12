@@ -345,7 +345,7 @@ keywords: [regras de negócio, web]
   com execução de pé, ritmo de projeto quando ligada, [RN-632](parte-05.md#rn-632)).
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:544` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a

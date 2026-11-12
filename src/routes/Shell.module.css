@@ -551,3 +551,13 @@
 
 .menuDoUsuario { min-width: 12rem; }
 .larguraTotal { width: 100%; }
+
+.rotuloDoRodape {
+  margin: 0;
+  padding: var(--space-1) 12px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}

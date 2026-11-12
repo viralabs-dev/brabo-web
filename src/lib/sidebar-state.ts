@@ -16,7 +16,6 @@
 
 export const CHAVE_COLAPSADO = 'brabo.sidebar.collapsed';
 export const CHAVE_PROJETOS_ABERTOS = 'brabo.sidebar.open';
-export const CHAVE_AGENTES_ABERTOS = 'brabo.sidebar.agents';
 export const CHAVE_PROJETO_ATIVO = 'brabo.project';
 export const CHAVE_ABA_ATIVA = 'brabo.tab';
 
@@ -82,14 +81,6 @@ export function gravarProjetosAbertos(ids: Set<string>): void {
  * `${agenteBase}/${instancia}` (uma instância específica aberta dentro do
  * grupo) — mesma barra, ids adaptados.
  */
-export function lerAgentesAbertos(): Set<string> {
-  return lerConjunto(CHAVE_AGENTES_ABERTOS);
-}
-
-export function gravarAgentesAbertos(ids: Set<string>): void {
-  gravarConjunto(CHAVE_AGENTES_ABERTOS, ids);
-}
-
 /** `brabo.project` — o projeto ativo (RN-201). */
 export function lerProjetoAtivo(): string | null {
   return lerString(CHAVE_PROJETO_ATIVO);

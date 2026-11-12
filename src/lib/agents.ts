@@ -164,7 +164,7 @@ export const AGENTS: Record<AgentKey, AgentDef> = {
     name: 'Dev Backend',
     initials: 'BE',
     role: 'Implementação de API e domínio',
-    color: 'var(--success)',
+    color: 'var(--ag-dev)',
     icon: CodeIcon,
   },
   'dev-frontend': {
@@ -180,7 +180,7 @@ export const AGENTS: Record<AgentKey, AgentDef> = {
     name: 'Infra',
     initials: 'IN',
     role: 'Provisionamento e operação',
-    color: 'var(--warning)',
+    color: 'var(--ag-infra)',
     icon: ServerIcon,
   },
   // Subagente da área de Infra (Fase 8c/8d) — gera o pipeline de CI,
@@ -191,7 +191,7 @@ export const AGENTS: Record<AgentKey, AgentDef> = {
     name: 'Workflows',
     initials: 'WF',
     role: 'Pipeline de CI (GitHub Actions / GitLab CI)',
-    color: 'var(--warning)',
+    color: 'var(--ag-infra)',
     icon: DeployIcon,
   },
   qa: {
@@ -199,7 +199,7 @@ export const AGENTS: Record<AgentKey, AgentDef> = {
     name: 'QA',
     initials: 'QA',
     role: 'Verificação e testes',
-    color: 'var(--danger)',
+    color: 'var(--ag-qa)',
     icon: PermissionIcon,
   },
   // Subespecialidades da área de QA (Fase 8b/8d) — delegadas pelo lead
@@ -209,7 +209,7 @@ export const AGENTS: Record<AgentKey, AgentDef> = {
     name: 'QA de Automação',
     initials: 'QA',
     role: 'Suite de testes e coverage_matrix',
-    color: 'var(--danger)',
+    color: 'var(--ag-qa)',
     icon: CodeIcon,
   },
   'qa-performance-seguranca': {
@@ -217,7 +217,7 @@ export const AGENTS: Record<AgentKey, AgentDef> = {
     name: 'QA de Performance e Segurança',
     initials: 'QP',
     role: 'RNFs de performance e apoio de segurança em nível de código',
-    color: 'var(--danger)',
+    color: 'var(--ag-qa)',
     icon: GaugeIcon,
   },
   secops: {

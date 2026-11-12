@@ -13,7 +13,14 @@
     "noAdrs": "尚无提议的 ADR。",
     "pendenciesLabel": "交叉验证待办",
     "reasonNoModule": "未关联模块",
-    "reasonMissingModule": "模块不存在：{{missing}}"
+    "reasonMissingModule": "模块不存在：{{missing}}",
+    "cols": {
+      "module": "模块",
+      "stack": "技术栈",
+      "responsibility": "职责",
+      "dependsOn": "依赖"
+    },
+    "adrWaiting_other": "有 {{count}} 个 ADR 提案等待您批准。"
   },
   "c4": {
     "titleContext": "上下文",

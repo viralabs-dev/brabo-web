@@ -45,3 +45,9 @@
   min-height: 96px;
   height: 96px;
 }
+
+.fluxoDaPr {
+  margin: 16px 0 0;
+  font-size: var(--fs-meta, 12px);
+  color: var(--text-secondary);
+}

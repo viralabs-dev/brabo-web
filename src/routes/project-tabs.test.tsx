@@ -100,6 +100,9 @@ vi.mock('./ProjectBacklogTab', () => ({
 vi.mock('./ProjectInsightsTab', () => ({
   ProjectInsightsTab: () => <div>painel de insights</div>,
 }));
+vi.mock('./PermissoesDoProjeto', () => ({
+  PermissoesDoProjeto: () => <div>painel de permissoes</div>,
+}));
 vi.mock('./ProjectSpendTab', () => ({
   ProjectSpendTab: () => <div>painel de spend</div>,
 }));
@@ -288,7 +291,7 @@ describe('abas do projeto derivam de um registro só', () => {
    * Ondas 2/3.
    */
   it('as abas que o handoff não previu continuam no registro, e a fusão Chat/RAG tirou uma chave', () => {
-    expect(ABAS_DO_PROJETO).toHaveLength(13);
+    expect(ABAS_DO_PROJETO).toHaveLength(14);
     const chaves = ABAS_DO_PROJETO.map((aba) => aba.key);
     expect(chaves).toEqual(
       expect.arrayContaining([
@@ -325,6 +328,7 @@ describe('abas do projeto derivam de um registro só', () => {
       code: ['codigo', 'code'],
       prs: ['codigo', 'prs'],
       approvals: ['decisoes', 'approvals'],
+      permissoes: ['decisoes', 'permissoes'],
       backlog: ['trabalho', 'backlog'],
       arquitetura: ['arquitetura', 'arquitetura'],
       spend: ['spend', 'spend'],

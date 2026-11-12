@@ -13,7 +13,16 @@
     "noAdrs": "Nenhum ADR proposto ainda.",
     "pendenciesLabel": "Pendências de validação cruzada",
     "reasonNoModule": "sem módulo vinculado",
-    "reasonMissingModule": "módulo inexistente: {{missing}}"
+    "reasonMissingModule": "módulo inexistente: {{missing}}",
+    "cols": {
+      "module": "Módulo",
+      "stack": "Stack",
+      "responsibility": "Responsabilidade",
+      "dependsOn": "Depende de"
+    },
+    "adrWaiting_zero": "Nenhuma proposta de ADR espera sua aprovação.",
+    "adrWaiting_one": "Uma proposta de ADR espera sua aprovação.",
+    "adrWaiting_other": "{{count}} propostas de ADR esperam sua aprovação."
   },
   "c4": {
     "titleContext": "Contexto",

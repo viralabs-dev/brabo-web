@@ -26,7 +26,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
   `apps/web/src/routes/SessionPage.tsx:795` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:644`
+  `apps/web/src/routes/session-timeline-montagem.tsx:651`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -136,7 +136,7 @@ keywords: [regras de negócio, web]
   fecho tem o botão; os passos do turno não. A tela reconhece a linha pelo
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:954` (`respostaCortada`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:958` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:439` (`continuarRespostaCortada`),
   `:685` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
@@ -183,8 +183,8 @@ keywords: [regras de negócio, web]
   cima não é arrastado. A causa do topo no aceite do handoff da Infra não foi
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
-- **Onde:** `apps/web/src/routes/project-tabs.ts:332` (`abaDaRota`),
-  `apps/web/src/routes/Shell.tsx:509` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
+  `apps/web/src/routes/Shell.tsx:358` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
   `apps/web/src/components/ModelCatalogSection.module.css` (`.barraDeLote`),
@@ -256,7 +256,7 @@ keywords: [regras de negócio, web]
   bloqueio). Sem sessão no projeto, o mesmo: o motivo vai em texto, nunca só
   no `title` do botão `disabled`, que não abre no Chromium. Se tarefa
   bloqueada deve ou não travar o merge é pergunta do dono, não decidida aqui.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:293` (`avisoDaLinha`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:304` (`avisoDaLinha`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("AT-451: tarefa
   bloqueada com gate pendente NÃO diz que o merge segue disponível")
 - **Origem:** AT-451 (TP-01 de 09/10: "O merge segue disponível — a decisão é
@@ -320,7 +320,7 @@ keywords: [regras de negócio, web]
   lista onde a sessão aparece, que é o caminho de volta a ela. Sessão ainda
   carregando, ou aba publicada de outro projeto, cai em "Chat". Sem leitura
   nova: o tipo já veio com a sessão.
-- **Onde:** `apps/web/src/routes/project-tabs.ts:332` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
   `apps/web/src/lib/session-kind.ts:94` (`usePublicarAbaDaSessao`)
 - **Teste:** `apps/web/src/lib/session-rolagem-fim.test.ts` (criativa marca
   "Criativo"; aba de outro projeto ou inválida não vale)
@@ -835,7 +835,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:636` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1325` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1354` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -1130,7 +1130,7 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 3. **Orçamento.** A aba traz o editor do teto (`PUT projects/:projectId/budget`, `maintainer` pela `roleAtLeast`); abaixo do papel o controle fica inerte e o motivo é dito em texto. O botão "Definir orçamento" do card do projeto abre `?tab=spend` (antes `?tab=settings`, onde nenhuma tela gravava o orçamento).
 4. **Assinatura.** `assinaturaMicros` aparece num destaque separado; linha de modelo marcado `subscription` com custo zero mostra "assinatura — sem preço registrado", nunca "US$ 0".
 
-- **Código:** `apps/web/src/components/SpendPaineis.tsx:153` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:354` (`GastoDoTimeNoProjeto`); `apps/web/src/routes/ProjectSpendTab.tsx:172` (`EditorDoOrcamento`); `apps/web/src/routes/Dashboard.tsx:98` (`onDefineBudget`)
+- **Código:** `apps/web/src/components/SpendPaineis.tsx:153` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:354` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:93` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:98` (`onDefineBudget`)
 - **Teste:** `apps/web/src/routes/SpendPage.test.tsx` (owner × não-owner, sem provider para quem não é owner); `apps/web/src/routes/ProjectSpendTab.test.tsx` (owner só do projeto, membro por agente e área, editor grava, teto inválido e papel baixo recusados)
 - **Origem:** AT-632
 
@@ -1198,8 +1198,8 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
 - **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
-- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:973` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
-- **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:981` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`).
+- **Teste:** `apps/web/src/components/ai-elements/passos-do-turno.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
 - **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 
 <a id="rn-975"></a>

@@ -38,6 +38,9 @@
     },
     "todas": {
       "label": "Todas"
+    },
+    "permissoes": {
+      "label": "Permissões"
     }
   },
   "sections": {
@@ -63,6 +66,7 @@
     "arquitetura": "Arquitetura",
     "spend": "Gastos",
     "settings": "Configurações",
-    "todas": "Todas"
+    "todas": "Todas",
+    "permissoes": "Permissões"
   }
 }

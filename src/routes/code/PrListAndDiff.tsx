@@ -58,6 +58,8 @@ export interface PrListAndDiffProps {
    * (e um clique nele também dispararia o clique da linha).
    */
   renderItemExtra?: (pr: CodePullRequestSummary) => ReactNode;
+  /** As próximas ações do vazio (AT-895): só a aba PRs as passa; Código segue igual. */
+  vazioExtra?: ReactNode;
   /**
    * De qual aba este componente é consumido — decide o TEXTO do bloqueio do
    * portão da imagem (AT-323, RN-646). Ausente é a aba Código, o
@@ -96,6 +98,7 @@ export interface PrListAndDiffProps {
 export function PrListAndDiff({
   projectId,
   renderItemExtra,
+  vazioExtra,
   superficie = 'code',
 }: PrListAndDiffProps) {
   const { t } = useTranslation('code');
@@ -222,6 +225,7 @@ export function PrListAndDiff({
           {filtro !== 'all'
             ? t('diff.noPrsWithState', { state: t(CHAVE_ESTADO_PR[filtro]) })
             : t('diff.noPrsAny')}
+          {vazioExtra}
         </div>
       )}
 

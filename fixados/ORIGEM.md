@@ -6,7 +6,7 @@ byte a byte em 07/11/2026 contra o repo de origem. O histórico do monorepo (`vi
 
 | Arquivo | Origem hoje | Ponto | Usado por |
 |---|---|---|---|
-| `openapi.json` | `brabo-api:docs/reference/openapi.json` | gerado por `pnpm openapi:export` na `dev` do brabo-api em **`119b86db`** (api#97, AT-906/912/913); o `docs/reference/openapi.json` da `dev` ainda estava sem as rotas `wake` e `archive` | `pnpm openapi:types` e `:check` |
+| `openapi.json` | `brabo-api:docs/reference/openapi.json` | `docs/reference/openapi.json` da `dev` do brabo-api em **`9d58fdbf`** (api#108, teto mensal e do workspace) | `pnpm openapi:types` e `:check` |
 | `sempre-permitir.ts` | `brabo-api:src/domain/actions/sempre-permitir.ts` | idêntico ao da `dev` do brabo-api em **`7d94c3b7`** | `sempre-permitir.test.ts` |
 | `decide.ts` | `brabo-api:src/domain/actions/decide.ts` | ainda a cópia do `brabo-legacy` em **`1586158973`**; a api já passou dele (RN-1019, `semMergeLocal`), e a cópia não o importa porque o `external-effect.ts` não vem junto | `aprovacoes.test.ts` |
 | `events.md` | `brabo:docs/reference/events.md` | ainda a cópia do `brabo-legacy` em **`1586158973`**; o `brabo` já seguiu | `activity-catalog.test.ts` |

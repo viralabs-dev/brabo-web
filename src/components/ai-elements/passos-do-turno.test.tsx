@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import '../../lib/i18n';
 import { passosDoTurno } from '../../lib/passos-do-turno';
 import type { SessionEvent } from '../../lib/api-types';
-import { PassosEncerrados } from './passos-encerrados';
+import { PassosDoTurno } from './passos-do-turno';
 
 const ev = (seq: number, type: string, payload: unknown = {}, actor = 'dev'): SessionEvent =>
   ({ id: `e${seq}`, seq, type, actor: { kind: 'agent', id: actor }, payload }) as unknown as SessionEvent;
@@ -15,7 +15,7 @@ describe('passos do turno encerrado (RN-974)', () => {
     const events = [ev(1, 'agent.response'), tr(2, 'a'), tr(3, 'b'), tr(4, 'c'), ev(5, 'agent.response')];
     const passos = passosDoTurno(events, events[4]!);
     expect(passos.map((p) => p.tool)).toEqual(['a', 'b', 'c']);
-    const { container } = render(<PassosEncerrados passos={passos} />);
+    const { container } = render(<PassosDoTurno passos={passos} />);
     expect(container.querySelectorAll('[data-slot="ai-tool"]').length).toBe(0); // recolhido
     fireEvent.click(screen.getByRole('button'));
     expect(container.querySelectorAll('[data-slot="ai-tool"]').length).toBe(3);
@@ -24,11 +24,27 @@ describe('passos do turno encerrado (RN-974)', () => {
 
   it('ok:false aparece como falha e o corte é avisado', () => {
     const events = [tr(1, 'x', false, { resultadoTotal: 5000 }), ev(2, 'agent.response')];
-    render(<PassosEncerrados passos={passosDoTurno(events, events[1]!)} />);
+    render(<PassosDoTurno passos={passosDoTurno(events, events[1]!)} />);
     fireEvent.click(screen.getByRole('button'));
-    fireEvent.click(screen.getAllByRole('button')[1]!);
+    fireEvent.click(screen.getByRole('button', { name: /^x/ }));
     expect(screen.getByRole('alert').textContent).toContain('r-x');
     expect(document.querySelector('[data-slot="ai-tool-truncated"]')).toBeTruthy();
+  });
+
+  it('seletor Agrupados | Em ordem: mesmo conjunto, ordem original e grupos (RN-1185)', () => {
+    const events = [tr(1, 'create_epic'), tr(2, 'listar_backlog'), tr(3, 'read_file'), ev(4, 'agent.response')];
+    const passos = passosDoTurno(events, events[3]!);
+    const { container } = render(<PassosDoTurno passos={passos} duracaoMs={2500} />);
+    expect(container.textContent).toContain('—');
+    expect(container.textContent).toContain('2.5 s');
+    fireEvent.click(screen.getByRole('button', { name: /Turn steps|Passos do turno/ }));
+    const nomes = () => [...container.querySelectorAll('[data-slot="ai-tool"]')].length;
+    expect(container.querySelector('[data-testid="grupo-leu"]')).toBeTruthy();
+    expect(container.querySelector('[data-testid="grupo-outros"]')).toBeTruthy();
+    expect(nomes()).toBe(3);
+    fireEvent.click(screen.getByRole('button', { name: /Em ordem|In order/ }));
+    expect(container.querySelector('[data-testid^="grupo-"]')).toBeNull();
+    expect(nomes()).toBe(3);
   });
 
   it('turno sem ferramenta não ganha passos', () => {

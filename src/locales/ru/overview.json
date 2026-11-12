@@ -13,7 +13,17 @@
     "noAdrs": "ADR пока не предложены.",
     "pendenciesLabel": "Незакрытые вопросы перекрёстной проверки",
     "reasonNoModule": "нет связанного модуля",
-    "reasonMissingModule": "несуществующий модуль: {{missing}}"
+    "reasonMissingModule": "несуществующий модуль: {{missing}}",
+    "cols": {
+      "module": "Модуль",
+      "stack": "Стек",
+      "responsibility": "Ответственность",
+      "dependsOn": "Зависит от"
+    },
+    "adrWaiting_one": "Одно предложение ADR ожидает вашего одобрения.",
+    "adrWaiting_few": "{{count}} предложения ADR ожидают вашего одобрения.",
+    "adrWaiting_many": "{{count}} предложений ADR ожидают вашего одобрения.",
+    "adrWaiting_other": "{{count}} предложения ADR ожидают вашего одобрения."
   },
   "c4": {
     "titleContext": "Контекст",

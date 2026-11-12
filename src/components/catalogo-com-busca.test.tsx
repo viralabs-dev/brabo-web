@@ -198,7 +198,7 @@ describe('"Atualizar catálogo" ao lado da credencial (RN-694)', () => {
     listCredentials.mockResolvedValue([credencial('openrouter')]);
     montar(<CredentialsSection />);
 
-    await screen.findByLabelText('Nova chave de OpenRouter');
+    await screen.findByRole('button', { name: 'Informar nova chave de OpenRouter' });
     await waitFor(() => expect(listModelCatalog).toHaveBeenCalled());
     expect(screen.queryByRole('button', { name: /Atualizar o catálogo/ })).toBeNull();
   });
@@ -222,6 +222,9 @@ describe('"Atualizar catálogo" ao lado da credencial (RN-694)', () => {
     vi.mocked(upsertCredential).mockResolvedValue({} as never);
     montar(<CredentialsSection />);
 
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Informar nova chave de Anthropic' }),
+    );
     fireEvent.change(await screen.findByLabelText('Nova chave de Anthropic'), {
       target: { value: 'chave-de-teste' },
     });

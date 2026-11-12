@@ -38,6 +38,9 @@
     },
     "todas": {
       "label": "全部"
+    },
+    "permissoes": {
+      "label": "权限"
     }
   },
   "sections": {
@@ -63,6 +66,7 @@
     "arquitetura": "架构",
     "spend": "支出",
     "settings": "设置",
-    "todas": "全部"
+    "todas": "全部",
+    "permissoes": "权限"
   }
 }

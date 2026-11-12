@@ -38,6 +38,9 @@
     },
     "todas": {
       "label": "Все"
+    },
+    "permissoes": {
+      "label": "Разрешения"
     }
   },
   "sections": {
@@ -63,6 +66,7 @@
     "arquitetura": "Архитектура",
     "spend": "Расходы",
     "settings": "Настройки",
-    "todas": "Все"
+    "todas": "Все",
+    "permissoes": "Разрешения"
   }
 }

@@ -22,6 +22,7 @@ import { Button } from '../components/ui/Button';
 import { Alert } from '../components/ui/Alert';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { useToast } from '../components/ui/ToastProvider.helpers';
+import { pedirAba } from '../lib/contagens-do-projeto';
 import { PrListAndDiff } from './code/PrListAndDiff';
 import styles from './ProjectPrsTab.module.css';
 
@@ -205,6 +206,16 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
       <PrListAndDiff
         projectId={projectId}
         superficie="prs"
+        vazioExtra={
+          <div className={styles.extraLinha} data-testid="prs-vazio-acoes">
+            <Button variant="secondary" size="sm" onClick={() => pedirAba({ projectId, tab: 'approvals' })}>
+              {t('prsTab.vazio.verAprovacao')}
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => pedirAba({ projectId, tab: 'executores' })}>
+              {t('prsTab.vazio.ativarExecucao')}
+            </Button>
+          </div>
+        }
         renderItemExtra={(pr) => {
           if (pr.state !== 'open') return null;
 
@@ -307,6 +318,9 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
           );
         }}
       />
+      <p className={styles.fluxoDaPr} data-testid="fluxo-da-pr">
+        <b>{t('prsTab.fluxo.titulo')}</b> {t('prsTab.fluxo.passos')} {t('prsTab.fluxo.mergeManual')}
+      </p>
     </div>
   );
 }

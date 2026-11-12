@@ -327,7 +327,6 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           </span>
         </div>
         <AgentTeamGrid
-          projectId={projectId}
           roster={roster}
           groups={overviewGroups}
           events={events}

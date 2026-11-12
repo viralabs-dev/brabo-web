@@ -33,7 +33,7 @@ keywords: [regras de negócio, web]
 ### RN-980 — As Configurações do projeto são uma página por grupo, com os grupos como abas dentro da página; só o grupo aberto monta {#rn-980}
 
 - **Regra:** revisa a [RN-645](parte-05.md#rn-645) no item 3. O sumário lateral deixa de existir: cada grupo do registro (`modelos`, `projeto`, `pessoas`, `avancado`) é uma PÁGINA, e os quatro são ABAS numa faixa no topo da página de Configurações (setas, Home e End; `aria-selected`/`aria-controls`); "Configurações" segue UM item só da barra lateral, sem sub-itens (decisão do dono, 03/11). O endereço é `?tab=settings&group=<grupo>`; Modelos é a página padrão. `?section=` continua valendo: abre a página do grupo da seção e rola até ela, e vence um `group` incoerente; chave aposentada ([RN-911](parte-06.md#rn-911)) ou desconhecida abre Modelos no topo. O grupo é derivado do campo `grupo` do registro, nunca de outra lista. Só as seções do grupo aberto montam, então a carga busca só o que é da página (abrindo em Modelos, no máximo 21 requisições, contra 30; teto em `configuracoes.orcamento.test.tsx`). Os itens 1 e 2 da RN-645 (frescor de um minuto, sem poll) não mudam, e trocar de página dentro do minuto não refaz busca. Trocar de página descarta rascunho não salvo, como trocar de aba.
-- **Onde:** `apps/web/src/routes/settings/sumario.ts:110` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:115` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:63` (`ProjectSettingsTab`).
+- **Onde:** `apps/web/src/routes/settings/sumario.ts:110` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:115` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`).
 - **Teste:** `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (página só com as seções do grupo; todo `?section=` antigo cai no seu grupo; rola até a seção), `apps/web/src/routes/configuracoes.orcamento.test.tsx` (carga de Modelos não busca o resto), `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (a faixa de abas e o teclado).
 - **Origem:** AT-719 (EP-031).
 
@@ -235,3 +235,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/DecisionsPage.tsx` (`DecisionsPage`), `src/components/CaixaDeDecisoes.tsx` (`CaixaDeDecisoes`), `src/lib/caixa-de-decisoes.ts` (`caixaTemAlgo`), `src/routes/Shell.tsx` (`ItemDaCaixa`), `src/routes/ProjectPage.tsx`.
 - **Teste:** `src/routes/DecisionsPage.test.tsx`, `src/routes/DecisionsPage.orcamento.test.tsx`.
 - **Origem:** AT-889 (EP-035), ADR 0294, contrato da AT-928.
+
+<a id="rn-1270"></a>
+
+### RN-1270 — Instruções e ferramentas dos agentes moram em Configurações › Modelos, só leitura, e saem do cartão {#rn-1270}
+
+- **Regra:** desde a AT-937 o catálogo de cada agente (identidade, instrução vigente do projeto e lista de ferramentas) é a seção `agent-catalog` do grupo Modelos, lida de `GET /projects/:projectId/agent-catalog` (`viewer`, sem controle de escrita nem `disabled` por papel, RN-102). A leitura só liga ao abrir um agente (RN-645) e usa a mesma `queryKey ['agent-catalog', projectId]` do composer. O histórico e a reversão de instruções continuam em Avançado (`maintainer`), com um botão na seção que leva até lá. O `AgentCard` perdeu os dois blocos, na Visão geral e na Executores (decisão do dono de 12/11/2026). Sem prévia nova: a divergência da v9 (que não tem a tela de Modelos) fica registrada na AT-897.
+- **Onde:** `src/routes/settings/AgentCatalogSection.tsx:18` (`AgentCatalogSection`), `src/routes/settings/sumario.ts` (`SECOES_DE_CONFIGURACOES`), `src/routes/ProjectSettingsTab.tsx` (`ProjectSettingsTab`), `src/components/AgentCard.tsx` (`AgentCard`).
+- **Teste:** `src/routes/settings/AgentCatalogSection.test.tsx` (lê só ao abrir; `ferramentas: null` não vira "sem ferramentas").
+- **Origem:** AT-937 (EP-035), depende da AT-896 lane F.

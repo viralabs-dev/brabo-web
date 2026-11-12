@@ -578,5 +578,26 @@
     "descartar": "放弃",
     "salvar": "保存",
     "salvando": "保存中…"
+  },
+  "agentCatalog": {
+    "catalog": {
+      "instructions": "Instructions",
+      "tools": "Tools",
+      "identity": "Identity",
+      "projectInstruction": "Project instruction (version {{versao}})",
+      "noProjectInstruction": "This agent has no instruction of its own in this project yet.",
+      "instructionsUnavailable": "Could not read the instructions right now.",
+      "toolsUnavailable": "Could not read the tools right now.",
+      "noTools": "This agent has no tools.",
+      "note": "Full catalog: at each step the model may see only part of it.",
+      "loading": "Loading…",
+      "error": "Could not read this agent's catalog.",
+      "missing_other": "缺少 {{count}} 个字符(文本已截断)",
+      "toolCount_other": "{{count}} 个工具"
+    },
+    "title": "智能体的指令与工具",
+    "eyebrow": "只读",
+    "subtitle": "每个智能体在此项目中获得的内容。查看版本历史或回退指令，请打开“高级”。",
+    "history": "指令历史与回退"
   }
 }

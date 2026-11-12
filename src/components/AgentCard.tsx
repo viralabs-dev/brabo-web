@@ -1,6 +1,4 @@
-import { Disclosure } from './ui/Disclosure';
-import { useState, type CSSProperties } from 'react';
-import { useCatalogoDeAgentes } from '../lib/agent-catalog-queries';
+import type { CSSProperties } from 'react';
 import { Hand, Plane, RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentDef } from '../lib/agents';
@@ -71,9 +69,6 @@ interface AgentCardProps {
   onRearm?: () => void;
   /** AT-906: faz o dev ocioso procurar tarefa de novo; só renderiza com `status === 'ocioso'`. */
   onWake?: () => void;
-  /** Liga as seções de instruções e ferramentas (AT-686); sem elas, o card fica como era. */
-  projectId?: string;
-  agentSlug?: string;
 }
 
 function formatMicros(micros: number): string {
@@ -93,8 +88,6 @@ export function AgentCard({
   compact,
   onRearm,
   onWake,
-  projectId,
-  agentSlug,
 }: AgentCardProps) {
   const { t } = useTranslation('executors');
 
@@ -201,78 +194,6 @@ export function AgentCard({
           </BotaoDeIcone>
         </div>
       )}
-      {projectId && agentSlug && <CatalogoDoAgente projectId={projectId} slug={agentSlug} />}
     </Card>
-  );
-}
-
-// Filho à parte: a query só existe quando o card tem projeto.
-function CatalogoDoAgente({ projectId, slug }: { projectId: string; slug: string }) {
-  const { t } = useTranslation('executors');
-  const [abertas, setAbertas] = useState(false);
-  // Só busca quando uma seção é aberta; as demais leem o mesmo cache.
-  const catalogo = useCatalogoDeAgentes(projectId, abertas);
-  return (
-    <div className={styles.catalog}>
-      {(['instructions', 'tools'] as const).map((secao) => (
-        <Disclosure
-          key={secao}
-          titulo={t(`agentCard.catalog.${secao}`)}
-          onAlternar={(aberto) => aberto && setAbertas(true)}
-        >
-          <SecaoDoCatalogo secao={secao} slug={slug} query={catalogo} />
-        </Disclosure>
-      ))}
-    </div>
-  );
-}
-
-function SecaoDoCatalogo({
-  secao,
-  slug,
-  query,
-}: {
-  secao: 'instructions' | 'tools';
-  slug: string;
-  query: ReturnType<typeof useCatalogoDeAgentes>;
-}) {
-  const { t } = useTranslation('executors');
-  if (query.isError) return <p>{t('agentCard.catalog.error')}</p>;
-  if (!query.data) return <p aria-busy="true">{t('agentCard.catalog.loading')}</p>;
-  // Os dev-<modulo> usam a entrada `dev-*` do catálogo.
-  const a = query.data.agentes.find((x) => x.agente === slug) ??
-    (slug.startsWith('dev-') ? query.data.agentes.find((x) => x.agente === 'dev-*') : undefined);
-  if (secao === 'tools') {
-    if (!a?.ferramentas) return <p>{t('agentCard.catalog.toolsUnavailable')}</p>;
-    if (a.ferramentas.length === 0) return <p>{t('agentCard.catalog.noTools')}</p>;
-    return (
-      <>
-        <p>{t('agentCard.catalog.toolCount', { count: a.ferramentas.length })}. {t('agentCard.catalog.note')}</p>
-        <ul className={styles.scroll}>
-          {a.ferramentas.map((f) => (
-            <li key={f.nome}>
-              <code>{f.nome}</code> {f.descricao}
-            </li>
-          ))}
-        </ul>
-      </>
-    );
-  }
-  const ins = a?.instrucoesDoProjeto;
-  return (
-    <>
-      {a?.identidade ? <p>{a.identidade}</p> : a ? <p>{t('agentCard.catalog.instructionsUnavailable')}</p> : null}
-      {ins ? (
-        <>
-          <p>{t('agentCard.catalog.projectInstruction', { versao: ins.versao })}</p>
-          <pre className={styles.scroll}>{ins.conteudo}</pre>
-          {ins.conteudoTotal !== undefined && (
-            <p>{t('agentCard.catalog.missing', { count: ins.conteudoTotal - ins.conteudo.length })}</p>
-          )}
-        </>
-      ) : (
-        <p>{t('agentCard.catalog.noProjectInstruction')}</p>
-      )}
-    </>
   );
 }

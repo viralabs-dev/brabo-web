@@ -615,15 +615,9 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
-<<<<<<< HEAD
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:444`
   (`movel`), `:463` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:90` (`movel`);
-=======
-  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:291`
-  (`movel`), `:311` (`fecharAoSeguirLink`);
-  `apps/web/src/routes/ProjectPage.tsx:84` (`movel`);
->>>>>>> origin/dev
   `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;

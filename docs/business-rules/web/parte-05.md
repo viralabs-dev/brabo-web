@@ -616,7 +616,7 @@ barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:312`
-  (`movel`), `:463` (`fecharAoSeguirLink`);
+  (`movel`), `:311` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel

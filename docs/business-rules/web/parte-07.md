@@ -244,3 +244,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/settings/AgentCatalogSection.tsx:18` (`AgentCatalogSection`), `src/routes/settings/sumario.ts` (`SECOES_DE_CONFIGURACOES`), `src/routes/ProjectSettingsTab.tsx` (`ProjectSettingsTab`), `src/components/AgentCard.tsx` (`AgentCard`).
 - **Teste:** `src/routes/settings/AgentCatalogSection.test.tsx` (lê só ao abrir; `ferramentas: null` não vira "sem ferramentas").
 - **Origem:** AT-937 (EP-035), depende da AT-896 lane F.
+
+<a id="rn-1280"></a>
+
+### RN-1280 — A Visão geral abre com o que precisa de você e resume cada turno numa linha {#rn-1280}
+
+- **Regra:** a Visão geral abre com a `FaixaPrecisaDeVoce`: o item mais urgente (primeira fila com itens de `montarFilas`) com o MESMO `ApprovalCard` e os mesmos endpoints, e as cinco filas em chips SEPARADOS, nunca somados (RN-467), lidas pela fila do PROJETO (RN-638). "O que aconteceu" alterna Turnos | Eventos: cada turno (`agent.response`) é um `ResumoDeTurno` com o "Gravado neste turno" do engine (RN-731), nunca o texto do modelo; sem `gravadoNoTurno` não há texto e sem `custoMicros` o custo é traço, nunca zero. O Próximo passo e o resumo de arquitetura moram na coluna lateral. A `ExecutionSection`, a árvore da linha do tempo e o `Ajuda` dela saíram (as ações de execução moram em Executores, AT-894).
+- **Onde:** `src/components/FaixaPrecisaDeVoce.tsx` (`FaixaPrecisaDeVoce`), `src/routes/ProjectOverviewTab.tsx` (`ProjectOverviewTab`), `src/components/ResumoDeTurno.tsx` (`ResumoDeTurno`).
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx` (faixa presente; turno sem `gravadoNoTurno` mostra traço).
+- **Origem:** AT-890 (EP-035), ADR 0294.

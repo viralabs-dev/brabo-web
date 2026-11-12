@@ -34,7 +34,9 @@
     "ajustesAria": "Модель, язык ответов и бюджет этой сессии",
     "perguntaDeIdiomaPendente": "есть вопрос о языке ответов",
     "encerrarSessao": "Завершить сессию",
-    "pararTurno": "Остановить ход"
+    "pararTurno": "Остановить ход",
+    "trilha": "Путь сессии",
+    "sessoes": "Сессии"
   },
   "convite": {
     "criativa": {

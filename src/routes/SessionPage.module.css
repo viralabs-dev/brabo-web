@@ -1210,3 +1210,16 @@
 .textoDoAgente {
   max-width: 62ch;
 }
+
+/* Trilha "Sessões / título" acima do título (v9 C30). */
+.trilha {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trilha a {
+  color: inherit;
+}

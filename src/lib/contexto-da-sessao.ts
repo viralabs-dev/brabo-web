@@ -68,3 +68,16 @@ export function gastoPorAgente(events: SessionEvent[]): { actorId: string; usd: 
   }
   return [...por].map(([actorId, usd]) => ({ actorId, usd }));
 }
+
+/** A cadeia de agentes da sessão, na ordem em que cada um apareceu nos eventos já baixados (AT-892, sem leitura nova). */
+export function cadeiaDeAgentes(events: readonly SessionEvent[], rotulo: (id: string) => string | null): string[] {
+  const vistos = new Set<string>();
+  const nomes: string[] = [];
+  for (const e of [...events].sort((a, b) => a.seq - b.seq)) {
+    if (e.actor.kind !== 'agent' || vistos.has(e.actor.id)) continue;
+    vistos.add(e.actor.id);
+    const nome = rotulo(e.actor.id);
+    if (nome) nomes.push(nome);
+  }
+  return nomes;
+}

@@ -34,7 +34,9 @@
     "ajustesAria": "Modelo, idioma das respostas e orçamento desta sessão",
     "perguntaDeIdiomaPendente": "há uma pergunta sobre o idioma das respostas",
     "encerrarSessao": "Encerrar a sessão",
-    "pararTurno": "Parar turno"
+    "pararTurno": "Parar turno",
+    "trilha": "Trilha da sessão",
+    "sessoes": "Sessões"
   },
   "convite": {
     "criativa": {

@@ -34,7 +34,9 @@
     "ajustesAria": "Model, response language and budget for this session",
     "perguntaDeIdiomaPendente": "there is a question about the response language",
     "encerrarSessao": "Close the session",
-    "pararTurno": "Stop turn"
+    "pararTurno": "Stop turn",
+    "trilha": "Session breadcrumb",
+    "sessoes": "Sessions"
   },
   "convite": {
     "criativa": {

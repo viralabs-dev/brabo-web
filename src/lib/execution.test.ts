@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { deriveExecutionProgress, estadoDaTarefa, execucaoParadaDe, execucaoParadaVigente, formatMicros } from './execution';
+import { contarTarefasPendentes, deriveExecutionProgress, estadoDaTarefa, execucaoParadaDe, execucaoParadaVigente, formatMicros } from './execution';
 import type { SessionEvent } from './api-types';
 
 let seq = 0;
@@ -241,12 +241,28 @@ describe('execucaoParadaVigente (RN-1061)', () => {
     expect(execucaoParadaVigente([parada()])).toBe(true);
   });
 
-  it.each(['dev.working', 'dev.rearmed', 'backlog.task_unblocked'])('%s depois do stalled encerra a parada', (tipo) => {
+  it.each(['dev.working', 'dev.rearmed', 'dev.wake_requested', 'backlog.task_unblocked'])('%s depois do stalled encerra a parada', (tipo) => {
     expect(execucaoParadaVigente([parada(), ev(tipo, 'dev-catalogo', {})])).toBe(false);
   });
 
   it('um novo stalled depois do destrave volta a valer; sem stalled é falso', () => {
     expect(execucaoParadaVigente([parada(), ev('dev.rearmed', 'x', {}), parada()])).toBe(true);
     expect(execucaoParadaVigente([ev('dev.idle', 'dev-auth', {})])).toBe(false);
+  });
+});
+
+describe('AT-913 e AT-912', () => {
+  it('a parada traz o ciclo de dependência do engine, e vazio quando não há', () => {
+    const ciclo = { taskId: 't1', modulo: 'agendamento', esperaPor: 'api-http' };
+    const com = execucaoParadaDe([ev('execution.stalled', 'execucao', { tarefasPendentes: 3, ciclosDeDependencia: [ciclo] })]);
+    expect(com?.ciclosDeDependencia).toEqual([ciclo]);
+    const sem = execucaoParadaDe([ev('execution.stalled', 'execucao', { tarefasPendentes: 3 })]);
+    expect(sem?.ciclosDeDependencia).toEqual([]);
+  });
+
+  it('a tarefa arquivada não conta como pendente', () => {
+    const t = (id: string, extra = {}) => ({ id, status: 'todo', ...extra });
+    const epics = [{ stories: [{ tasks: [t('a'), t('b', { archivedAt: '2026-11-11T00:00:00Z' })] }] }] as never;
+    expect(contarTarefasPendentes(epics)).toBe(1);
   });
 });

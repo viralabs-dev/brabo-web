@@ -378,7 +378,9 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
                 ? `${actorLabel} abriu a PR e aguarda o gate`
                 : type === 'dev.rearmed'
                   ? `${actorLabel} rearmou ${payloadField(payload, 'agentId') ?? 'o agente'}`
-                  : `atividade em ${actorLabel}`,
+                  : type === 'dev.wake_requested'
+                    ? `${actorLabel} mandou ${payloadField(payload, 'agentId') ?? 'o agente'} procurar tarefa de novo`
+                    : `atividade em ${actorLabel}`,
     };
   }
   // O bootstrap de Gitflow (achado H). Os cinco tipos caíam no fallback final e
@@ -475,6 +477,16 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
       color: 'var(--danger)',
       bad: true,
       text: `task bloqueada: ${payloadField(payload, 'reason') ?? 'sem motivo registrado'}`,
+    };
+  }
+  // AT-912: tarefa arquivada com motivo; sai da fila e das dependências, fica no histórico.
+  if (type === 'backlog.task_archived') {
+    return {
+      kind: 'commit',
+      icon: CommitIcon,
+      color: 'var(--text-muted)',
+      bad: false,
+      text: `task arquivada: ${payloadField(payload, 'reason') ?? 'sem motivo registrado'}`,
     };
   }
   if (type === 'backlog.task_unblocked') {

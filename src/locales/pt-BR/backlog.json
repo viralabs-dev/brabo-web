@@ -109,6 +109,20 @@
     "todo": "a fazer",
     "inProgress": "em curso",
     "inReview": "em revisão",
-    "done": "concluída"
+    "done": "concluída",
+    "archived": "arquivada"
+  },
+  "taskNode": {
+    "archive": "Arquivar",
+    "archiveModalTitle": "Arquivar a tarefa \"{{title}}\"?",
+    "archiveExplain": "A tarefa sai da fila e das dependências e fica visível no histórico. Só a tarefa a fazer se arquiva.",
+    "archiveReasonLabel": "Motivo (obrigatório)",
+    "archiveReasonPlaceholder": "Ex.: duplicada pela tarefa de outro módulo.",
+    "archiveConfirm": "Arquivar tarefa",
+    "archivedReason": "Motivo: {{motivo}}",
+    "toast": {
+      "archived": "Tarefa arquivada",
+      "archiveError": "Não foi possível arquivar a tarefa"
+    }
   }
 }

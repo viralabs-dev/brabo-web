@@ -31,7 +31,9 @@
     "summary_other": "{{count}} agents · {{working}} working · {{waiting}} waiting",
     "autonomyErrorTitle": "Could not change autonomy",
     "rearmSuccess": "Agent rearmed",
-    "rearmErrorTitle": "Could not rearm the agent"
+    "rearmErrorTitle": "Could not rearm the agent",
+    "wakeSuccess": "Looking for a task",
+    "wakeErrorTitle": "Could not wake the agent"
   },
   "timeline": {
     "title": "Team timeline",

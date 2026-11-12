@@ -97,6 +97,20 @@
     "todo": "to do",
     "inProgress": "in progress",
     "inReview": "in review",
-    "done": "done"
+    "done": "done",
+    "archived": "archived"
+  },
+  "taskNode": {
+    "archive": "Archive",
+    "archiveModalTitle": "Archive the task \"{{title}}\"?",
+    "archiveExplain": "The task leaves the queue and the dependencies and stays visible in the history. Only a to-do task can be archived.",
+    "archiveReasonLabel": "Reason (required)",
+    "archiveReasonPlaceholder": "E.g. duplicated by another module's task.",
+    "archiveConfirm": "Archive task",
+    "archivedReason": "Reason: {{motivo}}",
+    "toast": {
+      "archived": "Task archived",
+      "archiveError": "Could not archive the task"
+    }
   }
 }

@@ -22,7 +22,7 @@ export function contarTarefasPendentes(epics: Epic[] | undefined): number {
   return (epics ?? []).reduce(
     (total, epic) =>
       total +
-      epic.stories.reduce((n, story) => n + story.tasks.filter((t) => t.status !== 'done').length, 0),
+      epic.stories.reduce((n, story) => n + story.tasks.filter((t) => t.status !== 'done' && !t.archivedAt).length, 0),
     0,
   );
 }
@@ -157,9 +157,12 @@ export interface ExecucaoParada {
   agentesTravados: { agentId: string; module?: string }[];
   tarefasBloqueadas: { taskId: string; title?: string; module?: string; reason?: string }[];
   tarefasPendentes: number;
+  /** AT-913 (RN-1088): a tarefa bloqueada do módulo `modulo` espera `esperaPor`, que depende de `modulo`. */
+  ciclosDeDependencia?: { taskId: string; modulo: string; esperaPor: string }[];
 }
 
-const FIM_DA_PARADA = new Set(['dev.working', 'dev.rearmed', 'backlog.task_unblocked']);
+// `dev.wake_requested` (AT-906): o dono mandou o ocioso procurar; o engine o conta como movimento.
+const FIM_DA_PARADA = new Set(['dev.working', 'dev.rearmed', 'dev.wake_requested', 'backlog.task_unblocked']);
 
 /**
  * A parada vigente: o ÚLTIMO evento entre `execution.stalled`, `dev.working`,
@@ -177,6 +180,7 @@ export function execucaoParadaDe(events: SessionEvent[]): ExecucaoParada | null 
         agentesTravados: p.agentesTravados ?? [],
         tarefasBloqueadas: p.tarefasBloqueadas ?? [],
         tarefasPendentes: p.tarefasPendentes ?? 0,
+        ciclosDeDependencia: p.ciclosDeDependencia ?? [],
       };
     }
   }

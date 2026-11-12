@@ -399,7 +399,9 @@
       "semMotivo": "Sem motivo registrado.",
       "semPapel": "Desbloquear exige o papel developer no projeto.",
       "diagnostico": "Diagnóstico",
-      "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear."
+      "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear.",
+      "orientacao": "Orientação para o dev (opcional)",
+      "orientacaoDica": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho."
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",

@@ -1019,9 +1019,13 @@ export const unblockTask = (
   projectId: string,
   sessionId: string,
   taskId: string,
+  // AT-909: orientação opcional (máx. 2000) que o dev lê na volta. PROVISÓRIO:
+  // tipo à mão até a api (R368) entrar na dev e o `openapi:types` ser regenerado.
+  orientacao?: string,
 ) =>
   post<{ ok: true }>(
     `/projects/${projectId}/sessions/${sessionId}/tasks/${taskId}/unblock`,
+    orientacao?.trim() ? { orientacao: orientacao.trim() } : undefined,
   );
 // Rearma um dev agent travado pelo circuit breaker (Fase 12b — RN-047) — a
 // única saída de idle_tripped.

@@ -118,7 +118,9 @@
     "requestDeniedTitle": "Pedido recusado",
     "requestError": "Não foi possível pedir",
     "unblocking": "Desbloqueando…",
-    "unblockNeedsSession": "A sessão ainda está carregando: desbloquear depende dela."
+    "unblockNeedsSession": "A sessão ainda está carregando: desbloquear depende dela.",
+    "unblockGuidance": "Orientação para o dev (opcional)",
+    "unblockGuidanceHint": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho."
   },
   "architectureSummary": {
     "title": "Arquitetura",

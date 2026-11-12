@@ -55,6 +55,7 @@ export interface AgentTeamGridProps {
   onToggleArea: (areaKey: string) => void;
   onAutonomyChange: (agentId: string, actionType: string, mode: AutonomyMode) => void;
   onRearm: (agentId: string) => void;
+  onWake: (agentId: string) => void;
 }
 
 export function AgentTeamGrid({
@@ -71,6 +72,7 @@ export function AgentTeamGrid({
   onToggleArea,
   onAutonomyChange,
   onRearm,
+  onWake,
 }: AgentTeamGridProps) {
   const { t } = useTranslation('executors');
 
@@ -115,6 +117,7 @@ export function AgentTeamGrid({
           curinga?.mode === 'auto_approve' ? t('agentCard.autonomy.autoModeHint') : undefined
         }
         onRearm={r.status === 'travado' ? () => onRearm(r.id) : undefined}
+        onWake={r.status === 'ocioso' ? () => onWake(r.id) : undefined}
         activity={
           r.status === 'travado'
             ? {

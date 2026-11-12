@@ -108,6 +108,22 @@ describe('AgentCard', () => {
     expect(screen.queryByTestId('piloto-detalhe')).toBeNull();
   });
 
+  describe('procurar tarefa de novo (AT-906)', () => {
+    it('só aparece com status ocioso E o handler, e chama onWake ao clicar', () => {
+      const onWake = vi.fn();
+
+      renderCard({ status: 'travado', onWake }).unmount();
+      expect(screen.queryByRole('button', { name: 'Procurar tarefa de novo' })).not.toBeInTheDocument();
+
+      renderCard({ status: 'ocioso' }).unmount();
+      expect(screen.queryByRole('button', { name: 'Procurar tarefa de novo' })).not.toBeInTheDocument();
+
+      renderCard({ status: 'ocioso', onWake });
+      fireEvent.click(screen.getByRole('button', { name: 'Procurar tarefa de novo' }));
+      expect(onWake).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('rearmar (Fase 12b — RN-047)', () => {
     it('só aparece com status travado E o handler — nenhum dos dois sozinho basta', () => {
       const onRearm = vi.fn();

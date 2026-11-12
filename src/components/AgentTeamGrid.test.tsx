@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { AgentTeamGrid } from './AgentTeamGrid';
 import { AGENTS } from '../lib/agents';
 import type { AgentAutonomyRule } from '../lib/api-types';
@@ -16,7 +16,7 @@ afterAll(() => {
 
 const DEV: RosterEntry = { id: 'dev-api', def: AGENTS.criativo, status: 'ocioso' };
 
-function renderGrid(autonomyRules: AgentAutonomyRule[]) {
+function renderGrid(autonomyRules: AgentAutonomyRule[], onWake = vi.fn()) {
   return render(
     <AgentTeamGrid
       roster={[DEV]}
@@ -30,6 +30,7 @@ function renderGrid(autonomyRules: AgentAutonomyRule[]) {
       onToggleArea={vi.fn()}
       onAutonomyChange={vi.fn()}
       onRearm={vi.fn()}
+      onWake={onWake}
     />,
   );
 }
@@ -56,5 +57,14 @@ describe('AgentTeamGrid — frase do modo automático (RN-603)', () => {
     renderGrid([{ agentId: 'dev-api', actionType: 'terminal', mode: 'auto_approve' }]);
     expect(screen.getByRole('button', { name: 'Modo automático' })).toBeInTheDocument();
     expect(screen.queryByText(/inclusive fora da pasta do projeto/)).toBeNull();
+  });
+});
+
+describe('AgentTeamGrid — procurar tarefa de novo (AT-906)', () => {
+  it('o cartão ocioso chama onWake com o id do agente', () => {
+    const onWake = vi.fn();
+    renderGrid([], onWake);
+    fireEvent.click(screen.getByRole('button', { name: 'Procurar tarefa de novo' }));
+    expect(onWake).toHaveBeenCalledWith('dev-api');
   });
 });

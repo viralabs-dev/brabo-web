@@ -33,7 +33,9 @@
     "summary_other": "{{count}} агента · {{working}} работают · {{waiting}} ждут",
     "autonomyErrorTitle": "Не удалось изменить автономность",
     "rearmSuccess": "Агент перезапущен",
-    "rearmErrorTitle": "Не удалось перезапустить агента"
+    "rearmErrorTitle": "Не удалось перезапустить агента",
+    "wakeSuccess": "Ищу задачу",
+    "wakeErrorTitle": "Не удалось разбудить агента"
   },
   "timeline": {
     "title": "Хронология команды",

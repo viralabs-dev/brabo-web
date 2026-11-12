@@ -30,7 +30,9 @@
     "summary_other": "{{count}} 个智能体 · {{working}} 个工作中 · {{waiting}} 个等待中",
     "autonomyErrorTitle": "无法更改自主模式",
     "rearmSuccess": "智能体已重新启用",
-    "rearmErrorTitle": "无法重新启用智能体"
+    "rearmErrorTitle": "无法重新启用智能体",
+    "wakeSuccess": "正在查找任务",
+    "wakeErrorTitle": "无法唤醒智能体"
   },
   "timeline": {
     "title": "团队时间线",

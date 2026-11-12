@@ -376,7 +376,7 @@ function pr(id: string, sourceBranch: string) {
   };
 }
 
-function backlog(tarefas: Record<string, unknown>[]) {
+function backlog(tarefas: Record<string, unknown>[], moduleIds?: string[]) {
   return [
     {
       id: 'e1',
@@ -389,6 +389,7 @@ function backlog(tarefas: Record<string, unknown>[]) {
       stories: [
         {
           id: 's1',
+          moduleIds,
           tasks: tarefas.map((t) => ({
             storyId: 's1',
             description: '',
@@ -518,6 +519,24 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fila).queryByText('o diagnóstico longo')).toBeNull();
     fireEvent.click(within(fila).getByRole('button', { name: /Diagnóstico/ }));
     expect(within(fila).getByText('o diagnóstico longo')).toBeInTheDocument();
+  });
+
+  it('AT-912: a tarefa sem módulo em história de vários módulos aparece, e a de um módulo só não', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a', 'b']));
+    montar();
+    await abrir('Tarefas sem módulo');
+    const fila = await screen.findByTestId('fila-tarefas-sem-modulo');
+    expect(within(fila).getByText('Tarefa 7')).toBeInTheDocument();
+    expect(within(fila).getByText(/Sem módulo: ninguém vai pegar/)).toBeInTheDocument();
+  });
+
+  it('AT-912 (falha): história de um módulo só não gera a fila', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a']));
+    montar();
+    await waitFor(() => expect(listBacklog).toHaveBeenCalled());
+    expect(screen.queryByTestId('fila-tarefas-sem-modulo')).toBeNull();
   });
 
   it('AT-753 (UX-7): a PR que sai da fila dá um aviso; a primeira leitura não avisa nada', async () => {

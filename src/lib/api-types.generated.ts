@@ -1359,6 +1359,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/sessions/{sessionId}/tasks/{taskId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archives a `todo` task the Dev Lead created
+         * @description Required reason; writes `backlog.task_archived` with the Dev Lead as actor. A task created by someone else (the PO, the user) is a named 409.
+         */
+        post: operations["InternalSessionsController_archiveTaskRoute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/sessions/{sessionId}/tasks/{taskId}/block": {
         parameters: {
             query?: never;
@@ -1692,7 +1712,7 @@ export interface paths {
         get: operations["AgentAutonomyController_list"];
         /**
          * Sets an agent's autonomy for an action type
-         * @description Upsert by (agent, type). It does NOT override `permissions.json`: a pattern already in `deny` stays blocked no matter how much autonomy is granted here. `actionType: "*"` is "auto mode" (RN-153) — autonomy for ANY action type of this agent; a specific rule recorded afterwards still wins over the wildcard for that type.
+         * @description Upsert by (agent, type). It does NOT override `permissions.json`: a pattern already in `deny` stays blocked no matter how much autonomy is granted here. `actionType: "*"` is "auto mode" (RN-153) — autonomy for ANY action type of this agent; a specific rule recorded afterwards still wins over the wildcard for that type. Turning on the wildcard `auto_approve` re-evaluates the agent's pending actions (RN-1103).
          */
         put: operations["AgentAutonomyController_set"];
         post?: never;
@@ -3365,6 +3385,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/projects/{projectId}/sessions/{sessionId}/agents/{agentId}/wake": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Makes an idle dev agent look for a task again
+         * @description The engine delivers the wake to the agent and `dev.wake_requested` is recorded. Only an `idle` agent: any other state is a named 409 with the engine's sentence (never a 500).
+         */
+        post: operations["ExecutionController_wake"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/projects/{projectId}/sessions/{sessionId}/agents/arquiteto/handoff-infra": {
         parameters: {
             query?: never;
@@ -3958,6 +3998,26 @@ export interface paths {
          * @description The human step that `manual` mode (default since Phase 12c) hands back to the user: until promotion, NO task from the story is pickable by any dev agent. Promoting releases the batch of tasks at once and wakes up the idle agents of the module (Phase 12b). The batch is NOT all-or-nothing — whatever didn't pass comes back as `failed` with the reason, and whatever passed is promoted.
          */
         post: operations["BacklogController_promote"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/tasks/{taskId}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Archives a `todo` task, with a required reason (AT-912)
+         * @description The task leaves the claim, the parallelization count, the stalled-execution check and the dependencies; nothing is deleted and `backlog.task_archived` records who and why. Only a `todo` task (blocked or not).
+         */
+        post: operations["BacklogController_archiveTaskRoute"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5414,6 +5474,22 @@ export interface components {
             /** @example Duplicate of "Register a user". */
             reason?: string;
         };
+        ArchiveTaskDto: {
+            /**
+             * @description Required; recorded in `backlog.task_archived`.
+             * @example Duplicate foundation task.
+             */
+            reason: string;
+        };
+        ArchiveTaskInternalDto: {
+            /**
+             * Format: uuid
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: string;
+            /** @example Duplicate foundation task. */
+            reason: string;
+        };
         AreaDeAgentesResponseDto: {
             /** @example 01JC4Z8QK3M7YV2N5T9B0PXHRA */
             id: string;
@@ -6725,6 +6801,11 @@ export interface components {
             title: string;
             /** @example Accepts SKU and quantity; validates stock. */
             description?: string;
+            /**
+             * @description Module of the task; must be one of the story modules (400 otherwise). Omitted, a story with a single module lends it; with several the task is born without a module and waits for the execution plan.
+             * @example api
+             */
+            module?: string;
             /**
              * @description Agent creating the task; becomes the actor of the event.
              * @default po
@@ -11571,6 +11652,17 @@ export interface components {
             module: Record<string, never> | null;
             /**
              * Format: date-time
+             * @description When the task was archived (AT-912). An archived task leaves the claim, the parallelization count and the dependencies, and stays in the history.
+             * @example null
+             */
+            archivedAt: Record<string, never> | null;
+            /**
+             * @description Why the task was archived (required when archiving).
+             * @example null
+             */
+            archivedReason: Record<string, never> | null;
+            /**
+             * Format: date-time
              * @example 2026-07-25T10:00:00.000Z
              */
             createdAt: string;
@@ -14848,6 +14940,59 @@ export interface operations {
             };
             /** @description Session, project, or resource not found. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalSessionsController_archiveTaskRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArchiveTaskInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description Invalid body. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `tarefa_arquivada`, `tarefa_em_execucao` or `tarefa_de_outro_autor`. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -20983,6 +21128,64 @@ export interface operations {
             };
         };
     };
+    ExecutionController_wake: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                sessionId: string;
+                agentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkResponseDto"];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project, session, or task not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description The agent is not idle. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     AgentsController_handoffInfra: {
         parameters: {
             query?: never;
@@ -22960,6 +23163,74 @@ export interface operations {
             };
             /** @description Project does not exist. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    BacklogController_archiveTaskRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ArchiveTaskDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description Empty reason. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Named refusal (`reason`): `tarefa_arquivada`, `tarefa_em_execucao` (the task has an agent: unblock it or wait for the gate). */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

@@ -371,7 +371,8 @@
       "prontas": "PRs prontas para merge",
       "bloqueadas": "Tarefas bloqueadas",
       "perguntas": "Perguntas em aberto",
-      "travados": "Agentes travados"
+      "travados": "Agentes travados",
+      "semModulo": "Tarefas sem módulo"
     },
     "origem_zero": "{{count}} propostas na sessão {{hashtag}} · a mais antiga {{tempo}}",
     "origem_one": "Proposta na sessão {{hashtag}} · {{tempo}}",
@@ -450,6 +451,9 @@
       "ok": "Agente rearmado: ele volta a pegar tarefas.",
       "erro": "Não foi possível rearmar o agente.",
       "semPapel": "Rearmar exige o papel developer no projeto."
+    },
+    "semModulo": {
+      "motivo": "Sem módulo: ninguém vai pegar. Atribua pelo plano ou arquive a tarefa na aba Backlog."
     }
   },
   "mergearNoChat": {
@@ -533,7 +537,8 @@
     "nota": "Rearmar tira o agente do disjuntor; desbloquear devolve a tarefa à fila.",
     "semPapel": "Rearmar e desbloquear exigem o papel developer no projeto.",
     "feito": "Feito — o andamento aparece neste fio.",
-    "erroTitulo": "Não foi possível destravar a execução"
+    "erroTitulo": "Não foi possível destravar a execução",
+    "ciclo": "Impasse: {{modulo}} espera {{esperaPor}}, que depende de {{modulo}}. Só o contrato ou o dependsOn mudando destrava."
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}} \"{{titulo}}\" está pronta para você mergear: os gates passaram.",

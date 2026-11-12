@@ -29,6 +29,7 @@ import {
   rearmDevAgent,
   setAgentAutonomy,
   unblockTask,
+  wakeDevAgent,
 } from '../lib/api-client';
 import {
   deriveAgentRoster,
@@ -260,6 +261,18 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
     }
   }
 
+  // AT-906: o 409 do engine (agente fora de `idle`) chega com a frase dele.
+  async function handleWake(agentId: string) {
+    if (!sessionId) return;
+    try {
+      await wakeDevAgent(projectId, sessionId, agentId);
+      await queryClient.invalidateQueries({ queryKey: ['session-events', projectId, sessionId] });
+      showToast({ title: t('team.wakeSuccess'), tone: 'success' });
+    } catch (erro) {
+      showToast({ title: t('team.wakeErrorTitle'), message: mensagemDaApi(erro), tone: 'danger' });
+    }
+  }
+
   // FASE 27 — dev/QA saem daqui para a aba Executores (RN-121); o resto do
   // time (Criativo/PO/Arquiteto/Infra) continua na Visão geral. Contagem do
   // cabeçalho e a árvore abaixo passam a refletir só o que a Visão geral
@@ -316,6 +329,7 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           onToggleArea={toggleArea}
           onAutonomyChange={handleAutonomyChange}
           onRearm={handleRearm}
+          onWake={handleWake}
         />
 
         {/* A árvore vem LOGO ABAIXO dos cards do time, e não na coluna de

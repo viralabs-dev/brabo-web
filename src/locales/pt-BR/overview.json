@@ -32,7 +32,9 @@
     "summary_other": "{{count}} agentes · {{working}} trabalhando · {{waiting}} aguardando",
     "autonomyErrorTitle": "Não foi possível mudar a autonomia",
     "rearmSuccess": "Agente rearmado",
-    "rearmErrorTitle": "Não foi possível rearmar o agente"
+    "rearmErrorTitle": "Não foi possível rearmar o agente",
+    "wakeSuccess": "Procurando tarefa",
+    "wakeErrorTitle": "Não foi possível acordar o agente"
   },
   "timeline": {
     "title": "Linha do tempo do time",

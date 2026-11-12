@@ -15,11 +15,12 @@ import {
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
 import { numberFmt } from '../lib/currency';
 import { hashtagDaSessao } from '../lib/session-label';
-import { custoMedioPorChamada, linhasParaCsv, rotuloDoAtor, type SpendPorDia } from '../lib/spend';
-import { JANELAS, comoRanking, rotuloDoProvider } from '../lib/spend-ranking';
-import { Select } from './ui/Select';
+import { custoMedioPorChamada, diasDoMesUtc, linhasParaCsv, rotuloDoAtor, type SpendPorDia } from '../lib/spend';
+import { comoRanking, rotuloDoProvider } from '../lib/spend-ranking';
+import { AGENTS, type AgentKey } from '../lib/agents';
+import { SegmentedControl } from './ui/SegmentedControl';
 import { Shimmer } from './ui/Shimmer';
-import { GastoPorDia } from './GastoPorDia';
+import { GastoPorDia, GastoPorDiaEAgente } from './GastoPorDia';
 import { Ranking } from './SpendCharts';
 import { CabecalhoDePagina } from './shadcn/cabecalho-de-pagina';
 import { SectionCards } from './shadcn/section-cards';
@@ -35,17 +36,20 @@ export function SeletorDeJanela({
   onChange: (dias: number) => void;
 }) {
   const { t } = useTranslation('spend');
+  // "Mês" = dias do mês corrente em UTC; se coincidir com 7 ou 30, a opção já existe.
+  const mes = diasDoMesUtc();
+  const opcoes = [
+    { valor: '7', rotulo: t('window.option', { n: 7 }) },
+    { valor: '30', rotulo: t('window.option', { n: 30 }) },
+    ...(mes === 7 || mes === 30 ? [] : [{ valor: String(mes), rotulo: t('window.month') }]),
+  ];
   return (
-    <label className={styles.nota}>
-      {t('window.label')}{' '}
-      <Select value={dias} onChange={(e) => onChange(Number(e.target.value))}>
-        {JANELAS.map((n) => (
-          <option key={n} value={n}>
-            {t('window.option', { n })}
-          </option>
-        ))}
-      </Select>
-    </label>
+    <SegmentedControl
+      rotulo={t('window.label')}
+      opcoes={opcoes}
+      valor={String(dias)}
+      onChange={(v) => onChange(Number(v))}
+    />
   );
 }
 
@@ -128,6 +132,7 @@ function DestaquesDoTotal({
   entrada,
   saida,
   rotuloTotal,
+  modelo,
 }: {
   total: number;
   assinatura?: number;
@@ -135,6 +140,8 @@ function DestaquesDoTotal({
   entrada: number;
   saida: number;
   rotuloTotal: string;
+  /** Modelo de maior gasto, quando o relatório o traz. */
+  modelo?: string;
 }) {
   const { t } = useTranslation('spend');
   const media = custoMedioPorChamada(total, chamadas);
@@ -159,6 +166,7 @@ function DestaquesDoTotal({
         {
           rotulo: t('shared.avgCallLabel'),
           valor: media === null ? '—' : formatarUsd(media),
+          nota: modelo,
         },
         ...((assinatura ?? 0) > 0
           ? [
@@ -230,6 +238,7 @@ export function GastoDoWorkspace({
             entrada={r.inputTokens}
             saida={r.outputTokens}
             rotuloTotal={t('workspace.totalLabel', { dias })}
+            modelo={r.porModelo[0]?.chave}
           />
           <div className={styles.faixa}>
             <GastoPorDia serie={r.porDia} titulo={t('workspace.dailySpendTitle')} tokens={{ entrada: r.inputTokens, saida: r.outputTokens }} />
@@ -262,7 +271,14 @@ titulo={t('project.bySessionTitle')}
               <Ranking
                 icone={<Folder aria-hidden="true" size={12} />}
 titulo={t('workspace.byProjectTitle')}
-                linhas={comoRanking(r.porProjeto, (l) => l.rotulo ?? l.chave, t)}
+                linhas={comoRanking(r.porProjeto, (l) => l.rotulo ?? l.chave, t).map((l) => ({
+                  ...l,
+                  rotuloNo: (
+                    <Link to="/projects/$projectId" params={{ projectId: l.chave }} search={{ tab: 'spend' }}>
+                      {l.rotulo}
+                    </Link>
+                  ),
+                }))}
                 vazio={t('workspace.byProjectEmpty')}
               />
             )}
@@ -406,12 +422,23 @@ export function GastoDoTimeNoProjeto({ projectId }: { projectId: string }) {
             entrada={d.inputTokens}
             saida={d.outputTokens}
             rotuloTotal={t('team.totalLabel', { dias })}
+            modelo={d.porModelo?.[0]?.chave}
           />
+          <div className={styles.faixa}>
+            <GastoPorDiaEAgente
+              linhas={d.porDiaEAgente ?? []}
+              dias={dias}
+              titulo={t('workspace.dailySpendTitle')}
+            />
+          </div>
           <div className={styles.grade}>
             <Ranking
               icone={<Bot aria-hidden="true" size={12} />}
 titulo={t('team.byAgentTitle')}
-              linhas={comoRanking(d.porAgente, (l) => l.chave, t)}
+              linhas={comoRanking(d.porAgente, (l) => l.chave, t).map((l) => ({
+                ...l,
+                cor: AGENTS[l.chave as AgentKey]?.color,
+              }))}
               vazio={t('team.byAgentEmpty')}
             />
             <Ranking

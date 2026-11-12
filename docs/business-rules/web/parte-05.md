@@ -875,8 +875,8 @@ genérico, que ao lado de um brief ou de uma regra da mesma sessão parecia nega
 que eles existissem — o escopo da seção (PR e backlog, [RN-159](parte-02.md#rn-159)) não
 muda.
 
-- **Código:** `apps/web/src/routes/Shell.tsx:604` (`execucao`), `:594`
-  (`origemDaAtividade`), `:601` (`estadoDaAtividade`);
+- **Código:** `apps/web/src/routes/Shell.tsx:435` (`execucao`), `:449`
+  (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:127` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:75` (`lastActivityText`);
   `apps/web/src/routes/ContextAside.tsx:47` (`quantos`), `:340`

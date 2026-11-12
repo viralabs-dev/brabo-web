@@ -28,9 +28,12 @@
   },
   "status": {
     "heading": "Brabo —— 平台状态",
+    "resumo": { "ok": "一切正常", "erro": "有服务不可用", "checking": "正在检查服务…", "detalhe": "上次检查 {{instante}} · 每 {{segundos}} 秒刷新" },
+    "latenciaValor": "{{ms}} 毫秒",
     "columns": {
       "service": "服务",
       "status": "状态",
+      "latency": "延迟",
       "lastCheck": "最后检查"
     },
     "services": {

@@ -1,7 +1,7 @@
 import { renovarSessao, tokenAtual } from './auth';
 import { runtimeConfig } from './runtime-config';
 import { childSpan, logger, newTraceContext } from './logger';
-import type { DecisionInbox, WorkspaceBudget } from './api-types';
+import type { DecisionInbox } from './api-types';
 import type { LlmCredentialProvider } from './models';
 import type {
   MySpend,
@@ -321,9 +321,6 @@ export const getWorkspaceSummary = (workspaceId: string) =>
 /** Caixa de decisões (RN-1195..1199): uma contagem por fila, nunca somadas (RN-467). Papel `viewer`. */
 export const getDecisionInbox = (workspaceId: string) =>
   get<DecisionInbox>(`/workspaces/${workspaceId}/decision-inbox?status=pending`);
-/** Teto de gasto do workspace (api#108): só o `owner` lê (RN-060). */
-export const getWorkspaceBudget = (workspaceId: string) =>
-  get<WorkspaceBudget>(`/workspaces/${workspaceId}/budget`);
 export const getProjectsStatus = (workspaceId: string) =>
   get<ProjectBlockedStatus[]>(`/workspaces/${workspaceId}/projects-status`);
 export const getProjectsSummary = (workspaceId: string) =>
@@ -1346,6 +1343,12 @@ export const setProjectBudget = (
   projectId: string,
   input: { limitUsd: number; policy: BudgetPolicy },
 ) => put<Budget>(`/projects/${projectId}/budget`, input);
+export const getWorkspaceBudget = (workspaceId: string) =>
+get<Budget | null>(`/workspaces/${workspaceId}/budget`);
+export const setWorkspaceBudget = (
+workspaceId: string,
+input: { limitUsd: number; policy: BudgetPolicy },
+) => put<Budget>(`/workspaces/${workspaceId}/budget`, input);
 export const getSessionBudget = (projectId: string, sessionId: string) =>
   get<Budget | null>(`/projects/${projectId}/sessions/${sessionId}/budget`);
 export const getSessionTokenUsage = (projectId: string, sessionId: string) =>

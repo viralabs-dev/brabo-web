@@ -208,7 +208,7 @@
         "semTeto": "{{quem}} no cap",
         "quemProjeto": "project",
         "aviso": "The estimate (up to {{estimativa}}) exceeds the cap {{onde}} ({{resta}} left). The run stops when the cap is reached; the estimate is the per-task cap, not the price.",
-        "ondeProjeto": "of the project",
+        "ondeProjeto": "of the project for this month",
         "ondeArea": "of the {{area}} area",
         "ajustar": "Adjust cap",
         "campo": "Cap of the dev area, in dollars",

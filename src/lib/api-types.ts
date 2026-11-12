@@ -18,7 +18,6 @@ import type { components } from './api-types.generated';
 export type CatalogoDeAgentes = components['schemas']['CatalogoDeAgentesResponseDto'];
 
 export type DecisionInbox = components['schemas']['DecisionInboxResponseDto'];
-export type WorkspaceBudget = components['schemas']['BudgetMensalResponseDto'];
 
 export type Role = 'owner' | 'maintainer' | 'developer' | 'viewer';
 
@@ -834,10 +833,21 @@ export interface Budget {
   id: string;
   projectId: string | null;
   sessionId: string | null;
+  workspaceId?: string | null;
   limitMicros: number;
+  /** Do mês (UTC) nos tetos de projeto e de workspace; acumulado na sessão (RN-1168). */
   spentMicros: number;
   policy: BudgetPolicy;
   lastThresholdNotified: number;
+  /** Só nos tetos mensais; a sessão não tem (RN-1168). */
+  periodo?: PeriodoDoTeto | null;
+}
+
+export interface PeriodoDoTeto {
+  inicio: string;
+  fim: string;
+  diasRestantes: number;
+  previsaoMicros: number;
 }
 
 export type GitProviderName = 'local' | 'github' | 'gitlab';

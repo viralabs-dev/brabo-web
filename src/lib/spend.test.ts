@@ -2,6 +2,7 @@ import { describe, expect, it, beforeAll } from 'vitest';
 import i18n from './i18n';
 import {
   alertaDeOrcamento,
+  viradaDoMesLocal,
   alturasRelativas,
   diaCurto,
   rotuloDoAtor,
@@ -117,7 +118,7 @@ describe('alertaDeOrcamento (RN-213)', () => {
       alertaDeOrcamento({ ...base, spentMicros: 7_000_000, lastThresholdNotified: 70 }),
     ).toEqual({
       nivel: 'warning',
-      mensagem: 'Este projeto já passou de 70% do orçamento definido.',
+      mensagem: 'Já passou de 70% do teto do mês.',
     });
   });
 
@@ -126,7 +127,7 @@ describe('alertaDeOrcamento (RN-213)', () => {
       alertaDeOrcamento({ ...base, spentMicros: 9_200_000, lastThresholdNotified: 90 }),
     ).toEqual({
       nivel: 'danger',
-      mensagem: 'Este projeto já passou de 90% do orçamento definido.',
+      mensagem: 'Já passou de 90% do teto do mês.',
     });
   });
 
@@ -154,5 +155,12 @@ describe('alertaDeOrcamento (RN-213)', () => {
       lastThresholdNotified: 90,
     });
     expect(alerta?.mensagem).not.toMatch(/BLOQUEADAS/);
+  });
+});
+
+describe("viradaDoMesLocal (RN-1200)", () => {
+  it("a legenda e a hora local do 00:00 UTC do 1o dia do mes seguinte", () => {
+    const quando = viradaDoMesLocal("2026-12-01", "pt-BR");
+    expect(quando).toBe(new Date("2026-12-01T00:00:00Z").toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" }));
   });
 });

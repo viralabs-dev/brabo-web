@@ -31,6 +31,7 @@ interface Tema {
   surface0: Rgb;
   surface1: Rgb;
   surface2: Rgb;
+  surface3: Rgb;
   textPrimary: Rgb;
   textSecondary: Rgb;
   textMuted: Rgb;
@@ -55,6 +56,7 @@ function lerTema(tokens: Record<string, string>): Tema {
     surface0: cor('--surface-0'),
     surface1: cor('--surface-1'),
     surface2: cor('--surface-2'),
+    surface3: cor('--surface-3'),
     textPrimary: cor('--text-primary'),
     textSecondary: cor('--text-secondary'),
     textMuted: cor('--text-muted'),
@@ -117,6 +119,11 @@ describe.each([
 
   it('ProjectCard: badge de contagem de área (--text-primary) sobre --surface-2', () => {
     expect(contraste(tema.textPrimary, tema.surface2)).toBeGreaterThanOrEqual(AA_TEXTO);
+  });
+
+  it('v9 (AT-884): hover e item ativo — --text-primary e --text-secondary sobre --surface-3', () => {
+    expect(contraste(tema.textPrimary, tema.surface3)).toBeGreaterThanOrEqual(AA_TEXTO);
+    expect(contraste(tema.textSecondary, tema.surface3)).toBeGreaterThanOrEqual(AA_TEXTO);
   });
 
   it('fio da sessão: chip do modelo (--text-secondary) sobre --surface-2', () => {

@@ -615,9 +615,15 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
+<<<<<<< HEAD
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:444`
   (`movel`), `:463` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:90` (`movel`);
+=======
+  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:291`
+  (`movel`), `:311` (`fecharAoSeguirLink`);
+  `apps/web/src/routes/ProjectPage.tsx:84` (`movel`);
+>>>>>>> origin/dev
   `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;
@@ -875,8 +881,8 @@ genérico, que ao lado de um brief ou de uma regra da mesma sessão parecia nega
 que eles existissem — o escopo da seção (PR e backlog, [RN-159](parte-02.md#rn-159)) não
 muda.
 
-- **Código:** `apps/web/src/routes/Shell.tsx:604` (`execucao`), `:594`
-  (`origemDaAtividade`), `:601` (`estadoDaAtividade`);
+- **Código:** `apps/web/src/routes/Shell.tsx:435` (`execucao`), `:449`
+  (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:127` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:75` (`lastActivityText`);
   `apps/web/src/routes/ContextAside.tsx:47` (`quantos`), `:340`

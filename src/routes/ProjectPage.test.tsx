@@ -40,7 +40,7 @@ let papelDoTeste: string | undefined = 'developer';
 vi.mock('@tanstack/react-router', () => ({ useNavigate: () => vi.fn() }));
 vi.mock('../lib/hooks', () => ({
   useCurrentWorkspaceWithRole: () => ({ data: { role: papelDoTeste, workspace: { id: 'ws-1' } } }),
-  useProjectsSummary: () => ({ data: [] }),
+  useActiveExecutionSession: () => ({ session: undefined }),
   useArchitecture: () => ({ data: undefined }),
   useBacklog: () => ({ data: [] }),
   useHypotheses: () => ({ data: [] }),

@@ -2,13 +2,14 @@ import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { getProject, getProjectBudget, getRepository } from '../lib/api-client';
-import { useCurrentWorkspaceWithRole, useLatestSession, useProjectsSummary } from '../lib/hooks';
+import { useActiveExecutionSession, useCurrentWorkspaceWithRole, useLatestSession } from '../lib/hooks';
 import { useCriarSessao } from '../lib/use-criar-sessao';
 import { useAtivarExecucao } from '../lib/use-ativar-execucao';
 import { roleAtLeast } from '../lib/roles';
 import { KIND_PRE_SELECIONADO } from '../lib/session-kind';
 import { Button } from '../components/ui/Button';
 import type { ReactNode } from 'react';
+import type { Role } from '../lib/api-types';
 import {
   publicarAbaAtiva,
   ouvirPedidosDeAba,
@@ -36,6 +37,30 @@ const PROVIDER_ICON = { github: GitHubIcon, gitlab: GitLabIcon, local: LocalRepo
 
 /** O chip ao lado do nome diz o que o repositório É (handoff, seção 4). */
 const VISIBILIDADE_KEY = { public: 'visibility.public', private: 'visibility.private' } as const;
+
+function AtivarExecucaoDoCabecalho({
+  projectId,
+  papel,
+}: {
+  projectId: string;
+  papel: Role | undefined;
+}) {
+  const { t } = useTranslation('projectPage');
+  const { ativar, semRepositorio } = useAtivarExecucao(projectId);
+  if (useActiveExecutionSession(projectId).session) return null;
+  return (
+    <>
+      {semRepositorio && <span className={styles.metaStrong}>{t('acao.semRepositorio')}</span>}
+      <Button
+        variant="primary"
+        onClick={() => void ativar()}
+        disabled={semRepositorio || !roleAtLeast(papel, 'maintainer')}
+      >
+        {t('acao.ativarExecucao')}
+      </Button>
+    </>
+  );
+}
 
 interface ProjectPageProps {
   projectId: string;
@@ -129,9 +154,6 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
   const { data: workspace } = useCurrentWorkspaceWithRole();
   const papel = workspace?.role;
   const { criar, criando } = useCriarSessao(projectId);
-  const { ativar, semRepositorio } = useAtivarExecucao(projectId);
-  const { data: resumos } = useProjectsSummary(workspace?.workspace.id);
-  const executionActivated = resumos?.find((s) => s.projectId === projectId)?.roster.executionActivated ?? false;
 
   const { latest: latestSession } = useLatestSession(projectId);
   // As cinco filas de decisão, lidas pelo MESMO hook que a sidebar usa para os
@@ -202,18 +224,11 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         {t('acao.novaSessao')}
       </Button>
     );
-  } else if (secaoAtual === 'trabalho' && !executionActivated) {
+  } else if (secaoAtual === 'trabalho') {
+    // Componente à parte: a leitura do resumo só acontece em Trabalho, e o
+    // orçamento de requisições das outras abas (RN-632/645) não sobe.
     acaoPrimaria = (
-      <>
-        {semRepositorio && <span className={styles.metaStrong}>{t('acao.semRepositorio')}</span>}
-        <Button
-          variant="primary"
-          onClick={() => void ativar()}
-          disabled={semRepositorio || !roleAtLeast(papel, 'maintainer')}
-        >
-          {t('acao.ativarExecucao')}
-        </Button>
-      </>
+      <AtivarExecucaoDoCabecalho projectId={projectId} papel={papel} />
     );
   }
 

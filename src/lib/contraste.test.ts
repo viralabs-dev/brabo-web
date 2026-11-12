@@ -65,7 +65,7 @@ const PARES: { texto: string; fundo: string; piso: number; onde: string }[] = [
   // As três cores de agente sem contraparte semântica viraram token por tema
   // no ADR 0181 (eram hex soltos em `lib/agents.ts`, calibrados só contra o
   // escuro). O papel delas é o do `--violet`: dot, badge, avatar — ELEMENTO.
-  ...['--agent-leve', '--agent-frontend', '--agent-secops'].flatMap((texto) =>
+  ...['--agent-leve', '--agent-frontend', '--agent-secops', ...['criativo', 'po', 'arquiteto', 'dev', 'qa', 'secops', 'infra', 'psi'].map((p) => `--ag-${p}`)].flatMap((texto) =>
     ['--surface-0', '--surface-1', '--surface-2'].map((fundo) => ({
       texto,
       fundo,

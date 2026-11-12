@@ -16,6 +16,7 @@ export function useAtivarExecucao(projectId: string) {
   const repositorioQuery = useQuery({
     queryKey: ['repository', projectId],
     queryFn: () => getRepository(projectId),
+    staleTime: 30_000, // a página já o leu: o segundo observador não repete (RN-632)
   });
   const semRepositorio = repositorioQuery.isSuccess && repositorioQuery.data === null;
 

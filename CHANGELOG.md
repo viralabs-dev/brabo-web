@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+<<<<<<< HEAD
 - Feat (AT-888, RN-1210): o cabeçalho do projeto passa a ter 56 px com a trilha `Projeto / Seção`, o `MedidorDeGasto` (gasto do mês, barra e previsão da api; "sem teto" neutro) e a ação primária da seção ("Nova sessão" em Visão geral e Sessões, "Ativar execução" em Trabalho). `handleCreate` e `handleActivate` viram os hooks `useCriarSessao` e `useAtivarExecucao`. Pin do `openapi.json` na `dev` da api `9d58fdbf`.
+=======
+- Feat (AT-887, RN-1205): a sidebar troca Atividades por "Agentes agora" (até 5 agentes por urgência, avatar, nome e ponto de status, sem contagem de eventos; recolhida, só avatar com tooltip), rotula Containers, Providers, Gastos e Status (link novo) como Workspace e passa a usar os oito `--ag-*` do v9 nos dois temas (qa verde, infra azul, dev-backend teal). Sem requisição nova. A Caixa de decisões vai para a AT-889.
+>>>>>>> origin/dev
 
 - Feat (AT-896, lanes A e C): Login ganha a coluna de marca (três promessas e o número de papéis derivado do catálogo `AGENT_LIST`, nunca digitado); Status ganha o cartão de resumo e a latência por serviço; Containers ganha quatro cartões de métrica (rodando, imagem decidida, nunca provisionado, recursos em uso). i18n nos quatro idiomas. Conta já estava em lista (`Item*`), sem mudança.
 

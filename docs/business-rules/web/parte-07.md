@@ -174,7 +174,6 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (os 15 deep-links, as chaves de seção, desconhecida e a faixa com o selo de cada fila), `apps/web/src/routes/AbasDoProjeto.test.tsx` (8 itens, teclado com volta, Decisões sem número), `apps/web/src/routes/Shell.test.tsx` (sidebar, flyout e gaveta).
 - **Origem:** AT-886 (EP-035), ADR 0294. Revisa a RN-196 e o ADR 0211 no que diz respeito aos três grupos: a lista passa a ter oito itens.
 
-<<<<<<< HEAD
 <a id="rn-1210"></a>
 
 ### RN-1210 — O cabeçalho do projeto tem trilha, chips, medidor de gasto do mês e UMA ação primária por seção {#rn-1210}
@@ -183,7 +182,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/routes/ProjectPage.tsx` (`ProjectPage`), `apps/web/src/components/MedidorDeGasto.tsx:14` (`MedidorDeGasto`), `apps/web/src/lib/use-criar-sessao.ts:17` (`useCriarSessao`), `apps/web/src/lib/use-ativar-execucao.ts:12` (`useAtivarExecucao`).
 - **Teste:** `apps/web/src/components/MedidorDeGasto.test.tsx` (com teto, faixa e previsão; sem teto).
 - **Origem:** AT-888 (EP-035), ADR 0294 e 0296 (previsão: AT-934).
-=======
+
 <a id="rn-1225"></a>
 
 ### RN-1225 — Decisões ganha "Decididas recentemente" e a sub-aba Permissões; PRs diz as próximas ações e que o merge é manual {#rn-1225}
@@ -192,7 +191,6 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/DecididasRecentemente.tsx:21` (`DecididasRecentemente`), `src/lib/decididas-queries.ts:13` (`useProjectDecidedActions`), `src/routes/PermissoesDoProjeto.tsx:26` (`PermissoesDoProjeto`), `src/routes/project-tabs.ts:258` (registro da sub-aba `permissoes`), `src/routes/code/PrListAndDiff.tsx:62` (`vazioExtra`).
 - **Teste:** `src/routes/DecididasRecentemente.test.tsx` (automática com origem, negada com motivo, vazio, "Ver todas", erro), `src/routes/PermissoesDoProjeto.test.tsx` (as três de hoje, extraídas), `src/routes/project-tabs.test.tsx` (13 abas, deep-link `permissoes`), `src/routes/ProjectPrsTab.test.tsx` (vazio e fluxo).
 - **Origem:** AT-895 (EP-035), ADR 0294. Fica de fora, declarado: Hipóteses (P17) sem o bloco "Exemplo", "Aprovar e criar regra" (rótulo) e o rodapé "0 agentes editando", que sai.
->>>>>>> origin/dev
 
 <a id="rn-1205"></a>
 

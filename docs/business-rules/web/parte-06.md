@@ -301,8 +301,7 @@ keywords: [regras de negócio, web]
   não é a mais recente. Nenhuma requisição a mais: as chaves são as que a
   sidebar já assina, e `useActiveExecutionSession` ganha `staleTime` igual ao
   intervalo, para o segundo assinante não refazer a busca ([RN-632](parte-05.md#rn-632)).
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:101` (`linhaDoTempoNaExecucao`)
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (decisão fora da janela não vira 0; sessão inteira na janela diz vazio),
   `apps/web/src/routes/ProjectOverviewTab.test.tsx` (lê a sessão de execução e
@@ -345,8 +344,7 @@ keywords: [regras de negócio, web]
   com execução de pé, ritmo de projeto quando ligada, [RN-632](parte-05.md#rn-632)).
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
   execução encerrada)
@@ -364,7 +362,7 @@ keywords: [regras de negócio, web]
   Infra Lead cujo handoff foi aceito lá), e com uma ideação aberta depois a
   árvore dizia "Nenhum agente entrou em ação nesta sessão ainda" sobre um time
   trabalhando. Sem leitura nova.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:292` (`overviewEvents`)
+- **Onde:** removido da Visão geral na AT-890 (RN-1280).
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("AT-471: agente
   que só agiu na execução aparece na árvore…"; o caso sem execução segue lendo
   a mais recente)
@@ -716,8 +714,7 @@ keywords: [regras de negócio, web]
   altura reservada, e jsdom não faz layout — o teste prova a ORDEM, não o
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:509` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:640` (`blockedTasks`)
+- **Onde:** removido da Visão geral na AT-890 (RN-1280).
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),
@@ -859,7 +856,7 @@ keywords: [regras de negócio, web]
   aviso `infra.pr_opened` do canal da sessão a relê.
 - **Onde:** `apps/web/src/components/RodarNaSuaMaquina.tsx:19` (`RodarNaSuaMaquina`),
   `apps/web/src/components/RodarNaSuaMaquina.helpers.ts:15` (`urlLocalSegura`), `:8` (`releSeInfraAbriuPr`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:214` (`releSeInfraAbriuPr`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:194` (`releSeInfraAbriuPr`),
   `apps/web/src/lib/api-client.ts:888` (`getRunInstructions`)
 - **Teste:** `apps/web/src/components/RodarNaSuaMaquina.test.tsx` ("mostra
   comando, copiar, link local e a nota de não verificado"; "sem declaração

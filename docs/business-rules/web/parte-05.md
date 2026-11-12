@@ -300,7 +300,7 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
   `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:221` (`invalidador`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:206` (`invalidador`);
+  `apps/web/src/routes/ProjectOverviewTab.tsx:200` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
 - **Teste:** `apps/web/src/routes/duas-abas.orcamento.test.tsx` (as duas abas
   com canal vivo, com rajada, com o canal que nunca conecta, e `/containers`;
@@ -443,7 +443,7 @@ o do chat.
   `:121` (os merges da mesma leitura);
   `apps/web/src/routes/ProjectApprovalsTab.tsx:106` (`pendentesQuery`), `:112`
   (`sessaoDeTrabalho`), `:312` (`handleApprove`);
-  `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
+  `apps/web/src/routes/ProjectOverviewTab.tsx:111` (`pendentesDoProjeto`);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:124` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
@@ -618,7 +618,7 @@ barra) fechou no ADR 0211.
   `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:312`
   (`movel`), `:330` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
-  `apps/web/src/routes/ProjectOverviewTab.tsx:80` (`movel`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:72` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
   (RN-643)": a gaveta abre com o foco dentro e o Esc a fecha devolvendo o foco;
   fecha pelo link, pelo X, pelo fundo e pela troca de rota; ignora o colapso

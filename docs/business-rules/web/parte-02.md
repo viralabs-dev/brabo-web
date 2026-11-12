@@ -1212,7 +1212,7 @@ montada, os cinco números saem do MESMO hook que ela usa
 projeto aberto abre um flyout com as mesmas abas.
 
 - **Onde:** `apps/web/src/routes/Shell.tsx:596` (`projetosAbertosEfetivo`),
-  `:504` (`useContagensDoProjeto`), `:539` (`irParaAba`), `:541`
+  `:352` (`useContagensDoProjeto`), `:539` (`irParaAba`), `:541`
   (`flyoutAberto`), `:232` (`contagensDoResumo`);
   `apps/web/src/routes/AbasDoProjeto.tsx:63` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
   (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:80` (`aoTeclar`);

@@ -33,7 +33,8 @@
     "ajustes": "Model and language",
     "ajustesAria": "Model, response language and budget for this session",
     "perguntaDeIdiomaPendente": "there is a question about the response language",
-    "encerrarSessao": "Close the session"
+    "encerrarSessao": "Close the session",
+    "pararTurno": "Stop turn"
   },
   "convite": {
     "criativa": {
@@ -316,7 +317,12 @@
     "recorteMaisRecentes": "Showing the {{mostradas}} most recent of {{total}}.",
     "arquivosVazio": "No files in the PRs or commits of this session or of the execution session linked to it.",
     "prsNaoLidas_one": "{{count}} PR was left out of this list (past the read limit, or its diff could not be read) — the PRs tab shows them all.",
-    "prsNaoLidas_other": "{{count}} PRs were left out of this list (past the read limit, or their diff could not be read) — the PRs tab shows them all."
+    "prsNaoLidas_other": "{{count}} PRs were left out of this list (past the read limit, or their diff could not be read) — the PRs tab shows them all.",
+    "objetivo": "Goal",
+    "perguntasAbertas": "Open questions",
+    "gastoPorAgente": "Spend by agent",
+    "gastoVazio": "No spend yet.",
+    "detalhes": "Session details"
   },
   "turno": {
     "artefato": {

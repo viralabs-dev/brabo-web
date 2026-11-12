@@ -4,6 +4,7 @@
 
 - Feat (AT-889, RN-1275): a Caixa de decisões (`/decisions`, S07) reúne as cinco filas de todos os projetos numa leitura, com o seletor Pendentes | Decididas, o item na sidebar com ponto de presença e sem somar filas. O chip "Precisa de você" sai do cabeçalho do projeto. i18n nos quatro idiomas. O regressivo de `aprovacoes` fica para a lane do qa.
 
+- Feat (AT-892): o painel de contexto da Sessão mostra Objetivo (resumo do product brief; sem brief a seção sai), Perguntas abertas (a mesma fila do fio), Artefatos e Gasto por agente; Regras de negócio, Decisões, Arquivos tocados e Log de eventos ficam recolhidos em "Detalhes da sessão" (abre sozinho ao citar um evento). A barra da sessão troca Encerrar por "Parar turno" enquanto há turno em curso. Sem requisição nova. Ficaram fora: o medidor "N chamadas", a cadeia de agentes no topo e o gasto por agente oficial (exigem leitura nova na Sessão, RN-632). O regressivo `chat-e-pendencias` fica para a lane do qa.
 - Feat (AT-888, RN-1210): o cabeçalho do projeto passa a ter 56 px com a trilha `Projeto / Seção`, o `MedidorDeGasto` (gasto do mês, barra e previsão da api; "sem teto" neutro) e a ação primária da seção ("Nova sessão" em Visão geral e Sessões, "Ativar execução" em Trabalho). `handleCreate` e `handleActivate` viram os hooks `useCriarSessao` e `useAtivarExecucao`. Pin do `openapi.json` na `dev` da api `9d58fdbf`.
 
 

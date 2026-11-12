@@ -226,7 +226,9 @@ function credencial(over: Partial<UserCredentialMetadata> = {}): UserCredentialM
 }
 
 /** O card do OpenRouter, que é o provider do bug que originou esta seção. */
+// A chave só existe no diálogo: sem credencial, o botão da grade o abre.
 async function campoDoOpenrouter() {
+  fireEvent.click(await screen.findByRole('button', { name: 'OpenRouter' }));
   return await screen.findByLabelText('API key de OpenRouter');
 }
 
@@ -707,13 +709,18 @@ describe('CredentialsSection (ADR 0050)', () => {
       provider: 'openrouter',
       apiKey: 'sk-boa',
     });
-    await waitFor(() => expect(campo).toHaveValue(''));
+    // Salvou: o diálogo fecha e a chave sai da tela (write-only, ADR 0050).
+    await waitFor(() => expect(screen.queryByLabelText('API key de OpenRouter')).toBeNull());
+    expect(screen.queryByDisplayValue('sk-boa')).toBeNull();
   });
 
   it('com credencial salva o campo continua lá, para TROCAR sem remover antes', async () => {
     listCredentials.mockResolvedValue([credencial()]);
     montarSecao(<CredentialsSection />);
 
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Informar nova chave de OpenRouter' }),
+    );
     const campo = await screen.findByLabelText('Nova chave de OpenRouter');
     fireEvent.change(campo, { target: { value: 'sk-nova' } });
     fireEvent.click(screen.getByRole('button', { name: 'Trocar chave de OpenRouter' }));
@@ -803,8 +810,9 @@ describe('CredentialsSection (ADR 0050)', () => {
    * só cada.
    */
   it('cada conector tem uma sigla própria no chip', async () => {
+    listCredentials.mockResolvedValue(CREDENCIAIS_DE_LLM.map((c) => credencial({ provider: c.id })));
     montarSecao(<CredentialsSection />);
-    await campoDoOpenrouter();
+    await screen.findByText('OA');
 
     expect(screen.getByText('OA')).toBeInTheDocument();
     expect(screen.getByText('OR')).toBeInTheDocument();
@@ -1492,5 +1500,27 @@ describe('PersonalAccessTokensSection (ADR 0105)', () => {
     expect(listAllPersonalAccessTokens).toHaveBeenCalledTimes(2);
     // Revogar de admin não mexe na listagem própria — são queries separadas.
     expect(revokePersonalAccessToken).not.toHaveBeenCalled();
+  });
+});
+
+/** Lane D da AT-896: a chave nunca reaparece na tela. */
+describe('CredentialsSection — chave write-only (ADR 0050)', () => {
+  it('com chave salva a lista mostra só a data; o diálogo abre vazio e nada da chave volta', async () => {
+    listCredentials.mockResolvedValue([credencial()]);
+    montarSecao(<CredentialsSection />);
+
+    expect(await screen.findByText(/nunca reexibida/)).toBeInTheDocument();
+    expect(screen.queryByLabelText('Nova chave de OpenRouter')).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Informar nova chave de OpenRouter' }));
+    expect(await screen.findByLabelText('Nova chave de OpenRouter')).toHaveValue('');
+    expect(document.body.textContent).not.toContain('sk-');
+  });
+
+  it('fechar o diálogo sem salvar descarta o que foi digitado', async () => {
+    montarSecao(<CredentialsSection />);
+    fireEvent.change(await campoDoOpenrouter(), { target: { value: 'sk-segredo' } });
+    fireEvent.keyDown(document.activeElement ?? document.body, { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByDisplayValue('sk-segredo')).toBeNull());
+    expect(document.body.textContent).not.toContain('sk-segredo');
   });
 });

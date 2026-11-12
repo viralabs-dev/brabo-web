@@ -84,6 +84,9 @@ export interface ProjectSpendTeam {
   chamadas: number;
   porAgente: SpendLinha[];
   porArea: SpendLinha[];
+  /** Por MODELO e por SESSÃO do projeto inteiro (RN-1152); nunca por provider (RN-186). */
+  porModelo?: SpendLinha[];
+  porSessao?: SpendLinha[];
 }
 
 /** O meu consumo no workspace, somado por projeto (RN-953). */
@@ -279,4 +282,15 @@ export function viradaDoMesLocal(fim: string, locale: string): string {
     dateStyle: 'short',
     timeStyle: 'short',
   });
+}
+
+/** Custo médio por chamada em micro-USD; sem chamada não há média (null, nunca NaN). */
+export function custoMedioPorChamada(totalMicros: number, chamadas: number): number | null {
+  return chamadas > 0 ? totalMicros / chamadas : null;
+}
+
+/** CSV (RFC 4180) das linhas que já estão na tela; nada novo é pedido à api. */
+export function linhasParaCsv(cabecalho: string[], linhas: (string | number)[][]): string {
+  const cel = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+  return [cabecalho, ...linhas].map((l) => l.map(cel).join(',')).join('\r\n');
 }

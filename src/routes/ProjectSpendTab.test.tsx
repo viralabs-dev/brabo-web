@@ -377,7 +377,7 @@ describe('ProjectSpendTab — o orçamento do projeto', () => {
     montar();
 
     expect(
-      await screen.findByText(/Nenhum orçamento definido para este projeto/i),
+      await screen.findByText(/Nenhum teto do mês definido para este projeto/i),
     ).toBeInTheDocument();
     expect(screen.queryByTestId('token-meter')).not.toBeInTheDocument();
     expect(screen.getByText("Não configurado")).toBeInTheDocument();
@@ -399,6 +399,25 @@ describe('ProjectSpendTab — o orçamento do projeto', () => {
     expect(
       screen.queryByText(/já passou de/i),
     ).not.toBeInTheDocument();
+  });
+
+  it('mostra dias restantes, previsão e a virada do mês (RN-1200)', async () => {
+    getProjectBudget.mockResolvedValue({
+      id: 'b-1',
+      projectId: 'p-1',
+      sessionId: null,
+      limitMicros: 10_000_000,
+      spentMicros: 2_000_000,
+      policy: 'allow',
+      lastThresholdNotified: 0,
+      periodo: { inicio: '2026-11-01', fim: '2026-12-01', diasRestantes: 18, previsaoMicros: 5_000_000 },
+    });
+    montar();
+
+    const texto = await screen.findByTestId('periodo-do-teto');
+    expect(texto).toHaveTextContent(/18 dias restantes/);
+    expect(texto).toHaveTextContent(/Previsão no fim do mês/);
+    expect(texto).toHaveTextContent(/00:00 UTC/);
   });
 
   /** RN-213: leitura pura de `lastThresholdNotified`, nunca recalculado aqui. */
@@ -431,7 +450,7 @@ describe('ProjectSpendTab — o orçamento do projeto', () => {
     montar();
 
     expect(
-      await screen.findByText(/estão BLOQUEADAS até o teto subir/i),
+      await screen.findByText(/estão BLOQUEADAS até o teto subir ou o mês virar/i),
     ).toBeInTheDocument();
   });
 

@@ -4,6 +4,8 @@ import { RotateCcw } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
+import { getWorkspaceBudget, setWorkspaceBudget } from '../lib/api-client';
+import { TetoDoMes } from '../components/TetoDoMes';
 import {
   GastoDoWorkspace,
   MeuConsumoNoWorkspace,
@@ -43,11 +45,21 @@ export function SpendPage() {
         workspaceId &&
         (roleAtLeast(papel.data.role, 'owner') ? (
           <>
+            <TetoDoMes
+              escopo="workspace"
+              queryKey={['workspace-budget', workspaceId]}
+              ler={() => getWorkspaceBudget(workspaceId)}
+              gravar={(input) => setWorkspaceBudget(workspaceId, input)}
+              podeEditar
+            />
             <GastoDoWorkspace workspaceId={workspaceId} />
             <OrcamentosDosProjetos workspaceId={workspaceId} />
           </>
         ) : (
-          <MeuConsumoNoWorkspace workspaceId={workspaceId} />
+          <>
+            <MeuConsumoNoWorkspace workspaceId={workspaceId} />
+            <p className={styles.nota}>{t('teto.membro')}</p>
+          </>
         ))}
     </div>
   );

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-934, AT-935, RN-1200, RN-1201): o teto do projeto vira "Teto do mês" (gasto do mês em UTC, dias restantes, previsão de fim de mês e a legenda da virada em hora local), e o workspace ganha o teto mensal na S06, só para o owner (`GET/PUT workspaces/:id/budget`); quem não é owner vê o motivo em texto. Componente único `TetoDoMes`. O cartão do plano e os alertas 70/90 falam "do mês". `fixados/openapi.json` atualizado da `dev` do brabo-api (api#108).
+
 - Feat (AT-909, AT-910): o "Desbloquear" da tarefa bloqueada (pendências e Visão geral) ganha o campo opcional de orientação (máx. 2000), enviado como `orientacao` no corpo do unblock, com botão inerte e um clique, uma chamada; o "Negar" do plano pede o motivo (obrigatório) e o envia como `reason` do deny (gravado em `rejectionReason`). O tipo de `orientacao` é PROVISÓRIO, à mão em `unblockTask`, até a api (R368) entrar na `dev` e o `openapi:types` ser regenerado.
 - Feat (AT-936, RN-1162): a Visão geral ganha o cartão "Próximo passo", abaixo dos Primeiros passos: UMA situação, a primeira verdadeira de uma tabela tipada e ordenada (`lib/proximo-passo.ts`: primeiro passo, agente trabalhando, continuar a ideação, confirmar a arquitetura, ligar a módulo, desbloquear, ativar a execução, acompanhar a execução, rodar o entregável); sem situação verdadeira o cartão some. Decisões pendentes ficam na faixa "Precisa de você"; nenhuma leitura nova. `usePrimeirosPassos` sai do cartão da RN-708 para ser reusado. Prévia em `13-design/proximo-passo`.
 

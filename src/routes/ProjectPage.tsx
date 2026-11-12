@@ -21,6 +21,7 @@ import { ABA_PADRAO, abaPorChave, ehChaveDeAba, type ChaveDeAba } from './projec
 import { ContextoDeGrupoInicial, ContextoDeSecaoInicial, ContextoDeTrocaDeGrupo } from './settings/secao-inicial';
 import { ContextoDeHistoriaInicial } from '../lib/historia-inicial';
 import type { ChaveDeSecao, GrupoDoSumario } from './settings/sumario';
+import { FaixaDeSubAbas } from '../components/FaixaDeSubAbas';
 import { Badge } from '../components/ui/Badge';
 import { CabecalhoDePagina } from '../components/shadcn/cabecalho-de-pagina';
 import styles from './ProjectPage.module.css';
@@ -60,6 +61,19 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
       url.searchParams.set('tab', 'settings');
       url.searchParams.set('group', g);
       url.searchParams.delete('section');
+      window.history.replaceState(window.history.state, '', url);
+    } catch {
+      // sem `window` (teste/SSR): só a troca local
+    }
+  }
+  // Trocar de sub-aba: estado local + o endereço acompanha (como `trocarGrupo`).
+  function trocarSub(chave: ChaveDeAba) {
+    setTab(chave);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', chave);
+      url.searchParams.delete('section');
+      url.searchParams.delete('group');
       window.history.replaceState(window.history.state, '', url);
     } catch {
       // sem `window` (teste/SSR): só a troca local
@@ -243,6 +257,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
             {/* Cada painel é um chunk próprio (AT-300): o `Suspense` fica AQUI,
                 em volta só do painel, para que trocar de aba nunca apague o
                 cabeçalho enquanto o chunk chega. */}
+            <FaixaDeSubAbas ativa={tab} contagens={filasDoProjeto.contagens} onChange={trocarSub} />
             <Suspense fallback={<CarregandoRota />}>
               <PainelDaAba projectId={projectId} />
             </Suspense>

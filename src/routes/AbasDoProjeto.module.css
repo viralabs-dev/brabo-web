@@ -139,3 +139,12 @@
   flex: none;
   color: var(--text-muted);
 }
+
+/* Ponto de presença: seção com mais de uma fila (os números ficam nas sub-abas). */
+.presenca {
+  width: 6px;
+  height: 6px;
+  margin-left: auto;
+  border-radius: 50%;
+  background: var(--accent);
+}

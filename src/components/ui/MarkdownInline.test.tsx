@@ -19,7 +19,7 @@ describe('MarkdownInline (AT-393)', () => {
 
 describe('resolverChaveDeAba (AT-394)', () => {
   it('`historias` resolve para backlog; chave desconhecida não resolve', () => {
-    expect(resolverChaveDeAba('historias')).toBe('backlog');
+    expect(resolverChaveDeAba('historias')?.sub).toBe('backlog');
     expect(resolverChaveDeAba('nada')).toBeUndefined();
   });
 });

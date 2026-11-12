@@ -323,7 +323,7 @@ const projectRoute = createRoute({
   // `?tab=rag`) e os resolve pra `chat` — sem isso, um link antigo caía
   // silencioso na Visão geral.
   validateSearch: (search: Record<string, unknown>): ProjectSearch => ({
-    tab: resolverChaveDeAba(search.tab),
+    tab: resolverChaveDeAba(search.tab)?.sub,
     section: resolverChaveDeSecao(search.section),
     group: ehGrupoDoSumario(search.group) ? search.group : undefined,
     historia: typeof search.historia === 'string' ? search.historia : undefined,

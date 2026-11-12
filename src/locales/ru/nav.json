@@ -1,21 +1,64 @@
 {
   "tabs": {
-    "overview": { "label": "Обзор" },
-    "executors": { "label": "Исполнители" },
-    "criativo": { "label": "Criativo" },
-    "chat": { "label": "Чат" },
-    "insights": { "label": "Наблюдения" },
-    "code": { "label": "Код" },
-    "prs": { "label": "PR" },
-    "approvals": { "label": "Одобрения" },
-    "backlog": { "label": "Истории" },
-    "architecture": { "label": "Архитектура" },
-    "spend": { "label": "Расходы" },
-    "settings": { "label": "Настройки" }
+    "overview": {
+      "label": "Обзор"
+    },
+    "executors": {
+      "label": "Исполнители"
+    },
+    "criativo": {
+      "label": "Criativo"
+    },
+    "chat": {
+      "label": "Чат"
+    },
+    "insights": {
+      "label": "Наблюдения"
+    },
+    "code": {
+      "label": "Код"
+    },
+    "prs": {
+      "label": "PR"
+    },
+    "approvals": {
+      "label": "Одобрения"
+    },
+    "backlog": {
+      "label": "Истории"
+    },
+    "architecture": {
+      "label": "Архитектура"
+    },
+    "spend": {
+      "label": "Расходы"
+    },
+    "settings": {
+      "label": "Настройки"
+    }
   },
-  "groups": {
-    "agentes": { "label": "Агенты" },
-    "dev": { "label": "Dev" },
-    "documentacao": { "label": "Документация" }
+  "sections": {
+    "overview": "Обзор",
+    "sessoes": "Сессии",
+    "trabalho": "Работа",
+    "codigo": "Код",
+    "decisoes": "Решения",
+    "arquitetura": "Архитектура",
+    "spend": "Расходы",
+    "settings": "Настройки"
+  },
+  "subs": {
+    "overview": "Обзор",
+    "criativo": "Идеи",
+    "chat": "Чат",
+    "backlog": "Истории",
+    "executores": "Выполнение",
+    "code": "Файлы",
+    "prs": "PR",
+    "approvals": "Согласования",
+    "insights": "Гипотезы",
+    "arquitetura": "Архитектура",
+    "spend": "Расходы",
+    "settings": "Настройки"
   }
 }

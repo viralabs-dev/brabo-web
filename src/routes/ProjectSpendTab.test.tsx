@@ -261,7 +261,7 @@ describe('ProjectSpendTab — a audiência do owner', () => {
     expect(screen.getByText('Por agente e pessoa')).toBeInTheDocument();
     expect(screen.getByText('Gasto por dia')).toBeInTheDocument();
 
-    expect(screen.getByText('caro/modelo')).toBeInTheDocument();
+    expect(screen.getAllByText('caro/modelo')[0]).toBeInTheDocument();
     // RN-211: o rótulo humano do provider, não o slug cru.
     expect(screen.getByText('Anthropic')).toBeInTheDocument();
     expect(screen.getByText('criativo')).toBeInTheDocument();

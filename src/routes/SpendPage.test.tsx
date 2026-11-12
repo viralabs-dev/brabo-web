@@ -131,7 +131,7 @@ describe('SpendPage — moldura e seletor (AT-648)', () => {
 
     const h1 = await screen.findByRole('heading', { level: 1, name: 'Gastos' });
     expect(h1.closest('header')).not.toBeNull();
-    expect(await screen.findByLabelText(/Janela/)).toHaveAttribute('data-slot', 'native-select');
+    expect(await screen.findByLabelText(/Janela/)).toHaveAttribute('role', 'group');
   });
 });
 

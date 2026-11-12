@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-886, RN-1180): a navegação do projeto passa a oito seções (Visão geral, Sessões, Trabalho, Código, Decisões, Arquitetura, Gastos, Configurações) com faixa de sub-abas no topo do conteúdo; as 12 abas viram sub-abas e `?tab=` com as chaves antigas (`sessions`, `rag`, `historias` incluídos) abre a mesma tela. `resolverChaveDeAba` devolve `{ secao, sub }`. Contadores por fila, nunca somados: Decisões mostra só o ponto. i18n nos quatro idiomas (`nav.sections`, `nav.subs`; saem os grupos).
+
 - Feat (AT-936, RN-1162): a Visão geral ganha o cartão "Próximo passo", abaixo dos Primeiros passos: UMA situação, a primeira verdadeira de uma tabela tipada e ordenada (`lib/proximo-passo.ts`: primeiro passo, agente trabalhando, continuar a ideação, confirmar a arquitetura, ligar a módulo, desbloquear, ativar a execução, acompanhar a execução, rodar o entregável); sem situação verdadeira o cartão some. Decisões pendentes ficam na faixa "Precisa de você"; nenhuma leitura nova. `usePrimeirosPassos` sai do cartão da RN-708 para ser reusado. Prévia em `13-design/proximo-passo`.
 
 - Doc (AT-885): `design/` registra a v9 como referência visual vigente (README, SCREENS e COMPONENTS): oito seções com sub-abas, Caixa de decisões com 5 filas, Agentes agora, peças novas e os tokens aprovados (corpo 14, rótulo 11, títulos 24/20, `--surface-3`, `--ag-*`), com a superfície quente de fora. Aponta para o ADR 0294 do `brabo`. Só doc: os valores entram em `tokens.css` pela AT-884.

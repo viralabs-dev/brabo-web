@@ -15,7 +15,12 @@ import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
-import { Item } from '@/components/shadcn/item';
+import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho';
+import { TetoDoMes } from '../../components/TetoDoMes';
+import { getProjectBudget, setProjectBudget } from '../../lib/api-client';
+import { useCurrentWorkspaceWithRole } from '../../lib/hooks';
+import { roleAtLeast } from '../../lib/roles';
 
 /**
  * O teto de GASTO de cada área, opcional (ADR 0110, RN-443).
@@ -69,6 +74,9 @@ export function BudgetSection({ projectId }: { projectId: string }) {
     erroGenerico: t('budget.toast.error'),
   });
 
+  usePublicarNoCabecalho('budget', t('budget.title'), secao);
+  const papel = useCurrentWorkspaceWithRole();
+
   return (
     <SecaoDeConfiguracoes chave="budget">
       <div className={styles.sectionHead}>
@@ -79,6 +87,19 @@ export function BudgetSection({ projectId }: { projectId: string }) {
         <span className={styles.eyebrow}>{t('budget.eyebrow')}</span>
       </div>
 
+      <LinhaDeConfiguracao
+        rotulo={t('budget.mes.rotulo')}
+        descricao={t('budget.mes.descricao')}
+      >
+        <TetoDoMes
+          escopo="projeto"
+          queryKey={['budget', projectId]}
+          ler={() => getProjectBudget(projectId)}
+          gravar={(input) => setProjectBudget(projectId, input)}
+          podeEditar={!!papel.data && roleAtLeast(papel.data.role, 'maintainer')}
+        />
+      </LinhaDeConfiguracao>
+
       {!areas || areas.length === 0 ? (
         <div className={styles.subtitle}>
           {t('budget.empty.before')}
@@ -88,43 +109,30 @@ export function BudgetSection({ projectId }: { projectId: string }) {
       ) : (
         <>
           {areas.map((area) => (
-            <Item variant="outline" key={area.key} className={styles.ajusteCard}>
-              <div className={styles.ajusteInfo}>
-                <div className={styles.ajusteTitulo}>
-                  {t('budget.card.title', { area: area.key })}
-                </div>
-                <div className={styles.ajusteHint}>
-                  {t('budget.card.spent', {
-                    amount: formatarCustoMicros(area.spentMicros),
-                  })}
-                </div>
-                <div className={styles.ajusteHint}>
-                  {/* O polo positivo não leva detalhe: o teto próprio está no
-                      campo ao lado, e repeti-lo aqui seria a mesma duplicação
-                      que este padrão existe para remover. */}
+            <LinhaDeConfiguracao
+              key={area.key}
+              rotulo={t('budget.card.title', { area: area.key })}
+              descricao={
+                <>
+                  {t('budget.card.spent', { amount: formatarCustoMicros(area.spentMicros) })}{' '}
                   <MarcaDeHeranca
                     proprio={area.budgetMicros !== null}
-                    detalhe={
-                      area.budgetMicros === null
-                        ? t('budget.card.noCap')
-                        : undefined
-                    }
+                    detalhe={area.budgetMicros === null ? t('budget.card.noCap') : undefined}
                   />
-                </div>
-              </div>
-              <div className={styles.ajusteNumero}>
-                <Input
-                  mono
-                  type="number"
-                  min={0}
-                  step="any"
-                  placeholder={t('budget.placeholder')}
-                  aria-label={t('budget.card.capAria', { area: area.key })}
-                  value={secao.textoDe(area)}
-                  onChange={(e) => secao.editar(area.key, e.target.value)}
-                />
-              </div>
-            </Item>
+                </>
+              }
+            >
+              <Input
+                mono
+                type="number"
+                min={0}
+                step="any"
+                placeholder={t('budget.placeholder')}
+                aria-label={t('budget.card.capAria', { area: area.key })}
+                value={secao.textoDe(area)}
+                onChange={(e) => secao.editar(area.key, e.target.value)}
+              />
+            </LinhaDeConfiguracao>
           ))}
 
           <div className={styles.acoesDaSecao}>

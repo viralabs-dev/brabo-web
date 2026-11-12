@@ -13,7 +13,8 @@ import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
-import { Item } from '@/components/shadcn/item';
+import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho';
 
 /**
  * O teto de paralelismo de cada lead (FASE 14d — RN-083, ADR 0053).
@@ -62,6 +63,8 @@ export function ParallelismSection({ projectId }: { projectId: string }) {
     erroGenerico: t('parallelism.toast.error'),
   });
 
+  usePublicarNoCabecalho('parallelism', t('parallelism.title'), secao);
+
   return (
     <SecaoDeConfiguracoes chave="parallelism">
       <div className={styles.sectionHead}>
@@ -81,29 +84,27 @@ export function ParallelismSection({ projectId }: { projectId: string }) {
       ) : (
         <>
           {areas.map((area) => (
-            <Item variant="outline" key={area.key} className={styles.ajusteCard}>
-              <div className={styles.ajusteInfo}>
-                <div className={styles.ajusteTitulo}>
-                  {t('parallelism.card.title', { area: area.key })}
-                </div>
-                <div className={styles.ajusteHint}>
+            <LinhaDeConfiguracao
+              key={area.key}
+              rotulo={t('parallelism.card.title', { area: area.key })}
+              descricao={
+                <>
                   {t('parallelism.card.lead', { lead: nomeDoAgente(area.leadAgentId) })}
                   {area.members.length > 0
                     ? t('parallelism.card.membersCount', { count: area.members.length })
                     : t('parallelism.card.noMembersYet')}
-                </div>
-              </div>
-              <div className={styles.ajusteNumero}>
-                <Input
-                  mono
-                  type="number"
-                  min={1}
-                  aria-label={t('parallelism.card.capAria', { area: area.key })}
-                  value={secao.textoDe(area)}
-                  onChange={(e) => secao.editar(area.key, e.target.value)}
-                />
-              </div>
-            </Item>
+                </>
+              }
+            >
+              <Input
+                mono
+                type="number"
+                min={1}
+                aria-label={t('parallelism.card.capAria', { area: area.key })}
+                value={secao.textoDe(area)}
+                onChange={(e) => secao.editar(area.key, e.target.value)}
+              />
+            </LinhaDeConfiguracao>
           ))}
 
           <div className={styles.acoesDaSecao}>

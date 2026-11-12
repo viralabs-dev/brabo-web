@@ -306,6 +306,10 @@
     "toast": {
       "success": "{{area}} area's spend cap saved",
       "error": "Could not save"
+    },
+    "mes": {
+      "rotulo": "Monthly spend cap",
+      "descricao": "How much the project may spend per month (UTC); the reset time is shown with the cap."
     }
   },
   "promotion": {
@@ -578,5 +582,12 @@
     "retry": "Try again",
     "cellLoading": "reading…",
     "cellUnread": "not read"
+  },
+  "cabecalho": {
+    "naoSalvas_one": "{{count}} unsaved change",
+    "naoSalvas_other": "{{count}} unsaved changes",
+    "descartar": "Discard",
+    "salvar": "Save",
+    "salvando": "Saving…"
   }
 }

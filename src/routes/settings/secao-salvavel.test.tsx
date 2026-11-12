@@ -25,6 +25,9 @@ vi.mock('../../lib/api-client', async () => {
     listAgentAreas: (...args: unknown[]) => listAgentAreas(...args),
     setAreaMaxParallel: (...args: unknown[]) => setAreaMaxParallel(...args),
     setAreaBudget: (...args: unknown[]) => setAreaBudget(...args),
+    listWorkspaces: () => Promise.resolve([{ id: 'ws-1', role: 'owner' }]),
+    getProjectBudget: () => Promise.resolve(null),
+    setProjectBudget: () => Promise.resolve({}),
   };
 });
 

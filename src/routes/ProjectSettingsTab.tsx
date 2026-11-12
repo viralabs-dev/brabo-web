@@ -41,6 +41,7 @@ import { ProvedorDoSumario } from './settings/SecaoDeConfiguracoes';
 import { useGrupoInicial, useTrocaDeGrupo } from './settings/secao-inicial';
 import { GRUPOS_DO_SUMARIO, ehGrupoDoSumario, type GrupoDoSumario } from './settings/sumario';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/shadcn/tabs';
+import { BarraDeSalvar, ProvedorDoSalvarDoCabecalho } from './settings/salvar-do-cabecalho';
 import { useTranslation } from 'react-i18next';
 import type { ReactNode } from 'react';
 import styles from './settings/sumario.module.css';
@@ -98,8 +99,10 @@ export function ProjectSettingsTab({ projectId }: ProjectSettingsTabProps) {
   };
   return (
     <ProvedorDoSumario>
+      <ProvedorDoSalvarDoCabecalho>
       {/* RN-980: os grupos são ABAS dentro da página; Configurações é um item só da sidebar. */}
       <Tabs value={grupo} onValueChange={(v) => ehGrupoDoSumario(v) && trocar(v)}>
+        <BarraDeSalvar />
         <TabsList variant="casa" aria-label={t('title')}>
           {GRUPOS_DO_SUMARIO.map((g) => (
             <TabsTrigger key={g} value={g} variant="casa">
@@ -113,6 +116,7 @@ export function ProjectSettingsTab({ projectId }: ProjectSettingsTabProps) {
           </TabsContent>
         ))}
       </Tabs>
+      </ProvedorDoSalvarDoCabecalho>
     </ProvedorDoSumario>
   );
 }

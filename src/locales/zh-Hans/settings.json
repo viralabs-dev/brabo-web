@@ -298,6 +298,10 @@
     "toast": {
       "success": "领域 {{area}} 的花费上限已保存",
       "error": "无法保存"
+    },
+    "mes": {
+      "rotulo": "月度支出上限",
+      "descricao": "项目每月（UTC）可支出的额度；重置时间显示在上限旁。"
     }
   },
   "promotion": {
@@ -568,5 +572,11 @@
     "retry": "重试",
     "cellLoading": "读取中…",
     "cellUnread": "未读取"
+  },
+  "cabecalho": {
+    "naoSalvas_other": "{{count}} 项未保存的更改",
+    "descartar": "放弃",
+    "salvar": "保存",
+    "salvando": "保存中…"
   }
 }

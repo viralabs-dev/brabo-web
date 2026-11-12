@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { mensagemDaApi } from '../../lib/api-client';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
 
-import type { ConfigDeSecao, SecaoSalvavel } from './secao-salvavel';
+import type { ConfigDeSecao, DesfechoDeSalvar, SecaoSalvavel } from './secao-salvavel';
 
 /**
  * Um botão de salvar por SEÇÃO, no lugar de um por linha.
@@ -106,12 +106,24 @@ export function useSecaoSalvavel<TItem, TValor>({
     setRascunhos((d) => ({ ...d, [chave]: texto }));
   }
 
-  async function salvarSecao() {
+  function descartar() {
+    setRascunhos({});
+  }
+
+  /**
+   * `silencioso`: quem chama (o Salvar do cabeçalho, RN-1265) junta os
+   * desfechos de várias seções e fala UMA vez; sem isto cada seção avisaria
+   * por conta própria e a tela diria N coisas sobre um só clique.
+   */
+  async function salvarSecao(
+    opcoes: { silencioso?: boolean } = {},
+  ): Promise<DesfechoDeSalvar> {
     const pendentes = linhas.filter((item) => leitura(item).suja);
-    if (pendentes.length === 0) return;
+    const desfecho: DesfechoDeSalvar = { salvas: [], falhas: [] };
+    if (pendentes.length === 0) return desfecho;
 
     setSalvando(true);
-    const salvas: string[] = [];
+    const salvas = desfecho.salvas;
     const falhas: { chave: string; erro: unknown }[] = [];
     try {
       for (const item of pendentes) {
@@ -137,7 +149,16 @@ export function useSecaoSalvavel<TItem, TValor>({
         await aoConcluir?.();
       }
 
-      if (falhas.length === 0) {
+      for (const f of falhas) {
+        desfecho.falhas.push({
+          chave: f.chave,
+          motivo: mensagemDaApi(f.erro, erroGenerico),
+        });
+      }
+
+      if (opcoes.silencioso) {
+        // o chamador fala
+      } else if (falhas.length === 0) {
         showToast({
           title:
             salvas.length === 1
@@ -166,6 +187,7 @@ export function useSecaoSalvavel<TItem, TValor>({
     } finally {
       setSalvando(false);
     }
+    return desfecho;
   }
 
   return {
@@ -176,5 +198,6 @@ export function useSecaoSalvavel<TItem, TValor>({
     salvando,
     podeSalvar: sujas.length > 0 && invalidas.length === 0 && !salvando,
     salvarSecao,
+    descartar,
   };
 }

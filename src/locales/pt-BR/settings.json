@@ -314,6 +314,10 @@
     "toast": {
       "success": "Teto de gasto da área {{area}} salvo",
       "error": "Não foi possível salvar"
+    },
+    "mes": {
+      "rotulo": "Teto de gasto do mês",
+      "descricao": "Quanto o projeto pode gastar por mês (UTC); a virada vem dita no teto."
     }
   },
   "promotion": {
@@ -588,5 +592,13 @@
     "retry": "Tentar de novo",
     "cellLoading": "lendo…",
     "cellUnread": "não lido"
+  },
+  "cabecalho": {
+    "naoSalvas_zero": "{{count}} alterações não salvas",
+    "naoSalvas_one": "{{count}} alteração não salva",
+    "naoSalvas_other": "{{count}} alterações não salvas",
+    "descartar": "Descartar",
+    "salvar": "Salvar",
+    "salvando": "Salvando…"
   }
 }

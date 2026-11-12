@@ -42,7 +42,15 @@ export interface SecaoSalvavel<TItem> {
   invalidas: string[];
   salvando: boolean;
   podeSalvar: boolean;
-  salvarSecao: () => Promise<void>;
+  salvarSecao: (opcoes?: { silencioso?: boolean }) => Promise<DesfechoDeSalvar>;
+  /** Joga fora todos os rascunhos (o "Descartar" do cabeçalho). */
+  descartar: () => void;
+}
+
+/** O que a api CONFIRMOU e o que recusou, por chave — nada além disso é afirmado. */
+export interface DesfechoDeSalvar {
+  salvas: string[];
+  falhas: { chave: string; motivo: string }[];
 }
 
 /**

@@ -732,6 +732,8 @@ export function SessionPage({
   return (
     <div className={styles.wrapper}>
       <SessionTopbar
+        streaming={streaming}
+        handleCancel={handleCancel}
         projectId={projectId}
         sessionId={sessionId}
         session={session}

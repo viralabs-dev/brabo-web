@@ -1206,6 +1206,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
               agentesTravados: p.agentesTravados ?? [],
               tarefasBloqueadas: p.tarefasBloqueadas ?? [],
               tarefasPendentes: p.tarefasPendentes ?? 0,
+              ciclosDeDependencia: p.ciclosDeDependencia ?? [],
             })}
           </MensagemDeConversa>
         ),

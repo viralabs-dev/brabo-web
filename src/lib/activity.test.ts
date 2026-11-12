@@ -564,3 +564,17 @@ describe('classifyEvent — execução parada (AT-800, RN-1061)', () => {
     expect(c.text).toContain('dev-catalogo');
   });
 });
+
+describe('AT-906 e AT-912: narração', () => {
+  it('dev.wake_requested diz quem procurou tarefa de novo', () => {
+    expect(classifyEvent(ev('dev.wake_requested', 'user-1', { agentId: 'dev-api' })).text).toContain(
+      'dev-api procurar tarefa de novo',
+    );
+  });
+
+  it('backlog.task_archived diz o motivo e não é ruim', () => {
+    const c = classifyEvent(ev('backlog.task_archived', 'user-1', { reason: 'duplicada' }));
+    expect(c.text).toBe('task arquivada: duplicada');
+    expect(c.bad).toBe(false);
+  });
+});

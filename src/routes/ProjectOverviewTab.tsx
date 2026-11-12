@@ -29,6 +29,7 @@ import {
   rearmDevAgent,
   setAgentAutonomy,
   unblockTask,
+  wakeDevAgent,
 } from '../lib/api-client';
 import {
   deriveAgentRoster,
@@ -66,7 +67,8 @@ import { Button } from '../components/ui/Button';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { AgentAutonomyActionType, Architecture, ProposedAction, SessionEvent } from '../lib/api-types';
 import { Card } from '../components/ui/Card';
-import { nomeDoAgente } from '../lib/agents';
+import { addressableAgents, nomeDoAgente } from '../lib/agents';
+import { ProximoPasso } from '../components/ProximoPasso';
 import styles from './ProjectOverviewTab.module.css';
 
 interface ProjectOverviewTabProps {
@@ -260,6 +262,18 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
     }
   }
 
+  // AT-906: o 409 do engine (agente fora de `idle`) chega com a frase dele.
+  async function handleWake(agentId: string) {
+    if (!sessionId) return;
+    try {
+      await wakeDevAgent(projectId, sessionId, agentId);
+      await queryClient.invalidateQueries({ queryKey: ['session-events', projectId, sessionId] });
+      showToast({ title: t('team.wakeSuccess'), tone: 'success' });
+    } catch (erro) {
+      showToast({ title: t('team.wakeErrorTitle'), message: mensagemDaApi(erro), tone: 'danger' });
+    }
+  }
+
   // FASE 27 — dev/QA saem daqui para a aba Executores (RN-121); o resto do
   // time (Criativo/PO/Arquiteto/Infra) continua na Visão geral. Contagem do
   // cabeçalho e a árvore abaixo passam a refletir só o que a Visão geral
@@ -280,6 +294,8 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
     (e) => e.actor.kind !== 'agent' || !isExecutorAgentId(e.actor.id),
   );
   const workingCount = overviewRoster.filter((r) => r.status === 'trabalhando').length;
+  const conversacionais = new Set<string>(addressableAgents());
+  const agenteTrabalhando = overviewRoster.find((r) => r.status === 'trabalhando' && conversacionais.has(r.id));
   const waitingCount = overviewRoster.filter((r) => r.status === 'aguardando').length;
 
   return (
@@ -289,6 +305,14 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
         <PrimeirosPassos
           projectId={projectId}
           temSessao={sessoesQuery.data ? !!latestSession : undefined}
+        />
+        {/* RN-1162: o próximo passo do projeto, da tabela ordenada. */}
+        <ProximoPasso
+          projectId={projectId}
+          temSessao={sessoesQuery.data ? !!latestSession : undefined}
+          agenteTrabalhando={agenteTrabalhando ? nomeDoAgente(agenteTrabalhando.id) : null}
+          execucaoAtiva={execucao.isSuccess ? !!execucao.session : undefined}
+          architecture={architecture}
         />
         {/* RN-855: como rodar o entregável, declarado pela Infra. */}
         <RodarNaSuaMaquina projectId={projectId} />
@@ -316,6 +340,7 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           onToggleArea={toggleArea}
           onAutonomyChange={handleAutonomyChange}
           onRearm={handleRearm}
+          onWake={handleWake}
         />
 
         {/* A árvore vem LOGO ABAIXO dos cards do time, e não na coluna de

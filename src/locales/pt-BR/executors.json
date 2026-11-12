@@ -21,7 +21,9 @@
     "toast": {
       "autonomyError": "Não foi possível mudar a autonomia",
       "rearmed": "Agente rearmado",
-      "rearmError": "Não foi possível rearmar o agente"
+      "rearmError": "Não foi possível rearmar o agente",
+      "woken": "Procurando tarefa",
+      "wakeError": "Não foi possível acordar o agente"
     },
     "noExecutorsTitle": "Ninguém em ação agora",
     "idleWarning": "Nenhum agente está trabalhando agora. A execução está ativa: os agentes aguardam a tarefa de que dependem e acordam quando a dependência for mergeada."
@@ -58,7 +60,8 @@
       "toolCount_other": "{{count}} ferramentas",
       "missing_zero": "Faltam {{count}} caracteres (texto cortado)",
       "toolCount_zero": "{{count}} ferramentas"
-    }
+    },
+    "wake": "Procurar tarefa de novo"
   },
   "teamGrid": {
     "leadBadge": "Lead",

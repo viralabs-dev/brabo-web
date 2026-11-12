@@ -5,6 +5,45 @@ componentes citados abaixo). Este arquivo cobre a COMPOSIÇÃO de cada tela
 — quais regiões existem, como se organizam, e o comportamento de estado
 de cada uma.
 
+## v9 — a estrutura vigente (ADR 0294)
+
+Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`, markup em `fonte/<id>.dc.html`). Cada tela abaixo cita o id da prévia; a tela de código é conferida contra a imagem de mesmo id (AT-897). Onde a v9 e as seções mais antigas deste arquivo divergem, vale a v9. Decisão: [ADR 0294](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0294-a-estrutura-v9-oito-secoes-com-sub-abas-caixa-de-decisoes-e-agentes-agora.md).
+
+### Shell
+- **Sidebar** (`sidebar-07`, 256/48 px): marca, Buscar (⌘K), Início, Caixa de decisões (ponto de presença, nunca número), rótulo PROJETO, seletor do projeto, as 8 seções, rótulo AGENTES AGORA (até 5, avatar, nome e ponto de status, mais "ver todos"), rótulo WORKSPACE (Containers, Providers, Gastos, Status) e o menu do usuário. Fora de um projeto, o bloco PROJETO vira a lista de projetos.
+- **Cabeçalho do projeto** (56 px): trilha `Projeto / Seção`, chips `local · privado` e `⎇ branch`, medidor do mês (só com fonte; o teto mensal é a AT-934) e uma ação primária. O chip "Precisa de você" saiu: virou a faixa da Visão geral e a Caixa.
+- **Faixa de sub-abas** no topo do conteúdo, a mesma de Configurações (ADR 0241); contador por sub-aba, nunca somado.
+
+### As oito seções
+
+| seção | sub-abas | telas da prévia |
+|---|---|---|
+| Visão geral | — | P10 |
+| Sessões | Todas, Ideação, Conversa | P13, P23, C30, C31 |
+| Trabalho | Backlog, Execução | P12, P11 |
+| Código | Arquivos, PRs | P22, P15 |
+| Decisões | Aprovações, Hipóteses, Permissões | P14, P17 |
+| Arquitetura | — | P16 |
+| Gastos | — | P21 |
+| Configurações | Modelos, Projeto e execução, Pessoas e acesso, Avançado | P18, P19, P20 |
+
+As chaves de URL de hoje viram as chaves das sub-abas; todo link antigo abre a mesma tela.
+
+### S07 — Caixa de decisões (`/decisions`)
+Cinco cartões de fila, cada um com o próprio número e nunca somados (RN-467): Aprovações, PRs para mergear, Hipóteses, Promoções de história e Pendências de arquitetura. Abaixo, uma seção por fila com os itens de todos os projetos (avatar, ação, tipo, projeto, idade, motivo, e Aprovar, Negar e Abrir). Fila vazia tem texto próprio. Fonte: AT-928.
+
+### P10 — Visão geral
+Faixa "Precisa de você" (`--accent-panel`) com o item mais urgente e as ações; cartões do time; "O que aconteceu" com o seletor Turnos | Eventos (um turno é uma linha: agente, passos, "Gravado neste turno", custo, hora); coluna lateral com Próximo passo (regra da AT-936) e Ambiente.
+
+### C30 / C31 — Sessão
+Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor da sessão. Fio com a linha de passos recolhida (N passos, até 3 chips de ferramenta, custo do turno), texto do agente em 62ch e aprovação em linha (variante única). Passos abertos agrupados por intenção, a partir de um mapa tipado ferramenta para grupo; o bloco Raciocínio só para `developer` ou mais (ADR 0249). Painel de contexto de 340 px.
+
+### Demais telas
+P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), P16, P21, P18 a P20 e S00 a S06, H01 seguem a imagem de mesmo id.
+
+### Fora da v9
+Superfície quente (decisão do dono, 11/11/2026). Vistas "ADRs" e "Contratos" da Arquitetura e sub-aba "Commits" dependem de fonte (AT-883). O que a tela mostra precisa de fonte: o que ainda não tem (teto mensal, teto do workspace, "Próximo passo") entra pelas AT-934 a AT-936 e fica fora da tela até lá.
+
 ## A referência viva é `design_handoff_brabo/` (desde 2026-08-08, FASE 16)
 
 O handoff está **versionado no repositório**: um `README.md` com a

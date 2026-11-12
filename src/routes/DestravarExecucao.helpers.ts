@@ -9,5 +9,7 @@ export function textoDaExecucaoParada(
     ...parada.tarefasBloqueadas.map((x) => t('execucaoParada.tarefa', { titulo: x.title ?? x.taskId })),
     ...parada.agentesTravados.map((x) => t('execucaoParada.agente', { agente: x.agentId })),
   ].join(', ');
-  return t('execucaoParada.aviso', { count: parada.tarefasPendentes, atras });
+  const aviso = t('execucaoParada.aviso', { count: parada.tarefasPendentes, atras });
+  const ciclos = (parada.ciclosDeDependencia ?? []).map((c) => t('execucaoParada.ciclo', { modulo: c.modulo, esperaPor: c.esperaPor }));
+  return [aviso, ...ciclos].join(' ');
 }

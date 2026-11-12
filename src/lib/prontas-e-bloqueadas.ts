@@ -52,7 +52,7 @@ export function prsProntasParaMerge(
 /** As tarefas bloqueadas do backlog (`blocked`), na ordem do backlog — RN-826. */
 export function tarefasBloqueadas(epics: readonly Epic[] | undefined): Task[] {
   return (epics ?? []).flatMap((e) =>
-    (e.stories ?? []).flatMap((s) => (s.tasks ?? []).filter((t) => t.blocked)),
+    (e.stories ?? []).flatMap((s) => (s.tasks ?? []).filter((t) => t.blocked && !t.archivedAt)),
   );
 }
 
@@ -72,4 +72,18 @@ export function assinaturaDoBacklog(epics: readonly Epic[] | undefined): string 
     )
     .sort()
     .join('|');
+}
+
+/**
+ * AT-912 (RN-1085): tarefa `todo`, sem módulo, em história de vários módulos — nenhum dev a pega até o
+ * plano atribuir o módulo ou o dono arquivar. A história de um só módulo não entra: a tarefa herda o dela.
+ */
+export function tarefasSemModulo(epics: readonly Epic[] | undefined): Task[] {
+  return (epics ?? []).flatMap((e) =>
+    (e.stories ?? []).flatMap((s) =>
+      (s.moduleIds?.length ?? 0) > 1
+        ? (s.tasks ?? []).filter((t) => t.status === 'todo' && !t.module && !t.blocked && !t.archivedAt)
+        : [],
+    ),
+  );
 }

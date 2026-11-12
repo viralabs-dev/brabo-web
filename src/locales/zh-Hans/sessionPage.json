@@ -347,7 +347,8 @@
       "prontas": "可合并的 PR",
       "bloqueadas": "被阻塞的任务",
       "perguntas": "未回答的问题",
-      "travados": "卡住的智能体"
+      "travados": "卡住的智能体",
+      "semModulo": "无模块的任务"
     },
     "origem_other": "会话 {{hashtag}} 中的 {{count}} 个提议 · 最早的 {{tempo}}",
     "abas": "待处理队列",
@@ -404,6 +405,9 @@
       "ok": "智能体已重新启用：它会再次领取任务。",
       "erro": "无法重新启用该智能体。",
       "semPapel": "重新启用需要项目中的 developer 角色。"
+    },
+    "semModulo": {
+      "motivo": "没有模块：没人会接手。请通过计划分配，或在 Backlog 标签页归档该任务。"
     }
   },
   "mergearNoChat": {
@@ -481,7 +485,8 @@
     "nota": "重新启用会让代理脱离熔断；解除阻塞会把任务放回队列。",
     "semPapel": "重新启用和解除阻塞需要项目中的 developer 角色。",
     "feito": "完成——进展会显示在此对话中。",
-    "erroTitulo": "无法解除执行停滞"
+    "erroTitulo": "无法解除执行停滞",
+    "ciclo": "僵局：{{modulo}} 在等待 {{esperaPor}}，而它又依赖 {{modulo}}。只有合约或 dependsOn 变更才能解开。"
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}}“{{titulo}}”已就绪，可以合并：检查已通过。",

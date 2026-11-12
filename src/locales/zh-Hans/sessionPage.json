@@ -378,7 +378,9 @@
       "semMotivo": "未记录原因。",
       "semPapel": "解除阻塞需要项目中的 developer 角色。",
       "diagnostico": "诊断",
-      "agenteTravado": "{{agente}} 已卡住：请先重新启用，再解除阻塞。"
+      "agenteTravado": "{{agente}} 已卡住：请先重新启用，再解除阻塞。",
+      "orientacao": "给开发者的指引（可选）",
+      "orientacaoDica": "例如：入口由组装方注入；不要单独启动该模块。"
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",

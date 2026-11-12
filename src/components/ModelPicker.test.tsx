@@ -243,3 +243,37 @@ describe('ModelPicker', () => {
     expect(screen.queryByText('Nenhum modelo cadastrado')).toBeNull();
   });
 });
+
+describe('ModelPicker com catálogo vazio (AT-900)', () => {
+  it('sem modelo e com o atalho do owner, mostra o aviso e chama o sync', () => {
+    const aoAtualizar = vi.fn();
+    render(
+      <ModelPicker
+        models={{} as ModelsByCategory}
+        onSelect={vi.fn()}
+        aoAtualizarCatalogo={aoAtualizar}
+      />,
+    );
+    fireEvent.click(screen.getByRole('button', { name: /Selecionar modelo/ }));
+
+    expect(screen.getByText(/Nenhum modelo deste workspace veio do catálogo/)).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Atualizar catálogo' }));
+    expect(aoAtualizar).toHaveBeenCalledTimes(1);
+  });
+
+  it('sem o atalho (não é owner), o catálogo vazio segue só com a mensagem', () => {
+    render(<ModelPicker models={{} as ModelsByCategory} onSelect={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: /Selecionar modelo/ }));
+
+    expect(screen.getByText('Nenhum modelo cadastrado')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Atualizar catálogo' })).toBeNull();
+  });
+
+  it('com modelos no catálogo, não mostra o aviso mesmo com o atalho', () => {
+    render(<ModelPicker models={MODELOS} onSelect={vi.fn()} aoAtualizarCatalogo={vi.fn()} />);
+    fireEvent.click(screen.getByRole('button', { name: /Selecionar modelo/ }));
+
+    expect(screen.queryByText(/Nenhum modelo deste workspace/)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Atualizar catálogo' })).toBeNull();
+  });
+});

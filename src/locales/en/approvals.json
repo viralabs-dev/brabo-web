@@ -219,6 +219,12 @@
         "semPapel": "Adjusting the cap requires the maintainer role on the project.",
         "invalido": "Enter a dollar amount of zero or more, or leave it empty for no cap."
       }
+    },
+    "denyReason": {
+      "label": "Why are you denying this plan?",
+      "placeholder": "The Dev Lead reads this reason and asks what to change before proposing again.",
+      "confirm": "Confirm and deny",
+      "cancel": "Cancel"
     }
   },
   "prGateTimeline": {

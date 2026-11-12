@@ -379,6 +379,7 @@
     },
     "toast": {
       "saved": "凭据已保存",
+      "catalogRefreshed": "该 provider 的模型目录已更新。",
       "saveErrorTitle": "无法保存",
       "testOk": "provider 接受了该密钥",
       "testRefused": "provider 拒绝了该密钥",

@@ -910,12 +910,12 @@ consegue nomear.
 - **Onde:** `apps/web/src/routes/settings/cascata.helpers.ts:14` (`montarCadeia` — os
   quatro estados e o nó do Criativo), `:73` (`herdouDoCriativo` — a dedução e
   seu limite), `apps/web/src/routes/settings/cascata.tsx:196` (`CadeiaDeCascata`),
-  `apps/web/src/routes/settings/ModelsSection.tsx:154` (`cadeiaDoAgente`),
-  `:321` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
-  por que a linha só relê no sucesso), `:403` (`handleClearAgentBinding` — os
+  `apps/web/src/routes/settings/ModelsSection.tsx:178` (`cadeiaDoAgente`),
+  `:345` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
+  por que a linha só relê no sucesso), `:427` (`handleClearAgentBinding` — os
   três desfechos, e por que o 404 tem o dele), `:359` (coluna Origem), `:429`
   (`não há nível abaixo`), `:448` (`sem gasto ainda`),
-  `apps/web/src/components/ModelPicker.tsx:95` (`selected` sai do prop — o
+  `apps/web/src/components/ModelPicker.tsx:102` (`selected` sai do prop — o
   picker não guarda a escolha, e é por isso que a recusa não deixa valor
   fantasma na tela),
   `apps/api/src/application/use-cases/llm/set-model-binding.use-case.ts:38`

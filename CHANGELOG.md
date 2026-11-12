@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Doc (AT-885): `design/` registra a v9 como referência visual vigente (README, SCREENS e COMPONENTS): oito seções com sub-abas, Caixa de decisões com 5 filas, Agentes agora, peças novas e os tokens aprovados (corpo 14, rótulo 11, títulos 24/20, `--surface-3`, `--ag-*`), com a superfície quente de fora. Aponta para o ADR 0294 do `brabo`. Só doc: os valores entram em `tokens.css` pela AT-884.
+
 - Feat (AT-906, AT-912, AT-913): o cartão do dev ocioso ganha "Procurar tarefa de novo" (`POST .../agents/:agentId/wake`; o 409 do engine aparece com a frase dele, e `dev.wake_requested` encerra a parada vigente). A tarefa `todo` ganha "Arquivar" com motivo obrigatório, só para o dono (`POST /projects/:id/tasks/:taskId/archive`), e a arquivada fica no histórico, riscada e com o motivo, fora das pendentes e das bloqueadas. As pendências ganham a fila "Tarefas sem módulo" (todo, sem módulo, história de vários módulos). A execução parada nomeia o ciclo de dependência (`ciclosDeDependencia`). O log narra `dev.wake_requested` e `backlog.task_archived`. `fixados/openapi.json` regenerado da `dev` do brabo-api (api#97). Prévia em `13-design/acordar-e-arquivar`.
 
 - Feat (AT-898, RN-1076): o log da sessão narra `psychologist.platform_signal` como "sinal interno de plataforma (TP-01) sobre <agente>", em vez de "atividade em psicólogo". É sinal interno do TP-01, não hipótese: não aparece em Percepções. `fixados/openapi.json` regenerado da `dev` do brabo-api (`46d41b5`, api#96: POST interno de hipóteses e contexto do Psicólogo) e `api-types.generated.ts` refeito.

@@ -7,9 +7,7 @@ import {
   approveAction,
   approveAlwaysAction,
   denyAction,
-  getProjectPermissions,
   setAgentAutonomy,
-  setProjectPermissions,
 } from '../lib/api-client';
 import {
   useActiveExecutionSession,
@@ -25,7 +23,6 @@ import type { ProposedAction } from '../lib/api-types';
 import {
   AGENT_AUTONOMY_ALL_ACTIONS,
   type CoverageMatrixRow,
-  type PermissionListName,
   type QaVerdictPayload,
   type SecOpsVerdictPayload,
   type Task,
@@ -36,15 +33,13 @@ import { useDecisoesDaPolitica } from '../lib/decisao-da-politica-queries';
 import { PrGateTimeline, type GateVerdict } from '../components/PrGateTimeline';
 import { getRegistroDeGates } from '../lib/api-client';
 import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Table, type TableColumn } from '../components/ui/Table';
-import { Badge } from '../components/ui/Badge';
 import { EmptyState } from '../components/ui/EmptyState';
 import { useToast } from '../components/ui/ToastProvider.helpers';
-import { AlertCircleIcon, CheckIcon, SearchIcon, TrashIcon } from '../components/ui/icons';
+import { CheckIcon } from '../components/ui/icons';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { AGENTS, AREAS } from '../lib/agents';
 import type { DelegationEventPayload } from '../lib/api-types';
+import { DecididasRecentemente } from './DecididasRecentemente';
 import styles from './ProjectApprovalsTab.module.css';
 import { X } from 'lucide-react';
 
@@ -96,11 +91,6 @@ function BlocoDeDados<T>({
   return <>{children(query.data)}</>;
 }
 
-interface PermissionRow {
-  pattern: string;
-  list: PermissionListName;
-}
-
 interface ProjectApprovalsTabProps {
   projectId: string;
 }
@@ -126,7 +116,6 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [search, setSearch] = useState('');
 
   // "Auto mode" (RN-153) exige `maintainer` no endpoint que grava a curinga —
   // mesma aproximação (papel de WORKSPACE) que `ProjectSettingsTab.tsx` já
@@ -287,11 +276,6 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
       });
   }
 
-  const permissionsQuery = useQuery({
-    queryKey: ['permissions', projectId],
-    queryFn: () => getProjectPermissions(projectId),
-  });
-
   // O registro de gates (ADR 0054) — FASE 15b. SEM `projectId` na chave: o
   // registro é fato do produto, e cachear por projeto criaria N cópias do
   // mesmo. `staleTime` alto pelo mesmo motivo: ele muda quando o produto
@@ -377,65 +361,6 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
     setSelected(new Set());
     invalidateActions(escolhidas.map((a) => a.sessionId));
   }
-
-  async function revokeRule(row: PermissionRow) {
-    if (!permissionsQuery.data) return;
-    const updated = {
-      ...permissionsQuery.data,
-      [row.list]: permissionsQuery.data[row.list].filter((p) => p !== row.pattern),
-    };
-    await setProjectPermissions(projectId, updated);
-    queryClient.invalidateQueries({ queryKey: ['permissions', projectId] });
-  }
-
-  const rows: PermissionRow[] = permissionsQuery.data
-    ? (['allow', 'deny', 'ask'] as PermissionListName[]).flatMap((list) =>
-        permissionsQuery.data![list].map((pattern) => ({ pattern, list })),
-      )
-    : [];
-  const filteredRows = rows.filter((r) => r.pattern.toLowerCase().includes(search.toLowerCase()) || r.list.includes(search.toLowerCase()));
-
-  const columns: TableColumn<PermissionRow>[] = [
-    {
-      key: 'pattern',
-      label: t('approvalsTab.permissions.columnPattern'),
-      width: '2.4fr',
-      render: (r) => <span className={styles.pattern}>{r.pattern}</span>,
-    },
-    {
-      key: 'type',
-      label: t('approvalsTab.permissions.columnType'),
-      width: '0.9fr',
-      render: (r) => (
-        <Badge square tone={r.list === 'deny' ? 'danger' : r.list === 'allow' ? 'success' : 'warning'}>
-          {r.list}
-        </Badge>
-      ),
-    },
-    {
-      key: 'action',
-      label: t('approvalsTab.permissions.columnAction'),
-      width: '64px',
-      // Botão QUADRADO só de ícone, como no desenho — o rótulo "revogar" ao
-      // lado do ícone comia a largura de uma coluna inteira. O nome acessível
-      // carrega o padrão porque "Revogar" sozinho, repetido por linha, não diz
-      // revogar o quê.
-      render: (r) => (
-        <Button
-          type="button"
-          icon
-          size="sm"
-          variant="secondary"
-          className={styles.revoke}
-          title={t('approvalsTab.permissions.revoke')}
-          aria-label={t('approvalsTab.permissions.revokeAriaLabel', { pattern: r.pattern })}
-          onClick={() => revokeRule(r)}
-        >
-          <TrashIcon size={14} />
-        </Button>
-      ),
-    },
-  ];
 
   return (
     <div>
@@ -525,6 +450,8 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
         </BlocoDeDados>
       </div>
 
+      <DecididasRecentemente projectId={projectId} />
+
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.title}>{t('approvalsTab.devPrs.title')}</h2>
@@ -602,48 +529,6 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
         </BlocoDeDados>
       </div>
 
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h2 className={styles.title}>{t('approvalsTab.permissions.title')}</h2>
-          <span className={styles.eyebrow}>.brabo/permissions.json</span>
-        </div>
-        <p className={styles.subtitle}>{t('approvalsTab.permissions.subtitle')}</p>
-        <div className={styles.banner}>
-          <AlertCircleIcon size={15} className={styles.bannerIcone} />
-          <span>
-            {t('approvalsTab.permissions.bannerPrefix')} <b className={styles.deny}>deny</b>{' '}
-            {t('approvalsTab.permissions.bannerMiddle')} <b className={styles.allow}>allow</b>
-            {t('approvalsTab.permissions.bannerSuffix')}
-          </span>
-        </div>
-        <div className={styles.searchRow}>
-          <Input
-            mono
-            placeholder={t('approvalsTab.permissions.searchPlaceholder')}
-            icon={<SearchIcon size={15} />}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <BlocoDeDados
-          query={permissionsQuery}
-          titulo={t('approvalsTab.permissions.error')}
-          carregando={t('approvalsTab.permissions.loading')}
-        >
-          {() => (
-            <Table
-              columns={columns}
-              rows={filteredRows}
-              rowKey={(r) => `${r.list}:${r.pattern}`}
-              emptyMessage={
-                rows.length === 0
-                  ? t('approvalsTab.permissions.emptyNoRules')
-                  : t('approvalsTab.permissions.emptyNoMatch')
-              }
-            />
-          )}
-        </BlocoDeDados>
-      </div>
     </div>
   );
 }

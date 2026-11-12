@@ -10,6 +10,16 @@
     "next": "Next",
     "status": "{{page}} / {{total}}"
   },
+  "metrics": {
+    "running": "Running",
+    "decided": "Image decided",
+    "never": "Never provisioned",
+    "resources": "Resources in use",
+    "nothing": "nothing to measure",
+    "resourcesValue": "{{cpus}} CPU · {{memoryMb}} MB",
+    "de_one": "of {{count}} project",
+    "de_other": "of {{count}} projects"
+  },
   "table": {
     "project": "Project",
     "image": "Image",

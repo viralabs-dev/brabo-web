@@ -10,6 +10,18 @@
     "next": "Далее",
     "status": "{{page}} / {{total}}"
   },
+  "metrics": {
+    "running": "Работает",
+    "decided": "Образ выбран",
+    "never": "Не создавался",
+    "resources": "Ресурсы в работе",
+    "nothing": "нечего измерять",
+    "resourcesValue": "{{cpus}} CPU · {{memoryMb}} МБ",
+    "de_one": "из {{count}} проекта",
+    "de_few": "из {{count}} проектов",
+    "de_many": "из {{count}} проектов",
+    "de_other": "из {{count}} проекта"
+  },
   "table": {
     "project": "Проект",
     "image": "Образ",

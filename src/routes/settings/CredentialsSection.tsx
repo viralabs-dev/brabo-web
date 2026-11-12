@@ -1,10 +1,11 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { KeyRound } from 'lucide-react';
-import { PlugZap, RefreshCw, Save, Trash2 } from 'lucide-react';
+import { PlugZap, Plus, RefreshCw, Save, Trash2 } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
   deleteCredential,
+  getCredentialSpend,
   listCredentials,
   listModelCatalog,
   mensagemDaApi,
@@ -21,6 +22,7 @@ import {
 import { Input } from '../../components/ui/Input';
 import { Ajuda } from '@/components/ui/Ajuda';
 import { Button } from '../../components/ui/Button';
+import { Modal } from '../../components/ui/Modal';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from '@/components/shadcn/item';
 import styles from '../ProjectSettingsTab.module.css';
@@ -144,6 +146,20 @@ export function CredentialsSection() {
   // só, e não um booleano por card: duas chamadas simultâneas aqui não fazem
   // sentido nenhum, e o estado por provider convidaria a esquecer de limpá-lo.
   const [emVoo, setEmVoo] = useState<string | null>(null);
+  // Provider cujo diálogo de chave está aberto. A chave só existe DENTRO do
+  // diálogo (write-only, ADR 0050): fechou ou salvou, o rascunho some.
+  const [dialogo, setDialogo] = useState<LlmCredentialProvider | null>(null);
+  function fecharDialogo() {
+    setDialogo(null);
+    setDrafts({});
+  }
+
+  // Chamadas por provider = gasto por chave: só o owner (RN-060/RN-101).
+  const { data: gasto } = useQuery({
+    queryKey: ['credential-spend', workspaceId],
+    queryFn: () => getCredentialSpend(workspaceId!),
+    enabled: !!workspaceId && podeSincronizar,
+  });
 
   /**
    * Todo `catch` desta seção existe por um bug real: sem eles, o `ApiError`
@@ -158,7 +174,7 @@ export function CredentialsSection() {
     try {
       await aposMudarChave(queryClient, () => upsertCredential({ provider, apiKey }));
       void queryClient.invalidateQueries({ queryKey: ['models'] });
-      setDrafts((d) => ({ ...d, [provider]: '' }));
+      fecharDialogo();
       showToast({
         title: t('credentials.toast.saved'),
         message: t('credentials.toast.catalogRefreshed'),
@@ -228,6 +244,12 @@ export function CredentialsSection() {
     }
   }
 
+  const conectados = CREDENCIAIS_DE_LLM.filter((c) => credentials?.some((x) => x.provider === c.id));
+  const disponiveis = CREDENCIAIS_DE_LLM.filter((c) => !conectados.includes(c));
+  const dialogoTemChave = !!dialogo && conectados.some((c) => c.id === dialogo);
+  const rotuloDoDialogo = CREDENCIAIS_DE_LLM.find((c) => c.id === dialogo)?.label ?? '';
+  const chamadas = new Map((gasto?.porProvider ?? []).map((p) => [p.provider as string, p.chamadas]));
+
   return (
     <section className={styles.section}>
       <div className={styles.sectionHead}>
@@ -246,10 +268,12 @@ export function CredentialsSection() {
           sigla, nome, estado da chave e ações só com ícone. A credencial é
           write-only e nunca volta do servidor (ADR 0050): a linha mostra a
           data, nunca uma chave mascarada inventada. */}
+      <h3 className={styles.conectorSubtitulo}>
+        {t('credentials.connected', { count: conectados.length })}
+      </h3>
       <ItemGroup className={styles.conectorLista}>
-        {CREDENCIAIS_DE_LLM.map(({ id, label, kind }) => {
+        {conectados.map(({ id, label, kind }) => {
           const existing = credentials?.find((c) => c.provider === id);
-          const rascunho = drafts[id]?.trim() ?? '';
           const ocupado = emVoo === id;
           const cor = COR_DO_PROVIDER[id];
           return (
@@ -275,6 +299,9 @@ export function CredentialsSection() {
                   </span>
                 </ItemTitle>
                 <ItemDescription>
+                  {chamadas.has(id) && (
+                    <>{t('credentials.connector.calls', { count: chamadas.get(id) })} · </>
+                  )}
                   {existing
                     ? t('credentials.connector.configuredNote', {
                         date: new Date(existing.updatedAt).toLocaleDateString(i18n.language),
@@ -301,34 +328,13 @@ export function CredentialsSection() {
                   : t('credentials.connector.missing')}
               </span>
               <ItemActions>
-                {/* O input fica SEMPRE visível: com credencial salva ele é o
-                    caminho da troca, que antes só existia removendo primeiro. */}
-                <Input
-                  mono
-                  type="password"
-                  aria-label={
-                    existing
-                      ? t('credentials.connector.newKeyAria', { label })
-                      : t('credentials.connector.apiKeyAria', { label })
-                  }
-                  placeholder={
-                    existing
-                      ? t('credentials.connector.swapPlaceholder')
-                      : t('credentials.connector.apiKeyPlaceholder')
-                  }
-                  value={drafts[id] ?? ''}
-                  onChange={(e) => setDrafts((d) => ({ ...d, [id]: e.target.value }))}
-                />
                 <Button
-                  legenda={
-                    existing
-                      ? t('credentials.connector.swapKeyAria', { label })
-                      : t('credentials.connector.saveKeyAria', { label })
-                  }
-                  disabled={ocupado || rascunho.length === 0}
-                  onClick={() => handleSave(id)}
+                  variant="secondary"
+                  legenda={t('credentials.connector.openSwapAria', { label })}
+                  disabled={ocupado}
+                  onClick={() => setDialogo(id)}
                 >
-                  {existing ? <RefreshCw aria-hidden="true" /> : <Save aria-hidden="true" />}
+                  <RefreshCw aria-hidden="true" />
                 </Button>
                 {existing && (
                   <>
@@ -365,6 +371,46 @@ export function CredentialsSection() {
           );
         })}
       </ItemGroup>
+
+      <h3 className={styles.conectorSubtitulo}>{t('credentials.addTitle')}</h3>
+      <div className={styles.conectorGrade}>
+        {disponiveis.map(({ id, label }) => (
+          <Button key={id} variant="secondary" onClick={() => setDialogo(id)}>
+            <Plus aria-hidden="true" />
+            {label}
+          </Button>
+        ))}
+      </div>
+
+      {dialogo && (
+        <Modal title={t('credentials.dialogTitle', { label: rotuloDoDialogo })} onClose={fecharDialogo}>
+          <Input
+            mono
+            type="password"
+            autoComplete="off"
+            aria-label={
+              dialogoTemChave
+                ? t('credentials.connector.newKeyAria', { label: rotuloDoDialogo })
+                : t('credentials.connector.apiKeyAria', { label: rotuloDoDialogo })
+            }
+            placeholder={t('credentials.connector.apiKeyPlaceholder')}
+            value={drafts[dialogo] ?? ''}
+            onChange={(e) => setDrafts({ [dialogo]: e.target.value })}
+          />
+          <Button
+            legenda={
+              dialogoTemChave
+                ? t('credentials.connector.swapKeyAria', { label: rotuloDoDialogo })
+                : t('credentials.connector.saveKeyAria', { label: rotuloDoDialogo })
+            }
+            disabled={emVoo === dialogo || (drafts[dialogo]?.trim() ?? '').length === 0}
+            onClick={() => handleSave(dialogo)}
+          >
+            {dialogoTemChave ? <RefreshCw aria-hidden="true" /> : <Save aria-hidden="true" />}
+            {dialogoTemChave ? t('credentials.connector.swap') : t('credentials.connector.save')}
+          </Button>
+        </Modal>
+      )}
     </section>
   );
 }

@@ -358,7 +358,19 @@
     "consultadoCorte": "mostrando {{shown}} de {{total}}",
     "passosCount_zero": "{{count}} passos",
     "passosCount_one": "{{count}} passo",
-    "passosCount_other": "{{count}} passos"
+    "passosCount_other": "{{count}} passos",
+    "visao": "Visão dos passos",
+    "agrupados": "Agrupados",
+    "emOrdem": "Em ordem",
+    "grupos": {
+      "leu": "Leu o contexto",
+      "desenhou": "Desenhou",
+      "registrou": "Registrou",
+      "outros": "Outros"
+    },
+    "raciocinioTokens_zero": "{{count}} tokens",
+    "raciocinioTokens_one": "{{count}} token",
+    "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" acima.",
@@ -553,5 +565,31 @@
     "verAs_one": "Ver a {{count}}",
     "verAs_other": "Ver as {{count}}",
     "agoraNao": "Agora não"
+  },
+  "resumo": {
+    "gravado": "Gravado neste turno: {{itens}}",
+    "tipos": {
+      "regra": "regra de negócio",
+      "decisao": "decisão",
+      "pergunta": "pergunta em aberto",
+      "epico": "épico",
+      "historia": "história",
+      "historia_corrigida": "história corrigida",
+      "historia_arquivada": "história arquivada",
+      "tarefa": "tarefa",
+      "tarefa_corrigida": "tarefa corrigida",
+      "nota": "nota",
+      "artefato": "outro artefato",
+      "adr": "ADR proposto",
+      "module_map": "mapa de módulos",
+      "modulos_de_historia": "atribuição de módulos",
+      "imagem": "imagem decidida",
+      "c4": "diagrama C4",
+      "roteamento": "roteamento para a infra",
+      "contratos": "contrato de módulos",
+      "insight": "insight",
+      "rfc": "RFC proposta",
+      "prototipo": "protótipo proposto"
+    }
   }
 }

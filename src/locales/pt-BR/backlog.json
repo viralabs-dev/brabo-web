@@ -14,7 +14,8 @@
     "epics": "Nenhum épico ainda. Aceite o handoff do Criativo numa sessão para o PO gerar o backlog.",
     "rules": "Sem regras de negócio ainda.",
     "epicsTitle": "Backlog vazio",
-    "rulesTitle": "Sem regras"
+    "rulesTitle": "Sem regras",
+    "filtrado": "Nenhuma história com esse filtro."
   },
   "coverage": {
     "uncoveredBadge_zero": "{{count}} descobertas",
@@ -124,5 +125,31 @@
       "archived": "Tarefa arquivada",
       "archiveError": "Não foi possível arquivar a tarefa"
     }
+  },
+  "visao": {
+    "label": "Visão do backlog",
+    "epico": "Por épico",
+    "quadro": "Quadro"
+  },
+  "busca": {
+    "label": "Buscar história, tarefa ou RN"
+  },
+  "filtro": {
+    "comPergunta_zero": "Com pergunta aberta · {{count}}",
+    "comPergunta_one": "Com pergunta aberta · {{count}}",
+    "comPergunta_other": "Com pergunta aberta · {{count}}",
+    "modulo": "Módulo",
+    "todosModulos": "Todos os módulos",
+    "recorte": "A contagem de perguntas é um recorte: só as 50 primeiras de {{total}} entram."
+  },
+  "epico": {
+    "progresso_zero": "nenhuma história",
+    "progresso_one": "{{count}} história · {{prontas}} de {{count}} prontas",
+    "progresso_other": "{{count}} histórias · {{prontas}} de {{count}} prontas"
+  },
+  "historia": {
+    "perguntas_zero": "nenhuma pergunta",
+    "perguntas_one": "{{count}} pergunta",
+    "perguntas_other": "{{count}} perguntas"
   }
 }

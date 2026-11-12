@@ -979,7 +979,7 @@ tela pausa durante o turno — e com ele a duplicata visual da bolha em
 streaming.
 
 - **Onde:** `apps/web/src/lib/hooks.ts:262` (o `pausarPoll` do histórico),
-  `:411` (`baixados`); `apps/web/src/routes/ContextAside.tsx:164`
+  `:417` (`baixados`); `apps/web/src/routes/ContextAside.tsx:164`
   (`eventosAnteriores`) e o `ActivityFeed` com o pager, no fim do mesmo
   arquivo
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -1211,9 +1211,9 @@ montada, os cinco números saem do MESMO hook que ela usa
 (`useContagensDoProjeto`), sem requisição nova. Recolhida, o quadrado do
 projeto aberto abre um flyout com as mesmas abas.
 
-- **Onde:** `apps/web/src/routes/Shell.tsx:596` (`projetosAbertosEfetivo`),
-  `:352` (`useContagensDoProjeto`), `:539` (`irParaAba`), `:541`
-  (`flyoutAberto`), `:232` (`contagensDoResumo`);
+- **Onde:** `apps/web/src/routes/Shell.tsx:620` (`projetosAbertosEfetivo`),
+  `:371` (`useContagensDoProjeto`), `:563` (`irParaAba`), `:541`
+  (`flyoutAberto`), `:251` (`contagensDoResumo`);
   `apps/web/src/routes/AbasDoProjeto.tsx:63` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
   (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:80` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),

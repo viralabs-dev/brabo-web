@@ -26,9 +26,9 @@ function telas() {
 }
 
 describe('rotas carregadas sob demanda (AT-300)', () => {
-  it('as dezessete telas têm `.preload` — o router espera o chunk em vez de suspender no render', () => {
+  it('as dezoito telas têm `.preload` — o router espera o chunk em vez de suspender no render', () => {
     const rotas = telas();
-    expect(rotas).toHaveLength(17);
+    expect(rotas).toHaveLength(18);
     for (const rota of rotas) {
       const componente = rota.options.component as ComPreload | undefined;
       expect(typeof componente?.preload, `rota ${rota.id} sem .preload`).toBe('function');

@@ -1,0 +1,34 @@
+{
+  "titulo": "Decision inbox",
+  "subtitulo": "The queues of all projects, kept separate.",
+  "seletor": "Pending or decided",
+  "modo": {
+    "pending": "Pending",
+    "decided": "Decided"
+  },
+  "erro": "Could not load the decision inbox.",
+  "carregando": "Loading…",
+  "filas": {
+    "aprovacoes": "Action approvals",
+    "prs": "PR merges",
+    "promocoes": "Story promotions",
+    "arquitetura": "Architecture pending items",
+    "hipoteses": "Psychologist hypotheses"
+  },
+  "vazio": {
+    "aprovacoes": "No action waiting for a decision.",
+    "prs": "No PR merge waiting for a decision.",
+    "promocoes": "No story waiting for promotion.",
+    "arquitetura": "No architecture pending items.",
+    "hipoteses": "No Psychologist hypothesis waiting for a decision."
+  },
+  "vazioArquiteturaDecididas": "Architecture is a derived pending item: there is no human decision to list here.",
+  "truncada": "Showing {{mostrados}} of {{total}}; the rest is in the project tab.",
+  "gateParado": "The {{gate}} gate is stopped until you decide this action.",
+  "abrir": "Open",
+  "dataEmprestada": "story updated {{tempo}}",
+  "motivo": {
+    "no_module": "The story has no module.",
+    "missing_module": "Modules missing from the map: {{modulos}}."
+  }
+}

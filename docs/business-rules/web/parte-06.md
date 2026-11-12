@@ -346,7 +346,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
   `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:544` (`semExecucaoVigente`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
   execução encerrada)
@@ -381,7 +381,7 @@ keywords: [regras de negócio, web]
   Proton Pass. O composer da Sessão já o tinha. A constante NÃO tem atributo de
   ignore do NordPass, e nenhum foi inventado: se o NordPass segue se anexando,
   o resto da lacuna é da extensão, como na RN-740.
-- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:325` (`SEM_AUTOFILL`),
+- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:281` (`SEM_AUTOFILL`),
   `apps/web/src/lib/conversa-comecou.ts:29` (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` ("AT-472: o nome
   da nova ideação não convida o gerenciador de senhas")
@@ -716,8 +716,8 @@ keywords: [regras de negócio, web]
   altura reservada, e jsdom não faz layout — o teste prova a ORDEM, não o
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:524` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:659` (`blockedTasks`)
+- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:509` (`desbloqueio`),
+  `apps/web/src/routes/ProjectOverviewTab.tsx:640` (`blockedTasks`)
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),

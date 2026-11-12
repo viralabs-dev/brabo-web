@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-892): a barra da Sessão ganha a trilha "Sessões / título" e a cadeia de agentes (do primeiro ao último a falar, derivada dos eventos já baixados, sem leitura nova, RN-632). O medidor "N chamadas" e o gasto oficial seguem de fora. O regressivo `chat-e-pendencias` fica para a lane do qa.
 - Feat (AT-889, RN-1275): a Caixa de decisões (`/decisions`, S07) reúne as cinco filas de todos os projetos numa leitura, com o seletor Pendentes | Decididas, o item na sidebar com ponto de presença e sem somar filas. O chip "Precisa de você" sai do cabeçalho do projeto. i18n nos quatro idiomas. O regressivo de `aprovacoes` fica para a lane do qa.
 
 - Feat (AT-896, lane G, parte 2): Gastos ganham o gasto por dia empilhado por agente (`porDiaEAgente`, RN-1153, densificado no cliente, recharts lazy) com "Ver como tabela" na visão do time do projeto, o seletor de janela em grupo de botões (7 dias, 30 dias, Mês), "Por projeto" com link, "Por agente" com a cor do agente e o modelo de maior gasto na nota do custo médio. Sem RN nova.

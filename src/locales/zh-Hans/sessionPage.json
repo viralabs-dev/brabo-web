@@ -34,7 +34,9 @@
     "ajustesAria": "本会话的模型、回复语言与预算",
     "perguntaDeIdiomaPendente": "有一个关于回复语言的问题",
     "encerrarSessao": "结束会话",
-    "pararTurno": "停止本轮"
+    "pararTurno": "停止本轮",
+    "trilha": "会话路径",
+    "sessoes": "会话"
   },
   "convite": {
     "criativa": {

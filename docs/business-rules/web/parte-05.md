@@ -441,8 +441,8 @@ o do chat.
 
 - **Código:** `apps/web/src/routes/ProjectPage.tsx:82` (o contador),
   `:121` (os merges da mesma leitura);
-  `apps/web/src/routes/ProjectApprovalsTab.tsx:115` (`pendentesQuery`), `:119`
-  (`sessaoDeTrabalho`), `:326` (`handleApprove`);
+  `apps/web/src/routes/ProjectApprovalsTab.tsx:106` (`pendentesQuery`), `:112`
+  (`sessaoDeTrabalho`), `:312` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:129` (`pendentesDoProjeto`);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:111` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);

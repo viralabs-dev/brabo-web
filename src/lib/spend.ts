@@ -269,3 +269,14 @@ export function alertaDeOrcamento(
 
   return { nivel, mensagem };
 }
+
+/**
+ * A legenda da virada do teto mensal (RN-1200): a api vira o mês em UTC (`fim` é
+ * o 1º dia do mês seguinte, `AAAA-MM-DD`); só a LEGENDA vai para a hora local.
+ */
+export function viradaDoMesLocal(fim: string, locale: string): string {
+  return new Date(`${fim}T00:00:00Z`).toLocaleString(locale, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
+}

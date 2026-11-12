@@ -8,7 +8,9 @@
 /* Cabeçalho linear: título, meta e ações, com uma única divisória embaixo. */
 .header {
   flex-shrink: 0;
-  padding: 16px 24px 14px;
+  min-height: 56px;
+  align-items: center;
+  padding: 8px 24px;
 }
 
 /*

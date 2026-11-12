@@ -150,3 +150,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `apps/web/src/routes/project-tabs.ts:390` (`SECOES_DO_PROJETO`), `apps/web/src/routes/project-tabs.ts:412` (`resolverChaveDeAba`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11` (`itensDasAbas`), `apps/web/src/components/FaixaDeSubAbas.tsx:22` (`FaixaDeSubAbas`), `apps/web/src/routes/ProjectPage.tsx` (`trocarSub`).
 - **Teste:** `apps/web/src/routes/project-tabs.test.tsx` (os 15 deep-links, as chaves de seção, desconhecida e a faixa com o selo de cada fila), `apps/web/src/routes/AbasDoProjeto.test.tsx` (8 itens, teclado com volta, Decisões sem número), `apps/web/src/routes/Shell.test.tsx` (sidebar, flyout e gaveta).
 - **Origem:** AT-886 (EP-035), ADR 0294. Revisa a RN-196 e o ADR 0211 no que diz respeito aos três grupos: a lista passa a ter oito itens.
+
+<a id="rn-1210"></a>
+
+### RN-1210 — O cabeçalho do projeto tem trilha, chips, medidor de gasto do mês e UMA ação primária por seção {#rn-1210}
+
+- **Regra:** desde a AT-888 o cabeçalho (56 px) mostra a trilha `Projeto / Seção` (a seção vem de `secaoDaChave`), os chips `provider · visibilidade` e a branch padrão do repositório (não a checada), o `MedidorDeGasto` e a ação primária da seção: Visão geral e Sessões = "Nova sessão"; Trabalho = "Ativar execução" (some com a execução já ativa); demais = nenhuma. O medidor lê `GET projects/:id/budget`: gasto do mês, barra por faixa (70% aviso, 90% perigo) e a previsão de `periodo.previsaoMicros` só quando a api a devolve; sem teto (`null`) diz "sem teto" com barra neutra e leva a Configurações. "Nova sessão" cria `consultiva` em Sessões › Conversa e `criativa` nos demais lugares, ativa e navega, pelo MESMO `useCriarSessao` da aba (uma régua só). "Ativar execução" usa `useAtivarExecucao`: recusa por repositório ausente confirmado (RN-582) e toast com a causa real da api. Papel mínimo do controle = o do endpoint (RN-102): `developer` para criar sessão, `maintainer` para ativar. O chip "Precisa de você" fica até a AT-889.
+- **Onde:** `apps/web/src/routes/ProjectPage.tsx` (`ProjectPage`), `apps/web/src/components/MedidorDeGasto.tsx:14` (`MedidorDeGasto`), `apps/web/src/lib/use-criar-sessao.ts:17` (`useCriarSessao`), `apps/web/src/lib/use-ativar-execucao.ts:12` (`useAtivarExecucao`).
+- **Teste:** `apps/web/src/components/MedidorDeGasto.test.tsx` (com teto, faixa e previsão; sem teto).
+- **Origem:** AT-888 (EP-035), ADR 0294 e 0296 (previsão: AT-934).

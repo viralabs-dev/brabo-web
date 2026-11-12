@@ -2,14 +2,20 @@ import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { getProject, getProjectBudget, getRepository } from '../lib/api-client';
-import { useLatestSession } from '../lib/hooks';
+import { useCurrentWorkspaceWithRole, useLatestSession, useProjectsSummary } from '../lib/hooks';
+import { useCriarSessao } from '../lib/use-criar-sessao';
+import { useAtivarExecucao } from '../lib/use-ativar-execucao';
+import { roleAtLeast } from '../lib/roles';
+import { KIND_PRE_SELECIONADO } from '../lib/session-kind';
+import { Button } from '../components/ui/Button';
+import type { ReactNode } from 'react';
 import {
   publicarAbaAtiva,
   ouvirPedidosDeAba,
   useContagensDoProjeto,
 } from '../lib/contagens-do-projeto';
 import { setLastSeenSeq } from '../lib/read-state';
-import { TokenMeter } from '../components/TokenMeter';
+import { MedidorDeGasto } from '../components/MedidorDeGasto';
 import { PainelPrecisaDeVoce } from '../components/PainelPrecisaDeVoce';
 import { montarFilas } from '../lib/precisa-de-voce';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
@@ -17,7 +23,7 @@ import { Skeleton } from '../components/ui/Skeleton';
 import { CarregandoRota } from '../components/CarregandoRota';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { BranchIcon, GitHubIcon, GitLabIcon, LocalRepoIcon } from '../components/ui/icons';
-import { ABA_PADRAO, abaPorChave, ehChaveDeAba, type ChaveDeAba } from './project-tabs';
+import { ABA_PADRAO, abaPorChave, ehChaveDeAba, secaoDaChave, type ChaveDeAba } from './project-tabs';
 import { ContextoDeGrupoInicial, ContextoDeSecaoInicial, ContextoDeTrocaDeGrupo } from './settings/secao-inicial';
 import { ContextoDeHistoriaInicial } from '../lib/historia-inicial';
 import type { ChaveDeSecao, GrupoDoSumario } from './settings/sumario';
@@ -120,6 +126,13 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
   const { data: repository } = useQuery({ queryKey: ['repository', projectId], queryFn: () => getRepository(projectId) });
   const { data: budget } = useQuery({ queryKey: ['budget', projectId], queryFn: () => getProjectBudget(projectId) });
 
+  const { data: workspace } = useCurrentWorkspaceWithRole();
+  const papel = workspace?.role;
+  const { criar, criando } = useCriarSessao(projectId);
+  const { ativar, semRepositorio } = useAtivarExecucao(projectId);
+  const { data: resumos } = useProjectsSummary(workspace?.workspace.id);
+  const executionActivated = resumos?.find((s) => s.projectId === projectId)?.roster.executionActivated ?? false;
+
   const { latest: latestSession } = useLatestSession(projectId);
   // As cinco filas de decisão, lidas pelo MESMO hook que a sidebar usa para os
   // contadores das abas (ADR 0211) — mesmas `queryKey`s, deduplicadas. Aqui
@@ -175,6 +188,35 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
   const aba = abaPorChave(tab);
   const PainelDaAba = aba.component;
 
+  // A ação primária da seção (AT-888, RN-1210). O papel mínimo é o do endpoint
+  // (RN-102): criar sessão `developer`, ativar execução `maintainer`.
+  const secaoAtual = secaoDaChave(tab).chave;
+  let acaoPrimaria: ReactNode = null;
+  if (secaoAtual === 'overview' || secaoAtual === 'sessoes') {
+    acaoPrimaria = (
+      <Button
+        variant="primary"
+        onClick={() => void criar(tab === 'chat' ? 'consultiva' : KIND_PRE_SELECIONADO)}
+        disabled={criando || !roleAtLeast(papel, 'developer')}
+      >
+        {t('acao.novaSessao')}
+      </Button>
+    );
+  } else if (secaoAtual === 'trabalho' && !executionActivated) {
+    acaoPrimaria = (
+      <>
+        {semRepositorio && <span className={styles.metaStrong}>{t('acao.semRepositorio')}</span>}
+        <Button
+          variant="primary"
+          onClick={() => void ativar()}
+          disabled={semRepositorio || !roleAtLeast(papel, 'maintainer')}
+        >
+          {t('acao.ativarExecucao')}
+        </Button>
+      </>
+    );
+  }
+
   return (
     <div className={[styles.wrapper, movel && styles.movel].filter(Boolean).join(' ')}>
       {/* O cabeçalho é uma faixa `surface-1` com uma única divisória embaixo
@@ -182,7 +224,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
           saiu de dentro dele (ADR 0126) e mora na sidebar (ADR 0211). */}
       <CabecalhoDePagina
         className={styles.header}
-        titulo={project.name}
+        titulo={`${project.name} / ${secaoDaChave(tab).label}`}
         descricao={
           <span className={styles.meta}>
             <ProviderIcon size={14} />
@@ -230,16 +272,10 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
                 }
               }}
             />
-            {budget && (
-              <TokenMeter
-                variant="compact"
-                unitLabel="USD"
-                used={budget.spentMicros / 1_000_000}
-                limit={budget.limitMicros / 1_000_000}
-                costBRL={0}
-                costUSD={budget.spentMicros / 1_000_000}
-              />
+            {budget !== undefined && (
+              <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('settings')} />
             )}
+            {acaoPrimaria}
           </>
         }
       />

@@ -835,6 +835,8 @@ export interface Budget {
   spentMicros: number;
   policy: BudgetPolicy;
   lastThresholdNotified: number;
+  /** O mês de UTC e a previsão linear (AT-934); ausente em teto de sessão. */
+  periodo?: { inicio: string; fim: string; diasRestantes: number; previsaoMicros: number };
 }
 
 export type GitProviderName = 'local' | 'github' | 'gitlab';

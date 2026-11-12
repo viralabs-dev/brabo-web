@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-899, RN-1300): o "Ativar execução" do Trabalho fica inerte, com o motivo e o link para Containers, enquanto o container não está `running`; a frase do 409 `execucao_sem_container` da api aparece ao lado. i18n nos quatro idiomas. O regressivo de `execucao` fica para a lane do qa. O cartão "aguardando" levar à ação pendente de outra sessão fica para a lane dona de `AgentCard`/`PendenciasDeOutrasSessoes`.
 - Feat (AT-890, RN-1280): a Visão geral abre com a faixa "Precisa de você" (item mais urgente com o `ApprovalCard` e cinco chips separados) e resume cada turno numa linha com o "Gravado neste turno" do engine (Turnos | Eventos); a `ExecutionSection` e a árvore da linha do tempo saem.
 - Feat (AT-937, RN-1270): Configurações › Modelos ganha a seção "Instruções e ferramentas dos agentes" (só leitura, `viewer`, lê `agent-catalog` ao abrir um agente, com botão para o histórico e a reversão em Avançado); os dois blocos saem do cartão de agente na Visão geral e na Executores.
 - Feat (AT-896, lane F, RN-1265): Configurações ganha a linha de configuração (rótulo e descrição à esquerda, controle à direita) em paralelismo e teto por área, a linha "Teto de gasto do mês" (`TetoDoMes`) e o Salvar do cabeçalho com "N alterações não salvas · Descartar · Salvar", em série e sem abortar, com desfecho parcial nomeado (RN-469). i18n nos quatro idiomas. O regressivo do qa fica para a lane do qa.

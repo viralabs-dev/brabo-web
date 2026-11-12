@@ -279,6 +279,8 @@
     "activate": "Ativar execução",
     "activateError": "Não foi possível ativar a execução",
     "needsMaintainer": "Ativar a execução pede o papel maintainer.",
+    "semContainer": "O container ainda não está rodando, então a execução não pode começar. Aprove a subida proposta pela Infra ou peça a subida a ela.",
+    "abrirContainers": "Abrir Containers",
     "title_zero": "A execução está desligada · nenhuma tarefa pronta",
     "title_one": "A execução está desligada · {{count}} tarefa pronta",
     "title_other": "A execução está desligada · {{count}} tarefas prontas",

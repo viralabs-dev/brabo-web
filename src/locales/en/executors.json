@@ -269,6 +269,8 @@
     "activate": "Activate execution",
     "activateError": "Could not activate the execution",
     "needsMaintainer": "Activating the execution requires the maintainer role.",
+    "semContainer": "The container is not running yet, so the execution cannot start. Approve the start proposed by Infra or ask it to start.",
+    "abrirContainers": "Open Containers",
     "title_one": "Execution is off · {{count}} task ready",
     "title_other": "Execution is off · {{count}} tasks ready",
     "explain_one": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",

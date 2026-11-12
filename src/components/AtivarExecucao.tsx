@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { Play } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from '@tanstack/react-query';
-import { activateExecution, mensagemDaApi } from '../lib/api-client';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
+import { activateExecution, getContainerLifecycle, mensagemDaApi } from '../lib/api-client';
 import { useActiveExecutionSession, useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
 import { Button } from './ui/Button';
@@ -19,6 +20,14 @@ export function AtivarExecucao({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient();
   const { data: workspace } = useCurrentWorkspaceWithRole();
   const { session, isSuccess } = useActiveExecutionSession(projectId);
+  // Mesma queryKey do painel de código: nenhuma leitura a mais (RN-632).
+  const lifecycle = useQuery({
+    queryKey: ['container-lifecycle', projectId],
+    queryFn: () => getContainerLifecycle(projectId),
+    staleTime: 30_000,
+  });
+  // RN-1300: só `running` libera; leitura em curso ou com erro não tranca (a api decide).
+  const semContainer = lifecycle.isSuccess && lifecycle.data?.status !== 'running';
   const [ocupado, setOcupado] = useState(false);
   const [recusa, setRecusa] = useState<string | null>(null);
   if (!isSuccess || session) return null;
@@ -40,10 +49,15 @@ export function AtivarExecucao({ projectId }: { projectId: string }) {
 
   return (
     <div data-testid="ativar-execucao">
-      <Button variant="primary" loading={ocupado} disabled={!pode} onClick={ativar}>
+      <Button variant="primary" loading={ocupado} disabled={!pode || semContainer} onClick={ativar}>
         <Play aria-hidden="true" />
         {t('chamada.activate')}
       </Button>
+      {semContainer && (
+        <p>
+          {t('chamada.semContainer')} <Link to="/containers">{t('chamada.abrirContainers')}</Link>
+        </p>
+      )}
       {!pode && <p>{t('chamada.needsMaintainer')}</p>}
       {recusa && <p role="alert">{recusa}</p>}
     </div>

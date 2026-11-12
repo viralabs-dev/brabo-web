@@ -253,3 +253,10 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/FaixaPrecisaDeVoce.tsx` (`FaixaPrecisaDeVoce`), `src/routes/ProjectOverviewTab.tsx` (`ProjectOverviewTab`), `src/components/ResumoDeTurno.tsx` (`ResumoDeTurno`).
 - **Teste:** `src/routes/ProjectOverviewTab.test.tsx` (faixa presente; turno sem `gravadoNoTurno` mostra traço).
 - **Origem:** AT-890 (EP-035), ADR 0294.
+
+### RN-1300 — Sem container `running`, o "Ativar execução" do Trabalho fica inerte e diz o motivo {#rn-1300}
+
+- **Regra:** o `AtivarExecucao` lê o ciclo de vida do container (`getContainerLifecycle`, mesma `queryKey` do painel de código, sem leitura a mais). Com a leitura confirmando status diferente de `running` (inclusive sem registro), o botão fica desabilitado com o motivo em texto e o link para Containers. Leitura em curso ou com erro não tranca: quem decide é a api, e o 409 `execucao_sem_container` (RN-1101) aparece com a frase dela.
+- **Onde:** `src/components/AtivarExecucao.tsx` (`AtivarExecucao`).
+- **Teste:** `src/components/AtivarExecucao.test.tsx` (inerte sem `running`, habilitado com `running`, frase do 409).
+- **Origem:** AT-899 (EP-036).

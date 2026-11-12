@@ -28,9 +28,12 @@
   },
   "status": {
     "heading": "Brabo — статус платформы",
+    "resumo": { "ok": "Всё работает", "erro": "Сервис недоступен", "checking": "Проверка сервисов…", "detalhe": "Последняя проверка {{instante}} · обновляется каждые {{segundos}} с" },
+    "latenciaValor": "{{ms}} мс",
     "columns": {
       "service": "Сервис",
       "status": "Статус",
+      "latency": "Задержка",
       "lastCheck": "Последняя проверка"
     },
     "services": {

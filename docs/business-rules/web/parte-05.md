@@ -1310,7 +1310,7 @@ decisão, fechados juntos:
 
 - **Onde:** `apps/web/src/lib/aprovacoes.ts:485` (`verboDaAcao`),
   `apps/api/src/domain/actions/sempre-permitir.ts:33` (`TIPOS_SEM_SEMPRE_PERMITIR`),
-  `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:88` (`execute`),
+  `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:95` (`execute`),
   `apps/api/src/application/use-cases/execution/execute-execution-plan.use-case.ts:89` (`execute`),
   `apps/api/src/application/use-cases/execution/activate-execution.use-case.ts:123` (`execute`),
   `apps/engine/lib/engine/agents/dev_lead_tools.ex:845` (`resumo_do_plano`)

@@ -259,6 +259,8 @@
     "activate": "启动执行",
     "activateError": "无法启动执行",
     "needsMaintainer": "启动执行需要 maintainer 角色。",
+    "semContainer": "容器尚未运行，因此无法开始执行。请批准 Infra 提出的启动，或请它启动。",
+    "abrirContainers": "打开容器",
     "title_other": "执行已关闭 · {{count}} 个任务就绪",
     "explain_other": "启动后 Dev Lead 会在 dev agent 之间分配工作（dev 区域最多并行 {{count}} 个）。每个 PR 都经过 QA 和 SecOps，等你来合并。",
     "teto": "项目上限 {{valor}}"

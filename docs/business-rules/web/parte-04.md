@@ -808,7 +808,7 @@ interrupção sem causa.
   novo. Enquanto a leitura está em voo, a linha simplesmente não aparece.
   - **Código:** `apps/web/src/routes/settings/ExecutionModeSection.tsx:106`
     (`consequenciasCondicionais`), `:122` (`containerParaOAviso`, os três
-    estados), `:240` (`cicloQuery`, só em `container`), `:344` (as quatro
+    estados), `:244` (`cicloQuery`, só em `container`), `:344` (as quatro
     linhas no `Alert`)
   - **Teste:** o describe `AT-144` em
     `apps/web/src/routes/settings/conversao-de-modo.test.tsx` — nenhuma

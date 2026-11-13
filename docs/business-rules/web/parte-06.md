@@ -184,7 +184,7 @@ keywords: [regras de negócio, web]
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
 - **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
-  `apps/web/src/routes/Shell.tsx:377` (`abaDaRota`),
+  `apps/web/src/routes/Shell.tsx:400` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
   `apps/web/src/components/ModelCatalogSection.module.css` (`.barraDeLote`),
@@ -212,7 +212,7 @@ keywords: [regras de negócio, web]
   piloto automático é um checkbox já marcado dentro do próprio cartão, e aprovar com
   ele marcado é o que o liga ([RN-804](#rn-804)). Todo outro tipo de ação
   mantém a regra acima.
-- **Onde:** `apps/web/src/components/ApprovalCard.tsx:219` (`ApprovalCard`)
+- **Onde:** `apps/web/src/components/ApprovalCard.tsx:239` (`ApprovalCard`)
 - **Teste:** `apps/web/src/components/ApprovalCard.test.tsx` (`ligar o
   "Modo automático" não aprova o card, e o card diz isso`; sem o botão, a nota
   não sai)

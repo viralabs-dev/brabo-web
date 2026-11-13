@@ -515,6 +515,16 @@ export interface GitActionFailureResult {
   conflictingFiles?: string[];
 }
 
+/** `git_merge` executado: `jaContida` = o merge não moveu o alvo (RN-1104). */
+export interface GitMergeExecutionResult {
+  kind: 'git_merge';
+  pullRequestId: string;
+  state: string;
+  targetBranch: string;
+  mergedSha?: string;
+  jaContida?: true;
+}
+
 export interface ProposedAction {
   id: string;
   projectId: string;
@@ -528,7 +538,7 @@ export interface ProposedAction {
   decidedBy: string | null;
   decidedAt: string | null;
   rejectionReason: string | null;
-  executionResult: TerminalExecutionResult | GitActionFailureResult | null;
+  executionResult: TerminalExecutionResult | GitActionFailureResult | GitMergeExecutionResult | null;
   createdAt: string;
   updatedAt: string;
 }

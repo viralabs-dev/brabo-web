@@ -197,7 +197,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "Слияние ничего не изменило в {{target}}: исходная ветка уже была включена. Проверьте, вошла ли её работа; если нет, PR не принёс ожидаемого."
       },
       "instructionPatch": {
         "hypothesisOrigin": "источник: гипотеза {{id}}"

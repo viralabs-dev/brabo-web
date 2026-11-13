@@ -173,7 +173,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "合并没有改变 {{target}}：源分支已被包含。请确认其工作是否已进入；如果没有，这个 PR 没有带来你期望的内容。"
       },
       "instructionPatch": {
         "hypothesisOrigin": "来源：假设 {{id}}"

@@ -189,7 +189,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "O merge não mudou nada em {{target}}: a branch de origem já estava contida. Confira se o trabalho dela já entrou; se não, a PR não trouxe o que você esperava."
       },
       "instructionPatch": {
         "hypothesisOrigin": "origem: hipótese {{id}}"

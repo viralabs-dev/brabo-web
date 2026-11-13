@@ -619,6 +619,26 @@ describe('ApprovalCard', () => {
       expect(screen.queryByText(/"pullRequestId"/)).toBeNull();
     });
 
+    it('RN-1104: merge com jaContida diz que nada mudou; sem a marca, não diz', () => {
+      const ui = (res: ProposedAction['executionResult']) => (
+        <ApprovalCard
+          action={{ ...mergeAction(), executionResult: res }}
+          detalheRecolhido
+          onApprove={vi.fn()}
+          onDeny={vi.fn()}
+          onAlwaysAllow={vi.fn()}
+        />
+      );
+      const base = { kind: 'git_merge', pullRequestId: '218', state: 'merged', targetBranch: 'dev' } as const;
+      const { unmount } = render(ui({ ...base, jaContida: true }));
+      fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+      expect(screen.getByText(/O merge não mudou nada em dev/)).toBeTruthy();
+      unmount();
+      render(ui(base));
+      fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+      expect(screen.queryByText(/O merge não mudou nada/)).toBeNull();
+    });
+
     it('sem título no payload, degrada para "Pull request #<id>"', () => {
       render(
         <ApprovalCard

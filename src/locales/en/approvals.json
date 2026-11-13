@@ -181,7 +181,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "The merge changed nothing in {{target}}: the source branch was already contained. Check whether its work already landed; if not, the PR did not bring what you expected."
       },
       "instructionPatch": {
         "hypothesisOrigin": "origin: hypothesis {{id}}"

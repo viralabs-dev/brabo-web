@@ -883,6 +883,12 @@ function ApprovalBody({ actionType, payload, executionResult, expandedFile, onTo
           </span>
           <Badge tone="neutral" square size="md">{target ?? '?'}</Badge>
         </div>
+        {/* RN-1104: merge `merged` que não moveu o alvo — a fonte já estava contida. */}
+        {executionResult && 'jaContida' in executionResult && executionResult.jaContida && (
+          <div className={styles.prSummary}>
+            {t('approvalCard.body.gitMerge.jaContida', { target: target ?? executionResult.targetBranch })}
+          </div>
+        )}
       </div>
     );
   }

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Ajuda } from '@/components/ui/Ajuda';
 import { Item } from '@/components/shadcn/item';
+import { Badge } from '../../components/ui/Badge';
 import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
 import { getWorkspaceToolRouter, mensagemDaApi, setWorkspaceToolRouter } from '../../lib/api-client';
@@ -91,36 +92,41 @@ export function RoteadorDeFerramentasSection(_: { projectId: string }) {
         <span className={styles.eyebrow}>{t('toolRouter.eyebrow')}</span>
       </div>
 
-      <Item variant="outline" className={styles.ajusteCard}>
-        <div className={styles.ajusteInfo}>
-          <div className={styles.ajusteTitulo}>{t('toolRouter.card.title')}</div>
-          <div className={styles.ajusteHint}>{t('toolRouter.card.hint')}</div>
-          <div className={styles.ajusteHint}>{t(`toolRouter.opcao.${roteador}.hint`)}</div>
-          {!podeTrocar && (
-            <div className={styles.ajusteHint} data-testid="roteador-motivo">{t('toolRouter.reason.owner')}</div>
-          )}
+      <Item variant="outline" className={`${styles.ajusteCard} ${styles.roteadorCard}`}>
+        <div className={styles.roteadorLinha}>
+          <div className={styles.ajusteInfo}>
+            <div className={styles.ajusteTitulo}>{t('toolRouter.card.title')}</div>
+            <div className={styles.ajusteHint}>{t('toolRouter.card.hint')}</div>
+            <div className={styles.ajusteHint}>{t(`toolRouter.opcao.${roteador}.hint`)}</div>
+            {!podeTrocar && (
+              <div className={styles.ajusteHint} data-testid="roteador-motivo">{t('toolRouter.reason.owner')}</div>
+            )}
+          </div>
+          <div className={styles.ajusteControle}>
+            <ToggleGroup
+              variant="chip"
+              size="chip"
+              value={[roteador]}
+              disabled={!podeTrocar || saving}
+              aria-label={t('toolRouter.selectAria')}
+              onValueChange={(v) => v.length > 0 && void gravar(v[0] as RoteadorDeFerramentas)}
+            >
+              {OPCOES.map((o) => (
+                <ToggleGroupItem key={o} value={o} disabled={o === 'laya' && !proficiente && roteador !== 'laya'}>
+                  {t(`toolRouter.opcao.${o}.label`)}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
         </div>
-        <div className={styles.ajusteControle}>
-          <ToggleGroup
-            variant="chip"
-            size="chip"
-            value={[roteador]}
-            disabled={!podeTrocar || saving}
-            aria-label={t('toolRouter.selectAria')}
-            onValueChange={(v) => v.length > 0 && void gravar(v[0] as RoteadorDeFerramentas)}
-          >
-            {OPCOES.map((o) => (
-              <ToggleGroupItem key={o} value={o} disabled={o === 'laya' && !proficiente && roteador !== 'laya'}>
-                {t(`toolRouter.opcao.${o}.label`)}
-              </ToggleGroupItem>
-            ))}
-          </ToggleGroup>
-        </div>
-      </Item>
 
-      <Item variant="outline" className={styles.ajusteCard}>
-        <div className={styles.ajusteInfo}>
-          <div className={styles.ajusteTitulo}>{t('toolRouter.laya.title')}</div>
+        <div className={styles.roteadorLaya}>
+          <div className={styles.ajusteTitulo}>
+            {t('toolRouter.laya.title')}
+            <Badge tone={proficiente ? 'success' : laya.estado === 'nao_configurado' ? 'muted' : 'danger'}>
+              {t(`toolRouter.nome.${laya.estado}`)}
+            </Badge>
+          </div>
           <div className={styles.ajusteHint} data-testid="roteador-laya-estado">{textoDoEstado}</div>
           {codigoBruto && <code data-testid="roteador-codigo">{codigoBruto}</code>}
           {laya.estado !== 'nao_configurado' && (

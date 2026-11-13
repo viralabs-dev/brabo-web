@@ -33,7 +33,7 @@ keywords: [regras de negócio, web]
 ### RN-980 — As Configurações do projeto são uma página por grupo, com os grupos como abas dentro da página; só o grupo aberto monta {#rn-980}
 
 - **Regra:** revisa a [RN-645](parte-05.md#rn-645) no item 3. O sumário lateral deixa de existir: cada grupo do registro (`modelos`, `projeto`, `pessoas`, `avancado`) é uma PÁGINA, e os quatro são ABAS numa faixa no topo da página de Configurações (setas, Home e End; `aria-selected`/`aria-controls`); "Configurações" segue UM item só da barra lateral, sem sub-itens (decisão do dono, 03/11). O endereço é `?tab=settings&group=<grupo>`; Modelos é a página padrão. `?section=` continua valendo: abre a página do grupo da seção e rola até ela, e vence um `group` incoerente; chave aposentada ([RN-911](parte-06.md#rn-911)) ou desconhecida abre Modelos no topo. O grupo é derivado do campo `grupo` do registro, nunca de outra lista. Só as seções do grupo aberto montam, então a carga busca só o que é da página (abrindo em Modelos, no máximo 21 requisições, contra 30; teto em `configuracoes.orcamento.test.tsx`). Os itens 1 e 2 da RN-645 (frescor de um minuto, sem poll) não mudam, e trocar de página dentro do minuto não refaz busca. Trocar de página descarta rascunho não salvo, como trocar de aba.
-- **Onde:** `apps/web/src/routes/settings/sumario.ts:110` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:115` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`).
+- **Onde:** `apps/web/src/routes/settings/sumario.ts:114` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:119` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`).
 - **Teste:** `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (página só com as seções do grupo; todo `?section=` antigo cai no seu grupo; rola até a seção), `apps/web/src/routes/configuracoes.orcamento.test.tsx` (carga de Modelos não busca o resto), `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (a faixa de abas e o teclado).
 - **Origem:** AT-719 (EP-031).
 
@@ -129,7 +129,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1073 — O motivo do ócio do dev agent é derivado no web do `module_map` e do backlog, com o predicado da RN-1005; sem causa achada, diz "sem tarefa disponível agora" {#rn-1073}
 
 - **Regra:** o `dev.idle` do engine só diz "sem task pegável" (ou a pausa de rede, [RN-864](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules.md#rn-864)), e o claim vazio é decidido na api por [RN-1005](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1005): a tarefa do módulo só sai enquanto nenhum módulo do `dependsOn` DIRETO tiver tarefa aberta. O web relê esse predicado para o cartão, em ordem: (a) pausa de rede: o próprio `reason`; (b) o módulo não tem tarefa aberta: concluído; (c) o módulo tem tarefa aberta e algum `dependsOn` tem tarefa ≠ `done`: "esperando a fundação de X" com a PR aberta da tarefa de X (branch `feature/task-<id>`) ou o título da tarefa em andamento, e com várias dependências "esperando N módulos; o primeiro a destravar é X" (o que tem PR); (d) todas as tarefas abertas bloqueadas: "tarefa bloqueada" com o motivo; (e) fora disso, "sem tarefa disponível agora", nunca um motivo inventado. A tarefa ainda não pega não tem `module`: ela herda os `moduleIds` da história (AT-881), que o backlog já manda. `Task.module` já vinha no DTO e passou a existir no tipo do web.
-- **Onde:** `apps/web/src/lib/executores-ao-vivo.ts:68` (`motivoDoOcio`), `apps/web/src/lib/api-types.ts:1105` (`Task.module`).
+- **Onde:** `apps/web/src/lib/executores-ao-vivo.ts:68` (`motivoDoOcio`), `apps/web/src/lib/api-types.ts:1110` (`Task.module`).
 - **Teste:** `apps/web/src/lib/executores-ao-vivo.test.ts`.
 - **Origem:** AT-880 (EP-031); levantamento de 09/11/2026 (TP-01 28ª).
 
@@ -156,7 +156,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
 - **Regra:** a S06 (Gastos) mostra ao `owner` o teto do mês do workspace (`GET/PUT workspaces/:id/budget`, 403 para os demais), com o mesmo medidor, previsão e legenda da RN-1200, e o editor (valor e política `block`/`allow`). Quem não é owner não lê o valor (a api recusa): vê, em texto, que o teto é do owner e que só o conhece quando uma chamada é recusada ("Budget do workspace atingiu o teto do mês"). O controle nunca é oferecido a quem a api não deixa usar (RN-102); erro de leitura de quem não edita é silencioso. O teto do workspace soma todos os projetos e é independente dos de projeto, sessão e área: basta um no limite com `block` para recusar.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1354` (`getWorkspaceBudget`).
+- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1360` (`getWorkspaceBudget`).
 - **Teste:** `src/components/TetoDoMes.test.tsx` (owner edita; sem papel fica inerte com o motivo; 403 silencioso).
 - **Origem:** AT-935 (EP-035).
 
@@ -276,3 +276,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/Shell.tsx:252` (`SeletorDeProjeto`), `src/routes/Shell.tsx:300` (`Shell`), `src/lib/sidebar-state.ts:57` (`lerProjetoAtivo`).
 - **Teste:** `src/routes/Shell.test.tsx` (lista plana fora de projeto, seletor e oito seções dentro, sem "ver todos").
 - **Origem:** AT-939 (v9), decisão do dono de 13/11/2026.
+
+<a id="rn-1331"></a>
+
+### RN-1331 — A seção do roteador de ferramentas mostra o estado do Laya nomeado, com o "desde", e a opção Laya só ativa com `proficiente` {#rn-1331}
+
+- **Regra:** Configurações › Modelos › Roteador de ferramentas é escolha do WORKSPACE (vale para todos os projetos) entre Jev (padrão), Laya e Desligado, gravada na hora; só `owner` troca, os outros veem a seção inerte com o motivo em texto. O estado do Laya aparece NOMEADO (nunca colapsado em ligado/desligado), com o texto do motivo quando a api o dá, o código bruto quando não o conhecemos e sempre "visto assim desde …" (o `desde` é de quando a api percebeu, não da queda); nunca bolinha verde. A opção Laya fica inerte fora de `proficiente`. Com `laya` escolhido e estado diferente de `proficiente`, um aviso fixo diz que cada passo usa o catálogo inteiro de ferramentas (RN-1302), nunca "voltou ao Jev". O 409 `roteador_local_indisponivel` vira toast com a frase da api e a tela relê o estado. A seção não polla (`FRESCOR_DA_CONFIGURACAO_MS`).
+- **Onde:** `src/routes/settings/RoteadorDeFerramentasSection.tsx` (`RoteadorDeFerramentasSection`), `src/lib/api-client.ts` (`getWorkspaceToolRouter`, `setWorkspaceToolRouter`).
+- **Teste:** `src/routes/settings/RoteadorDeFerramentasSection.test.tsx` (um caso por estado e motivo, não-owner, PUT, 409, aviso de queda).
+- **Origem:** AT-626 (Rodada C), decisão do dono de 13/11/2026.

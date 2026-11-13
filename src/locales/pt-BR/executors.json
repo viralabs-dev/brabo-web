@@ -8,7 +8,6 @@
     "sessionError": {
       "title": "Não foi possível descobrir a sessão de execução deste projeto."
     },
-    "noActiveExecution": "Nenhuma execução ativa neste projeto no momento.",
     "showingSession": "Mostrando",
     "rosterError": {
       "title": "Não foi possível saber quem está executando."

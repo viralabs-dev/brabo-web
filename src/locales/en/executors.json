@@ -7,7 +7,6 @@
     "sessionError": {
       "title": "Could not find this project's execution session."
     },
-    "noActiveExecution": "No active execution in this project right now.",
     "showingSession": "Showing",
     "rosterError": {
       "title": "Could not find out who is executing."

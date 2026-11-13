@@ -6,7 +6,6 @@
     "sessionError": {
       "title": "无法确定此项目的执行会话。"
     },
-    "noActiveExecution": "此项目当前没有进行中的执行。",
     "showingSession": "正在显示",
     "rosterError": {
       "title": "无法得知谁在执行。"

@@ -1172,6 +1172,8 @@ vê recolhido foi o usuário quem pediu, e está gravado.
 
 ### RN-196 — Projetos expansíveis revelam as abas do projeto, N ao mesmo tempo {#rn-196}
 
+> **Revogada** pela RN-1329 (AT-939, v9): a sidebar mostra um projeto por vez, sem expansão por projeto; `brabo.sidebar.open` deixou de ser lida.
+
 Cada projeto na sidebar ganha um chevron: clicar nele expande a linha e
 revela a lista de abas daquele projeto (Visão geral, Executores, Criativo,
 Chat, Code, Backlog, Aprovações, Insights, Gastos, Configurações), cada uma

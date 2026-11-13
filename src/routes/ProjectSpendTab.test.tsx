@@ -134,6 +134,7 @@ const doWorkspace: WorkspaceSpendReport = {
     },
   ],
   porDia: serie(5),
+  porDiaEAgente: [{ dia: '2026-11-11', agente: 'po', costMicros: 5, chamadas: 1 }],
 };
 
 const meu: MySpend = {
@@ -259,7 +260,7 @@ describe('ProjectSpendTab — a audiência do owner', () => {
     expect(screen.queryByText('Por projeto')).not.toBeInTheDocument();
     expect(getWorkspaceSpendReport).toHaveBeenCalledWith('ws-1', 30, 'p-1');
     expect(screen.getByText('Por agente e pessoa')).toBeInTheDocument();
-    expect(screen.getByText('Gasto por dia')).toBeInTheDocument();
+    expect(await screen.findByText(/Gasto por dia/)).toBeInTheDocument();
 
     expect(screen.getAllByText('caro/modelo')[0]).toBeInTheDocument();
     // RN-211: o rótulo humano do provider, não o slug cru.

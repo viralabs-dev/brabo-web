@@ -241,7 +241,7 @@ export function GastoDoWorkspace({
             modelo={r.porModelo[0]?.chave}
           />
           <div className={styles.faixa}>
-            <GastoPorDia serie={r.porDia} titulo={t('workspace.dailySpendTitle')} tokens={{ entrada: r.inputTokens, saida: r.outputTokens }} />
+            <GastoPorDiaEAgente linhas={r.porDiaEAgente ?? []} dias={dias} titulo={t('workspace.dailySpendTitle')} />
           </div>
           <div className={styles.grade}>
             <Ranking

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-896, RN-1153): o "Gasto por dia" da S06 (Gastos do workspace) e da P21 do owner passa a ser empilhado por agente, lendo `porDiaEAgente` do `spend-report` (com e sem `?projectId=`); o `openapi.json` pinado sobe para a `dev` da api em `49d51f1d` (api#110). Sem RN nova, sem texto novo. O membro não muda (já tinha o empilhado).
 - Feat (AT-901, RN-1104): o cartão do `git_merge` diz "O merge não mudou nada em <alvo>" quando a api marca `jaContida` (merge `merged` sem efeito, caso da api#98). Sem RN nova. i18n nos quatro idiomas.
 - Feat (AT-895): Decisões ganha Hipóteses (P17: estado do Psicólogo, pausado ou ativo, e o bloco "Como uma hipótese aparece" rotulado Exemplo, nunca uma hipótese real), a seção "PRs nos portões" (PRs de dev agents e de infra sob um título) e o rótulo "Aprovar e criar regra" no lugar de "Sempre permitir" (o `approve_always` também aprova a ação atual; só aparece fora dos tetos). Sem RN nova. Divergência da prévia: sem o botão "Reativar o Psicólogo" (não há endpoint). i18n nos quatro idiomas. O regressivo fica para a lane do qa.
 - Feat (AT-899, RN-1300): o "Ativar execução" do Trabalho fica inerte, com o motivo e o link para Containers, enquanto o container não está `running`; a frase do 409 `execucao_sem_container` da api aparece ao lado. i18n nos quatro idiomas. O regressivo de `execucao` fica para a lane do qa. O cartão "aguardando" levar à ação pendente de outra sessão fica para a lane dona de `AgentCard`/`PendenciasDeOutrasSessoes`.

@@ -106,7 +106,7 @@ export function AuthLayout({
     .join(' ');
 
   return (
-    <main className={styles.tela}>
+    <main className={`${styles.tela} ${colunaDeIdentidade ? styles.telaDupla : ''}`}>
       <div className={styles.grade} aria-hidden="true" />
       <div className={styles.brilho} aria-hidden="true" />
 

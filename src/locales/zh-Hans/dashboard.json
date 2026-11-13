@@ -1,6 +1,6 @@
 {
   "topbar": {
-    "title": "项目",
+    "title": "首页",
     "searchPlaceholder": "搜索项目…",
     "newProject": "新建项目"
   },
@@ -94,5 +94,14 @@
       "aprovacoes_other": "{{n}} 项审批",
       "demais": "PR {{prs}} · 晋升 {{promocoes}} · 架构 {{arquitetura}} · 假设 {{hipoteses}}"
     }
+  },
+  "secaoProjetos": "项目",
+  "novoCartao": {
+    "titulo": "新建项目",
+    "descricao": "从简报开始，或接入现有仓库。"
+  },
+  "atividadeRecente": {
+    "titulo": "最近活动",
+    "indisponivel": "无法读取最近活动。"
   }
 }

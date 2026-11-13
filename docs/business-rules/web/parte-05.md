@@ -1313,7 +1313,7 @@ decisão, fechados juntos:
   `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:88` (`execute`),
   `apps/api/src/application/use-cases/execution/execute-execution-plan.use-case.ts:89` (`execute`),
   `apps/api/src/application/use-cases/execution/activate-execution.use-case.ts:123` (`execute`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:674` (`resumo_do_plano`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:845` (`resumo_do_plano`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("AT-371 — o verbo segue o
   estado da ação", "AT-381 — o plano mostra a estimativa de gasto"),
   `apps/web/src/components/ApprovalCard.test.tsx` ("open_adr_pr pendente"),

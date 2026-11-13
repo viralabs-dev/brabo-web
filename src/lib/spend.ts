@@ -68,6 +68,8 @@ export interface WorkspaceSpendReport {
   /** Partição de `porAtor` por `actorKind === 'agent'` (RN-188). */
   porAgente: SpendLinha[];
   porDia: SpendPorDia[];
+  /** Por dia e agente, ESPARSO (RN-1153); ausente em api antiga. */
+  porDiaEAgente?: SpendDiaDoAgente[];
 }
 
 /**

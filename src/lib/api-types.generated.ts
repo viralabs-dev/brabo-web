@@ -11047,6 +11047,11 @@ export interface components {
              * @example true
              */
             catalogoCompleto?: boolean;
+            /**
+             * @description Asks for DOUBLE the output ceiling. The engine sets it on the retry of a step whose answer was only reasoning cut by the ceiling (RN-780).
+             * @example true
+             */
+            saidaAmpliada?: boolean;
         };
         RunnerDeviceKeyListResponseDto: {
             /** @example 01JC4Z0000CHAVE000000000001 */
@@ -11943,6 +11948,11 @@ export interface components {
              * @example true
              */
             catalogoCompleto?: boolean;
+            /**
+             * @description Asks for DOUBLE the output ceiling. The engine sets it on the retry of a step whose answer was only reasoning cut by the ceiling (RN-780).
+             * @example true
+             */
+            saidaAmpliada?: boolean;
         };
         SugestaoDoCatalogoResponseDto: {
             /**
@@ -12523,6 +12533,8 @@ export interface components {
             /** @description The AGENT rows (`actor_kind = "agent"`). The other half of `porAtor`. */
             porAgente: components["schemas"]["SpendLinhaResponseDto"][];
             porDia: components["schemas"]["SpendPorDiaResponseDto"][];
+            /** @description By day and AGENT (RN-1153). Sparse: only days with a call; the client densifies. */
+            porDiaEAgente: components["schemas"]["SpendDiaDoAgenteResponseDto"][];
         };
         WorkspaceSummaryResponseDto: {
             /**

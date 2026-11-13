@@ -31,7 +31,7 @@ interface Props {
 export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
   const { t, i18n } = useTranslation('sessionPage');
   const { prontas: lidas, backlogQuery } = usePrsProntas(projectId, sessionId);
-  const moduleMap = useArchitecture(projectId, 15_000).data?.moduleMap;
+  const moduleMap = useArchitecture(projectId, 60_000).data?.moduleMap;
   // Mais destrava primeiro; o sort é estável, então o empate guarda a ordem da fila.
   const prontas = useMemo(() => {
     const com = lidas.map((p) => ({

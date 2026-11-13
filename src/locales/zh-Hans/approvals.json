@@ -218,7 +218,8 @@
     },
     "explicado": {
       "oQueAcontece": "批准后会发生什么",
-      "porQueEstaAqui": "为何出现在这里"
+      "porQueEstaAqui": "为何出现在这里",
+      "sessao": "会话 {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -281,18 +282,16 @@
     },
     "devPrs": {
       "title": "审查中的 PR",
-      "eyebrow": "{{count}} 个来自 dev agent，处于 QA/SecOps gate",
       "loading": "正在加载审查中的 PR…",
       "backlogError": "无法加载 backlog。",
-      "empty": "还没有 dev agent 的 PR 处于审查中。"
+      "frase": "PR 通过 QA 和 SecOps 后会出现在这里，等待你合并。"
     },
     "infraPrs": {
       "title": "审查中的基础设施 PR",
-      "eyebrow": "{{count}} 个基础设施 PR，处于 QA/SecOps gate",
       "loading": "正在加载基础设施 PR…",
       "error": "无法加载基础设施 PR。",
-      "empty": "还没有基础设施 PR 处于审查中。",
-      "mergeLink": "在 PR 标签页中合并"
+      "mergeLink": "在 PR 标签页中合并",
+      "frase": "镜像、CI 和部署的变更，走同一道关口。"
     },
     "permissions": {
       "title": "项目权限",
@@ -331,7 +330,10 @@
         "auto_approved": "自动",
         "executed": "已执行",
         "failed": "失败"
-      }
+      },
+      "chipAuto": "自动 · 策略",
+      "seeAllLower": "查看全部",
+      "earlierAuto_other": "此前 {{count}} 条自动决定"
     }
   },
   "prsTab": {

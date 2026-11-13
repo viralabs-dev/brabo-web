@@ -160,6 +160,15 @@ function readFiles(payload: Record<string, unknown>): DiffFile[] | undefined {
   return files as DiffFile[];
 }
 
+/** "há 8 min" / "8 min ago", pela língua da tela; nada antes do instante da ação. */
+function haQuanto(iso: string, lang: string): string {
+  const min = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'always', style: 'short' });
+  if (min < 60) return rtf.format(-min, 'minute');
+  if (min < 1440) return rtf.format(-Math.round(min / 60), 'hour');
+  return rtf.format(-Math.round(min / 1440), 'day');
+}
+
 interface ApprovalCardProps {
   action: ProposedAction;
   urgency?: ApprovalUrgency;
@@ -223,6 +232,8 @@ interface ApprovalCardProps {
    * segue com UMA variante (RN-096/RN-626).
    */
   explicado?: boolean;
+  /** Com `explicado`: o nome da sessão que propôs a ação, para a linha do cabeçalho (a tela já lê as sessões). */
+  nomeDaSessao?: string | null;
 }
 
 export function ApprovalCard({
@@ -239,6 +250,7 @@ export function ApprovalCard({
   bloqueio,
   detalheRecolhido,
   explicado,
+  nomeDaSessao,
 }: ApprovalCardProps) {
   const { t, i18n } = useTranslation('approvals');
   const [expandedFile, setExpandedFile] = useState<string | null>(null);
@@ -347,8 +359,8 @@ export function ApprovalCard({
     return onApprove();
   }
 
-  const fraseJsx = (
-      <p className={styles.frase}>
+  const trechosJsx = (
+    <>
         {trechos
           ? trechos.map((trecho, indice) =>
               // AT-322: comando, branch e caminho em mono e SEM aspas — a aspa
@@ -362,8 +374,9 @@ export function ApprovalCard({
               ),
             )
           : `${verbo} — ${SEM_FRASE}.`}
-      </p>
+    </>
   );
+  const fraseJsx = <p className={styles.frase}>{trechosJsx}</p>;
 
   // Ficam à vista nos tipos de sempre; no cartão do plano vão para "Detalhes".
   const politicaJsx = (
@@ -417,6 +430,25 @@ export function ApprovalCard({
           {/* Tipografia do handoff: nome do agente em título, verbo em corpo
               apagado. O verbo vem de `lib/aprovacoes.ts` — mesma fonte que a
               frase logo abaixo e que a aba Insights. */}
+          {explicado && !ehPlano ? (
+            <>
+              <div className={styles.title}>
+                <span className={styles.actorName}>{trechosJsx}</span>
+              </div>
+              <div className={styles.metaExplicado} data-testid="meta-do-card">
+                <code className={styles.chipDoTipo}>{action.actionType}</code>
+                <span>
+                  {[
+                    actorLabel,
+                    nomeDaSessao ? t('approvalCard.explicado.sessao', { nome: nomeDaSessao }) : null,
+                    haQuanto(action.createdAt, i18n.language),
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </span>
+              </div>
+            </>
+          ) : (
           <div className={styles.title}>
             <span className={styles.actorName}>
               {temQueryClient && action.actor.kind === 'user' ? (
@@ -427,6 +459,7 @@ export function ApprovalCard({
             </span>
             <span className={styles.verb}>{verbo}</span>
           </div>
+          )}
         </div>
         {urgency && (
           <span className={styles.urgency} style={{ ['--urgency-color' as string]: URGENCY_COLOR[urgency] }}>

@@ -172,6 +172,25 @@ describe('ProjectApprovalsTab — fila', () => {
 
 });
 
+describe('ProjectApprovalsTab — layout da v9 (AT-944)', () => {
+  it('ordem Esperando você, PRs nos portões (dois cartões com número e frase), Decididas recentemente', async () => {
+    getProjectPendingActions.mockResolvedValue([acao()]);
+    montar();
+
+    const esperando = await screen.findByRole('heading', { name: 'Esperando você' });
+    const portoes = screen.getByRole('heading', { name: 'PRs nos portões' });
+    const decididas = await screen.findByRole('heading', { name: 'Decididas recentemente' });
+    const antes = (a: Node, b: Node) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING;
+    expect(antes(esperando, portoes)).toBeTruthy();
+    expect(antes(portoes, decididas)).toBeTruthy();
+    expect(screen.getByTestId('portao-dev').textContent).toContain('PRs de dev agents');
+    expect(screen.getByTestId('portao-dev').textContent).toContain('esperam o seu merge');
+    expect(screen.getByTestId('portao-infra').textContent).toContain('PRs de infra');
+    expect(screen.getByTestId('card-explicado')).toBeInTheDocument();
+    expect(screen.getByTestId('meta-do-card').textContent).toContain('terminal');
+  });
+});
+
 describe('ProjectApprovalsTab — a fila é a do PROJETO, não a da sessão mais recente (AT-297)', () => {
   it('a pendente da sessão de execução aparece com uma ideação mais nova aberta, e decide pela sessão DELA', async () => {
     // A ideação nasceu DEPOIS da execução: é ela a "mais recente".

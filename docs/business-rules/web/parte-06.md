@@ -342,7 +342,7 @@ keywords: [regras de negócio, web]
   quando a execução for religada — o botão está na mesma seção. Na aba
   Executores o backlog só é lido com a ausência confirmada (query desligada
   com execução de pé, ritmo de projeto quando ligada, [RN-632](parte-05.md#rn-632)).
-- **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
+- **Onde:** `apps/web/src/components/ReligarExecucao.tsx` (removido na AT-943, sem uso),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
   `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-626, RN-1331): Configurações › Modelos ganha a seção "Roteador de ferramentas": o owner escolhe, para o workspace, Jev (padrão), Laya ou Desligado, gravado na hora. O Laya só ativa com o serviço `proficiente`; nos outros estados a tela diz o estado e o motivo, com "visto assim desde …", e com `laya` escolhido e o serviço fora avisa que cada passo usa o catálogo inteiro. Lê `GET`/`PUT /workspaces/:id/tool-router` (+1 leitura na página Modelos).
 - Feat (AT-939, RN-1329, revoga RN-196 e RN-729): a sidebar segue a v9: chip do ambiente (`VITE_BRABO_AMBIENTE`) e atalho ⌘K/Ctrl K no Buscar, item "Início"; fora de projeto PROJETOS vira lista plana com "+ Novo projeto"; dentro de projeto, PROJETO traz seletor de projeto e as oito seções; o "ver todos" dos Agentes agora saiu; `brabo.sidebar.open` deixou de ser lida.
 - Feat: Login (S00) em duas colunas da v9: metade esquerda de marca, direita sem cartão, manchete "Um time de agentes conduz sua aplicação do brief ao deploy.", chips dos papéis de topo na cor de cada papel e estado de api/engine numa linha (`SinaisDoAmbiente` modo `compacto`). GitHub/GitLab e o número de papéis do catálogo continuam.
 - Feat: o início ganha título "Início", botão "Novo projeto" com rótulo no desktop, cartão tracejado "Novo projeto" na grade e a seção "Atividade recente" (último evento de cada projeto, até 5), sem leitura nova de api.

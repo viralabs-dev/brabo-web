@@ -33,6 +33,7 @@ import { BudgetSection } from './settings/BudgetSection';
 import { PromotionSection } from './settings/PromotionSection';
 import { ProjectLanguageSection } from './settings/ProjectLanguageSection';
 import { MelhoresModelosPorCapacidadeSection } from './settings/MelhoresModelosPorCapacidadeSection';
+import { RoteadorDeFerramentasSection } from './settings/RoteadorDeFerramentasSection';
 import { ModelsSection } from './settings/ModelsSection';
 import { AgentCatalogSection } from './settings/AgentCatalogSection';
 import { MembersSection } from './settings/MembersSection';
@@ -78,6 +79,7 @@ export function ProjectSettingsTab({ projectId }: ProjectSettingsTabProps) {
         <ModelsSection {...p} />
         <AgentCatalogSection {...p} />
         <MelhoresModelosPorCapacidadeSection {...p} />
+        <RoteadorDeFerramentasSection {...p} />
       </>
     ),
     projeto: (

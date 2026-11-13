@@ -655,5 +655,62 @@
   "taskBudget": {
     "title": "Per-task cap and model ladder",
     "subtitle": "How much each task may spend, and the model ladder when it gets blocked."
+  },
+  "toolRouter": {
+    "title": "Tool router",
+    "eyebrow": "applies to every project",
+    "subtitle": "Who picks the tool for each agent step. The choice belongs to the workspace and applies to all its projects.",
+    "selectAria": "Workspace tool router",
+    "card": {
+      "title": "Who picks the tool",
+      "hint": "Applies to every project in the workspace and saves as soon as you switch."
+    },
+    "opcao": {
+      "jev": {
+        "label": "Jev",
+        "hint": "Jev (default): the Jev model picks the tool for each step."
+      },
+      "laya": {
+        "label": "Laya",
+        "hint": "Laya: the local GPU model picks the tool. Only available when Laya is proficient."
+      },
+      "desligado": {
+        "label": "Off",
+        "hint": "Off: no step is routed and the whole tool menu goes to the model."
+      }
+    },
+    "reason": {
+      "owner": "Only the workspace owner can switch the router. Ask an owner."
+    },
+    "laya": {
+      "title": "Laya status"
+    },
+    "estado": {
+      "nao_configurado": "This installation does not have Laya. It only exists with an NVIDIA GPU, enabled in the installer.",
+      "sem_resposta": "The Laya service did not answer.",
+      "sem_gpu": "The Laya service started without a GPU.",
+      "lento": "Laya is too slow to route.",
+      "proficiente": "Laya available: p95 {{ms}} ms · free VRAM {{mib}} MiB."
+    },
+    "motivo": {
+      "sem_gpu": "The service started without a GPU (device: {{dispositivo}}).",
+      "vram_insuficiente": "Free VRAM {{mib}} MiB, below the 2048 MiB minimum.",
+      "p95_acima_do_teto": "Probe p95 {{ms}} ms, above the 500 ms ceiling.",
+      "sonda_em_andamento": "Measuring Laya (boot probe)…",
+      "sonda_falhou": "The boot probe failed; restart the service."
+    },
+    "nome": {
+      "nao_configurado": "not configured",
+      "sem_resposta": "no answer",
+      "sem_gpu": "no GPU",
+      "lento": "slow",
+      "proficiente": "proficient"
+    },
+    "desde": "Seen this way since {{quando}}.",
+    "queda": "Laya is selected but unavailable ({{estado}}) since {{quando}}: every step uses the whole tool catalog; the turn does not fail.",
+    "toast": {
+      "saved": "Tool router saved",
+      "error": "Could not save"
+    }
   }
 }

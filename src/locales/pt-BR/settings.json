@@ -668,5 +668,62 @@
   "taskBudget": {
     "title": "Teto por tarefa e escada de modelos",
     "subtitle": "Quanto cada tarefa pode gastar e a escada de modelos quando ela bloqueia."
+  },
+  "toolRouter": {
+    "title": "Roteador de ferramentas",
+    "eyebrow": "vale para todos os projetos",
+    "subtitle": "Quem escolhe a ferramenta de cada passo do agente. A escolha é do workspace e vale para todos os projetos dele.",
+    "selectAria": "Roteador de ferramentas do workspace",
+    "card": {
+      "title": "Quem escolhe a ferramenta",
+      "hint": "Vale para todos os projetos do workspace e grava assim que você troca."
+    },
+    "opcao": {
+      "jev": {
+        "label": "Jev",
+        "hint": "Jev (padrão): o modelo Jev escolhe a ferramenta de cada passo."
+      },
+      "laya": {
+        "label": "Laya",
+        "hint": "Laya: o modelo local na GPU escolhe a ferramenta. Só ativa quando o Laya está proficiente."
+      },
+      "desligado": {
+        "label": "Desligado",
+        "hint": "Desligado: nenhum passo é roteado e o menu inteiro de ferramentas vai ao modelo."
+      }
+    },
+    "reason": {
+      "owner": "Só o owner do workspace troca o roteador. Peça a um owner."
+    },
+    "laya": {
+      "title": "Situação do Laya"
+    },
+    "estado": {
+      "nao_configurado": "Esta instalação não tem o Laya. Ele só existe com GPU NVIDIA, ligado no instalador.",
+      "sem_resposta": "O serviço do Laya não respondeu.",
+      "sem_gpu": "O serviço do Laya subiu sem GPU.",
+      "lento": "O Laya está lento demais para rotear.",
+      "proficiente": "Laya disponível: p95 {{ms}} ms · VRAM livre {{mib}} MiB."
+    },
+    "motivo": {
+      "sem_gpu": "O serviço subiu sem GPU (dispositivo: {{dispositivo}}).",
+      "vram_insuficiente": "VRAM livre {{mib}} MiB, abaixo do mínimo de 2048 MiB.",
+      "p95_acima_do_teto": "p95 da sonda {{ms}} ms, acima do teto de 500 ms.",
+      "sonda_em_andamento": "Medindo o Laya (sonda de boot)…",
+      "sonda_falhou": "A sonda de boot falhou; reinicie o serviço."
+    },
+    "nome": {
+      "nao_configurado": "não configurado",
+      "sem_resposta": "sem resposta",
+      "sem_gpu": "sem GPU",
+      "lento": "lento",
+      "proficiente": "proficiente"
+    },
+    "desde": "Visto assim desde {{quando}}.",
+    "queda": "O Laya está escolhido mas indisponível ({{estado}}) desde {{quando}}: cada passo usa o catálogo inteiro de ferramentas; o turno não falha.",
+    "toast": {
+      "saved": "Roteador de ferramentas salvo",
+      "error": "Não foi possível salvar"
+    }
   }
 }

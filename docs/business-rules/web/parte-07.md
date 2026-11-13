@@ -276,3 +276,12 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/Shell.tsx:252` (`SeletorDeProjeto`), `src/routes/Shell.tsx:300` (`Shell`), `src/lib/sidebar-state.ts:57` (`lerProjetoAtivo`).
 - **Teste:** `src/routes/Shell.test.tsx` (lista plana fora de projeto, seletor e oito seções dentro, sem "ver todos").
 - **Origem:** AT-939 (v9), decisão do dono de 13/11/2026.
+
+<a id="rn-1331"></a>
+
+### RN-1331 — A seção do roteador de ferramentas mostra o estado do Laya nomeado, com o "desde", e a opção Laya só ativa com `proficiente` {#rn-1331}
+
+- **Regra:** Configurações › Modelos › Roteador de ferramentas é escolha do WORKSPACE (vale para todos os projetos) entre Jev (padrão), Laya e Desligado, gravada na hora; só `owner` troca, os outros veem a seção inerte com o motivo em texto. O estado do Laya aparece NOMEADO (nunca colapsado em ligado/desligado), com o texto do motivo quando a api o dá, o código bruto quando não o conhecemos e sempre "visto assim desde …" (o `desde` é de quando a api percebeu, não da queda); nunca bolinha verde. A opção Laya fica inerte fora de `proficiente`. Com `laya` escolhido e estado diferente de `proficiente`, um aviso fixo diz que cada passo usa o catálogo inteiro de ferramentas (RN-1302), nunca "voltou ao Jev". O 409 `roteador_local_indisponivel` vira toast com a frase da api e a tela relê o estado. A seção não polla (`FRESCOR_DA_CONFIGURACAO_MS`).
+- **Onde:** `src/routes/settings/RoteadorDeFerramentasSection.tsx` (`RoteadorDeFerramentasSection`), `src/lib/api-client.ts` (`getWorkspaceToolRouter`, `setWorkspaceToolRouter`).
+- **Teste:** `src/routes/settings/RoteadorDeFerramentasSection.test.tsx` (um caso por estado e motivo, não-owner, PUT, 409, aviso de queda).
+- **Origem:** AT-626 (Rodada C), decisão do dono de 13/11/2026.

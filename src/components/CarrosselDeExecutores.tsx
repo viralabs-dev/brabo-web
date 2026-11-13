@@ -63,7 +63,7 @@ interface Props {
 }
 
 /**
- * AT-880 (RN-1072): a faixa acima do fio do chat com os executores da execução
+ * AT-880 (RN-1303): a faixa acima do fio do chat com os executores da execução
  * vigente — devs, QA e SecOps — num carrossel MANUAL (sem autoplay). Expandido
  * mostra tarefa, última ação, motivo do ócio e o link do fio; minimizado (e
  * recolhido no celular, o mesmo estado) mostra só nome, estado, tempo e gasto.

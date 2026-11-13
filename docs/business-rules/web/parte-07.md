@@ -115,9 +115,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `apps/web/src/components/AvisoDePrPronta.test.tsx`, `apps/web/src/lib/saidas-da-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`.
 - **Origem:** AT-810 (EP-031); decisão do dono, 07/11/2026 (aviso fixo na borda do fio; contador no título da aba; sem notificação do navegador).
 
-<a id="rn-1072"></a>
+<a id="rn-1303"></a>
 
-### RN-1072 — O chat de sessão criativa mostra os executores da execução vigente num carrossel manual acima do fio, que se minimiza e some quando a execução termina {#rn-1072}
+### RN-1303 — O chat de sessão criativa mostra os executores da execução vigente num carrossel manual acima do fio, que se minimiza e some quando a execução termina {#rn-1303}
 
 - **Regra:** quando a sessão aberta é `kind=criativa` e há execução vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)) com `module_map`, uma faixa FIXA acima do fio (RN-816), logo abaixo das pendências de outras sessões, mostra um cartão por executor: os dev agents (um por módulo) e, com evidência (`pr.gate_changed`, `artifact.qa_verdict`/`artifact.secops_verdict`, `delegation.*`), QA e SecOps em cartões próprios, com o gate que julgam, a PR, o último veredito e há quanto tempo. A lista lê a sessão de execução (outra sessão, mesmas chaves de cache de `useAgentesTravados`) e se mantém viva pelo heartbeat dela; sem endpoint nem evento novo. O cabeçalho traz "x de N tarefas" (`done` sobre o backlog vigente, mesmo conjunto da [RN-794](parte-06.md#rn-794)) com barra `role="progressbar"`, a contagem por estado, o custo total e o link para Executores. O casco é o `ui/Carousel` ([RN-148](parte-02.md#rn-148)) com páginas de 3 cartões (1 no celular), SEM autoplay (decisão do dono), e `anunciar={false}` para não falar a cada evento: só o resumo tem `role="status"`. A ordem é a de atenção primeiro: travado, bloqueado, falhou, trabalhando, aguardando, ocioso, concluído, e dentro do estado a do `module_map`. Cada cartão mostra o estado (badge), a tarefa, o texto do estado, a última ação, o tempo (minutos, sem tique), o custo (`token-usage` da execução) e "Ver no fio" (`?highlightEvent=` do último evento). **Minimizar:** um botão com `aria-expanded` reduz cada executor a um chip com nome, estado, tempo e gasto (somem tarefa, última ação, motivo e link do fio) e a barra continua; a escolha fica em `localStorage` (`brabo:carrossel-de-executores:minimizado`, em try/catch) e vale ao recarregar; sem escolha salva, o celular abre minimizado (o "recolhido" do levantamento é o mesmo estado). **Fim:** quando a execução deixa de ser a vigente, a faixa vira uma linha de resumo ("execução concluída" com todas as tarefas `done`, senão "execução parada") com o "x de N", o custo e "Ver Executores", dispensável no ×.
 - **Onde:** `apps/web/src/components/CarrosselDeExecutores.tsx:71` (`CarrosselDeExecutores`), `apps/web/src/lib/executores-ao-vivo-query.ts:23` (`useExecutoresAoVivo`), `apps/web/src/lib/executores-ao-vivo.ts:212` (`cartoesDaExecucao`), `apps/web/src/components/ui/Carousel.tsx:47` (`anunciar`, Home/End), `apps/web/src/routes/SessionPage.tsx:775` (montagem).
@@ -142,12 +142,16 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `apps/web/src/lib/proximo-passo.test.ts` (um caso por situação, precedência, "nenhuma" e tarefa arquivada), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (describe "próximo passo": fixture da P10, bloqueada, cartão que some).
 - **Origem:** AT-936 (EP-035); prévia em `13-design/proximo-passo`. Revisa a RN-708: o primeiro passo pendente dela é a situação 1 desta tabela.
 
+<a id="rn-1200"></a>
+
 ### RN-1200 — O teto do projeto é MENSAL na tela: medidor, dias restantes, previsão e a legenda da virada em UTC {#rn-1200}
 
 - **Regra:** o teto do projeto (`GET/PUT projects/:id/budget`, `maintainer`) passa a ser do mês civil em UTC (api RN-1168..1171): o `spentMicros` é o gasto do mês e a resposta traz `periodo { inicio, fim, diasRestantes, previsaoMicros }`. A aba Gastos chama o bloco de "Teto do mês" e diz "N dias restantes", "Previsão no fim do mês: US$ X" e "O mês vira em <data> (00:00 UTC)". A virada é em UTC; SÓ a legenda é convertida para a hora local do navegador. Os avisos 70/90 e o bloqueio falam "do mês" (a sessão segue acumulada e sem `periodo`). O cartão do plano (RN-1062) compara a estimativa com o que resta do teto do projeto NO MÊS. O motivo `politica` do engine agora também vem do teto do mês; o cartão "Aumentar o teto por tarefa" (AT-917) só vale para o motivo do ToolLoop e deve oferecer "ver o teto do projeto" no motivo `politica`.
 - **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/lib/spend.ts:289` (`viradaDoMesLocal`), `src/routes/ProjectSpendTab.tsx:95` (`OrcamentoDoProjeto`).
 - **Teste:** `src/routes/ProjectSpendTab.test.tsx` ("mostra dias restantes, previsão e a virada do mês"), `src/lib/spend.test.ts` (`viradaDoMesLocal`).
 - **Origem:** AT-934 (EP-035). Revisa a RN-213 (o alerta é do mês).
+
+<a id="rn-1201"></a>
 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
@@ -227,6 +231,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/settings/salvar-do-cabecalho.tsx:21` (`ProvedorDoSalvarDoCabecalho`), `src/routes/settings/salvar-do-cabecalho.tsx:100` (`BarraDeSalvar`), `src/routes/settings/secao-salvavel.helpers.ts:118` (`salvarSecao`), `src/routes/settings/LinhaDeConfiguracao.tsx:5` (`LinhaDeConfiguracao`).
 - **Teste:** `src/routes/settings/salvar-do-cabecalho.test.tsx` (tudo em série e desfecho parcial nomeado).
 - **Origem:** AT-896 lane F (EP-035), ADR 0294.
+
 <a id="rn-1275"></a>
 
 ### RN-1275 — A Caixa de decisões (`/decisions`) lê as cinco filas de todos os projetos numa leitura, sem somá-las, com Pendentes | Decididas {#rn-1275}

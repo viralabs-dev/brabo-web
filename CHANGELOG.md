@@ -41,7 +41,7 @@
 
 - Fix (AT-881, RN-1073): o carrossel diz "esperando a fundação de X" também para a tarefa ainda não pega (sem `module`), que herda os `moduleIds` da história; `Story` ganha `moduleIds`. O carrossel ganha `data-testid` (`carrossel-executores`, `carrossel-cartao-<agentId>`, `carrossel-minimizar`).
 
-- Feat (AT-880, RN-1072/RN-1073): o chat do Criativo mostra os executores da execução vigente num carrossel manual acima do fio, com devs, QA e SecOps em cartões próprios, "x de N tarefas", custo, o motivo do ócio derivado do `module_map` e um botão para minimizar (só nome, estado, tempo e gasto; a escolha fica no navegador). `ui/Carousel` ganha `anunciar` e Home/End; `Task` ganha `module`.
+- Feat (AT-880, RN-1303/RN-1073): o chat do Criativo mostra os executores da execução vigente num carrossel manual acima do fio, com devs, QA e SecOps em cartões próprios, "x de N tarefas", custo, o motivo do ócio derivado do `module_map` e um botão para minimizar (só nome, estado, tempo e gasto; a escolha fica no navegador). `ui/Carousel` ganha `anunciar` e Home/End; `Task` ganha `module`.
 
 - CI: repina o brabo-ci na release final `v1.4.0` (`5320046`), para a promoção `dev → main` de 09/11/2026.
 

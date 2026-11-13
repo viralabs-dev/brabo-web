@@ -515,16 +515,6 @@ export interface GitActionFailureResult {
   conflictingFiles?: string[];
 }
 
-/** `git_merge` executado: `jaContida` = o merge não moveu o alvo (RN-1104). */
-export interface GitMergeExecutionResult {
-  kind: 'git_merge';
-  pullRequestId: string;
-  state: string;
-  targetBranch: string;
-  mergedSha?: string;
-  jaContida?: true;
-}
-
 export interface ProposedAction {
   id: string;
   projectId: string;
@@ -2082,3 +2072,13 @@ export type RunInstructions = components['schemas']['RunInstructionsResponseDto'
 /** RN-858/861 (AT-521): a pergunta que um agente deixou para o usuário. */
 export type OpenQuestion = components['schemas']['OpenQuestionResponseDto'];
 export type OpenQuestionsList = components['schemas']['OpenQuestionsListResponseDto'];
+
+/** `git_merge` executado: `jaContida` = o merge não moveu o alvo (RN-1104). */
+export interface GitMergeExecutionResult {
+  kind: 'git_merge';
+  pullRequestId: string;
+  state: string;
+  targetBranch: string;
+  mergedSha?: string;
+  jaContida?: true;
+}

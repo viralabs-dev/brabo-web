@@ -47,12 +47,10 @@ import {
   gravarAbaAtiva,
   gravarColapsado,
   gravarProjetoAtivo,
-  gravarProjetosAbertos,
   lerColapsado,
-  lerProjetosAbertos,
 } from '../lib/sidebar-state';
-import type { ProjectCardSummary } from '../lib/api-types';
-import { Activity, Inbox, CircleUser, Container, Folder, FolderOpen, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
+import type { Project, ProjectCardSummary } from '../lib/api-types';
+import { Activity, Inbox, CircleUser, Container, House, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
 import { caixaTemAlgo } from '../lib/caixa-de-decisoes';
 import caixaStyles from '../components/CaixaDeDecisoes.module.css';
 import { deveAbrirPaleta } from '../lib/paleta-de-comandos';
@@ -61,7 +59,6 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import {
   ChevronDownIcon,
-  ChevronRightIcon,
   LogoMark,
   MenuIcon,
   PlusIcon,
@@ -72,7 +69,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -247,6 +243,49 @@ function ItemDaCaixa({ workspaceId, colapsado }: { workspaceId: string | undefin
   );
 }
 
+/** Atalho da paleta como a prévia o escreve: ⌘K no Mac, Ctrl K no resto (RN-971). */
+function atalhoDaPaleta(): string {
+  return /Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘K' : 'Ctrl K';
+}
+
+/** Seletor do projeto atual (AT-939): o botão mostra o nome e abre os demais projetos e "Novo projeto". */
+function SeletorDeProjeto({
+  atual,
+  projetos,
+  onEscolher,
+  onNovo,
+}: {
+  atual: Project;
+  projetos: readonly Project[];
+  onEscolher: (id: string) => void;
+  onNovo: () => void;
+}) {
+  const { t } = useTranslation('shell');
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={styles.seletor}
+        aria-label={t('sidebar.projects.switch', { name: atual.name })}
+        title={atual.name}
+      >
+        <span className={styles.navName}>{atual.name}</span>
+        <ChevronDownIcon size={14} aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className={styles.menuDoUsuario}>
+        {projetos.map((p) => (
+          <DropdownMenuItem key={p.id} onClick={() => onEscolher(p.id)}>
+            {p.name}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuItem onClick={onNovo}>
+          <PlusIcon size={14} aria-hidden="true" />
+          {t('sidebar.nav.newProject')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 /** Projeto FECHADO: só Aprovações tem número, do resumo do dashboard. */
 function contagensDoResumo(aprovacoesPendentes: number): ContagensDeAba {
   return {
@@ -337,24 +376,8 @@ export function Shell() {
     gravarColapsado(proximo);
   }
 
-  // --- Projetos expansíveis (RN-196) --------------------------------------
-  const [projetosAbertos, setProjetosAbertos] = useState(lerProjetosAbertos);
-  function alternarProjeto(id: string) {
-    setProjetosAbertos((atual) => {
-      const proximo = new Set(atual);
-      if (proximo.has(id)) proximo.delete(id);
-      else proximo.add(id);
-      gravarProjetosAbertos(proximo);
-      return proximo;
-    });
-  }
-
   const currentProject = (projects ?? []).find((p) => pathname.startsWith(`/projects/${p.id}`));
-  // O projeto da rota atual sempre aparece expandido — sem isso ele nasce
-  // fechado toda vez que a sidebar remonta, mesmo com você OLHANDO as abas
-  // dele na tela principal. Só entra na persistência quando o CHEVRON é
-  // clicado; abrir "de graça" pela rota não grava nada.
-  // --- Abas do projeto (RN-196, ADR 0211) ---------------------------------
+  // --- Abas do projeto (ADR 0211) ---------------------------------
   // A sidebar é a ÚNICA navegação do projeto desde o ADR 0211: o trilho
   // vertical (ADR 0126) saiu, e tudo o que só ele tinha mora aqui. Os cinco
   // contadores do projeto ABERTO saem do MESMO hook da moldura (mesmas
@@ -412,28 +435,6 @@ export function Shell() {
     document.addEventListener('keydown', aoTeclar);
     return () => document.removeEventListener('keydown', aoTeclar);
   }, [flyoutAberto]);
-
-  // RN-729: abrir um projeto RECOLHE os outros — só ele fica expandido, e a
-  // lista rola até ele; sem projeto aberto (Dashboard), nenhum fica forçado
-  // expandido. Antes, o projeto visitado antes seguia aberto no topo e as
-  // abas do atual ficavam abaixo da dobra. O chevron segue alternando à mão.
-  const idDoProjetoAtual = currentProject?.id;
-  const blocoDoProjetoAtual = useRef<HTMLLIElement | null>(null);
-  useEffect(() => {
-    const proximo = idDoProjetoAtual ? new Set([idDoProjetoAtual]) : new Set<string>();
-    setProjetosAbertos(proximo);
-    gravarProjetosAbertos(proximo);
-  }, [idDoProjetoAtual]);
-  useEffect(() => {
-    if (!idDoProjetoAtual) return;
-    blocoDoProjetoAtual.current?.scrollIntoView?.({ block: 'nearest' });
-  }, [idDoProjetoAtual]);
-
-  const projetosAbertosEfetivo = useMemo(() => {
-    if (!currentProject) return projetosAbertos;
-    if (projetosAbertos.has(currentProject.id)) return projetosAbertos;
-    return new Set(projetosAbertos).add(currentProject.id);
-  }, [projetosAbertos, currentProject]);
 
   // --- Atividades (RN-198) — escopada ao projeto ATUAL --------------------
   // O handoff não diz se "Atividades" agrega TODOS os projetos ou só o
@@ -498,17 +499,31 @@ export function Shell() {
 
   // O corpo da sidebar é UM só: no desktop mora no `Sidebar` do kit (ícones ao
   // recolher), no telefone dentro da gaveta nossa (`collapsible="none"`).
+  const ambiente = import.meta.env.VITE_BRABO_AMBIENTE as string | undefined;
+  function abrirWizard() {
+    setGavetaAberta(false);
+    setWizardOpen(true);
+  }
+
   const conteudo = (
     <>
       <SidebarHeader>
         {/* O monograma B no ladrilho terracota — a MESMA marca das telas de
             auth, e a única que o handoff reconhece. */}
-        <Link to="/" className={styles.brand} aria-label={t('sidebar.brand.dashboardLink')}>
-          <span className={styles.brandTile} aria-hidden="true">
-            <LogoMark size={18} />
-          </span>
-          {!colapsado && <span className={styles.brandName}>Brabo</span>}
-        </Link>
+        <div className={styles.marcaLinha}>
+          <Link to="/" className={styles.brand} aria-label={t('sidebar.brand.dashboardLink')}>
+            <span className={styles.brandTile} aria-hidden="true">
+              <LogoMark size={18} />
+            </span>
+            {!colapsado && <span className={styles.brandName}>Brabo</span>}
+          </Link>
+          {/* Vazio no build de produção: sem chip (AT-939). */}
+          {!colapsado && ambiente && (
+            <span className={styles.chipAmbiente} data-testid="chip-do-ambiente">
+              {ambiente}
+            </span>
+          )}
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -519,6 +534,11 @@ export function Shell() {
             >
               <SearchIcon size={16} aria-hidden="true" />
               {!colapsado && <span>{t('palette.open')}</span>}
+              {!colapsado && (
+                <kbd className={styles.atalho} aria-hidden="true">
+                  {atalhoDaPaleta()}
+                </kbd>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -527,6 +547,17 @@ export function Shell() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={pathname === '/'}
+                render={<Link to="/" />}
+                title={t('sidebar.home')}
+                aria-label={t('sidebar.home')}
+              >
+                <House size={16} aria-hidden="true" />
+                {!colapsado && <span>{t('sidebar.home')}</span>}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <ItemDaCaixa workspaceId={workspace?.id} colapsado={colapsado} />
           </SidebarMenu>
         </SidebarGroup>
@@ -549,7 +580,6 @@ export function Shell() {
                         return;
                       }
                       definirColapso(false);
-                      alternarProjeto(project.id);
                       gravarProjetoAtivo(project.id);
                       void navigate({ to: '/projects/$projectId', params: { projectId: project.id } });
                     }}
@@ -583,18 +613,8 @@ export function Shell() {
           <>
             <SidebarGroup>
               <SidebarGroupLabel className={styles.rotulo}>
-                {t('sidebar.nav.projectsLabel')}
+                {currentProject ? t('sidebar.nav.projectLabel') : t('sidebar.nav.projectsLabel')}
               </SidebarGroupLabel>
-              <SidebarGroupAction
-                onClick={() => {
-                  setGavetaAberta(false);
-                  setWizardOpen(true);
-                }}
-                title={t('sidebar.nav.newProject')}
-                aria-label={t('sidebar.nav.newProject')}
-              >
-                <PlusIcon size={16} />
-              </SidebarGroupAction>
               {/* A lista falhou: a sidebar DIZ, em vez de ficar vazia como se o
                   workspace não tivesse projeto nenhum (RN-088). */}
               {projectsQuery.isError && (
@@ -611,80 +631,76 @@ export function Shell() {
                 </div>
               )}
               <SidebarGroupContent>
-                <SidebarMenu>
-                  {(projects ?? []).map((project) => {
-                    // Aprovações pendentes do projeto INTEIRO (RN-151), não
-                    // atividade não lida; o resumo do dashboard as traz de graça.
-                    const summary = cardPorProjeto.get(project.id);
-                    const pendingApprovalsCount = summary?.pendingApprovalsCount ?? 0;
-                    const aberto = projetosAbertosEfetivo.has(project.id);
-                    return (
-                      <SidebarMenuItem
-                        key={project.id}
-                        ref={project.id === idDoProjetoAtual ? blocoDoProjetoAtual : undefined}
-                      >
-                        <div className={styles.linhaDoProjeto}>
-                          <button
-                            type="button"
-                            className={styles.chevronBotao}
-                            aria-expanded={aberto}
-                            aria-label={
-                              aberto
-                                ? t('sidebar.projects.collapse', { name: project.name })
-                                : t('sidebar.projects.expand', { name: project.name })
-                            }
-                            onClick={() => alternarProjeto(project.id)}
-                          >
-                            {aberto ? <ChevronDownIcon size={13} /> : <ChevronRightIcon size={13} />}
-                          </button>
-                          <SidebarMenuButton
-                            isActive={pathname.startsWith(`/projects/${project.id}`)}
-                            render={
-                              <Link
-                                to="/projects/$projectId"
-                                params={{ projectId: project.id }}
-                                title={project.name}
-                                onClick={() => {
-                                  gravarProjetoAtivo(project.id);
-                                  gravarAbaAtiva(ABA_PADRAO);
-                                }}
+                {currentProject ? (
+                  <>
+                    <SeletorDeProjeto
+                      atual={currentProject}
+                      projetos={projects ?? []}
+                      onEscolher={(id) => irParaAba(id, ABA_PADRAO)}
+                      onNovo={abrirWizard}
+                    />
+                    <AbasDoProjeto
+                      projectId={currentProject.id}
+                      nomeDoProjeto={currentProject.name}
+                      itens={itensDoProjeto(currentProject.id)}
+                      active={abaAtivaDoAtual}
+                      onChange={(chave) => irParaAba(currentProject.id, chave)}
+                    />
+                  </>
+                ) : (
+                  <SidebarMenu>
+                    {(projects ?? []).map((project) => {
+                      // Aprovações pendentes do projeto INTEIRO (RN-151), não
+                      // atividade não lida; o resumo do dashboard as traz de graça.
+                      const summary = cardPorProjeto.get(project.id);
+                      const pendingApprovalsCount = summary?.pendingApprovalsCount ?? 0;
+                      return (
+                        <SidebarMenuItem key={project.id}>
+                          <div className={styles.linhaDoProjeto}>
+                            <SidebarMenuButton
+                              render={
+                                <Link
+                                  to="/projects/$projectId"
+                                  params={{ projectId: project.id }}
+                                  title={project.name}
+                                  onClick={() => {
+                                    gravarProjetoAtivo(project.id);
+                                    gravarAbaAtiva(ABA_PADRAO);
+                                  }}
+                                />
+                              }
+                            >
+                              <NavStatusDot
+                                summary={summary}
+                                blockedTaskCount={blockedByProject.get(project.id) ?? 0}
                               />
-                            }
-                          >
-                            {aberto ? <FolderOpen size={15} aria-hidden="true" /> : <Folder size={15} aria-hidden="true" />}
-                            <NavStatusDot
-                              summary={summary}
-                              blockedTaskCount={blockedByProject.get(project.id) ?? 0}
-                            />
-                            <span className={styles.navText}>
-                              <span className={styles.navName}>{project.name}</span>
-                              {/* Só quando o nome se repete — ver `project-label.ts`. */}
-                              {repetidos.has(project.name) && (
-                                <span className={styles.navDesempate}>
-                                  {desempateDoProjeto(project)}
-                                </span>
-                              )}
-                            </span>
-                          </SidebarMenuButton>
-                          {pendingApprovalsCount > 0 && (
-                            <Badge tone="accent" square>
-                              {pendingApprovalsCount}
-                            </Badge>
-                          )}
-                        </div>
-                        {aberto && (
-                          <AbasDoProjeto
-                            projectId={project.id}
-                            nomeDoProjeto={project.name}
-                            itens={itensDoProjeto(project.id)}
-                            active={project.id === currentProject?.id ? abaAtivaDoAtual : undefined}
-                            onChange={(chave) => irParaAba(project.id, chave)}
-                          />
-                        )}
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
+                              <span className={styles.navText}>
+                                <span className={styles.navName}>{project.name}</span>
+                                {/* Só quando o nome se repete — ver `project-label.ts`. */}
+                                {repetidos.has(project.name) && (
+                                  <span className={styles.navDesempate}>
+                                    {desempateDoProjeto(project)}
+                                  </span>
+                                )}
+                              </span>
+                            </SidebarMenuButton>
+                            {pendingApprovalsCount > 0 && (
+                              <Badge tone="accent" square>
+                                {pendingApprovalsCount}
+                              </Badge>
+                            )}
+                          </div>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                    <SidebarMenuItem>
+                      <SidebarMenuButton onClick={abrirWizard}>
+                        <PlusIcon size={16} />
+                        <span>{t('sidebar.nav.newProject')}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                )}
               </SidebarGroupContent>
             </SidebarGroup>
 

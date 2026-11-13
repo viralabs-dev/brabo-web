@@ -58,13 +58,6 @@ export function AgentesAgora({
           </SidebarMenuItem>
         );
       })}
-      {itens.length > 0 && !colapsado && (
-        <SidebarMenuItem>
-          <button type="button" className={styles.verTodos} onClick={onVerTodos}>
-            {t('sidebar.agentsNow.viewAll')}
-          </button>
-        </SidebarMenuItem>
-      )}
     </SidebarMenu>
   );
 }

@@ -31,6 +31,7 @@ import { ApiError } from '../lib/api-client';
 import { CREDENCIAIS_DE_LLM } from '../lib/models';
 import type { Project, UserCredentialMetadata } from '../lib/api-types';
 import { loteSobreLeiturasPorChave } from '../test/lote-de-bindings';
+import { BarraDeSalvar, ProvedorDoSalvarDoCabecalho } from './settings/salvar-do-cabecalho';
 
 const getProject = vi.fn();
 const updateProject = vi.fn();
@@ -179,10 +180,24 @@ function montarSecao(secao: ReactNode) {
   return render(
     <QueryClientProvider client={client}>
       <I18nextProvider i18n={i18n}>
-        <ToastProvider>{secao}</ToastProvider>
+        <ToastProvider>
+          <ProvedorDoSalvarDoCabecalho>
+            <BarraDeSalvar />
+            {secao}
+          </ProvedorDoSalvarDoCabecalho>
+        </ToastProvider>
       </I18nextProvider>
     </QueryClientProvider>,
   );
+}
+
+const ROTULO_DO_MODO: Record<string, string> = {
+  container: 'Container',
+  mounted: 'Pasta montada',
+  runner: 'Runner local',
+};
+async function trocarModo(modo: string) {
+  fireEvent.click(await screen.findByRole('button', { name: ROTULO_DO_MODO[modo] }));
 }
 
 function montar() {
@@ -496,7 +511,8 @@ describe('ExecutionSection', () => {
         maxConsecutiveBlocked: 7,
       }),
     );
-    expect(await screen.findByText('Teto da parada automática salvo')).toBeTruthy();
+    // O Salvar é o da barra do cabeçalho (RN-1265): ele fala UMA vez, pela contagem.
+    expect(await screen.findByText('1 alteração salva')).toBeTruthy();
   });
 
   it('valor inválido (zero, negativo, fracionário): botão desabilitado, nada é salvo', async () => {
@@ -523,7 +539,7 @@ describe('ExecutionModeSection (RN-447..450, ADR 0111)', () => {
     getProject.mockResolvedValue(project({ executionMode: 'container' }));
     montarModo();
 
-    expect(await screen.findByDisplayValue('Container')).toBeTruthy();
+    expect(await screen.findByRole('button', { name: 'Container', pressed: true })).toBeTruthy();
     expect(screen.queryByLabelText('Novo caminho da pasta')).toBeNull();
     // Nada mudou ainda — Converter fica desabilitado.
     expect(screen.getByText('Converter').closest('button')?.disabled).toBe(
@@ -535,8 +551,7 @@ describe('ExecutionModeSection (RN-447..450, ADR 0111)', () => {
     getProject.mockResolvedValue(project({ executionMode: 'container' }));
     montarModo();
 
-    const select = await screen.findByLabelText('Novo modo de execução');
-    fireEvent.change(select, { target: { value: 'mounted' } });
+    await trocarModo('mounted');
 
     const campo = await screen.findByLabelText('Novo caminho da pasta');
     expect(campo).toHaveValue('');
@@ -553,8 +568,7 @@ describe('ExecutionModeSection (RN-447..450, ADR 0111)', () => {
     );
     montarModo();
 
-    const select = await screen.findByLabelText('Novo modo de execução');
-    fireEvent.change(select, { target: { value: 'mounted' } });
+    await trocarModo('mounted');
     const campo = await screen.findByLabelText('Novo caminho da pasta');
     fireEvent.change(campo, { target: { value: '/home/voce/loja' } });
     fireEvent.click(screen.getByText('Converter'));
@@ -577,8 +591,7 @@ describe('ExecutionModeSection (RN-447..450, ADR 0111)', () => {
     );
     montarModo();
 
-    const select = await screen.findByLabelText('Novo modo de execução');
-    fireEvent.change(select, { target: { value: 'container' } });
+    await trocarModo('container');
 
     expect(screen.queryByLabelText('Novo caminho da pasta')).toBeNull();
     fireEvent.click(screen.getByText('Converter'));
@@ -598,7 +611,7 @@ describe('ExecutionModeSection (RN-447..450, ADR 0111)', () => {
     expect(
       await screen.findByText(/Só quem é maintainer ou owner pode converter/),
     ).toBeTruthy();
-    expect(screen.getByLabelText('Novo modo de execução')).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Container' })).toBeDisabled();
     expect(screen.getByText('Converter').closest('button')?.disabled).toBe(
       true,
     );
@@ -613,8 +626,7 @@ describe('ExecutionModeSection (RN-447..450, ADR 0111)', () => {
     );
     montarModo();
 
-    const select = await screen.findByLabelText('Novo modo de execução');
-    fireEvent.change(select, { target: { value: 'runner' } });
+    await trocarModo('runner');
     const campo = await screen.findByLabelText('Novo caminho da pasta');
     fireEvent.change(campo, { target: { value: '/home/voce/loja' } });
     fireEvent.click(screen.getByText('Converter'));

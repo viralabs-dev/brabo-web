@@ -180,7 +180,6 @@
   },
   "repository": {
     "title": "Repository",
-    "eyebrow": "git · provider and policy",
     "adopted": "Adopted — it already existed before the project, and the branch policy is its own.",
     "created": "Created by Brabo, with the Gitflow bootstrap applied.",
     "dismissed": {
@@ -188,12 +187,15 @@
       "strong": "skipped",
       "after": " on adoption: no branch or protection was changed by us."
     },
-    "divergesTitle": "This repository diverges from the template:"
+    "divergesTitle": "This repository diverges from the template:",
+    "none": {
+      "title": "Not provisioned yet",
+      "subtitle": "This project has no repository yet."
+    }
   },
   "execution": {
     "title": "Execution",
-    "eyebrow": "dev agent circuit breaker",
-    "subtitle": "Dev agents' circuit breaker — applies starting with the next execution activation, doesn't affect agents already running.",
+    "subtitle": "When a dev agent stops on its own.",
     "card": {
       "title": "Consecutive blocked tasks before stopping",
       "hintDefault": "uses the default ({{default}})",
@@ -208,7 +210,8 @@
     "teto": {
       "title": "Spend cap per task (US$)",
       "hintDefault": "uses the default (US$ {{default}})",
-      "vale": "Also applies to agents already running, from the next lap of each task."
+      "vale": "Also applies to agents already running, from the next lap of each task.",
+      "saved": "Per-task cap saved"
     },
     "semPapel": "Editing requires the maintainer role on the project.",
     "escada": {
@@ -223,8 +226,7 @@
   },
   "executionMode": {
     "title": "Where the code lives",
-    "eyebrow": "convert execution mode",
-    "subtitle": "Changes WHERE this project's commands execute — the managed folder, a folder of yours mounted via bind-mount, or a folder of yours connected through the runner.",
+    "subtitle": "Converting changes where the agents run.",
     "needsMaintainer": "Only a maintainer or owner can convert.",
     "warning": {
       "refuses": "If any dev agent is working or stuck right now, the conversion is refused — wait for it to finish (or unblock the stuck task) and try again.",
@@ -270,19 +272,14 @@
   },
   "parallelism": {
     "title": "Parallelism by area",
-    "eyebrow": "how many agents without asking",
-    "subtitle": {
-      "before": "How many agents the lead of each area can have ",
-      "strong": "in the session",
-      "after": " without asking your authorization. Above the threshold it doesn't spin up anything: the request becomes an action in Approvals, with the reason, and waits for you. The threshold is for the whole session, not per module — counting per module would let many agents spin up with no authorization at all."
-    },
+    "subtitle": "How many agents work at the same time without asking.",
     "empty": {
       "before": "No area yet. They're born when you activate execution, because the members of the dev area come from the ",
       "code": "module_map",
       "after": " from the Architect."
     },
     "card": {
-      "title": "{{area}} area",
+      "title": "{{area}}",
       "lead": "Lead: {{lead}}",
       "membersCount_one": " — {{count}} member",
       "membersCount_other": " — {{count}} members",
@@ -654,5 +651,9 @@
       "off": "Automatic merge off",
       "error": "Could not save"
     }
+  },
+  "taskBudget": {
+    "title": "Per-task cap and model ladder",
+    "subtitle": "How much each task may spend, and the model ladder when it gets blocked."
   }
 }

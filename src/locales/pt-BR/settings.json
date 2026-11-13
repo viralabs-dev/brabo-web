@@ -187,7 +187,6 @@
   },
   "repository": {
     "title": "Repositório",
-    "eyebrow": "git · provider e política",
     "adopted": "Adotado — já existia antes do projeto, e a política de branches é dele.",
     "created": "Criado pelo Brabo, com o bootstrap de Gitflow aplicado.",
     "dismissed": {
@@ -195,12 +194,15 @@
       "strong": "dispensado",
       "after": " na adoção: nenhuma branch ou proteção foi alterada por nós."
     },
-    "divergesTitle": "Este repositório diverge do template:"
+    "divergesTitle": "Este repositório diverge do template:",
+    "none": {
+      "title": "Ainda não provisionado",
+      "subtitle": "Este projeto ainda não tem repositório."
+    }
   },
   "execution": {
     "title": "Execução",
-    "eyebrow": "parada automática do dev agent",
-    "subtitle": "Parada automática dos dev agents — vale a partir da próxima ativação da execução, não afeta agentes já rodando.",
+    "subtitle": "Quando um dev agent para sozinho.",
     "card": {
       "title": "Tarefas bloqueadas seguidas até parar",
       "hintDefault": "usa o padrão ({{default}})",
@@ -215,7 +217,8 @@
     "teto": {
       "title": "Teto de gasto por tarefa (US$)",
       "hintDefault": "usa o padrão (US$ {{default}})",
-      "vale": "Vale também para os agentes já em execução, a partir da próxima volta de cada tarefa."
+      "vale": "Vale também para os agentes já em execução, a partir da próxima volta de cada tarefa.",
+      "saved": "Teto por tarefa salvo"
     },
     "semPapel": "Editar exige o papel maintainer no projeto.",
     "escada": {
@@ -230,8 +233,7 @@
   },
   "executionMode": {
     "title": "Onde o código mora",
-    "eyebrow": "converter modo de execução",
-    "subtitle": "Muda ONDE o comando deste projeto executa — a pasta gerenciada, uma pasta sua montada por bind-mount, ou uma pasta sua conectada pelo runner.",
+    "subtitle": "Converter muda onde os agentes executam.",
     "needsMaintainer": "Só quem é maintainer ou owner pode converter.",
     "warning": {
       "refuses": "Se algum dev agent estiver trabalhando ou travado agora, a conversão é recusada — espere terminar (ou desbloqueie a tarefa travada) e tente de novo.",
@@ -277,19 +279,14 @@
   },
   "parallelism": {
     "title": "Paralelismo por área",
-    "eyebrow": "quantos agentes sem perguntar",
-    "subtitle": {
-      "before": "Quantos agentes o lead de cada área pode ter ",
-      "strong": "na sessão",
-      "after": " sem pedir sua autorização. Acima do teto ele não sobe nada: o pedido vira uma ação em Aprovações, com o motivo, e espera você. O teto é da sessão inteira e não de cada módulo — contar por módulo deixaria muitos agentes subirem sem autorização nenhuma."
-    },
+    "subtitle": "Quantos agentes trabalham ao mesmo tempo sem perguntar.",
     "empty": {
       "before": "Nenhuma área ainda. Elas nascem quando você ativa a execução, porque os membros da área de dev vêm do ",
       "code": "module_map",
       "after": " do Arquiteto."
     },
     "card": {
-      "title": "Área {{area}}",
+      "title": "{{area}}",
       "lead": "Lead: {{lead}}",
       "membersCount_zero": " — {{count}} membros",
       "membersCount_one": " — {{count}} membro",
@@ -667,5 +664,9 @@
       "off": "Merge automático desligado",
       "error": "Não foi possível salvar"
     }
+  },
+  "taskBudget": {
+    "title": "Teto por tarefa e escada de modelos",
+    "subtitle": "Quanto cada tarefa pode gastar e a escada de modelos quando ela bloqueia."
   }
 }

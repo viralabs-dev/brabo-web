@@ -269,15 +269,18 @@
     "abrirContainers": "打开容器",
     "title_other": "执行已关闭 · {{count}} 个任务就绪",
     "explain_other": "启动后 Dev Lead 会在 dev agent 之间分配工作（dev 区域最多并行 {{count}} 个）。每个 PR 都经过 QA 和 SecOps，等你来合并。",
-    "teto": "项目上限 {{valor}}"
+    "teto": "项目上限 {{valor}}",
+    "semRepositorio": "没有仓库，无法启动执行。"
   },
   "areas": {
     "title": "区域",
     "working": "工作中",
     "stopped": "已停止",
-    "parallelism": "并行度 {{ativos}} / {{max}}",
-    "lead": "lead：{{nome}}",
-    "members_other": "{{count}} 名成员"
+    "members_other": "{{count}} 名成员",
+    "parallelismLabel": "并行度",
+    "leadLabel": "Lead",
+    "semMembros": "暂无成员",
+    "devNasce": "执行启动后才会创建智能体。"
   },
   "fila": {
     "title": "任务队列",
@@ -285,6 +288,14 @@
     "running_other": "{{count}} 个运行中",
     "blocked_other": "{{count}} 个已阻塞",
     "semModulo_other": "{{count}} 个无模块",
-    "more_other": "+ {{count}} 个任务，在待办中查看"
+    "more_other": "+ {{count}} 个任务",
+    "verNoBacklog": "在待办中查看",
+    "estado": {
+      "blocked": "已阻塞",
+      "todo": "就绪",
+      "in_progress": "运行中",
+      "in_review": "评审中",
+      "done": "已完成"
+    }
   }
 }

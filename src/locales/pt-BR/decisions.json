@@ -1,6 +1,6 @@
 {
   "titulo": "Caixa de decisões",
-  "subtitulo": "As filas de todos os projetos, separadas.",
+  "subtitulo": "Tudo o que espera você, em todos os projetos. Cada fila conta sozinha: uma aprovação não é o mesmo que uma hipótese, e a tela não soma as duas.",
   "seletor": "Pendentes ou decididas",
   "modo": {
     "pending": "Pendentes",
@@ -9,15 +9,15 @@
   "erro": "Não foi possível carregar a Caixa de decisões.",
   "carregando": "Carregando…",
   "filas": {
-    "aprovacoes": "Aprovações de ação",
-    "prs": "Merges de PR",
+    "aprovacoes": "Aprovações",
+    "prs": "PRs para mergear",
     "promocoes": "Promoções de história",
     "arquitetura": "Pendências de arquitetura",
-    "hipoteses": "Hipóteses do Psicólogo"
+    "hipoteses": "Hipóteses"
   },
   "vazio": {
     "aprovacoes": "Nenhuma ação esperando decisão.",
-    "prs": "Nenhum merge de PR esperando decisão.",
+    "prs": "Nenhuma PR esperando merge",
     "promocoes": "Nenhuma história esperando promoção.",
     "arquitetura": "Nenhuma pendência de arquitetura.",
     "hipoteses": "Nenhuma hipótese do Psicólogo esperando decisão."
@@ -30,5 +30,21 @@
   "motivo": {
     "no_module": "A história não tem módulo.",
     "missing_module": "Módulos faltando no mapa: {{modulos}}."
-  }
+  },
+  "legenda": {
+    "aprovacoes": "ações com efeito externo",
+    "prs": "passaram por QA e SecOps",
+    "promocoes": "histórias prontas para promover",
+    "arquitetura": "módulos fora do mapa",
+    "hipoteses": "do Psicólogo, sobre o time"
+  },
+  "vazioPrs": "Merge em branch protegida é sempre manual. Quando uma PR passar pelos portões, ela aparece aqui.",
+  "psicologoPausado": "O Psicólogo está pausado",
+  "psicologoPausadoDetalhe": "Nenhuma sessão é analisada até ele ser reativado.",
+  "projetos_zero": "{{count}} projeto",
+  "projetos_one": "{{count}} projeto",
+  "projetos_other": "{{count}} projetos",
+  "aprovar": "Aprovar",
+  "negar": "Negar",
+  "decidirNoCard": "Plano: decida no card, com custo e motivo."
 }

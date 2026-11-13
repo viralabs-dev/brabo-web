@@ -12,9 +12,12 @@ beforeAll(async () => {
 });
 
 const getDecisionInbox = vi.fn();
+const getPsychologistStatus = vi.fn();
 vi.mock('../lib/api-client', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../lib/api-client')>()),
   getDecisionInbox: (...a: unknown[]) => getDecisionInbox(...a),
+  listProjects: () => Promise.resolve([{ id: 'p1' }]),
+  getPsychologistStatus: (...a: unknown[]) => getPsychologistStatus(...a),
 }));
 vi.mock('../lib/hooks', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../lib/hooks')>()),
@@ -40,6 +43,7 @@ function montar() {
 
 beforeEach(() => {
   getDecisionInbox.mockReset();
+  getPsychologistStatus.mockReset().mockResolvedValue({ enabled: true });
 });
 
 describe('DecisionsPage (AT-889, S07)', () => {
@@ -63,6 +67,27 @@ describe('DecisionsPage (AT-889, S07)', () => {
     await waitFor(() => expect(getDecisionInbox).toHaveBeenLastCalledWith('ws-1', 'decided'));
     const secao = await screen.findByRole('region', { name: 'Pendências de arquitetura' });
     expect(within(secao).getByText(/não há decisão humana/)).toBeTruthy();
+  });
+
+  it('linha compacta: Aprovar, Negar e Abrir; plano só abre', async () => {
+    const plano = { ...acao('a2'), actionType: 'propose_execution_plan', payload: { modulos: [] } };
+    getDecisionInbox.mockResolvedValue(
+      inbox({ aprovacoes: fila([{ projectId: 'p1', projectName: 'Alfa', acao: acao('a1') }, { projectId: 'p1', projectName: 'Alfa', acao: plano }]) }),
+    );
+    montar();
+    await screen.findAllByText('Alfa');
+    expect(screen.getAllByRole('button', { name: 'Aprovar' })).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Negar' })).toHaveLength(1);
+    expect(screen.getAllByText('Abrir')).toHaveLength(2);
+    expect(screen.getByText('1 projeto')).toBeTruthy();
+  });
+
+  it('Hipóteses vazia diz que o Psicólogo está pausado', async () => {
+    getPsychologistStatus.mockResolvedValue({ enabled: false });
+    getDecisionInbox.mockResolvedValue(inbox({}));
+    montar();
+    expect(await screen.findByText('O Psicólogo está pausado')).toBeTruthy();
+    expect(screen.getByText('Nenhuma PR esperando merge')).toBeTruthy();
   });
 
   it('falha de leitura diz que falhou', async () => {

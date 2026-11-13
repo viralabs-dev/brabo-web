@@ -146,3 +146,11 @@
   color: var(--danger);
   border-color: var(--danger-line);
 }
+
+/* AT-944 (v9): PRs de dev agents e de infra lado a lado. */
+.portoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}

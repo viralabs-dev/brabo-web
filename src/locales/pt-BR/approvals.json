@@ -237,6 +237,10 @@
       "placeholder": "O Dev Lead lê este motivo e pergunta o que mudar antes de propor de novo.",
       "confirm": "Confirmar e negar",
       "cancel": "Cancelar"
+    },
+    "explicado": {
+      "oQueAcontece": "O que acontece se aprovar",
+      "porQueEstaAqui": "Por que está aqui"
     }
   },
   "prGateTimeline": {
@@ -286,7 +290,7 @@
   "approvalsTab": {
     "genericLoading": "Carregando…",
     "pending": {
-      "title": "Pendentes",
+      "title": "Esperando você",
       "eyebrow": "mais antigas primeiro",
       "selectedCount_zero": "{{count}} selecionadas",
       "selectedCount_one": "{{count}} selecionada",

@@ -215,6 +215,10 @@
       "placeholder": "Dev Lead 会阅读此原因，并在再次提议前询问需要修改什么。",
       "confirm": "确认并拒绝",
       "cancel": "取消"
+    },
+    "explicado": {
+      "oQueAcontece": "批准后会发生什么",
+      "porQueEstaAqui": "为何出现在这里"
     }
   },
   "prGateTimeline": {
@@ -256,7 +260,7 @@
   "approvalsTab": {
     "genericLoading": "加载中…",
     "pending": {
-      "title": "待处理",
+      "title": "等你处理",
       "eyebrow": "最早在前",
       "selectedCount_other": "已选 {{count}} 项",
       "approveSelected": "批准所选",

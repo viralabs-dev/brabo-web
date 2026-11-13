@@ -226,6 +226,10 @@
       "placeholder": "The Dev Lead reads this reason and asks what to change before proposing again.",
       "confirm": "Confirm and deny",
       "cancel": "Cancel"
+    },
+    "explicado": {
+      "oQueAcontece": "What happens if you approve",
+      "porQueEstaAqui": "Why it's here"
     }
   },
   "prGateTimeline": {
@@ -271,7 +275,7 @@
   "approvalsTab": {
     "genericLoading": "Loading…",
     "pending": {
-      "title": "Pending",
+      "title": "Waiting for you",
       "eyebrow": "oldest first",
       "selectedCount_one": "{{count}} selected",
       "selectedCount_other": "{{count}} selected",

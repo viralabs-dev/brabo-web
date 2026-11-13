@@ -423,6 +423,7 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
                           key={action.id}
                           action={action}
                           detalheRecolhido
+                          explicado
                           // AT-336 (RN-614): o motivo DESTA ação, do log
                           // carregado ou lido pela ação. Carregando ou com a
                           // leitura falha, `undefined` — o card cala, e a
@@ -450,12 +451,11 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
         </BlocoDeDados>
       </div>
 
-      <DecididasRecentemente projectId={projectId} />
-
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.title}>{t('approvalsTab.gates.title')}</h2>
         </div>
+      <div className={styles.portoes}>
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h3 className={styles.title}>{t('approvalsTab.devPrs.title')}</h3>
@@ -532,7 +532,9 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
         </BlocoDeDados>
       </div>
       </div>
+      </div>
 
+      <DecididasRecentemente projectId={projectId} />
     </div>
   );
 }

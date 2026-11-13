@@ -248,6 +248,10 @@
       "placeholder": "Dev Lead прочитает причину и спросит, что изменить, прежде чем предлагать снова.",
       "confirm": "Подтвердить и отклонить",
       "cancel": "Отмена"
+    },
+    "explicado": {
+      "oQueAcontece": "Что будет, если одобрить",
+      "porQueEstaAqui": "Почему это здесь"
     }
   },
   "prGateTimeline": {
@@ -301,7 +305,7 @@
   "approvalsTab": {
     "genericLoading": "Загрузка…",
     "pending": {
-      "title": "Ожидают",
+      "title": "Ждут вас",
       "eyebrow": "сначала старые",
       "selectedCount_one": "Выбрано: {{count}}",
       "selectedCount_few": "Выбрано: {{count}}",

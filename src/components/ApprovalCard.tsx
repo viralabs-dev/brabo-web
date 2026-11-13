@@ -216,6 +216,13 @@ interface ApprovalCardProps {
    * largura do card é o CONTÊINER (o fio o centraliza em 560px, RN-173).
    */
   detalheRecolhido?: boolean;
+  /**
+   * AT-944 (v9): a frase da ação e o motivo da política em duas colunas
+   * rotuladas ("O que acontece se aprovar" / "Por que está aqui"). Opcional e
+   * ligada só pela aba Aprovações; é o mesmo texto, em outro arranjo — o card
+   * segue com UMA variante (RN-096/RN-626).
+   */
+  explicado?: boolean;
 }
 
 export function ApprovalCard({
@@ -231,6 +238,7 @@ export function ApprovalCard({
   decisaoDaPolitica,
   bloqueio,
   detalheRecolhido,
+  explicado,
 }: ApprovalCardProps) {
   const { t, i18n } = useTranslation('approvals');
   const [expandedFile, setExpandedFile] = useState<string | null>(null);
@@ -339,6 +347,24 @@ export function ApprovalCard({
     return onApprove();
   }
 
+  const fraseJsx = (
+      <p className={styles.frase}>
+        {trechos
+          ? trechos.map((trecho, indice) =>
+              // AT-322: comando, branch e caminho em mono e SEM aspas — a aspa
+              // reta em fonte proporcional se lia como parte do comando.
+              trecho.codigo ? (
+                <code key={indice} className={styles.codigoNaFrase}>
+                  {trecho.texto}
+                </code>
+              ) : (
+                trecho.texto
+              ),
+            )
+          : `${verbo} — ${SEM_FRASE}.`}
+      </p>
+  );
+
   // Ficam à vista nos tipos de sempre; no cartão do plano vão para "Detalhes".
   const politicaJsx = (
     decisaoDaPolitica !== undefined && (
@@ -436,7 +462,7 @@ export function ApprovalCard({
             <TetoDoPlano projectId={action.projectId} estimativaMicros={tetoDoPlanoLido.total} />
           )}
         </>
-      ) : (
+      ) : explicado ? null : (
       <p className={styles.frase}>
         {trechos
           ? trechos.map((trecho, indice) =>
@@ -533,7 +559,22 @@ export function ApprovalCard({
         </>
       ) : null}
     >
-      {!ehPlano && politicaJsx}
+      {explicado && !ehPlano ? (
+        <div className={styles.explicado} data-testid="card-explicado">
+          <div>
+            <h4 className={styles.rotuloExplicado}>{t('approvalCard.explicado.oQueAcontece')}</h4>
+            {fraseJsx}
+          </div>
+          {decisaoDaPolitica !== undefined && (
+            <div>
+              <h4 className={styles.rotuloExplicado}>{t('approvalCard.explicado.porQueEstaAqui')}</h4>
+              {politicaJsx}
+            </div>
+          )}
+        </div>
+      ) : (
+        !ehPlano && politicaJsx
+      )}
 
       <Disclosure
         titulo={temCorpoProprio || ehPlano ? t('approvalCard.details.title') : t('approvalCard.details.rawPayloadTitle')}

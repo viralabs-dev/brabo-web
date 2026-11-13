@@ -1,6 +1,6 @@
 {
   "topbar": {
-    "title": "Projects",
+    "title": "Home",
     "searchPlaceholder": "Search projects…",
     "newProject": "New project"
   },
@@ -97,5 +97,14 @@
       "aprovacoes_other": "{{n}} approvals",
       "demais": "PRs {{prs}} · promotions {{promocoes}} · architecture {{arquitetura}} · hypotheses {{hipoteses}}"
     }
+  },
+  "secaoProjetos": "Projects",
+  "novoCartao": {
+    "titulo": "New project",
+    "descricao": "Start from a brief or adopt an existing repository."
+  },
+  "atividadeRecente": {
+    "titulo": "Recent activity",
+    "indisponivel": "Could not read recent activity."
   }
 }

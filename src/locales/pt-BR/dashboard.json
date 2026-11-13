@@ -1,6 +1,6 @@
 {
   "topbar": {
-    "title": "Projetos",
+    "title": "Início",
     "searchPlaceholder": "Buscar projetos…",
     "newProject": "Novo projeto"
   },
@@ -100,5 +100,14 @@
       "aprovacoes_zero": "nenhuma aprovação",
       "demais": "PRs {{prs}} · promoções {{promocoes}} · arquitetura {{arquitetura}} · hipóteses {{hipoteses}}"
     }
+  },
+  "secaoProjetos": "Projetos",
+  "novoCartao": {
+    "titulo": "Novo projeto",
+    "descricao": "Comece de um brief ou adote um repositório existente."
+  },
+  "atividadeRecente": {
+    "titulo": "Atividade recente",
+    "indisponivel": "Não foi possível ler a atividade recente."
   }
 }

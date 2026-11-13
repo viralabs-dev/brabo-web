@@ -1,0 +1,196 @@
+/* Aba Insights (AT-945, P17): estilo próprio. As classes de hipótese, faixa de
+   análises e cabeçalho são cópias das da Visão geral que esta aba usa; o resto
+   é o cartão de estado do Psicólogo e o cartão de exemplo. */
+
+.sectionHeader {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sectionSub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.archLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 16px 0 10px;
+}
+
+.moduleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+/* Cartão de estado do Psicólogo: pausado ou ativo, com a ação de explicar. */
+.estado {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px;
+  margin-bottom: 24px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.estadoIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+}
+
+.estadoCorpo {
+  flex: 1 1 280px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.estadoTitulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.estadoAcao {
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+/* Cartão de exemplo: a forma de uma hipótese, sem ações que funcionem. */
+.exemplo {
+  margin-top: 8px;
+}
+
+.exemploCartao {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.exemploCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.exemploIcone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-xs);
+}
+
+.exemploAncora {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.exemploSugestao {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.exemploAcoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* Faixa de análises do Psicólogo (Fase 4b) — tier + custo por sessão analisada. */
+.analysisStrip {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 18px;
+}
+
+.analysisRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.analysisSession {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.analysisSession:hover {
+  text-decoration: underline;
+}
+
+.analysisMeta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.analysisCost {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.analysisReanalyze {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-full);
+  padding: 3px 10px;
+  cursor: pointer;
+}
+
+.analysisReanalyze:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+}

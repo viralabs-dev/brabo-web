@@ -7,7 +7,6 @@
     "sessionError": {
       "title": "Could not find this project's execution session."
     },
-    "noActiveExecution": "No active execution in this project right now.",
     "showingSession": "Showing",
     "rosterError": {
       "title": "Could not find out who is executing."
@@ -281,16 +280,19 @@
     "title_other": "Execution is off · {{count}} tasks ready",
     "explain_one": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",
     "explain_other": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",
-    "teto": "Project cap {{valor}}"
+    "teto": "Project cap {{valor}}",
+    "semRepositorio": "Without a repository there is nowhere to activate execution."
   },
   "areas": {
     "title": "Areas",
     "working": "working",
     "stopped": "stopped",
-    "parallelism": "Parallelism {{ativos}} / {{max}}",
-    "lead": "lead: {{nome}}",
     "members_one": "{{count}} member",
-    "members_other": "{{count}} members"
+    "members_other": "{{count}} members",
+    "parallelismLabel": "Parallelism",
+    "leadLabel": "Lead",
+    "semMembros": "no members yet",
+    "devNasce": "Agents are born when execution turns on."
   },
   "fila": {
     "title": "Task queue",
@@ -302,7 +304,15 @@
     "blocked_other": "{{count}} blocked",
     "semModulo_one": "{{count}} without module",
     "semModulo_other": "{{count}} without module",
-    "more_one": "+ {{count}} task, see in the backlog",
-    "more_other": "+ {{count}} tasks, see in the backlog"
+    "more_one": "+ {{count}} task",
+    "more_other": "+ {{count}} tasks",
+    "verNoBacklog": "see in the backlog",
+    "estado": {
+      "blocked": "blocked",
+      "todo": "ready",
+      "in_progress": "running",
+      "in_review": "in review",
+      "done": "done"
+    }
   }
 }

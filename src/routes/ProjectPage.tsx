@@ -26,6 +26,7 @@ import { ABA_PADRAO, abaPorChave, ehChaveDeAba, secaoDaChave, type ChaveDeAba } 
 import { ContextoDeGrupoInicial, ContextoDeSecaoInicial, ContextoDeTrocaDeGrupo } from './settings/secao-inicial';
 import { ContextoDeHistoriaInicial } from '../lib/historia-inicial';
 import type { ChaveDeSecao, GrupoDoSumario } from './settings/sumario';
+import { ChipsDaArquitetura } from './ChipsDaArquitetura';
 import { FaixaDeSubAbas } from '../components/FaixaDeSubAbas';
 import { Badge } from '../components/ui/Badge';
 import { CabecalhoDePagina } from '../components/shadcn/cabecalho-de-pagina';
@@ -209,7 +210,8 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         {t('acao.novaSessao')}
       </Button>
     );
-  } else if (secaoAtual === 'trabalho') {
+  } else if (secaoAtual === 'trabalho' && tab === 'backlog') {
+    // v9 (AT-943): em Execução a ação é a do cartão de chamada; o cabeçalho só a leva em Backlog.
     // Componente à parte: a leitura do resumo só acontece em Trabalho, e o
     // orçamento de requisições das outras abas (RN-632/645) não sobe.
     acaoPrimaria = (
@@ -226,6 +228,9 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         className={styles.header}
         titulo={`${project.name} / ${secaoDaChave(tab).label}`}
         descricao={
+          secaoAtual === 'arquitetura' ? (
+            <ChipsDaArquitetura projectId={projectId} />
+          ) : (
           <span className={styles.meta}>
             <ProviderIcon size={14} />
             {repository && (
@@ -249,6 +254,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
               t('repositoryNotProvisioned')
             )}
           </span>
+          )
         }
         acoes={
           <>

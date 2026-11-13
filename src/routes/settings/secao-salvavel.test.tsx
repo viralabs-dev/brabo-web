@@ -7,6 +7,7 @@ import { initReactI18next, I18nextProvider } from 'react-i18next';
 import settingsPtBR from '../../locales/pt-BR/settings.json';
 import { ToastProvider } from '../../components/ui/ToastProvider';
 import { ApiError } from '../../lib/api-client';
+import { BarraDeSalvar, ProvedorDoSalvarDoCabecalho } from './salvar-do-cabecalho';
 
 const listAgentAreas = vi.fn();
 const setAreaMaxParallel = vi.fn();
@@ -51,7 +52,12 @@ function montarSecao(secao: ReactNode) {
   return render(
     <QueryClientProvider client={client}>
       <I18nextProvider i18n={i18n}>
-        <ToastProvider>{secao}</ToastProvider>
+        <ToastProvider>
+          <ProvedorDoSalvarDoCabecalho>
+            <BarraDeSalvar />
+            {secao}
+          </ProvedorDoSalvarDoCabecalho>
+        </ToastProvider>
       </I18nextProvider>
     </QueryClientProvider>,
   );
@@ -104,12 +110,12 @@ describe('marca de alterações não salvas', () => {
 
     fireEvent.change(tetoDe('dev'), { target: { value: '5' } });
     expect(
-      await screen.findByText('1 alteração não salva nesta seção'),
+      await screen.findByText('1 alteração não salva'),
     ).toBeInTheDocument();
 
     fireEvent.change(tetoDe('qa'), { target: { value: '6' } });
     expect(
-      await screen.findByText('2 alterações não salvas nesta seção'),
+      await screen.findByText('2 alterações não salvas'),
     ).toBeInTheDocument();
   });
 
@@ -121,12 +127,13 @@ describe('marca de alterações não salvas', () => {
 
     fireEvent.change(tetoDe('dev'), { target: { value: '5' } });
     expect(
-      await screen.findByText('1 alteração não salva nesta seção'),
+      await screen.findByText('1 alteração não salva'),
     ).toBeInTheDocument();
 
     fireEvent.change(tetoDe('dev'), { target: { value: '2.0' } });
     await waitFor(() => expect(screen.queryByRole('status')).toBeNull());
-    expect(screen.getByRole('button', { name: 'Salvar' })).toBeDisabled();
+    // Sem nada sujo a barra do cabeçalho some, e com ela o botão.
+    expect(screen.queryByRole('button', { name: 'Salvar' })).toBeNull();
   });
 
   it('valor inválido substitui a contagem pelo que BLOQUEIA o botão', async () => {
@@ -206,7 +213,7 @@ describe('falha parcial', () => {
 
     expect(await screen.findByText('Salvou 1 de 2')).toBeInTheDocument();
     expect(
-      screen.getByText('Não salvou: qa. max_parallel precisa ser <= 8'),
+      screen.getByText('Não salvou: Paralelismo por área: qa. max_parallel precisa ser <= 8'),
     ).toBeInTheDocument();
     expect(screen.queryByText('2 alterações salvas')).toBeNull();
   });
@@ -223,7 +230,7 @@ describe('falha parcial', () => {
     // De 2 para 1: o rascunho confirmado some, o recusado permanece — e é ele
     // que ainda aparece no campo, para não perder o que a pessoa digitou.
     expect(
-      await screen.findByText('1 alteração não salva nesta seção'),
+      await screen.findByText('1 alteração não salva'),
     ).toBeInTheDocument();
     expect(tetoDe('qa')).toHaveValue(9);
   });
@@ -281,7 +288,7 @@ describe('falha parcial', () => {
     ).toBeInTheDocument();
     expect(screen.queryByText(/Salvou/)).toBeNull();
     expect(
-      screen.getByText('1 alteração não salva nesta seção'),
+      screen.getByText('1 alteração não salva'),
     ).toBeInTheDocument();
   });
 });

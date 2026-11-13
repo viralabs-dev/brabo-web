@@ -55,11 +55,26 @@ describe('DecididasRecentemente (RN-1225)', () => {
     ]);
     montar();
     expect(await screen.findAllByTestId('acao-decidida')).toHaveLength(2);
-    expect(screen.getByText(/pela política/)).toBeTruthy();
+    expect(screen.getByText('auto · política')).toBeTruthy();
     expect(screen.getByText(/fora do escopo/)).toBeTruthy();
     const opts = getProjectPendingActions.mock.calls[0][1];
     expect(opts.status).toBe('decided');
     expect(typeof opts.since).toBe('string');
+  });
+
+  it('24h: mostra as 2 mais novas e colapsa o resto das automáticas em "N decisões automáticas anteriores"', async () => {
+    getProjectPendingActions.mockResolvedValue([
+      acao({ id: 'a1' }),
+      acao({ id: 'a2' }),
+      acao({ id: 'a3' }),
+      acao({ id: 'a4' }),
+      acao({ id: 'a5', status: 'denied', rejectionReason: 'x' }),
+    ]);
+    montar();
+    expect(await screen.findAllByTestId('acao-decidida')).toHaveLength(3);
+    expect(screen.getByTestId('decididas-anteriores').textContent).toContain('2 decisões automáticas anteriores');
+    fireEvent.click(screen.getByText('ver todas'));
+    await waitFor(() => expect(getProjectPendingActions.mock.calls.length).toBeGreaterThan(1));
   });
 
   it('vazio tem texto próprio e "Ver todas" alarga a janela', async () => {

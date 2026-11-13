@@ -25,6 +25,7 @@ import { useLayoutMovel } from '../lib/layout-movel';
 import type { Project, ProjectCardSummary } from '../lib/api-types';
 import { ProjectCard, ProjectCardSkeleton } from '../components/ProjectCard';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
+import { AtividadeRecente } from '../components/AtividadeRecente';
 import { NotificationBell } from '../components/NotificationBell';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
@@ -248,6 +249,7 @@ export function Dashboard() {
   // quebrava em duas linhas. No móvel a busca desce para uma linha própria,
   // inteira, e a primeira fica com título, sino e o botão.
   const movel = useLayoutMovel();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -273,10 +275,12 @@ export function Dashboard() {
         />
         <Button
           className={styles.novoProjeto}
-          legenda={t('topbar.newProject')}
+          // No móvel continua só ícone (RN-643, AT-330); no desktop leva o rótulo.
+          {...(movel ? { legenda: t('topbar.newProject') } : {})}
           onClick={() => setWizardOpen(true)}
         >
           <PlusIcon size={14} aria-hidden="true" />
+          {!movel && t('topbar.newProject')}
         </Button>
       </div>
 
@@ -318,17 +322,36 @@ export function Dashboard() {
         ) : filtered.length === 0 ? (
           <EmptyState>{t('empty.noSearchResults', { search })}</EmptyState>
         ) : (
-          <div className={styles.grid}>
-            {filtered.map((project) => (
-              <ProjectCardContainer
-                key={project.id}
-                project={project}
-                summary={cardPorProjeto.get(project.id)}
-                carregando={cardsQuery.isLoading}
-                agentesAguardando={aguardandoPorProjeto.get(project.id)}
-              />
-            ))}
-          </div>
+          <section>
+            <h2 className={styles.secao}>{t('secaoProjetos')}</h2>
+            <div className={styles.grid}>
+              {filtered.map((project) => (
+                <ProjectCardContainer
+                  key={project.id}
+                  project={project}
+                  summary={cardPorProjeto.get(project.id)}
+                  carregando={cardsQuery.isLoading}
+                  agentesAguardando={aguardandoPorProjeto.get(project.id)}
+                />
+              ))}
+              {!search && (
+                <button type="button" className={styles.novoCartao} onClick={() => setWizardOpen(true)}>
+                  <PlusIcon size={16} aria-hidden="true" />
+                  <strong>{t('novoCartao.titulo')}</strong>
+                  <span>{t('novoCartao.descricao')}</span>
+                </button>
+              )}
+            </div>
+          </section>
+        )}
+
+        {projects && projects.length > 0 && (
+          <AtividadeRecente
+            projects={projects}
+            cards={cards}
+            erro={cardsQuery.isError}
+            onAbrir={(projectId) => navigate({ to: '/projects/$projectId', params: { projectId } })}
+          />
         )}
       </div>
 

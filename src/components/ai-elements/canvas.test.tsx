@@ -16,7 +16,8 @@ describe('Canvas (AT-684)', () => {
     const { nos, arestas } = grafoDe(modulos);
     expect(nos.map((n) => n.id)).toEqual(['api', 'db']);
     expect(arestas.map((a) => a.id)).toEqual(['api->db']);
-    expect(nos[0]!.position.y).toBeGreaterThan(nos[1]!.position.y);
+    // v9: quem não depende de ninguém (db) fica embaixo.
+    expect(nos[0]!.position.y).toBeLessThan(nos[1]!.position.y);
   });
 
   it('mostra texto no estado vazio', () => {

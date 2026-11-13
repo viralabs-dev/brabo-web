@@ -10,14 +10,14 @@
     "nav": {
       "trilhaAriaLabel": "Projetos e atividades",
       "projectsLabel": "Projetos",
-      "newProject": "Novo projeto"
+      "newProject": "Novo projeto",
+      "projectLabel": "Projeto"
     },
     "projects": {
       "loadError": "Não foi possível carregar os projetos.",
       "retry": "tentar de novo",
-      "expand": "Expandir {{name}}",
-      "collapse": "Recolher {{name}}",
-      "tabsAriaLabel": "Abas de {{name}}"
+      "tabsAriaLabel": "Abas de {{name}}",
+      "switch": "Trocar de projeto: {{name}}"
     },
     "agentsNow": {
       "label": "Agentes agora",
@@ -25,7 +25,6 @@
       "empty": "Nenhum agente entrou em ação ainda.",
       "noSession": "Este projeto ainda não tem sessão.",
       "loadError": "Não foi possível carregar os agentes.",
-      "viewAll": "ver todos",
       "status": {
         "trabalhando": "trabalhando",
         "aguardando": "aguardando",
@@ -47,7 +46,8 @@
       "accountFallback": "conta",
       "logout": "sair"
     },
-    "caixa": "Caixa de decisões"
+    "caixa": "Caixa de decisões",
+    "home": "Início"
   },
   "notificationBell": {
     "label": "Notificações",

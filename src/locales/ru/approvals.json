@@ -248,6 +248,11 @@
       "placeholder": "Dev Lead прочитает причину и спросит, что изменить, прежде чем предлагать снова.",
       "confirm": "Подтвердить и отклонить",
       "cancel": "Отмена"
+    },
+    "explicado": {
+      "oQueAcontece": "Что будет, если одобрить",
+      "porQueEstaAqui": "Почему это здесь",
+      "sessao": "сессия {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -301,7 +306,7 @@
   "approvalsTab": {
     "genericLoading": "Загрузка…",
     "pending": {
-      "title": "Ожидают",
+      "title": "Ждут вас",
       "eyebrow": "сначала старые",
       "selectedCount_one": "Выбрано: {{count}}",
       "selectedCount_few": "Выбрано: {{count}}",
@@ -331,18 +336,16 @@
     },
     "devPrs": {
       "title": "PR на ревью",
-      "eyebrow": "{{count}} от dev agents на gate QA/SecOps",
       "loading": "Загрузка PR на ревью…",
       "backlogError": "Не удалось загрузить бэклог.",
-      "empty": "Пока нет PR от dev agent на ревью."
+      "frase": "PR появляются здесь, когда проходят QA и SecOps и ждут вашего merge."
     },
     "infraPrs": {
       "title": "PR инфраструктуры на ревью",
-      "eyebrow": "{{count}} инфраструктурных на gate QA/SecOps",
       "loading": "Загрузка PR инфраструктуры…",
       "error": "Не удалось загрузить PR инфраструктуры.",
-      "empty": "Пока нет PR инфраструктуры на ревью.",
-      "mergeLink": "Выполнить merge на вкладке PR"
+      "mergeLink": "Выполнить merge на вкладке PR",
+      "frase": "Изменения образов, CI и деплоя через тот же шлюз."
     },
     "permissions": {
       "title": "Разрешения проекта",
@@ -381,7 +384,13 @@
         "auto_approved": "Автоматически",
         "executed": "Выполнено",
         "failed": "Сбой"
-      }
+      },
+      "chipAuto": "авто · политика",
+      "seeAllLower": "показать все",
+      "earlierAuto_one": "{{count}} более раннее автоматическое решение",
+      "earlierAuto_few": "{{count}} более ранних автоматических решения",
+      "earlierAuto_many": "{{count}} более ранних автоматических решений",
+      "earlierAuto_other": "{{count}} более ранних автоматических решений"
     }
   },
   "prsTab": {

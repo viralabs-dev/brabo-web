@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { GitBranch } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getBootstrapPlan, getRepository } from '../../lib/api-client';
 import { divergencias } from '../../lib/adoption';
 import { Alert } from '../../components/ui/Alert';
 import { BranchIcon } from '../../components/ui/icons';
-import styles from '../ProjectSettingsTab.module.css';
+import { CabecalhoDaSecao } from './CabecalhoDaSecao';
+import styles from './CabecalhoDaSecao.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { Item } from '@/components/shadcn/item';
@@ -22,7 +22,7 @@ import { Item } from '@/components/shadcn/item';
  */
 export function RepositorySection({ projectId }: { projectId: string }) {
   const { t } = useTranslation('settings');
-  const { data: repository } = useQuery({
+  const { data: repository, isSuccess } = useQuery({
     queryKey: ['repository', projectId],
     queryFn: () => getRepository(projectId),
     staleTime: FRESCOR_DA_CONFIGURACAO_MS,
@@ -33,33 +33,39 @@ export function RepositorySection({ projectId }: { projectId: string }) {
     enabled: repository?.origin === 'adopted',
   });
 
-  if (!repository) return null;
+  // v9: a seção abre a página sempre; sem repositório ela diz "não provisionado" na mesma moldura.
+  if (!repository && !isSuccess) return null;
 
   const avisos = planoEstado?.plan ? divergencias(planoEstado.plan) : [];
 
   return (
     <SecaoDeConfiguracoes chave="repository">
-      <div className={styles.sectionHead}>
-        <h2 className={styles.title}><GitBranch aria-hidden="true" className={styles.tituloIcone} />{t('repository.title')}</h2>
-        <span className={styles.eyebrow}>{t('repository.eyebrow')}</span>
-      </div>
-      <div className={styles.subtitle}>
-        {repository.origin === 'adopted'
-          ? t('repository.adopted')
-          : t('repository.created')}
-      </div>
+      <CabecalhoDaSecao
+        titulo={t('repository.title')}
+        subtitulo={
+          !repository
+            ? t('repository.none.subtitle')
+            : repository.origin === 'adopted'
+              ? t('repository.adopted')
+              : t('repository.created')
+        }
+      />
 
-      {/* Faixa do repositório como no handoff (seção 7, item 1): ícone, caminho
-          em mono e a origem/branch ao lado, dentro de um card — não três nós
-          soltos sobre o fundo da aba. O selo "sincronizado" do desenho NÃO
-          entra: não existe fato de sincronismo no `repository`, e um selo teal
-          fixo afirmaria algo que ninguém mediu. */}
-      <Item variant="outline" className={styles.repoCard}>
-        <BranchIcon size={16} className={styles.repoIcone} />
-        <code className={styles.repoPath}>{repository.externalId}</code>
-        <span className={styles.repoMeta}>
-          {repository.provider} · {repository.defaultBranch}
-        </span>
+      {/* O selo "sincronizado" do desenho NÃO entra: não existe fato de
+          sincronismo no `repository`, e um selo fixo afirmaria algo que
+          ninguém mediu. */}
+      <Item variant="outline" className={styles.moldura}>
+        {repository ? (
+          <>
+            <code className={styles.caminho}>{repository.externalId}</code>
+            <span className={styles.chip}>{repository.provider}</span>
+            <span className={styles.chip}>
+              <BranchIcon size={12} /> {repository.defaultBranch}
+            </span>
+          </>
+        ) : (
+          <span className={`${styles.caminho} ${styles.nao}`}>{t('repository.none.title')}</span>
+        )}
       </Item>
 
       {planoEstado?.decision === 'as_is' && (

@@ -1,6 +1,6 @@
 {
   "topbar": {
-    "title": "Проекты",
+    "title": "Главная",
     "searchPlaceholder": "Искать проекты…",
     "newProject": "Новый проект"
   },
@@ -103,5 +103,14 @@
       "aprovacoes_other": "{{n}} подтверждения",
       "demais": "PR {{prs}} · повышения {{promocoes}} · архитектура {{arquitetura}} · гипотезы {{hipoteses}}"
     }
+  },
+  "secaoProjetos": "Проекты",
+  "novoCartao": {
+    "titulo": "Новый проект",
+    "descricao": "Начните с брифа или подключите существующий репозиторий."
+  },
+  "atividadeRecente": {
+    "titulo": "Недавняя активность",
+    "indisponivel": "Не удалось прочитать недавнюю активность."
   }
 }

@@ -9,7 +9,6 @@
     "sessionError": {
       "title": "Не удалось определить сессию выполнения этого проекта."
     },
-    "noActiveExecution": "Сейчас в этом проекте нет активного выполнения.",
     "showingSession": "Показана",
     "rosterError": {
       "title": "Не удалось узнать, кто сейчас выполняет."
@@ -305,18 +304,21 @@
     "explain_few": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
     "explain_many": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
     "explain_other": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
-    "teto": "Лимит проекта {{valor}}"
+    "teto": "Лимит проекта {{valor}}",
+    "semRepositorio": "Без репозитория выполнение запустить негде."
   },
   "areas": {
     "title": "Области",
     "working": "работает",
     "stopped": "остановлена",
-    "parallelism": "Параллелизм {{ativos}} / {{max}}",
-    "lead": "lead: {{nome}}",
     "members_one": "{{count}} участник",
     "members_few": "{{count}} участника",
     "members_many": "{{count}} участников",
-    "members_other": "{{count}} участника"
+    "members_other": "{{count}} участника",
+    "parallelismLabel": "Параллелизм",
+    "leadLabel": "Lead",
+    "semMembros": "участников пока нет",
+    "devNasce": "Агенты появляются, когда выполнение запущено."
   },
   "fila": {
     "title": "Очередь задач",
@@ -336,9 +338,17 @@
     "semModulo_few": "{{count}} без модуля",
     "semModulo_many": "{{count}} без модуля",
     "semModulo_other": "{{count}} без модуля",
-    "more_one": "+ {{count}} задача, смотреть в бэклоге",
-    "more_few": "+ {{count}} задачи, смотреть в бэклоге",
-    "more_many": "+ {{count}} задач, смотреть в бэклоге",
-    "more_other": "+ {{count}} задачи, смотреть в бэклоге"
+    "more_one": "+ {{count}} задача",
+    "more_few": "+ {{count}} задачи",
+    "more_many": "+ {{count}} задач",
+    "more_other": "+ {{count}} задачи",
+    "verNoBacklog": "смотреть в бэклоге",
+    "estado": {
+      "blocked": "заблокирована",
+      "todo": "готова",
+      "in_progress": "выполняется",
+      "in_review": "на ревью",
+      "done": "завершена"
+    }
   }
 }

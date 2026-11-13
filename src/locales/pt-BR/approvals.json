@@ -237,6 +237,11 @@
       "placeholder": "O Dev Lead lê este motivo e pergunta o que mudar antes de propor de novo.",
       "confirm": "Confirmar e negar",
       "cancel": "Cancelar"
+    },
+    "explicado": {
+      "oQueAcontece": "O que acontece se aprovar",
+      "porQueEstaAqui": "Por que está aqui",
+      "sessao": "sessão {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -286,7 +291,7 @@
   "approvalsTab": {
     "genericLoading": "Carregando…",
     "pending": {
-      "title": "Pendentes",
+      "title": "Esperando você",
       "eyebrow": "mais antigas primeiro",
       "selectedCount_zero": "{{count}} selecionadas",
       "selectedCount_one": "{{count}} selecionada",
@@ -313,18 +318,16 @@
     },
     "devPrs": {
       "title": "PRs de dev agents",
-      "eyebrow": "{{count}} de dev agents nos gates de QA/SecOps",
       "loading": "Carregando as PRs em revisão…",
       "backlogError": "Não foi possível carregar o backlog.",
-      "empty": "Nenhuma PR de dev agent em revisão ainda."
+      "frase": "As PRs aparecem aqui quando passam por QA e SecOps e esperam o seu merge."
     },
     "infraPrs": {
       "title": "PRs de infra",
-      "eyebrow": "{{count}} de infra nos gates de QA/SecOps",
       "loading": "Carregando as PRs de infra…",
       "error": "Não foi possível carregar as PRs de infra.",
-      "empty": "Nenhuma PR de infra em revisão ainda.",
-      "mergeLink": "Mergear na aba PRs"
+      "mergeLink": "Mergear na aba PRs",
+      "frase": "Mudanças de imagem, CI e deploy, com o mesmo portão."
     },
     "permissions": {
       "title": "Permissões do projeto",
@@ -363,7 +366,12 @@
         "auto_approved": "Automática",
         "executed": "Executada",
         "failed": "Falhou"
-      }
+      },
+      "chipAuto": "auto · política",
+      "seeAllLower": "ver todas",
+      "earlierAuto_zero": "{{count}} decisões automáticas anteriores",
+      "earlierAuto_one": "{{count}} decisão automática anterior",
+      "earlierAuto_other": "{{count}} decisões automáticas anteriores"
     }
   },
   "prsTab": {

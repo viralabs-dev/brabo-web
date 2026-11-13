@@ -1172,6 +1172,8 @@ vê recolhido foi o usuário quem pediu, e está gravado.
 
 ### RN-196 — Projetos expansíveis revelam as abas do projeto, N ao mesmo tempo {#rn-196}
 
+> **Revogada** pela RN-1329 (AT-939, v9): a sidebar mostra um projeto por vez, sem expansão por projeto; `brabo.sidebar.open` deixou de ser lida.
+
 Cada projeto na sidebar ganha um chevron: clicar nele expande a linha e
 revela a lista de abas daquele projeto (Visão geral, Executores, Criativo,
 Chat, Code, Backlog, Aprovações, Insights, Gastos, Configurações), cada uma
@@ -1211,9 +1213,9 @@ montada, os cinco números saem do MESMO hook que ela usa
 (`useContagensDoProjeto`), sem requisição nova. Recolhida, o quadrado do
 projeto aberto abre um flyout com as mesmas abas.
 
-- **Onde:** `apps/web/src/routes/Shell.tsx:620` (`projetosAbertosEfetivo`),
-  `:371` (`useContagensDoProjeto`), `:563` (`irParaAba`), `:541`
-  (`flyoutAberto`), `:251` (`contagensDoResumo`);
+- **Onde:** `apps/web/src/routes/Shell.tsx:300` (`Shell`; `projetosAbertosEfetivo` saiu na AT-939),
+  `:394` (`useContagensDoProjeto`), `:593` (`irParaAba`), `:574`
+  (`flyoutAberto`), `:290` (`contagensDoResumo`);
   `apps/web/src/routes/AbasDoProjeto.tsx:63` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
   (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:80` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),

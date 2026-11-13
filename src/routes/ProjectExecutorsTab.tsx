@@ -27,8 +27,7 @@ import {
   wakeDevAgent,
 } from '../lib/api-client';
 import { deriveAgentRoster, groupRosterByArea, isExecutorAgentId, isExecutorGroup } from '../lib/agent-status';
-import { contarTarefasPendentes, deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
-import { ReligarExecucao } from '../components/ReligarExecucao';
+import { deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
 import { connectSessionHeartbeat } from '../lib/session-channel';
 import { INTERVALO_DO_PROJETO_MS, criarInvalidadorDoCanal } from '../lib/canal-vivo';
 import { rotuloDaSessao } from '../lib/session-label';
@@ -116,7 +115,6 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     enabled: false,
   });
   const epicsDaTela = backlogQuery.data ?? backlogEmCache.data;
-  const tarefasPendentes = contarTarefasPendentes(backlogQuery.data);
   const eventsQuery = useSessionEvents(projectId, sessionId);
   const events = eventsQuery.data?.items ?? [];
   // Quem espera decisão sai da fila do PROJETO (AT-297, RN-638): a mesma
@@ -296,6 +294,8 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   // uma segunda área de scroll aninhada.
   return (
     <div>
+      {/* v9 (AT-943): com a execução parada o topo é só o cartão de chamada. */}
+      {!semExecucaoVigente && (
       <div className={styles.sectionRow}>
         <h2 className={styles.sectionHeader}>{t('tab.title')}</h2>
         <Ajuda assunto={t('tab.title')}>{t('tab.subtitle')}</Ajuda>
@@ -309,6 +309,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           </span>
         )}
       </div>
+      )}
 
       {/* Indicador de QUAL sessão a aba está olhando (RN-139) — os três
           estados da RN-088, erro antes de vazio: sem isto a troca silenciosa
@@ -324,14 +325,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
         <div className={styles.sectionSub} aria-busy="true">
           <Skeleton width={220} height={18} />
         </div>
-      ) : !executionSession ? (
-        <>
-          <div className={styles.sectionSub}>{t('tab.noActiveExecution')}</div>
-          {tarefasPendentes > 0 && (
-            <ReligarExecucao projectId={projectId} tarefasPendentes={tarefasPendentes} />
-          )}
-        </>
-      ) : (
+      ) : !executionSession ? null : (
         <div className={styles.sectionSub}>
           {t('tab.showingSession')}{' '}
           <Link

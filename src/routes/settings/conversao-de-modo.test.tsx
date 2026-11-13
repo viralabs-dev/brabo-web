@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import settingsPtBR from '../../locales/pt-BR/settings.json';
 import settingsEn from '../../locales/en/settings.json';
 // A instância REAL do app: o `FolderBrowserModal` que esta seção passou a
@@ -118,10 +118,15 @@ async function abrirAviso(nome = 'Atenção: o que a conversão faz') {
   return screen.findByTestId('aviso-conversao');
 }
 
+const ROTULO_DO_MODO: Record<string, string> = {
+  container: 'Container',
+  mounted: 'Pasta montada',
+  runner: 'Runner local',
+};
+// v9: o modo é um controle segmentado; clicar no outro lado arma a conversão.
 function trocarModoPara(modo: string) {
-  fireEvent.change(screen.getByLabelText(settingsPtBR.executionMode.selectAria), {
-    target: { value: modo },
-  });
+  const grupo = screen.getByRole('group', { name: settingsPtBR.executionMode.selectAria });
+  fireEvent.click(within(grupo).getByRole('button', { name: ROTULO_DO_MODO[modo] }));
 }
 
 beforeEach(async () => {
@@ -243,7 +248,7 @@ describe('RN-559 — o navegador de pastas no ramo `mounted`', () => {
     getProject.mockResolvedValue(projeto({ executionMode: 'mounted', workspacePath: '/home/dani/projetos/loja' }));
     await montar();
 
-    expect(screen.getByLabelText(settingsPtBR.executionMode.selectAria)).toBeDisabled();
+    expect(within(screen.getByRole('group', { name: settingsPtBR.executionMode.selectAria })).getByRole('button', { name: 'Container' })).toBeDisabled();
     expect(screen.getByLabelText(settingsPtBR.executionMode.pathAria)).toBeDisabled();
     expect(screen.getByRole('button', { name: /Procurar pasta/ })).toBeDisabled();
     // O motivo é dito UMA vez, em TEXTO (`title` em `disabled` não abre no

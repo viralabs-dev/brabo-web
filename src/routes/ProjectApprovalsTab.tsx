@@ -32,6 +32,7 @@ import { ApprovalCard } from '../components/ApprovalCard';
 import { useDecisoesDaPolitica } from '../lib/decisao-da-politica-queries';
 import { PrGateTimeline, type GateVerdict } from '../components/PrGateTimeline';
 import { getRegistroDeGates } from '../lib/api-client';
+import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
 import { useToast } from '../components/ui/ToastProvider.helpers';
@@ -423,6 +424,8 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
                           key={action.id}
                           action={action}
                           detalheRecolhido
+                          explicado
+                          nomeDaSessao={sessionsQuery.data?.find((x) => x.id === action.sessionId)?.name}
                           // AT-336 (RN-614): o motivo DESTA ação, do log
                           // carregado ou lido pela ação. Carregando ou com a
                           // leitura falha, `undefined` — o card cala, e a
@@ -450,19 +453,17 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
         </BlocoDeDados>
       </div>
 
-      <DecididasRecentemente projectId={projectId} />
-
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2 className={styles.title}>{t('approvalsTab.gates.title')}</h2>
         </div>
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h3 className={styles.title}>{t('approvalsTab.devPrs.title')}</h3>
-          <span className={styles.eyebrow}>
-            {t('approvalsTab.devPrs.eyebrow', { count: gateTasks.length })}
-          </span>
+      <div className={styles.portoes}>
+      <div className={styles.cartaoDoPortao} data-testid="portao-dev">
+        <div className={styles.cabecaDoPortao}>
+          <h3 className={styles.tituloDoPortao}>{t('approvalsTab.devPrs.title')}</h3>
+          <Badge tone="muted">{gateTasks.length}</Badge>
         </div>
+        <p className={styles.fraseDoPortao}>{t('approvalsTab.devPrs.frase')}</p>
 
         <BlocoDeDados
           query={backlogQuery}
@@ -470,11 +471,7 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
           carregando={t('approvalsTab.devPrs.loading')}
         >
           {() =>
-            gateTasks.length === 0 ? (
-              <EmptyState icone={<CheckIcon size={20} />} tom="sucesso">
-                {t('approvalsTab.devPrs.empty')}
-              </EmptyState>
-            ) : (
+            gateTasks.length === 0 ? null : (
               <div className={styles.queue}>
                 {gateTasks.map((task) => (
                   <PrGateTimeline
@@ -490,13 +487,12 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
           }
         </BlocoDeDados>
       </div>
-      <div className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h3 className={styles.title}>{t('approvalsTab.infraPrs.title')}</h3>
-          <span className={styles.eyebrow}>
-            {t('approvalsTab.infraPrs.eyebrow', { count: (infraQuery.data ?? []).length })}
-          </span>
+      <div className={styles.cartaoDoPortao} data-testid="portao-infra">
+        <div className={styles.cabecaDoPortao}>
+          <h3 className={styles.tituloDoPortao}>{t('approvalsTab.infraPrs.title')}</h3>
+          <Badge tone="muted">{(infraQuery.data ?? []).length}</Badge>
         </div>
+        <p className={styles.fraseDoPortao}>{t('approvalsTab.infraPrs.frase')}</p>
 
         <BlocoDeDados
           query={infraQuery}
@@ -504,9 +500,7 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
           carregando={t('approvalsTab.infraPrs.loading')}
         >
           {(infraArtifacts) =>
-            infraArtifacts.length === 0 ? (
-              <Item variant="outline" className={styles.clean}>{t('approvalsTab.infraPrs.empty')}</Item>
-            ) : (
+            infraArtifacts.length === 0 ? null : (
               <div className={styles.queue}>
                 {infraArtifacts.map((artifact) => (
                   <div key={artifact.id}>
@@ -532,7 +526,9 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
         </BlocoDeDados>
       </div>
       </div>
+      </div>
 
+      <DecididasRecentemente projectId={projectId} />
     </div>
   );
 }

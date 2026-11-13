@@ -68,11 +68,9 @@ describe('LoginPage — coluna de identidade e ambiente', () => {
     // A frase de identidade e o bloco de ambiente: as DUAS metades da coluna
     // da esquerda.
     expect(
-      screen.getByText(/provisiona o repositório, escreve o código/i),
+      screen.getByText(/Um time de agentes conduz sua aplicação do brief ao deploy/i),
     ).toBeInTheDocument();
-    expect(screen.getByText('Ambiente')).toBeInTheDocument();
-    expect(screen.getByText('api')).toBeInTheDocument();
-    expect(screen.getByText('engine')).toBeInTheDocument();
+    expect(screen.getByText('verificando api e engine…')).toBeInTheDocument();
 
     // E o formulário, do outro lado.
     esperarFormulario();
@@ -109,7 +107,7 @@ describe('LoginPage — coluna de identidade e ambiente', () => {
 
     // A sonda falha nos dois serviços — e diz isso.
     await waitFor(() => {
-      expect(screen.getAllByText('sem resposta')).toHaveLength(2);
+      expect(screen.getByText('api e engine sem resposta')).toBeInTheDocument();
     });
 
     // O formulário não foi afetado: o login é uma requisição INDEPENDENTE, e
@@ -144,7 +142,7 @@ describe('LoginPage — coluna de identidade e ambiente', () => {
     const { onEntrar } = montar();
 
     esperarFormulario();
-    expect(screen.getAllByText('verificando…')).toHaveLength(2);
+    expect(screen.getByText('verificando api e engine…')).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText('E-mail'), {
       target: { value: 'fulano@brabo.dev' },
@@ -157,10 +155,24 @@ describe('LoginPage — coluna de identidade e ambiente', () => {
     await waitFor(() => expect(onEntrar).toHaveBeenCalled());
   });
 
-  it('não promete runner nem modelos locais antes de haver identidade', () => {
-    // Os dois são escopados a `{user_id, project_id}` / `projects/:id/models`:
-    // afirmar qualquer coisa sobre eles aqui seria invenção. A tela DIZ a
-    // ausência em vez de omiti-la.
+  it('com api e engine respondendo, diz numa linha só que estão no ar', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve(new Response(JSON.stringify({ status: 'ok' }), { status: 200 })),
+      ),
+    );
+
+    const { container } = montar();
+
+    await waitFor(() => {
+      expect(screen.getByText('api e engine no ar')).toBeInTheDocument();
+    });
+    // Antes da identidade não há runner nem modelos locais para afirmar.
+    expect(container.textContent).not.toMatch(/Ollama|runner/i);
+  });
+
+  it('mostra um chip por papel de topo, com a inicial', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(() => new Promise<Response>(() => {})),
@@ -168,9 +180,7 @@ describe('LoginPage — coluna de identidade e ambiente', () => {
 
     const { container } = montar();
 
-    expect(
-      screen.getByText(/Runner e modelos locais dependem da sua conta/i),
-    ).toBeInTheDocument();
-    expect(container.textContent).not.toMatch(/Ollama/i);
+    const chips = [...container.querySelectorAll('ul[aria-hidden] li')].map((l) => l.textContent);
+    expect(chips).toEqual(['C', 'P', 'A', 'D', 'Q', 'S', 'I']);
   });
 });

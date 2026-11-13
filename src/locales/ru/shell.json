@@ -10,14 +10,14 @@
     "nav": {
       "trilhaAriaLabel": "Проекты и активность",
       "projectsLabel": "Проекты",
-      "newProject": "Новый проект"
+      "newProject": "Новый проект",
+      "projectLabel": "Проект"
     },
     "projects": {
       "loadError": "Не удалось загрузить проекты.",
       "retry": "попробовать снова",
-      "expand": "Развернуть {{name}}",
-      "collapse": "Свернуть {{name}}",
-      "tabsAriaLabel": "Вкладки {{name}}"
+      "tabsAriaLabel": "Вкладки {{name}}",
+      "switch": "Сменить проект: {{name}}"
     },
     "agentsNow": {
       "label": "Агенты сейчас",
@@ -25,7 +25,6 @@
       "empty": "Ни один агент ещё не действовал.",
       "noSession": "В этом проекте ещё нет сессии.",
       "loadError": "Не удалось загрузить агентов.",
-      "viewAll": "показать всех",
       "status": {
         "trabalhando": "работает",
         "aguardando": "ожидает",
@@ -47,7 +46,8 @@
       "accountFallback": "аккаунт",
       "logout": "выйти"
     },
-    "caixa": "Decision inbox"
+    "caixa": "Decision inbox",
+    "home": "Главная"
   },
   "notificationBell": {
     "label": "Уведомления",

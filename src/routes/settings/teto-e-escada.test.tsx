@@ -20,7 +20,8 @@ vi.mock('../../lib/api-client', async (importOriginal) => {
   };
 });
 
-const { ExecutionSection } = await import('./ExecutionSection');
+const { TetoPorTarefaSection } = await import('./TetoPorTarefaSection');
+const { BarraDeSalvar, ProvedorDoSalvarDoCabecalho } = await import('./salvar-do-cabecalho');
 
 beforeAll(async () => {
   await i18n.changeLanguage('pt-BR');
@@ -36,7 +37,10 @@ function montar() {
   return render(
     <QueryClientProvider client={qc}>
       <ToastProvider>
-        <ExecutionSection projectId="p1" />
+        <ProvedorDoSalvarDoCabecalho>
+          <BarraDeSalvar />
+          <TetoPorTarefaSection projectId="p1" />
+        </ProvedorDoSalvarDoCabecalho>
       </ToastProvider>
     </QueryClientProvider>,
   );
@@ -50,14 +54,14 @@ beforeEach(() => {
   updateProject.mockResolvedValue({});
 });
 
-describe('ExecutionSection — teto e escada (AT-916/917)', () => {
+describe('TetoPorTarefaSection — teto e escada (AT-916/917)', () => {
   it('o teto por tarefa vem com o padrão e grava em micro-USD pelo PATCH do projeto', async () => {
     montar();
     const campo = await screen.findByLabelText('Teto de gasto por tarefa (US$)');
     expect(campo).toHaveValue(0.5);
     await waitFor(() => expect(campo).toBeEnabled());
     fireEvent.change(campo, { target: { value: '2' } });
-    fireEvent.click(screen.getAllByRole('button', { name: 'Salvar' })[1]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Salvar' })[0]);
     await waitFor(() => expect(updateProject).toHaveBeenCalledWith('p1', { taskBudgetMicros: 2_000_000 }));
   });
 
@@ -67,7 +71,7 @@ describe('ExecutionSection — teto e escada (AT-916/917)', () => {
     expect(teto2).toHaveValue(2);
     await waitFor(() => expect(teto2).toBeEnabled());
     fireEvent.change(teto2, { target: { value: '3' } });
-    fireEvent.click(screen.getAllByRole('button', { name: 'Salvar' })[2]);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Salvar' })[0]);
     await waitFor(() =>
       expect(updateProject).toHaveBeenCalledWith('p1', {
         modelEscalation: {

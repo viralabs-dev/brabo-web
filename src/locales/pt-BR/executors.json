@@ -8,7 +8,6 @@
     "sessionError": {
       "title": "Não foi possível descobrir a sessão de execução deste projeto."
     },
-    "noActiveExecution": "Nenhuma execução ativa neste projeto no momento.",
     "showingSession": "Mostrando",
     "rosterError": {
       "title": "Não foi possível saber quem está executando."
@@ -293,17 +292,20 @@
     "explain_zero": "Ao ativar, o Dev Lead distribui entre os dev agents. Cada PR passa por QA e SecOps e espera você para mergear.",
     "explain_one": "Ao ativar, o Dev Lead distribui entre os dev agents (até {{count}} em paralelo na área dev). Cada PR passa por QA e SecOps e espera você para mergear.",
     "explain_other": "Ao ativar, o Dev Lead distribui entre os dev agents (até {{count}} em paralelo na área dev). Cada PR passa por QA e SecOps e espera você para mergear.",
-    "teto": "Teto do projeto {{valor}}"
+    "teto": "Teto do projeto {{valor}}",
+    "semRepositorio": "Sem repositório, não há onde ativar a execução."
   },
   "areas": {
     "title": "Áreas",
     "working": "trabalhando",
     "stopped": "parada",
-    "parallelism": "Paralelismo {{ativos}} / {{max}}",
-    "lead": "lead: {{nome}}",
     "members_zero": "nenhum membro",
     "members_one": "{{count}} membro",
-    "members_other": "{{count}} membros"
+    "members_other": "{{count}} membros",
+    "parallelismLabel": "Paralelismo",
+    "leadLabel": "Lead",
+    "semMembros": "sem membros ainda",
+    "devNasce": "Os agentes nascem quando a execução liga."
   },
   "fila": {
     "title": "Fila de tarefas",
@@ -319,8 +321,16 @@
     "semModulo_zero": "nenhuma sem módulo",
     "semModulo_one": "{{count}} sem módulo",
     "semModulo_other": "{{count}} sem módulo",
+    "more_one": "+ {{count}} tarefa",
+    "more_other": "+ {{count}} tarefas",
     "more_zero": "ver no backlog",
-    "more_one": "+ {{count}} tarefa, ver no backlog",
-    "more_other": "+ {{count}} tarefas, ver no backlog"
+    "verNoBacklog": "ver no backlog",
+    "estado": {
+      "blocked": "bloqueada",
+      "todo": "pronta",
+      "in_progress": "rodando",
+      "in_review": "em revisão",
+      "done": "concluída"
+    }
   }
 }

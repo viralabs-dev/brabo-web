@@ -6,11 +6,8 @@ import { initReactI18next, I18nextProvider } from 'react-i18next';
 import { Shell } from './Shell';
 import { ApiError } from '../lib/api-client';
 import type { Project, WorkspaceWithRole } from '../lib/api-types';
-import { CHAVE_COLAPSADO, CHAVE_PROJETOS_ABERTOS } from '../lib/sidebar-state';
+import { CHAVE_COLAPSADO } from '../lib/sidebar-state';
 import { simularLayoutMovel } from '../test/match-media';
-// Real module, não mockado — RN-196 lê a LISTA de abas dela, nunca hardcoda
-// rótulos, então o teste também lê daqui em vez de repetir uma string.
-import { SECOES_DO_PROJETO } from './project-tabs';
 import { ouvirPedidosDeAba, publicarAbaAtiva } from '../lib/contagens-do-projeto';
 // Os RÓTULOS das abas vêm do singleton do app (`project-tabs.ts`).
 import i18nDoApp from '../lib/i18n';
@@ -416,27 +413,69 @@ describe('Shell — marca', () => {
  * lacuna.
  */
 describe('Shell — novo projeto na sidebar', () => {
-  it('o botão aparece e abre o mesmo wizard estando DENTRO de um projeto aberto', async () => {
+  it('dentro de um projeto, "Novo projeto" é uma opção do seletor e abre o mesmo wizard', async () => {
     estado.pathname = '/projects/project-1';
 
     renderShell();
 
     expect(screen.queryByTestId('wizard-stub')).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Novo projeto' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Trocar de projeto: Core API' }));
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'Novo projeto' }));
 
     // O assistente é carregado sob demanda (AT-300): o stub chega num tick.
     expect(await screen.findByTestId('wizard-stub')).toBeInTheDocument();
   });
 
-  it('também aparece no dashboard — as duas entradas convivem, uma na topbar (Dashboard) e outra na sidebar (aqui)', () => {
+  it('fora de projeto, "+ Novo projeto" é a última linha da lista e abre o wizard', async () => {
     estado.pathname = '/';
 
     renderShell();
 
-    expect(
-      screen.getByRole('button', { name: 'Novo projeto' }),
-    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Novo projeto' }));
+
+    expect(await screen.findByTestId('wizard-stub')).toBeInTheDocument();
+  });
+});
+
+/** AT-939: cabeçalho e "Início" da v9. */
+describe('Shell — Início, ⌘K e chip do ambiente', () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it('"Início" leva a / e fica ativo na raiz', () => {
+    estado.pathname = '/';
+    renderShell();
+    const inicio = screen.getByRole('link', { name: 'Início' });
+    expect(inicio).toHaveAttribute('href', '/');
+    expect(inicio).toHaveAttribute('data-active');
+  });
+
+  it('"Início" não fica ativo dentro de um projeto', () => {
+    estado.pathname = '/projects/project-1';
+    renderShell();
+    expect(screen.getByRole('link', { name: 'Início' })).not.toHaveAttribute('data-active');
+  });
+
+  it('o Buscar mostra o atalho Ctrl K fora do Mac', () => {
+    renderShell();
+    expect(screen.getByText('Ctrl K')).toBeInTheDocument();
+  });
+
+  it('o atalho vira ⌘K no Mac', () => {
+    vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Macintosh)');
+    renderShell();
+    expect(screen.getByText('⌘K')).toBeInTheDocument();
+    vi.restoreAllMocks();
+  });
+
+  it('o chip do ambiente só aparece com VITE_BRABO_AMBIENTE', () => {
+    vi.stubEnv('VITE_BRABO_AMBIENTE', '');
+    renderShell().unmount();
+    expect(screen.queryByTestId('chip-do-ambiente')).toBeNull();
+
+    vi.stubEnv('VITE_BRABO_AMBIENTE', 'local');
+    renderShell();
+    expect(screen.getByTestId('chip-do-ambiente')).toHaveTextContent('local');
   });
 });
 
@@ -516,56 +555,48 @@ describe('Shell — colapso da sidebar', () => {
 });
 
 /**
- * RN-196: a linha do projeto expande revelando as abas dele, lidas de
- * `SECOES_DO_PROJETO` (`project-tabs.ts`, dona da FRENTE C) — nunca
- * hardcoded aqui.
+ * Seção PROJETO (AT-939, substitui a RN-196): um projeto por vez, escolhido
+ * no seletor; fora de projeto, a lista plana. A chave antiga
+ * `brabo.sidebar.open` não é mais lida.
  */
-describe('Shell — projetos expansíveis', () => {
-  it('projeto fechado não mostra nenhuma aba', () => {
+describe('Shell — seletor de projeto', () => {
+  it('fora de projeto: lista plana sem chevron nem abas', () => {
+    window.localStorage.setItem('brabo.sidebar.open', JSON.stringify([PROJECT.id]));
+
     renderShell();
 
-    for (const aba of SECOES_DO_PROJETO) {
-      expect(screen.queryByText(aba.label)).toBeNull();
-    }
+    expect(screen.getByText('Projetos')).toBeInTheDocument();
+    expect(screen.queryByRole('tablist')).toBeNull();
+    expect(screen.queryByRole('button', { name: /Expandir|Recolher Core/ })).toBeNull();
   });
 
-  it('clicar no chevron revela as abas do projeto; clicar de novo esconde', () => {
-    renderShell();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Expandir Core API' }));
-
-    for (const secao of SECOES_DO_PROJETO) {
-      expect(screen.getByText(secao.label)).toBeInTheDocument();
-    }
-    expect(screen.getByRole('button', { name: 'Recolher Core API' })).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Recolher Core API' }));
-
-    expect(screen.queryByText(SECOES_DO_PROJETO[1].label)).toBeNull();
-  });
-
-  it('RN-729: abrir um projeto recolhe o visitado antes e rola até o aberto', () => {
+  it('dentro de projeto: seção PROJETO com o seletor e as abas só do atual', () => {
     const WEB = { ...PROJECT, id: 'bbbbbbbb-2222-4000-8000-000000000002', name: 'Web' };
     estado.projects = [PROJECT, WEB];
-    window.localStorage.setItem(CHAVE_PROJETOS_ABERTOS, JSON.stringify([PROJECT.id]));
-    const rolar = vi.fn();
-    Element.prototype.scrollIntoView = rolar;
     estado.pathname = `/projects/${WEB.id}`;
 
     renderShell();
 
-    expect(screen.getByRole('button', { name: 'Expandir Core API' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Recolher Web' })).toBeInTheDocument();
-    expect(rolar).toHaveBeenCalled();
+    expect(screen.getByText('Projeto')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Trocar de projeto: Web' })).toBeInTheDocument();
+    expect(screen.getAllByRole('tablist')).toHaveLength(1);
   });
 
-  it('RN-729: no Dashboard nenhum projeto fica forçado expandido', () => {
-    window.localStorage.setItem(CHAVE_PROJETOS_ABERTOS, JSON.stringify([PROJECT.id]));
-    estado.pathname = '/';
+  it('escolher outro projeto no seletor navega para a aba padrão dele', async () => {
+    const WEB = { ...PROJECT, id: 'bbbbbbbb-2222-4000-8000-000000000002', name: 'Web' };
+    estado.projects = [PROJECT, WEB];
+    estado.pathname = `/projects/${PROJECT.id}`;
 
     renderShell();
 
-    expect(screen.getByRole('button', { name: 'Expandir Core API' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Trocar de projeto: Core API' }));
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'Web' }));
+
+    expect(navigate).toHaveBeenLastCalledWith({
+      to: '/projects/$projectId',
+      params: { projectId: WEB.id },
+      search: { tab: 'overview' },
+    });
   });
 });
 
@@ -729,7 +760,7 @@ describe('Shell — Agentes agora', () => {
     const item = screen.getByTestId('agente-agora-criativo');
     expect(item).toHaveAttribute('aria-label', expect.stringContaining('Criativo'));
     expect(item.textContent).not.toMatch(/\d/);
-    expect(screen.getByText('ver todos')).toBeInTheDocument();
+    expect(screen.queryByText('ver todos')).toBeNull();
   });
 
   it('mostra no máximo 5 agentes', () => {

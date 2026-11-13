@@ -1006,6 +1006,33 @@ describe('ApprovalCard — o motivo da política e a raiz do escopo (AT-148, RN-
     );
   });
 
+  it('`explicado` (AT-944): duas colunas rotuladas; sem leitura do log, só a do que acontece', () => {
+    const { rerender } = render(
+      <ApprovalCard
+        action={makeAction()}
+        explicado
+        decisaoDaPolitica={null}
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={vi.fn()}
+      />,
+    );
+    const bloco = screen.getByTestId('card-explicado');
+    expect(bloco.textContent).toContain('O que acontece se aprovar');
+    expect(bloco.textContent).toContain('Por que está aqui');
+    expect(screen.getByTestId('motivo-da-politica')).toBeTruthy();
+    rerender(
+      <ApprovalCard
+        action={makeAction()}
+        explicado
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('card-explicado').textContent).not.toContain('Por que está aqui');
+  });
+
   it('`undefined` (tela que não lê o log): o card cala', () => {
     renderCom(undefined);
     expect(screen.queryByTestId('motivo-da-politica')).toBeNull();

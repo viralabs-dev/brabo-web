@@ -226,6 +226,11 @@
       "placeholder": "The Dev Lead reads this reason and asks what to change before proposing again.",
       "confirm": "Confirm and deny",
       "cancel": "Cancel"
+    },
+    "explicado": {
+      "oQueAcontece": "What happens if you approve",
+      "porQueEstaAqui": "Why it's here",
+      "sessao": "session {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -271,7 +276,7 @@
   "approvalsTab": {
     "genericLoading": "Loading…",
     "pending": {
-      "title": "Pending",
+      "title": "Waiting for you",
       "eyebrow": "oldest first",
       "selectedCount_one": "{{count}} selected",
       "selectedCount_other": "{{count}} selected",
@@ -295,18 +300,16 @@
     },
     "devPrs": {
       "title": "Dev agent PRs",
-      "eyebrow": "{{count}} from dev agents in QA/SecOps gates",
       "loading": "Loading PRs in review…",
       "backlogError": "Couldn't load the backlog.",
-      "empty": "No dev agent PR in review yet."
+      "frase": "PRs show up here once they pass QA and SecOps and wait for your merge."
     },
     "infraPrs": {
       "title": "Infra PRs",
-      "eyebrow": "{{count}} from infra in QA/SecOps gates",
       "loading": "Loading infra PRs…",
       "error": "Couldn't load infra PRs.",
-      "empty": "No infra PR in review yet.",
-      "mergeLink": "Merge it in the PRs tab"
+      "mergeLink": "Merge it in the PRs tab",
+      "frase": "Image, CI and deploy changes, through the same gate."
     },
     "permissions": {
       "title": "Project permissions",
@@ -345,7 +348,11 @@
         "auto_approved": "Automatic",
         "executed": "Executed",
         "failed": "Failed"
-      }
+      },
+      "earlierAuto_one": "{{count}} earlier automatic decision",
+      "earlierAuto_other": "{{count}} earlier automatic decisions",
+      "chipAuto": "auto · policy",
+      "seeAllLower": "see all"
     }
   },
   "prsTab": {

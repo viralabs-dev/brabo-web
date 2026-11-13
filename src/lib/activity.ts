@@ -378,7 +378,9 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
                 ? `${actorLabel} abriu a PR e aguarda o gate`
                 : type === 'dev.rearmed'
                   ? `${actorLabel} rearmou ${payloadField(payload, 'agentId') ?? 'o agente'}`
-                  : `atividade em ${actorLabel}`,
+                  : type === 'dev.wake_requested'
+                    ? `${actorLabel} mandou ${payloadField(payload, 'agentId') ?? 'o agente'} procurar tarefa de novo`
+                    : `atividade em ${actorLabel}`,
     };
   }
   // O bootstrap de Gitflow (achado H). Os cinco tipos caíam no fallback final e
@@ -475,6 +477,40 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
       color: 'var(--danger)',
       bad: true,
       text: `task bloqueada: ${payloadField(payload, 'reason') ?? 'sem motivo registrado'}`,
+    };
+  }
+  // AT-916 (RN-1143/1145): a escada de modelos subiu, ou chegou ao fim.
+  if (type === 'agent.model_escalated') {
+    const agente = payloadField(payload, 'agentId') ?? 'o agente';
+    const teto = Number(payloadField(payload, 'tetoMicros'));
+    return {
+      kind: 'commit',
+      icon: CommitIcon,
+      color: 'var(--warning)',
+      bad: false,
+      text:
+        `${agente} subiu de ${payloadField(payload, 'de') ?? 'o modelo base'} para ${payloadField(payload, 'para') ?? 'o próximo modelo'}` +
+        ' depois de 2 bloqueios por limite de iterações' +
+        (Number.isFinite(teto) && teto > 0 ? ` (teto por tarefa US$ ${(teto / 1_000_000).toFixed(2)})` : ''),
+    };
+  }
+  if (type === 'agent.model_escalation_exhausted') {
+    return {
+      kind: 'commit',
+      icon: CommitIcon,
+      color: 'var(--danger)',
+      bad: true,
+      text: `escada esgotada: ${payloadField(payload, 'agentId') ?? 'o agente'} já está no último modelo e a tarefa continua bloqueada para você`,
+    };
+  }
+  // AT-912: tarefa arquivada com motivo; sai da fila e das dependências, fica no histórico.
+  if (type === 'backlog.task_archived') {
+    return {
+      kind: 'commit',
+      icon: CommitIcon,
+      color: 'var(--text-muted)',
+      bad: false,
+      text: `task arquivada: ${payloadField(payload, 'reason') ?? 'sem motivo registrado'}`,
     };
   }
   if (type === 'backlog.task_unblocked') {
@@ -784,6 +820,10 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
             ? `hipótese sobre ${alvo ?? 'um agente'} descartada`
             : type === 'psychologist.hypothesis_accepted_for_anamnese'
               ? `hipótese encaminhada para a Anamnese`
+              : // AT-898: sinal interno de falha da plataforma (só sessão do TP-01).
+                // Não é hipótese de produto e não aparece em Percepções.
+                type === 'psychologist.platform_signal'
+                ? `sinal interno de plataforma (TP-01) sobre ${alvo ?? 'um agente'}`
               : type === 'psychologist.analysis_completed'
                 ? `análise do Psicólogo concluída (${payloadField(payload, 'tier') ?? 'triagem'})`
                 : // Dispensada NÃO é falha: a sessão não tinha o que analisar.

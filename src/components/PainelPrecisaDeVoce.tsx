@@ -124,10 +124,10 @@ export function PainelPrecisaDeVoce({
       invalidar(item.acao.sessionId);
     }
   }
-  async function negar(item: ItemDaFila) {
+  async function negar(item: ItemDaFila, motivo?: string) {
     if (!item.acao) return;
     try {
-      await denyAction(projectId, item.acao.sessionId, item.acao.id);
+      await denyAction(projectId, item.acao.sessionId, item.acao.id, motivo);
     } finally {
       invalidar(item.acao.sessionId);
     }
@@ -242,7 +242,7 @@ export function PainelPrecisaDeVoce({
                           action={item.acao}
                           detalheRecolhido
                           onApprove={() => aprovar(item)}
-                          onDeny={() => negar(item)}
+                          onDeny={(motivo) => negar(item, motivo)}
                           onAlwaysAllow={() => semprePermitir(item)}
                         />
                         <div className={styles.rodapeDoCard}>{tempo(item)}</div>

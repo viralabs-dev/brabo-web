@@ -33,7 +33,10 @@
     "ajustes": "Modelo e idioma",
     "ajustesAria": "Modelo, idioma das respostas e orçamento desta sessão",
     "perguntaDeIdiomaPendente": "há uma pergunta sobre o idioma das respostas",
-    "encerrarSessao": "Encerrar a sessão"
+    "encerrarSessao": "Encerrar a sessão",
+    "pararTurno": "Parar turno",
+    "trilha": "Trilha da sessão",
+    "sessoes": "Sessões"
   },
   "convite": {
     "criativa": {
@@ -326,7 +329,12 @@
     "arquivosVazio": "Nenhum arquivo nas PRs nem nos commits desta sessão ou da execução ligada a ela.",
     "prsNaoLidas_zero": "Todas as PRs foram lidas.",
     "prsNaoLidas_one": "{{count}} PR ficou de fora desta lista (além do limite de leitura, ou o diff não pôde ser lido) — a aba PRs mostra todas.",
-    "prsNaoLidas_other": "{{count}} PRs ficaram de fora desta lista (além do limite de leitura, ou o diff não pôde ser lido) — a aba PRs mostra todas."
+    "prsNaoLidas_other": "{{count}} PRs ficaram de fora desta lista (além do limite de leitura, ou o diff não pôde ser lido) — a aba PRs mostra todas.",
+    "objetivo": "Objetivo",
+    "perguntasAbertas": "Perguntas abertas",
+    "gastoPorAgente": "Gasto por agente",
+    "gastoVazio": "Sem gasto ainda.",
+    "detalhes": "Detalhes da sessão"
   },
   "turno": {
     "artefato": {
@@ -358,7 +366,19 @@
     "consultadoCorte": "mostrando {{shown}} de {{total}}",
     "passosCount_zero": "{{count}} passos",
     "passosCount_one": "{{count}} passo",
-    "passosCount_other": "{{count}} passos"
+    "passosCount_other": "{{count}} passos",
+    "visao": "Visão dos passos",
+    "agrupados": "Agrupados",
+    "emOrdem": "Em ordem",
+    "grupos": {
+      "leu": "Leu o contexto",
+      "desenhou": "Desenhou",
+      "registrou": "Registrou",
+      "outros": "Outros"
+    },
+    "raciocinioTokens_zero": "{{count}} tokens",
+    "raciocinioTokens_one": "{{count}} token",
+    "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" acima.",
@@ -371,7 +391,8 @@
       "prontas": "PRs prontas para merge",
       "bloqueadas": "Tarefas bloqueadas",
       "perguntas": "Perguntas em aberto",
-      "travados": "Agentes travados"
+      "travados": "Agentes travados",
+      "semModulo": "Tarefas sem módulo"
     },
     "origem_zero": "{{count}} propostas na sessão {{hashtag}} · a mais antiga {{tempo}}",
     "origem_one": "Proposta na sessão {{hashtag}} · {{tempo}}",
@@ -398,7 +419,15 @@
       "semMotivo": "Sem motivo registrado.",
       "semPapel": "Desbloquear exige o papel developer no projeto.",
       "diagnostico": "Diagnóstico",
-      "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear."
+      "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear.",
+      "orientacao": "Orientação para o dev (opcional)",
+      "orientacaoDica": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho.",
+      "aumentarTeto": "Aumentar o teto por tarefa",
+      "tetoCampo": "Novo teto por tarefa (US$)",
+      "gravarTeto": "Gravar o teto",
+      "tetoOk": "Teto do projeto atualizado: vale para os agentes vivos na próxima volta. Agora é só desbloquear.",
+      "tetoErro": "Não foi possível gravar o teto.",
+      "tetoSemPapel": "Aumentar o teto exige o papel maintainer no projeto."
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",
@@ -450,6 +479,9 @@
       "ok": "Agente rearmado: ele volta a pegar tarefas.",
       "erro": "Não foi possível rearmar o agente.",
       "semPapel": "Rearmar exige o papel developer no projeto."
+    },
+    "semModulo": {
+      "motivo": "Sem módulo: ninguém vai pegar. Atribua pelo plano ou arquive a tarefa na aba Backlog."
     }
   },
   "mergearNoChat": {
@@ -533,18 +565,51 @@
     "nota": "Rearmar tira o agente do disjuntor; desbloquear devolve a tarefa à fila.",
     "semPapel": "Rearmar e desbloquear exigem o papel developer no projeto.",
     "feito": "Feito — o andamento aparece neste fio.",
-    "erroTitulo": "Não foi possível destravar a execução"
+    "erroTitulo": "Não foi possível destravar a execução",
+    "ciclo": "Impasse: {{modulo}} espera {{esperaPor}}, que depende de {{modulo}}. Só o contrato ou o dependsOn mudando destrava."
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}} \"{{titulo}}\" está pronta para você mergear: os gates passaram.",
     "varias_zero": "{{count}} PRs prontas para você mergear.",
     "varias_one": "{{count}} PR pronta para você mergear.",
     "varias_other": "{{count}} PRs prontas para você mergear.",
+    "destrava_zero": "Não destrava tarefas.",
+    "destrava_one": "Destrava {{count}} tarefa.",
+    "destrava_other": "Destrava {{count}} tarefas.",
+    "destravaA_zero": "A PR #{{numero}} não destrava tarefas.",
+    "destravaA_one": "A PR #{{numero}} destrava {{count}} tarefa.",
+    "destravaA_other": "A PR #{{numero}} destrava {{count}} tarefas.",
     "espera": "Pronta {{quando}}.",
     "ver": "Ver a PR",
     "verAs_zero": "Ver as {{count}}",
     "verAs_one": "Ver a {{count}}",
     "verAs_other": "Ver as {{count}}",
     "agoraNao": "Agora não"
+  },
+  "resumo": {
+    "gravado": "Gravado neste turno: {{itens}}",
+    "tipos": {
+      "regra": "regra de negócio",
+      "decisao": "decisão",
+      "pergunta": "pergunta em aberto",
+      "epico": "épico",
+      "historia": "história",
+      "historia_corrigida": "história corrigida",
+      "historia_arquivada": "história arquivada",
+      "tarefa": "tarefa",
+      "tarefa_corrigida": "tarefa corrigida",
+      "nota": "nota",
+      "artefato": "outro artefato",
+      "adr": "ADR proposto",
+      "module_map": "mapa de módulos",
+      "modulos_de_historia": "atribuição de módulos",
+      "imagem": "imagem decidida",
+      "c4": "diagrama C4",
+      "roteamento": "roteamento para a infra",
+      "contratos": "contrato de módulos",
+      "insight": "insight",
+      "rfc": "RFC proposta",
+      "prototipo": "protótipo proposto"
+    }
   }
 }

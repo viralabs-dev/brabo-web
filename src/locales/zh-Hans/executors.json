@@ -6,7 +6,6 @@
     "sessionError": {
       "title": "无法确定此项目的执行会话。"
     },
-    "noActiveExecution": "此项目当前没有进行中的执行。",
     "showingSession": "正在显示",
     "rosterError": {
       "title": "无法得知谁在执行。"
@@ -19,10 +18,14 @@
     "toast": {
       "autonomyError": "无法更改自主模式",
       "rearmed": "智能体已重新启用",
-      "rearmError": "无法重新启用智能体"
+      "rearmError": "无法重新启用智能体",
+      "woken": "正在查找任务",
+      "wakeError": "无法唤醒智能体",
+      "modelError": "无法更换模型"
     },
     "noExecutorsTitle": "目前无人执行",
-    "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。"
+    "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。",
+    "modelSemPapel": "更换模型需要项目中的 developer 角色。"
   },
   "agentCard": {
     "status": {
@@ -38,20 +41,10 @@
       "autoModeHint": "自动模式：可运行任何命令，包括项目文件夹之外的命令。git push 和 PR 将放行；部署、sudo/doas 以及合并到受保护分支仍需你的批准。"
     },
     "rearm": "重新启用",
-    "catalog": {
-      "instructions": "Instructions",
-      "tools": "Tools",
-      "identity": "Identity",
-      "projectInstruction": "Project instruction (version {{versao}})",
-      "noProjectInstruction": "This agent has no instruction of its own in this project yet.",
-      "instructionsUnavailable": "Could not read the instructions right now.",
-      "toolsUnavailable": "Could not read the tools right now.",
-      "noTools": "This agent has no tools.",
-      "note": "Full catalog: at each step the model may see only part of it.",
-      "loading": "Loading…",
-      "error": "Could not read this agent's catalog.",
-      "missing_other": "缺少 {{count}} 个字符(文本已截断)",
-      "toolCount_other": "{{count}} 个工具"
+    "wake": "重新查找任务",
+    "model": {
+      "label": "{{agente}} 的模型",
+      "escolher": "选择模型"
     }
   },
   "teamGrid": {
@@ -177,5 +170,131 @@
     "lendoTarefas": "正在读取待办列表以统计进行中和审查中的任务……",
     "tarefasNaoLidas": "无法读取待办列表：无法统计进行中和审查中的任务。",
     "ficaRevisao_other": "{{count}} 个任务处于 QA 审查中：其 gate 将停止，任务被阻塞，PR 保持打开；待你放行后重新回到队列。"
+  },
+  "carrossel": {
+    "regiao": "正在执行",
+    "titulo": "执行",
+    "progresso": "{{done}} / {{total}} 个任务",
+    "minimizar": "最小化执行者轮播",
+    "restaurar": "显示执行者详情",
+    "minimizadoLista": "执行者（摘要）",
+    "verExecutores": "执行者",
+    "verNoFio": "在对话中查看",
+    "dispensar": "关闭执行摘要",
+    "ultimaAcao": "最近操作：{{acao}}",
+    "cartaoRotulo": "第 {{posicao}} / {{total}}：{{nome}}，{{estado}}",
+    "haSeg": "{{n}} 秒前",
+    "haMin": "{{n}} 分钟前",
+    "haH": "{{n}} 小时前",
+    "estado": {
+      "trabalhando": "工作中",
+      "aguardando": "等待中",
+      "ocioso": "空闲",
+      "bloqueado": "已阻塞",
+      "travado": "已停滞",
+      "falhou": "失败",
+      "concluido": "已完成"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} 个工作中",
+      "aguardando": "{{n}} 个在 gate",
+      "ocioso": "{{n}} 个在等待",
+      "atencao": "{{n}} 个需要关注"
+    },
+    "fim": {
+      "concluida": "执行已完成",
+      "parada": "执行已停止"
+    },
+    "texto": {
+      "trabalhando": "正在处理任务。",
+      "corrigindo": "正在修复 QA 提出的问题。",
+      "corrigindoPr": "正在修复 QA 在 PR #{{pr}} 提出的问题。",
+      "aguardandoQa": "在 QA gate。",
+      "aguardandoQaPr": "PR #{{pr}} 在 QA gate。",
+      "aguardandoSecops": "在 SecOps gate。",
+      "aguardandoSecopsPr": "PR #{{pr}} 在 SecOps。",
+      "aguardandoUsuario": "等待你合并。",
+      "aguardandoUsuarioPr": "等待你合并（PR #{{pr}}）。",
+      "aguardandoAprovacao": "等待你的批准。",
+      "aguardandoGate": "等待 gate。",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "目前没有可用任务。",
+      "esperaFundacaoPr": "正在等待 {{modulo}} 的基础（{{agente}}，PR #{{pr}}）。",
+      "esperaFundacaoTarefa": "正在等待 {{modulo}} 的基础：任务“{{titulo}}”进行中。",
+      "esperaModulos": "正在等待 {{n}} 个模块；最先解锁的是 {{primeiro}}。",
+      "tarefaBloqueada": "任务已阻塞：{{motivo}}",
+      "bloqueado": "项目容器未运行。Infra 会提议启动；代理会自行重试。",
+      "travado": "{{motivo}} 请在“执行者”中重新启用。",
+      "falhou": "失败：{{motivo}}",
+      "falhouSemMotivo": "失败。",
+      "concluido": "模块的 {{done}} / {{total}} 个任务已完成。",
+      "gateJulga": "正在评审“{{tarefa}}”。",
+      "gateJulgaPr": "正在评审“{{tarefa}}”（PR #{{pr}}）。",
+      "gateJulgaSemTarefa": "正在评审一个 PR。",
+      "gateFalhou": "gate 周期失败。",
+      "gateOcioso": "目前没有待评审的 PR。",
+      "gateUltimoAprovado": "最近结论：已通过。",
+      "gateUltimoAprovadoPr": "最近结论：已通过（PR #{{pr}}）。",
+      "gateUltimoMudancas": "最近结论：需要修改。",
+      "gateUltimoMudancasPr": "最近结论：需要修改（PR #{{pr}}）。"
+    }
+  },
+  "acoes": {
+    "blockedTasksLabel": "被阻塞的任务",
+    "noDiagnosis": "无诊断",
+    "unblock": "解除阻塞",
+    "unblocking": "正在解除阻塞…",
+    "unblockError": "无法解除任务阻塞",
+    "unblockedTitle": "任务已解除阻塞",
+    "unblockGuidance": "给开发者的指引（可选）",
+    "unblockGuidanceHint": "例如：入口由组装方注入；不要单独启动该模块。",
+    "suggestionBefore": "存在相互独立的任务于 ",
+    "suggestionAfter": " —— 要再启动一个 dev 吗？",
+    "accept": "接受",
+    "pullRequestsLabel": "等待你处理的 Pull request",
+    "noPullRequests": "没有等待你的 PR。",
+    "pullRequestFallback": "PR",
+    "errorTitle": "错误",
+    "requestError": "无法发起请求",
+    "requestDeniedTitle": "请求被拒绝",
+    "authorizationNeededTitle": "需要你的授权",
+    "authorizationNeededMessage_other": "会话已有 {{count}} 个智能体，lead 的上限为 {{max}}。请求已放入“审批”。"
+  },
+  "chamada": {
+    "activate": "启动执行",
+    "activateError": "无法启动执行",
+    "needsMaintainer": "启动执行需要 maintainer 角色。",
+    "semContainer": "容器尚未运行，因此无法开始执行。请批准 Infra 提出的启动，或请它启动。",
+    "abrirContainers": "打开容器",
+    "title_other": "执行已关闭 · {{count}} 个任务就绪",
+    "explain_other": "启动后 Dev Lead 会在 dev agent 之间分配工作（dev 区域最多并行 {{count}} 个）。每个 PR 都经过 QA 和 SecOps，等你来合并。",
+    "teto": "项目上限 {{valor}}",
+    "semRepositorio": "没有仓库，无法启动执行。"
+  },
+  "areas": {
+    "title": "区域",
+    "working": "工作中",
+    "stopped": "已停止",
+    "members_other": "{{count}} 名成员",
+    "parallelismLabel": "并行度",
+    "leadLabel": "Lead",
+    "semMembros": "暂无成员",
+    "devNasce": "执行启动后才会创建智能体。"
+  },
+  "fila": {
+    "title": "任务队列",
+    "ready_other": "{{count}} 个就绪",
+    "running_other": "{{count}} 个运行中",
+    "blocked_other": "{{count}} 个已阻塞",
+    "semModulo_other": "{{count}} 个无模块",
+    "more_other": "+ {{count}} 个任务",
+    "verNoBacklog": "在待办中查看",
+    "estado": {
+      "blocked": "已阻塞",
+      "todo": "就绪",
+      "in_progress": "运行中",
+      "in_review": "评审中",
+      "done": "已完成"
+    }
   }
 }

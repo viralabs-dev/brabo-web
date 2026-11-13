@@ -10,28 +10,29 @@
     "nav": {
       "trilhaAriaLabel": "Проекты и активность",
       "projectsLabel": "Проекты",
-      "newProject": "Новый проект"
+      "newProject": "Новый проект",
+      "projectLabel": "Проект"
     },
     "projects": {
       "loadError": "Не удалось загрузить проекты.",
       "retry": "попробовать снова",
-      "expand": "Развернуть {{name}}",
-      "collapse": "Свернуть {{name}}",
-      "tabsAriaLabel": "Вкладки {{name}}"
+      "tabsAriaLabel": "Вкладки {{name}}",
+      "switch": "Сменить проект: {{name}}"
     },
-    "activities": {
-      "label": "Активность",
-      "openProjectHint": "Откройте проект, чтобы увидеть активность агентов.",
-      "empty": "В последней сессии ещё ни один агент не приступил к работе.",
-      "emptyExecution": "В сессии выполнения ещё ни один агент не приступил к работе.",
-      "noSession": "У этого проекта ещё нет сессии.",
-      "loadError": "Не удалось загрузить активность.",
-      "noMarksYet": "отметок пока нет",
-      "instancesCount_one": "{{count}} экземпляр",
-      "instancesCount_few": "{{count}} экземпляра",
-      "instancesCount_many": "{{count}} экземпляров",
-      "instancesCount_other": "{{count}} экземпляра"
+    "agentsNow": {
+      "label": "Агенты сейчас",
+      "openProjectHint": "Откройте проект, чтобы увидеть его агентов.",
+      "empty": "Ни один агент ещё не действовал.",
+      "noSession": "В этом проекте ещё нет сессии.",
+      "loadError": "Не удалось загрузить агентов.",
+      "status": {
+        "trabalhando": "работает",
+        "aguardando": "ожидает",
+        "ocioso": "простаивает",
+        "falhou": "сбой"
+      }
     },
+    "workspaceLabel": "Рабочее пространство",
     "collapseButton": {
       "expand": "Развернуть меню",
       "collapse": "Свернуть меню"
@@ -44,7 +45,9 @@
     "footer": {
       "accountFallback": "аккаунт",
       "logout": "выйти"
-    }
+    },
+    "caixa": "Decision inbox",
+    "home": "Главная"
   },
   "notificationBell": {
     "label": "Уведомления",

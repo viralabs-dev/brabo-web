@@ -1,0 +1,33 @@
+.caixa { display: flex; flex-direction: column; gap: 20px; }
+.pagina { padding: 24px; display: flex; flex-direction: column; gap: 20px; }
+.cartoes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.cartao {
+  display: flex; flex-direction: column; gap: 6px; text-align: left; cursor: pointer;
+  padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-md);
+  background: var(--surface-1); color: var(--text-primary);
+}
+.cartao[aria-pressed='true'], .cartao[data-com-algo]:first-of-type { border-color: var(--accent); }
+.cartaoRotulo { font-family: var(--font-mono); font-size: var(--fs-meta); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); }
+.cartaoNumero { font-family: var(--font-heading); font-size: 28px; }
+.cartao[data-com-algo] .cartaoNumero { color: var(--accent); }
+.cartaoLegenda { font-size: 12px; color: var(--text-secondary); }
+.intro { margin: 0; max-width: 60ch; color: var(--text-secondary); font-size: 14px; }
+.linhaDeAcao {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+  border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-1);
+}
+.frase { font-weight: 600; color: var(--text-primary); }
+.chip { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 1px 8px; }
+.acoes { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
+.secao { display: flex; flex-direction: column; gap: 10px; }
+.secaoTitulo { display: flex; justify-content: space-between; align-items: baseline; margin: 0; font-family: var(--font-heading); font-size: 15px; color: var(--text-primary); }
+.secaoTotal { font-family: var(--font-mono); color: var(--text-muted); font-size: var(--fs-meta); }
+.linha {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-1);
+}
+.linhaTexto { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.projeto { margin: 0; font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-muted); }
+.nota { margin: 0; font-size: 12px; color: var(--text-secondary); }
+.seletor { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--border); border-radius: var(--radius-md); }
+.ponto { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }

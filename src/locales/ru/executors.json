@@ -9,7 +9,6 @@
     "sessionError": {
       "title": "Не удалось определить сессию выполнения этого проекта."
     },
-    "noActiveExecution": "Сейчас в этом проекте нет активного выполнения.",
     "showingSession": "Показана",
     "rosterError": {
       "title": "Не удалось узнать, кто сейчас выполняет."
@@ -22,10 +21,14 @@
     "toast": {
       "autonomyError": "Не удалось изменить автономию",
       "rearmed": "Агент перезапущен",
-      "rearmError": "Не удалось перезапустить агента"
+      "rearmError": "Не удалось перезапустить агента",
+      "woken": "Ищу задачу",
+      "wakeError": "Не удалось разбудить агента",
+      "modelError": "Не удалось сменить модель"
     },
     "noExecutorsTitle": "Сейчас никто не действует",
-    "idleWarning": "Сейчас ни один агент не работает. Выполнение активно: агенты ждут задачу, от которой зависят, и просыпаются, когда зависимость будет смержена."
+    "idleWarning": "Сейчас ни один агент не работает. Выполнение активно: агенты ждут задачу, от которой зависят, и просыпаются, когда зависимость будет смержена.",
+    "modelSemPapel": "Для смены модели нужна роль developer в проекте."
   },
   "agentCard": {
     "status": {
@@ -41,26 +44,10 @@
       "autoModeHint": "Автоматический режим: выполняет любую команду, в том числе вне папки проекта. git push и PR разрешены; deploy, sudo/doas и merge в защищённую ветку по-прежнему требуют вашего одобрения."
     },
     "rearm": "перезапустить",
-    "catalog": {
-      "instructions": "Instructions",
-      "tools": "Tools",
-      "identity": "Identity",
-      "projectInstruction": "Project instruction (version {{versao}})",
-      "noProjectInstruction": "This agent has no instruction of its own in this project yet.",
-      "instructionsUnavailable": "Could not read the instructions right now.",
-      "toolsUnavailable": "Could not read the tools right now.",
-      "noTools": "This agent has no tools.",
-      "note": "Full catalog: at each step the model may see only part of it.",
-      "loading": "Loading…",
-      "error": "Could not read this agent's catalog.",
-      "missing_one": "Не хватает символов: {{count}} (текст обрезан)",
-      "missing_few": "Не хватает символов: {{count}} (текст обрезан)",
-      "missing_many": "Не хватает символов: {{count}} (текст обрезан)",
-      "missing_other": "Не хватает символов: {{count}} (текст обрезан)",
-      "toolCount_one": "Инструментов: {{count}}",
-      "toolCount_few": "Инструментов: {{count}}",
-      "toolCount_many": "Инструментов: {{count}}",
-      "toolCount_other": "Инструментов: {{count}}"
+    "wake": "Снова искать задачу",
+    "model": {
+      "label": "Модель {{agente}}",
+      "escolher": "выберите модель"
     }
   },
   "teamGrid": {
@@ -210,5 +197,158 @@
     "ficaRevisao_few": "{{count}} задачи на проверке QA: их gates останавливаются, задачи блокируются, PR остаются открытыми; они вернутся в очередь, когда вы их разблокируете.",
     "ficaRevisao_many": "{{count}} задач на проверке QA: их gates останавливаются, задачи блокируются, PR остаются открытыми; они вернутся в очередь, когда вы их разблокируете.",
     "ficaRevisao_other": "{{count}} задачи на проверке QA: их gates останавливаются, задачи блокируются, PR остаются открытыми; они вернутся в очередь, когда вы их разблокируете."
+  },
+  "carrossel": {
+    "regiao": "Выполнение идёт",
+    "titulo": "Выполнение",
+    "progresso": "{{done}} из {{total}} задач",
+    "minimizar": "Свернуть карусель исполнителей",
+    "restaurar": "Показать подробности исполнителей",
+    "minimizadoLista": "Исполнители (сводка)",
+    "verExecutores": "Исполнители",
+    "verNoFio": "Открыть в ленте",
+    "dispensar": "Закрыть сводку выполнения",
+    "ultimaAcao": "Последнее действие: {{acao}}",
+    "cartaoRotulo": "{{posicao}} из {{total}}: {{nome}}, {{estado}}",
+    "haSeg": "{{n}} с назад",
+    "haMin": "{{n}} мин назад",
+    "haH": "{{n}} ч назад",
+    "estado": {
+      "trabalhando": "работает",
+      "aguardando": "ожидает",
+      "ocioso": "простаивает",
+      "bloqueado": "заблокирован",
+      "travado": "остановлен",
+      "falhou": "сбой",
+      "concluido": "готово"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} работают",
+      "aguardando": "{{n}} на gate",
+      "ocioso": "{{n}} ждут",
+      "atencao": "{{n}} требуют внимания"
+    },
+    "fim": {
+      "concluida": "выполнение завершено",
+      "parada": "выполнение остановлено"
+    },
+    "texto": {
+      "trabalhando": "Работает над задачей.",
+      "corrigindo": "Исправляет замечания QA.",
+      "corrigindoPr": "Исправляет замечания QA в PR #{{pr}}.",
+      "aguardandoQa": "На gate QA.",
+      "aguardandoQaPr": "PR #{{pr}} на gate QA.",
+      "aguardandoSecops": "На gate SecOps.",
+      "aguardandoSecopsPr": "PR #{{pr}} на SecOps.",
+      "aguardandoUsuario": "Ждёт вашего merge.",
+      "aguardandoUsuarioPr": "Ждёт вашего merge (PR #{{pr}}).",
+      "aguardandoAprovacao": "Ждёт вашего одобрения.",
+      "aguardandoGate": "Ждёт gate.",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "Сейчас нет доступных задач.",
+      "esperaFundacaoPr": "Ждёт основу модуля {{modulo}} ({{agente}}, PR #{{pr}}).",
+      "esperaFundacaoTarefa": "Ждёт основу модуля {{modulo}}: задача «{{titulo}}» в работе.",
+      "esperaModulos": "Ждёт модулей: {{n}}; первым разблокируется {{primeiro}}.",
+      "tarefaBloqueada": "Задача заблокирована: {{motivo}}",
+      "bloqueado": "Контейнер проекта не запущен. Infra предлагает его запустить; агент повторит попытку сам.",
+      "travado": "{{motivo}} Перезапуск в разделе «Исполнители».",
+      "falhou": "Сбой: {{motivo}}",
+      "falhouSemMotivo": "Сбой.",
+      "concluido": "{{done}} из {{total}} задач модуля выполнено.",
+      "gateJulga": "Проверяет «{{tarefa}}».",
+      "gateJulgaPr": "Проверяет «{{tarefa}}» (PR #{{pr}}).",
+      "gateJulgaSemTarefa": "Проверяет PR.",
+      "gateFalhou": "Цикл gate завершился сбоем.",
+      "gateOcioso": "Сейчас нет PR для проверки.",
+      "gateUltimoAprovado": "Последний вердикт: одобрено.",
+      "gateUltimoAprovadoPr": "Последний вердикт: одобрено (PR #{{pr}}).",
+      "gateUltimoMudancas": "Последний вердикт: нужны изменения.",
+      "gateUltimoMudancasPr": "Последний вердикт: нужны изменения (PR #{{pr}})."
+    }
+  },
+  "acoes": {
+    "blockedTasksLabel": "Заблокированные задачи",
+    "noDiagnosis": "без диагноза",
+    "unblock": "Разблокировать",
+    "unblocking": "Разблокировка…",
+    "unblockError": "Не удалось разблокировать задачу",
+    "unblockedTitle": "Задача разблокирована",
+    "unblockGuidance": "Указание для разработчика (необязательно)",
+    "unblockGuidanceHint": "Напр.: точка входа внедряется тем, кто собирает; не запускайте модуль отдельно.",
+    "suggestionBefore": "Есть независимые задачи в ",
+    "suggestionAfter": " — запустить ещё одного dev?",
+    "accept": "Принять",
+    "pullRequestsLabel": "Pull requests, ожидающие вас",
+    "noPullRequests": "Нет PR, ожидающих вас.",
+    "pullRequestFallback": "PR",
+    "errorTitle": "Ошибка",
+    "requestError": "Не удалось отправить запрос",
+    "requestDeniedTitle": "Запрос отклонён",
+    "authorizationNeededTitle": "Нужно ваше разрешение",
+    "authorizationNeededMessage_one": "В сессии уже {{count}} агент, лимит lead — {{max}}. Запрос находится в Одобрениях.",
+    "authorizationNeededMessage_few": "В сессии уже {{count}} агента, лимит lead — {{max}}. Запрос находится в Одобрениях.",
+    "authorizationNeededMessage_many": "В сессии уже {{count}} агентов, лимит lead — {{max}}. Запрос находится в Одобрениях.",
+    "authorizationNeededMessage_other": "В сессии уже {{count}} агента, лимит lead — {{max}}. Запрос находится в Одобрениях."
+  },
+  "chamada": {
+    "activate": "Запустить выполнение",
+    "activateError": "Не удалось запустить выполнение",
+    "needsMaintainer": "Для запуска выполнения нужна роль maintainer.",
+    "semContainer": "Контейнер ещё не запущен, поэтому выполнение начать нельзя. Одобрите запуск, предложенный Infra, или попросите её запустить.",
+    "abrirContainers": "Открыть контейнеры",
+    "title_one": "Выполнение выключено · {{count}} задача готова",
+    "title_few": "Выполнение выключено · {{count}} задачи готовы",
+    "title_many": "Выполнение выключено · {{count}} задач готово",
+    "title_other": "Выполнение выключено · {{count}} задачи готово",
+    "explain_one": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
+    "explain_few": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
+    "explain_many": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
+    "explain_other": "После запуска Dev Lead распределяет работу между dev agents (до {{count}} параллельно в области dev). Каждый PR проходит QA и SecOps и ждёт вашего merge.",
+    "teto": "Лимит проекта {{valor}}",
+    "semRepositorio": "Без репозитория выполнение запустить негде."
+  },
+  "areas": {
+    "title": "Области",
+    "working": "работает",
+    "stopped": "остановлена",
+    "members_one": "{{count}} участник",
+    "members_few": "{{count}} участника",
+    "members_many": "{{count}} участников",
+    "members_other": "{{count}} участника",
+    "parallelismLabel": "Параллелизм",
+    "leadLabel": "Lead",
+    "semMembros": "участников пока нет",
+    "devNasce": "Агенты появляются, когда выполнение запущено."
+  },
+  "fila": {
+    "title": "Очередь задач",
+    "ready_one": "{{count}} готова",
+    "ready_few": "{{count}} готовы",
+    "ready_many": "{{count}} готовы",
+    "ready_other": "{{count}} готовы",
+    "running_one": "{{count}} выполняется",
+    "running_few": "{{count}} выполняются",
+    "running_many": "{{count}} выполняются",
+    "running_other": "{{count}} выполняются",
+    "blocked_one": "{{count}} заблокирована",
+    "blocked_few": "{{count}} заблокированы",
+    "blocked_many": "{{count}} заблокированы",
+    "blocked_other": "{{count}} заблокированы",
+    "semModulo_one": "{{count}} без модуля",
+    "semModulo_few": "{{count}} без модуля",
+    "semModulo_many": "{{count}} без модуля",
+    "semModulo_other": "{{count}} без модуля",
+    "more_one": "+ {{count}} задача",
+    "more_few": "+ {{count}} задачи",
+    "more_many": "+ {{count}} задач",
+    "more_other": "+ {{count}} задачи",
+    "verNoBacklog": "смотреть в бэклоге",
+    "estado": {
+      "blocked": "заблокирована",
+      "todo": "готова",
+      "in_progress": "выполняется",
+      "in_review": "на ревью",
+      "done": "завершена"
+    }
   }
 }

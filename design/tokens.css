@@ -108,6 +108,7 @@
   --surface-0: var(--neutro-900);
   --surface-1: var(--neutro-850);
   --surface-2: var(--neutro-800);
+  --surface-3: #24242a; /* hover e item ativo da sidebar (v9, AT-884) */
   --text-primary: #ececef;
   --text-secondary: var(--neutro-400);
   /* Rascunho: #71717a (--neutro-500) — 3,80:1 sobre --surface-1 e 3,51:1
@@ -138,6 +139,15 @@
   --agent-leve: #b8acdf;
   --agent-frontend: #5fb3a8;
   --agent-secops: #8f9ba3;
+  /* Uma cor por papel (v9, AT-887). qa verde, infra azul, dev teal. */
+  --ag-criativo: #d4a13a;
+  --ag-po: #9d8ad6;
+  --ag-arquiteto: #c8744f;
+  --ag-dev: #5fb3a8;
+  --ag-qa: #3fb68b;
+  --ag-secops: #8f9ba3;
+  --ag-infra: #6aa7d8;
+  --ag-psi: #b8acdf;
   --border: var(--neutro-750);
   --border-strong: var(--neutro-700);
   --code-bg: var(--neutro-950);
@@ -186,14 +196,14 @@
 
   /* Escala de texto do handoff. Os pesos e o letter-spacing de cada degrau
      ficam em quem usa — aqui é só o tamanho, que é o que se repetia solto. */
-  --fs-h1: 22px; /* peso 700, letter-spacing -.02em */
-  --fs-title: 18px; /* peso 600, letter-spacing -.01em — título de tela */
-  --fs-h2: 15px; /* peso 600 — título de card */
-  --fs-body: 13px;
-  --fs-sm: 12px;
+  --fs-h1: 24px; /* peso 700, letter-spacing -.02em */
+  --fs-title: 20px; /* peso 600, letter-spacing -.01em — título de tela */
+  --fs-h2: 16px; /* peso 600 — título de card */
+  --fs-body: 14px;
+  --fs-sm: 13px;
   --fs-mono: 12.5px;
-  --fs-meta: 11px;
-  --fs-label: 10px; /* peso 600, letter-spacing .08–.1em, uppercase */
+  --fs-meta: 12px;
+  --fs-label: 11px; /* peso 600, letter-spacing .08–.1em, uppercase */
 
   /* Espaçamento — escala base 8px, meio-passo 4px */
   --space-1: 4px;
@@ -283,6 +293,7 @@
   --surface-0: var(--neutro-000);
   --surface-1: var(--neutro-050);
   --surface-2: var(--neutro-100);
+  --surface-3: #ececef; /* hover e item ativo da sidebar (v9, AT-884) */
   --text-primary: #18181b;
   --text-secondary: var(--neutro-600);
   /* Rascunho: #71717a — 4,40:1 sobre --surface-2, e o claro fecha os pares
@@ -298,6 +309,14 @@
   --agent-leve: #8671c9;
   --agent-frontend: #1f766c;
   --agent-secops: #5f6b73;
+  --ag-criativo: #8a5a0a;
+  --ag-po: #6a50b8;
+  --ag-arquiteto: #a4502c;
+  --ag-dev: #1f766c;
+  --ag-qa: #137a55;
+  --ag-secops: #5f6b73;
+  --ag-infra: #2b6aa0;
+  --ag-psi: #8671c9;
   --border: var(--neutro-200);
   --border-strong: var(--neutro-300);
   --code-bg: var(--neutro-100);

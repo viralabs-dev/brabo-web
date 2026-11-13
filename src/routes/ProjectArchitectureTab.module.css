@@ -1,0 +1,116 @@
+/* P16 (v9, AT-946): estilos próprios da Arquitetura; copiados do módulo compartilhado da Visão geral, que não muda. */
+.faixa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--warning-panel-border, var(--border-strong));
+  background: var(--warning-panel, var(--surface-2));
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.faixaTag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--warning, var(--accent));
+}
+
+.faixaTexto {
+  flex: 1;
+}
+
+.titulo {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+  margin: 24px 0 12px;
+}
+
+.archLabel {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin: 16px 0 10px;
+}
+
+.sectionSub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.deps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.adrList,
+.pendList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adrItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.adrLink {
+  display: inline-block;
+  min-height: 24px;
+  line-height: 24px;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.adrLink:hover {
+  text-decoration: underline;
+}
+
+.pendItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--danger-panel-border);
+  background: var(--danger-panel);
+  border-radius: var(--radius-md);
+}
+
+.pendTitle {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.pendReason {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  color: var(--danger);
+}
+
+.chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}

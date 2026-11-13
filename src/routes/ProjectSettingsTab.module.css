@@ -830,3 +830,27 @@
 .quebraLinha { flex-wrap: wrap; }
 .rolagemHorizontal { overflow-x: auto; }
 .larguraMinima { min-width: 56rem; }
+
+.conectorSubtitulo {
+  margin: 16px 0 4px;
+  font-size: var(--fs-sm, 13px);
+  color: var(--text-muted);
+}
+
+.conectorGrade {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* O Salvar do cabeçalho de Configurações (RN-1265): só aparece com algo sujo. */
+.barraDeSalvar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+}

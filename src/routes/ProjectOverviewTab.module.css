@@ -317,3 +317,4 @@
   color: var(--text-primary);
   border-color: var(--accent);
 }
+.turnos{display:flex;flex-direction:column;gap:6px}

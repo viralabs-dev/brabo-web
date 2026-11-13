@@ -1,4 +1,9 @@
 {
+  "faixa": {
+    "titulo": "Precisa de você",
+    "verTodas": "Ver todas →",
+    "vazio": "Nada espera por você agora."
+  },
   "architectureTab": {
     "title": "Arquitetura",
     "emptyTitle": "Sem arquitetura ainda",
@@ -13,7 +18,22 @@
     "noAdrs": "Nenhum ADR proposto ainda.",
     "pendenciesLabel": "Pendências de validação cruzada",
     "reasonNoModule": "sem módulo vinculado",
-    "reasonMissingModule": "módulo inexistente: {{missing}}"
+    "reasonMissingModule": "módulo inexistente: {{missing}}",
+    "cols": {
+      "module": "Módulo",
+      "stack": "Stack",
+      "responsibility": "Responsabilidade",
+      "dependsOn": "Depende de",
+      "stories": "Histórias"
+    },
+    "proposalTag": "PROPOSTA",
+    "adrProposal": "ADR “{{titulo}}” espera sua aprovação para virar PR.",
+    "decide": "Decidir",
+    "header": {
+      "modules": "módulos · v{{version}}",
+      "c4": "C4 nível 2",
+      "byArchitect": "pelo Arquiteto · {{hora}}"
+    }
   },
   "c4": {
     "titleContext": "Contexto",
@@ -32,7 +52,9 @@
     "summary_other": "{{count}} agentes · {{working}} trabalhando · {{waiting}} aguardando",
     "autonomyErrorTitle": "Não foi possível mudar a autonomia",
     "rearmSuccess": "Agente rearmado",
-    "rearmErrorTitle": "Não foi possível rearmar o agente"
+    "rearmErrorTitle": "Não foi possível rearmar o agente",
+    "wakeSuccess": "Procurando tarefa",
+    "wakeErrorTitle": "Não foi possível acordar o agente"
   },
   "timeline": {
     "title": "Linha do tempo do time",
@@ -75,6 +97,9 @@
     "modelosLocaisEmbedding_other": "{{count}} de embedding (só para a busca, não conversam)"
   },
   "activity": {
+    "verEventos": "Eventos",
+    "verTurnos": "Turnos",
+    "turnosVazio": "Nenhum turno terminou ainda.",
     "title": "Atividade",
     "count_zero": "{{count}} eventos",
     "count_one": "{{count}} evento",
@@ -116,7 +141,9 @@
     "requestDeniedTitle": "Pedido recusado",
     "requestError": "Não foi possível pedir",
     "unblocking": "Desbloqueando…",
-    "unblockNeedsSession": "A sessão ainda está carregando: desbloquear depende dela."
+    "unblockNeedsSession": "A sessão ainda está carregando: desbloquear depende dela.",
+    "unblockGuidance": "Orientação para o dev (opcional)",
+    "unblockGuidanceHint": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho."
   },
   "architectureSummary": {
     "title": "Arquitetura",
@@ -146,6 +173,57 @@
       "titulo": "Começar a primeira ideação",
       "pendente": "Conte a ideia ao Criativo — é daí que saem as histórias.",
       "link": "Abrir o Criativo →"
+    }
+  },
+  "proximoPasso": {
+    "titulo": "Próximo passo",
+    "agente": "Aguarde: {{agente}} está trabalhando",
+    "agente_trabalhando": {
+      "texto": "Um agente está em andamento nesta sessão.",
+      "link": "Abrir a sessão →"
+    },
+    "continuar_ideacao": {
+      "titulo": "Continuar a conversa na sessão",
+      "texto": "Ainda não há histórias no backlog.",
+      "link": "Abrir o Criativo →"
+    },
+    "confirmar_arquitetura": {
+      "titulo": "Confirmar a arquitetura",
+      "texto": "Há histórias, mas o mapa de módulos está faltando ou com pendência.",
+      "link": "Abrir a arquitetura →"
+    },
+    "ligar_modulo": {
+      "titulo_zero": "Ligar {{count}} tarefas a um módulo",
+      "titulo_one": "Ligar {{count}} tarefa a um módulo",
+      "titulo_other": "Ligar {{count}} tarefas a um módulo",
+      "texto": "Ninguém pega a tarefa enquanto ela não tem módulo.",
+      "link": "Abrir a arquitetura →"
+    },
+    "desbloquear": {
+      "titulo_zero": "Desbloquear {{count}} tarefas",
+      "titulo_one": "Desbloquear {{count}} tarefa",
+      "titulo_other": "Desbloquear {{count}} tarefas",
+      "texto": "Tarefa bloqueada não avança sozinha.",
+      "link": "Ver execução →"
+    },
+    "ativar_execucao": {
+      "titulo": "Ativar a execução",
+      "texto_zero": "{{count}} tarefas prontas no backlog.",
+      "texto_one": "{{count}} tarefa pronta no backlog.",
+      "texto_other": "{{count}} tarefas prontas no backlog.",
+      "link": "Ver execução →"
+    },
+    "acompanhar_execucao": {
+      "titulo": "Acompanhar a execução",
+      "texto_zero": "{{count}} tarefas em andamento.",
+      "texto_one": "{{count}} tarefa em andamento.",
+      "texto_other": "{{count}} tarefas em andamento.",
+      "link": "Ver execução →"
+    },
+    "rodar_entregavel": {
+      "titulo": "Rodar o entregável na sua máquina",
+      "texto": "Todas as tarefas estão concluídas.",
+      "link": "Ver como rodar →"
     }
   },
   "rodarNaSuaMaquina": {

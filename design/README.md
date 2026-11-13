@@ -1,5 +1,9 @@
 # design/
 
+> **A referência visual vigente é a v9** (`13-design/v9-estrutura/` no Vault do dono; ADR 0294, [ADR 0294](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0294-a-estrutura-v9-oito-secoes-com-sub-abas-caixa-de-decisoes-e-agentes-agora.md)). A v9 muda a ESTRUTURA, não o kit: oito seções com sub-abas, Caixa de decisões global, "Agentes agora" e a escala de tipo nova. Toda tela nova ou alterada segue `SCREENS.md` e `COMPONENTS.md` (seções "v9") e é conferida contra a imagem de mesmo id da prévia. A v8 fica como histórico.
+>
+> **Tokens da v9 (aprovados em 11/11/2026, AT-882):** `--fs-body` 13 para 14 px, `--fs-label` 10 para 11 px, `--fs-meta` 11 para 12 px, `--fs-h1`/`--fs-title` 22/18 para 24/20 px, `--surface-3` (`#24242a` no escuro, `#ececef` no claro) e uma cor por papel de agente, `--ag-*`. **Superfície quente: fora**, por ora. Os valores moram em `tokens.css` e entram pela AT-884; esta página registra a decisão, não os valores. Os pisos de contraste do ADR 0181 não se afrouxam.
+
 Design system do Brabo — fidelidade estrita exigida na UI (ver `CLAUDE.md`).
 
 - **`tokens.css`** — também consumido pelo site de documentação

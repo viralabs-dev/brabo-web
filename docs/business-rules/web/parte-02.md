@@ -900,7 +900,7 @@ lista, e um `useEffect` renderizaria uma vez com a página inválida antes de
 corrigir. Com 5 ou menos, o paginador **não existe** — controle que não pagina
 nada é ruído ocupando altura.
 
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:110` (`REGRAS_POR_PAGINA`) e
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:114` (`REGRAS_POR_PAGINA`) e
   a ordenação das quatro seções no mesmo arquivo;
   `apps/web/src/components/ActivityFeed.tsx:98` (o `sort` decrescente)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -979,7 +979,7 @@ tela pausa durante o turno — e com ele a duplicata visual da bolha em
 streaming.
 
 - **Onde:** `apps/web/src/lib/hooks.ts:262` (o `pausarPoll` do histórico),
-  `:388` (`baixados`); `apps/web/src/routes/ContextAside.tsx:154`
+  `:417` (`baixados`); `apps/web/src/routes/ContextAside.tsx:164`
   (`eventosAnteriores`) e o `ActivityFeed` com o pager, no fim do mesmo
   arquivo
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -1172,6 +1172,8 @@ vê recolhido foi o usuário quem pediu, e está gravado.
 
 ### RN-196 — Projetos expansíveis revelam as abas do projeto, N ao mesmo tempo {#rn-196}
 
+> **Revogada** pela RN-1329 (AT-939, v9): a sidebar mostra um projeto por vez, sem expansão por projeto; `brabo.sidebar.open` deixou de ser lida.
+
 Cada projeto na sidebar ganha um chevron: clicar nele expande a linha e
 revela a lista de abas daquele projeto (Visão geral, Executores, Criativo,
 Chat, Code, Backlog, Aprovações, Insights, Gastos, Configurações), cada uma
@@ -1211,11 +1213,11 @@ montada, os cinco números saem do MESMO hook que ela usa
 (`useContagensDoProjeto`), sem requisição nova. Recolhida, o quadrado do
 projeto aberto abre um flyout com as mesmas abas.
 
-- **Onde:** `apps/web/src/routes/Shell.tsx:564` (`projetosAbertosEfetivo`),
-  `:504` (`useContagensDoProjeto`), `:519` (`irParaAba`), `:546`
-  (`flyoutAberto`), `:243` (`contagensDoResumo`);
-  `apps/web/src/routes/AbasDoProjeto.tsx:69` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
-  (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:86` (`aoTeclar`);
+- **Onde:** `apps/web/src/routes/Shell.tsx:300` (`Shell`; `projetosAbertosEfetivo` saiu na AT-939),
+  `:394` (`useContagensDoProjeto`), `:593` (`irParaAba`), `:574`
+  (`flyoutAberto`), `:290` (`contagensDoResumo`);
+  `apps/web/src/routes/AbasDoProjeto.tsx:63` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
+  (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:80` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),
   `:70` (`publicarAbaAtiva`), `:86` (`pedirAba`);
   `apps/web/src/lib/sidebar-state.ts` (`lerProjetosAbertos`/`gravarProjetosAbertos`)

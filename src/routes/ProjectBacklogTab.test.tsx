@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import i18next from 'i18next';
 import uiPtBR from '../locales/pt-BR/ui.json';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
@@ -15,6 +15,7 @@ const getCoverage = vi.fn();
 const promoteStories = vi.fn();
 const returnStory = vi.fn();
 const archiveStory = vi.fn();
+const archiveTask = vi.fn();
 const updateStoryTitle = vi.fn();
 const listWorkspaces = vi.fn();
 
@@ -24,6 +25,7 @@ vi.mock('../lib/api-client', () => ({
   promoteStories: (...args: unknown[]) => promoteStories(...args),
   returnStory: (...args: unknown[]) => returnStory(...args),
   archiveStory: (...args: unknown[]) => archiveStory(...args),
+  archiveTask: (...args: unknown[]) => archiveTask(...args),
   updateStoryTitle: (...args: unknown[]) => updateStoryTitle(...args),
   listWorkspaces: (...args: unknown[]) => listWorkspaces(...args),
   mensagemDaApi: (e: unknown) => (e instanceof Error ? e.message : 'erro'),
@@ -109,6 +111,7 @@ beforeEach(() => {
   promoteStories.mockResolvedValue({ promoted: ['story-1'], failed: [] });
   returnStory.mockResolvedValue({ ok: true });
   archiveStory.mockResolvedValue({ id: 'story-1' });
+  archiveTask.mockResolvedValue({ id: 't1' });
   updateStoryTitle.mockResolvedValue({ id: 'story-1' });
   listWorkspaces.mockResolvedValue([
     { workspace: { id: 'w1' }, role: 'developer' },
@@ -391,5 +394,66 @@ describe('ProjectBacklogTab — estado da tarefa (RN-887, AT-536)', () => {
     montar();
     const li = await linhaDa('Livre');
     expect(li.textContent).toContain('a fazer');
+  });
+});
+
+describe('ProjectBacklogTab — arquivar tarefa (AT-912)', () => {
+  const tarefa = (over: Record<string, unknown> = {}) => ({
+    id: 't1', storyId: 'story-1', title: 'Listar horários', description: '', status: 'todo',
+    assignedTo: null, blocked: false, blockedReason: null, gateStatus: null, gateCorrectionCount: 0,
+    createdAt: '', updatedAt: '', ...over,
+  });
+  const abrirHistoria = async () => fireEvent.click(await screen.findByText('Cadastrar usuário'));
+
+  const daTarefa = (titulo: string) => within(screen.getByText(titulo).closest('[data-task-state]') as HTMLElement);
+
+  it('o dono arquiva a tarefa a fazer com motivo obrigatório', async () => {
+    listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'owner' }]);
+    listBacklog.mockResolvedValue([epic([story({ status: 'ready', proposedReady: false, tasks: [tarefa()] as never })])]);
+    montar();
+    await abrirHistoria();
+    await screen.findByText('Listar horários');
+    fireEvent.click(daTarefa('Listar horários').getByRole('button', { name: 'Arquivar' }));
+    const confirmar = await screen.findByRole('button', { name: 'Arquivar tarefa' });
+    expect(confirmar).toBeDisabled();
+    fireEvent.change(screen.getByLabelText('Motivo (obrigatório)'), { target: { value: ' duplicada ' } });
+    fireEvent.click(confirmar);
+    await waitFor(() => expect(archiveTask).toHaveBeenCalledWith('proj-1', 't1', 'duplicada'));
+  });
+
+  it('o 409 da api aparece como erro e o diálogo segue aberto', async () => {
+    listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'owner' }]);
+    listBacklog.mockResolvedValue([epic([story({ status: 'ready', proposedReady: false, tasks: [tarefa()] as never })])]);
+    archiveTask.mockRejectedValue(new Error('A tarefa está com dev-agenda'));
+    montar();
+    await abrirHistoria();
+    await screen.findByText('Listar horários');
+    fireEvent.click(daTarefa('Listar horários').getByRole('button', { name: 'Arquivar' }));
+    fireEvent.change(await screen.findByLabelText('Motivo (obrigatório)'), { target: { value: 'x' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Arquivar tarefa' }));
+    expect(await screen.findByText('A tarefa está com dev-agenda')).toBeTruthy();
+    expect(screen.getByLabelText('Motivo (obrigatório)')).toBeTruthy();
+  });
+
+  it('sem ser o dono, ou com a tarefa em curso, não há botão', async () => {
+    listBacklog.mockResolvedValue([epic([story({ status: 'ready', proposedReady: false, tasks: [tarefa(), tarefa({ id: 't2', title: 'Em curso', status: 'in_progress' })] as never })])]);
+    montar();
+    await abrirHistoria();
+    await screen.findByText('Listar horários');
+    expect(daTarefa('Listar horários').queryByRole('button', { name: 'Arquivar' })).toBeNull();
+    expect(daTarefa('Em curso').queryByRole('button', { name: 'Arquivar' })).toBeNull();
+  });
+
+  it('a tarefa arquivada fica no histórico, riscada, com o motivo e sem botão', async () => {
+    listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'owner' }]);
+    listBacklog.mockResolvedValue([
+      epic([story({ status: 'ready', proposedReady: false, tasks: [tarefa({ archivedAt: '2026-11-11T00:00:00Z', archivedReason: 'duplicada' })] as never })]),
+    ]);
+    montar();
+    await abrirHistoria();
+    const item = daTarefa('Listar horários');
+    expect(item.getByText('arquivada')).toBeTruthy();
+    expect(item.getByText('Motivo: duplicada')).toBeTruthy();
+    expect(item.queryByRole('button', { name: 'Arquivar' })).toBeNull();
   });
 });

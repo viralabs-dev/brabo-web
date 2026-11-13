@@ -1,10 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { listCredentials } from '../lib/api-client';
-import { useBindingsResolvidos } from '../lib/bindings-resolvidos';
-import { derivarPrimeirosPassos, type ChaveDoPasso } from '../lib/primeiros-passos';
-import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
+import { DESTINO_DO_PASSO } from '../lib/primeiros-passos';
+import { usePrimeirosPassos } from './PrimeirosPassos.helpers';
 import { Card } from '@/components/shadcn/card';
 import { Item, ItemActions, ItemContent, ItemGroup, ItemMedia, ItemTitle, ItemDescription } from '@/components/shadcn/item';
 import styles from './PrimeirosPassos.module.css';
@@ -30,33 +27,9 @@ export function PrimeirosPassos({
   temSessao: boolean | undefined;
 }) {
   const { t } = useTranslation('overview');
-  const bindings = useBindingsResolvidos(projectId);
-  const doCriativo = bindings.doAgente('criativo');
-  // A Visão geral não lê credenciais, e o orçamento da carga dela é contado
-  // (`duas-abas.orcamento.test.tsx`). Com modelo resolvido para o time o
-  // passo da credencial está coberto (o modelo já roda — local não pede
-  // chave), então a leitura só acontece quando o cartão realmente precisa
-  // dela: o time ainda sem modelo.
-  const credenciais = useQuery({
-    queryKey: ['credentials'],
-    queryFn: listCredentials,
-    staleTime: FRESCOR_DA_CONFIGURACAO_MS,
-    enabled: doCriativo === null,
-  });
-
-  const passos = derivarPrimeirosPassos({
-    credenciais: doCriativo ? 1 : credenciais.data?.length,
-    timeComModelo: doCriativo === undefined ? undefined : doCriativo !== null,
-    temSessao,
-  });
+  const passos = usePrimeirosPassos(projectId, temSessao);
   if (!passos) return null;
 
-  // A credencial é do usuário e mora em /providers (RN-911); só o modelo é do projeto.
-  const destino: Record<ChaveDoPasso, 'providers' | { tab: 'settings' | 'criativo'; section?: 'models' }> = {
-    credencial: 'providers',
-    modelo: { tab: 'settings', section: 'models' },
-    ideacao: { tab: 'criativo' },
-  };
   const feitos = passos.filter((p) => p.feito).length;
 
   return (
@@ -69,7 +42,7 @@ export function PrimeirosPassos({
       </div>
       <ItemGroup className={styles.lista}>
         {passos.map((passo) => {
-          const alvo = destino[passo.chave];
+          const alvo = DESTINO_DO_PASSO[passo.chave];
           const rotulo = t(`primeirosPassos.${passo.chave}.link`);
           return (
             <Item

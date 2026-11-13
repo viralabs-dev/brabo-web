@@ -9,12 +9,17 @@ import {
   mensagemDaApi,
   rearmDevAgent,
   unblockTask,
+  updateProject,
 } from '../lib/api-client';
 import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
 import { usePrsProntas } from '../lib/prs-prontas';
 import { useAgentesTravados } from '../lib/agentes-travados-query';
-import { assinaturaDoBacklog, tarefasBloqueadas } from '../lib/prontas-e-bloqueadas';
+import { assinaturaDoBacklog, tarefasBloqueadas, tarefasSemModulo } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
+import { Textarea } from './ui/Textarea';
+import { Input } from './ui/Input';
+import { useCurrentWorkspaceWithRole } from '../lib/hooks';
+import { roleAtLeast } from '../lib/roles';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
@@ -35,7 +40,7 @@ import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
 
-type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados';
+type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados' | 'semModulo';
 
 /** Nenhum evento local: estas ações são sempre de OUTRA sessão (AT-340). */
 const SEM_EVENTOS_LOCAIS: readonly never[] = [];
@@ -106,7 +111,14 @@ export function PendenciasDeOutrasSessoes({
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
+  const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
+  // AT-917: "Aumentar o teto" grava o teto do PROJETO (`PATCH /projects/:id`, `maintainer`).
+  const { data: comPapel } = useCurrentWorkspaceWithRole();
+  const podeEditarTeto = roleAtLeast(comPapel?.role, 'maintainer');
+  const [tetos, setTetos] = useState<Record<string, string>>({});
+  const [retornoDoTeto, setRetornoDoTeto] = useState<Record<string, { tom: 'ok' | 'erro'; texto: string }>>({});
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
+  const semModulo = filasDoChat ? tarefasSemModulo(backlogQuery.data) : [];
   // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
   // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
   const { sessionId: execucaoId, travados } = useAgentesTravados(filasDoChat ? projectId : undefined);
@@ -209,21 +221,38 @@ export function PendenciasDeOutrasSessoes({
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
     travados.length === 0 &&
+    semModulo.length === 0 &&
     perguntas.length === 0 &&
     respondidas.length === 0
   )
     return null;
 
   async function desbloquear(task: Task) {
+    if (desbloqueio[task.id] === 'enviando') return;
     setDesbloqueio((d) => ({ ...d, [task.id]: 'enviando' }));
     try {
-      await unblockTask(projectId, sessionId, task.id);
+      await unblockTask(projectId, sessionId, task.id, orientacoes[task.id]);
       setDesbloqueio((d) => ({ ...d, [task.id]: { tom: 'ok', texto: t('pendencias.bloqueadas.ok') } }));
       void queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
     } catch (erro) {
       setDesbloqueio((d) => ({
         ...d,
         [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.erro')) },
+      }));
+    }
+  }
+
+  async function gravarTeto(task: Task) {
+    const usd = Number(tetos[task.id]);
+    if (!Number.isFinite(usd) || Math.round(usd * 1_000_000) <= 0) return;
+    try {
+      await updateProject(projectId, { taskBudgetMicros: Math.round(usd * 1_000_000) });
+      void queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+      setRetornoDoTeto((r) => ({ ...r, [task.id]: { tom: 'ok', texto: t('pendencias.bloqueadas.tetoOk') } }));
+    } catch (erro) {
+      setRetornoDoTeto((r) => ({
+        ...r,
+        [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.tetoErro')) },
       }));
     }
   }
@@ -252,7 +281,7 @@ export function PendenciasDeOutrasSessoes({
         decisaoDaPolitica={decisoes.get(acao.id)}
         bloqueio={podeDecidir ? undefined : t('pendencias.semPapel')}
         onApprove={() => decidir(acao, () => approveAction(projectId, acao.sessionId, acao.id))}
-        onDeny={() => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id))}
+        onDeny={(motivo) => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id, motivo))}
         onAlwaysAllow={() =>
           decidir(acao, async () => {
             await approveAlwaysAction(projectId, acao.sessionId, acao.id);
@@ -329,7 +358,7 @@ export function PendenciasDeOutrasSessoes({
                 decisaoDaPolitica={decisoes.get(acao.id)}
                 bloqueio={podeDecidir ? undefined : t('pendencias.semPapel')}
                 onApprove={() => decidir(acao, () => approveAction(projectId, acao.sessionId, acao.id))}
-                onDeny={() => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id))}
+                onDeny={(motivo) => decidir(acao, () => denyAction(projectId, acao.sessionId, acao.id, motivo))}
                 onAlwaysAllow={() =>
                   decidir(acao, async () => {
                     await approveAlwaysAction(projectId, acao.sessionId, acao.id);
@@ -356,9 +385,10 @@ export function PendenciasDeOutrasSessoes({
     prontas: prontas.length,
     bloqueadas: bloqueadas.length,
     travados: travados.length,
+    semModulo: semModulo.length,
     perguntas: totalDePerguntas,
   };
-  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
+  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
@@ -406,7 +436,7 @@ export function PendenciasDeOutrasSessoes({
           onValueChange={(v) => setAberta((v[0] as ChaveDeFila | undefined) ?? null)}
         >
           <Ajuda assunto={t('pendencias.abas')}>{t('pendencias.nota')}</Ajuda>
-          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados'] as const)
+          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
             .filter((chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0))
             .map((chave) => (
               <ToggleGroupItem key={chave} value={chave}>
@@ -513,10 +543,18 @@ export function PendenciasDeOutrasSessoes({
                         <p className={styles.nota}>{diagnostico}</p>
                       </Disclosure>
                     )}
+                    <Textarea
+                      label={t('pendencias.bloqueadas.orientacao')}
+                      placeholder={t('pendencias.bloqueadas.orientacaoDica')}
+                      maxLength={2000}
+                      value={orientacoes[task.id] ?? ''}
+                      disabled={!podeDecidir || estado === 'enviando'}
+                      onChange={(e) => setOrientacoes((o) => ({ ...o, [task.id]: e.target.value }))}
+                    />
                     <div className={styles.acoesDaLinha}>
                       <Button
                         variant="secondary"
-                        disabled={!podeDecidir}
+                        disabled={!podeDecidir || estado === 'enviando'}
                         loading={estado === 'enviando'}
                         onClick={() => void desbloquear(task)}
                       >
@@ -526,6 +564,49 @@ export function PendenciasDeOutrasSessoes({
                         <span className={styles.nota}>{t('pendencias.bloqueadas.semPapel')}</span>
                       )}
                     </div>
+                    {task.blockedOrigin === 'politica' && (
+                      <div className={styles.acoesDaLinha} data-testid="aumentar-teto">
+                        {tetos[task.id] === undefined ? (
+                          <Button
+                            variant="secondary"
+                            disabled={!podeEditarTeto}
+                            onClick={() => setTetos((v) => ({ ...v, [task.id]: '' }))}
+                          >
+                            {t('pendencias.bloqueadas.aumentarTeto')}
+                          </Button>
+                        ) : (
+                          <>
+                            <Input
+                              mono
+                              type="number"
+                              min={0.01}
+                              step={0.01}
+                              aria-label={t('pendencias.bloqueadas.tetoCampo')}
+                              value={tetos[task.id]}
+                              onChange={(e) => setTetos((v) => ({ ...v, [task.id]: e.target.value }))}
+                            />
+                            <Button
+                              variant="secondary"
+                              disabled={!(Number(tetos[task.id]) > 0)}
+                              onClick={() => void gravarTeto(task)}
+                            >
+                              {t('pendencias.bloqueadas.gravarTeto')}
+                            </Button>
+                          </>
+                        )}
+                        {!podeEditarTeto && (
+                          <span className={styles.nota}>{t('pendencias.bloqueadas.tetoSemPapel')}</span>
+                        )}
+                        {retornoDoTeto[task.id] && (
+                          <span
+                            className={retornoDoTeto[task.id].tom === 'erro' ? styles.erro : styles.nota}
+                            role={retornoDoTeto[task.id].tom === 'erro' ? 'alert' : 'status'}
+                          >
+                            {retornoDoTeto[task.id].texto}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     {estado && estado !== 'enviando' && (
                       <p
                         className={estado.tom === 'erro' ? styles.erro : styles.nota}
@@ -543,6 +624,24 @@ export function PendenciasDeOutrasSessoes({
                 pagina={pBloqueadas}
                 aoMudar={irParaPagina('bloqueadas')}
               />
+            </section>
+          ))}
+          {painel('semModulo', semModulo.length > 0 && (
+            <section
+              className={styles.fila}
+              aria-label={t('pendencias.filas.semModulo')}
+              data-testid="fila-tarefas-sem-modulo"
+            >
+              <h4 className={styles.filaTitulo}>
+                {t('pendencias.filas.semModulo')}
+                <span className={styles.contagem}>{semModulo.length}</span>
+              </h4>
+              {semModulo.map((task) => (
+                <div key={task.id} className={styles.grupo} data-testid="tarefa-sem-modulo">
+                  <div className={styles.origem}>{task.title}</div>
+                  <p className={styles.nota}>{t('pendencias.semModulo.motivo')}</p>
+                </div>
+              ))}
             </section>
           ))}
           {painel('travados', travados.length > 0 && (

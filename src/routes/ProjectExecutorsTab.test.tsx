@@ -42,6 +42,8 @@ const getProjectsSummary = vi.fn();
 const getProjectPendingActions = vi.fn();
 const listBacklog = vi.fn();
 const activateExecution = vi.fn();
+const listAgentAreas = vi.fn();
+const getRepository = vi.fn();
 
 vi.mock('../lib/api-client', async () => {
   const real = await vi.importActual<typeof import('../lib/api-client')>('../lib/api-client');
@@ -65,6 +67,8 @@ vi.mock('../lib/api-client', async () => {
     getProjectPendingActions: (...args: unknown[]) => getProjectPendingActions(...args),
     listBacklog: (...args: unknown[]) => listBacklog(...args),
     activateExecution: (...args: unknown[]) => activateExecution(...args),
+    listAgentAreas: (...args: unknown[]) => listAgentAreas(...args),
+    getRepository: (...args: unknown[]) => getRepository(...args),
     approveAction: vi.fn(),
     denyAction: vi.fn(),
     approveAlwaysAction: vi.fn(),
@@ -342,14 +346,17 @@ describe('ProjectExecutorsTab — sessão de execução (RN-139)', () => {
     expect(screen.getByText('#sess-1')).toBeInTheDocument();
   });
 
-  it('sem execução ativa, diz isso explicitamente — nunca um grid em branco', async () => {
+  it('sem execução ativa, o cartão de chamada diz isso — nunca um grid em branco', async () => {
     getActiveExecutionSession.mockResolvedValue(null);
 
     montar();
 
     expect(
-      await screen.findByText('Nenhuma execução ativa neste projeto no momento.'),
+      await screen.findByTestId('cartao-de-chamada'),
     ).toBeInTheDocument();
+    // v9 (AT-943): parada, o topo é só o cartão de chamada.
+    expect(screen.queryByRole('heading', { name: 'Executores' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Nenhuma execução ativa neste projeto no momento.')).not.toBeInTheDocument();
     // Sem sessão, a aba não deve nem tentar buscar eventos/roster: o estado
     // vazio da RN-088 é "não pergunte a pergunta seguinte", não "pergunte e
     // finja que a resposta não importa".
@@ -574,7 +581,7 @@ describe('ProjectExecutorsTab — bindings em lote (AT-339)', () => {
     }));
     montar();
 
-    expect(await screen.findByText(/Modelo Dois/)).toBeInTheDocument();
+    expect(await screen.findByText(/Modelo Dois ·/)).toBeInTheDocument();
     // Duas leituras: o catálogo (com as áreas) e os extras — só `dev-pagamentos`.
     expect(getResolvedModelBindings).toHaveBeenCalledTimes(2);
     expect(getResolvedModelBindings).toHaveBeenCalledWith('proj-1', ['dev-pagamentos'], []);
@@ -593,7 +600,7 @@ describe('ProjectExecutorsTab — bindings em lote (AT-339)', () => {
 
     expect((await screen.findAllByText('dev-pagamentos')).length).toBeGreaterThan(0);
     await waitFor(() => expect(getResolvedModelBindings).toHaveBeenCalledTimes(2));
-    expect(screen.queryByText(/Modelo Dois/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Modelo Dois ·/)).not.toBeInTheDocument();
     expect(getAgentModelBinding).not.toHaveBeenCalled();
   });
 });
@@ -628,16 +635,35 @@ describe('ProjectExecutorsTab — religar a execução (RN-794)', () => {
     },
   ];
 
-  it('diz quantas tarefas ficaram pendentes e religa pelo execution/activate', async () => {
+  it('o cartão de chamada liga pelo execution/activate', async () => {
     getActiveExecutionSession.mockResolvedValue(null);
     listBacklog.mockResolvedValue(backlog);
     activateExecution.mockResolvedValue({ sessionId: 'sess-2' });
 
     montar();
 
-    expect(await screen.findByText(/2 tarefas seguem pendentes/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Religar execução' }));
+    expect(await screen.findByText(/A execução está desligada/)).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
     await waitFor(() => expect(activateExecution).toHaveBeenCalledWith('proj-1'));
+  });
+
+  it('v9: um cartão por área da api (Dev, Infra, QA) e o motivo do repositório dentro do cartão', async () => {
+    getActiveExecutionSession.mockResolvedValue(null);
+    listBacklog.mockResolvedValue(backlog);
+    getRepository.mockResolvedValue(null);
+    const area = (key: string, maxParallel: number, members: string[]) => ({
+      id: key, projectId: 'proj-1', key, leadAgentId: key, maxParallel, budgetMicros: null, spentMicros: 0, members,
+    });
+    listAgentAreas.mockResolvedValue([area('dev', 5, []), area('infra', 2, ['infra-workflows']), area('qa', 4, ['a', 'b'])]);
+
+    montar();
+
+    await waitFor(() => expect(screen.getByTestId('linha-da-area-dev')).toHaveTextContent('0 / 5'));
+    expect(screen.getByTestId('linha-da-area-dev')).toHaveTextContent('sem membros ainda');
+    expect(screen.getByTestId('linha-da-area-infra')).toHaveTextContent('1 membro');
+    expect(screen.getByTestId('linha-da-area-qa')).toHaveTextContent('2 membros');
+    expect(await screen.findByTestId('sem-repositorio')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ativar execução' })).toBeDisabled();
   });
 
   it('recusa da api (409) aparece com a frase dela', async () => {
@@ -649,7 +675,7 @@ describe('ProjectExecutorsTab — religar a execução (RN-794)', () => {
 
     montar();
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Religar execução' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
     expect(await screen.findByRole('alert')).toHaveTextContent('O projeto não tem repositório.');
   });
 

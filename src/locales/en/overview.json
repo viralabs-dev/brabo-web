@@ -1,4 +1,9 @@
 {
+  "faixa": {
+    "titulo": "Needs you",
+    "verTodas": "View all →",
+    "vazio": "Nothing is waiting for you right now."
+  },
   "architectureTab": {
     "title": "Architecture",
     "emptyTitle": "No architecture yet",
@@ -13,7 +18,22 @@
     "noAdrs": "No ADR proposed yet.",
     "pendenciesLabel": "Cross-validation pendencies",
     "reasonNoModule": "no module linked",
-    "reasonMissingModule": "missing module: {{missing}}"
+    "reasonMissingModule": "missing module: {{missing}}",
+    "cols": {
+      "module": "Module",
+      "stack": "Stack",
+      "responsibility": "Responsibility",
+      "dependsOn": "Depends on",
+      "stories": "Stories"
+    },
+    "proposalTag": "PROPOSAL",
+    "adrProposal": "ADR “{{titulo}}” is waiting for your approval to become a PR.",
+    "decide": "Decide",
+    "header": {
+      "modules": "modules · v{{version}}",
+      "c4": "C4 level 2",
+      "byArchitect": "by the Architect · {{hora}}"
+    }
   },
   "c4": {
     "titleContext": "Context",
@@ -31,7 +51,9 @@
     "summary_other": "{{count}} agents · {{working}} working · {{waiting}} waiting",
     "autonomyErrorTitle": "Could not change autonomy",
     "rearmSuccess": "Agent rearmed",
-    "rearmErrorTitle": "Could not rearm the agent"
+    "rearmErrorTitle": "Could not rearm the agent",
+    "wakeSuccess": "Looking for a task",
+    "wakeErrorTitle": "Could not wake the agent"
   },
   "timeline": {
     "title": "Team timeline",
@@ -71,6 +93,9 @@
     "modelosLocaisEmbedding_other": "{{count}} embedding models (search only, do not chat)"
   },
   "activity": {
+    "verEventos": "Events",
+    "verTurnos": "Turns",
+    "turnosVazio": "No turn has finished yet.",
     "title": "Activity",
     "count_one": "{{count}} event",
     "count_other": "{{count}} events",
@@ -110,7 +135,9 @@
     "requestDeniedTitle": "Request denied",
     "requestError": "Could not request",
     "unblocking": "Unblocking…",
-    "unblockNeedsSession": "The session is still loading: unblocking needs it."
+    "unblockNeedsSession": "The session is still loading: unblocking needs it.",
+    "unblockGuidance": "Guidance for the dev (optional)",
+    "unblockGuidanceHint": "E.g. the entry point is injected by the composer; do not start the module on its own."
   },
   "architectureSummary": {
     "title": "Architecture",
@@ -139,6 +166,53 @@
       "titulo": "Start the first ideation",
       "pendente": "Tell the Creative agent your idea — that is where the stories come from.",
       "link": "Open the Creative agent →"
+    }
+  },
+  "proximoPasso": {
+    "titulo": "Next step",
+    "agente": "Wait: {{agente}} is working",
+    "agente_trabalhando": {
+      "texto": "An agent is working in this session.",
+      "link": "Open the session →"
+    },
+    "continuar_ideacao": {
+      "titulo": "Continue the conversation in the session",
+      "texto": "There are no stories in the backlog yet.",
+      "link": "Open the Criativo →"
+    },
+    "confirmar_arquitetura": {
+      "titulo": "Confirm the architecture",
+      "texto": "There are stories, but the module map is missing or has pendencies.",
+      "link": "Open the architecture →"
+    },
+    "ligar_modulo": {
+      "titulo_one": "Link {{count}} task to a module",
+      "titulo_other": "Link {{count}} tasks to a module",
+      "texto": "Nobody picks up a task until it has a module.",
+      "link": "Open the architecture →"
+    },
+    "desbloquear": {
+      "titulo_one": "Unblock {{count}} task",
+      "titulo_other": "Unblock {{count}} tasks",
+      "texto": "A blocked task does not move on its own.",
+      "link": "See the execution →"
+    },
+    "ativar_execucao": {
+      "titulo": "Activate the execution",
+      "texto_one": "{{count}} task ready in the backlog.",
+      "texto_other": "{{count}} tasks ready in the backlog.",
+      "link": "See the execution →"
+    },
+    "acompanhar_execucao": {
+      "titulo": "Follow the execution",
+      "texto_one": "{{count}} task in progress.",
+      "texto_other": "{{count}} tasks in progress.",
+      "link": "See the execution →"
+    },
+    "rodar_entregavel": {
+      "titulo": "Run the deliverable on your machine",
+      "texto": "All tasks are done.",
+      "link": "See how to run →"
     }
   },
   "rodarNaSuaMaquina": {

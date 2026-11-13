@@ -1,6 +1,6 @@
 {
   "topbar": {
-    "title": "Проекты",
+    "title": "Главная",
     "searchPlaceholder": "Искать проекты…",
     "newProject": "Новый проект"
   },
@@ -28,9 +28,17 @@
   },
   "status": {
     "heading": "Brabo — статус платформы",
+    "resumo": {
+      "ok": "Всё работает",
+      "erro": "Сервис недоступен",
+      "checking": "Проверка сервисов…",
+      "detalhe": "Последняя проверка {{instante}} · обновляется каждые {{segundos}} с"
+    },
+    "latenciaValor": "{{ms}} мс",
     "columns": {
       "service": "Сервис",
       "status": "Статус",
+      "latency": "Задержка",
       "lastCheck": "Последняя проверка"
     },
     "services": {
@@ -56,12 +64,53 @@
       "failed": "Ошибка",
       "awaitingPlanDecision": "Ждёт вашего решения"
     },
-    "online": "{{count}} онлайн"
+    "online": "{{count}} онлайн",
+    "aguardandoVoce": "{{agente}} ждёт вас"
   },
   "projectStatus": {
     "saudavel": "активен",
     "atencao": "бюджет ≥70%",
     "risco": "требует внимания",
     "inativo": "нет недавней активности"
+  },
+  "inicio": {
+    "indisponivel": "недоступно",
+    "projetos": {
+      "rotulo": "Активные проекты"
+    },
+    "agentes": {
+      "rotulo": "Агенты сейчас",
+      "trabalhando_one": "{{count}} работает",
+      "trabalhando_few": "{{count}} работают",
+      "trabalhando_many": "{{count}} работают",
+      "trabalhando_other": "{{count}} работают",
+      "aguardando_one": "{{count}} ждёт вас",
+      "aguardando_few": "{{count}} ждут вас",
+      "aguardando_many": "{{count}} ждут вас",
+      "aguardando_other": "{{count}} ждут вас"
+    },
+    "gasto": {
+      "rotulo": "Расход за месяц",
+      "soOwner": "лимит виден владельцу",
+      "tetoIndisponivel": "лимит недоступен",
+      "teto": "лимит {{valor}}"
+    },
+    "caixa": {
+      "rotulo": "Ящик решений",
+      "aprovacoes_one": "{{n}} подтверждение",
+      "aprovacoes_few": "{{n}} подтверждения",
+      "aprovacoes_many": "{{n}} подтверждений",
+      "aprovacoes_other": "{{n}} подтверждения",
+      "demais": "PR {{prs}} · повышения {{promocoes}} · архитектура {{arquitetura}} · гипотезы {{hipoteses}}"
+    }
+  },
+  "secaoProjetos": "Проекты",
+  "novoCartao": {
+    "titulo": "Новый проект",
+    "descricao": "Начните с брифа или подключите существующий репозиторий."
+  },
+  "atividadeRecente": {
+    "titulo": "Недавняя активность",
+    "indisponivel": "Не удалось прочитать недавнюю активность."
   }
 }

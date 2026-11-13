@@ -1,10 +1,8 @@
 {
   "projectInsightsTab": {
-    "header": "洞察",
     "errorTitle": "无法加载假设。",
     "loading": "正在加载假设…",
     "empty": "还没有假设 —— Psicólogo 会分析每个已结束的会话。",
-    "emptyPaused": "Psicólogo 已暂停 —— 在重新启用之前不会分析任何会话。",
     "summary_other": "{{count}} 个假设 · {{pending}} 个等待决定",
     "analysisStrip": {
       "tier": "分诊 {{tier}}",
@@ -13,7 +11,6 @@
       "metaHypotheses_other": "{{count}} 个假设",
       "reanalyzeTitleEnabled": "重新运行分析并消耗预算；之前的分析保留在历史中"
     },
-    "pausedNotice": "根据团队决定，Psicólogo 已全局暂停 —— 暂时不会进行新的重新分析。已生成的假设仍保留在这里。",
     "toasts": {
       "acceptError": "无法接受该假设",
       "dismissError": "无法驳回该假设",
@@ -24,7 +21,28 @@
       "psychologistPausedFallback": "Psicólogo 已全局停用。",
       "reanalyzeError": "无法将重新分析加入队列"
     },
-    "emptyTitle": "暂无假设"
+    "emptyTitle": "暂无假设",
+    "estado": {
+      "pausado": "心理学家已暂停",
+      "ativo": "心理学家已启用",
+      "pausadoTag": "已暂停",
+      "ativoTag": "已启用",
+      "descricao": "启用后，它会基于真实事件提出关于团队的假设，每一条都等待你接受或拒绝。",
+      "pausadoDescricao": "在重新启用之前不会分析任何会话。启用后，它会基于真实事件提出关于团队的假设，每一条都等待你接受或拒绝。",
+      "reativar": "重新启用心理学家",
+      "reativarExplicacao": "暂停是团队的决定。要重新启用，负责运行该实例的人需在 engine 中设置 PSYCHOLOGIST_ENABLED=true 并重启它。已生成的假设不会改变；新的分析会再次消耗预算。"
+    },
+    "exemplo": {
+      "titulo": "假设的呈现方式",
+      "rotulo": "示例",
+      "observacao": "“PO 提出了创意已在简报中回答过的开放问题。”",
+      "sugestao": "建议：把完整简报放进 PO 的上下文。接受会生成带版本的指令补丁，这是上限：只有你能应用。",
+      "tag": "假设",
+      "ancorada": "基于 3 个事件",
+      "aceitar": "接受",
+      "recusar": "拒绝",
+      "inerte": "这是示例"
+    }
   },
   "hypothesisCard": {
     "status": {

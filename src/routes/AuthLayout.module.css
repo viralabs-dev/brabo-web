@@ -125,75 +125,105 @@
 }
 
 /*
- * O modo duplo. Vem DEPOIS de `.container` de propósito: as duas regras têm a
- * mesma especificidade (uma classe), então quem manda no `max-width` é a
- * ordem no arquivo.
- *
- * `align-items: center` e não `start`: as duas colunas têm alturas
- * independentes e nenhuma delas é "a régua" — encostar as duas no topo
- * deixaria a marca alinhada com o título do card por acidente de altura, e
- * desalinhada na primeira frase a mais.
+ * O modo duplo (v9, AT-940): a tela vira DUAS METADES. Esquerda em
+ * `--surface-1`, com borda à direita, marca no topo, manchete no meio e os
+ * papéis no pé; direita com o formulário SEM cartão. Só vale de 901px para
+ * cima; abaixo disso nada daqui se aplica e a pilha é a das outras três
+ * telas, com a identidade em cima do formulário.
  */
-.containerDuplo {
-  max-width: 940px;
-  display: flex;
-  align-items: center;
-  gap: 64px;
-}
-
-.containerDuplo .colunaIdentidade {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  /* `1 1 0` com `min-width: 0`: a coluna da esquerda absorve a sobra e pode
-     ENCOLHER — sem o `min-width`, um caminho longo dentro dela empurraria o
-     card para fora da tela, que é o defeito clássico de item de flex. */
-  flex: 1 1 0;
-  min-width: 0;
-}
-
-/*
- * A marca perde a margem de baixo aqui: no modo duplo quem dá o respiro entre
- * ela e o texto é o `gap` da coluna, e somar os dois abriria 54px.
- */
-.containerDuplo .marca {
-  margin-bottom: 0;
-}
-
-.containerDuplo .colunaFormulario {
-  display: block;
-  /* A coluna do formulário mantém EXATAMENTE a largura do card de sempre
-     (412px, do mock aprovado): o layout novo põe o card ao lado de outra
-     coisa, não o redesenha. */
-  flex: 0 0 412px;
-  max-width: 412px;
-}
-
-/*
- * Abaixo de 900px não cabem duas colunas de leitura confortável, e o
- * formulário é o que a pessoa veio fazer: o modo duplo se desfaz por completo
- * — os dois invólucros voltam a `contents` e a pilha é a mesma das outras
- * telas, com a identidade em cima do card.
- */
-@media (max-width: 900px) {
-  .containerDuplo {
+@media (min-width: 901px) {
+  .telaDupla {
     display: block;
-    max-width: 412px;
+    padding: 0;
   }
 
-  .containerDuplo .colunaIdentidade,
-  .containerDuplo .colunaFormulario {
-    display: contents;
+  .telaDupla .grade,
+  .telaDupla .brilho {
+    display: none;
+  }
+
+  .containerDuplo {
+    max-width: none;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .containerDuplo .colunaIdentidade {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: var(--space-5);
+    min-width: 0;
+    padding: 56px;
+    background: var(--surface-1);
+    border-right: 1px solid var(--border);
   }
 
   .containerDuplo .marca {
-    margin-bottom: 26px;
+    margin-bottom: 0;
   }
 
-  /* Com os invólucros de volta a `contents`, o `gap` da coluna não existe
-     mais: o respiro entre o bloco de ambiente e o card passa a ser margem do
-     próprio bloco. `* + *` porque o primeiro filho é a marca, que já tem a
-     margem dela. */
+  .containerDuplo .tagline {
+    display: none;
+  }
+
+  .containerDuplo .nome {
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .containerDuplo .selo {
+    width: 28px;
+    height: 28px;
+    border-radius: var(--r-sm);
+    box-shadow: none;
+  }
+
+  .containerDuplo .selo svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .containerDuplo .colunaFormulario {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    padding: var(--space-5) var(--space-4);
+  }
+
+  /* Formulário sem cartão: some o fundo, a borda, a sombra e o padding. */
+  .containerDuplo .cartao {
+    background: none;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+
+  .containerDuplo .cabeca {
+    padding: 0 0 4px;
+  }
+
+  .containerDuplo .corpo {
+    padding: 14px 0 0;
+  }
+
+  .containerDuplo .rodapeCartao {
+    background: none;
+    border-top: none;
+    padding: var(--space-3) 0 0;
+  }
+}
+
+/*
+ * Abaixo de 900px a identidade empilha em cima do formulário; o `gap` da
+ * coluna não existe (os invólucros são `contents`), então o respiro é margem.
+ */
+@media (max-width: 900px) {
   .containerDuplo .colunaIdentidade > * + * {
     margin-bottom: 22px;
   }
@@ -243,11 +273,26 @@
 }
 
 /*
- * A frase de identidade da coluna da esquerda: o que o produto faz, em uma
- * respiração. Maior que o corpo do card (15px contra 13px) porque é a única
- * prosa da tela que não é rótulo de campo — e é `<p>`, não cabeçalho, para o
+ * Identidade da coluna da esquerda. A manchete é `<p>`, não cabeçalho, para o
  * título do card seguir sendo o único `<h1>` da página.
  */
+.meio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.manchete {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(28px, 3.4vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  max-width: 18em;
+}
+
 .pitch {
   margin: 0;
   font-family: var(--font-body);
@@ -255,6 +300,60 @@
   line-height: 1.6;
   color: var(--text-secondary);
   max-width: 42ch;
+}
+
+.promessas {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.promessas li::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: var(--space-2);
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.pe {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  gap: 6px;
+}
+
+/* Inicial na cor do papel, sobre uma mistura dela com a superfície. */
+.chip {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: color-mix(in srgb, currentColor 14%, transparent);
+  border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
+}
+
+.papeis {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
 }
 
 /* O card. `overflow: hidden` é o que faz o rodapé respeitar o raio. */

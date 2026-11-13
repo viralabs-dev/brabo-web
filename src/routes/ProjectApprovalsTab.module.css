@@ -146,3 +146,78 @@
   color: var(--danger);
   border-color: var(--danger-line);
 }
+
+/* AT-944 (v9): PRs de dev agents e de infra lado a lado. */
+.portoes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+.cartaoDoPortao {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-1, transparent);
+}
+
+.cabecaDoPortao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tituloDoPortao {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.fraseDoPortao {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.cartaoDoPortao .queue {
+  margin-top: 14px;
+}
+
+.decididas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.linhaDecidida {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.linhaDecidida + .linhaDecidida {
+  border-top: 1px solid var(--border);
+}
+
+.fraseDecidida {
+  flex: 1;
+  min-width: 0;
+}
+
+.pontoDecidida {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.pontoDecidida[data-tom='success'] { background: var(--success, #3dba8c); }
+.pontoDecidida[data-tom='warning'] { background: var(--warning, #e0a030); }
+.pontoDecidida[data-tom='danger'] { background: var(--danger, #e5484d); }

@@ -1,0 +1,48 @@
+{
+  "titulo": "Decision inbox",
+  "subtitulo": "Everything waiting on you, across all projects. Each queue counts on its own: an approval is not the same as a hypothesis, and the screen does not add them up.",
+  "seletor": "Pending or decided",
+  "modo": {
+    "pending": "Pending",
+    "decided": "Decided"
+  },
+  "erro": "Could not load the decision inbox.",
+  "carregando": "Loading…",
+  "filas": {
+    "aprovacoes": "Approvals",
+    "prs": "PRs to merge",
+    "promocoes": "Story promotions",
+    "arquitetura": "Architecture pending items",
+    "hipoteses": "Hypotheses"
+  },
+  "vazio": {
+    "aprovacoes": "No action waiting for a decision.",
+    "prs": "No PR waiting for merge",
+    "promocoes": "No story waiting for promotion.",
+    "arquitetura": "No architecture pending items.",
+    "hipoteses": "No Psychologist hypothesis waiting for a decision."
+  },
+  "vazioArquiteturaDecididas": "Architecture is a derived pending item: there is no human decision to list here.",
+  "truncada": "Showing {{mostrados}} of {{total}}; the rest is in the project tab.",
+  "gateParado": "The {{gate}} gate is stopped until you decide this action.",
+  "abrir": "Open",
+  "dataEmprestada": "story updated {{tempo}}",
+  "motivo": {
+    "no_module": "The story has no module.",
+    "missing_module": "Modules missing from the map: {{modulos}}."
+  },
+  "legenda": {
+    "aprovacoes": "actions with external effect",
+    "prs": "passed QA and SecOps",
+    "promocoes": "stories ready to promote",
+    "arquitetura": "modules missing from the map",
+    "hipoteses": "from the Psychologist, about the team"
+  },
+  "vazioPrs": "Merging into a protected branch is always manual. When a PR passes the gates, it shows up here.",
+  "psicologoPausado": "The Psychologist is paused",
+  "psicologoPausadoDetalhe": "No session is analyzed until it is re-enabled.",
+  "aprovar": "Approve",
+  "negar": "Deny",
+  "decidirNoCard": "Plan: decide on the card, with cost and reason.",
+  "projetos_other": "{{count}} projects"
+}

@@ -18,8 +18,9 @@ function painel<K extends string>(
 }
 
 const ProjectOverviewTab = painel(() => import('./ProjectOverviewTab'), 'ProjectOverviewTab');
+const ProjectTodasTab = painel(() => import('./ProjectSessionsTab'), 'ProjectTodasTab');
 const ProjectCriativoTab = painel(() => import('./ProjectSessionsTab'), 'ProjectCriativoTab');
-const ProjectChatShell = painel(() => import('./ProjectChatShell'), 'ProjectChatShell');
+const ProjectChatTab = painel(() => import('./ProjectSessionsTab'), 'ProjectChatTab');
 const ProjectCodeTab = painel(() => import('./ProjectCodeTab'), 'ProjectCodeTab');
 const ProjectPrsTab = painel(() => import('./ProjectPrsTab'), 'ProjectPrsTab');
 const ProjectExecutorsTab = painel(() => import('./ProjectExecutorsTab'), 'ProjectExecutorsTab');
@@ -29,6 +30,7 @@ const ProjectArchitectureTab = painel(
   'ProjectArchitectureTab',
 );
 const ProjectApprovalsTab = painel(() => import('./ProjectApprovalsTab'), 'ProjectApprovalsTab');
+const PermissoesDoProjeto = painel(() => import('./PermissoesDoProjeto'), 'PermissoesDoProjeto');
 const ProjectInsightsTab = painel(() => import('./ProjectInsightsTab'), 'ProjectInsightsTab');
 const ProjectSpendTab = painel(() => import('./ProjectSpendTab'), 'ProjectSpendTab');
 const ProjectSettingsTab = painel(() => import('./ProjectSettingsTab'), 'ProjectSettingsTab');
@@ -65,7 +67,7 @@ const ProjectSettingsTab = painel(() => import('./ProjectSettingsTab'), 'Project
  * tempo — desde o ADR 0211 na lista do projeto da sidebar, `routes/AbasDoProjeto.tsx`) e duas chaves novas ainda em placeholder (`prs`,
  * `arquitetura` — Ondas 2/3 entregam o conteúdo real). A fusão mais visível
  * desta onda: `sessions` ("Chat") e `rag` ("Chat RAG") viraram UMA aba só,
- * `chat`, com um controle segmentado por dentro (`ProjectChatShell.tsx`) —
+ * `chat`, com um controle segmentado por dentro (removido na AT-893) —
  * fusão de CONTÊINER DE UI, não de lógica. `ProjectChatTab` (ativa agente,
  * gasta a chave do owner — RN-058) e `ProjectRagTab` (busca read-only sobre
  * o índice, sem agente — RN-202/ADR 0082) continuam os dois caminhos de
@@ -136,19 +138,8 @@ export interface AbaDoProjeto {
    * aba, e uma condição escrita na moldura envelhece calada.
    */
   semRespiro?: boolean;
-  /**
-   * O grupo da régua a que esta aba pertence (PROGRAMA de abas agrupadas,
-   * Onda 1). Ausente = aba SOLTA no nível do topo, junto dos grupos.
-   *
-   * `ordem` aqui é a posição do GRUPO entre os itens de topo — grupos e abas
-   * soltas compartilham o mesmo espaço de ordenação (ver `GRUPOS_DO_PROJETO`)
-   * — nunca a posição desta aba DENTRO do grupo, que continua sendo o
-   * `ordem` de fora deste campo. Toda aba do mesmo `grupo.chave` declara o
-   * MESMO `label`/`ordem` de grupo; é redundante por design (o registro
-   * continua sendo uma lista plana, sem árvore para editar à mão) e a
-   * derivação usa o primeiro valor que encontrar.
-   */
-  grupo?: { chave: string; label: string; ordem: number };
+  /** A seção (item da sidebar) a que esta aba pertence: a aba é a sub-aba dela (ADR 0294). */
+  secao: string;
 }
 
 /**
@@ -159,6 +150,7 @@ export interface AbaDoProjeto {
 const REGISTRO = [
   {
     key: 'overview',
+    secao: 'overview',
     get label() {
       return i18n.t('tabs.overview.label', { ns: 'nav' });
     },
@@ -169,38 +161,36 @@ const REGISTRO = [
   // Grupo "Agentes" — as quatro abas que giram em torno de conversar com um
   // agente ou acompanhar o que ele fez: acompanhamento de execução
   // (Executores), os dois lugares de sessão (Criativo e o Chat fundido,
-  // ver `ProjectChatShell.tsx`) e as hipóteses do Psicólogo (Insights).
+  // AT-893 o desfez) e as hipóteses do Psicólogo (Insights).
   {
     key: 'executores',
+    secao: 'trabalho',
     get label() {
       return i18n.t('tabs.executors.label', { ns: 'nav' });
     },
     component: ProjectExecutorsTab,
     ordem: 21,
-    grupo: {
-      chave: 'agentes',
-      get label() {
-        return i18n.t('groups.agentes.label', { ns: 'nav' });
-      },
-      ordem: 20,
-    },
   },
   // Criativo vem antes de Chat pelo mesmo motivo que `KIND_PRE_SELECIONADO` é
   // `criativa`: é o caminho que produz, e o outro é o de tirar dúvidas.
   {
+    // AT-893: a união das duas listas; `?tab=rag` abre aqui em modo RAG.
+    key: 'todas',
+    secao: 'sessoes',
+    get label() {
+      return i18n.t('tabs.todas.label', { ns: 'nav' });
+    },
+    component: ProjectTodasTab,
+    ordem: 21.5,
+  },
+  {
     key: 'criativo',
+    secao: 'sessoes',
     get label() {
       return i18n.t('tabs.criativo.label', { ns: 'nav' });
     },
     component: ProjectCriativoTab,
     ordem: 22,
-    grupo: {
-      chave: 'agentes',
-      get label() {
-        return i18n.t('groups.agentes.label', { ns: 'nav' });
-      },
-      ordem: 20,
-    },
   },
   {
     // A CHAVE virou `chat` nesta onda — antes era `sessions` (o rótulo já
@@ -219,34 +209,22 @@ const REGISTRO = [
     // "?tab= só vale como deep-link inicial" que o resto do registro já
     // segue).
     key: 'chat',
+    secao: 'sessoes',
     get label() {
       return i18n.t('tabs.chat.label', { ns: 'nav' });
     },
-    component: ProjectChatShell,
+    component: ProjectChatTab,
     ordem: 23,
-    grupo: {
-      chave: 'agentes',
-      get label() {
-        return i18n.t('groups.agentes.label', { ns: 'nav' });
-      },
-      ordem: 20,
-    },
   },
   {
     key: 'insights',
+    secao: 'decisoes',
     get label() {
       return i18n.t('tabs.insights.label', { ns: 'nav' });
     },
     component: ProjectInsightsTab,
     count: (c: ContagensDeAba) => c.hipotesesPendentes || undefined,
     ordem: 24,
-    grupo: {
-      chave: 'agentes',
-      get label() {
-        return i18n.t('groups.agentes.label', { ns: 'nav' });
-      },
-      ordem: 20,
-    },
   },
   // Grupo "Dev" — o que sai do trabalho de desenvolvimento: código
   // (só leitura, FASE 26), PRs (Onda 2 — listagem project-wide + merge) e as
@@ -256,54 +234,45 @@ const REGISTRO = [
     // "Código", e nenhum outro ponto compara pela STRING do rótulo — a chave
     // de deep-link e de registro continua `code` (ADR 0078).
     key: 'code',
+    secao: 'codigo',
     get label() {
       return i18n.t('tabs.code.label', { ns: 'nav' });
     },
     component: ProjectCodeTab,
     semRespiro: true,
     ordem: 31,
-    grupo: {
-      chave: 'dev',
-      get label() {
-        return i18n.t('groups.dev.label', { ns: 'nav' });
-      },
-      ordem: 30,
-    },
   },
   {
     // Onda 2 do programa de abas agrupadas: listagem de PRs do PROJETO
     // inteiro (direto do provider de git, não escopada a sessão nenhuma —
     // ver `ProjectPrsTab.tsx`) com merge propondo `git_merge` inline.
     key: 'prs',
+    secao: 'codigo',
     get label() {
       return i18n.t('tabs.prs.label', { ns: 'nav' });
     },
     component: ProjectPrsTab,
     count: (c: ContagensDeAba) => c.prsPendentes || undefined,
     ordem: 32,
-    grupo: {
-      chave: 'dev',
-      get label() {
-        return i18n.t('groups.dev.label', { ns: 'nav' });
-      },
-      ordem: 30,
-    },
   },
   {
     key: 'approvals',
+    secao: 'decisoes',
     get label() {
       return i18n.t('tabs.approvals.label', { ns: 'nav' });
     },
     component: ProjectApprovalsTab,
     count: (c: ContagensDeAba) => c.aprovacoesPendentes || undefined,
     ordem: 33,
-    grupo: {
-      chave: 'dev',
-      get label() {
-        return i18n.t('groups.dev.label', { ns: 'nav' });
-      },
-      ordem: 30,
+  },
+  {
+    key: 'permissoes',
+    secao: 'decisoes',
+    get label() {
+      return i18n.t('tabs.permissoes.label', { ns: 'nav' });
     },
+    component: PermissoesDoProjeto,
+    ordem: 34,
   },
   // Grupo "Documentação" — o que registra intenção e conhecimento do
   // produto: Backlog (histórias/épicos) e Arquitetura (Onda 3 — hoje
@@ -311,37 +280,25 @@ const REGISTRO = [
   // aterrissar, hoje espalhados pela Visão geral).
   {
     key: 'backlog',
+    secao: 'trabalho',
     get label() {
       return i18n.t('tabs.backlog.label', { ns: 'nav' });
     },
     component: ProjectBacklogTab,
     count: (c: ContagensDeAba) => c.promocoesPendentes || undefined,
     ordem: 41,
-    grupo: {
-      chave: 'documentacao',
-      get label() {
-        return i18n.t('groups.documentacao.label', { ns: 'nav' });
-      },
-      ordem: 40,
-    },
   },
   {
     // Placeholder da Onda 1 — ver comentário de `prs` acima; mesma razão.
     // TODO: substituído pela Onda 3 do programa (abas agrupadas).
     key: 'arquitetura',
+    secao: 'arquitetura',
     get label() {
       return i18n.t('tabs.architecture.label', { ns: 'nav' });
     },
     component: ProjectArchitectureTab,
     count: (c: ContagensDeAba) => c.arquiteturaPendente || undefined,
     ordem: 42,
-    grupo: {
-      chave: 'documentacao',
-      get label() {
-        return i18n.t('groups.documentacao.label', { ns: 'nav' });
-      },
-      ordem: 40,
-    },
   },
   // FASE 22 — o mesmo gasto para duas audiências (ADR 0063): o owner vê a
   // conta do workspace, o membro vê o que ele consumiu. Antes de Configurações
@@ -349,6 +306,7 @@ const REGISTRO = [
   // documentação, e não vale abrir grupo de uma aba só.
   {
     key: 'spend',
+    secao: 'spend',
     get label() {
       return i18n.t('tabs.spend.label', { ns: 'nav' });
     },
@@ -357,6 +315,7 @@ const REGISTRO = [
   },
   {
     key: 'settings',
+    secao: 'settings',
     get label() {
       return i18n.t('tabs.settings.label', { ns: 'nav' });
     },
@@ -419,114 +378,66 @@ export function abaPorChave(chave: string | undefined): AbaDoProjeto {
   );
 }
 
-/**
- * Chaves de deep-link aposentadas pela fusão da Onda 1 — `sessions`
- * (FASE 24, RN-104) e `rag` (Onda 5, frente G3) viraram segmentos de UMA
- * aba (`chat`), não duas abas. Um link antigo continua abrindo alguma
- * coisa em vez de cair silencioso na Visão geral — mesma garantia que
- * RN-104 já dava, só que agora precisa de um mapa em vez de a chave já
- * ser ela mesma (a chave não é mais a mesma).
- */
+/** Chaves de deep-link aposentadas; abrem a sub-aba de hoje. */
 const ALIASES_DE_ABA: Readonly<Record<string, ChaveDeAba>> = {
   sessions: 'chat',
-  rag: 'chat',
+  rag: 'todas',
   // AT-394: o rótulo da aba é "Histórias", e é isso que se digita na URL.
   historias: 'backlog',
 };
 
 /**
- * O guarda ESTENDIDO: aceita a chave atual OU um alias aposentado, sempre
- * resolvendo para o valor de hoje. É esta função, e não `ehChaveDeAba`
- * sozinha, que o `validateSearch` do router usa — `ehChaveDeAba` continua
- * validando só contra o registro atual, e é o que os testes usam para
- * provar que toda `ChaveDeAba` bate com uma aba de verdade.
+ * As OITO seções da sidebar (ADR 0294, AT-886). A ordem das `subs` é a da
+ * faixa; a primeira é o destino do item da seção. `todas` (AT-893) e
+ * `permissoes` (AT-895) entram aqui, uma linha cada, quando tiverem painel.
  */
-export function resolverChaveDeAba(valor: unknown): ChaveDeAba | undefined {
-  if (ehChaveDeAba(valor)) return valor;
-  if (typeof valor === 'string' && valor in ALIASES_DE_ABA) {
-    return ALIASES_DE_ABA[valor];
-  }
-  return undefined;
+export interface SecaoDoProjeto {
+  chave: string;
+  label: string;
+  subs: readonly ChaveDeAba[];
+}
+
+const SECOES_BASE = [
+  { chave: 'overview', subs: ['overview'] },
+  { chave: 'sessoes', subs: ['todas', 'criativo', 'chat'] },
+  { chave: 'trabalho', subs: ['backlog', 'executores'] },
+  { chave: 'codigo', subs: ['code', 'prs'] },
+  { chave: 'decisoes', subs: ['approvals', 'insights', 'permissoes'] },
+  { chave: 'arquitetura', subs: ['arquitetura'] },
+  { chave: 'spend', subs: ['spend'] },
+  { chave: 'settings', subs: ['settings'] },
+] as const satisfies readonly { chave: string; subs: readonly ChaveDeAba[] }[];
+
+export const SECOES_DO_PROJETO: readonly SecaoDoProjeto[] = SECOES_BASE.map((s) => ({
+  chave: s.chave,
+  // getter: acompanha a troca de idioma (mesmo motivo dos rótulos do REGISTRO)
+  get label() {
+    return i18n.t(`sections.${s.chave}`, { ns: 'nav' });
+  },
+  subs: s.subs,
+}));
+
+/** O rótulo da sub-aba na faixa (ADR 0294: Ideação, Conversa, Execução...). */
+export function rotuloDeSub(chave: ChaveDeAba): string {
+  return i18n.t(`subs.${chave}`, { ns: 'nav' });
+}
+
+export function secaoDaChave(chave: ChaveDeAba): SecaoDoProjeto {
+  return SECOES_DO_PROJETO.find((s) => s.subs.includes(chave))!;
 }
 
 /**
- * A estrutura agrupada da régua (PROGRAMA de abas agrupadas — Onda 1),
- * derivada do `REGISTRO` — nunca escrita à mão em paralelo a ele. Um item é
- * um GRUPO (com as abas-filhas, ordenadas pelo `ordem` de cada uma) ou uma
- * aba SOLTA (sem `grupo`). Os dois tipos de item compartilham o mesmo espaço
- * de ordenação de topo: `ordem` de um grupo é a de qualquer uma das suas
- * abas-membro (`grupo.ordem`, redundante por design — ver o campo em
- * `AbaDoProjeto`); `ordem` de uma aba solta é a dela mesma.
- *
- * Só a ESTRUTURA sai daqui — quem resolve `count` contra `ContagensDeAba` e
- * monta os itens que a sidebar consome é `itensDasAbas` (`AbasDoProjeto.tsx`), mesma
- * divisão de responsabilidade que já existia entre este arquivo e
- * `ABAS_DO_PROJETO`.
+ * O guarda do deep-link `?tab=`: a chave atual, um alias aposentado ou a
+ * chave de uma seção (abre a primeira sub-aba). Devolve `{ secao, sub }`.
  */
-export interface GrupoDoProjeto {
-  tipo: 'grupo';
-  chave: string;
-  label: string;
-  ordem: number;
-  abas: readonly AbaDoProjeto[];
+export function resolverChaveDeAba(
+  valor: unknown,
+): { secao: string; sub: ChaveDeAba } | undefined {
+  if (typeof valor !== 'string') return undefined;
+  const sub = ehChaveDeAba(valor)
+    ? valor
+    : valor in ALIASES_DE_ABA
+      ? ALIASES_DE_ABA[valor]
+      : SECOES_DO_PROJETO.find((s) => s.chave === valor)?.subs[0];
+  return sub ? { secao: secaoDaChave(sub).chave, sub } : undefined;
 }
-
-export interface AbaSoltaDoProjeto {
-  tipo: 'aba';
-  aba: AbaDoProjeto;
-}
-
-export type ItemDaReguaDoProjeto = GrupoDoProjeto | AbaSoltaDoProjeto;
-
-function agruparRegistro(
-  registro: readonly AbaDoProjeto[],
-): readonly ItemDaReguaDoProjeto[] {
-  const grupos = new Map<
-    string,
-    { grupo: NonNullable<AbaDoProjeto['grupo']>; abas: AbaDoProjeto[] }
-  >();
-  const soltas: AbaDoProjeto[] = [];
-
-  for (const aba of registro) {
-    if (!aba.grupo) {
-      soltas.push(aba);
-      continue;
-    }
-    const existente = grupos.get(aba.grupo.chave);
-    if (existente) {
-      existente.abas.push(aba);
-    } else {
-      grupos.set(aba.grupo.chave, { grupo: aba.grupo, abas: [aba] });
-    }
-  }
-
-  // `label` continua GETTER até aqui — copiar `g.grupo.label` pra um campo
-  // fixo congelaria a tradução no idioma vigente na única vez em que
-  // `GRUPOS_DO_PROJETO` é avaliado (módulo não-React, import único). Manter
-  // a referência a `g.grupo` (o mesmo objeto de `REGISTRO`) é o que faz o
-  // grupo acompanhar troca de idioma, igual toda aba já fazia.
-  const itensDeGrupo: ItemDaReguaDoProjeto[] = [...grupos.entries()].map(
-    ([chave, g]) => ({
-      tipo: 'grupo',
-      chave,
-      get label() {
-        return g.grupo.label;
-      },
-      ordem: g.grupo.ordem,
-      abas: [...g.abas].sort((a, b) => a.ordem - b.ordem),
-    }),
-  );
-  const itensSoltos: ItemDaReguaDoProjeto[] = soltas.map((aba) => ({
-    tipo: 'aba',
-    aba,
-  }));
-
-  return [...itensDeGrupo, ...itensSoltos].sort((a, b) => {
-    const ordemA = a.tipo === 'grupo' ? a.ordem : a.aba.ordem;
-    const ordemB = b.tipo === 'grupo' ? b.ordem : b.aba.ordem;
-    return ordemA - ordemB;
-  });
-}
-
-export const GRUPOS_DO_PROJETO: readonly ItemDaReguaDoProjeto[] =
-  agruparRegistro(REGISTRO);

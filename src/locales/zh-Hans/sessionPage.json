@@ -33,7 +33,10 @@
     "ajustes": "模型与语言",
     "ajustesAria": "本会话的模型、回复语言与预算",
     "perguntaDeIdiomaPendente": "有一个关于回复语言的问题",
-    "encerrarSessao": "结束会话"
+    "encerrarSessao": "结束会话",
+    "pararTurno": "停止本轮",
+    "trilha": "会话路径",
+    "sessoes": "会话"
   },
   "convite": {
     "criativa": {
@@ -306,7 +309,12 @@
     "arquivosNaoLidos": "尚未读取整个会话的文件。",
     "recorteMaisRecentes": "显示 {{total}} 条中最近的 {{mostradas}} 条。",
     "arquivosVazio": "本会话及其关联执行的 PR 和提交中没有任何文件。",
-    "prsNaoLidas_other": "{{count}} 个 PR 未列入此列表（超出读取上限，或无法读取 diff）— PR 标签页显示全部。"
+    "prsNaoLidas_other": "{{count}} 个 PR 未列入此列表（超出读取上限，或无法读取 diff）— PR 标签页显示全部。",
+    "objetivo": "目标",
+    "perguntasAbertas": "未决问题",
+    "gastoPorAgente": "按智能体统计的花费",
+    "gastoVazio": "暂无花费。",
+    "detalhes": "会话详情"
   },
   "turno": {
     "artefato": {
@@ -334,7 +342,17 @@
     "consultado": "本轮已查阅",
     "fonteN": "来源 {{n}}：{{rotulo}}",
     "consultadoCorte": "显示 {{shown}} / {{total}}",
-    "passosCount_other": "{{count}} 步"
+    "passosCount_other": "{{count}} 步",
+    "visao": "步骤视图",
+    "agrupados": "分组",
+    "emOrdem": "按顺序",
+    "grupos": {
+      "leu": "读取了上下文",
+      "desenhou": "设计了",
+      "registrou": "记录了",
+      "outros": "其他"
+    },
+    "raciocinioTokens_other": "{{count}} 个 token"
   },
   "pendencias": {
     "referenciaNoFio": "已提出合并 — 请在上方“可合并的 PR”队列中决定。",
@@ -347,7 +365,8 @@
       "prontas": "可合并的 PR",
       "bloqueadas": "被阻塞的任务",
       "perguntas": "未回答的问题",
-      "travados": "卡住的智能体"
+      "travados": "卡住的智能体",
+      "semModulo": "无模块的任务"
     },
     "origem_other": "会话 {{hashtag}} 中的 {{count}} 个提议 · 最早的 {{tempo}}",
     "abas": "待处理队列",
@@ -368,7 +387,15 @@
       "semMotivo": "未记录原因。",
       "semPapel": "解除阻塞需要项目中的 developer 角色。",
       "diagnostico": "诊断",
-      "agenteTravado": "{{agente}} 已卡住：请先重新启用，再解除阻塞。"
+      "agenteTravado": "{{agente}} 已卡住：请先重新启用，再解除阻塞。",
+      "orientacao": "给开发者的指引（可选）",
+      "orientacaoDica": "例如：入口由组装方注入；不要单独启动该模块。",
+      "aumentarTeto": "提高每个任务的上限",
+      "tetoCampo": "新的每任务上限（US$）",
+      "gravarTeto": "保存上限",
+      "tetoOk": "项目上限已更新：运行中的代理在下一轮生效。现在只需解除阻塞。",
+      "tetoErro": "无法保存上限。",
+      "tetoSemPapel": "提高上限需要项目中的 maintainer 角色。"
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",
@@ -404,6 +431,9 @@
       "ok": "智能体已重新启用：它会再次领取任务。",
       "erro": "无法重新启用该智能体。",
       "semPapel": "重新启用需要项目中的 developer 角色。"
+    },
+    "semModulo": {
+      "motivo": "没有模块：没人会接手。请通过计划分配，或在 Backlog 标签页归档该任务。"
     }
   },
   "mergearNoChat": {
@@ -481,14 +511,43 @@
     "nota": "重新启用会让代理脱离熔断；解除阻塞会把任务放回队列。",
     "semPapel": "重新启用和解除阻塞需要项目中的 developer 角色。",
     "feito": "完成——进展会显示在此对话中。",
-    "erroTitulo": "无法解除执行停滞"
+    "erroTitulo": "无法解除执行停滞",
+    "ciclo": "僵局：{{modulo}} 在等待 {{esperaPor}}，而它又依赖 {{modulo}}。只有合约或 dependsOn 变更才能解开。"
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}}“{{titulo}}”已就绪，可以合并：检查已通过。",
     "varias_other": "有 {{count}} 个 PR 已就绪，可以合并。",
+    "destrava_other": "可解锁 {{count}} 个任务。",
+    "destravaA_other": "PR #{{numero}} 可解锁 {{count}} 个任务。",
     "espera": "就绪于{{quando}}。",
     "ver": "查看该 PR",
     "verAs_other": "查看全部 {{count}} 个",
     "agoraNao": "暂不处理"
+  },
+  "resumo": {
+    "gravado": "本轮记录:{{itens}}",
+    "tipos": {
+      "regra": "业务规则",
+      "decisao": "决定",
+      "pergunta": "未决问题",
+      "epico": "史诗",
+      "historia": "故事",
+      "historia_corrigida": "已修正的故事",
+      "historia_arquivada": "已归档的故事",
+      "tarefa": "任务",
+      "tarefa_corrigida": "已修正的任务",
+      "nota": "笔记",
+      "artefato": "其他产物",
+      "adr": "已提议的 ADR",
+      "module_map": "模块图",
+      "modulos_de_historia": "模块分配",
+      "imagem": "已决定的镜像",
+      "c4": "C4 图",
+      "roteamento": "基础设施路由",
+      "contratos": "模块契约",
+      "insight": "洞察",
+      "rfc": "已提议的 RFC",
+      "prototipo": "已提议的原型"
+    }
   }
 }

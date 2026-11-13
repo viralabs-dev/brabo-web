@@ -7,7 +7,6 @@
     "sessionError": {
       "title": "Could not find this project's execution session."
     },
-    "noActiveExecution": "No active execution in this project right now.",
     "showingSession": "Showing",
     "rosterError": {
       "title": "Could not find out who is executing."
@@ -20,10 +19,14 @@
     "toast": {
       "autonomyError": "Could not change autonomy",
       "rearmed": "Agent rearmed",
-      "rearmError": "Could not rearm the agent"
+      "rearmError": "Could not rearm the agent",
+      "woken": "Looking for a task",
+      "wakeError": "Could not wake the agent",
+      "modelError": "Could not change the model"
     },
     "noExecutorsTitle": "Nobody acting right now",
-    "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged."
+    "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged.",
+    "modelSemPapel": "Changing the model requires the developer role on the project."
   },
   "agentCard": {
     "status": {
@@ -39,22 +42,10 @@
       "autoModeHint": "Auto mode: runs any command, even outside the project folder. git push and PR are released; deploy, sudo/doas and merges into a protected branch still ask for your approval."
     },
     "rearm": "rearm",
-    "catalog": {
-      "instructions": "Instructions",
-      "tools": "Tools",
-      "identity": "Identity",
-      "projectInstruction": "Project instruction (version {{versao}})",
-      "noProjectInstruction": "This agent has no instruction of its own in this project yet.",
-      "instructionsUnavailable": "Could not read the instructions right now.",
-      "missing_one": "{{count}} character missing (text truncated)",
-      "missing_other": "{{count}} characters missing (text truncated)",
-      "toolsUnavailable": "Could not read the tools right now.",
-      "noTools": "This agent has no tools.",
-      "note": "Full catalog: at each step the model may see only part of it.",
-      "loading": "Loading…",
-      "error": "Could not read this agent's catalog.",
-      "toolCount_one": "{{count}} tool",
-      "toolCount_other": "{{count}} tools"
+    "wake": "Look for a task again",
+    "model": {
+      "label": "Model of {{agente}}",
+      "escolher": "choose the model"
     }
   },
   "teamGrid": {
@@ -138,7 +129,7 @@
       "compound": "compound commands with a segment that has no rule in permissions.json",
       "commitBranch": "git commit and creating a LOCAL branch",
       "pushPr": "git push and opening a PR",
-      "alwaysAllow": "clicking \"Always allow\" on this agent does not turn the autopilot off"
+      "alwaysAllow": "clicking \"Approve and create rule\" on this agent does not turn the autopilot off"
     },
     "notReleased": {
       "title": "Auto mode does NOT release — these still ask for your approval:",
@@ -188,5 +179,140 @@
     "tarefasNaoLidas": "Could not read the backlog: tasks in progress and in review could not be counted.",
     "ficaRevisao_one": "{{count}} task in QA review: its gate stops and the task is blocked, with its pull request left open; it returns to the queue when you release it.",
     "ficaRevisao_other": "{{count}} tasks in QA review: their gates stop and the tasks are blocked, with their pull requests left open; they return to the queue when you release them."
+  },
+  "carrossel": {
+    "regiao": "Execution in progress",
+    "titulo": "Execution",
+    "progresso": "{{done}} of {{total}} tasks",
+    "minimizar": "Minimize the executors carousel",
+    "restaurar": "Show the executors details",
+    "minimizadoLista": "Executors (summary)",
+    "verExecutores": "Executors",
+    "verNoFio": "View in thread",
+    "dispensar": "Dismiss the execution summary",
+    "ultimaAcao": "Last action: {{acao}}",
+    "cartaoRotulo": "{{posicao}} of {{total}}: {{nome}}, {{estado}}",
+    "haSeg": "{{n}} s ago",
+    "haMin": "{{n}} min ago",
+    "haH": "{{n}} h ago",
+    "estado": {
+      "trabalhando": "working",
+      "aguardando": "waiting",
+      "ocioso": "idle",
+      "bloqueado": "blocked",
+      "travado": "stuck",
+      "falhou": "failed",
+      "concluido": "done"
+    },
+    "contagem": {
+      "trabalhando": "{{n}} working",
+      "aguardando": "{{n}} at a gate",
+      "ocioso": "{{n}} waiting",
+      "atencao": "{{n}} needing attention"
+    },
+    "fim": {
+      "concluida": "execution complete",
+      "parada": "execution stopped"
+    },
+    "texto": {
+      "trabalhando": "Working on the task.",
+      "corrigindo": "Fixing what QA asked for.",
+      "corrigindoPr": "Fixing what QA asked for on PR #{{pr}}.",
+      "aguardandoQa": "At the QA gate.",
+      "aguardandoQaPr": "PR #{{pr}} at the QA gate.",
+      "aguardandoSecops": "At the SecOps gate.",
+      "aguardandoSecopsPr": "PR #{{pr}} at SecOps.",
+      "aguardandoUsuario": "Waiting for your merge.",
+      "aguardandoUsuarioPr": "Waiting for your merge (PR #{{pr}}).",
+      "aguardandoAprovacao": "Waiting for your approval.",
+      "aguardandoGate": "Waiting for the gate.",
+      "ociosoPausa": "{{reason}}",
+      "semTarefa": "No task available right now.",
+      "esperaFundacaoPr": "Waiting for the foundation of {{modulo}} ({{agente}}, PR #{{pr}}).",
+      "esperaFundacaoTarefa": "Waiting for the foundation of {{modulo}}: task “{{titulo}}” in progress.",
+      "esperaModulos": "Waiting for {{n}} modules; the first to unblock is {{primeiro}}.",
+      "tarefaBloqueada": "Task blocked: {{motivo}}",
+      "bloqueado": "The project container is not running. Infra proposes to start it; the agent retries on its own.",
+      "travado": "{{motivo}} Rearm in Executors.",
+      "falhou": "Failed: {{motivo}}",
+      "falhouSemMotivo": "Failed.",
+      "concluido": "{{done}} of {{total}} module tasks done.",
+      "gateJulga": "Judging “{{tarefa}}”.",
+      "gateJulgaPr": "Judging “{{tarefa}}” (PR #{{pr}}).",
+      "gateJulgaSemTarefa": "Judging a PR.",
+      "gateFalhou": "The gate cycle failed.",
+      "gateOcioso": "No PR to judge right now.",
+      "gateUltimoAprovado": "Last verdict: approved.",
+      "gateUltimoAprovadoPr": "Last verdict: approved (PR #{{pr}}).",
+      "gateUltimoMudancas": "Last verdict: changes requested.",
+      "gateUltimoMudancasPr": "Last verdict: changes requested (PR #{{pr}})."
+    }
+  },
+  "acoes": {
+    "blockedTasksLabel": "Blocked tasks",
+    "noDiagnosis": "no diagnosis",
+    "unblock": "Unblock",
+    "unblocking": "Unblocking…",
+    "unblockError": "Could not unblock the task",
+    "unblockedTitle": "Task unblocked",
+    "unblockGuidance": "Guidance for the dev (optional)",
+    "unblockGuidanceHint": "E.g. the entry point is injected by the composer; do not start the module on its own.",
+    "suggestionBefore": "There are independent tasks in ",
+    "suggestionAfter": " — spin up an extra dev?",
+    "accept": "Accept",
+    "pullRequestsLabel": "Pull requests waiting for you",
+    "noPullRequests": "No PR waiting for you.",
+    "pullRequestFallback": "PR",
+    "errorTitle": "Error",
+    "requestError": "Could not request",
+    "requestDeniedTitle": "Request denied",
+    "authorizationNeededTitle": "Needs your authorization",
+    "authorizationNeededMessage_one": "The session already has {{count}} agent, the lead's cap is {{max}}. The request is in Approvals.",
+    "authorizationNeededMessage_other": "The session already has {{count}} agents, the lead's cap is {{max}}. The request is in Approvals."
+  },
+  "chamada": {
+    "activate": "Activate execution",
+    "activateError": "Could not activate the execution",
+    "needsMaintainer": "Activating the execution requires the maintainer role.",
+    "semContainer": "The container is not running yet, so the execution cannot start. Approve the start proposed by Infra or ask it to start.",
+    "abrirContainers": "Open Containers",
+    "title_one": "Execution is off · {{count}} task ready",
+    "title_other": "Execution is off · {{count}} tasks ready",
+    "explain_one": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",
+    "explain_other": "On activation the Dev Lead distributes work among dev agents (up to {{count}} in parallel in the dev area). Each PR goes through QA and SecOps and waits for you to merge.",
+    "teto": "Project cap {{valor}}",
+    "semRepositorio": "Without a repository there is nowhere to activate execution."
+  },
+  "areas": {
+    "title": "Areas",
+    "working": "working",
+    "stopped": "stopped",
+    "members_one": "{{count}} member",
+    "members_other": "{{count}} members",
+    "parallelismLabel": "Parallelism",
+    "leadLabel": "Lead",
+    "semMembros": "no members yet",
+    "devNasce": "Agents are born when execution turns on."
+  },
+  "fila": {
+    "title": "Task queue",
+    "ready_one": "{{count}} ready",
+    "ready_other": "{{count}} ready",
+    "running_one": "{{count}} running",
+    "running_other": "{{count}} running",
+    "blocked_one": "{{count}} blocked",
+    "blocked_other": "{{count}} blocked",
+    "semModulo_one": "{{count}} without module",
+    "semModulo_other": "{{count}} without module",
+    "more_one": "+ {{count}} task",
+    "more_other": "+ {{count}} tasks",
+    "verNoBacklog": "see in the backlog",
+    "estado": {
+      "blocked": "blocked",
+      "todo": "ready",
+      "in_progress": "running",
+      "in_review": "in review",
+      "done": "done"
+    }
   }
 }

@@ -52,6 +52,9 @@ vi.mock('../../lib/api-client', async () => {
     updateProject: vi.fn(),
     listAgentAreas: (...args: unknown[]) => listAgentAreas(...args),
     setAreaBudget: vi.fn(),
+    listWorkspaces: () => Promise.resolve([]),
+    getProjectBudget: () => Promise.resolve(null),
+    setProjectBudget: vi.fn(),
     listModels: (...args: unknown[]) => listModels(...args),
     // Nenhum provider com a capability de roteamento (ADR 0166): o estado de
     // produção enquanto o smoke do OpenRouter não rodar.
@@ -151,7 +154,8 @@ describe('padrão único de valor herdado — Execução (circuit breaker)', () 
     getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
     montar(<ExecutionSection projectId="proj-1" />);
 
-    expect(await screen.findByText('Sem valor próprio')).toBeInTheDocument();
+    // A parada é o único ajuste herdável da Execução na v9.
+    expect((await screen.findAllByText('Sem valor próprio'))[0]).toBeInTheDocument();
     expect(screen.getByText('usa o padrão (3)')).toBeInTheDocument();
     expect(screen.queryByText('Valor próprio')).toBeNull();
   });
@@ -164,6 +168,7 @@ describe('padrão único de valor herdado — Execução (circuit breaker)', () 
     expect(
       screen.getByText('configurado para este projeto'),
     ).toBeInTheDocument();
+    // A Execução da v9 só tem a parada; teto por tarefa e escada moram em TetoPorTarefaSection.
     expect(screen.queryByText('Sem valor próprio')).toBeNull();
   });
 });
@@ -265,7 +270,7 @@ describe('padrão único de valor herdado — as duas línguas', () => {
     getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
     montar(<ExecutionSection projectId="proj-1" />, 'en');
 
-    expect(await screen.findByText('No value of its own')).toBeInTheDocument();
+    expect((await screen.findAllByText('No value of its own'))[0]).toBeInTheDocument();
     expect(screen.getByText('uses the default (3)')).toBeInTheDocument();
   });
 

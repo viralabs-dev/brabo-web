@@ -48,6 +48,8 @@ const PARES: { texto: string; fundo: string; piso: number; onde: string }[] = [
   { texto: '--text-primary', fundo: '--surface-0', piso: AA_TEXTO_NORMAL, onde: 'corpo sobre o fundo da página' },
   { texto: '--text-primary', fundo: '--surface-1', piso: AA_TEXTO_NORMAL, onde: 'corpo dentro de card' },
   { texto: '--text-primary', fundo: '--surface-2', piso: AA_TEXTO_NORMAL, onde: 'corpo em cabeçalho de tabela' },
+  { texto: '--text-primary', fundo: '--surface-3', piso: AA_TEXTO_NORMAL, onde: 'corpo em hover/item ativo (v9)' },
+  { texto: '--text-secondary', fundo: '--surface-3', piso: AA_TEXTO_NORMAL, onde: 'apoio em hover/item ativo (v9)' },
   { texto: '--text-secondary', fundo: '--surface-0', piso: AA_TEXTO_NORMAL, onde: 'texto de apoio na página' },
   { texto: '--text-secondary', fundo: '--surface-1', piso: AA_TEXTO_NORMAL, onde: 'texto de apoio em card' },
   { texto: '--accent', fundo: '--surface-0', piso: AA_NAO_TEXTO, onde: 'link e realce' },
@@ -63,7 +65,7 @@ const PARES: { texto: string; fundo: string; piso: number; onde: string }[] = [
   // As três cores de agente sem contraparte semântica viraram token por tema
   // no ADR 0181 (eram hex soltos em `lib/agents.ts`, calibrados só contra o
   // escuro). O papel delas é o do `--violet`: dot, badge, avatar — ELEMENTO.
-  ...['--agent-leve', '--agent-frontend', '--agent-secops'].flatMap((texto) =>
+  ...['--agent-leve', '--agent-frontend', '--agent-secops', ...['criativo', 'po', 'arquiteto', 'dev', 'qa', 'secops', 'infra', 'psi'].map((p) => `--ag-${p}`)].flatMap((texto) =>
     ['--surface-0', '--surface-1', '--surface-2'].map((fundo) => ({
       texto,
       fundo,

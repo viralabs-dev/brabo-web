@@ -1,10 +1,8 @@
 {
   "projectInsightsTab": {
-    "header": "Insights",
     "errorTitle": "Could not load the hypotheses.",
     "loading": "Loading the hypotheses…",
     "empty": "No hypotheses yet — the Psychologist analyzes every closed session.",
-    "emptyPaused": "The Psychologist is paused — no session is analyzed until it is reactivated.",
     "summary_one": "{{count}} hypothesis · {{pending}} awaiting decision",
     "summary_other": "{{count}} hypotheses · {{pending}} awaiting decision",
     "analysisStrip": {
@@ -16,7 +14,6 @@
       "metaHypotheses_other": "{{count}} hypotheses",
       "reanalyzeTitleEnabled": "Runs the analysis again and spends budget; the previous one stays in history"
     },
-    "pausedNotice": "The Psychologist is globally paused by the team's decision — no new reanalysis for now. Hypotheses already issued stay here.",
     "toasts": {
       "acceptError": "Could not accept the hypothesis",
       "dismissError": "Could not dismiss the hypothesis",
@@ -27,7 +24,28 @@
       "psychologistPausedFallback": "The Psychologist is globally disabled.",
       "reanalyzeError": "Could not queue the reanalysis"
     },
-    "emptyTitle": "No hypotheses"
+    "emptyTitle": "No hypotheses",
+    "estado": {
+      "pausado": "Psychologist paused",
+      "ativo": "Psychologist active",
+      "pausadoTag": "paused",
+      "ativoTag": "active",
+      "descricao": "When active, it proposes hypotheses about the team anchored in real events, and each one waits for you to accept or dismiss.",
+      "pausadoDescricao": "No session is analyzed until it is reactivated. When active, it proposes hypotheses about the team anchored in real events, and each one waits for you to accept or dismiss.",
+      "reativar": "Reactivate the Psychologist",
+      "reativarExplicacao": "The pause is a team decision. To turn it back on, whoever operates the installation sets PSYCHOLOGIST_ENABLED=true in the engine and restarts it. Hypotheses already issued do not change; new analyses will spend budget again."
+    },
+    "exemplo": {
+      "titulo": "How a hypothesis shows up",
+      "rotulo": "Example",
+      "observacao": "\"The PO declares open questions the Creative had already answered in the brief.\"",
+      "sugestao": "Suggestion: include the full brief in the PO's context. Accepting creates a versioned instruction patch, which is a ceiling: only you apply it.",
+      "tag": "hypothesis",
+      "ancorada": "anchored in 3 events",
+      "aceitar": "Accept",
+      "recusar": "Dismiss",
+      "inerte": "This is an example"
+    }
   },
   "hypothesisCard": {
     "status": {

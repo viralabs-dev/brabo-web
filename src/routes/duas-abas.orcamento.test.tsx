@@ -41,7 +41,9 @@ import type { SessionChannelHandlers } from '../lib/session-channel';
  * Remedidos na AT-339 (os tetos abaixo são estes números, não folga):
  *   chat + Executores, canal vivo ........ 71 + 64 = 135
  *   idem, dev agent em rajada ............ 71 + 89 = 160
- *   idem, canal que nunca conecta ........ 156 + 104 = 260
+ *   idem, canal que nunca conecta ........ 156 + 104 = 260 → 162 + 104 = 266
+ *     (AT-880: o carrossel de executores do chat lê a execução — arquitetura,
+ *     PRs abertas e custo — a 15–30 s; mais nada do que o canal já avisa)
  *   CARGA de Executores / Visão geral .... 29 / 33 → 27 / 31 (bindings em lote)
  *   Visão geral + "Rodar na sua máquina" (RN-855): 31 → 32, UMA leitura
  *   de configuração, sem poll
@@ -333,7 +335,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
     expect(executores['GET /projects/:id/sessions/:id/events']).toBe(20);
     // `dev`: 341 — o teto estourava só com as duas abas paradas na tela.
     // Medido na AT-339: 156 + 104.
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(260);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(266);
   }, 60_000);
 
   it('a carga da Visão geral e da aba Executores lê os bindings em LOTE, não um por agente (AT-339)', async () => {

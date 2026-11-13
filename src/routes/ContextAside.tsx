@@ -2,12 +2,16 @@ import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import { useSessionEventHistory } from '../lib/hooks';
+import { usePerguntasEmAberto, rolarAteAsPerguntas } from '../lib/perguntas-em-aberto';
 import {
   artefatosDoAgenteNoAgregado,
+  objetivoDaSessao,
+  gastoPorAgente,
   totalDaSessao,
   useContextoDaSessaoInteira,
 } from '../lib/contexto-da-sessao';
 import { AGENTS, corDoAgente, nomeDoAgente } from '../lib/agents';
+import { formatarCusto } from '../lib/resumo-de-turno';
 import { regrasAtivas } from '../lib/regras-ativas';
 import { ordemDaAcaoNaTimeline } from '../lib/session-timeline';
 import {
@@ -147,6 +151,11 @@ export function ContextAside({
    */
   const historico = useSessionEventHistory(projectId, sessionId, 3000, pausarPoll);
   const events = historico.baixados;
+  const objetivo = objetivoDaSessao(events);
+  const perguntas = usePerguntasEmAberto(projectId).data;
+  const gasto = gastoPorAgente(events);
+  // O Log mora nos detalhes: citar um evento (logOpen) abre os dois.
+  const [detalhesAbertos, setDetalhesAbertos] = useState(false);
 
   // Quantos eventos da sessão ficaram ANTES do que já foi baixado. Sai de
   // SUBTRAÇÃO sobre o `seq` (que é gapless e por sessão), nunca de uma
@@ -389,6 +398,96 @@ export function ContextAside({
         </p>
       )}
 
+      {objetivo && (
+        <div className={styles.asideSection} data-testid="aside-objetivo">
+          <div className={styles.asideHeader}>{t('aside.objetivo')}</div>
+          <div>{objetivo}</div>
+        </div>
+      )}
+
+      <div className={styles.asideSection} data-testid="aside-perguntas">
+        <div className={styles.asideHeader}>
+          {t('aside.perguntasAbertas')} {perguntas?.total ?? 0}
+        </div>
+        {(perguntas?.itens ?? []).slice(0, 5).map((q) => (
+          <button
+            key={q.questionId}
+            type="button"
+            className={styles.asideItem}
+            onClick={rolarAteAsPerguntas}
+          >
+            {q.pergunta}
+          </button>
+        ))}
+      </div>
+
+      <div className={styles.asideSection}>
+        {/* RN-159: agrupado por agente (mesmo `Disclosure` do colapso do fio,
+            RN-138) — antes era uma lista PLANA só de `pr_open`, sem dizer
+            QUEM abriu cada PR nem incluir épico/história do PO. RN-179: e as
+            tarefas, penduradas na história a que pertencem. */}
+        <Disclosure
+          titulo={t('aside.artefatosGerados')}
+          trailing={totalDeArtefatos}
+          padraoAberto
+          classNameCabecalho={styles.asideHeader}
+        >
+          {gruposDeArtefatos.length === 0 ? (
+            // RN-648: o vazio diz O QUE esta seção conta (PR e backlog,
+            // RN-159). "Nada ainda" ao lado de um brief ou de uma regra da
+            // mesma sessão parecia negar que eles existissem.
+            <div className={styles.asideEmpty}>{t('aside.artefatosVazio')}</div>
+          ) : (
+            gruposComTotal.map(({ actorId, itens, naJanela, total }) => (
+              <div key={actorId} style={corDoAgente(actorId)}>
+                <Disclosure
+                  titulo={
+                    <span className={styles.agentGroupTitulo}>
+                      <AvatarDoAgente id={actorId} />
+                      {nomeDoAgente(actorId)}
+                    </span>
+                  }
+                  trailing={total}
+                  classNameCabecalho={styles.agentGroupCabecalho}
+                  className={styles.agentGroup}
+                >
+                  <div className={styles.artefatoGrupoRegiao}>
+                    {total > naJanela && (
+                      <div className={styles.asideEmpty}>
+                        {t('aside.recorte', { mostradas: naJanela, total })}
+                      </div>
+                    )}
+                    {itens.map((item) => item.node)}
+                  </div>
+                </Disclosure>
+              </div>
+            ))
+          )}
+        </Disclosure>
+      </div>
+
+      <div className={styles.asideSection} data-testid="aside-gasto">
+        <div className={styles.asideHeader}>{t('aside.gastoPorAgente')}</div>
+        {gasto.length === 0 ? (
+          <div className={styles.asideEmpty}>{t('aside.gastoVazio')}</div>
+        ) : (
+          gasto.map((g) => (
+            <div key={g.actorId} className={styles.asideItem} style={corDoAgente(g.actorId)}>
+              <AvatarDoAgente id={g.actorId} />
+              <span>{nomeDoAgente(g.actorId)}</span>
+              <span>{formatarCusto(g.usd)}</span>
+            </div>
+          ))
+        )}
+      </div>
+
+      <div className={styles.asideSection}>
+        <Disclosure
+          titulo={t('aside.detalhes')}
+          aberto={detalhesAbertos || logOpen}
+          onAlternar={setDetalhesAbertos}
+          classNameCabecalho={styles.asideHeader}
+        >
       <div className={styles.asideSection}>
         {/* Contador exposto com o MESMO padrão do Log de eventos (`Disclosure`
             + `trailing`) — antes o cabeçalho era um `div` mudo e o rodapé
@@ -513,51 +612,6 @@ export function ContextAside({
       </div>
 
       <div className={styles.asideSection}>
-        {/* RN-159: agrupado por agente (mesmo `Disclosure` do colapso do fio,
-            RN-138) — antes era uma lista PLANA só de `pr_open`, sem dizer
-            QUEM abriu cada PR nem incluir épico/história do PO. RN-179: e as
-            tarefas, penduradas na história a que pertencem. */}
-        <Disclosure
-          titulo={t('aside.artefatosGerados')}
-          trailing={totalDeArtefatos}
-          padraoAberto
-          classNameCabecalho={styles.asideHeader}
-        >
-          {gruposDeArtefatos.length === 0 ? (
-            // RN-648: o vazio diz O QUE esta seção conta (PR e backlog,
-            // RN-159). "Nada ainda" ao lado de um brief ou de uma regra da
-            // mesma sessão parecia negar que eles existissem.
-            <div className={styles.asideEmpty}>{t('aside.artefatosVazio')}</div>
-          ) : (
-            gruposComTotal.map(({ actorId, itens, naJanela, total }) => (
-              <div key={actorId} style={corDoAgente(actorId)}>
-                <Disclosure
-                  titulo={
-                    <span className={styles.agentGroupTitulo}>
-                      <AvatarDoAgente id={actorId} />
-                      {nomeDoAgente(actorId)}
-                    </span>
-                  }
-                  trailing={total}
-                  classNameCabecalho={styles.agentGroupCabecalho}
-                  className={styles.agentGroup}
-                >
-                  <div className={styles.artefatoGrupoRegiao}>
-                    {total > naJanela && (
-                      <div className={styles.asideEmpty}>
-                        {t('aside.recorte', { mostradas: naJanela, total })}
-                      </div>
-                    )}
-                    {itens.map((item) => item.node)}
-                  </div>
-                </Disclosure>
-              </div>
-            ))
-          )}
-        </Disclosure>
-      </div>
-
-      <div className={styles.asideSection}>
         <Disclosure
           titulo={t('aside.arquivosTocados')}
           trailing={totalDeArquivos}
@@ -652,6 +706,8 @@ export function ContextAside({
               loadingOlder={historico.carregandoMaisAntigos}
             />
           )}
+        </Disclosure>
+      </div>
         </Disclosure>
       </div>
     </aside>

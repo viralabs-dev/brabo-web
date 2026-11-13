@@ -1,0 +1,33 @@
+.linha {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+
+.texto {
+  flex: 1;
+  min-width: 260px;
+}
+
+.rotulo {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+}
+
+.descricao {
+  margin-top: 2px;
+  max-width: 62ch;
+  font-size: var(--fs-body);
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+.controle {
+  min-width: 150px;
+}

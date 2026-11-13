@@ -1,7 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
@@ -339,137 +338,6 @@ describe('ProjectOverviewTab — presença de SecOps vem do resumo, não da jane
   });
 });
 
-describe('ProjectOverviewTab — executionActivated vem do resumo, não da janela de 200 eventos', () => {
-  it('sessão com mais de 200 eventos: a seção Execução não volta a oferecer "Ativar execução" para uma execução já em andamento', async () => {
-    // A janela (`useSessionEvents`) perdeu o `execution.activated` original —
-    // só o resumo agregado (RN-090) ainda sabe que a execução está rodando.
-    listSessionEvents.mockResolvedValue({
-      items: [EVENTOS[0], EVENTOS[2], EVENTOS[3], EVENTOS[4]], // sem e2 (execution.activated)
-      nextCursor: null,
-    });
-    getProjectsSummary.mockResolvedValue([resumo({ executionActivated: true })]);
-
-    montar();
-
-    await screen.findByText('Execução');
-    expect(screen.queryByRole('button', { name: 'Ativar execução' })).not.toBeInTheDocument();
-  });
-
-  it('resumo com `executionActivated: false` mantém o convite para ativar a execução', async () => {
-    listSessionEvents.mockResolvedValue({ items: EVENTOS, nextCursor: null });
-    getProjectsSummary.mockResolvedValue([
-      resumo({ executionActivated: false, gatesEverOpened: false }),
-    ]);
-
-    montar();
-
-    expect(await screen.findByRole('button', { name: 'Ativar execução' })).toBeInTheDocument();
-  });
-});
-
-/**
- * RN-478 — o mesmo botão tinha DOIS diagnósticos: o chat da sessão
- * (`SessionPage.tsx`) já mostrava a causa por `mensagemDaApi`, e a Visão
- * geral imprimia a constante `activateError`. O 400 que ensina ("o Arquiteto
- * precisa definir os módulos", "a pasta do projeto está incoerente") morria
- * aqui, e quem clicava ficava com "Não foi possível ativar a execução".
- */
-describe('ProjectOverviewTab — a causa da recusa de ativar chega à tela', () => {
-  it('mostra a mensagem da api, e não a constante genérica', async () => {
-    getProjectsSummary.mockResolvedValue([
-      resumo({ executionActivated: false, gatesEverOpened: false }),
-    ]);
-    activateExecutionMock.mockRejectedValue(
-      new ApiError(400, {
-        message:
-          'workspacePath inválido para projeto no modo runner: "/home/voce/../../etc".',
-      }),
-    );
-
-    montar();
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
-
-    expect(
-      await screen.findByText(/workspacePath inválido para projeto no modo runner/),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('Não foi possível ativar a execução'),
-    ).not.toBeInTheDocument();
-  });
-
-  it('erro sem corpo da api cai no texto padrão — o fallback continua existindo', async () => {
-    getProjectsSummary.mockResolvedValue([
-      resumo({ executionActivated: false, gatesEverOpened: false }),
-    ]);
-    activateExecutionMock.mockRejectedValue({ nao: 'e um Error' });
-
-    montar();
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
-
-    expect(
-      await screen.findByText('Não foi possível ativar a execução'),
-    ).toBeInTheDocument();
-  });
-});
-
-/**
- * RN-582 (ADR 0165) — `execution/activate` sem repositório é 409. A tela tira
- * o CONTROLE e diz o motivo uma vez, em texto (RN-102/ADR 0064), e nunca
- * transforma "não sei" em "não tem".
- */
-describe('ProjectOverviewTab — sem repositório, não se oferece ativar (RN-582)', () => {
-  it('repositório ausente CONFIRMADO: botão inerte, motivo em texto e o caminho para provisionar', async () => {
-    getProjectsSummary.mockResolvedValue([
-      resumo({ executionActivated: false, gatesEverOpened: false }),
-    ]);
-    getRepository.mockResolvedValue(null);
-
-    montar();
-
-    expect(
-      await screen.findByText(/O projeto ainda não tem repositório/),
-    ).toBeInTheDocument();
-    expect(screen.getByText('Provisionar o repositório agora')).toBeInTheDocument();
-    const botao = screen.getByRole('button', { name: 'Ativar execução' });
-    expect(botao).toBeDisabled();
-    expect(botao).toHaveTextContent('');
-    await userEvent.click(botao);
-    expect(activateExecutionMock).not.toHaveBeenCalled();
-  });
-
-  it('repositório ainda carregando: o botão fica como estava — "não sei" não vira "não tem"', async () => {
-    getProjectsSummary.mockResolvedValue([
-      resumo({ executionActivated: false, gatesEverOpened: false }),
-    ]);
-    getRepository.mockReturnValue(new Promise(() => {}));
-
-    montar();
-
-    const botao = await screen.findByRole('button', { name: 'Ativar execução' });
-    expect(botao).toBeEnabled();
-    expect(screen.queryByText(/O projeto ainda não tem repositório/)).not.toBeInTheDocument();
-  });
-
-  it('consulta do repositório FALHOU: o botão fica como estava, e o backend decide', async () => {
-    getProjectsSummary.mockResolvedValue([
-      resumo({ executionActivated: false, gatesEverOpened: false }),
-    ]);
-    getRepository.mockRejectedValue(new ApiError(500, { message: 'fora' }));
-
-    montar();
-
-    const botao = await screen.findByRole('button', { name: 'Ativar execução' });
-    expect(botao).toBeEnabled();
-    expect(screen.queryByText(/O projeto ainda não tem repositório/)).not.toBeInTheDocument();
-  });
-});
-
-/**
- * AT-339 (RN-654) — a Visão geral lê os bindings do roster no LOTE, e não
- * numa rota por agente.
- */
 describe('ProjectOverviewTab — bindings em lote (AT-339)', () => {
   const MODELO = {
     id: 'm-1',
@@ -542,7 +410,7 @@ describe('primeiros passos (RN-708, AT-372)', () => {
     });
     montar();
 
-    await screen.findAllByText(/Execução/);
+    await screen.findByTestId("faixa-precisa-de-voce");
     expect(screen.queryByTestId('primeiros-passos')).toBeNull();
   });
 
@@ -551,150 +419,81 @@ describe('primeiros passos (RN-708, AT-372)', () => {
     listCredentials.mockRejectedValue(new Error('rede'));
     montar();
 
-    await screen.findAllByText(/Execução/);
+    await screen.findByTestId("faixa-precisa-de-voce");
     expect(screen.queryByTestId('primeiros-passos')).toBeNull();
   });
 });
 
-describe('linha do tempo do time lê a sessão de execução (AT-463)', () => {
-  it('com execução ativa noutra sessão, a árvore lê a de execução e diz isso', async () => {
-    getActiveExecutionSession.mockResolvedValue({ ...SESSAO, id: 'sess-exec' });
-    montar();
+describe('próximo passo (RN-1162, AT-936)', () => {
+  const MODELO_DO_TIME = {
+    agents: [
+      { key: 'criativo', binding: { modelId: 'm-1', origin: 'project', routingPreference: null, skipped: [] } },
+    ],
+    areas: [],
+  };
+  const tarefas = (n: number, extra: Record<string, unknown> = {}) =>
+    Array.from({ length: n }, (_, i) => ({
+      id: `t-${i}`, storyId: 's-1', title: `Tarefa ${i}`, description: '', status: 'todo', assignedTo: null,
+      blocked: false, blockedReason: null, gateStatus: null, gateCorrectionCount: 0, module: 'Backend',
+      createdAt: '', updatedAt: '', ...extra,
+    }));
+  const epicos = (ts: unknown[]) => [
+    { id: 'e-1', projectId: 'proj-1', sessionId: 'sess-1', title: 'E', description: '', createdAt: '', updatedAt: '',
+      stories: [{ id: 's-1', epicId: 'e-1', title: 'H', moduleIds: ['Backend'], tasks: ts }] },
+  ];
 
-    expect(await screen.findByText(/Lendo a sessão de execução, não a mais recente\./)).toBeInTheDocument();
-    expect(listSessionEvents.mock.calls.some((c) => c[1] === 'sess-exec')).toBe(true);
+  beforeEach(() => {
+    getResolvedModelBindings.mockResolvedValue(MODELO_DO_TIME);
+    listSessionEvents.mockResolvedValue({ items: [], nextCursor: null });
   });
 
-  it('AT-471: agente que só agiu na execução aparece na árvore, sem "nenhum agente"', async () => {
-    // O handoff da Infra foi aceito na sessão de EXECUÇÃO; a mais recente
-    // (ideação) não tem nenhum, então a roster dela não traz o Infra Lead.
-    listHandoffs.mockResolvedValue([]);
-    getActiveExecutionSession.mockResolvedValue({ ...SESSAO, id: 'sess-exec' });
-    listSessionEvents.mockImplementation(async (_p: string, sessionId: string) =>
-      sessionId === 'sess-exec'
-        ? {
-            items: [
-              evento({ id: 'x1', seq: 1, type: 'agent.activated', actor: { kind: 'agent', id: 'infra' }, payload: {} }),
-              evento({ id: 'x2', seq: 2, type: 'agent.activated', actor: { kind: 'agent', id: 'dev-backend' }, payload: {} }),
-            ],
-            nextCursor: null,
-          }
-        : { items: [evento({ id: 'c1', seq: 1, type: 'chat.message', actor: { kind: 'user', id: 'u1' }, payload: { text: 'oi' } })], nextCursor: null },
-    );
+  it('fixture da P10: 8 tarefas prontas e execução inativa dizem "Ativar a execução"', async () => {
+    listBacklog.mockResolvedValue(epicos(tarefas(8)));
     montar();
 
-    expect(await screen.findByText(/Lendo a sessão de execução/)).toBeInTheDocument();
-    // A árvore ganha o ramo do Infra Lead (o do dev segue na aba Executores).
-    await vi.waitFor(() =>
-      expect(screen.queryByText('Nenhum agente entrou em ação nesta sessão ainda.')).not.toBeInTheDocument(),
-    );
-    expect(listSessionEvents.mock.calls.some((c) => c[1] === 'sess-exec')).toBe(true);
+    const cartao = await screen.findByTestId('proximo-passo');
+    expect(cartao).toHaveAttribute('data-passo', 'ativar_execucao');
+    expect(within(cartao).getByText('Ativar a execução')).toBeInTheDocument();
+    expect(within(cartao).getByText('8 tarefas prontas no backlog.')).toBeInTheDocument();
   });
 
-  it('CASO DE FALHA evitado: sem execução, lê a mais recente e não anuncia outra', async () => {
+  it('com uma tarefa bloqueada a mais, diz "Desbloquear 1 tarefa"', async () => {
+    listBacklog.mockResolvedValue(epicos([...tarefas(8), ...tarefas(1, { id: 'b-1', blocked: true })]));
     montar();
 
-    expect(await screen.findByText('Criativo')).toBeInTheDocument();
-    expect(screen.queryByText(/Lendo a sessão de execução/)).not.toBeInTheDocument();
-    expect(listSessionEvents.mock.calls.every((c) => c[1] === 'sess-1')).toBe(true);
+    const cartao = await screen.findByTestId('proximo-passo');
+    expect(cartao).toHaveAttribute('data-passo', 'desbloquear');
+    expect(within(cartao).getByText('Desbloquear 1 tarefa')).toBeInTheDocument();
+  });
+
+  it('CASO DE FALHA: sem situação verdadeira o cartão não aparece', async () => {
+    // Execução ativa e nada em andamento, com tarefa a fazer: nenhuma linha vale.
+    getActiveExecutionSession.mockResolvedValue({ ...SESSAO, id: 'sess-exec' });
+    listBacklog.mockResolvedValue(epicos([...tarefas(1, { status: 'done' }), ...tarefas(1, { id: 'x' })]));
+    montar();
+
+    await screen.findByTestId("faixa-precisa-de-voce");
+    expect(screen.queryByTestId('proximo-passo')).toBeNull();
   });
 });
 
-// RN-794 (AT-469): execução já ativada antes, nenhuma vigente agora, tarefa
-// bloqueada no backlog — a seção diz quantas pendem, oferece religar e o
-// "Desbloquear" avisa que nada volta a rodar até religar.
-describe('religar a execução encerrada (RN-794)', () => {
-  const backlog = [
-    {
-      id: 'ep-1',
-      projectId: 'proj-1',
-      sessionId: 'sess-1',
-      title: 'E',
-      description: '',
-      createdAt: '',
-      updatedAt: '',
-      stories: [
-        {
-          id: 'st-1',
-          title: 'H',
-          tasks: [
-            {
-              id: 't1',
-              storyId: 'st-1',
-              title: 'Tarefa travada',
-              description: '',
-              status: 'todo',
-              assignedTo: null,
-              blocked: true,
-              blockedReason: 'motivo',
-              gateStatus: null,
-              gateCorrectionCount: 0,
-              createdAt: '',
-              updatedAt: '',
-            },
-          ],
-        },
+describe('AT-890: faixa e turnos', () => {
+  it('abre com a faixa "precisa de você"', async () => {
+    montar();
+    expect(await screen.findByTestId('faixa-precisa-de-voce')).toBeInTheDocument();
+  });
+
+  it('turno sem gravadoNoTurno mostra traço no custo, nunca zero', async () => {
+    listSessionEvents.mockResolvedValue({
+      items: [
+        evento({ id: 'r1', seq: 1, type: 'agent.response', payload: { gravadoNoTurno: { itens: [{ tipo: 'regra', total: 2 }] }, custoMicros: 1000 } }),
+        evento({ id: 'r2', seq: 2, type: 'agent.response', payload: {} }),
       ],
-    },
-  ];
-
-  it('oferece religar pelo execution/activate e o desbloqueio avisa', async () => {
-    getProjectsSummary.mockResolvedValue([resumo({ executionActivated: true })]);
-    listBacklog.mockResolvedValue(backlog);
-    unblockTaskMock.mockResolvedValue(undefined);
-    activateExecutionMock.mockResolvedValue({ sessionId: 'sess-2' });
-
+      nextCursor: null,
+    });
     montar();
-
-    expect(await screen.findByText(/1 tarefa segue pendente/)).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Desbloquear' }));
-    expect(await screen.findByText(/a tarefa só roda quando você religar/)).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Religar execução' }));
-    expect(activateExecutionMock).toHaveBeenCalledWith('proj-1');
-  });
-
-  it('RN-835 (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou', async () => {
-    getProjectsSummary.mockResolvedValue([resumo({ executionActivated: true })]);
-    listBacklog.mockResolvedValue(backlog);
-    let resolver: () => void = () => {};
-    unblockTaskMock.mockReset();
-    unblockTaskMock.mockReturnValue(new Promise<void>((r) => (resolver = r)));
-
-    montar();
-
-    const botao = await screen.findByRole('button', { name: 'Desbloquear' });
-    await userEvent.click(botao);
-    const emVoo = await screen.findByRole('button', { name: 'Desbloqueando…' });
-    expect(emVoo).toBeDisabled();
-    await userEvent.click(emVoo);
-    expect(unblockTaskMock).toHaveBeenCalledTimes(1);
-    resolver();
-    expect(await screen.findByTestId('desbloqueada')).toHaveTextContent('Tarefa desbloqueada');
-  });
-
-  it('RN-835: a recusa do desbloqueio mostra a frase da api na linha', async () => {
-    getProjectsSummary.mockResolvedValue([resumo({ executionActivated: true })]);
-    listBacklog.mockResolvedValue(backlog);
-    unblockTaskMock.mockReset();
-    unblockTaskMock.mockRejectedValue(new ApiError(409, { message: 'A tarefa já está em curso.' }));
-
-    montar();
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Desbloquear' }));
-    expect((await screen.findAllByText('A tarefa já está em curso.')).length).toBeGreaterThan(0);
-    expect(screen.getByRole('button', { name: 'Desbloquear' })).toBeEnabled();
-  });
-
-  it('a recusa (409) de religar mostra a frase da api', async () => {
-    getProjectsSummary.mockResolvedValue([resumo({ executionActivated: true })]);
-    listBacklog.mockResolvedValue(backlog);
-    activateExecutionMock.mockRejectedValue(
-      new ApiError(409, { message: 'A sessão é consultiva.' }),
-    );
-
-    montar();
-
-    await userEvent.click(await screen.findByRole('button', { name: 'Religar execução' }));
-    expect(await screen.findByRole('alert')).toHaveTextContent('A sessão é consultiva.');
+    const linhas = await screen.findAllByTestId('resumo-de-turno');
+    expect(linhas).toHaveLength(2);
+    expect(linhas[0].textContent).toContain('—');
   });
 });

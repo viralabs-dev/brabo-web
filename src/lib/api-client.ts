@@ -1,6 +1,7 @@
 import { renovarSessao, tokenAtual } from './auth';
 import { runtimeConfig } from './runtime-config';
 import { childSpan, logger, newTraceContext } from './logger';
+import type { DecisionInbox } from './api-types';
 import type { LlmCredentialProvider } from './models';
 import type {
   MySpend,
@@ -20,6 +21,7 @@ import type {
   Architecture,
   StoryPromotionMode,
   Story,
+  Task,
   AgentArea,
   ParallelizationRequest,
   InfraArtifact,
@@ -60,6 +62,7 @@ import type {
   PermissionsFile,
   MirrorState,
   Project,
+  EscadaDeModelos,
   ProjectBlockedStatus,
   ProjectCardSummary,
   ProjectFolders,
@@ -316,6 +319,9 @@ export const listProjectFolders = (workspaceId: string, path?: string) =>
   get<ProjectFolders>(`/workspaces/${workspaceId}/project-folders${qs({ path })}`);
 export const getWorkspaceSummary = (workspaceId: string) =>
   get<WorkspaceSummary>(`/workspaces/${workspaceId}/summary`);
+/** Caixa de decisões (RN-1195..1199): uma contagem por fila, nunca somadas (RN-467). Papel `viewer`. */
+export const getDecisionInbox = (workspaceId: string, status: 'pending' | 'decided' = 'pending') =>
+  get<DecisionInbox>(`/workspaces/${workspaceId}/decision-inbox?status=${status}`);
 export const getProjectsStatus = (workspaceId: string) =>
   get<ProjectBlockedStatus[]>(`/workspaces/${workspaceId}/projects-status`);
 export const getProjectsSummary = (workspaceId: string) =>
@@ -376,8 +382,15 @@ export const updateProject = (
     storyPromotion?: StoryPromotionMode;
     // O idioma do projeto (RN-619) — `maintainer`, pela mesma rota.
     language?: string;
+    // Teto por tarefa (RN-1142, micro-USD) e escada de modelos (RN-1143/1146): `maintainer`.
+    taskBudgetMicros?: number;
+    modelEscalation?: EscadaDeModelos;
   },
 ) => patch<Project>(`/projects/${projectId}`, input);
+
+/** A chave do merge automático (RN-1316): `owner` liga, `maintainer` desliga. */
+export const setMergeAutomatico = (projectId: string, habilitado: boolean) =>
+  put<Project>(`/projects/${projectId}/auto-merge`, { habilitado });
 
 /**
  * Converte o `execution_mode` de um projeto EXISTENTE (RN-447..450, ADR
@@ -1018,9 +1031,13 @@ export const unblockTask = (
   projectId: string,
   sessionId: string,
   taskId: string,
+  // AT-909: orientação opcional (máx. 2000) que o dev lê na volta. PROVISÓRIO:
+  // tipo à mão até a api (R368) entrar na dev e o `openapi:types` ser regenerado.
+  orientacao?: string,
 ) =>
   post<{ ok: true }>(
     `/projects/${projectId}/sessions/${sessionId}/tasks/${taskId}/unblock`,
+    orientacao?.trim() ? { orientacao: orientacao.trim() } : undefined,
   );
 // Rearma um dev agent travado pelo circuit breaker (Fase 12b — RN-047) — a
 // única saída de idle_tripped.
@@ -1032,6 +1049,13 @@ export const rearmDevAgent = (
   post<{ ok: true }>(
     `/projects/${projectId}/sessions/${sessionId}/agents/${agentId}/rearm`,
   );
+// AT-906: faz o dev ocioso procurar tarefa de novo. 202; fora de `idle` é 409
+// com a frase do engine (`mensagemDaApi` a mostra).
+export const wakeDevAgent = (projectId: string, sessionId: string, agentId: string) =>
+  post<{ ok: true }>(`/projects/${projectId}/sessions/${sessionId}/agents/${agentId}/wake`);
+// AT-912: arquiva tarefa `todo` com motivo obrigatório (409 nomeado se estiver em execução).
+export const archiveTask = (projectId: string, taskId: string, reason: string) =>
+  post<Task>(`/projects/${projectId}/tasks/${taskId}/archive`, { reason });
 
 // --- Proposed actions ---
 
@@ -1080,10 +1104,10 @@ export const denyAction = (
 // `status=pending` é suportado hoje.
 export const getProjectPendingActions = (
   projectId: string,
-  opts: { actionType?: ActionType; status?: 'pending' | 'failed' } = {},
+  opts: { actionType?: ActionType; status?: 'pending' | 'failed' | 'decided'; since?: string } = {},
 ) =>
   get<ProposedAction[]>(
-    `/projects/${projectId}/actions${qs({ status: opts.status ?? 'pending', actionType: opts.actionType })}`,
+    `/projects/${projectId}/actions${qs({ status: opts.status ?? 'pending', actionType: opts.actionType, since: opts.since })}`,
   );
 
 // --- LLM: modelos, bindings, credenciais, budgets ---
@@ -1327,6 +1351,12 @@ export const setProjectBudget = (
   projectId: string,
   input: { limitUsd: number; policy: BudgetPolicy },
 ) => put<Budget>(`/projects/${projectId}/budget`, input);
+export const getWorkspaceBudget = (workspaceId: string) =>
+get<Budget | null>(`/workspaces/${workspaceId}/budget`);
+export const setWorkspaceBudget = (
+workspaceId: string,
+input: { limitUsd: number; policy: BudgetPolicy },
+) => put<Budget>(`/workspaces/${workspaceId}/budget`, input);
 export const getSessionBudget = (projectId: string, sessionId: string) =>
   get<Budget | null>(`/projects/${projectId}/sessions/${sessionId}/budget`);
 export const getSessionTokenUsage = (projectId: string, sessionId: string) =>

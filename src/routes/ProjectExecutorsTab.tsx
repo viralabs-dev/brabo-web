@@ -3,7 +3,7 @@ import { Ajuda } from '@/components/ui/Ajuda';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useBindingsDosAgentes } from '../lib/bindings-resolvidos';
+import { invalidarBindingsResolvidos, useBindingsDosAgentes } from '../lib/bindings-resolvidos';
 import {
   useActiveExecutionSession,
   useArchitecture,
@@ -19,12 +19,15 @@ import {
 import {
   listAgentAutonomy,
   listModels,
+  mensagemDaApi,
+  listBacklog,
   rearmDevAgent,
   setAgentAutonomy,
+  setAgentModelBinding,
+  wakeDevAgent,
 } from '../lib/api-client';
 import { deriveAgentRoster, groupRosterByArea, isExecutorAgentId, isExecutorGroup } from '../lib/agent-status';
-import { contarTarefasPendentes, deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
-import { ReligarExecucao } from '../components/ReligarExecucao';
+import { deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
 import { connectSessionHeartbeat } from '../lib/session-channel';
 import { INTERVALO_DO_PROJETO_MS, criarInvalidadorDoCanal } from '../lib/canal-vivo';
 import { rotuloDaSessao } from '../lib/session-label';
@@ -37,6 +40,8 @@ import type { AutonomyMode } from '../components/AgentCard';
 import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { AgentTimelineTree } from '../components/AgentTimelineTree';
 import { Alert } from '../components/ui/Alert';
+import { AcoesDaExecucao } from './AcoesDaExecucao';
+import { ResumoDaExecucao } from './ResumoDaExecucao';
 import { DestravarExecucao } from './DestravarExecucao';
 import { textoDaExecucaoParada } from './DestravarExecucao.helpers';
 import { Badge } from '../components/ui/Badge';
@@ -102,7 +107,14 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   // e no ritmo de projeto quando ligada.
   const semExecucaoVigente = executionSessionQuery.isSuccess && !executionSession;
   const backlogQuery = useBacklog(semExecucaoVigente ? projectId : undefined, INTERVALO_DO_PROJETO_MS);
-  const tarefasPendentes = contarTarefasPendentes(backlogQuery.data);
+  // Com a execução de pé o backlog NÃO é lido aqui (RN-794, RN-632): o que a tela mostra vem do
+  // cache que o trilho do projeto já mantém na MESMA chave, sem requisição nova.
+  const backlogEmCache = useQuery({
+    queryKey: ['backlog', projectId],
+    queryFn: () => listBacklog(projectId),
+    enabled: false,
+  });
+  const epicsDaTela = backlogQuery.data ?? backlogEmCache.data;
   const eventsQuery = useSessionEvents(projectId, sessionId);
   const events = eventsQuery.data?.items ?? [];
   // Quem espera decisão sai da fila do PROJETO (AT-297, RN-638): a mesma
@@ -223,6 +235,16 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     };
   }, [sessionId, executionSession?.status, projectId, queryClient]);
 
+  // AT-916: a troca de modelo pelo cartão pede `developer` no endpoint (`PUT agent-bindings`).
+  async function handleModelChange(agentId: string, modelId: string) {
+    try {
+      await setAgentModelBinding(projectId, agentId, modelId);
+      await invalidarBindingsResolvidos(queryClient, projectId);
+    } catch {
+      showToast({ title: t('tab.toast.modelError'), message: nomeDoAgente(agentId), tone: 'danger' });
+    }
+  }
+
   async function handleAutonomyChange(agentId: string, actionType: string, mode: AutonomyMode) {
     try {
       await setAgentAutonomy(projectId, {
@@ -253,6 +275,18 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     }
   }
 
+  // AT-906: o 409 do engine (agente fora de `idle`) chega com a frase dele.
+  async function handleWake(agentId: string) {
+    if (!sessionId) return;
+    try {
+      await wakeDevAgent(projectId, sessionId, agentId);
+      await queryClient.invalidateQueries({ queryKey: ['session-events', projectId, sessionId] });
+      showToast({ title: t('tab.toast.woken'), tone: 'success' });
+    } catch (erro) {
+      showToast({ title: t('tab.toast.wakeError'), message: mensagemDaApi(erro), tone: 'danger' });
+    }
+  }
+
   // Sem `semRespiro` no registro: a moldura do `ProjectPage` já dá os 24px de
   // respiro e a rolagem própria (`.body`, `ProjectPage.module.css`) — reusar
   // `styles.main` aqui (que tem os MESMOS dois ajustes, pensados para dentro
@@ -260,6 +294,8 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   // uma segunda área de scroll aninhada.
   return (
     <div>
+      {/* v9 (AT-943): com a execução parada o topo é só o cartão de chamada. */}
+      {!semExecucaoVigente && (
       <div className={styles.sectionRow}>
         <h2 className={styles.sectionHeader}>{t('tab.title')}</h2>
         <Ajuda assunto={t('tab.title')}>{t('tab.subtitle')}</Ajuda>
@@ -273,6 +309,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           </span>
         )}
       </div>
+      )}
 
       {/* Indicador de QUAL sessão a aba está olhando (RN-139) — os três
           estados da RN-088, erro antes de vazio: sem isto a troca silenciosa
@@ -288,14 +325,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
         <div className={styles.sectionSub} aria-busy="true">
           <Skeleton width={220} height={18} />
         </div>
-      ) : !executionSession ? (
-        <>
-          <div className={styles.sectionSub}>{t('tab.noActiveExecution')}</div>
-          {tarefasPendentes > 0 && (
-            <ReligarExecucao projectId={projectId} tarefasPendentes={tarefasPendentes} />
-          )}
-        </>
-      ) : (
+      ) : !executionSession ? null : (
         <div className={styles.sectionSub}>
           {t('tab.showingSession')}{' '}
           <Link
@@ -311,6 +341,16 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
             })}
           </Badge>
         </div>
+      )}
+
+      {executionSessionQuery.isSuccess && (
+        <ResumoDaExecucao
+          projectId={projectId}
+          epics={epicsDaTela}
+          parada={semExecucaoVigente}
+          grupos={executorGroups}
+          budget={projectSummary?.budget}
+        />
       )}
 
       {sessionId && (
@@ -378,6 +418,8 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
             filasDoChat={false}
           />
 
+          <AcoesDaExecucao projectId={projectId} sessionId={sessionId} epics={epicsDaTela} acoes={pendentes} events={events} podeDecidir={podeDecidir} />
+
           {/* `executionActivated` vem do resumo agregado — os três estados
               da RN-088 aqui: sem eles, um "nenhum dev agent" de CARREGANDO
               (o resumo ainda não chegou) fica indistinguível do vazio real. */}
@@ -395,7 +437,6 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
             <EmptyState titulo={t('tab.noExecutorsTitle')} icone={<Users size={18} />}>{t('tab.noExecutors')}</EmptyState>
           ) : (
             <AgentTeamGrid
-          projectId={projectId}
               roster={roster}
               groups={executorGroups}
               events={events}
@@ -408,6 +449,9 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
               onToggleArea={toggleArea}
               onAutonomyChange={handleAutonomyChange}
               onRearm={handleRearm}
+              onWake={handleWake}
+              onModelChange={handleModelChange}
+              modelDisabledReason={podeDecidir ? undefined : t('tab.modelSemPapel')}
             />
           )}
 

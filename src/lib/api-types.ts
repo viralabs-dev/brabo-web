@@ -17,6 +17,8 @@ import type { components } from './api-types.generated';
 
 export type CatalogoDeAgentes = components['schemas']['CatalogoDeAgentesResponseDto'];
 
+export type DecisionInbox = components['schemas']['DecisionInboxResponseDto'];
+
 export type Role = 'owner' | 'maintainer' | 'developer' | 'viewer';
 
 /**
@@ -85,6 +87,14 @@ export interface WorkspaceWithRole {
   role: Role;
 }
 
+export interface DegrauDaEscada {
+  modelId: string;
+  taskBudgetMicros: number;
+}
+export interface EscadaDeModelos {
+  ladder: DegrauDaEscada[];
+}
+
 export interface Project {
   id: string;
   workspaceId: string;
@@ -94,10 +104,16 @@ export interface Project {
   // Circuit breaker por dev agent (Fase 12b — RN-047). `null` usa o default
   // do domínio (3).
   maxConsecutiveBlocked: number | null;
+  // Teto de gasto por tarefa do dev agent, em micro-USD (RN-1142). `null` = padrão do domínio.
+  taskBudgetMicros?: number | null;
+  // Escada de modelos do projeto (RN-1143/1146). `null` = padrão Haiku 5.5 → Sonnet 5.
+  modelEscalation?: EscadaDeModelos | null;
   // Quem promove história a `ready` (Fase 12c — RN-048). `manual` é o default
   // de projeto novo; os projetos que existiam antes da fase ficaram em `auto`,
   // que é o comportamento anterior.
   storyPromotion: StoryPromotionMode;
+  // Merge automático (RN-1316, ADR 0292): desligado por padrão; só a rota PUT /auto-merge o muda.
+  mergeAutomatico?: boolean;
   // ONDE o comando executa (RN-169/RN-421 — ADR 0072/0104). `container`: a
   // pasta gerenciada pelo produto, que é o default e o comportamento de
   // sempre. `mounted`: a pasta do usuário em `workspacePath`, montada por
@@ -429,7 +445,10 @@ export interface Session {
  * `repo_bootstraps`, nunca o nome). O GET de uma sessão não o carrega.
  */
 export type SessaoListada = Session &
-  Pick<components['schemas']['SessionListItemResponseDto'], 'technical'>;
+  Pick<
+    components['schemas']['SessionListItemResponseDto'],
+    'technical' | 'costMicros' | 'chamadas' | 'agentes' | 'passos'
+  >;
 
 export type ActorKind = 'user' | 'agent' | 'system';
 
@@ -523,7 +542,7 @@ export interface ProposedAction {
   decidedBy: string | null;
   decidedAt: string | null;
   rejectionReason: string | null;
-  executionResult: TerminalExecutionResult | GitActionFailureResult | null;
+  executionResult: TerminalExecutionResult | GitActionFailureResult | GitMergeExecutionResult | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -831,10 +850,21 @@ export interface Budget {
   id: string;
   projectId: string | null;
   sessionId: string | null;
+  workspaceId?: string | null;
   limitMicros: number;
+  /** Do mês (UTC) nos tetos de projeto e de workspace; acumulado na sessão (RN-1168). */
   spentMicros: number;
   policy: BudgetPolicy;
   lastThresholdNotified: number;
+  /** Só nos tetos mensais; a sessão não tem (RN-1168). */
+  periodo?: PeriodoDoTeto | null;
+}
+
+export interface PeriodoDoTeto {
+  inicio: string;
+  fim: string;
+  diasRestantes: number;
+  previsaoMicros: number;
 }
 
 export type GitProviderName = 'local' | 'github' | 'gitlab';
@@ -1069,8 +1099,15 @@ export interface Task {
   assignedTo: string | null;
   blocked: boolean;
   blockedReason: string | null;
+  /** Origem do bloqueio (ADR 0020/0038); `politica` = teto de gasto. */
+  blockedOrigin?: 'infra' | 'modelo' | 'codigo' | 'politica' | null;
   gateStatus: PrGateStatus | null;
   gateCorrectionCount: number;
+  /** Módulo do `module_map` a que a tarefa pertence (AT-880); `null` para a sem módulo. */
+  module?: string | null;
+  /** AT-912: quando e por quê a tarefa `todo` foi arquivada; a arquivada fica no histórico. */
+  archivedAt?: string | null;
+  archivedReason?: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1296,6 +1333,8 @@ export interface Story {
   businessRuleIds: string[];
   dod: string[];
   dor: string[];
+  /** Módulos do `module_map` que a história toca (AT-881); a tarefa sem `module` herda daqui. */
+  moduleIds?: string[];
   status: StoryStatus;
   // Fase 12c (RN-048). Convive com `status: 'draft'` — é uma PROPOSTA, não um
   // estado: o PO terminou a história e ela aguarda a decisão do usuário.
@@ -2049,3 +2088,13 @@ export type RunInstructions = components['schemas']['RunInstructionsResponseDto'
 /** RN-858/861 (AT-521): a pergunta que um agente deixou para o usuário. */
 export type OpenQuestion = components['schemas']['OpenQuestionResponseDto'];
 export type OpenQuestionsList = components['schemas']['OpenQuestionsListResponseDto'];
+
+/** `git_merge` executado: `jaContida` = o merge não moveu o alvo (RN-1104). */
+export interface GitMergeExecutionResult {
+  kind: 'git_merge';
+  pullRequestId: string;
+  state: string;
+  targetBranch: string;
+  mergedSha?: string;
+  jaContida?: true;
+}

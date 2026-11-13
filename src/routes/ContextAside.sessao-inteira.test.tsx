@@ -35,6 +35,11 @@ vi.mock('../lib/hooks', () => ({
   useSessionEventHistory: () => historicoFalso(janela),
 }));
 
+vi.mock('../lib/perguntas-em-aberto', () => ({
+  usePerguntasEmAberto: () => ({ data: undefined }),
+  rolarAteAsPerguntas: () => {},
+}));
+
 vi.mock('../lib/contexto-da-sessao', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../lib/contexto-da-sessao')>()),
   useContextoDaSessaoInteira: () => ({ data: resumo }),
@@ -49,7 +54,7 @@ function renderizar() {
       sessionId="s1"
       actions={[]}
       pausarPoll={false}
-      logOpen={false}
+      logOpen={true}
       onToggleLog={() => {}}
     />,
   );

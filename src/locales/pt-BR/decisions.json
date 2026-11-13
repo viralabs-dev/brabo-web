@@ -1,0 +1,50 @@
+{
+  "titulo": "Caixa de decisões",
+  "subtitulo": "Tudo o que espera você, em todos os projetos. Cada fila conta sozinha: uma aprovação não é o mesmo que uma hipótese, e a tela não soma as duas.",
+  "seletor": "Pendentes ou decididas",
+  "modo": {
+    "pending": "Pendentes",
+    "decided": "Decididas"
+  },
+  "erro": "Não foi possível carregar a Caixa de decisões.",
+  "carregando": "Carregando…",
+  "filas": {
+    "aprovacoes": "Aprovações",
+    "prs": "PRs para mergear",
+    "promocoes": "Promoções de história",
+    "arquitetura": "Pendências de arquitetura",
+    "hipoteses": "Hipóteses"
+  },
+  "vazio": {
+    "aprovacoes": "Nenhuma ação esperando decisão.",
+    "prs": "Nenhuma PR esperando merge",
+    "promocoes": "Nenhuma história esperando promoção.",
+    "arquitetura": "Nenhuma pendência de arquitetura.",
+    "hipoteses": "Nenhuma hipótese do Psicólogo esperando decisão."
+  },
+  "vazioArquiteturaDecididas": "A arquitetura é uma pendência derivada: não há decisão humana a listar aqui.",
+  "truncada": "Mostrando {{mostrados}} de {{total}}; o resto está na aba do projeto.",
+  "gateParado": "O gate de {{gate}} está parado até você decidir esta ação.",
+  "abrir": "Abrir",
+  "dataEmprestada": "história atualizada {{tempo}}",
+  "motivo": {
+    "no_module": "A história não tem módulo.",
+    "missing_module": "Módulos faltando no mapa: {{modulos}}."
+  },
+  "legenda": {
+    "aprovacoes": "ações com efeito externo",
+    "prs": "passaram por QA e SecOps",
+    "promocoes": "histórias prontas para promover",
+    "arquitetura": "módulos fora do mapa",
+    "hipoteses": "do Psicólogo, sobre o time"
+  },
+  "vazioPrs": "Merge em branch protegida é sempre manual. Quando uma PR passar pelos portões, ela aparece aqui.",
+  "psicologoPausado": "O Psicólogo está pausado",
+  "psicologoPausadoDetalhe": "Nenhuma sessão é analisada até ele ser reativado.",
+  "projetos_zero": "{{count}} projeto",
+  "projetos_one": "{{count}} projeto",
+  "projetos_other": "{{count}} projetos",
+  "aprovar": "Aprovar",
+  "negar": "Negar",
+  "decidirNoCard": "Plano: decida no card, com custo e motivo."
+}

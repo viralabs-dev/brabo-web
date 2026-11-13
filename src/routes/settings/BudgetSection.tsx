@@ -1,21 +1,19 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Wallet } from 'lucide-react';
 import { Ajuda } from '@/components/ui/Ajuda';
-import { Save } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { listAgentAreas, setAreaBudget } from '../../lib/api-client';
 import type { AgentArea } from '../../lib/api-types';
 import { microsParaUsd } from '../../lib/currency';
 import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
 import { formatarCustoMicros } from './shared';
 import styles from '../ProjectSettingsTab.module.css';
 import { MarcaDeHeranca } from './heranca';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
-import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
-import { Item } from '@/components/shadcn/item';
+import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
 
 /**
  * O teto de GASTO de cada área, opcional (ADR 0110, RN-443).
@@ -69,6 +67,8 @@ export function BudgetSection({ projectId }: { projectId: string }) {
     erroGenerico: t('budget.toast.error'),
   });
 
+  usePublicarNoCabecalho('budget', t('budget.title'), secao);
+
   return (
     <SecaoDeConfiguracoes chave="budget">
       <div className={styles.sectionHead}>
@@ -88,55 +88,31 @@ export function BudgetSection({ projectId }: { projectId: string }) {
       ) : (
         <>
           {areas.map((area) => (
-            <Item variant="outline" key={area.key} className={styles.ajusteCard}>
-              <div className={styles.ajusteInfo}>
-                <div className={styles.ajusteTitulo}>
-                  {t('budget.card.title', { area: area.key })}
-                </div>
-                <div className={styles.ajusteHint}>
-                  {t('budget.card.spent', {
-                    amount: formatarCustoMicros(area.spentMicros),
-                  })}
-                </div>
-                <div className={styles.ajusteHint}>
-                  {/* O polo positivo não leva detalhe: o teto próprio está no
-                      campo ao lado, e repeti-lo aqui seria a mesma duplicação
-                      que este padrão existe para remover. */}
+            <LinhaDeConfiguracao
+              key={area.key}
+              rotulo={t('budget.card.title', { area: area.key })}
+              descricao={
+                <>
+                  {t('budget.card.spent', { amount: formatarCustoMicros(area.spentMicros) })}{' '}
                   <MarcaDeHeranca
                     proprio={area.budgetMicros !== null}
-                    detalhe={
-                      area.budgetMicros === null
-                        ? t('budget.card.noCap')
-                        : undefined
-                    }
+                    detalhe={area.budgetMicros === null ? t('budget.card.noCap') : undefined}
                   />
-                </div>
-              </div>
-              <div className={styles.ajusteNumero}>
-                <Input
-                  mono
-                  type="number"
-                  min={0}
-                  step="any"
-                  placeholder={t('budget.placeholder')}
-                  aria-label={t('budget.card.capAria', { area: area.key })}
-                  value={secao.textoDe(area)}
-                  onChange={(e) => secao.editar(area.key, e.target.value)}
-                />
-              </div>
-            </Item>
-          ))}
-
-          <div className={styles.acoesDaSecao}>
-            <Button
-              onClick={() => void secao.salvarSecao()}
-              disabled={!secao.podeSalvar}
+                </>
+              }
             >
-              <Save aria-hidden="true" />
-              {secao.salvando ? t('budget.saving') : t('budget.save')}
-            </Button>
-            <MarcaDeNaoSalvo sujas={secao.sujas} invalidas={secao.invalidas} />
-          </div>
+              <Input
+                mono
+                type="number"
+                min={0}
+                step="any"
+                placeholder={t('budget.placeholder')}
+                aria-label={t('budget.card.capAria', { area: area.key })}
+                value={secao.textoDe(area)}
+                onChange={(e) => secao.editar(area.key, e.target.value)}
+              />
+            </LinhaDeConfiguracao>
+          ))}
         </>
       )}
     </SecaoDeConfiguracoes>

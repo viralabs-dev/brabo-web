@@ -23,6 +23,7 @@ import {
 } from '../lib/decisao-da-politica';
 import { Badge } from './ui/Badge';
 import { Button } from './ui/Button';
+import { Textarea } from './ui/Textarea';
 import { Confirmacao } from './ai-elements/confirmation';
 import { Disclosure } from './ui/Disclosure';
 import {
@@ -159,6 +160,15 @@ function readFiles(payload: Record<string, unknown>): DiffFile[] | undefined {
   return files as DiffFile[];
 }
 
+/** "há 8 min" / "8 min ago", pela língua da tela; nada antes do instante da ação. */
+function haQuanto(iso: string, lang: string): string {
+  const min = Math.max(0, Math.round((Date.now() - new Date(iso).getTime()) / 60000));
+  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'always', style: 'short' });
+  if (min < 60) return rtf.format(-min, 'minute');
+  if (min < 1440) return rtf.format(-Math.round(min / 60), 'hour');
+  return rtf.format(-Math.round(min / 1440), 'day');
+}
+
 interface ApprovalCardProps {
   action: ProposedAction;
   urgency?: ApprovalUrgency;
@@ -215,6 +225,15 @@ interface ApprovalCardProps {
    * largura do card é o CONTÊINER (o fio o centraliza em 560px, RN-173).
    */
   detalheRecolhido?: boolean;
+  /**
+   * AT-944 (v9): a frase da ação e o motivo da política em duas colunas
+   * rotuladas ("O que acontece se aprovar" / "Por que está aqui"). Opcional e
+   * ligada só pela aba Aprovações; é o mesmo texto, em outro arranjo — o card
+   * segue com UMA variante (RN-096/RN-626).
+   */
+  explicado?: boolean;
+  /** Com `explicado`: o nome da sessão que propôs a ação, para a linha do cabeçalho (a tela já lê as sessões). */
+  nomeDaSessao?: string | null;
 }
 
 export function ApprovalCard({
@@ -230,6 +249,8 @@ export function ApprovalCard({
   decisaoDaPolitica,
   bloqueio,
   detalheRecolhido,
+  explicado,
+  nomeDaSessao,
 }: ApprovalCardProps) {
   const { t, i18n } = useTranslation('approvals');
   const [expandedFile, setExpandedFile] = useState<string | null>(null);
@@ -244,6 +265,9 @@ export function ApprovalCard({
   // AT-753 (UX-4, decisão P3): a oferta do modo automático é um checkbox JÁ
   // MARCADO no cartão do plano; vale ao aprovar.
   const [ligarPiloto, setLigarPiloto] = useState(true);
+  // AT-910: negar um PLANO pede o motivo (o Dev Lead o lê), em vez de negar mudo.
+  const [negando, setNegando] = useState(false);
+  const [motivo, setMotivo] = useState('');
   const queryClient = useContext(QueryClientContext);
 
   async function decidir(chamada: () => void | Promise<unknown>) {
@@ -335,6 +359,25 @@ export function ApprovalCard({
     return onApprove();
   }
 
+  const trechosJsx = (
+    <>
+        {trechos
+          ? trechos.map((trecho, indice) =>
+              // AT-322: comando, branch e caminho em mono e SEM aspas — a aspa
+              // reta em fonte proporcional se lia como parte do comando.
+              trecho.codigo ? (
+                <code key={indice} className={styles.codigoNaFrase}>
+                  {trecho.texto}
+                </code>
+              ) : (
+                trecho.texto
+              ),
+            )
+          : `${verbo} — ${SEM_FRASE}.`}
+    </>
+  );
+  const fraseJsx = <p className={styles.frase}>{trechosJsx}</p>;
+
   // Ficam à vista nos tipos de sempre; no cartão do plano vão para "Detalhes".
   const politicaJsx = (
     decisaoDaPolitica !== undefined && (
@@ -387,6 +430,25 @@ export function ApprovalCard({
           {/* Tipografia do handoff: nome do agente em título, verbo em corpo
               apagado. O verbo vem de `lib/aprovacoes.ts` — mesma fonte que a
               frase logo abaixo e que a aba Insights. */}
+          {explicado && !ehPlano ? (
+            <>
+              <div className={styles.title}>
+                <span className={styles.actorName}>{trechosJsx}</span>
+              </div>
+              <div className={styles.metaExplicado} data-testid="meta-do-card">
+                <code className={styles.chipDoTipo}>{action.actionType}</code>
+                <span>
+                  {[
+                    actorLabel,
+                    nomeDaSessao ? t('approvalCard.explicado.sessao', { nome: nomeDaSessao }) : null,
+                    haQuanto(action.createdAt, i18n.language),
+                  ]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </span>
+              </div>
+            </>
+          ) : (
           <div className={styles.title}>
             <span className={styles.actorName}>
               {temQueryClient && action.actor.kind === 'user' ? (
@@ -397,6 +459,7 @@ export function ApprovalCard({
             </span>
             <span className={styles.verb}>{verbo}</span>
           </div>
+          )}
         </div>
         {urgency && (
           <span className={styles.urgency} style={{ ['--urgency-color' as string]: URGENCY_COLOR[urgency] }}>
@@ -432,7 +495,7 @@ export function ApprovalCard({
             <TetoDoPlano projectId={action.projectId} estimativaMicros={tetoDoPlanoLido.total} />
           )}
         </>
-      ) : (
+      ) : explicado ? null : (
       <p className={styles.frase}>
         {trechos
           ? trechos.map((trecho, indice) =>
@@ -471,7 +534,11 @@ export function ApprovalCard({
               <Check aria-hidden="true" />
               {t(ehPlano ? 'approvalCard.actions.approvePlan' : 'approvalCard.actions.approve')}
             </Button>
-            <Button variant="danger" disabled={inerte} onClick={() => void decidir(() => onDeny())}>
+            <Button
+              variant="danger"
+              disabled={inerte || (ehPlano && negando)}
+              onClick={() => (ehPlano ? setNegando(true) : void decidir(() => onDeny()))}
+            >
               <X aria-hidden="true" />
               {t('approvalCard.actions.deny')}
             </Button>
@@ -499,10 +566,48 @@ export function ApprovalCard({
               </Button>
             )}
           </div>
+          {ehPlano && negando && (
+            <div data-testid="motivo-da-negacao">
+              <Textarea
+                label={t('approvalCard.denyReason.label')}
+                placeholder={t('approvalCard.denyReason.placeholder')}
+                value={motivo}
+                disabled={inerte}
+                onChange={(e) => setMotivo(e.target.value)}
+              />
+              <div className={styles.acoesDoCard}>
+                <Button
+                  variant="danger"
+                  disabled={inerte || !motivo.trim()}
+                  onClick={() => void decidir(() => onDeny(motivo.trim()))}
+                >
+                  {t('approvalCard.denyReason.confirm')}
+                </Button>
+                <Button variant="secondary" disabled={inerte} onClick={() => setNegando(false)}>
+                  {t('approvalCard.denyReason.cancel')}
+                </Button>
+              </div>
+            </div>
+          )}
         </>
       ) : null}
     >
-      {!ehPlano && politicaJsx}
+      {explicado && !ehPlano ? (
+        <div className={styles.explicado} data-testid="card-explicado">
+          <div>
+            <h4 className={styles.rotuloExplicado}>{t('approvalCard.explicado.oQueAcontece')}</h4>
+            {fraseJsx}
+          </div>
+          {decisaoDaPolitica !== undefined && (
+            <div>
+              <h4 className={styles.rotuloExplicado}>{t('approvalCard.explicado.porQueEstaAqui')}</h4>
+              {politicaJsx}
+            </div>
+          )}
+        </div>
+      ) : (
+        !ehPlano && politicaJsx
+      )}
 
       <Disclosure
         titulo={temCorpoProprio || ehPlano ? t('approvalCard.details.title') : t('approvalCard.details.rawPayloadTitle')}
@@ -852,6 +957,12 @@ function ApprovalBody({ actionType, payload, executionResult, expandedFile, onTo
           </span>
           <Badge tone="neutral" square size="md">{target ?? '?'}</Badge>
         </div>
+        {/* RN-1104: merge `merged` que não moveu o alvo — a fonte já estava contida. */}
+        {executionResult && 'jaContida' in executionResult && executionResult.jaContida && (
+          <div className={styles.prSummary}>
+            {t('approvalCard.body.gitMerge.jaContida', { target: target ?? executionResult.targetBranch })}
+          </div>
+        )}
       </div>
     );
   }

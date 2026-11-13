@@ -141,18 +141,18 @@
       "approve": "Aprovar",
       "approvePlan": "Aprovar plano",
       "deny": "Negar",
-      "alwaysAllow": "Sempre permitir",
+      "alwaysAllow": "Aprovar e criar regra",
       "autoMode": "Modo automático"
     },
     "notes": {
-      "alwaysAllow": "Sempre permitir: grava em .brabo/permissions.json do projeto uma regra por segmento do comando, por verbo + subcomando (ex.: \"npm test\", \"git status\") — o próximo comando com o mesmo verbo e subcomando roda sem perguntar.",
-      "alwaysAllowTyped": "Sempre permitir: grava em .brabo/permissions.json do projeto uma regra para este tipo de ação — a próxima do mesmo tipo roda sem perguntar.",
-      "alwaysAllowScoped": "Sempre permitir: libera este tipo de ação só para {{agent}}, não para os outros agentes do projeto.",
+      "alwaysAllow": "Aprovar e criar regra: grava em .brabo/permissions.json do projeto uma regra por segmento do comando, por verbo + subcomando (ex.: \"npm test\", \"git status\") — o próximo comando com o mesmo verbo e subcomando roda sem perguntar.",
+      "alwaysAllowTyped": "Aprovar e criar regra: grava em .brabo/permissions.json do projeto uma regra para este tipo de ação — a próxima do mesmo tipo roda sem perguntar.",
+      "alwaysAllowScoped": "Aprovar e criar regra: libera este tipo de ação só para {{agent}}, não para os outros agentes do projeto.",
       "autoMode": "Modo automático: {{actor}} roda qualquer comando sem perguntar, inclusive fora da pasta do projeto, e isso inclui git push e abertura de PR. Continuam pedindo sua decisão deploy, sudo/doas, merge em branch protegida, patch de instrução, paralelismo e remover container; o que estiver em deny segue negado. Desliga no card do agente.",
       "autoModeTyped": "Modo automático: {{actor}} passa a ter as próximas ações aprovadas sem perguntar, inclusive git push e abertura de PR. Continuam pedindo sua decisão deploy, merge em branch protegida, patch de instrução, paralelismo e remover container; o que estiver em deny segue negado. Desliga no card do agente.",
       "autoModeNotThis": "Ligar o modo automático não aprova esta ação: ela continua esperando o seu Aprovar.",
       "obsolete": "A ação já foi decidida por outro caminho; este card se atualiza sozinho.",
-      "alwaysAllowCurta": "Sempre permitir grava uma regra em permissions.json para este tipo de ação.",
+      "alwaysAllowCurta": "Aprovar e criar regra grava uma regra em permissions.json para este tipo de ação.",
       "autoModeCurta": "Modo automático: {{actor}} passa a ter as próximas ações aprovadas sem pedir."
     },
     "decided": {
@@ -189,7 +189,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "O merge não mudou nada em {{target}}: a branch de origem já estava contida. Confira se o trabalho dela já entrou; se não, a PR não trouxe o que você esperava."
       },
       "instructionPatch": {
         "hypothesisOrigin": "origem: hipótese {{id}}"
@@ -219,7 +220,7 @@
         "semTeto": "{{quem}} sem teto",
         "quemProjeto": "projeto",
         "aviso": "A estimativa (até {{estimativa}}) passa do teto {{onde}} (resta {{resta}}). A execução para quando o teto for atingido; a estimativa é o teto por tarefa, não o preço.",
-        "ondeProjeto": "do projeto",
+        "ondeProjeto": "do mês do projeto",
         "ondeArea": "da área {{area}}",
         "ajustar": "Ajustar teto",
         "campo": "Teto da área dev, em dólar",
@@ -230,6 +231,17 @@
         "semPapel": "Ajustar o teto exige o papel maintainer no projeto.",
         "invalido": "Digite um valor em dólar maior ou igual a zero, ou deixe vazio para ficar sem teto."
       }
+    },
+    "denyReason": {
+      "label": "Por que você nega este plano?",
+      "placeholder": "O Dev Lead lê este motivo e pergunta o que mudar antes de propor de novo.",
+      "confirm": "Confirmar e negar",
+      "cancel": "Cancelar"
+    },
+    "explicado": {
+      "oQueAcontece": "O que acontece se aprovar",
+      "porQueEstaAqui": "Por que está aqui",
+      "sessao": "sessão {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -279,8 +291,8 @@
   "approvalsTab": {
     "genericLoading": "Carregando…",
     "pending": {
-      "title": "Pendentes",
-      "eyebrow": "ordenadas por urgência",
+      "title": "Esperando você",
+      "eyebrow": "mais antigas primeiro",
       "selectedCount_zero": "{{count}} selecionadas",
       "selectedCount_one": "{{count}} selecionada",
       "selectedCount_other": "{{count}} selecionadas",
@@ -301,20 +313,21 @@
         "algumas_other": "Não foi possível ler o motivo da política de {{count}} das {{total}} ações abaixo: a leitura do log da sessão que as propôs falhou."
       }
     },
+    "gates": {
+      "title": "PRs nos portões"
+    },
     "devPrs": {
-      "title": "PRs em revisão",
-      "eyebrow": "{{count}} de dev agents nos gates de QA/SecOps",
+      "title": "PRs de dev agents",
       "loading": "Carregando as PRs em revisão…",
       "backlogError": "Não foi possível carregar o backlog.",
-      "empty": "Nenhuma PR de dev agent em revisão ainda."
+      "frase": "As PRs aparecem aqui quando passam por QA e SecOps e esperam o seu merge."
     },
     "infraPrs": {
-      "title": "PRs de infra em revisão",
-      "eyebrow": "{{count}} de infra nos gates de QA/SecOps",
+      "title": "PRs de infra",
       "loading": "Carregando as PRs de infra…",
       "error": "Não foi possível carregar as PRs de infra.",
-      "empty": "Nenhuma PR de infra em revisão ainda.",
-      "mergeLink": "Mergear na aba PRs"
+      "mergeLink": "Mergear na aba PRs",
+      "frase": "Mudanças de imagem, CI e deploy, com o mesmo portão."
     },
     "permissions": {
       "title": "Permissões do projeto",
@@ -336,6 +349,29 @@
     "toast": {
       "autoModeOnTitle": "Modo automático ligado",
       "autoModeOnErrorTitle": "Não foi possível ligar o modo automático"
+    },
+    "decided": {
+      "title": "Decididas recentemente",
+      "eyebrow_24h": "últimas 24 h, mais novas primeiro",
+      "eyebrow_30d": "últimos 30 dias, mais novas primeiro",
+      "seeAll": "Ver todas",
+      "error": "Não foi possível carregar as decisões recentes.",
+      "empty_24h": "Nada foi decidido nas últimas 24 h.",
+      "empty_30d": "Nada foi decidido nos últimos 30 dias.",
+      "byPolicy": "pela política",
+      "reason": "motivo: {{reason}}",
+      "status": {
+        "approved": "Aprovada",
+        "denied": "Negada",
+        "auto_approved": "Automática",
+        "executed": "Executada",
+        "failed": "Falhou"
+      },
+      "chipAuto": "auto · política",
+      "seeAllLower": "ver todas",
+      "earlierAuto_zero": "{{count}} decisões automáticas anteriores",
+      "earlierAuto_one": "{{count}} decisão automática anterior",
+      "earlierAuto_other": "{{count}} decisões automáticas anteriores"
     }
   },
   "prsTab": {
@@ -354,7 +390,16 @@
     "mergeRecusadoArquivos_one": "Arquivo em conflito: {{files}}",
     "mergeRecusadoArquivos_other": "Arquivos em conflito: {{files}}",
     "mergeRecusadoArquivos_zero": "Nenhum arquivo em conflito identificado",
-    "mergeResolverAntes": "Resolva o conflito antes (rebase da branch da PR sobre a dev) e tente o merge de novo."
+    "mergeResolverAntes": "Resolva o conflito antes (rebase da branch da PR sobre a dev) e tente o merge de novo.",
+    "vazio": {
+      "verAprovacao": "Ver a aprovação",
+      "ativarExecucao": "Ativar execução"
+    },
+    "fluxo": {
+      "titulo": "Como uma PR anda aqui:",
+      "passos": "aberta pelo agente, QA, SecOps, espera você, mesclada.",
+      "mergeManual": "Merge em branch protegida é sempre manual."
+    }
   },
   "politica": {
     "motivo": "A política decidiu por: {{motivo}}",

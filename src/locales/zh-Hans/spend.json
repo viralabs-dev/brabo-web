@@ -1,5 +1,7 @@
 {
   "shared": {
+    "exportCsv": "导出 CSV",
+    "avgCallLabel": "每次调用平均成本",
     "loading": "加载中…",
     "summing": "汇总中…",
     "retry": "重试",
@@ -61,10 +63,11 @@
   "libSpend": {
     "callTitle_other": "{{dia}} · {{custo}} · {{count}} 次调用",
     "actorPerson": "{{id}}（人员）",
-    "budgetBlocked": "此项目已达到预算的 {{pct}}%——新的 LLM 调用已被阻止，直到上限提高。",
-    "budgetWarning": "此项目已超过所设预算的 {{pct}}%。"
+    "budgetBlocked": "已达到月度上限的 {{pct}}%——新的 LLM 调用已被阻止，直到上限提高或月份切换。",
+    "budgetWarning": "已超过月度上限的 {{pct}}%。"
   },
   "window": {
+    "month": "本月",
     "label": "时间范围",
     "option": "{{n}} 天"
   },
@@ -97,6 +100,7 @@
     "bySessionEmpty": "此时间范围内没有会话产生支出。"
   },
   "team": {
+    "bySessionTitle": "按项目会话",
     "title": "项目支出",
     "subtitle": "最近 {{dias}} 天：智能体在此项目上的支出。不含提供方和密钥——账单属于工作区所有者。",
     "error": "暂时无法加载项目支出。",
@@ -119,5 +123,23 @@
     "error": "无法保存预算。未作任何更改。",
     "invalid": "请输入大于零的上限。",
     "noRole": "设置预算需要此项目的 maintainer 角色。"
+  },
+  "teto": {
+    "restantes_other": "剩余 {{count}} 天。",
+    "previsao": "月末预测：{{valor}}。",
+    "virada": "月份将在 {{quando}} 切换（00:00 UTC）。",
+    "projeto": {
+      "titulo": "月度上限",
+      "semTeto": "此项目尚未设置月度上限。",
+      "editor": "项目月度上限",
+      "semPapel": "设置月度上限需要此项目的 maintainer 角色。"
+    },
+    "workspace": {
+      "titulo": "工作区月度上限",
+      "semTeto": "工作区尚未设置月度上限。它汇总所有项目。",
+      "editor": "工作区月度上限",
+      "semPapel": "只有 owner 可以设置工作区上限。"
+    },
+    "membro": "工作区月度上限归 owner 所有；仅当调用被它拒绝时你才会看到。"
   }
 }

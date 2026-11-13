@@ -10,26 +10,29 @@
     "nav": {
       "trilhaAriaLabel": "Projects and activity",
       "projectsLabel": "Projects",
-      "newProject": "New project"
+      "newProject": "New project",
+      "projectLabel": "Project"
     },
     "projects": {
       "loadError": "Could not load the projects.",
       "retry": "try again",
-      "expand": "Expand {{name}}",
-      "collapse": "Collapse {{name}}",
-      "tabsAriaLabel": "Tabs of {{name}}"
+      "tabsAriaLabel": "Tabs of {{name}}",
+      "switch": "Switch project: {{name}}"
     },
-    "activities": {
-      "label": "Activity",
-      "openProjectHint": "Open a project to see agent activity.",
-      "empty": "No agent has acted in the latest session yet.",
-      "emptyExecution": "No agent has acted in the execution session yet.",
+    "agentsNow": {
+      "label": "Agents now",
+      "openProjectHint": "Open a project to see its agents.",
+      "empty": "No agent has acted yet.",
       "noSession": "This project has no session yet.",
-      "loadError": "Could not load the activity.",
-      "noMarksYet": "no milestones yet",
-      "instancesCount_one": "{{count}} instance",
-      "instancesCount_other": "{{count}} instances"
+      "loadError": "Could not load the agents.",
+      "status": {
+        "trabalhando": "working",
+        "aguardando": "waiting",
+        "ocioso": "idle",
+        "falhou": "failed"
+      }
     },
+    "workspaceLabel": "Workspace",
     "collapseButton": {
       "expand": "Expand menu",
       "collapse": "Collapse menu"
@@ -42,7 +45,9 @@
     "footer": {
       "accountFallback": "account",
       "logout": "sign out"
-    }
+    },
+    "caixa": "Decision inbox",
+    "home": "Home"
   },
   "notificationBell": {
     "label": "Notifications",

@@ -13,6 +13,7 @@ import {
   listModels,
   mensagemDaApi,
   setAgentModelBinding,
+  syncModelCatalog,
   setAreaModelBinding,
 } from '../../lib/api-client';
 import { AGENT_LIST, areaFor, nomeDoAgente } from '../../lib/agents';
@@ -92,6 +93,29 @@ export function ModelsSection({ projectId }: { projectId: string }) {
   // A caixa da área e o modelo do lead enquanto ela está marcada gravam o
   // binding de ÁREA, que pede `maintainer` (RN-102): outro mínimo, outro gate.
   const podeEditarArea = roleAtLeast(comPapel?.role, 'maintainer');
+// O sync é `owner` (RN-694): só ele vê o atalho "Atualizar catálogo" no seletor.
+const podeSincronizarCatalogo = roleAtLeast(comPapel?.role, 'owner');
+const [sincronizandoCatalogo, setSincronizandoCatalogo] = useState(false);
+
+async function sincronizarCatalogo() {
+  const workspaceId = comPapel?.workspace?.id;
+  if (!workspaceId) return;
+  setSincronizandoCatalogo(true);
+  try {
+    await syncModelCatalog(workspaceId);
+    void queryClient.invalidateQueries({ queryKey: ['model-catalog', workspaceId] });
+    void queryClient.invalidateQueries({ queryKey: ['models'] });
+    showToast({ title: t('catalog.toasts.syncSuccess', { ns: 'models' }), tone: 'success' });
+  } catch (erro) {
+    showToast({
+      title: t('catalog.toasts.syncErrorTitle', { ns: 'models' }),
+      message: mensagemDaApi(erro),
+      tone: 'danger',
+    });
+  } finally {
+    setSincronizandoCatalogo(false);
+  }
+}
 
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
@@ -556,6 +580,8 @@ export function ModelsSection({ projectId }: { projectId: string }) {
               selectedModelId={resolved?.modelId}
               onSelect={(model) => handleModelChange(agent.key, model)}
               variant="inline"
+              aoAtualizarCatalogo={podeSincronizarCatalogo ? sincronizarCatalogo : undefined}
+              atualizandoCatalogo={sincronizandoCatalogo}
               // Desabilitar, não esconder (ADR 0064): quem não tem `developer`
               // continua VENDO o modelo vigente do agente — e a cadeia inteira na
               // coluna ao lado —, só não consegue trocá-lo. O `disabled` mora no
@@ -841,6 +867,8 @@ export function ModelsSection({ projectId }: { projectId: string }) {
             variant="inline"
             disabled={!podeEditar}
             filtroDeAgentesPadrao
+            aoAtualizarCatalogo={podeSincronizarCatalogo ? sincronizarCatalogo : undefined}
+            atualizandoCatalogo={sincronizandoCatalogo}
           />
           <Button
             onClick={() => void loteDeAgentes.aplicarATodos()}

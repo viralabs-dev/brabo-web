@@ -6,7 +6,7 @@ byte a byte em 07/11/2026 contra o repo de origem. O histórico do monorepo (`vi
 
 | Arquivo | Origem hoje | Ponto | Usado por |
 |---|---|---|---|
-| `openapi.json` | `brabo-api:docs/reference/openapi.json` | idêntico ao da `dev` do brabo-api em **`18ff7b6`** | `pnpm openapi:types` e `:check` |
+| `openapi.json` | `brabo-api:docs/reference/openapi.json` | `docs/reference/openapi.json` da `dev` do brabo-api da `dev` do brabo-api após a api#112 (`PUT /projects/:projectId/auto-merge`, `mergeAutomatico`; antes `49d51f1d`, api#110) | `pnpm openapi:types` e `:check` |
 | `sempre-permitir.ts` | `brabo-api:src/domain/actions/sempre-permitir.ts` | idêntico ao da `dev` do brabo-api em **`7d94c3b7`** | `sempre-permitir.test.ts` |
 | `decide.ts` | `brabo-api:src/domain/actions/decide.ts` | ainda a cópia do `brabo-legacy` em **`1586158973`**; a api já passou dele (RN-1019, `semMergeLocal`), e a cópia não o importa porque o `external-effect.ts` não vem junto | `aprovacoes.test.ts` |
 | `events.md` | `brabo:docs/reference/events.md` | ainda a cópia do `brabo-legacy` em **`1586158973`**; o `brabo` já seguiu | `activity-catalog.test.ts` |

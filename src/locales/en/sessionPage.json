@@ -33,7 +33,10 @@
     "ajustes": "Model and language",
     "ajustesAria": "Model, response language and budget for this session",
     "perguntaDeIdiomaPendente": "there is a question about the response language",
-    "encerrarSessao": "Close the session"
+    "encerrarSessao": "Close the session",
+    "pararTurno": "Stop turn",
+    "trilha": "Session breadcrumb",
+    "sessoes": "Sessions"
   },
   "convite": {
     "criativa": {
@@ -316,7 +319,12 @@
     "recorteMaisRecentes": "Showing the {{mostradas}} most recent of {{total}}.",
     "arquivosVazio": "No files in the PRs or commits of this session or of the execution session linked to it.",
     "prsNaoLidas_one": "{{count}} PR was left out of this list (past the read limit, or its diff could not be read) — the PRs tab shows them all.",
-    "prsNaoLidas_other": "{{count}} PRs were left out of this list (past the read limit, or their diff could not be read) — the PRs tab shows them all."
+    "prsNaoLidas_other": "{{count}} PRs were left out of this list (past the read limit, or their diff could not be read) — the PRs tab shows them all.",
+    "objetivo": "Goal",
+    "perguntasAbertas": "Open questions",
+    "gastoPorAgente": "Spend by agent",
+    "gastoVazio": "No spend yet.",
+    "detalhes": "Session details"
   },
   "turno": {
     "artefato": {
@@ -346,7 +354,18 @@
     "fonteN": "Source {{n}}: {{rotulo}}",
     "consultadoCorte": "showing {{shown}} of {{total}}",
     "passosCount_one": "{{count}} step",
-    "passosCount_other": "{{count}} steps"
+    "passosCount_other": "{{count}} steps",
+    "visao": "Steps view",
+    "agrupados": "Grouped",
+    "emOrdem": "In order",
+    "grupos": {
+      "leu": "Read the context",
+      "desenhou": "Designed",
+      "registrou": "Recorded",
+      "outros": "Other"
+    },
+    "raciocinioTokens_one": "{{count}} token",
+    "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",
@@ -359,7 +378,8 @@
       "prontas": "PRs ready to merge",
       "bloqueadas": "Blocked tasks",
       "perguntas": "Open questions",
-      "travados": "Stuck agents"
+      "travados": "Stuck agents",
+      "semModulo": "Tasks without a module"
     },
     "origem_one": "Proposed in session {{hashtag}} · {{tempo}}",
     "origem_other": "{{count}} proposed in session {{hashtag}} · oldest {{tempo}}",
@@ -383,7 +403,15 @@
       "semMotivo": "No reason recorded.",
       "semPapel": "Unblocking requires the developer role on the project.",
       "diagnostico": "Diagnosis",
-      "agenteTravado": "{{agente}} is stuck: re-arm it before unblocking."
+      "agenteTravado": "{{agente}} is stuck: re-arm it before unblocking.",
+      "orientacao": "Guidance for the dev (optional)",
+      "orientacaoDica": "E.g. the entry point is injected by the composer; do not start the module on its own.",
+      "aumentarTeto": "Raise the per-task cap",
+      "tetoCampo": "New per-task cap (US$)",
+      "gravarTeto": "Save the cap",
+      "tetoOk": "Project cap updated: live agents pick it up on the next lap. Now just unblock.",
+      "tetoErro": "Could not save the cap.",
+      "tetoSemPapel": "Raising the cap requires the maintainer role on the project."
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",
@@ -427,6 +455,9 @@
       "ok": "Agent re-armed: it picks up tasks again.",
       "erro": "Could not re-arm the agent.",
       "semPapel": "Re-arming requires the developer role on the project."
+    },
+    "semModulo": {
+      "motivo": "No module: nobody will pick it up. Assign it through the plan or archive the task in the Backlog tab."
     }
   },
   "mergearNoChat": {
@@ -507,16 +538,47 @@
     "nota": "Rearming takes the agent out of the circuit breaker; unblocking puts the task back in the queue.",
     "semPapel": "Rearming and unblocking require the developer role on the project.",
     "feito": "Done — progress shows up in this thread.",
-    "erroTitulo": "Could not unstick the run"
+    "erroTitulo": "Could not unstick the run",
+    "ciclo": "Deadlock: {{modulo}} waits for {{esperaPor}}, which depends on {{modulo}}. Only the contract or dependsOn changing unblocks it."
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}} \"{{titulo}}\" is ready for you to merge: the gates passed.",
     "varias_one": "{{count}} PR ready for you to merge.",
     "varias_other": "{{count}} PRs ready for you to merge.",
+    "destrava_one": "Unlocks {{count}} task.",
+    "destrava_other": "Unlocks {{count}} tasks.",
+    "destravaA_one": "PR #{{numero}} unlocks {{count}} task.",
+    "destravaA_other": "PR #{{numero}} unlocks {{count}} tasks.",
     "espera": "Ready {{quando}}.",
     "ver": "View the PR",
     "verAs_one": "View {{count}}",
     "verAs_other": "View all {{count}}",
     "agoraNao": "Not now"
+  },
+  "resumo": {
+    "gravado": "Recorded this turn: {{itens}}",
+    "tipos": {
+      "regra": "business rule",
+      "decisao": "decision",
+      "pergunta": "open question",
+      "epico": "epic",
+      "historia": "story",
+      "historia_corrigida": "story corrected",
+      "historia_arquivada": "story archived",
+      "tarefa": "task",
+      "tarefa_corrigida": "task corrected",
+      "nota": "note",
+      "artefato": "other artifact",
+      "adr": "ADR proposed",
+      "module_map": "module map",
+      "modulos_de_historia": "module assignment",
+      "imagem": "image decided",
+      "c4": "C4 diagram",
+      "roteamento": "infra routing",
+      "contratos": "module contract",
+      "insight": "insight",
+      "rfc": "RFC proposed",
+      "prototipo": "prototype proposed"
+    }
   }
 }

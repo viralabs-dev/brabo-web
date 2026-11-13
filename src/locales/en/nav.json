@@ -1,21 +1,72 @@
 {
   "tabs": {
-    "overview": { "label": "Overview" },
-    "executors": { "label": "Executors" },
-    "criativo": { "label": "Creative" },
-    "chat": { "label": "Chat" },
-    "insights": { "label": "Insights" },
-    "code": { "label": "Code" },
-    "prs": { "label": "PRs" },
-    "approvals": { "label": "Approvals" },
-    "backlog": { "label": "Backlog" },
-    "architecture": { "label": "Architecture" },
-    "spend": { "label": "Spend" },
-    "settings": { "label": "Settings" }
+    "overview": {
+      "label": "Overview"
+    },
+    "executors": {
+      "label": "Executors"
+    },
+    "criativo": {
+      "label": "Creative"
+    },
+    "chat": {
+      "label": "Chat"
+    },
+    "insights": {
+      "label": "Insights"
+    },
+    "code": {
+      "label": "Code"
+    },
+    "prs": {
+      "label": "PRs"
+    },
+    "approvals": {
+      "label": "Approvals"
+    },
+    "backlog": {
+      "label": "Backlog"
+    },
+    "architecture": {
+      "label": "Architecture"
+    },
+    "spend": {
+      "label": "Spend"
+    },
+    "settings": {
+      "label": "Settings"
+    },
+    "todas": {
+      "label": "All"
+    },
+    "permissoes": {
+      "label": "Permissions"
+    }
   },
-  "groups": {
-    "agentes": { "label": "Agents" },
-    "dev": { "label": "Dev" },
-    "documentacao": { "label": "Documentation" }
+  "sections": {
+    "overview": "Overview",
+    "sessoes": "Sessions",
+    "trabalho": "Work",
+    "codigo": "Code",
+    "decisoes": "Decisions",
+    "arquitetura": "Architecture",
+    "spend": "Spend",
+    "settings": "Settings"
+  },
+  "subs": {
+    "overview": "Overview",
+    "criativo": "Ideation",
+    "chat": "Chat",
+    "backlog": "Backlog",
+    "executores": "Execution",
+    "code": "Files",
+    "prs": "PRs",
+    "approvals": "Approvals",
+    "insights": "Hypotheses",
+    "arquitetura": "Architecture",
+    "spend": "Spend",
+    "settings": "Settings",
+    "todas": "All",
+    "permissoes": "Permissions"
   }
 }

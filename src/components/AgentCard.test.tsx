@@ -54,6 +54,21 @@ describe('AgentCard', () => {
     expect(screen.getByText('US$ 0.0000')).toBeInTheDocument();
   });
 
+  it('AT-916: o modelo vira seletor com o handler; inerte com o motivo em texto', () => {
+    const onModelChange = vi.fn();
+    const opcoes = [
+      { id: 'm1', name: 'Haiku 5.5' },
+      { id: 'm2', name: 'Sonnet 5' },
+    ];
+    const r = renderCard({ modelOptions: opcoes, modelId: 'm1', onModelChange });
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'm2' } });
+    expect(onModelChange).toHaveBeenCalledWith('m2');
+    r.unmount();
+    renderCard({ modelOptions: opcoes, modelId: 'm1', onModelChange, modelDisabledReason: 'exige developer' });
+    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.getByText('exige developer')).toBeInTheDocument();
+  });
+
   it('o toggle de autonomia só aparece com o handler, e chama de volta', () => {
     const semHandler = renderCard({ autonomy: 'manual' });
     expect(screen.queryByRole('button', { name: 'Modo automático' })).not.toBeInTheDocument();
@@ -106,6 +121,22 @@ describe('AgentCard', () => {
   it('CASO DE FALHA: sem a frase (toggle manual/regra específica), a lista do piloto não aparece', () => {
     renderCard({ autonomy: 'manual', onAutonomyChange: vi.fn() });
     expect(screen.queryByTestId('piloto-detalhe')).toBeNull();
+  });
+
+  describe('procurar tarefa de novo (AT-906)', () => {
+    it('só aparece com status ocioso E o handler, e chama onWake ao clicar', () => {
+      const onWake = vi.fn();
+
+      renderCard({ status: 'travado', onWake }).unmount();
+      expect(screen.queryByRole('button', { name: 'Procurar tarefa de novo' })).not.toBeInTheDocument();
+
+      renderCard({ status: 'ocioso' }).unmount();
+      expect(screen.queryByRole('button', { name: 'Procurar tarefa de novo' })).not.toBeInTheDocument();
+
+      renderCard({ status: 'ocioso', onWake });
+      fireEvent.click(screen.getByRole('button', { name: 'Procurar tarefa de novo' }));
+      expect(onWake).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('rearmar (Fase 12b — RN-047)', () => {

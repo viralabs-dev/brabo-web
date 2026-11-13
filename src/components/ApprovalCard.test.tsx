@@ -102,13 +102,13 @@ describe('ApprovalCard', () => {
     expect(onDeny).toHaveBeenCalledTimes(1);
   });
 
-  it('chama onAlwaysAllow ao clicar em Sempre permitir', () => {
+  it('chama onAlwaysAllow ao clicar em Aprovar e criar regra', () => {
     const onAlwaysAllow = vi.fn();
     render(
       <ApprovalCard action={makeAction()} onApprove={vi.fn()} onDeny={vi.fn()} onAlwaysAllow={onAlwaysAllow} />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sempre permitir' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Aprovar e criar regra' }));
     expect(onAlwaysAllow).toHaveBeenCalledTimes(1);
   });
 
@@ -262,11 +262,11 @@ describe('ApprovalCard', () => {
       return { botoes, nota };
     }
 
-    it('fila e fio: mesmos botões e a mesma nota de "Sempre permitir"', () => {
+    it('fila e fio: mesmos botões e a mesma nota de "Aprovar e criar regra"', () => {
       const noFio = botoesENotas(false);
       const naFila = botoesENotas(true);
       expect(naFila).toEqual(noFio);
-      expect(noFio.botoes).toEqual(['Aprovar', 'Negar', 'Sempre permitir']);
+      expect(noFio.botoes).toEqual(['Aprovar', 'Negar', 'Aprovar e criar regra']);
       expect(noFio.nota).toMatch(/permissions\.json/);
     });
 
@@ -310,7 +310,7 @@ describe('ApprovalCard', () => {
 
   it('a nota de "sempre permitir" diz a unidade do padrão: verbo + subcomando, por segmento (RN-675)', async () => {
     render(<ApprovalCard action={makeAction()} onApprove={vi.fn()} onDeny={vi.fn()} onAlwaysAllow={vi.fn()} />);
-    expect(await abrirAjuda('Sempre permitir')).toHaveTextContent(
+    expect(await abrirAjuda('Aprovar e criar regra')).toHaveTextContent(
       'uma regra por segmento do comando, por verbo + subcomando',
     );
   });
@@ -412,7 +412,7 @@ describe('ApprovalCard', () => {
   // AT-320: a auditoria de 30/09 viu o botão (e a nota "libera este tipo de
   // ação só para dev-api") num `git_push` — a metade TIPADA do teto da RN-418.
   it.each<ActionType>(['git_push', 'pr_open', 'git_merge', 'open_adr_pr', 'open_infra_pr'])(
-    '%s de dev-api: não oferece "Sempre permitir" nem a nota do escopo',
+    '%s de dev-api: não oferece "Aprovar e criar regra" nem a nota do escopo',
     (actionType) => {
       render(
         <ApprovalCard
@@ -424,14 +424,14 @@ describe('ApprovalCard', () => {
       );
 
       expect(screen.getByRole('button', { name: 'Aprovar' })).toBeTruthy();
-      expect(screen.queryByRole('button', { name: 'Sempre permitir' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Aprovar e criar regra' })).toBeNull();
       expect(screen.queryByText(/só para/)).toBeNull();
     },
   );
 
-  // AT-371 (RN-709): PR de ADR é teto da RN-418 — sem "Sempre permitir" e sem
+  // AT-371 (RN-709): PR de ADR é teto da RN-418 — sem "Aprovar e criar regra" e sem
   // modo automático; e o cabeçalho pendente fala da PROPOSTA.
-  it('open_adr_pr pendente: "quer abrir", sem Sempre permitir nem modo automático', () => {
+  it('open_adr_pr pendente: "quer abrir", sem Aprovar e criar regra nem modo automático', () => {
     render(
       <ApprovalCard
         action={makeAction({ actionType: 'open_adr_pr', actor: { kind: 'agent', id: 'arquiteto' } })}
@@ -442,7 +442,7 @@ describe('ApprovalCard', () => {
       />,
     );
     expect(screen.getByText('quer abrir pull request de ADR')).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'Sempre permitir' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Aprovar e criar regra' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Modo automático' })).toBeNull();
     expect(screen.queryByTestId('nota-modo-automatico')).toBeNull();
   });
@@ -487,7 +487,7 @@ describe('ApprovalCard', () => {
       });
     }
 
-    it('não oferece "Sempre permitir" — a permissão seria inerte', () => {
+    it('não oferece "Aprovar e criar regra" — a permissão seria inerte', () => {
       // O teto do decide.ts força require_approval sempre, então gravar a
       // regra em permissions.json não mudaria nada: o botão prometia efeito.
       render(
@@ -500,7 +500,7 @@ describe('ApprovalCard', () => {
       );
 
       expect(screen.getByRole('button', { name: 'Aprovar' })).toBeTruthy();
-      expect(screen.queryByRole('button', { name: 'Sempre permitir' })).toBeNull();
+      expect(screen.queryByRole('button', { name: 'Aprovar e criar regra' })).toBeNull();
     });
 
     it('mostra o badge da hipótese de origem (rastreabilidade do loop)', () => {
@@ -617,6 +617,26 @@ describe('ApprovalCard', () => {
       // aqui é o CORPO do detalhe, então o código da frase fica de fora.
       expect(screen.getByText('dev', { ignore: 'script, style, p > code' })).toBeTruthy();
       expect(screen.queryByText(/"pullRequestId"/)).toBeNull();
+    });
+
+    it('RN-1104: merge com jaContida diz que nada mudou; sem a marca, não diz', () => {
+      const ui = (res: ProposedAction['executionResult']) => (
+        <ApprovalCard
+          action={{ ...mergeAction(), executionResult: res }}
+          detalheRecolhido
+          onApprove={vi.fn()}
+          onDeny={vi.fn()}
+          onAlwaysAllow={vi.fn()}
+        />
+      );
+      const base = { kind: 'git_merge', pullRequestId: '218', state: 'merged', targetBranch: 'dev' } as const;
+      const { unmount } = render(ui({ ...base, jaContida: true }));
+      fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+      expect(screen.getByText(/O merge não mudou nada em dev/)).toBeTruthy();
+      unmount();
+      render(ui(base));
+      fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+      expect(screen.queryByText(/O merge não mudou nada/)).toBeNull();
     });
 
     it('sem título no payload, degrada para "Pull request #<id>"', () => {
@@ -986,6 +1006,33 @@ describe('ApprovalCard — o motivo da política e a raiz do escopo (AT-148, RN-
     );
   });
 
+  it('`explicado` (AT-944): duas colunas rotuladas; sem leitura do log, só a do que acontece', () => {
+    const { rerender } = render(
+      <ApprovalCard
+        action={makeAction()}
+        explicado
+        decisaoDaPolitica={null}
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={vi.fn()}
+      />,
+    );
+    const bloco = screen.getByTestId('card-explicado');
+    expect(bloco.textContent).toContain('O que acontece se aprovar');
+    expect(bloco.textContent).toContain('Por que está aqui');
+    expect(screen.getByTestId('motivo-da-politica')).toBeTruthy();
+    rerender(
+      <ApprovalCard
+        action={makeAction()}
+        explicado
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId('card-explicado').textContent).not.toContain('Por que está aqui');
+  });
+
   it('`undefined` (tela que não lê o log): o card cala', () => {
     renderCom(undefined);
     expect(screen.queryByTestId('motivo-da-politica')).toBeNull();
@@ -1002,7 +1049,7 @@ it('AT-682: o ícone do botão é decorativo (aria-hidden) e o nome vem do texto
 describe('AT-713: texto longo no "?"', () => {
   it('o "?" tem o nome "Ajuda: <assunto>" e o ícone é decorativo', () => {
     render(<ApprovalCard action={makeAction()} onApprove={vi.fn()} onDeny={vi.fn()} onAlwaysAllow={vi.fn()} />);
-    const ajuda = screen.getByRole('button', { name: 'Ajuda: Sempre permitir' });
+    const ajuda = screen.getByRole('button', { name: 'Ajuda: Aprovar e criar regra' });
     expect(ajuda.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   });
 });

@@ -5,6 +5,7 @@ import { initReactI18next, I18nextProvider } from 'react-i18next';
 import authEn from '../locales/en/auth.json';
 import authPtBR from '../locales/pt-BR/auth.json';
 import { LoginPage } from './LoginPage';
+import { AGENT_LIST } from '../lib/agents';
 
 /**
  * A tela de login (Fase 7a — o corte).
@@ -54,6 +55,14 @@ function preencher(email = 'fulano@brabo.dev', senha = 'uma senha comprida') {
     target: { value: senha },
   });
 }
+
+describe('LoginPage — coluna de marca (AT-896)', () => {
+  it('o número de papéis vem do catálogo, nunca digitado à mão', () => {
+    montar();
+    expect(screen.getByText(new RegExp(`^${AGENT_LIST.length} papéis`))).toBeInTheDocument();
+    expect(screen.getByText('Merge em branch protegida é sempre seu')).toBeInTheDocument();
+  });
+});
 
 describe('LoginPage', () => {
   it('caminho feliz: envia as credenciais e navega para a raiz', async () => {

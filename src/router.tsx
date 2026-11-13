@@ -77,6 +77,7 @@ const ProvidersPageLazy = lazyRouteComponent(
   'ProvidersPage',
 );
 const SpendPageLazy = lazyRouteComponent(() => import('./routes/SpendPage'), 'SpendPage');
+const DecisionsPageLazy = lazyRouteComponent(() => import('./routes/DecisionsPage'), 'DecisionsPage');
 const ContainersPageLazy = lazyRouteComponent(
   () => import('./routes/ContainersPage'),
   'ContainersPage',
@@ -286,6 +287,12 @@ const providersRoute = createRoute({
   component: ProvidersPageLazy,
 });
 
+const decisionsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/decisions',
+  component: DecisionsPageLazy,
+});
+
 const spendRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/spend',
@@ -323,7 +330,7 @@ const projectRoute = createRoute({
   // `?tab=rag`) e os resolve pra `chat` — sem isso, um link antigo caía
   // silencioso na Visão geral.
   validateSearch: (search: Record<string, unknown>): ProjectSearch => ({
-    tab: resolverChaveDeAba(search.tab),
+    tab: resolverChaveDeAba(search.tab)?.sub,
     section: resolverChaveDeSecao(search.section),
     group: ehGrupoDoSumario(search.group) ? search.group : undefined,
     historia: typeof search.historia === 'string' ? search.historia : undefined,
@@ -466,6 +473,7 @@ const routeTree = rootRoute.addChildren([
 containerDetalheRoute,
     providersRoute,
     spendRoute,
+    decisionsRoute,
     projectRoute,
     sessionRoute,
     provisioningRoute,

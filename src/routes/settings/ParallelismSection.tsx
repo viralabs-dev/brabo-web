@@ -1,19 +1,16 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { GitFork } from 'lucide-react';
-import { Ajuda } from '@/components/ui/Ajuda';
-import { Save } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { listAgentAreas, setAreaMaxParallel } from '../../lib/api-client';
 import type { AgentArea } from '../../lib/api-types';
 import { nomeDoAgente } from '../../lib/agents';
 import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
-import styles from '../ProjectSettingsTab.module.css';
+import { CabecalhoDaSecao } from './CabecalhoDaSecao';
+import styles from './CabecalhoDaSecao.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
-import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
-import { Item } from '@/components/shadcn/item';
+import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
 
 /**
  * O teto de paralelismo de cada lead (FASE 14d — RN-083, ADR 0053).
@@ -62,18 +59,14 @@ export function ParallelismSection({ projectId }: { projectId: string }) {
     erroGenerico: t('parallelism.toast.error'),
   });
 
+  usePublicarNoCabecalho('parallelism', t('parallelism.title'), secao);
+
   return (
     <SecaoDeConfiguracoes chave="parallelism">
-      <div className={styles.sectionHead}>
-        <h2 className={styles.title}><GitFork aria-hidden="true" className={styles.tituloIcone} />{t('parallelism.title')}</h2>
-        <Ajuda assunto={t('parallelism.title')}>{t('parallelism.subtitle.before')}
-        <strong>{t('parallelism.subtitle.strong')}</strong>
-        {t('parallelism.subtitle.after')}</Ajuda>
-        <span className={styles.eyebrow}>{t('parallelism.eyebrow')}</span>
-      </div>
+      <CabecalhoDaSecao titulo={t('parallelism.title')} subtitulo={t('parallelism.subtitle')} />
 
       {!areas || areas.length === 0 ? (
-        <div className={styles.subtitle}>
+        <div className={styles.subtitulo}>
           {t('parallelism.empty.before')}
           <code>{t('parallelism.empty.code')}</code>
           {t('parallelism.empty.after')}
@@ -81,41 +74,28 @@ export function ParallelismSection({ projectId }: { projectId: string }) {
       ) : (
         <>
           {areas.map((area) => (
-            <Item variant="outline" key={area.key} className={styles.ajusteCard}>
-              <div className={styles.ajusteInfo}>
-                <div className={styles.ajusteTitulo}>
-                  {t('parallelism.card.title', { area: area.key })}
-                </div>
-                <div className={styles.ajusteHint}>
+            <LinhaDeConfiguracao
+              key={area.key}
+              rotulo={<span className={styles.linhaDaArea}><span className={styles.papel} aria-hidden="true">{area.key.charAt(0).toUpperCase()}</span>{t('parallelism.card.title', { area: area.key.charAt(0).toUpperCase() + area.key.slice(1) })}</span>}
+              descricao={
+                <>
                   {t('parallelism.card.lead', { lead: nomeDoAgente(area.leadAgentId) })}
                   {area.members.length > 0
                     ? t('parallelism.card.membersCount', { count: area.members.length })
                     : t('parallelism.card.noMembersYet')}
-                </div>
-              </div>
-              <div className={styles.ajusteNumero}>
-                <Input
-                  mono
-                  type="number"
-                  min={1}
-                  aria-label={t('parallelism.card.capAria', { area: area.key })}
-                  value={secao.textoDe(area)}
-                  onChange={(e) => secao.editar(area.key, e.target.value)}
-                />
-              </div>
-            </Item>
-          ))}
-
-          <div className={styles.acoesDaSecao}>
-            <Button
-              onClick={() => void secao.salvarSecao()}
-              disabled={!secao.podeSalvar}
+                </>
+              }
             >
-              <Save aria-hidden="true" />
-              {secao.salvando ? t('parallelism.saving') : t('parallelism.save')}
-            </Button>
-            <MarcaDeNaoSalvo sujas={secao.sujas} invalidas={secao.invalidas} />
-          </div>
+              <Input
+                mono
+                type="number"
+                min={1}
+                aria-label={t('parallelism.card.capAria', { area: area.key })}
+                value={secao.textoDe(area)}
+                onChange={(e) => secao.editar(area.key, e.target.value)}
+              />
+            </LinhaDeConfiguracao>
+          ))}
         </>
       )}
     </SecaoDeConfiguracoes>

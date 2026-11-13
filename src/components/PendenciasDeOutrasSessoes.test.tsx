@@ -21,6 +21,8 @@ const unblockTask = vi.fn();
 const getOpenQuestions = vi.fn();
 const getActiveExecutionSession = vi.fn();
 const rearmDevAgent = vi.fn();
+const listWorkspaces = vi.fn();
+const updateProject = vi.fn();
 
 vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
@@ -39,6 +41,8 @@ vi.mock('../lib/api-client', async (importOriginal) => {
     getOpenQuestions: (...a: unknown[]) => getOpenQuestions(...a),
     getActiveExecutionSession: (...a: unknown[]) => getActiveExecutionSession(...a),
     rearmDevAgent: (...a: unknown[]) => rearmDevAgent(...a),
+    listWorkspaces: (...a: unknown[]) => listWorkspaces(...a),
+    updateProject: (...a: unknown[]) => updateProject(...a),
   };
 });
 
@@ -103,6 +107,7 @@ beforeEach(() => {
   listBacklog.mockResolvedValue([]);
   getOpenQuestions.mockResolvedValue({ itens: [], total: 0 });
   getActiveExecutionSession.mockResolvedValue(null);
+  listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'maintainer' }]);
 });
 
 describe('PendenciasDeOutrasSessoes (AT-265)', () => {
@@ -376,7 +381,7 @@ function pr(id: string, sourceBranch: string) {
   };
 }
 
-function backlog(tarefas: Record<string, unknown>[]) {
+function backlog(tarefas: Record<string, unknown>[], moduleIds?: string[]) {
   return [
     {
       id: 'e1',
@@ -389,6 +394,7 @@ function backlog(tarefas: Record<string, unknown>[]) {
       stories: [
         {
           id: 's1',
+          moduleIds,
           tasks: tarefas.map((t) => ({
             storyId: 's1',
             description: '',
@@ -520,6 +526,24 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fila).getByText('o diagnóstico longo')).toBeInTheDocument();
   });
 
+  it('AT-912: a tarefa sem módulo em história de vários módulos aparece, e a de um módulo só não', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a', 'b']));
+    montar();
+    await abrir('Tarefas sem módulo');
+    const fila = await screen.findByTestId('fila-tarefas-sem-modulo');
+    expect(within(fila).getByText('Tarefa 7')).toBeInTheDocument();
+    expect(within(fila).getByText(/Sem módulo: ninguém vai pegar/)).toBeInTheDocument();
+  });
+
+  it('AT-912 (falha): história de um módulo só não gera a fila', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a']));
+    montar();
+    await waitFor(() => expect(listBacklog).toHaveBeenCalled());
+    expect(screen.queryByTestId('fila-tarefas-sem-modulo')).toBeNull();
+  });
+
   it('AT-753 (UX-7): a PR que sai da fila dá um aviso; a primeira leitura não avisa nada', async () => {
     getProjectPendingActions.mockResolvedValue([]);
     getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
@@ -594,10 +618,61 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
     expect(within(fila).getByText('ciclo de correção esgotado')).toBeInTheDocument();
     fireEvent.click(within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' }));
-    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8'));
+    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8', undefined));
     expect(await within(fila).findByTestId('retorno-desbloqueio')).toHaveTextContent(
       'a tarefa não está bloqueada',
     );
+  });
+
+  it('AT-917: a tarefa bloqueada por orçamento oferece "Aumentar o teto" e grava o teto do projeto (maintainer)', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([{ id: 'tp', title: 'Tarefa P', blocked: true, blockedReason: 'teto', blockedOrigin: 'politica' }]),
+    );
+    updateProject.mockResolvedValue({});
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    fireEvent.click(await within(fila).findByRole('button', { name: 'Aumentar o teto por tarefa' }));
+    fireEvent.change(within(fila).getByLabelText('Novo teto por tarefa (US$)'), { target: { value: '2' } });
+    fireEvent.click(within(fila).getByRole('button', { name: 'Gravar o teto' }));
+    await waitFor(() => expect(updateProject).toHaveBeenCalledWith('proj-1', { taskBudgetMicros: 2_000_000 }));
+  });
+
+  it('AT-917: sem o papel maintainer o botão fica inerte e o motivo aparece em texto', async () => {
+    listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'developer' }]);
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([{ id: 'tq', title: 'Tarefa Q', blocked: true, blockedReason: 'teto', blockedOrigin: 'politica' }]),
+    );
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(await within(fila).findByRole('button', { name: 'Aumentar o teto por tarefa' })).toBeDisabled();
+    expect(within(fila).getByText('Aumentar o teto exige o papel maintainer no projeto.')).toBeInTheDocument();
+  });
+
+  it('AT-909: a orientação digitada vai no desbloqueio e o botão fica inerte durante o envio (um clique, uma chamada)', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 't9', title: 'Tarefa 9', blocked: true, blockedReason: 'x' }]));
+    let liberar: (v: unknown) => void = () => {};
+    unblockTask.mockReturnValue(new Promise((r) => (liberar = r)));
+
+    montar();
+    await abrir('Tarefas bloqueadas');
+
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    fireEvent.change(within(fila).getByLabelText('Orientação para o dev (opcional)'), {
+      target: { value: '  suba pelo start  ' },
+    });
+    const botao = within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' });
+    fireEvent.click(botao);
+    fireEvent.click(botao);
+    await waitFor(() => expect(botao).toBeDisabled());
+    expect(unblockTask).toHaveBeenCalledTimes(1);
+    expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't9', '  suba pelo start  ');
+    liberar({ ok: true });
+    expect(await within(fila).findByTestId('retorno-desbloqueio')).toBeInTheDocument();
   });
 });
 

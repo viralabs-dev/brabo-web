@@ -173,7 +173,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "合并没有改变 {{target}}：源分支已被包含。请确认其工作是否已进入；如果没有，这个 PR 没有带来你期望的内容。"
       },
       "instructionPatch": {
         "hypothesisOrigin": "来源：假设 {{id}}"
@@ -197,7 +198,7 @@
         "semTeto": "{{quem}}无上限",
         "quemProjeto": "项目",
         "aviso": "预估（最多 {{estimativa}}）超过{{onde}}上限（剩余 {{resta}}）。达到上限时执行会停止；预估是每个任务的上限，不是价格。",
-        "ondeProjeto": "项目",
+        "ondeProjeto": "项目本月",
         "ondeArea": "{{area}} 区域",
         "ajustar": "调整上限",
         "campo": "dev 区域的上限（美元）",
@@ -208,6 +209,17 @@
         "semPapel": "调整上限需要项目中的 maintainer 角色。",
         "invalido": "请输入不小于零的美元金额，或留空表示无上限。"
       }
+    },
+    "denyReason": {
+      "label": "为什么拒绝这个计划？",
+      "placeholder": "Dev Lead 会阅读此原因，并在再次提议前询问需要修改什么。",
+      "confirm": "确认并拒绝",
+      "cancel": "取消"
+    },
+    "explicado": {
+      "oQueAcontece": "批准后会发生什么",
+      "porQueEstaAqui": "为何出现在这里",
+      "sessao": "会话 {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -249,8 +261,8 @@
   "approvalsTab": {
     "genericLoading": "加载中…",
     "pending": {
-      "title": "待处理",
-      "eyebrow": "按紧急程度排序",
+      "title": "等你处理",
+      "eyebrow": "最早在前",
       "selectedCount_other": "已选 {{count}} 项",
       "approveSelected": "批准所选",
       "clear": "清除",
@@ -265,20 +277,21 @@
         "algumas_other": "无法读取下方 {{total}} 个操作中 {{count}} 个的策略原因：读取提议它们的会话日志失败。"
       }
     },
+    "gates": {
+      "title": "关卡中的 PR"
+    },
     "devPrs": {
       "title": "审查中的 PR",
-      "eyebrow": "{{count}} 个来自 dev agent，处于 QA/SecOps gate",
       "loading": "正在加载审查中的 PR…",
       "backlogError": "无法加载 backlog。",
-      "empty": "还没有 dev agent 的 PR 处于审查中。"
+      "frase": "PR 通过 QA 和 SecOps 后会出现在这里，等待你合并。"
     },
     "infraPrs": {
       "title": "审查中的基础设施 PR",
-      "eyebrow": "{{count}} 个基础设施 PR，处于 QA/SecOps gate",
       "loading": "正在加载基础设施 PR…",
       "error": "无法加载基础设施 PR。",
-      "empty": "还没有基础设施 PR 处于审查中。",
-      "mergeLink": "在 PR 标签页中合并"
+      "mergeLink": "在 PR 标签页中合并",
+      "frase": "镜像、CI 和部署的变更，走同一道关口。"
     },
     "permissions": {
       "title": "项目权限",
@@ -300,6 +313,27 @@
     "toast": {
       "autoModeOnTitle": "自动模式已开启",
       "autoModeOnErrorTitle": "无法开启自动模式"
+    },
+    "decided": {
+      "title": "最近已决定",
+      "eyebrow_24h": "最近 24 小时，最新在前",
+      "eyebrow_30d": "最近 30 天，最新在前",
+      "seeAll": "查看全部",
+      "error": "无法加载最近的决定。",
+      "empty_24h": "最近 24 小时没有已决定的操作。",
+      "empty_30d": "最近 30 天没有已决定的操作。",
+      "byPolicy": "按策略",
+      "reason": "原因：{{reason}}",
+      "status": {
+        "approved": "已批准",
+        "denied": "已拒绝",
+        "auto_approved": "自动",
+        "executed": "已执行",
+        "failed": "失败"
+      },
+      "chipAuto": "自动 · 策略",
+      "seeAllLower": "查看全部",
+      "earlierAuto_other": "此前 {{count}} 条自动决定"
     }
   },
   "prsTab": {
@@ -316,7 +350,16 @@
     "gatePendente": "此 PR 的 gate {{gate}} 仍待处理。合并仍然可用——由你决定。",
     "mergeRecusado": "上一次合并尝试被拒绝：{{reason}}",
     "mergeRecusadoArquivos_other": "冲突文件：{{files}}",
-    "mergeResolverAntes": "请先解决冲突（将 PR 分支 rebase 到 dev 上），然后重试合并。"
+    "mergeResolverAntes": "请先解决冲突（将 PR 分支 rebase 到 dev 上），然后重试合并。",
+    "vazio": {
+      "verAprovacao": "查看审批",
+      "ativarExecucao": "启用执行"
+    },
+    "fluxo": {
+      "titulo": "PR 在这里的流程：",
+      "passos": "由智能体打开，QA，SecOps，等待你，已合并。",
+      "mergeManual": "合并到受保护分支始终需要手动操作。"
+    }
   },
   "politica": {
     "motivo": "策略的决定原因：{{motivo}}",

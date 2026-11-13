@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import type { Session } from '../lib/api-types';
 import { historicoFalso } from '../test/historico-de-eventos';
@@ -52,6 +52,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 vi.mock('../lib/hooks', () => ({
+  useArchitecture: () => ({ data: undefined }),
   useSessionEvents: () => ({ data: eventos(), isPending: false }),
   useSessionEventHistory: () => historicoFalso(eventos().items),
   useSessionEvent: () => ({ data: undefined, isError: false }),
@@ -173,6 +174,7 @@ describe('SessionPage — "Estou pronto — a necessidade está validada" exige 
 
     // O painel "Regras de negócio" (mesma fonte, sem busca própria) mostra a
     // regra registrada — prova de que não há uma segunda leitura divergente.
+    fireEvent.click(await screen.findByRole('button', { name: /Detalhes da sessão/ }));
     expect(screen.getByText('Só maiores de 18')).toBeInTheDocument();
   });
 });

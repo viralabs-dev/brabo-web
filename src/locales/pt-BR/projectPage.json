@@ -6,6 +6,19 @@
   },
   "adopted": "adotado",
   "repositoryNotProvisioned": "repositório não provisionado",
+  "medidor": {
+    "semTeto": "sem teto",
+    "definir": "Definir teto",
+    "gasto": "gasto do mês {{gasto}} de {{teto}}",
+    "previsao_zero": "previsão do mês {{valor}} · fecha hoje",
+    "previsao_one": "previsão do mês {{valor}} · {{count}} dia restante",
+    "previsao_other": "previsão do mês {{valor}} · {{count}} dias restantes"
+  },
+  "acao": {
+    "novaSessao": "Nova sessão",
+    "ativarExecucao": "Ativar execução",
+    "semRepositorio": "Sem repositório, não há onde ativar a execução."
+  },
   "precisaDeVoce": {
     "chip": "Precisa de você",
     "titulo": "Precisa de você",

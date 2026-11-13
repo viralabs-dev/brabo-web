@@ -158,6 +158,20 @@ describe('classifyEvent — Psicólogo (Fase 4b)', () => {
     expect(c.text).toContain('orçamento excedido');
   });
 
+  it('sinal de plataforma (AT-898) é narrado como sinal interno do TP-01, sem virar hipótese', () => {
+    const c = classifyEvent(
+      ev('psychologist.platform_signal', 'psicologo', {
+        agenteAlvo: 'dev-api',
+      }),
+    );
+
+    expect(c.kind).toBe('hypothesis');
+    expect(c.bad).toBe(false);
+    expect(c.text).toBe('sinal interno de plataforma (TP-01) sobre dev-api');
+    expect(c.text).not.toContain('nova hipótese');
+    expect(c.text).not.toContain('psychologist.platform_signal');
+  });
+
   it('tipo psychologist.* desconhecido não quebra a narração, e não vaza o tipo cru', () => {
     const c = classifyEvent(ev('psychologist.algo_novo', 'psicologo', {}));
 
@@ -548,5 +562,36 @@ describe('classifyEvent — execução parada (AT-800, RN-1061)', () => {
     expect(c.text).toContain('10 tarefas pendentes');
     expect(c.text).toContain('Fundação do catálogo');
     expect(c.text).toContain('dev-catalogo');
+  });
+});
+
+describe('AT-906 e AT-912: narração', () => {
+  it('dev.wake_requested diz quem procurou tarefa de novo', () => {
+    expect(classifyEvent(ev('dev.wake_requested', 'user-1', { agentId: 'dev-api' })).text).toContain(
+      'dev-api procurar tarefa de novo',
+    );
+  });
+
+  it('backlog.task_archived diz o motivo e não é ruim', () => {
+    const c = classifyEvent(ev('backlog.task_archived', 'user-1', { reason: 'duplicada' }));
+    expect(c.text).toBe('task arquivada: duplicada');
+    expect(c.bad).toBe(false);
+  });
+});
+
+describe('AT-916: escada de modelos', () => {
+  it('model_escalated diz de quem para quem, e o teto', () => {
+    const c = classifyEvent(
+      ev('agent.model_escalated', 'system', { agentId: 'dev-api', de: 'haiku', para: 'sonnet', tetoMicros: 2_000_000 }),
+    );
+    expect(c.text).toContain('dev-api subiu de haiku para sonnet');
+    expect(c.text).toContain('US$ 2.00');
+    expect(c.bad).toBe(false);
+  });
+
+  it('model_escalation_exhausted diz "escada esgotada" e é ruim', () => {
+    const c = classifyEvent(ev('agent.model_escalation_exhausted', 'system', { agentId: 'dev-api' }));
+    expect(c.text).toContain('escada esgotada');
+    expect(c.bad).toBe(true);
   });
 });

@@ -1,27 +1,21 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   CHAVE_ABA_ATIVA,
-  CHAVE_AGENTES_ABERTOS,
   CHAVE_COLAPSADO,
   CHAVE_PROJETO_ATIVO,
-  CHAVE_PROJETOS_ABERTOS,
   corDoProjeto,
   gravarAbaAtiva,
-  gravarAgentesAbertos,
   gravarColapsado,
   gravarProjetoAtivo,
-  gravarProjetosAbertos,
   lerAbaAtiva,
-  lerAgentesAbertos,
   lerColapsado,
   lerProjetoAtivo,
-  lerProjetosAbertos,
 } from './sidebar-state';
 
 /**
  * Persistência da sidebar (PROGRAMA 28, Onda 2 — RN-195..201).
  *
- * As seis chaves são as do handoff, ao pé da letra
+ * As chaves são as do handoff, ao pé da letra
  * (`design_handoff_brabo/CHECKLIST-CONFRONTO.md`, seção 1) — os testes de
  * chave literal são o que impede uma delas de ser renomeada por engano numa
  * refatoração futura.
@@ -38,8 +32,6 @@ afterEach(() => {
 describe('sidebar-state — chaves exatas do handoff', () => {
   it('usa os literais documentados, não variações', () => {
     expect(CHAVE_COLAPSADO).toBe('brabo.sidebar.collapsed');
-    expect(CHAVE_PROJETOS_ABERTOS).toBe('brabo.sidebar.open');
-    expect(CHAVE_AGENTES_ABERTOS).toBe('brabo.sidebar.agents');
     expect(CHAVE_PROJETO_ATIVO).toBe('brabo.project');
     expect(CHAVE_ABA_ATIVA).toBe('brabo.tab');
   });
@@ -61,34 +53,8 @@ describe('colapso — caminho feliz', () => {
   });
 });
 
-describe('conjuntos (projetos e agentes abertos) — caminho feliz', () => {
-  it('sem nada gravado, conjunto vazio', () => {
-    expect(lerProjetosAbertos()).toEqual(new Set());
-    expect(lerAgentesAbertos()).toEqual(new Set());
-  });
-
-  it('gravar e reler preserva os ids, em qualquer ordem', () => {
-    gravarProjetosAbertos(new Set(['p1', 'p2']));
-    expect(lerProjetosAbertos()).toEqual(new Set(['p1', 'p2']));
-
-    gravarAgentesAbertos(new Set(['dev-backend', 'dev-backend/dev-backend-2']));
-    expect(lerAgentesAbertos()).toEqual(new Set(['dev-backend', 'dev-backend/dev-backend-2']));
-  });
-});
-
-describe('conjuntos — quando dá errado', () => {
-  it('JSON corrompido no localStorage degrada para conjunto vazio, não lança', () => {
-    window.localStorage.setItem(CHAVE_PROJETOS_ABERTOS, '{not json');
-    expect(() => lerProjetosAbertos()).not.toThrow();
-    expect(lerProjetosAbertos()).toEqual(new Set());
-  });
-
-  it('valor que não é array (ex.: objeto) também degrada para vazio', () => {
-    window.localStorage.setItem(CHAVE_AGENTES_ABERTOS, '{"a":1}');
-    expect(lerAgentesAbertos()).toEqual(new Set());
-  });
-
-  it('localStorage que LANÇA não derruba leitura nem escrita', () => {
+describe('localStorage que lança', () => {
+  it('não derruba leitura nem escrita', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
       throw new Error('storage bloqueado');
     });
@@ -96,8 +62,6 @@ describe('conjuntos — quando dá errado', () => {
       throw new Error('storage bloqueado');
     });
 
-    expect(() => gravarProjetosAbertos(new Set(['p1']))).not.toThrow();
-    expect(lerProjetosAbertos()).toEqual(new Set());
     expect(lerColapsado()).toBe(false);
     expect(() => gravarColapsado(true)).not.toThrow();
   });

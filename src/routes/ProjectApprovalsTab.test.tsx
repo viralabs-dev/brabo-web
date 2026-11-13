@@ -131,18 +131,6 @@ describe('ProjectApprovalsTab — os três estados da RN-088', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('permissões que FALHARAM não viram "nenhuma regra configurada"', async () => {
-    getProjectPermissions.mockRejectedValue(new Error('sem acesso ao projeto'));
-    montar();
-
-    expect(
-      await screen.findByText('Não foi possível carregar as permissões do projeto.'),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('Nenhuma regra configurada ainda.'),
-    ).not.toBeInTheDocument();
-  });
-
   it('projeto sem sessão explica de onde as aprovações viriam', async () => {
     listSessions.mockResolvedValue([]);
     montar();
@@ -161,7 +149,7 @@ describe('ProjectApprovalsTab — os três estados da RN-088', () => {
   });
 });
 
-describe('ProjectApprovalsTab — fila e permissões', () => {
+describe('ProjectApprovalsTab — fila', () => {
   it('lista as pendentes e oferece o lote com "Limpar"', async () => {
     getProjectPendingActions.mockResolvedValue([acao()]);
     montar();
@@ -182,28 +170,24 @@ describe('ProjectApprovalsTab — fila e permissões', () => {
     );
   });
 
-  it('cada regra tem um revogar que diz o que revoga', async () => {
-    setProjectPermissions.mockResolvedValue(PERMISSOES);
+});
+
+describe('ProjectApprovalsTab — layout da v9 (AT-944)', () => {
+  it('ordem Esperando você, PRs nos portões (dois cartões com número e frase), Decididas recentemente', async () => {
+    getProjectPendingActions.mockResolvedValue([acao()]);
     montar();
 
-    const botao = await screen.findByRole('button', { name: 'Revogar rm -rf *' });
-    fireEvent.click(botao);
-
-    await waitFor(() => expect(setProjectPermissions).toHaveBeenCalledTimes(1));
-    expect(setProjectPermissions.mock.calls[0][1].deny).toEqual([]);
-  });
-
-  it('a busca que não acha nada diz isso, e não "nenhuma regra configurada"', async () => {
-    montar();
-    await screen.findByText('rm -rf *');
-
-    fireEvent.change(screen.getByPlaceholderText('Buscar regra ou padrão…'), {
-      target: { value: 'nao-existe' },
-    });
-
-    expect(
-      await screen.findByText('Nenhuma regra corresponde à busca.'),
-    ).toBeInTheDocument();
+    const esperando = await screen.findByRole('heading', { name: 'Esperando você' });
+    const portoes = screen.getByRole('heading', { name: 'PRs nos portões' });
+    const decididas = await screen.findByRole('heading', { name: 'Decididas recentemente' });
+    const antes = (a: Node, b: Node) => a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING;
+    expect(antes(esperando, portoes)).toBeTruthy();
+    expect(antes(portoes, decididas)).toBeTruthy();
+    expect(screen.getByTestId('portao-dev').textContent).toContain('PRs de dev agents');
+    expect(screen.getByTestId('portao-dev').textContent).toContain('esperam o seu merge');
+    expect(screen.getByTestId('portao-infra').textContent).toContain('PRs de infra');
+    expect(screen.getByTestId('card-explicado')).toBeInTheDocument();
+    expect(screen.getByTestId('meta-do-card').textContent).toContain('terminal');
   });
 });
 
@@ -219,7 +203,7 @@ describe('ProjectApprovalsTab — a fila é a do PROJETO, não a da sessão mais
     ]);
     montar();
 
-    fireEvent.click(await screen.findByRole('button', { name: /^Aprovar/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Aprovar' }));
 
     await waitFor(() => expect(approveAction).toHaveBeenCalledWith('proj-1', 'exec', 'do-dev'));
     // Nada da fila vem da listagem por sessão.

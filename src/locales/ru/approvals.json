@@ -197,7 +197,8 @@
       },
       "gitMerge": {
         "defaultTitle": "Pull request",
-        "prTitle": "Pull request #{{pr}}"
+        "prTitle": "Pull request #{{pr}}",
+        "jaContida": "Слияние ничего не изменило в {{target}}: исходная ветка уже была включена. Проверьте, вошла ли её работа; если нет, PR не принёс ожидаемого."
       },
       "instructionPatch": {
         "hypothesisOrigin": "источник: гипотеза {{id}}"
@@ -230,7 +231,7 @@
         "semTeto": "{{quem}} без лимита",
         "quemProjeto": "проект",
         "aviso": "Оценка (до {{estimativa}}) превышает лимит {{onde}} (осталось {{resta}}). Выполнение остановится при достижении лимита; оценка — это лимит на задачу, а не цена.",
-        "ondeProjeto": "проекта",
+        "ondeProjeto": "проекта на этот месяц",
         "ondeArea": "области {{area}}",
         "ajustar": "Изменить лимит",
         "campo": "Лимит области dev, в долларах",
@@ -241,6 +242,17 @@
         "semPapel": "Для изменения лимита нужна роль maintainer в проекте.",
         "invalido": "Введите сумму в долларах не меньше нуля или оставьте поле пустым, чтобы убрать лимит."
       }
+    },
+    "denyReason": {
+      "label": "Почему вы отклоняете этот план?",
+      "placeholder": "Dev Lead прочитает причину и спросит, что изменить, прежде чем предлагать снова.",
+      "confirm": "Подтвердить и отклонить",
+      "cancel": "Отмена"
+    },
+    "explicado": {
+      "oQueAcontece": "Что будет, если одобрить",
+      "porQueEstaAqui": "Почему это здесь",
+      "sessao": "сессия {{nome}}"
     }
   },
   "prGateTimeline": {
@@ -294,8 +306,8 @@
   "approvalsTab": {
     "genericLoading": "Загрузка…",
     "pending": {
-      "title": "Ожидают",
-      "eyebrow": "по срочности",
+      "title": "Ждут вас",
+      "eyebrow": "сначала старые",
       "selectedCount_one": "Выбрано: {{count}}",
       "selectedCount_few": "Выбрано: {{count}}",
       "selectedCount_many": "Выбрано: {{count}}",
@@ -319,20 +331,21 @@
         "algumas_other": "Не удалось прочитать причину политики для {{count}} из {{total}} действий ниже: чтение журнала сессии, которая их предложила, завершилось ошибкой."
       }
     },
+    "gates": {
+      "title": "PR у ворот"
+    },
     "devPrs": {
       "title": "PR на ревью",
-      "eyebrow": "{{count}} от dev agents на gate QA/SecOps",
       "loading": "Загрузка PR на ревью…",
       "backlogError": "Не удалось загрузить бэклог.",
-      "empty": "Пока нет PR от dev agent на ревью."
+      "frase": "PR появляются здесь, когда проходят QA и SecOps и ждут вашего merge."
     },
     "infraPrs": {
       "title": "PR инфраструктуры на ревью",
-      "eyebrow": "{{count}} инфраструктурных на gate QA/SecOps",
       "loading": "Загрузка PR инфраструктуры…",
       "error": "Не удалось загрузить PR инфраструктуры.",
-      "empty": "Пока нет PR инфраструктуры на ревью.",
-      "mergeLink": "Выполнить merge на вкладке PR"
+      "mergeLink": "Выполнить merge на вкладке PR",
+      "frase": "Изменения образов, CI и деплоя через тот же шлюз."
     },
     "permissions": {
       "title": "Разрешения проекта",
@@ -354,6 +367,30 @@
     "toast": {
       "autoModeOnTitle": "Автоматический режим включён",
       "autoModeOnErrorTitle": "Не удалось включить автоматический режим"
+    },
+    "decided": {
+      "title": "Недавние решения",
+      "eyebrow_24h": "последние 24 ч, сначала новые",
+      "eyebrow_30d": "последние 30 дней, сначала новые",
+      "seeAll": "Показать все",
+      "error": "Не удалось загрузить недавние решения.",
+      "empty_24h": "За последние 24 ч ничего не решено.",
+      "empty_30d": "За последние 30 дней ничего не решено.",
+      "byPolicy": "по политике",
+      "reason": "причина: {{reason}}",
+      "status": {
+        "approved": "Одобрено",
+        "denied": "Отклонено",
+        "auto_approved": "Автоматически",
+        "executed": "Выполнено",
+        "failed": "Сбой"
+      },
+      "chipAuto": "авто · политика",
+      "seeAllLower": "показать все",
+      "earlierAuto_one": "{{count}} более раннее автоматическое решение",
+      "earlierAuto_few": "{{count}} более ранних автоматических решения",
+      "earlierAuto_many": "{{count}} более ранних автоматических решений",
+      "earlierAuto_other": "{{count}} более ранних автоматических решений"
     }
   },
   "prsTab": {
@@ -373,7 +410,16 @@
     "mergeRecusadoArquivos_few": "Файлы в конфликте: {{files}}",
     "mergeRecusadoArquivos_many": "Файлы в конфликте: {{files}}",
     "mergeRecusadoArquivos_other": "Файлы в конфликте: {{files}}",
-    "mergeResolverAntes": "Сначала разрешите конфликт (rebase ветки PR на dev) и попробуйте merge снова."
+    "mergeResolverAntes": "Сначала разрешите конфликт (rebase ветки PR на dev) и попробуйте merge снова.",
+    "vazio": {
+      "verAprovacao": "Открыть согласование",
+      "ativarExecucao": "Включить выполнение"
+    },
+    "fluxo": {
+      "titulo": "Как PR проходит здесь:",
+      "passos": "открыт агентом, QA, SecOps, ждёт вас, слит.",
+      "mergeManual": "Слияние в защищённую ветку всегда ручное."
+    }
   },
   "politica": {
     "motivo": "Политика решила по причине: {{motivo}}",

@@ -67,6 +67,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 vi.mock('../lib/hooks', () => ({
+  useArchitecture: () => ({ data: undefined }),
   useSessionEvents: () => ({ data: eventos() }),
   useSessionEventHistory: () => historicoFalso(eventos().items),
   useSessionEvent: () => ({ data: undefined, isError: false }),
@@ -228,6 +229,7 @@ describe('SessionPage — achado A: contador de regras de negócio', () => {
 
     montar();
 
+    fireEvent.click(await screen.findByRole('button', { name: /Detalhes da sessão/ }));
     const cabecalho = await screen.findByRole('button', {
       name: /Regras de negócio/,
     });

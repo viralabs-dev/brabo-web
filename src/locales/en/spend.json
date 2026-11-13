@@ -1,5 +1,7 @@
 {
   "shared": {
+    "exportCsv": "Export CSV",
+    "avgCallLabel": "Average cost per call",
     "loading": "Loading…",
     "summing": "Adding up…",
     "retry": "Try again",
@@ -66,10 +68,11 @@
     "callTitle_one": "{{dia}} · {{custo}} · {{count}} call",
     "callTitle_other": "{{dia}} · {{custo}} · {{count}} calls",
     "actorPerson": "{{id}} (person)",
-    "budgetBlocked": "This project reached {{pct}}% of its budget — new LLM calls are BLOCKED until the cap goes up.",
-    "budgetWarning": "This project has already passed {{pct}}% of its defined budget."
+    "budgetBlocked": "Reached {{pct}}% of the monthly cap — new LLM calls are BLOCKED until the cap is raised or the month rolls over.",
+    "budgetWarning": "Already past {{pct}}% of the monthly cap."
   },
   "window": {
+    "month": "Month",
     "label": "Window",
     "option": "{{n}} days"
   },
@@ -102,6 +105,7 @@
     "bySessionEmpty": "No session spent in this window."
   },
   "team": {
+    "bySessionTitle": "By project session",
     "title": "Project spend",
     "subtitle": "Last {{dias}} days: what the agents spent on this project. No provider or key — the bill belongs to the workspace owner.",
     "error": "I could not load the project spend right now.",
@@ -124,5 +128,24 @@
     "error": "I could not save the budget. Nothing changed.",
     "invalid": "Enter a limit greater than zero.",
     "noRole": "Setting the budget requires the maintainer role on this project."
+  },
+  "teto": {
+    "restantes_one": "1 day left.",
+    "restantes_other": "{{count}} days left.",
+    "previsao": "End-of-month forecast: {{valor}}.",
+    "virada": "The month rolls over at {{quando}} (00:00 UTC).",
+    "projeto": {
+      "titulo": "Monthly cap",
+      "semTeto": "No monthly cap set for this project yet.",
+      "editor": "Project monthly cap",
+      "semPapel": "Setting the monthly cap requires the maintainer role in this project."
+    },
+    "workspace": {
+      "titulo": "Workspace monthly cap",
+      "semTeto": "No monthly cap set for the workspace yet. It adds up every project.",
+      "editor": "Workspace monthly cap",
+      "semPapel": "Only the owner sets the workspace cap."
+    },
+    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it."
   }
 }

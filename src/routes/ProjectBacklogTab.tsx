@@ -9,6 +9,7 @@ import {
 } from '../lib/hooks';
 import {
   archiveStory,
+  archiveTask,
   mensagemDaApi,
   promoteStories,
   returnStory,
@@ -16,12 +17,15 @@ import {
 } from '../lib/api-client';
 import { roleAtLeast } from '../lib/roles';
 import { estadoDaTarefa, type EstadoDaTarefa } from '../lib/execution';
+import { usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
+import { AtivarExecucao } from '../components/AtivarExecucao';
+import { Chip } from '../components/ui/Chip';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { useHistoriaInicial } from '../lib/historia-inicial';
 import { Checkbox } from '../components/shadcn/checkbox';
 import { Item, ItemGroup } from '../components/shadcn/item';
 import { Input } from '../components/ui/Input';
-import type { Epic, Story, StoryStatus } from '../lib/api-types';
+import type { Epic, Story, StoryStatus, Task } from '../lib/api-types';
 import { Badge, type BadgeTone } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Ajuda } from '../components/ui/Ajuda';
@@ -37,6 +41,7 @@ import {
 } from '../components/ui/icons';
 import styles from './ProjectBacklogTab.module.css';
 
+import { historiaPassaNoFiltro } from '../lib/trabalho-v9';
 import { aguardandoPromocao } from './ProjectBacklogTab.helpers';
 const STATUS_TONE: Record<StoryStatus, BadgeTone> = {
   draft: 'muted',
@@ -75,8 +80,31 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   // WORKSPACE, com a lacuna declarada da RN-471 (o de projeto pode sobrepor).
   const { data: workspaceComPapel } = useCurrentWorkspaceWithRole();
   const podeEscrever = roleAtLeast(workspaceComPapel?.role, 'developer');
+  // AT-912: arquivar tarefa é gesto do dono (o Dev Lead arquiva a que ele criou, pela ferramenta).
+  const podeArquivarTarefa = roleAtLeast(workspaceComPapel?.role, 'owner');
   const { data: coverage } = useCoverage(projectId);
   const propostas = aguardandoPromocao(epics);
+  const [visao, setVisao] = useState<'epico' | 'quadro'>('epico');
+  const [busca, setBusca] = useState('');
+  const [soComPergunta, setSoComPergunta] = useState(false);
+  const [modulo, setModulo] = useState('');
+  // RN-180: a lista de perguntas tem teto (50); acima dele a contagem por história é recorte e a tela diz.
+  const perguntasQuery = usePerguntasEmAberto(projectId).data;
+  const perguntasPorHistoria = new Map<string, number>();
+  for (const q of perguntasQuery?.itens ?? []) {
+    for (const h of q.afeta.historias) perguntasPorHistoria.set(h, (perguntasPorHistoria.get(h) ?? 0) + 1);
+  }
+  const recorte = !!perguntasQuery && perguntasQuery.total > perguntasQuery.itens.length;
+  const modulos = [...new Set((epics ?? []).flatMap((e) => e.stories.flatMap((st) => st.moduleIds ?? [])))].sort();
+  const epicsVisiveis = (epics ?? []).map((e) => ({
+    ...e,
+    stories: e.stories.filter((st) => historiaPassaNoFiltro(st, { busca, soComPergunta, modulo, perguntasPorHistoria })),
+  }));
+  const filtrando = busca.trim() !== '' || soComPergunta || modulo !== '';
+  const totalComPergunta = (epics ?? []).reduce(
+    (n, e) => n + e.stories.filter((st) => (perguntasPorHistoria.get(st.id) ?? 0) > 0).length,
+    0,
+  );
 
   return (
     <div className={styles.wrapper}>
@@ -86,15 +114,50 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
         )}
 
         <div className={styles.sectionLabel}>{t('sectionLabel.backlog')}</div>
-        {!epics || epics.length === 0 ? (
+        <div className={styles.visoes}>
+          <AtivarExecucao projectId={projectId} />
+        </div>
+        <div className={styles.visoes}>
+          <Input
+            label={t('busca.label')}
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+          <Chip pressed={soComPergunta} onClick={() => setSoComPergunta((v) => !v)}>
+            {t('filtro.comPergunta', { count: totalComPergunta })}
+          </Chip>
+          <select aria-label={t('filtro.modulo')} value={modulo} onChange={(e) => setModulo(e.target.value)}>
+            <option value="">{t('filtro.todosModulos')}</option>
+            {modulos.map((m) => (
+              <option key={m} value={m}>
+                {m}
+              </option>
+            ))}
+          </select>
+        </div>
+        {recorte && <p className={styles.description}>{t('filtro.recorte', { total: perguntasQuery?.total })}</p>}
+        <div role="group" aria-label={t('visao.label')} className={styles.visoes}>
+          {(['epico', 'quadro'] as const).map((v) => (
+            <Button key={v} variant={visao === v ? 'secondary' : 'ghost'} aria-pressed={visao === v} onClick={() => setVisao(v)}>
+              {t(`visao.${v}`)}
+            </Button>
+          ))}
+        </div>
+        {visao === 'quadro' ? (
+          <QuadroDeTarefas epics={epicsVisiveis} />
+        ) : !epics || epics.length === 0 ? (
           <EmptyState titulo={t('empty.epicsTitle')} icone={<ListTree size={18} />}>{t('empty.epics')}</EmptyState>
+        ) : filtrando && epicsVisiveis.every((e) => e.stories.length === 0) ? (
+          <EmptyState titulo={t('empty.filtrado')} icone={<ListTree size={18} />}>{t('empty.filtrado')}</EmptyState>
         ) : (
-          epics.map((epic) => (
+          epicsVisiveis.filter((e) => !filtrando || e.stories.length > 0).map((epic) => (
             <EpicNode
               key={epic.id}
               epic={epic}
+              perguntasPorHistoria={perguntasPorHistoria}
               projectId={projectId}
               podeEscrever={podeEscrever}
+              podeArquivarTarefa={podeArquivarTarefa}
             />
           ))
         )}
@@ -329,12 +392,16 @@ function PromotionQueue({
 
 function EpicNode({
   epic,
+  perguntasPorHistoria,
   projectId,
   podeEscrever,
+  podeArquivarTarefa,
 }: {
   epic: Epic;
+  perguntasPorHistoria: Map<string, number>;
   projectId: string;
   podeEscrever: boolean;
+  podeArquivarTarefa: boolean;
 }) {
   const { t } = useTranslation('backlog');
   const [open, setOpen] = useState(true);
@@ -355,7 +422,7 @@ function EpicNode({
         <StackIcon size={15} />
         <span className={styles.epicTitle}>{epic.title}</span>
         <span className={styles.count}>
-          {t('epicNode.storyCount', { count: epic.stories.length })}
+          {t('epico.progresso', { count: epic.stories.length, prontas: epic.stories.filter((st) => st.status === 'done').length })}
         </span>
       </button>
       {open && (
@@ -364,8 +431,10 @@ function EpicNode({
             <StoryNode
               key={story.id}
               story={story}
+              perguntas={perguntasPorHistoria.get(story.id) ?? 0}
               projectId={projectId}
               podeEscrever={podeEscrever}
+              podeArquivarTarefa={podeArquivarTarefa}
             />
           ))}
         </div>
@@ -376,12 +445,16 @@ function EpicNode({
 
 function StoryNode({
   story,
+  perguntas,
   projectId,
   podeEscrever,
+  podeArquivarTarefa,
 }: {
   story: Story;
+  perguntas: number;
   projectId: string;
   podeEscrever: boolean;
+  podeArquivarTarefa: boolean;
 }) {
   const { t } = useTranslation('backlog');
   const queryClient = useQueryClient();
@@ -462,6 +535,12 @@ function StoryNode({
         </span>
         <HypothesisIcon size={13} />
         <span className={styles.storyTitle}>{story.title}</span>
+        {(story.moduleIds ?? []).map((m) => (
+          <Badge key={m} tone="neutral">
+            {m}
+          </Badge>
+        ))}
+        {perguntas > 0 && <Badge tone="warning">{t('historia.perguntas', { count: perguntas })}</Badge>}
         <Badge tone={STATUS_TONE[story.status]}>
           {t(STATUS_LABEL_KEY[story.status])}
         </Badge>
@@ -497,15 +576,7 @@ function StoryNode({
           {story.tasks.length > 0 && (
             <ItemGroup className={styles.tasks}>
               {story.tasks.map((task) => (
-                <Item key={task.id} size="sm" className={styles.task} data-task-state={estadoDaTarefa(task)}>
-                  <Badge tone={TASK_STATE_TONE[estadoDaTarefa(task)]}>
-                    {t(TASK_STATE_LABEL_KEY[estadoDaTarefa(task)])}
-                  </Badge>{' '}
-                  {task.title}
-                  {task.blocked && task.blockedReason && (
-                    <div className={styles.taskBlockedReason}>{task.blockedReason}</div>
-                  )}
-                </Item>
+                <TarefaDoBacklog key={task.id} task={task} projectId={projectId} podeArquivar={podeArquivarTarefa} />
               ))}
             </ItemGroup>
           )}
@@ -611,6 +682,117 @@ function FieldList({ label, items }: { label: string; items: string[] }) {
           <li key={i}>{item}</li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+/**
+ * AT-912: a tarefa do backlog. A `todo` ganha "Arquivar" com motivo obrigatório (só para o dono);
+ * a arquivada fica no histórico, riscada e com o motivo. A api recusa a que tem agente (409 nomeado).
+ */
+function TarefaDoBacklog({
+  task,
+  projectId,
+  podeArquivar,
+}: {
+  task: Task;
+  projectId: string;
+  podeArquivar: boolean;
+}) {
+  const { t } = useTranslation('backlog');
+  const queryClient = useQueryClient();
+  const { showToast } = useToast();
+  const [arquivando, setArquivando] = useState(false);
+  const [motivo, setMotivo] = useState('');
+  const [ocupado, setOcupado] = useState(false);
+  const arquivada = Boolean(task.archivedAt);
+  const estado = arquivada ? 'archived' : estadoDaTarefa(task);
+
+  async function confirmar() {
+    if (ocupado || motivo.trim() === '') return;
+    setOcupado(true);
+    try {
+      await archiveTask(projectId, task.id, motivo.trim());
+      setArquivando(false);
+      await queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
+      showToast({ title: t('taskNode.toast.archived'), tone: 'success' });
+    } catch (erro) {
+      showToast({ title: t('taskNode.toast.archiveError'), message: mensagemDaApi(erro), tone: 'danger' });
+    } finally {
+      setOcupado(false);
+    }
+  }
+
+  return (
+    <Item size="sm" className={styles.task} data-task-state={estado}>
+      <Badge tone={arquivada ? 'muted' : TASK_STATE_TONE[estadoDaTarefa(task)]}>
+        {t(arquivada ? 'taskState.archived' : TASK_STATE_LABEL_KEY[estadoDaTarefa(task)])}
+      </Badge>{' '}
+      {arquivada ? <s>{task.title}</s> : task.title}
+      {arquivada && task.archivedReason && (
+        <div className={styles.taskBlockedReason}>{t('taskNode.archivedReason', { motivo: task.archivedReason })}</div>
+      )}
+      {!arquivada && task.blocked && task.blockedReason && (
+        <div className={styles.taskBlockedReason}>{task.blockedReason}</div>
+      )}
+      {!arquivada && podeArquivar && task.status === 'todo' && (
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setMotivo('');
+            setArquivando(true);
+          }}
+        >
+          <Archive aria-hidden="true" />
+          {t('taskNode.archive')}
+        </Button>
+      )}
+      {arquivando && (
+        <Modal title={t('taskNode.archiveModalTitle', { title: task.title })} onClose={() => setArquivando(false)}>
+          <p className={styles.description}>{t('taskNode.archiveExplain')}</p>
+          <Textarea
+            label={t('taskNode.archiveReasonLabel')}
+            value={motivo}
+            onChange={(e) => setMotivo(e.target.value)}
+            placeholder={t('taskNode.archiveReasonPlaceholder')}
+          />
+          <div style={{ display: 'flex', gap: 8, marginTop: 16 }}>
+            <Button variant="danger" loading={ocupado} disabled={motivo.trim() === ''} onClick={confirmar}>
+              {t('taskNode.archiveConfirm')}
+            </Button>
+            <Button variant="ghost" onClick={() => setArquivando(false)}>
+              {t('storyNode.cancel')}
+            </Button>
+          </div>
+        </Modal>
+      )}
+    </Item>
+  );
+}
+
+const COLUNAS_DO_QUADRO: EstadoDaTarefa[] = ['todo', 'in_progress', 'in_review', 'done', 'blocked'];
+
+/** AT-894 (RN-1220): o Quadro é só leitura; as colunas são o estado da tarefa (`estadoDaTarefa`), sem arquivadas. */
+export function QuadroDeTarefas({ epics }: { epics: Epic[] }) {
+  const { t } = useTranslation('backlog');
+  const tarefas = epics.flatMap((e) => e.stories.flatMap((s) => s.tasks.filter((x) => !x.archivedAt)));
+  return (
+    <div className={styles.quadro} data-testid="quadro-de-tarefas">
+      {COLUNAS_DO_QUADRO.map((estado) => {
+        const doEstado = tarefas.filter((x) => estadoDaTarefa(x) === estado);
+        return (
+          <section key={estado} className={styles.colunaDoQuadro} data-coluna={estado}>
+            <div className={styles.sectionLabel}>
+              {t(TASK_STATE_LABEL_KEY[estado])} <Badge tone={TASK_STATE_TONE[estado]}>{doEstado.length}</Badge>
+            </div>
+            {doEstado.map((x) => (
+              <Item key={x.id} size="sm" className={styles.task}>
+                {x.title}
+              </Item>
+            ))}
+          </section>
+        );
+      })}
     </div>
   );
 }

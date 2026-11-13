@@ -35,17 +35,38 @@
     },
     "settings": {
       "label": "设置"
+    },
+    "todas": {
+      "label": "全部"
+    },
+    "permissoes": {
+      "label": "权限"
     }
   },
-  "groups": {
-    "agentes": {
-      "label": "智能体"
-    },
-    "dev": {
-      "label": "开发"
-    },
-    "documentacao": {
-      "label": "文档"
-    }
+  "sections": {
+    "overview": "概览",
+    "sessoes": "会话",
+    "trabalho": "工作",
+    "codigo": "代码",
+    "decisoes": "决策",
+    "arquitetura": "架构",
+    "spend": "支出",
+    "settings": "设置"
+  },
+  "subs": {
+    "overview": "概览",
+    "criativo": "构思",
+    "chat": "对话",
+    "backlog": "待办",
+    "executores": "执行",
+    "code": "文件",
+    "prs": "PR",
+    "approvals": "审批",
+    "insights": "假设",
+    "arquitetura": "架构",
+    "spend": "支出",
+    "settings": "设置",
+    "todas": "全部",
+    "permissoes": "权限"
   }
 }

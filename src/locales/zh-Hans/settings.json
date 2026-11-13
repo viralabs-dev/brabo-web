@@ -173,7 +173,6 @@
   },
   "repository": {
     "title": "仓库",
-    "eyebrow": "git · provider 与策略",
     "adopted": "已接管——仓库在项目之前就已存在，分支策略由它自己决定。",
     "created": "由 Brabo 创建，并已应用 Gitflow 初始化。",
     "dismissed": {
@@ -181,12 +180,15 @@
       "strong": "跳过",
       "after": "：我们没有修改任何分支或保护规则。"
     },
-    "divergesTitle": "此仓库与模板存在差异："
+    "divergesTitle": "此仓库与模板存在差异：",
+    "none": {
+      "title": "尚未创建",
+      "subtitle": "此项目还没有仓库。"
+    }
   },
   "execution": {
     "title": "执行",
-    "eyebrow": "dev agent 自动停止",
-    "subtitle": "dev agent 的自动停止——从下一次激活执行起生效，不影响已在运行的智能体。",
+    "subtitle": "dev agent 何时自行停止。",
     "card": {
       "title": "连续阻塞多少个任务后停止",
       "hintDefault": "使用默认值（{{default}}）",
@@ -197,12 +199,27 @@
     "toast": {
       "success": "自动停止上限已保存",
       "error": "无法保存"
+    },
+    "teto": {
+      "title": "每个任务的支出上限（US$）",
+      "hintDefault": "使用默认值（US$ {{default}}）",
+      "vale": "对已在运行的代理同样生效，从每个任务的下一轮开始。",
+      "saved": "单任务上限已保存"
+    },
+    "semPapel": "编辑需要项目中的 maintainer 角色。",
+    "escada": {
+      "title": "模型阶梯（同一任务因次数上限被阻塞 2 次后升级）",
+      "hintDefault": "使用默认值（Haiku 5.5 → Sonnet 5）",
+      "vale": "从小到大；每一级有各自的任务上限。任务关闭后，代理回到基础模型。",
+      "modelo": "第 {{n}} 级模型",
+      "teto": "第 {{n}} 级上限（US$）",
+      "remover": "删除第 {{n}} 级",
+      "adicionar": "添加一级"
     }
   },
   "executionMode": {
     "title": "代码存放位置",
-    "eyebrow": "转换执行模式",
-    "subtitle": "更改本项目命令的执行位置——托管目录、通过 bind-mount 挂载的你自己的目录，或通过 runner 连接的你自己的目录。",
+    "subtitle": "转换会改变智能体的运行位置。",
     "needsMaintainer": "只有 maintainer 或 owner 可以转换。",
     "warning": {
       "refuses": "如果当前有 dev agent 正在工作或卡住，转换会被拒绝——请等待其完成（或解除卡住的任务）后再试。",
@@ -248,19 +265,14 @@
   },
   "parallelism": {
     "title": "按领域的并行度",
-    "eyebrow": "无需询问可运行多少智能体",
-    "subtitle": {
-      "before": "每个领域的 lead ",
-      "strong": "在会话中",
-      "after": "无需你授权即可拥有的智能体数量。超过上限时它不会启动任何智能体：请求会变成审批中的一项操作，附带原因，等待你处理。上限针对整个会话而非每个模块——按模块计数会让大量智能体在未经授权的情况下启动。"
-    },
+    "subtitle": "无需询问即可同时工作的智能体数量。",
     "empty": {
       "before": "暂无领域。它们在你激活执行时产生，因为 dev 领域的成员来自 Arquiteto 的 ",
       "code": "module_map",
       "after": "。"
     },
     "card": {
-      "title": "领域 {{area}}",
+      "title": "{{area}}",
       "lead": "Lead：{{lead}}",
       "membersCount_other": " — {{count}} 名成员",
       "noMembersYet": " — 暂无成员",
@@ -298,6 +310,10 @@
     "toast": {
       "success": "领域 {{area}} 的花费上限已保存",
       "error": "无法保存"
+    },
+    "mes": {
+      "rotulo": "月度支出上限",
+      "descricao": "项目每月（UTC）可支出的额度；重置时间显示在上限旁。"
     }
   },
   "promotion": {
@@ -375,10 +391,13 @@
       "updateCatalog": "更新目录",
       "updateCatalogAria": "更新 {{label}} 的模型目录",
       "noModels": "目录中暂无此 provider 的模型——登记密钥不会发现模型。",
-      "noCatalogSource": "此 provider 不提供模型列表，因此无需同步——其模型通过 seed 导入。"
+      "noCatalogSource": "此 provider 不提供模型列表，因此无需同步——其模型通过 seed 导入。",
+      "openSwapAria": "输入 {{label}} 的新密钥",
+      "calls_other": "{{count}} 次调用"
     },
     "toast": {
       "saved": "凭据已保存",
+      "catalogRefreshed": "该 provider 的模型目录已更新。",
       "saveErrorTitle": "无法保存",
       "testOk": "provider 接受了该密钥",
       "testRefused": "provider 拒绝了该密钥",
@@ -387,7 +406,10 @@
       "testErrorTitle": "无法测试",
       "removed": "凭据已移除",
       "removeErrorTitle": "无法移除"
-    }
+    },
+    "connected_other": "已连接（{{count}}）",
+    "addTitle": "添加提供商",
+    "dialogTitle": "{{label}} 密钥"
   },
   "proficiency": {
     "title": "熟练度画像",
@@ -562,5 +584,63 @@
     "retry": "重试",
     "cellLoading": "读取中…",
     "cellUnread": "未读取"
+  },
+  "cabecalho": {
+    "naoSalvas_other": "{{count}} 项未保存的更改",
+    "descartar": "放弃",
+    "salvar": "保存",
+    "salvando": "保存中…"
+  },
+  "agentCatalog": {
+    "catalog": {
+      "instructions": "Instructions",
+      "tools": "Tools",
+      "identity": "Identity",
+      "projectInstruction": "Project instruction (version {{versao}})",
+      "noProjectInstruction": "This agent has no instruction of its own in this project yet.",
+      "instructionsUnavailable": "Could not read the instructions right now.",
+      "toolsUnavailable": "Could not read the tools right now.",
+      "noTools": "This agent has no tools.",
+      "note": "Full catalog: at each step the model may see only part of it.",
+      "loading": "Loading…",
+      "error": "Could not read this agent's catalog.",
+      "missing_other": "缺少 {{count}} 个字符(文本已截断)",
+      "toolCount_other": "{{count}} 个工具"
+    },
+    "title": "智能体的指令与工具",
+    "eyebrow": "只读",
+    "subtitle": "每个智能体在此项目中获得的内容。查看版本历史或回退指令，请打开“高级”。",
+    "history": "指令历史与回退"
+  },
+  "autoMerge": {
+    "title": "自动合并",
+    "eyebrow": "谁进入 main",
+    "subtitle": "默认关闭。开启后，本项目中所有关卡均为绿色且无冲突的 PR 会自动合并到项目的工作分支（即它的 main）。",
+    "card": {
+      "title": "自动合并",
+      "hintOff": "关闭：每个 PR 都等待你点击 Merge。",
+      "hintOn": "开启：所有关卡为绿色且无冲突的 PR 会自动合并，你无需事先查看代码。"
+    },
+    "switchAria": "项目 PR 的自动合并",
+    "reason": {
+      "ligar": "只有工作区 owner 可以开启自动合并。请联系 owner。",
+      "desligar": "只有 maintainer 或工作区 owner 可以关闭自动合并。"
+    },
+    "confirm": {
+      "title": "开启自动合并？",
+      "body": "开启后，所有关卡为绿色且无冲突的 PR 会自动合并到项目的 main，你无需事先查看代码。关卡成为唯一的屏障。这些 PR 不再显示“PR 已就绪”提示。你可以随时关闭；已合并的内容不会撤回。",
+      "manual": "仍为手动：合并到 Brabo 自身仓库的 main，以及旧项目的 dev、qa 和 rc。",
+      "cancel": "取消",
+      "ok": "开启自动合并"
+    },
+    "toast": {
+      "on": "自动合并已开启",
+      "off": "自动合并已关闭",
+      "error": "无法保存"
+    }
+  },
+  "taskBudget": {
+    "title": "单任务上限与模型阶梯",
+    "subtitle": "每个任务可花费多少，以及被阻塞时的模型阶梯。"
   }
 }

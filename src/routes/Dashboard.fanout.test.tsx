@@ -135,6 +135,10 @@ vi.mock('../lib/api-client', async () => {
         spentMicros: 1_000_000,
       });
     },
+    getDecisionInbox: conta('getDecisionInbox', {
+      filas: { aprovacoes: { total: 0, truncada: false, itens: [] }, prs: { total: 0, truncada: false, itens: [] }, promocoes: { total: 0, truncada: false, itens: [] }, arquitetura: { total: 0, truncada: false, itens: [] }, hipoteses: { total: 0, truncada: false, itens: [] } },
+      projetos: [],
+    }),
     getProjectsSummary: () => {
       chamadas.getProjectsSummary = (chamadas.getProjectsSummary ?? 0) + 1;
       return Promise.resolve(

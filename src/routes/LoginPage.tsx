@@ -6,6 +6,7 @@ import { Input } from '../components/ui/Input';
 import { GitHubIcon, GitLabIcon } from '../components/ui/icons';
 import { SinaisDoAmbiente } from '../components/SinaisDoAmbiente';
 import { runtimeConfig } from '../lib/runtime-config';
+import { AGENT_LIST, AREAS } from '../lib/agents';
 import { AuthLayout } from './AuthLayout';
 import styles from './AuthLayout.module.css';
 
@@ -67,6 +68,13 @@ const AcessoRapido =
     ? lazy(() => import('../components/AcessoRapido'))
     : null;
 
+/**
+ * Os papéis de topo mostrados como chips (v9): os agentes solo, a chave de cada
+ * área vinda de `AREAS` e o SecOps, na ordem da prévia. A chave é também o
+ * sufixo do token `--ag-<chave>` (uma cor por papel).
+ */
+const PAPEIS_DE_TOPO = ['criativo', 'po', 'arquiteto', AREAS.dev.key, AREAS.qa.key, 'secops', AREAS.infra.key];
+
 export function LoginPage({ onEntrar, irPara, erroOAuth }: LoginPageProps) {
   const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
@@ -105,10 +113,31 @@ export function LoginPage({ onEntrar, irPara, erroOAuth }: LoginPageProps) {
       irPara={irPara}
       colunaDeIdentidade={
         <>
-          <p className={styles.pitch}>{t('loginPage.identity.pitch')}</p>
-          <SinaisDoAmbiente />
+          <div className={styles.meio}>
+            <p className={styles.manchete}>{t('loginPage.identity.manchete')}</p>
+            <p className={styles.pitch}>{t('loginPage.identity.pitch')}</p>
+            <ul className={styles.promessas}>
+              {(t('loginPage.identity.promessas', { returnObjects: true }) as string[]).map((p) => (
+                <li key={p}>{p}</li>
+              ))}
+            </ul>
+          </div>
+          <div className={styles.pe}>
+            <ul className={styles.chips} aria-hidden="true">
+              {PAPEIS_DE_TOPO.map((k) => (
+                <li key={k} className={styles.chip} style={{ color: `var(--ag-${k})` }}>
+                  {k[0].toUpperCase()}
+                </li>
+              ))}
+            </ul>
+            {/* Derivado do catálogo: o número nunca é digitado à mão. */}
+            <p className={styles.papeis}>
+              {t('loginPage.identity.papeis', { count: AGENT_LIST.length })}
+            </p>
+          </div>
         </>
       }
+      abaixoDoCartao={<SinaisDoAmbiente compacto />}
       rodapeDoCartao={
         <>
           {t('loginPage.footer.noAccessPrompt')}{' '}

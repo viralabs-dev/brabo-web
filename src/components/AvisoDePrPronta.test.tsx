@@ -11,6 +11,7 @@ const getProjectPendingActions = vi.fn();
 const getOpenPullRequestsDoChat = vi.fn();
 const getCodePullRequests = vi.fn();
 const listBacklog = vi.fn();
+const getArchitecture = vi.fn();
 const proposeAction = vi.fn();
 const approveAction = vi.fn();
 
@@ -20,6 +21,7 @@ vi.mock('../lib/api-client', async (importOriginal) => ({
   getOpenPullRequestsDoChat: (...a: unknown[]) => getOpenPullRequestsDoChat(...a),
   getCodePullRequests: (...a: unknown[]) => getCodePullRequests(...a),
   listBacklog: (...a: unknown[]) => listBacklog(...a),
+  getArchitecture: (...a: unknown[]) => getArchitecture(...a),
   proposeAction: (...a: unknown[]) => proposeAction(...a),
   approveAction: (...a: unknown[]) => approveAction(...a),
 }));
@@ -48,7 +50,7 @@ const pr = (id: string, sourceBranch: string) => ({
   updatedAt: null,
 });
 
-function backlog(tarefas: { id: string; gateStatus: string | null }[]) {
+function backlog(tarefas: { id: string; gateStatus: string | null; module?: string; status?: string }[]) {
   return [
     {
       id: 'e1',
@@ -97,6 +99,7 @@ beforeEach(() => {
   getProjectPendingActions.mockResolvedValue([]);
   getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
   listBacklog.mockResolvedValue(backlog([]));
+  getArchitecture.mockResolvedValue({ moduleMap: null });
 });
 
 describe('AvisoDePrPronta', () => {
@@ -115,6 +118,26 @@ describe('AvisoDePrPronta', () => {
     expect(screen.getByRole('button', { name: 'Mergear' })).toBeInTheDocument();
     expect(screen.getByRole('status')).toContainElement(aviso);
     expect(document.title).toBe('(1) Brabo');
+  });
+
+  it('AT-902: a PR que fecha a fundação diz quantas tarefas destrava e vem primeiro', async () => {
+    getArchitecture.mockResolvedValue({
+      moduleMap: { modules: [{ name: 'base', dependsOn: [] }, { name: 'api', dependsOn: ['base'] }] },
+    });
+    getOpenPullRequestsDoChat.mockResolvedValue({
+      items: [pr('4', 'feature/task-bbbbbbbb'), pr('3', 'feature/task-aaaaaaaa')],
+    });
+    listBacklog.mockResolvedValue(
+      backlog([
+        { id: 'bbbbbbbb-1', gateStatus: 'awaiting_user', module: 'api' },
+        { id: 'aaaaaaaa-1', gateStatus: 'awaiting_user', module: 'base' },
+        { id: 'cccccccc-1', gateStatus: null, module: 'api', status: 'todo' },
+        { id: 'dddddddd-1', gateStatus: null, module: 'api', status: 'todo' },
+      ]),
+    );
+    montar();
+    const aviso = await screen.findByTestId('aviso-pr-pronta');
+    await waitFor(() => expect(aviso.textContent).toContain('A PR #3 destrava 2 tarefas.'));
   });
 
   it('AT-843: com /code/pull-requests em 409 (sem imagem decidida), o aviso aparece mesmo assim', async () => {

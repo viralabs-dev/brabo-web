@@ -3,6 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from '@tanstack/react-router';
 import {
   useCurrentWorkspace,
+  useCurrentWorkspaceWithRole,
+  useDecisionInbox,
+  useWorkspaceBudget,
   useProjects,
   useProjectsSummary,
   useWorkspaceSummary,
@@ -16,16 +19,17 @@ import { setLastSeenSeq } from '../lib/read-state';
 import { groupRosterByArea, rosterFromFacts } from '../lib/agent-status';
 import { classifyEvent } from '../lib/activity';
 import { formatRelativeTime } from '../lib/time';
-import { contagemAgentes, contagemProjetos } from '../lib/pluralize';
 import { microsParaUsd, usdFmt } from '../lib/currency';
+import { nomeDoAgente } from '../lib/agents';
 import { useLayoutMovel } from '../lib/layout-movel';
 import type { Project, ProjectCardSummary } from '../lib/api-types';
 import { ProjectCard, ProjectCardSkeleton } from '../components/ProjectCard';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
+import { AtividadeRecente } from '../components/AtividadeRecente';
 import { NotificationBell } from '../components/NotificationBell';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
-import { Skeleton } from '../components/ui/Skeleton';
+import { SectionCards, type MetricaDoCard } from '../components/shadcn/section-cards';
 import { EmptyState } from '../components/ui/EmptyState';
 import { PlusIcon, SearchIcon } from '../components/ui/icons';
 import { NewProjectWizard } from './NewProjectWizard';
@@ -44,7 +48,10 @@ function ProjectCardContainer({
   project,
   summary,
   carregando,
+  agentesAguardando,
 }: {
+  /** Ids dos agentes com ação pendente neste projeto (Caixa de decisões). */
+  agentesAguardando?: string[];
   project: Project;
   summary: ProjectCardSummary | undefined;
   /** O resumo do workspace ainda está chegando — sem ele não há como saber
@@ -113,6 +120,11 @@ function ProjectCardContainer({
       // projeto estivesse aberto — a diferença é o MECANISMO (aqui vem
       // agregado do backend; lá, do event log da sessão aberta).
       onlineAgentCount={summary?.onlineAgentCount}
+      aguardandoVoce={
+        agentesAguardando?.length
+          ? t('projectCard.aguardandoVoce', { agente: nomeDoAgente(agentesAguardando[0]) })
+          : undefined
+      }
       onClick={() =>
         provisioningStatus === 'provision_failed'
           ? navigate({
@@ -126,12 +138,86 @@ function ProjectCardContainer({
   );
 }
 
+/** `+` quando a fila foi cortada pelo teto: o total é real, mas o recorte é declarado (RN-180). */
+const total = (f: { total: number; truncada: boolean }) => `${f.total}${f.truncada ? '+' : ''}`;
+
+/**
+ * Os quatro cartões do topo (S01). Cada um degrada sozinho: um erro de leitura
+ * vira "indisponível" no próprio cartão. A Caixa nunca soma filas (RN-467).
+ */
+function CartoesDoInicio({ workspaceId }: { workspaceId: string | undefined }) {
+  const { t } = useTranslation('dashboard');
+  const summary = useWorkspaceSummary(workspaceId);
+  const inbox = useDecisionInbox(workspaceId);
+  const ehOwner = useCurrentWorkspaceWithRole().data?.role === 'owner';
+  const budget = useWorkspaceBudget(workspaceId, ehOwner);
+  const online = (useProjectsSummary(workspaceId).data ?? []).reduce(
+    (n, c) => n + c.onlineAgentCount,
+    0,
+  );
+  const indisp = t('inicio.indisponivel');
+  const carregando = '…';
+
+  const aguardando = inbox.data
+    ? inbox.data.projetos.reduce((n, p) => n + p.agentesAguardando.length, 0)
+    : undefined;
+  const f = inbox.data?.filas;
+
+  const metricas: MetricaDoCard[] = [
+    {
+      rotulo: t('inicio.projetos.rotulo'),
+      valor: summary.isError ? indisp : summary.data ? summary.data.activeProjects : carregando,
+    },
+    {
+      rotulo: t('inicio.agentes.rotulo'),
+      valor:
+        aguardando === undefined
+          ? inbox.isError ? indisp : carregando
+          : t('inicio.agentes.trabalhando', { count: Math.max(0, online - aguardando) }),
+      nota: aguardando === undefined ? undefined : t('inicio.agentes.aguardando', { count: aguardando }),
+    },
+    {
+      rotulo: t('inicio.gasto.rotulo'),
+      valor: summary.isError
+        ? indisp
+        : summary.data
+          ? usdFmt.format(microsParaUsd(summary.data.spentMicros))
+          : carregando,
+      nota: !ehOwner
+        ? t('inicio.gasto.soOwner')
+        : budget.isError
+          ? t('inicio.gasto.tetoIndisponivel')
+          : budget.data
+            ? t('inicio.gasto.teto', { valor: usdFmt.format(microsParaUsd(budget.data.limitMicros)) })
+            : undefined,
+    },
+    {
+      rotulo: t('inicio.caixa.rotulo'),
+      valor: f
+        ? t('inicio.caixa.aprovacoes', { count: f.aprovacoes.total, n: total(f.aprovacoes) })
+        : inbox.isError ? indisp : carregando,
+      nota: f
+        ? t('inicio.caixa.demais', {
+            prs: total(f.prs),
+            promocoes: total(f.promocoes),
+            arquitetura: total(f.arquitetura),
+            hipoteses: total(f.hipoteses),
+          })
+        : undefined,
+    },
+  ];
+  return <SectionCards metricas={metricas} data-testid="cartoes-do-inicio" />;
+}
+
 export function Dashboard() {
   const { t } = useTranslation('dashboard');
   const { data: workspace } = useCurrentWorkspace();
   const projectsQuery = useProjects(workspace?.id);
   const projects = projectsQuery.data;
-  const summaryQuery = useWorkspaceSummary(workspace?.id);
+  const inboxQuery = useDecisionInbox(workspace?.id);
+  const aguardandoPorProjeto = new Map(
+    (inboxQuery.data?.projetos ?? []).map((p) => [p.projectId, p.agentesAguardando]),
+  );
   // A grade INTEIRA numa requisição (RN-090). Mesma queryKey que o Shell usa
   // para os dots da sidebar: montados juntos, o React Query deduplica e o
   // dashboard custa um poll, não um por card.
@@ -163,6 +249,7 @@ export function Dashboard() {
   // quebrava em duas linhas. No móvel a busca desce para uma linha própria,
   // inteira, e a primeira fica com título, sino e o botão.
   const movel = useLayoutMovel();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -188,27 +275,17 @@ export function Dashboard() {
         />
         <Button
           className={styles.novoProjeto}
-          legenda={t('topbar.newProject')}
+          // No móvel continua só ícone (RN-643, AT-330); no desktop leva o rótulo.
+          {...(movel ? { legenda: t('topbar.newProject') } : {})}
           onClick={() => setWizardOpen(true)}
         >
           <PlusIcon size={14} aria-hidden="true" />
+          {!movel && t('topbar.newProject')}
         </Button>
       </div>
 
       <div className={styles.content}>
-        <div className={styles.summary}>
-          {summaryQuery.isError ? (
-            <span className={styles.summaryFallback}>{t('summary.unavailable')}</span>
-          ) : summaryQuery.data ? (
-            t('summary.line', {
-              projects: contagemProjetos(summaryQuery.data.activeProjects),
-              agents: contagemAgentes(summaryQuery.data.agentCount),
-              spent: usdFmt.format(microsParaUsd(summaryQuery.data.spentMicros)),
-            })
-          ) : (
-            <Skeleton width={220} height={13} />
-          )}
-        </div>
+        <CartoesDoInicio workspaceId={workspace?.id} />
 
         {projectsQuery.isError ? (
           // ANTES do teste de lista vazia, e não depois: `!projects` é
@@ -245,16 +322,36 @@ export function Dashboard() {
         ) : filtered.length === 0 ? (
           <EmptyState>{t('empty.noSearchResults', { search })}</EmptyState>
         ) : (
-          <div className={styles.grid}>
-            {filtered.map((project) => (
-              <ProjectCardContainer
-                key={project.id}
-                project={project}
-                summary={cardPorProjeto.get(project.id)}
-                carregando={cardsQuery.isLoading}
-              />
-            ))}
-          </div>
+          <section>
+            <h2 className={styles.secao}>{t('secaoProjetos')}</h2>
+            <div className={styles.grid}>
+              {filtered.map((project) => (
+                <ProjectCardContainer
+                  key={project.id}
+                  project={project}
+                  summary={cardPorProjeto.get(project.id)}
+                  carregando={cardsQuery.isLoading}
+                  agentesAguardando={aguardandoPorProjeto.get(project.id)}
+                />
+              ))}
+              {!search && (
+                <button type="button" className={styles.novoCartao} onClick={() => setWizardOpen(true)}>
+                  <PlusIcon size={16} aria-hidden="true" />
+                  <strong>{t('novoCartao.titulo')}</strong>
+                  <span>{t('novoCartao.descricao')}</span>
+                </button>
+              )}
+            </div>
+          </section>
+        )}
+
+        {projects && projects.length > 0 && (
+          <AtividadeRecente
+            projects={projects}
+            cards={cards}
+            erro={cardsQuery.isError}
+            onAbrir={(projectId) => navigate({ to: '/projects/$projectId', params: { projectId } })}
+          />
         )}
       </div>
 

@@ -2,25 +2,32 @@ import { Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { getProject, getProjectBudget, getRepository } from '../lib/api-client';
-import { useLatestSession } from '../lib/hooks';
+import { useActiveExecutionSession, useCurrentWorkspaceWithRole, useLatestSession } from '../lib/hooks';
+import { useCriarSessao } from '../lib/use-criar-sessao';
+import { useAtivarExecucao } from '../lib/use-ativar-execucao';
+import { roleAtLeast } from '../lib/roles';
+import { KIND_PRE_SELECIONADO } from '../lib/session-kind';
+import { Button } from '../components/ui/Button';
+import type { ReactNode } from 'react';
+import type { Role } from '../lib/api-types';
 import {
   publicarAbaAtiva,
   ouvirPedidosDeAba,
   useContagensDoProjeto,
 } from '../lib/contagens-do-projeto';
 import { setLastSeenSeq } from '../lib/read-state';
-import { TokenMeter } from '../components/TokenMeter';
-import { PainelPrecisaDeVoce } from '../components/PainelPrecisaDeVoce';
-import { montarFilas } from '../lib/precisa-de-voce';
+import { MedidorDeGasto } from '../components/MedidorDeGasto';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { Skeleton } from '../components/ui/Skeleton';
 import { CarregandoRota } from '../components/CarregandoRota';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { BranchIcon, GitHubIcon, GitLabIcon, LocalRepoIcon } from '../components/ui/icons';
-import { ABA_PADRAO, abaPorChave, ehChaveDeAba, type ChaveDeAba } from './project-tabs';
+import { ABA_PADRAO, abaPorChave, ehChaveDeAba, secaoDaChave, type ChaveDeAba } from './project-tabs';
 import { ContextoDeGrupoInicial, ContextoDeSecaoInicial, ContextoDeTrocaDeGrupo } from './settings/secao-inicial';
 import { ContextoDeHistoriaInicial } from '../lib/historia-inicial';
 import type { ChaveDeSecao, GrupoDoSumario } from './settings/sumario';
+import { ChipsDaArquitetura } from './ChipsDaArquitetura';
+import { FaixaDeSubAbas } from '../components/FaixaDeSubAbas';
 import { Badge } from '../components/ui/Badge';
 import { CabecalhoDePagina } from '../components/shadcn/cabecalho-de-pagina';
 import styles from './ProjectPage.module.css';
@@ -29,6 +36,30 @@ const PROVIDER_ICON = { github: GitHubIcon, gitlab: GitLabIcon, local: LocalRepo
 
 /** O chip ao lado do nome diz o que o repositório É (handoff, seção 4). */
 const VISIBILIDADE_KEY = { public: 'visibility.public', private: 'visibility.private' } as const;
+
+function AtivarExecucaoDoCabecalho({
+  projectId,
+  papel,
+}: {
+  projectId: string;
+  papel: Role | undefined;
+}) {
+  const { t } = useTranslation('projectPage');
+  const { ativar, semRepositorio } = useAtivarExecucao(projectId);
+  if (useActiveExecutionSession(projectId).session) return null;
+  return (
+    <>
+      {semRepositorio && <span className={styles.metaStrong}>{t('acao.semRepositorio')}</span>}
+      <Button
+        variant="primary"
+        onClick={() => void ativar()}
+        disabled={semRepositorio || !roleAtLeast(papel, 'maintainer')}
+      >
+        {t('acao.ativarExecucao')}
+      </Button>
+    </>
+  );
+}
 
 interface ProjectPageProps {
   projectId: string;
@@ -49,8 +80,7 @@ interface ProjectPageProps {
 export function ProjectPage({ projectId, initialTab, initialSection, initialGroup, initialStory }: ProjectPageProps) {
   const { t } = useTranslation('projectPage');
   const [tab, setTab] = useState<ChaveDeAba>(initialTab ?? ABA_PADRAO);
-  const [painelAberto, setPainelAberto] = useState(false);
-  // RN-980: o grupo de Configurações é estado local semeado pela URL; trocar escreve `?group=`.
+    // RN-980: o grupo de Configurações é estado local semeado pela URL; trocar escreve `?group=`.
   const [grupo, setGrupo] = useState(initialGroup);
   useEffect(() => setGrupo(initialGroup), [initialGroup]);
   function trocarGrupo(g: GrupoDoSumario) {
@@ -60,6 +90,19 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
       url.searchParams.set('tab', 'settings');
       url.searchParams.set('group', g);
       url.searchParams.delete('section');
+      window.history.replaceState(window.history.state, '', url);
+    } catch {
+      // sem `window` (teste/SSR): só a troca local
+    }
+  }
+  // Trocar de sub-aba: estado local + o endereço acompanha (como `trocarGrupo`).
+  function trocarSub(chave: ChaveDeAba) {
+    setTab(chave);
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', chave);
+      url.searchParams.delete('section');
+      url.searchParams.delete('group');
       window.history.replaceState(window.history.state, '', url);
     } catch {
       // sem `window` (teste/SSR): só a troca local
@@ -106,20 +149,12 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
   const { data: repository } = useQuery({ queryKey: ['repository', projectId], queryFn: () => getRepository(projectId) });
   const { data: budget } = useQuery({ queryKey: ['budget', projectId], queryFn: () => getProjectBudget(projectId) });
 
-  const { latest: latestSession } = useLatestSession(projectId);
-  // As cinco filas de decisão, lidas pelo MESMO hook que a sidebar usa para os
-  // contadores das abas (ADR 0211) — mesmas `queryKey`s, deduplicadas. Aqui
-  // elas viram as cinco FILAS do painel "precisa de você" (RN-467), SEPARADAS:
-  // sem soma nem no painel nem no chip.
-  const filasDoProjeto = useContagensDoProjeto(projectId);
-  const filasPrecisaDeVoce = montarFilas({
-    acoesPendentes: filasDoProjeto.pendentesDoProjeto,
-    merges: filasDoProjeto.merges,
-    epicos: filasDoProjeto.epicos,
-    pendenciasDeArquitetura: filasDoProjeto.pendenciasDeArquitetura,
-    hipoteses: filasDoProjeto.hipoteses,
-  });
+  const { data: workspace } = useCurrentWorkspaceWithRole();
+  const papel = workspace?.role;
+  const { criar, criando } = useCriarSessao(projectId);
 
+  const { latest: latestSession } = useLatestSession(projectId);
+  const filasDoProjeto = useContagensDoProjeto(projectId);
   useEffect(() => {
     // Literal de propósito: quem marca o projeto como lido é a Visão geral —
     // não "a aba padrão, seja ela qual for".
@@ -161,6 +196,29 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
   const aba = abaPorChave(tab);
   const PainelDaAba = aba.component;
 
+  // A ação primária da seção (AT-888, RN-1210). O papel mínimo é o do endpoint
+  // (RN-102): criar sessão `developer`, ativar execução `maintainer`.
+  const secaoAtual = secaoDaChave(tab).chave;
+  let acaoPrimaria: ReactNode = null;
+  if (secaoAtual === 'overview' || secaoAtual === 'sessoes') {
+    acaoPrimaria = (
+      <Button
+        variant="primary"
+        onClick={() => void criar(tab === 'chat' ? 'consultiva' : KIND_PRE_SELECIONADO)}
+        disabled={criando || !roleAtLeast(papel, 'developer')}
+      >
+        {t('acao.novaSessao')}
+      </Button>
+    );
+  } else if (secaoAtual === 'trabalho' && tab === 'backlog') {
+    // v9 (AT-943): em Execução a ação é a do cartão de chamada; o cabeçalho só a leva em Backlog.
+    // Componente à parte: a leitura do resumo só acontece em Trabalho, e o
+    // orçamento de requisições das outras abas (RN-632/645) não sobe.
+    acaoPrimaria = (
+      <AtivarExecucaoDoCabecalho projectId={projectId} papel={papel} />
+    );
+  }
+
   return (
     <div className={[styles.wrapper, movel && styles.movel].filter(Boolean).join(' ')}>
       {/* O cabeçalho é uma faixa `surface-1` com uma única divisória embaixo
@@ -168,8 +226,11 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
           saiu de dentro dele (ADR 0126) e mora na sidebar (ADR 0211). */}
       <CabecalhoDePagina
         className={styles.header}
-        titulo={project.name}
+        titulo={`${project.name} / ${secaoDaChave(tab).label}`}
         descricao={
+          secaoAtual === 'arquitetura' ? (
+            <ChipsDaArquitetura projectId={projectId} />
+          ) : (
           <span className={styles.meta}>
             <ProviderIcon size={14} />
             {repository && (
@@ -193,39 +254,14 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
               t('repositoryNotProvisioned')
             )}
           </span>
+          )
         }
         acoes={
           <>
-            <PainelPrecisaDeVoce
-              projectId={projectId}
-              filas={filasPrecisaDeVoce}
-              open={painelAberto}
-              onOpenChange={setPainelAberto}
-              // O painel não conhece `ChaveDeAba` de propósito; é aqui que o destino vira aba.
-              onIrParaAba={(destino) => {
-                setTab(destino satisfies ChaveDeAba);
-                // O endereço acompanha a aba (AT-394).
-                try {
-                  const url = new URL(window.location.href);
-                  url.searchParams.set('tab', destino);
-                  url.searchParams.delete('section');
-                  url.searchParams.delete('group');
-                  window.history.replaceState(window.history.state, '', url);
-                } catch {
-                  // sem `window` (teste/SSR): só a troca local
-                }
-              }}
-            />
-            {budget && (
-              <TokenMeter
-                variant="compact"
-                unitLabel="USD"
-                used={budget.spentMicros / 1_000_000}
-                limit={budget.limitMicros / 1_000_000}
-                costBRL={0}
-                costUSD={budget.spentMicros / 1_000_000}
-              />
+            {budget !== undefined && (
+              <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('settings')} />
             )}
+            {acaoPrimaria}
           </>
         }
       />
@@ -243,6 +279,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
             {/* Cada painel é um chunk próprio (AT-300): o `Suspense` fica AQUI,
                 em volta só do painel, para que trocar de aba nunca apague o
                 cabeçalho enquanto o chunk chega. */}
+            <FaixaDeSubAbas ativa={tab} contagens={filasDoProjeto.contagens} onChange={trocarSub} />
             <Suspense fallback={<CarregandoRota />}>
               <PainelDaAba projectId={projectId} />
             </Suspense>

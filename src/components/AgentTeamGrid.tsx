@@ -35,8 +35,6 @@ import styles from '../routes/ProjectOverviewTab.module.css';
  * evita a requisição em dobro quando as duas correm na mesma sessão).
  */
 export interface AgentTeamGridProps {
-  /** Habilita as seções de instruções e ferramentas dos cards (AT-686). */
-  projectId?: string;
   /** A roster INTEIRA da sessão. */
   roster: RosterEntry[];
   /** Os grupos a desenhar, já filtrados por quem chama. */
@@ -55,11 +53,15 @@ export interface AgentTeamGridProps {
   onToggleArea: (areaKey: string) => void;
   onAutonomyChange: (agentId: string, actionType: string, mode: AutonomyMode) => void;
   onRearm: (agentId: string) => void;
+  onWake: (agentId: string) => void;
+  /** AT-916: com isto o cartão troca o modelo; sem, fica só leitura (Visão geral). */
+  onModelChange?: (agentId: string, modelId: string) => void;
+  /** Motivo em texto quando o papel não alcança o mínimo do endpoint de binding. */
+  modelDisabledReason?: string;
 }
 
 export function AgentTeamGrid({
   roster,
-  projectId,
   groups,
   events,
   bindingDoAgente,
@@ -71,6 +73,9 @@ export function AgentTeamGrid({
   onToggleArea,
   onAutonomyChange,
   onRearm,
+  onWake,
+  onModelChange,
+  modelDisabledReason,
 }: AgentTeamGridProps) {
   const { t } = useTranslation('executors');
 
@@ -98,11 +103,13 @@ export function AgentTeamGrid({
       <AgentCard
         key={r.id}
         agent={r.def}
-        projectId={projectId}
-        agentSlug={r.id}
         status={r.status}
         badge={badge}
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
+        modelOptions={onModelChange ? allModels.map((m) => ({ id: m.id, name: m.displayName })) : undefined}
+        modelId={modelId}
+        onModelChange={onModelChange ? (id) => onModelChange(r.id, id) : undefined}
+        modelDisabledReason={modelDisabledReason}
         // Sem regra gravada o default do domínio é require_approval —
         // "manual". Mostrar o toggle sempre é o que o design pede, e
         // é o que torna a autonomia AJUSTÁVEL daqui.
@@ -115,6 +122,7 @@ export function AgentTeamGrid({
           curinga?.mode === 'auto_approve' ? t('agentCard.autonomy.autoModeHint') : undefined
         }
         onRearm={r.status === 'travado' ? () => onRearm(r.id) : undefined}
+        onWake={r.status === 'ocioso' ? () => onWake(r.id) : undefined}
         activity={
           r.status === 'travado'
             ? {
@@ -145,11 +153,13 @@ export function AgentTeamGrid({
       <AgentCard
         key={r.id}
         agent={r.def}
-        projectId={projectId}
-        agentSlug={r.id}
         status={r.status}
         compact
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
+        modelOptions={onModelChange ? allModels.map((m) => ({ id: m.id, name: m.displayName })) : undefined}
+        modelId={modelId}
+        onModelChange={onModelChange ? (id) => onModelChange(r.id, id) : undefined}
+        modelDisabledReason={modelDisabledReason}
         activity={outcome ? { label: outcome } : undefined}
         tokensMicros={custo}
       />

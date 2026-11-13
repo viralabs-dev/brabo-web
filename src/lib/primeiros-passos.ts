@@ -46,3 +46,10 @@ export function derivarPrimeirosPassos(insumos: InsumosDosPrimeirosPassos): Pass
   ];
   return passos.every((p) => p.feito) ? null : passos;
 }
+
+/** Onde cada passo se faz (a credencial é do usuário e mora em /providers, RN-911). */
+export const DESTINO_DO_PASSO: Record<ChaveDoPasso, 'providers' | { tab: 'settings' | 'criativo'; section?: 'models' }> = {
+  credencial: 'providers',
+  modelo: { tab: 'settings', section: 'models' },
+  ideacao: { tab: 'criativo' },
+};

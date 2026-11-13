@@ -33,7 +33,10 @@
     "ajustes": "Модель и язык",
     "ajustesAria": "Модель, язык ответов и бюджет этой сессии",
     "perguntaDeIdiomaPendente": "есть вопрос о языке ответов",
-    "encerrarSessao": "Завершить сессию"
+    "encerrarSessao": "Завершить сессию",
+    "pararTurno": "Остановить ход",
+    "trilha": "Путь сессии",
+    "sessoes": "Сессии"
   },
   "convite": {
     "criativa": {
@@ -336,7 +339,12 @@
     "prsNaoLidas_one": "{{count}} PR не попал в этот список (сверх лимита чтения или diff не удалось прочитать) — вкладка PR показывает все.",
     "prsNaoLidas_few": "{{count}} PR не попали в этот список (сверх лимита чтения или diff не удалось прочитать) — вкладка PR показывает все.",
     "prsNaoLidas_many": "{{count}} PR не попали в этот список (сверх лимита чтения или diff не удалось прочитать) — вкладка PR показывает все.",
-    "prsNaoLidas_other": "{{count}} PR не попали в этот список (сверх лимита чтения или diff не удалось прочитать) — вкладка PR показывает все."
+    "prsNaoLidas_other": "{{count}} PR не попали в этот список (сверх лимита чтения или diff не удалось прочитать) — вкладка PR показывает все.",
+    "objetivo": "Цель",
+    "perguntasAbertas": "Открытые вопросы",
+    "gastoPorAgente": "Расходы по агентам",
+    "gastoVazio": "Расходов пока нет.",
+    "detalhes": "Детали сессии"
   },
   "turno": {
     "artefato": {
@@ -370,7 +378,20 @@
     "passosCount_one": "{{count}} шаг",
     "passosCount_few": "{{count}} шага",
     "passosCount_many": "{{count}} шагов",
-    "passosCount_other": "{{count}} шага"
+    "passosCount_other": "{{count}} шага",
+    "visao": "Вид шагов",
+    "agrupados": "По группам",
+    "emOrdem": "По порядку",
+    "grupos": {
+      "leu": "Прочитал контекст",
+      "desenhou": "Спроектировал",
+      "registrou": "Записал",
+      "outros": "Другое"
+    },
+    "raciocinioTokens_one": "{{count}} токен",
+    "raciocinioTokens_few": "{{count}} токена",
+    "raciocinioTokens_many": "{{count}} токенов",
+    "raciocinioTokens_other": "{{count}} токена"
   },
   "pendencias": {
     "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» выше.",
@@ -383,7 +404,8 @@
       "prontas": "PR, готовые к merge",
       "bloqueadas": "Заблокированные задачи",
       "perguntas": "Открытые вопросы",
-      "travados": "Застрявшие агенты"
+      "travados": "Застрявшие агенты",
+      "semModulo": "Задачи без модуля"
     },
     "origem_one": "{{count}} предложение в сессии {{hashtag}} · {{tempo}}",
     "origem_few": "{{count}} предложения в сессии {{hashtag}} · самое старое {{tempo}}",
@@ -413,7 +435,15 @@
       "semMotivo": "Причина не записана.",
       "semPapel": "Для разблокировки нужна роль developer в проекте.",
       "diagnostico": "Диагностика",
-      "agenteTravado": "{{agente}} застрял: перезапустите его перед разблокировкой."
+      "agenteTravado": "{{agente}} застрял: перезапустите его перед разблокировкой.",
+      "orientacao": "Указание для разработчика (необязательно)",
+      "orientacaoDica": "Напр.: точка входа внедряется тем, кто собирает; не запускайте модуль отдельно.",
+      "aumentarTeto": "Повысить лимит на задачу",
+      "tetoCampo": "Новый лимит на задачу (US$)",
+      "gravarTeto": "Сохранить лимит",
+      "tetoOk": "Лимит проекта обновлён: живые агенты применят его на следующем витке. Теперь осталось разблокировать.",
+      "tetoErro": "Не удалось сохранить лимит.",
+      "tetoSemPapel": "Для повышения лимита нужна роль maintainer в проекте."
     },
     "perguntas": {
       "origem": "{{agente}} спросил · {{tempo}}",
@@ -473,6 +503,9 @@
       "ok": "Агент перезапущен: он снова берёт задачи.",
       "erro": "Не удалось перезапустить агента.",
       "semPapel": "Для перезапуска нужна роль developer в проекте."
+    },
+    "semModulo": {
+      "motivo": "Нет модуля: никто её не возьмёт. Назначьте через план или архивируйте задачу во вкладке Backlog."
     }
   },
   "mergearNoChat": {
@@ -559,7 +592,8 @@
     "nota": "Перезапуск снимает агента с предохранителя; разблокировка возвращает задачу в очередь.",
     "semPapel": "Для перезапуска и разблокировки нужна роль developer в проекте.",
     "feito": "Готово — ход работы появится в этой ленте.",
-    "erroTitulo": "Не удалось снять остановку выполнения"
+    "erroTitulo": "Не удалось снять остановку выполнения",
+    "ciclo": "Тупик: {{modulo}} ждёт {{esperaPor}}, который зависит от {{modulo}}. Помогает только смена контракта или dependsOn."
   },
   "avisoDePrPronta": {
     "uma": "PR #{{numero}} «{{titulo}}» готов к слиянию: проверки пройдены.",
@@ -567,6 +601,14 @@
     "varias_few": "{{count}} PR готовы к слиянию.",
     "varias_many": "{{count}} PR готовы к слиянию.",
     "varias_other": "{{count}} PR готовы к слиянию.",
+    "destrava_one": "Разблокирует {{count}} задачу.",
+    "destrava_few": "Разблокирует {{count}} задачи.",
+    "destrava_many": "Разблокирует {{count}} задач.",
+    "destrava_other": "Разблокирует {{count}} задачи.",
+    "destravaA_one": "PR #{{numero}} разблокирует {{count}} задачу.",
+    "destravaA_few": "PR #{{numero}} разблокирует {{count}} задачи.",
+    "destravaA_many": "PR #{{numero}} разблокирует {{count}} задач.",
+    "destravaA_other": "PR #{{numero}} разблокирует {{count}} задачи.",
     "espera": "Готов {{quando}}.",
     "ver": "Открыть PR",
     "verAs_one": "Открыть {{count}}",
@@ -574,5 +616,31 @@
     "verAs_many": "Открыть все {{count}}",
     "verAs_other": "Открыть все {{count}}",
     "agoraNao": "Не сейчас"
+  },
+  "resumo": {
+    "gravado": "Записано за ход: {{itens}}",
+    "tipos": {
+      "regra": "бизнес-правило",
+      "decisao": "решение",
+      "pergunta": "открытый вопрос",
+      "epico": "эпик",
+      "historia": "история",
+      "historia_corrigida": "исправленная история",
+      "historia_arquivada": "архивная история",
+      "tarefa": "задача",
+      "tarefa_corrigida": "исправленная задача",
+      "nota": "заметка",
+      "artefato": "другой артефакт",
+      "adr": "предложенный ADR",
+      "module_map": "карта модулей",
+      "modulos_de_historia": "назначение модулей",
+      "imagem": "выбранный образ",
+      "c4": "диаграмма C4",
+      "roteamento": "маршрутизация в инфру",
+      "contratos": "контракт модулей",
+      "insight": "инсайт",
+      "rfc": "предложенный RFC",
+      "prototipo": "предложенный прототип"
+    }
   }
 }

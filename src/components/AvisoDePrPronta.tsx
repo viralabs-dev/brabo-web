@@ -1,13 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GitMerge } from 'lucide-react';
+import { useArchitecture } from '../lib/hooks';
 import { usePrsProntas } from '../lib/prs-prontas';
 import { tarefaDaBranch } from '../lib/prontas-e-bloqueadas';
 import { abrirFilaDePendencias } from '../lib/perguntas-em-aberto';
 import { MergearNoChat } from '../routes/MergearNoChat';
 import { Alert } from './ui/Alert';
 import { Button } from './ui/Button';
-import { esperaRelativa, tituloComContador } from './AvisoDePrPronta.helpers';
+import { esperaRelativa, tarefasQueODestrava, tituloComContador } from './AvisoDePrPronta.helpers';
 import styles from './AvisoDePrPronta.module.css';
 
 interface Props {
@@ -23,12 +24,22 @@ interface Props {
  * MESMAS prontas do painel de pendências (`usePrsProntas`, cache compartilhado,
  * releitura de 15 s do backlog): sem evento novo, sem notificação do navegador.
  * O merge continua gesto humano (RN-418/RN-663): o aviso só oferece o
- * `MergearNoChat`, com a confirmação na linha. "Agora não" dispensa as PRs
+ * `MergearNoChat`, com a confirmação na linha. Diz quantas tarefas o merge destrava
+ * (AT-902: `module_map` + backlog já lidos) e põe no topo a PR que destrava mais. "Agora não" dispensa as PRs
  * avisadas; só uma PR NOVA o traz de volta.
  */
 export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
   const { t, i18n } = useTranslation('sessionPage');
-  const { prontas, backlogQuery } = usePrsProntas(projectId, sessionId);
+  const { prontas: lidas, backlogQuery } = usePrsProntas(projectId, sessionId);
+  const moduleMap = useArchitecture(projectId, 60_000).data?.moduleMap;
+  // Mais destrava primeiro; o sort é estável, então o empate guarda a ordem da fila.
+  const prontas = useMemo(() => {
+    const com = lidas.map((p) => ({
+      ...p,
+      destrava: tarefasQueODestrava(tarefaDaBranch(backlogQuery.data, p.pr.sourceBranch), backlogQuery.data, moduleMap),
+    }));
+    return com.sort((a, b) => b.destrava - a.destrava);
+  }, [lidas, backlogQuery.data, moduleMap]);
   const [dispensadas, setDispensadas] = useState<ReadonlySet<string>>(new Set());
 
   // O contador na aba: todas as prontas, mesmo as dispensadas (ainda esperam).
@@ -44,6 +55,7 @@ export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
   const avisadas = prontas.filter((p) => !dispensadas.has(p.pr.id));
   if (avisadas.length === 0) return null;
 
+  const topo = avisadas[0]!;
   const unica = avisadas.length === 1 ? avisadas[0]! : null;
   const tarefa = unica ? tarefaDaBranch(backlogQuery.data, unica.pr.sourceBranch) : undefined;
 
@@ -56,6 +68,8 @@ export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
               ? t('avisoDePrPronta.uma', { numero: unica.pr.number, titulo: unica.pr.title })
               : t('avisoDePrPronta.varias', { count: avisadas.length })}
             {tarefa && ` ${t('avisoDePrPronta.espera', { quando: esperaRelativa(tarefa.updatedAt, i18n.language) })}`}
+            {topo.destrava > 0 &&
+              ` ${t(unica ? 'avisoDePrPronta.destrava' : 'avisoDePrPronta.destravaA', { count: topo.destrava, numero: topo.pr.number })}`}
           </span>
           <div className={styles.acoes}>
             {unica && !unica.mergeDaSessao ? (

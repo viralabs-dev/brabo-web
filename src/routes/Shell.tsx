@@ -17,6 +17,7 @@ import {
   useActiveExecutionSession,
   useCurrentWorkspace,
   useCurrentWorkspaceWithRole,
+  useDecisionInbox,
   useProjects,
   useProjectsStatus,
   useProjectsSummary,
@@ -31,9 +32,8 @@ import {
 } from '../lib/project-status';
 import { ROLE_LABEL } from '../lib/roles';
 import { desempateDoProjeto, nomesRepetidos } from '../lib/project-label';
-import { AGENTS } from '../lib/agents';
-import { agruparPorInstancia, montarArvore, type GrupoDeAgente, type RamoDeAgente } from '../lib/timeline-tree';
-import { getAgentLastSeenSeq, setAgentLastSeenSeq } from '../lib/read-state';
+import { deriveAgentRoster } from '../lib/agent-status';
+import { AgentesAgora } from '../components/AgentesAgora';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { INTERVALO_DO_PROJETO_MS } from '../lib/canal-vivo';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
@@ -45,35 +45,30 @@ import { useTranslation } from 'react-i18next';
 import {
   corDoProjeto,
   gravarAbaAtiva,
-  gravarAgentesAbertos,
   gravarColapsado,
   gravarProjetoAtivo,
-  gravarProjetosAbertos,
-  lerAgentesAbertos,
   lerColapsado,
-  lerProjetosAbertos,
 } from '../lib/sidebar-state';
-import type { ProjectCardSummary } from '../lib/api-types';
-import { Activity, CircleUser, Container, Folder, FolderOpen, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
+import type { Project, ProjectCardSummary } from '../lib/api-types';
+import { Activity, Inbox, CircleUser, Container, House, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
+import { caixaTemAlgo } from '../lib/caixa-de-decisoes';
+import caixaStyles from '../components/CaixaDeDecisoes.module.css';
 import { deveAbrirPaleta } from '../lib/paleta-de-comandos';
 import { ABA_PADRAO, abaDaRota, type ContagensDeAba } from './project-tabs';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import {
   ChevronDownIcon,
-  ChevronRightIcon,
   LogoMark,
   MenuIcon,
   PlusIcon,
   XIcon,
 } from '../components/ui/icons';
-import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupAction,
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarHeader,
@@ -113,14 +108,6 @@ function iniciaisDoProjeto(nome: string): string {
   const letras =
     partes.length >= 2 ? [partes[0]?.[0], partes[1]?.[0]] : [nome[0], nome[1]];
   return letras.filter((c): c is string => !!c).join('').toUpperCase();
-}
-
-function rotuloDoAgente(agente: string): string {
-  return AGENTS[agente as keyof typeof AGENTS]?.name ?? agente;
-}
-
-function corDoAgente(agente: string): string {
-  return AGENTS[agente as keyof typeof AGENTS]?.color ?? 'var(--text-muted)';
 }
 
 /**
@@ -240,6 +227,65 @@ function LinkDoRodape({
   );
 }
 
+/** "Caixa de decisões": ponto de PRESENÇA, nunca número (RN-467). */
+function ItemDaCaixa({ workspaceId, colapsado }: { workspaceId: string | undefined; colapsado: boolean }) {
+  const { t } = useTranslation('shell');
+  const temAlgo = caixaTemAlgo(useDecisionInbox(workspaceId, 'pending', true).data);
+  const rotulo = t('sidebar.caixa');
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton render={<Link to="/decisions" />} title={rotulo} aria-label={rotulo}>
+        <Inbox size={16} aria-hidden="true" />
+        {!colapsado && <span>{rotulo}</span>}
+        {temAlgo && <span className={caixaStyles.ponto} data-testid="ponto-da-caixa" aria-hidden="true" />}
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+/** Atalho da paleta como a prévia o escreve: ⌘K no Mac, Ctrl K no resto (RN-971). */
+function atalhoDaPaleta(): string {
+  return /Mac|iPhone|iPad/.test(navigator.userAgent) ? '⌘K' : 'Ctrl K';
+}
+
+/** Seletor do projeto atual (AT-939): o botão mostra o nome e abre os demais projetos e "Novo projeto". */
+function SeletorDeProjeto({
+  atual,
+  projetos,
+  onEscolher,
+  onNovo,
+}: {
+  atual: Project;
+  projetos: readonly Project[];
+  onEscolher: (id: string) => void;
+  onNovo: () => void;
+}) {
+  const { t } = useTranslation('shell');
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={styles.seletor}
+        aria-label={t('sidebar.projects.switch', { name: atual.name })}
+        title={atual.name}
+      >
+        <span className={styles.navName}>{atual.name}</span>
+        <ChevronDownIcon size={14} aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className={styles.menuDoUsuario}>
+        {projetos.map((p) => (
+          <DropdownMenuItem key={p.id} onClick={() => onEscolher(p.id)}>
+            {p.name}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuItem onClick={onNovo}>
+          <PlusIcon size={14} aria-hidden="true" />
+          {t('sidebar.nav.newProject')}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 /** Projeto FECHADO: só Aprovações tem número, do resumo do dashboard. */
 function contagensDoResumo(aprovacoesPendentes: number): ContagensDeAba {
   return {
@@ -251,149 +297,8 @@ function contagensDoResumo(aprovacoesPendentes: number): ContagensDeAba {
   };
 }
 
-/** As instâncias/eventos de UM grupo de agente, dentro de Atividades (RN-198). */
-function InstanciaDeAgente({
-  projectId,
-  ramo,
-  aberta,
-  onAlternar,
-}: {
-  projectId: string;
-  ramo: RamoDeAgente;
-  aberta: boolean;
-  onAlternar: () => void;
-}) {
-  const { t } = useTranslation('shell');
-  const naoVistos = aberta
-    ? 0
-    : ramo.marcos.filter((m) => m.seq > getAgentLastSeenSeq(projectId, ramo.agente)).length;
-
-  useEffect(() => {
-    if (aberta) setAgentLastSeenSeq(projectId, ramo.agente, ramo.ultimoSeq);
-  }, [aberta, projectId, ramo.agente, ramo.ultimoSeq]);
-
-  return (
-    <div className={styles.instancia}>
-      <button
-        type="button"
-        className={styles.instanciaCabecalho}
-        aria-expanded={aberta}
-        onClick={onAlternar}
-      >
-        <span className={styles.chevronPequeno} aria-hidden="true">
-          {aberta ? <ChevronDownIcon size={11} /> : <ChevronRightIcon size={11} />}
-        </span>
-        <span className={styles.instanciaNome}>{ramo.agente}</span>
-        <span className={[styles.contagem, naoVistos > 0 && styles.contagemNova].filter(Boolean).join(' ')}>
-          {naoVistos > 0 ? `+${naoVistos}` : ramo.marcos.length}
-        </span>
-      </button>
-      {aberta && (
-        <ol className={styles.marcos}>
-          {ramo.marcos.length === 0 && (
-            <li className={styles.marcoVazio}>{t('sidebar.activities.noMarksYet')}</li>
-          )}
-          {ramo.marcos.map((m) => (
-            <li key={m.eventId} className={styles.marco}>
-              <span className={styles.bolinha} />
-              <span className={styles.marcoRotulo}>{m.rotulo}</span>
-              {m.detalhe && <span className={styles.marcoDetalhe}>{m.detalhe}</span>}
-            </li>
-          ))}
-        </ol>
-      )}
-    </div>
-  );
-}
-
-/** Um grupo de agente (1 ou 2 instâncias) na seção Atividades (RN-198). */
-function GrupoDeAtividade({
-  projectId,
-  grupo,
-  agentesAbertos,
-  onAlternar,
-}: {
-  projectId: string;
-  grupo: GrupoDeAgente;
-  agentesAbertos: Set<string>;
-  onAlternar: (chave: string) => void;
-}) {
-  const { t } = useTranslation('shell');
-  const multiplasInstancias = grupo.instancias.length > 1;
-  const abertoNoGrupo = agentesAbertos.has(grupo.agenteBase);
-  const totalInteracoes = grupo.instancias.reduce((soma, r) => soma + r.marcos.length, 0);
-  const totalNaoVistos = grupo.instancias.reduce((soma, r) => {
-    if (agentesAbertos.has(`${grupo.agenteBase}/${r.agente}`) || (!multiplasInstancias && abertoNoGrupo)) {
-      return soma;
-    }
-    return soma + r.marcos.filter((m) => m.seq > getAgentLastSeenSeq(projectId, r.agente)).length;
-  }, 0);
-
-  return (
-    <div className={styles.grupoAgente}>
-      <button
-        type="button"
-        className={styles.grupoCabecalho}
-        aria-expanded={abertoNoGrupo}
-        data-testid={`atividades-grupo-${grupo.agenteBase}`}
-        onClick={() => onAlternar(grupo.agenteBase)}
-        style={{ ['--msg-color' as string]: corDoAgente(grupo.agenteBase) } as CSSProperties}
-      >
-        <span className={styles.chevronPequeno} aria-hidden="true">
-          {abertoNoGrupo ? <ChevronDownIcon size={12} /> : <ChevronRightIcon size={12} />}
-        </span>
-        <AvatarDoAgente id={grupo.agenteBase} />
-        <span className={styles.grupoNome}>{rotuloDoAgente(grupo.agenteBase)}</span>
-        {multiplasInstancias && (
-          <Badge
-            tone="muted"
-            square
-            title={t('sidebar.activities.instancesCount', { count: grupo.instancias.length })}
-          >
-            {grupo.instancias.length}×
-          </Badge>
-        )}
-        <span
-          className={[styles.contagem, totalNaoVistos > 0 && styles.contagemNova].filter(Boolean).join(' ')}
-        >
-          {totalNaoVistos > 0 ? `+${totalNaoVistos}` : totalInteracoes}
-        </span>
-      </button>
-
-      {abertoNoGrupo && !multiplasInstancias && (
-        <InstanciaDeAgente
-          projectId={projectId}
-          ramo={grupo.instancias[0]}
-          aberta
-          onAlternar={() => onAlternar(grupo.agenteBase)}
-        />
-      )}
-
-      {abertoNoGrupo && multiplasInstancias && (
-        <div className={styles.instancias}>
-          {grupo.instancias.map((ramo) => {
-            const chaveInstancia = `${grupo.agenteBase}/${ramo.agente}`;
-            return (
-              <InstanciaDeAgente
-                key={ramo.agente}
-                projectId={projectId}
-                ramo={ramo}
-                aberta={agentesAbertos.has(chaveInstancia)}
-                onAlternar={() => onAlternar(chaveInstancia)}
-              />
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function Shell() {
-  const {
-    t,
-    i18n: { language },
-  } = useTranslation('shell');
+  const { t } = useTranslation('shell');
   // Os rótulos dos links globais do rodapé moram no namespace comum.
   const { t: tComum } = useTranslation();
   const navigate = useNavigate();
@@ -471,24 +376,8 @@ export function Shell() {
     gravarColapsado(proximo);
   }
 
-  // --- Projetos expansíveis (RN-196) --------------------------------------
-  const [projetosAbertos, setProjetosAbertos] = useState(lerProjetosAbertos);
-  function alternarProjeto(id: string) {
-    setProjetosAbertos((atual) => {
-      const proximo = new Set(atual);
-      if (proximo.has(id)) proximo.delete(id);
-      else proximo.add(id);
-      gravarProjetosAbertos(proximo);
-      return proximo;
-    });
-  }
-
   const currentProject = (projects ?? []).find((p) => pathname.startsWith(`/projects/${p.id}`));
-  // O projeto da rota atual sempre aparece expandido — sem isso ele nasce
-  // fechado toda vez que a sidebar remonta, mesmo com você OLHANDO as abas
-  // dele na tela principal. Só entra na persistência quando o CHEVRON é
-  // clicado; abrir "de graça" pela rota não grava nada.
-  // --- Abas do projeto (RN-196, ADR 0211) ---------------------------------
+  // --- Abas do projeto (ADR 0211) ---------------------------------
   // A sidebar é a ÚNICA navegação do projeto desde o ADR 0211: o trilho
   // vertical (ADR 0126) saiu, e tudo o que só ele tinha mora aqui. Os cinco
   // contadores do projeto ABERTO saem do MESMO hook da moldura (mesmas
@@ -502,7 +391,8 @@ export function Shell() {
   // fica com o número do resumo, como num projeto fechado.
   const abaPublicada = useAbaPublicada();
   const abaDaSessao = useAbaDaSessao();
-  const { contagens: contagensDaMoldura } = useContagensDoProjeto(abaPublicada?.projectId);
+  const moldura = useContagensDoProjeto(abaPublicada?.projectId);
+  const contagensDaMoldura = moldura.contagens;
   const abaAtivaDoAtual =
     currentProject && abaPublicada?.projectId === currentProject.id
       ? abaPublicada.tab
@@ -546,28 +436,6 @@ export function Shell() {
     return () => document.removeEventListener('keydown', aoTeclar);
   }, [flyoutAberto]);
 
-  // RN-729: abrir um projeto RECOLHE os outros — só ele fica expandido, e a
-  // lista rola até ele; sem projeto aberto (Dashboard), nenhum fica forçado
-  // expandido. Antes, o projeto visitado antes seguia aberto no topo e as
-  // abas do atual ficavam abaixo da dobra. O chevron segue alternando à mão.
-  const idDoProjetoAtual = currentProject?.id;
-  const blocoDoProjetoAtual = useRef<HTMLLIElement | null>(null);
-  useEffect(() => {
-    const proximo = idDoProjetoAtual ? new Set([idDoProjetoAtual]) : new Set<string>();
-    setProjetosAbertos(proximo);
-    gravarProjetosAbertos(proximo);
-  }, [idDoProjetoAtual]);
-  useEffect(() => {
-    if (!idDoProjetoAtual) return;
-    blocoDoProjetoAtual.current?.scrollIntoView?.({ block: 'nearest' });
-  }, [idDoProjetoAtual]);
-
-  const projetosAbertosEfetivo = useMemo(() => {
-    if (!currentProject) return projetosAbertos;
-    if (projetosAbertos.has(currentProject.id)) return projetosAbertos;
-    return new Set(projetosAbertos).add(currentProject.id);
-  }, [projetosAbertos, currentProject]);
-
   // --- Atividades (RN-198) — escopada ao projeto ATUAL --------------------
   // O handoff não diz se "Atividades" agrega TODOS os projetos ou só o
   // aberto; agregar todos exigiria uma consulta de eventos POR projeto — a
@@ -592,7 +460,6 @@ export function Shell() {
     INTERVALO_DO_PROJETO_MS,
   );
   const sessaoDaAtividade = execucao.session ?? (semExecucao ? sessoes.latest : undefined);
-  const origemDaAtividade: 'execucao' | 'recente' = execucao.session ? 'execucao' : 'recente';
   const eventosDaAtividade = useSessionEvents(currentProject?.id, sessaoDaAtividade?.id);
   const eventsPage = eventosDaAtividade.data;
   const events = useMemo(() => eventsPage?.items ?? [], [eventsPage]);
@@ -609,21 +476,22 @@ export function Shell() {
           : eventosDaAtividade.isPending
             ? 'carregando'
             : 'pronto';
-  // `language` na dependência: os rótulos da árvore saem traduzidos de
-  // `montarArvore` (AT-134), e trocar o idioma tem de refazê-los.
-  const { ramos } = useMemo(() => montarArvore(events, language), [events, language]);
-  const grupos = useMemo(() => agruparPorInstancia(ramos), [ramos]);
-
-  const [agentesAbertos, setAgentesAbertos] = useState(lerAgentesAbertos);
-  function alternarAgente(chave: string) {
-    setAgentesAbertos((atual) => {
-      const proximo = new Set(atual);
-      if (proximo.has(chave)) proximo.delete(chave);
-      else proximo.add(chave);
-      gravarAgentesAbertos(proximo);
-      return proximo;
-    });
-  }
+  // "Agentes agora" (AT-887, RN-1205): o roster sai dos MESMOS eventos e das
+  // MESMAS filas já lidas (nenhuma requisição nova). Sem handoffs (`[]`): Infra,
+  // UX e Staff só aparecem quando a janela já os mostra.
+  const pendentesDaMoldura =
+    abaPublicada?.projectId === currentProject?.id ? moldura.pendentesDoProjeto : undefined;
+  const roster = useMemo(
+    () =>
+      deriveAgentRoster(
+        events,
+        moldura.moduleMap,
+        false,
+        [],
+        new Set((pendentesDaMoldura ?? []).map((a) => a.actor.id)),
+      ),
+    [events, moldura.moduleMap, pendentesDaMoldura],
+  );
 
   const rotuloDoColapso = colapsado
     ? t('sidebar.collapseButton.expand')
@@ -631,17 +499,31 @@ export function Shell() {
 
   // O corpo da sidebar é UM só: no desktop mora no `Sidebar` do kit (ícones ao
   // recolher), no telefone dentro da gaveta nossa (`collapsible="none"`).
+  const ambiente = import.meta.env.VITE_BRABO_AMBIENTE as string | undefined;
+  function abrirWizard() {
+    setGavetaAberta(false);
+    setWizardOpen(true);
+  }
+
   const conteudo = (
     <>
       <SidebarHeader>
         {/* O monograma B no ladrilho terracota — a MESMA marca das telas de
             auth, e a única que o handoff reconhece. */}
-        <Link to="/" className={styles.brand} aria-label={t('sidebar.brand.dashboardLink')}>
-          <span className={styles.brandTile} aria-hidden="true">
-            <LogoMark size={18} />
-          </span>
-          {!colapsado && <span className={styles.brandName}>Brabo</span>}
-        </Link>
+        <div className={styles.marcaLinha}>
+          <Link to="/" className={styles.brand} aria-label={t('sidebar.brand.dashboardLink')}>
+            <span className={styles.brandTile} aria-hidden="true">
+              <LogoMark size={18} />
+            </span>
+            {!colapsado && <span className={styles.brandName}>Brabo</span>}
+          </Link>
+          {/* Vazio no build de produção: sem chip (AT-939). */}
+          {!colapsado && ambiente && (
+            <span className={styles.chipAmbiente} data-testid="chip-do-ambiente">
+              {ambiente}
+            </span>
+          )}
+        </div>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -652,12 +534,33 @@ export function Shell() {
             >
               <SearchIcon size={16} aria-hidden="true" />
               {!colapsado && <span>{t('palette.open')}</span>}
+              {!colapsado && (
+                <kbd className={styles.atalho} aria-hidden="true">
+                  {atalhoDaPaleta()}
+                </kbd>
+              )}
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
       <SidebarContent>
+        <SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                isActive={pathname === '/'}
+                render={<Link to="/" />}
+                title={t('sidebar.home')}
+                aria-label={t('sidebar.home')}
+              >
+                <House size={16} aria-hidden="true" />
+                {!colapsado && <span>{t('sidebar.home')}</span>}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <ItemDaCaixa workspaceId={workspace?.id} colapsado={colapsado} />
+          </SidebarMenu>
+        </SidebarGroup>
         {colapsado ? (
           <SidebarGroup>
             <SidebarMenu aria-label={t('sidebar.nav.trilhaAriaLabel')}>
@@ -677,7 +580,6 @@ export function Shell() {
                         return;
                       }
                       definirColapso(false);
-                      alternarProjeto(project.id);
                       gravarProjetoAtivo(project.id);
                       void navigate({ to: '/projects/$projectId', params: { projectId: project.id } });
                     }}
@@ -686,17 +588,10 @@ export function Shell() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  className={styles.trilhaItemAtividades}
-                  title={t('sidebar.activities.label')}
-                  aria-label={t('sidebar.activities.label')}
-                  onClick={() => definirColapso(false)}
-                >
-                  <Activity size={16} aria-hidden="true" />
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
+            {currentProject && (
+              <AgentesAgora roster={roster} colapsado onVerTodos={() => irParaAba(currentProject.id, 'executores')} />
+            )}
             {flyoutAberto && currentProject && (
               <div
                 className={styles.flyout}
@@ -718,18 +613,8 @@ export function Shell() {
           <>
             <SidebarGroup>
               <SidebarGroupLabel className={styles.rotulo}>
-                {t('sidebar.nav.projectsLabel')}
+                {currentProject ? t('sidebar.nav.projectLabel') : t('sidebar.nav.projectsLabel')}
               </SidebarGroupLabel>
-              <SidebarGroupAction
-                onClick={() => {
-                  setGavetaAberta(false);
-                  setWizardOpen(true);
-                }}
-                title={t('sidebar.nav.newProject')}
-                aria-label={t('sidebar.nav.newProject')}
-              >
-                <PlusIcon size={16} />
-              </SidebarGroupAction>
               {/* A lista falhou: a sidebar DIZ, em vez de ficar vazia como se o
                   workspace não tivesse projeto nenhum (RN-088). */}
               {projectsQuery.isError && (
@@ -746,116 +631,105 @@ export function Shell() {
                 </div>
               )}
               <SidebarGroupContent>
-                <SidebarMenu>
-                  {(projects ?? []).map((project) => {
-                    // Aprovações pendentes do projeto INTEIRO (RN-151), não
-                    // atividade não lida; o resumo do dashboard as traz de graça.
-                    const summary = cardPorProjeto.get(project.id);
-                    const pendingApprovalsCount = summary?.pendingApprovalsCount ?? 0;
-                    const aberto = projetosAbertosEfetivo.has(project.id);
-                    return (
-                      <SidebarMenuItem
-                        key={project.id}
-                        ref={project.id === idDoProjetoAtual ? blocoDoProjetoAtual : undefined}
-                      >
-                        <div className={styles.linhaDoProjeto}>
-                          <button
-                            type="button"
-                            className={styles.chevronBotao}
-                            aria-expanded={aberto}
-                            aria-label={
-                              aberto
-                                ? t('sidebar.projects.collapse', { name: project.name })
-                                : t('sidebar.projects.expand', { name: project.name })
-                            }
-                            onClick={() => alternarProjeto(project.id)}
-                          >
-                            {aberto ? <ChevronDownIcon size={13} /> : <ChevronRightIcon size={13} />}
-                          </button>
-                          <SidebarMenuButton
-                            isActive={pathname.startsWith(`/projects/${project.id}`)}
-                            render={
-                              <Link
-                                to="/projects/$projectId"
-                                params={{ projectId: project.id }}
-                                title={project.name}
-                                onClick={() => {
-                                  gravarProjetoAtivo(project.id);
-                                  gravarAbaAtiva(ABA_PADRAO);
-                                }}
+                {currentProject ? (
+                  <>
+                    <SeletorDeProjeto
+                      atual={currentProject}
+                      projetos={projects ?? []}
+                      onEscolher={(id) => irParaAba(id, ABA_PADRAO)}
+                      onNovo={abrirWizard}
+                    />
+                    <AbasDoProjeto
+                      projectId={currentProject.id}
+                      nomeDoProjeto={currentProject.name}
+                      itens={itensDoProjeto(currentProject.id)}
+                      active={abaAtivaDoAtual}
+                      onChange={(chave) => irParaAba(currentProject.id, chave)}
+                    />
+                  </>
+                ) : (
+                  <SidebarMenu>
+                    {(projects ?? []).map((project) => {
+                      // Aprovações pendentes do projeto INTEIRO (RN-151), não
+                      // atividade não lida; o resumo do dashboard as traz de graça.
+                      const summary = cardPorProjeto.get(project.id);
+                      const pendingApprovalsCount = summary?.pendingApprovalsCount ?? 0;
+                      return (
+                        <SidebarMenuItem key={project.id}>
+                          <div className={styles.linhaDoProjeto}>
+                            <SidebarMenuButton
+                              render={
+                                <Link
+                                  to="/projects/$projectId"
+                                  params={{ projectId: project.id }}
+                                  title={project.name}
+                                  onClick={() => {
+                                    gravarProjetoAtivo(project.id);
+                                    gravarAbaAtiva(ABA_PADRAO);
+                                  }}
+                                />
+                              }
+                            >
+                              <NavStatusDot
+                                summary={summary}
+                                blockedTaskCount={blockedByProject.get(project.id) ?? 0}
                               />
-                            }
-                          >
-                            {aberto ? <FolderOpen size={15} aria-hidden="true" /> : <Folder size={15} aria-hidden="true" />}
-                            <NavStatusDot
-                              summary={summary}
-                              blockedTaskCount={blockedByProject.get(project.id) ?? 0}
-                            />
-                            <span className={styles.navText}>
-                              <span className={styles.navName}>{project.name}</span>
-                              {/* Só quando o nome se repete — ver `project-label.ts`. */}
-                              {repetidos.has(project.name) && (
-                                <span className={styles.navDesempate}>
-                                  {desempateDoProjeto(project)}
-                                </span>
-                              )}
-                            </span>
-                          </SidebarMenuButton>
-                          {pendingApprovalsCount > 0 && (
-                            <Badge tone="accent" square>
-                              {pendingApprovalsCount}
-                            </Badge>
-                          )}
-                        </div>
-                        {aberto && (
-                          <AbasDoProjeto
-                            projectId={project.id}
-                            nomeDoProjeto={project.name}
-                            itens={itensDoProjeto(project.id)}
-                            active={project.id === currentProject?.id ? abaAtivaDoAtual : undefined}
-                            onChange={(chave) => irParaAba(project.id, chave)}
-                          />
-                        )}
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
+                              <span className={styles.navText}>
+                                <span className={styles.navName}>{project.name}</span>
+                                {/* Só quando o nome se repete — ver `project-label.ts`. */}
+                                {repetidos.has(project.name) && (
+                                  <span className={styles.navDesempate}>
+                                    {desempateDoProjeto(project)}
+                                  </span>
+                                )}
+                              </span>
+                            </SidebarMenuButton>
+                            {pendingApprovalsCount > 0 && (
+                              <Badge tone="accent" square>
+                                {pendingApprovalsCount}
+                              </Badge>
+                            )}
+                          </div>
+                        </SidebarMenuItem>
+                      );
+                    })}
+                    <SidebarMenuItem>
+                      <SidebarMenuButton onClick={abrirWizard}>
+                        <PlusIcon size={16} />
+                        <span>{t('sidebar.nav.newProject')}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  </SidebarMenu>
+                )}
               </SidebarGroupContent>
             </SidebarGroup>
 
             <SidebarGroup>
               <SidebarGroupLabel className={styles.rotulo}>
-                {t('sidebar.activities.label')}
+                {t('sidebar.agentsNow.label')}
               </SidebarGroupLabel>
               <SidebarGroupContent className={styles.atividadesSecao}>
                 {!currentProject && (
-                  <p className={styles.atividadesVazio}>{t('sidebar.activities.openProjectHint')}</p>
+                  <p className={styles.atividadesVazio}>{t('sidebar.agentsNow.openProjectHint')}</p>
                 )}
                 {currentProject && estadoDaAtividade === 'erro' && (
-                  <p className={styles.atividadesVazio} data-testid="atividades-erro">
-                    {t('sidebar.activities.loadError')}
+                  <p className={styles.atividadesVazio} data-testid="agentes-agora-erro">
+                    {t('sidebar.agentsNow.loadError')}
                   </p>
                 )}
                 {currentProject && estadoDaAtividade === 'sem-sessao' && (
-                  <p className={styles.atividadesVazio}>{t('sidebar.activities.noSession')}</p>
+                  <p className={styles.atividadesVazio}>{t('sidebar.agentsNow.noSession')}</p>
                 )}
-                {currentProject && estadoDaAtividade === 'pronto' && grupos.length === 0 && (
-                  <p className={styles.atividadesVazio}>
-                    {origemDaAtividade === 'execucao'
-                      ? t('sidebar.activities.emptyExecution')
-                      : t('sidebar.activities.empty')}
-                  </p>
+                {currentProject && estadoDaAtividade === 'pronto' && roster.length === 0 && (
+                  <p className={styles.atividadesVazio}>{t('sidebar.agentsNow.empty')}</p>
                 )}
-                {currentProject &&
-                  grupos.map((grupo) => (
-                    <GrupoDeAtividade
-                      key={grupo.agenteBase}
-                      projectId={currentProject.id}
-                      grupo={grupo}
-                      agentesAbertos={agentesAbertos}
-                      onAlternar={alternarAgente}
-                    />
-                  ))}
+                {currentProject && estadoDaAtividade === 'pronto' && roster.length > 0 && (
+                  <AgentesAgora
+                    roster={roster}
+                    colapsado={false}
+                    onVerTodos={() => irParaAba(currentProject.id, 'executores')}
+                  />
+                )}
               </SidebarGroupContent>
             </SidebarGroup>
           </>
@@ -864,9 +738,11 @@ export function Shell() {
 
       <SidebarFooter>
         <SidebarMenu>
+          {!colapsado && <p className={styles.rotuloDoRodape}>{t('sidebar.workspaceLabel')}</p>}
           <LinkDoRodape to="/containers" icone={<Container size={15} aria-hidden="true" />} rotulo={tComum('sidebar.containers')} colapsado={colapsado} />
           <LinkDoRodape to="/providers" icone={<KeyRound size={15} aria-hidden="true" />} rotulo={tComum('sidebar.providers')} colapsado={colapsado} />
           <LinkDoRodape to="/spend" icone={<Wallet size={15} aria-hidden="true" />} rotulo={tComum('sidebar.spend')} colapsado={colapsado} />
+          <LinkDoRodape to="/status" icone={<Activity size={15} aria-hidden="true" />} rotulo={tComum('sidebar.status')} colapsado={colapsado} />
           {/* Na gaveta não há o que recolher — ela já some inteira. */}
           {!movel && (
             <SidebarMenuItem>

@@ -1,11 +1,10 @@
-import { Disclosure } from './ui/Disclosure';
-import { useState, type CSSProperties } from 'react';
-import { useCatalogoDeAgentes } from '../lib/agent-catalog-queries';
-import { Hand, Plane, RotateCcw } from 'lucide-react';
+import type { CSSProperties } from 'react';
+import { Hand, Plane, RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentDef } from '../lib/agents';
 import { BranchIcon, ModelIcon } from './ui/icons';
 import { Badge } from './ui/Badge';
+import { Select } from './ui/Select';
 import { Button as BotaoDeIcone } from '@/components/ui/Button';
 import { Card } from '@/components/shadcn/card';
 import { Shimmer } from './ui/Shimmer';
@@ -42,6 +41,15 @@ interface AgentCardProps {
   agent: AgentDef;
   status: AgentStatus;
   model?: { name: string; provider: string };
+  /**
+   * AT-916: troca o modelo do agente pelo cartão (o mesmo `PUT agent-bindings`
+   * da tela de Modelos). Sem `onModelChange` o modelo é só leitura.
+   */
+  modelOptions?: { id: string; name: string }[];
+  modelId?: string;
+  onModelChange?: (modelId: string) => void;
+  /** Motivo, em TEXTO, de o seletor estar inerte (papel abaixo do mínimo do endpoint). */
+  modelDisabledReason?: string;
   autonomy?: AutonomyMode;
   onAutonomyChange?: (mode: AutonomyMode) => void;
   /**
@@ -69,9 +77,8 @@ interface AgentCardProps {
    * toggle de autonomia, a única precedente, aparece incondicional).
    */
   onRearm?: () => void;
-  /** Liga as seções de instruções e ferramentas (AT-686); sem elas, o card fica como era. */
-  projectId?: string;
-  agentSlug?: string;
+  /** AT-906: faz o dev ocioso procurar tarefa de novo; só renderiza com `status === 'ocioso'`. */
+  onWake?: () => void;
 }
 
 function formatMicros(micros: number): string {
@@ -82,6 +89,10 @@ export function AgentCard({
   agent,
   status,
   model,
+  modelOptions,
+  modelId,
+  onModelChange,
+  modelDisabledReason,
   autonomy,
   onAutonomyChange,
   autonomyHint,
@@ -90,8 +101,7 @@ export function AgentCard({
   badge,
   compact,
   onRearm,
-  projectId,
-  agentSlug,
+  onWake,
 }: AgentCardProps) {
   const { t } = useTranslation('executors');
 
@@ -152,6 +162,25 @@ export function AgentCard({
         </div>
       )}
 
+      {onModelChange && modelOptions && modelOptions.length > 0 && (
+        <div className={styles.footer}>
+          <Select
+            aria-label={t('agentCard.model.label', { agente: agent.name })}
+            value={modelId ?? ''}
+            disabled={!!modelDisabledReason}
+            onChange={(e) => e.target.value && onModelChange(e.target.value)}
+          >
+            {!modelId && <option value="">{t('agentCard.model.escolher')}</option>}
+            {modelOptions.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </Select>
+          {modelDisabledReason && <span>{modelDisabledReason}</span>}
+        </div>
+      )}
+
       {autonomy && onAutonomyChange && (
         <div className={styles.autonomy}>
           <BotaoDeIcone
@@ -190,78 +219,14 @@ export function AgentCard({
           </BotaoDeIcone>
         </div>
       )}
-      {projectId && agentSlug && <CatalogoDoAgente projectId={projectId} slug={agentSlug} />}
-    </Card>
-  );
-}
-
-// Filho à parte: a query só existe quando o card tem projeto.
-function CatalogoDoAgente({ projectId, slug }: { projectId: string; slug: string }) {
-  const { t } = useTranslation('executors');
-  const [abertas, setAbertas] = useState(false);
-  // Só busca quando uma seção é aberta; as demais leem o mesmo cache.
-  const catalogo = useCatalogoDeAgentes(projectId, abertas);
-  return (
-    <div className={styles.catalog}>
-      {(['instructions', 'tools'] as const).map((secao) => (
-        <Disclosure
-          key={secao}
-          titulo={t(`agentCard.catalog.${secao}`)}
-          onAlternar={(aberto) => aberto && setAbertas(true)}
-        >
-          <SecaoDoCatalogo secao={secao} slug={slug} query={catalogo} />
-        </Disclosure>
-      ))}
-    </div>
-  );
-}
-
-function SecaoDoCatalogo({
-  secao,
-  slug,
-  query,
-}: {
-  secao: 'instructions' | 'tools';
-  slug: string;
-  query: ReturnType<typeof useCatalogoDeAgentes>;
-}) {
-  const { t } = useTranslation('executors');
-  if (query.isError) return <p>{t('agentCard.catalog.error')}</p>;
-  if (!query.data) return <p aria-busy="true">{t('agentCard.catalog.loading')}</p>;
-  // Os dev-<modulo> usam a entrada `dev-*` do catálogo.
-  const a = query.data.agentes.find((x) => x.agente === slug) ??
-    (slug.startsWith('dev-') ? query.data.agentes.find((x) => x.agente === 'dev-*') : undefined);
-  if (secao === 'tools') {
-    if (!a?.ferramentas) return <p>{t('agentCard.catalog.toolsUnavailable')}</p>;
-    if (a.ferramentas.length === 0) return <p>{t('agentCard.catalog.noTools')}</p>;
-    return (
-      <>
-        <p>{t('agentCard.catalog.toolCount', { count: a.ferramentas.length })}. {t('agentCard.catalog.note')}</p>
-        <ul className={styles.scroll}>
-          {a.ferramentas.map((f) => (
-            <li key={f.nome}>
-              <code>{f.nome}</code> {f.descricao}
-            </li>
-          ))}
-        </ul>
-      </>
-    );
-  }
-  const ins = a?.instrucoesDoProjeto;
-  return (
-    <>
-      {a?.identidade ? <p>{a.identidade}</p> : a ? <p>{t('agentCard.catalog.instructionsUnavailable')}</p> : null}
-      {ins ? (
-        <>
-          <p>{t('agentCard.catalog.projectInstruction', { versao: ins.versao })}</p>
-          <pre className={styles.scroll}>{ins.conteudo}</pre>
-          {ins.conteudoTotal !== undefined && (
-            <p>{t('agentCard.catalog.missing', { count: ins.conteudoTotal - ins.conteudo.length })}</p>
-          )}
-        </>
-      ) : (
-        <p>{t('agentCard.catalog.noProjectInstruction')}</p>
+      {status === 'ocioso' && onWake && (
+        <div className={styles.autonomy}>
+          <BotaoDeIcone type="button" variant="secondary" onClick={onWake}>
+            <Search aria-hidden="true" />
+            {t('agentCard.wake')}
+          </BotaoDeIcone>
+        </div>
       )}
-    </>
+    </Card>
   );
 }

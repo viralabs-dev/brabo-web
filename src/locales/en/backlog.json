@@ -14,7 +14,8 @@
     "epics": "No epics yet. Accept the Creative agent's handoff in a session for the PO to generate the backlog.",
     "rules": "No business rules yet.",
     "epicsTitle": "Empty backlog",
-    "rulesTitle": "No rules"
+    "rulesTitle": "No rules",
+    "filtrado": "No story matches this filter."
   },
   "coverage": {
     "uncoveredBadge_one": "{{count}} uncovered",
@@ -97,6 +98,43 @@
     "todo": "to do",
     "inProgress": "in progress",
     "inReview": "in review",
-    "done": "done"
+    "done": "done",
+    "archived": "archived"
+  },
+  "taskNode": {
+    "archive": "Archive",
+    "archiveModalTitle": "Archive the task \"{{title}}\"?",
+    "archiveExplain": "The task leaves the queue and the dependencies and stays visible in the history. Only a to-do task can be archived.",
+    "archiveReasonLabel": "Reason (required)",
+    "archiveReasonPlaceholder": "E.g. duplicated by another module's task.",
+    "archiveConfirm": "Archive task",
+    "archivedReason": "Reason: {{motivo}}",
+    "toast": {
+      "archived": "Task archived",
+      "archiveError": "Could not archive the task"
+    }
+  },
+  "visao": {
+    "label": "Backlog view",
+    "epico": "By epic",
+    "quadro": "Board"
+  },
+  "busca": {
+    "label": "Search story, task or RN"
+  },
+  "filtro": {
+    "comPergunta_one": "With open question · {{count}}",
+    "comPergunta_other": "With open question · {{count}}",
+    "modulo": "Module",
+    "todosModulos": "All modules",
+    "recorte": "The question count is a slice: only the first 50 of {{total}} are included."
+  },
+  "epico": {
+    "progresso_one": "{{count}} story · {{prontas}} of {{count}} done",
+    "progresso_other": "{{count}} stories · {{prontas}} of {{count}} done"
+  },
+  "historia": {
+    "perguntas_one": "{{count}} question",
+    "perguntas_other": "{{count}} questions"
   }
 }

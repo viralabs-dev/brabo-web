@@ -12,6 +12,7 @@ import { CredentialsSection } from '../routes/settings/CredentialsSection';
 import { ToastProvider } from './ui/ToastProvider';
 import i18n from '../lib/i18n';
 import type { CatalogoPorCategoria, ModelComCuradoria } from '../lib/api-types';
+import { upsertCredential } from '../lib/api-client';
 
 const listModelCatalog = vi.fn();
 const setModelsActive = vi.fn();
@@ -197,7 +198,7 @@ describe('"Atualizar catálogo" ao lado da credencial (RN-694)', () => {
     listCredentials.mockResolvedValue([credencial('openrouter')]);
     montar(<CredentialsSection />);
 
-    await screen.findByLabelText('Nova chave de OpenRouter');
+    await screen.findByRole('button', { name: 'Informar nova chave de OpenRouter' });
     await waitFor(() => expect(listModelCatalog).toHaveBeenCalled());
     expect(screen.queryByRole('button', { name: /Atualizar o catálogo/ })).toBeNull();
   });
@@ -214,5 +215,23 @@ describe('"Atualizar catálogo" ao lado da credencial (RN-694)', () => {
     );
 
     expect(await screen.findByText('Sync falhou')).toBeTruthy();
+  });
+
+  it('salvar a chave avisa que o catálogo de modelos foi atualizado (AT-900)', async () => {
+    listCredentials.mockResolvedValue([credencial('anthropic')]);
+    vi.mocked(upsertCredential).mockResolvedValue({} as never);
+    montar(<CredentialsSection />);
+
+    fireEvent.click(
+      await screen.findByRole('button', { name: 'Informar nova chave de Anthropic' }),
+    );
+    fireEvent.change(await screen.findByLabelText('Nova chave de Anthropic'), {
+      target: { value: 'chave-de-teste' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Trocar chave de Anthropic' }));
+
+    expect(
+      await screen.findByText('O catálogo de modelos deste provider foi atualizado.'),
+    ).toBeTruthy();
   });
 });

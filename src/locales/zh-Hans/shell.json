@@ -10,25 +10,29 @@
     "nav": {
       "trilhaAriaLabel": "项目与活动",
       "projectsLabel": "项目",
-      "newProject": "新建项目"
+      "newProject": "新建项目",
+      "projectLabel": "项目"
     },
     "projects": {
       "loadError": "无法加载项目。",
       "retry": "重试",
-      "expand": "展开 {{name}}",
-      "collapse": "收起 {{name}}",
-      "tabsAriaLabel": "{{name}} 的标签页"
+      "tabsAriaLabel": "{{name}} 的标签页",
+      "switch": "切换项目：{{name}}"
     },
-    "activities": {
-      "label": "活动",
-      "openProjectHint": "打开一个项目以查看智能体的活动。",
-      "empty": "最近的会话中还没有智能体开始行动。",
-      "emptyExecution": "执行会话中还没有智能体开始行动。",
-      "noSession": "此项目还没有会话。",
-      "loadError": "无法加载活动。",
-      "noMarksYet": "暂无里程碑",
-      "instancesCount_other": "{{count}} 个实例"
+    "agentsNow": {
+      "label": "当前智能体",
+      "openProjectHint": "打开项目以查看其智能体。",
+      "empty": "还没有智能体行动。",
+      "noSession": "该项目还没有会话。",
+      "loadError": "无法加载智能体。",
+      "status": {
+        "trabalhando": "工作中",
+        "aguardando": "等待中",
+        "ocioso": "空闲",
+        "falhou": "失败"
+      }
     },
+    "workspaceLabel": "工作区",
     "collapseButton": {
       "expand": "展开菜单",
       "collapse": "收起菜单"
@@ -41,7 +45,9 @@
     "footer": {
       "accountFallback": "账户",
       "logout": "退出"
-    }
+    },
+    "caixa": "Decision inbox",
+    "home": "首页"
   },
   "notificationBell": {
     "label": "通知",

@@ -88,3 +88,39 @@
 .empty {
   padding: 60px 20px;
 }
+
+.secao {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0 0 12px;
+}
+
+/* Cartão tracejado "Novo projeto" no fim da grade (AT-941). */
+.novoCartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 160px;
+  padding: 20px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--r-md, 8px);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.novoCartao span {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.novoCartao:hover {
+  border-color: var(--text-secondary);
+}

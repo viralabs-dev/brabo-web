@@ -68,6 +68,8 @@ export interface WorkspaceSpendReport {
   /** Partição de `porAtor` por `actorKind === 'agent'` (RN-188). */
   porAgente: SpendLinha[];
   porDia: SpendPorDia[];
+  /** Por dia e agente, ESPARSO (RN-1153); ausente em api antiga. */
+  porDiaEAgente?: SpendDiaDoAgente[];
 }
 
 /**
@@ -84,6 +86,18 @@ export interface ProjectSpendTeam {
   chamadas: number;
   porAgente: SpendLinha[];
   porArea: SpendLinha[];
+  /** Por MODELO e por SESSÃO do projeto inteiro (RN-1152); nunca por provider (RN-186). */
+  porModelo?: SpendLinha[];
+  porSessao?: SpendLinha[];
+  /** Por dia e agente, ESPARSO: só dias com chamada (RN-1153); densifique com `densificarPorAgente`. */
+  porDiaEAgente?: SpendDiaDoAgente[];
+}
+
+export interface SpendDiaDoAgente {
+  dia: string;
+  agente: string;
+  costMicros: number;
+  chamadas: number;
 }
 
 /** O meu consumo no workspace, somado por projeto (RN-953). */
@@ -268,4 +282,52 @@ export function alertaDeOrcamento(
       });
 
   return { nivel, mensagem };
+}
+
+/**
+ * A legenda da virada do teto mensal (RN-1200): a api vira o mês em UTC (`fim` é
+ * o 1º dia do mês seguinte, `AAAA-MM-DD`); só a LEGENDA vai para a hora local.
+ */
+export function viradaDoMesLocal(fim: string, locale: string): string {
+  return new Date(`${fim}T00:00:00Z`).toLocaleString(locale, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
+}
+
+/** Custo médio por chamada em micro-USD; sem chamada não há média (null, nunca NaN). */
+export function custoMedioPorChamada(totalMicros: number, chamadas: number): number | null {
+  return chamadas > 0 ? totalMicros / chamadas : null;
+}
+
+/** CSV (RFC 4180) das linhas que já estão na tela; nada novo é pedido à api. */
+export function linhasParaCsv(cabecalho: string[], linhas: (string | number)[][]): string {
+  const cel = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+  return [cabecalho, ...linhas].map((l) => l.map(cel).join(',')).join('\r\n');
+}
+
+/** Dias do mês corrente em UTC até hoje: a janela "Mês" (a api conta dias para trás). */
+export function diasDoMesUtc(agora: Date = new Date()): number {
+  return agora.getUTCDate();
+}
+
+/**
+ * Densifica o esparso: uma linha por dia da janela (terminando hoje, UTC), com zero
+ * onde não houve chamada, e uma coluna por agente que aparece na janela.
+ */
+export function densificarPorAgente(
+  linhas: SpendDiaDoAgente[],
+  dias: number,
+  agora: Date = new Date(),
+): { agentes: string[]; dados: Record<string, string | number>[] } {
+  const fim = Date.UTC(agora.getUTCFullYear(), agora.getUTCMonth(), agora.getUTCDate());
+  const agentes = [...new Set(linhas.map((l) => l.agente))].sort();
+  const porChave = new Map(linhas.map((l) => [`${l.dia}|${l.agente}`, l.costMicros] as const));
+  const dados = Array.from({ length: dias }, (_, i) => {
+    const dia = new Date(fim - (dias - 1 - i) * 86_400_000).toISOString().slice(0, 10);
+    const linha: Record<string, string | number> = { dia };
+    for (const a of agentes) linha[a] = porChave.get(`${dia}|${a}`) ?? 0;
+    return linha;
+  });
+  return { agentes, dados };
 }

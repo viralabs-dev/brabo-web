@@ -25,8 +25,8 @@ keywords: [regras de negócio, web]
   pegam as tarefas como estão ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
-  `apps/web/src/routes/SessionPage.tsx:791` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:644`
+  `apps/web/src/routes/SessionPage.tsx:795` (`otimistaJaNoLog`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:651`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -90,7 +90,7 @@ keywords: [regras de negócio, web]
   pede para não prometer ganho de paralelismo. A aspa do modelo nas pontas do
   resumo é removida antes de a frase citá-lo, para não sobrar `coberto."`.
 - **Onde:** `apps/web/src/lib/aprovacoes.ts:360` (`propose_execution_plan`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:276` (`sobem`), `:249`
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:316` (`sobem`), `:289`
   (`classificar`), `:97` (`spec`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("plano com 2 agentes num
   módulo único diz que sobe 1…"; "plano sem agente a mais não fala de
@@ -136,7 +136,7 @@ keywords: [regras de negócio, web]
   fecho tem o botão; os passos do turno não. A tela reconhece a linha pelo
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:954` (`respostaCortada`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:958` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:439` (`continuarRespostaCortada`),
   `:685` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
@@ -183,8 +183,8 @@ keywords: [regras de negócio, web]
   cima não é arrastado. A causa do topo no aceite do handoff da Infra não foi
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
-- **Onde:** `apps/web/src/routes/project-tabs.ts:383` (`abaDaRota`),
-  `apps/web/src/routes/Shell.tsx:509` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
+  `apps/web/src/routes/Shell.tsx:400` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
   `apps/web/src/components/ModelCatalogSection.module.css` (`.barraDeLote`),
@@ -212,7 +212,7 @@ keywords: [regras de negócio, web]
   piloto automático é um checkbox já marcado dentro do próprio cartão, e aprovar com
   ele marcado é o que o liga ([RN-804](#rn-804)). Todo outro tipo de ação
   mantém a regra acima.
-- **Onde:** `apps/web/src/components/ApprovalCard.tsx:219` (`ApprovalCard`)
+- **Onde:** `apps/web/src/components/ApprovalCard.tsx:239` (`ApprovalCard`)
 - **Teste:** `apps/web/src/components/ApprovalCard.test.tsx` (`ligar o
   "Modo automático" não aprova o card, e o card diz isso`; sem o botão, a nota
   não sai)
@@ -256,7 +256,7 @@ keywords: [regras de negócio, web]
   bloqueio). Sem sessão no projeto, o mesmo: o motivo vai em texto, nunca só
   no `title` do botão `disabled`, que não abre no Chromium. Se tarefa
   bloqueada deve ou não travar o merge é pergunta do dono, não decidida aqui.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:293` (`avisoDaLinha`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:304` (`avisoDaLinha`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("AT-451: tarefa
   bloqueada com gate pendente NÃO diz que o merge segue disponível")
 - **Origem:** AT-451 (TP-01 de 09/10: "O merge segue disponível — a decisão é
@@ -301,8 +301,7 @@ keywords: [regras de negócio, web]
   não é a mais recente. Nenhuma requisição a mais: as chaves são as que a
   sidebar já assina, e `useActiveExecutionSession` ganha `staleTime` igual ao
   intervalo, para o segundo assinante não refazer a busca ([RN-632](parte-05.md#rn-632)).
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:402` (`trailing`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:101` (`linhaDoTempoNaExecucao`)
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   (decisão fora da janela não vira 0; sessão inteira na janela diz vazio),
   `apps/web/src/routes/ProjectOverviewTab.test.tsx` (lê a sessão de execução e
@@ -320,7 +319,7 @@ keywords: [regras de negócio, web]
   lista onde a sessão aparece, que é o caminho de volta a ela. Sessão ainda
   carregando, ou aba publicada de outro projeto, cai em "Chat". Sem leitura
   nova: o tipo já veio com a sessão.
-- **Onde:** `apps/web/src/routes/project-tabs.ts:383` (`abaDaRota`),
+- **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
   `apps/web/src/lib/session-kind.ts:94` (`usePublicarAbaDaSessao`)
 - **Teste:** `apps/web/src/lib/session-rolagem-fim.test.ts` (criativa marca
   "Criativo"; aba de outro projeto ou inválida não vale)
@@ -343,10 +342,9 @@ keywords: [regras de negócio, web]
   quando a execução for religada — o botão está na mesma seção. Na aba
   Executores o backlog só é lido com a ausência confirmada (query desligada
   com execução de pé, ritmo de projeto quando ligada, [RN-632](parte-05.md#rn-632)).
-- **Onde:** `apps/web/src/components/ReligarExecucao.tsx:23` (`ReligarExecucao`),
+- **Onde:** `apps/web/src/components/ReligarExecucao.tsx` (removido na AT-943, sem uso),
   `apps/web/src/lib/execution.ts:21` (`contarTarefasPendentes`),
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:103` (`semExecucaoVigente`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:518` (`semExecucaoVigente`)
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:108` (`semExecucaoVigente`)
 - **Teste:** `apps/web/src/routes/ProjectExecutorsTab.test.tsx` (religar a
   execução), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (religar a
   execução encerrada)
@@ -364,7 +362,7 @@ keywords: [regras de negócio, web]
   Infra Lead cujo handoff foi aceito lá), e com uma ideação aberta depois a
   árvore dizia "Nenhum agente entrou em ação nesta sessão ainda" sobre um time
   trabalhando. Sem leitura nova.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:279` (`overviewEvents`)
+- **Onde:** removido da Visão geral na AT-890 (RN-1280).
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("AT-471: agente
   que só agiu na execução aparece na árvore…"; o caso sem execução segue lendo
   a mais recente)
@@ -381,7 +379,7 @@ keywords: [regras de negócio, web]
   Proton Pass. O composer da Sessão já o tinha. A constante NÃO tem atributo de
   ignore do NordPass, e nenhum foi inventado: se o NordPass segue se anexando,
   o resto da lacuna é da extensão, como na RN-740.
-- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:325` (`SEM_AUTOFILL`),
+- **Onde:** `apps/web/src/routes/ProjectSessionsTab.tsx:310` (`SEM_AUTOFILL`),
   `apps/web/src/lib/conversa-comecou.ts:29` (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` ("AT-472: o nome
   da nova ideação não convida o gerenciador de senhas")
@@ -590,7 +588,7 @@ keywords: [regras de negócio, web]
   `travado` do card (`devStatus`). A tarefa bloqueada cujo `assignedTo` está
   travado diz "rearme antes de desbloquear".
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:217` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:230` (`desbloquear`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
@@ -716,8 +714,7 @@ keywords: [regras de negócio, web]
   altura reservada, e jsdom não faz layout — o teste prova a ORDEM, não o
   deslocamento em pixels; qual das duas causas (salto ou sessão não lida) fez o
   1º clique do TP-01 se perder não foi medido no navegador.
-- **Onde:** `apps/web/src/routes/ProjectOverviewTab.tsx:498` (`desbloqueio`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:634` (`blockedTasks`)
+- **Onde:** removido da Visão geral na AT-890 (RN-1280).
 - **Teste:** `apps/web/src/routes/ProjectOverviewTab.test.tsx` ("RN-835
   (AT-502): o desbloqueio chama uma vez, fica em voo e diz quando terminou";
   falha: "RN-835: a recusa do desbloqueio mostra a frase da api na linha"),
@@ -833,9 +830,9 @@ keywords: [regras de negócio, web]
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:604` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:703` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1325` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1354` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -859,8 +856,8 @@ keywords: [regras de negócio, web]
   aviso `infra.pr_opened` do canal da sessão a relê.
 - **Onde:** `apps/web/src/components/RodarNaSuaMaquina.tsx:19` (`RodarNaSuaMaquina`),
   `apps/web/src/components/RodarNaSuaMaquina.helpers.ts:15` (`urlLocalSegura`), `:8` (`releSeInfraAbriuPr`),
-  `apps/web/src/routes/ProjectOverviewTab.tsx:214` (`releSeInfraAbriuPr`),
-  `apps/web/src/lib/api-client.ts:882` (`getRunInstructions`)
+  `apps/web/src/routes/ProjectOverviewTab.tsx:194` (`releSeInfraAbriuPr`),
+  `apps/web/src/lib/api-client.ts:896` (`getRunInstructions`)
 - **Teste:** `apps/web/src/components/RodarNaSuaMaquina.test.tsx` ("mostra
   comando, copiar, link local e a nota de não verificado"; "sem declaração
   (null) o cartão não aparece"; "só localhost/127.0.0.1 com porta vira link";
@@ -973,7 +970,7 @@ keywords: [regras de negócio, web]
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:391`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:464`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba
@@ -995,7 +992,7 @@ keywords: [regras de negócio, web]
   e a tarefa segue na lista. Claim, desbloqueio e retomada não mudam.
 - **Onde:** `apps/web/src/lib/execution.ts:10` (`estadoDaTarefa`);
   `apps/web/src/routes/ProjectBacklogTab.tsx` (o selo da lista de tarefas);
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:471` (`bloqueio`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:622` (`bloqueio`)
 - **Teste:** `apps/web/src/lib/execution.test.ts` ("blocked vence o status";
   falha: "sem bloqueio, o status"); `apps/web/src/routes/ProjectBacklogTab.test.tsx`
   ("a bloqueada mostra \"Bloqueada\" e o motivo, sem o selo \"a fazer\"");
@@ -1061,7 +1058,7 @@ keywords: [regras de negócio, web]
 ### RN-911 — Provider é global; Configurações do projeto só escolhem modelo; a matriz mora na Conta {#rn-911}
 
 - **Regra:** credencial de LLM, catálogo de modelos (curadoria, preços, sync e o navegador do Hugging Face) e o relatório de gasto por chave saíram das Configurações do projeto. Moram em `/providers` (as três peças) e o gasto por chave também na aba Gastos, só para `owner` (RN-060). O projeto guarda só a ESCOLHA: modelo por agente e por área, o "aplicar a todos" (RN-476), o critério de roteamento e "melhores modelos". A matriz "Quem pode aprovar o quê" saiu das Configurações e é uma seção da Conta (`/account`), para qualquer pessoa logada. O atalho "Ativar e aplicar aos N agentes" (RN-694 item 3) deixou de existir. Link antigo `?section=credentials`, `model-catalog`, `key-spend` ou `approval-matrix` abre a aba no topo, sem erro. O vazio de "Modelos por agente", o subtítulo de "melhores modelos" e os Primeiros passos (RN-708) apontam para `/providers`. Revisa a RN-694 (item 3) e a RN-708 (destinos). Sem ADR: é fronteira de tela.
-- **Onde:** `apps/web/src/routes/settings/sumario.ts:48` (`SECOES_DE_CONFIGURACOES`), `apps/web/src/routes/ProjectSettingsTab.tsx:62` (`ProjectSettingsTab`), `apps/web/src/routes/AccountPage.tsx:36` (`AccountPage`)
+- **Onde:** `apps/web/src/routes/settings/sumario.ts:48` (`SECOES_DE_CONFIGURACOES`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`), `apps/web/src/routes/AccountPage.tsx:36` (`AccountPage`)
 - **Teste:** `apps/web/src/routes/settings/sumario.test.ts` (as quatro chaves não existem); `apps/web/src/routes/settings/SumarioDeConfiguracoes.test.tsx` (a aba não monta as quatro seções, nem para `owner`); `apps/web/src/routes/AccountPage.test.tsx` (a matriz, e o caso de falha no idioma); `apps/web/src/routes/configuracoes.orcamento.test.tsx` (a volta à aba não busca credencial); `apps/web/src/components/catalogo-com-busca.test.tsx` (sem atalho)
 - **Origem:** AT-597 e AT-598 (EP-031), pedidos do dono de 22/10.
 
@@ -1070,7 +1067,7 @@ keywords: [regras de negócio, web]
 ### RN-912 — O modelo da área é uma caixa na linha do lead, em "Modelos por agente" {#rn-912}
 
 - **Regra:** a seção "Modelo por área" deixou de existir. O padrão da área (RN-102, escopo `area` da RN-470) liga-se por uma caixa **só na linha do lead** de cada área (`dev-lead`, `qa`, `infra`): "Valer para a área X inteira (lead + subagentes)". O binding de área é um valor por área e não guarda o agente de origem, então a caixa em toda linha deixaria duas disputarem o valor. Marcada ⇔ o vigente do lead vem da área (`origin: 'area'`), lido do lote da RN-654, sem consulta nova. **Marcar** grava a área com o vigente do lead e o critério de roteamento dele (`PUT .../area-bindings/:area`) e DEPOIS apaga o binding próprio do lead (`DELETE .../agent-bindings/:lead`; copiar o deixaria para trás, RN-102). São duas chamadas e o desfecho é por passo (RN-469): se a área recusa (inclusive o 422 da RN-040) nada mudou e o toast traz a frase da api; se a área gravou e o DELETE falha, a tela diz que o padrão da área foi gravado e o modelo próprio do lead não foi removido (404 do DELETE conta como já removido). **Desmarcar** apaga a área (`DELETE .../area-bindings/:area`) e não grava nada no lead; 404 vira "já herdava". Com a caixa marcada, o seletor e o critério de roteamento do lead gravam a ÁREA. O agente com binding próprio vence a área (RN-470) e NÃO segue: a tela lista, com plural, os subagentes conhecidos nessa situação (recorte declarado, RN-180; os `dev-<modulo>` dinâmicos não entram e a tela diz isso) e não apaga a decisão deles. O "aplicar a todos" (RN-476) grava binding próprio nos 17 e, por isso, tira os subagentes do padrão da área; o aviso dele diz isso. **Papel:** a caixa e, enquanto marcada, o seletor do lead pedem `maintainer` (o mínimo do endpoint de área, RN-102), comparado por `roleAtLeast`; abaixo disso ficam inertes e o motivo é dito UMA vez em texto na legenda da seção (ADR 0064). As demais linhas seguem em `developer`. A caixa nasce desabilitada se o lead não tem vigente para copiar, e diz o motivo em texto na própria caixa (AT-601, chave `modelsSection.areaBox.needsModel`). Revisa a UI das RN-040, RN-102 e RN-470; a cascata, o escopo e os endpoints não mudam (sem ADR).
-- **Onde:** `apps/web/src/routes/settings/ModelsSection.tsx:94` (`podeEditarArea`), `:432` (`areaDoLead`), `:446` (`handleMarcarArea`), `:486` (`handleDesmarcarArea`)
+- **Onde:** `apps/web/src/routes/settings/ModelsSection.tsx:94` (`podeEditarArea`), `:452` (`areaDoLead`), `:470` (`handleMarcarArea`), `:510` (`handleDesmarcarArea`)
 - **Teste:** `apps/web/src/routes/settings/ModelsSection.caixa-da-area.test.tsx` (AT-601: motivo sem vigente no lead); `apps/web/src/routes/ProjectSettingsTab.test.tsx` (marcar, a área recusando, FALHA PARCIAL, desmarcar com e sem 404, seletor do lead na área, não-seguidores, `developer` inerte); `apps/web/src/routes/settings/papel-na-tabela-de-agentes.test.tsx` (os dois mínimos); `bindings-em-lote.test.tsx` (lote único); `cascata.test.tsx`; `heranca.test.tsx`; `filtro-de-aptos.test.tsx` (RN-040); `preferencia-de-roteamento.test.tsx` (ADR 0166)
 - **Origem:** AT-600 (EP-031), pedido do dono de 22/10.
 
@@ -1106,7 +1103,7 @@ keywords: [regras de negócio, web]
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
 - **Regra:** refina a RN-626, a RN-825, a RN-826 e a RN-861. Dentro do bloco do chat moram cinco filas, e só aprovações e merges são filtradas por "outra sessão"; perguntas em aberto, PRs prontas e tarefas bloqueadas são do projeto inteiro (a pergunta da PRÓPRIA sessão aparece ali de propósito, porque o aviso do composer lê a mesma query). Por isso, com `filasDoChat` (o chat) o título é "Pendências deste projeto" (`pendencias.tituloDoProjeto`, nos quatro locales); com `filasDoChat={false}` (aba Executores, só aprovações e merges) o título segue "Pendências de outras sessões deste projeto". Nenhuma fila é filtrada, nenhum teto muda e o `data-testid` não muda.
-- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:370` (`tituloDoProjeto`).
+- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:400` (`tituloDoProjeto`).
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 
@@ -1130,7 +1127,7 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 3. **Orçamento.** A aba traz o editor do teto (`PUT projects/:projectId/budget`, `maintainer` pela `roleAtLeast`); abaixo do papel o controle fica inerte e o motivo é dito em texto. O botão "Definir orçamento" do card do projeto abre `?tab=spend` (antes `?tab=settings`, onde nenhuma tela gravava o orçamento).
 4. **Assinatura.** `assinaturaMicros` aparece num destaque separado; linha de modelo marcado `subscription` com custo zero mostra "assinatura — sem preço registrado", nunca "US$ 0".
 
-- **Código:** `apps/web/src/components/SpendPaineis.tsx:153` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:354` (`GastoDoTimeNoProjeto`); `apps/web/src/routes/ProjectSpendTab.tsx:172` (`EditorDoOrcamento`); `apps/web/src/routes/Dashboard.tsx:98` (`onDefineBudget`)
+- **Código:** `apps/web/src/components/SpendPaineis.tsx:189` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:398` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:93` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:104` (`onDefineBudget`)
 - **Teste:** `apps/web/src/routes/SpendPage.test.tsx` (owner × não-owner, sem provider para quem não é owner); `apps/web/src/routes/ProjectSpendTab.test.tsx` (owner só do projeto, membro por agente e área, editor grava, teto inválido e papel baixo recusados)
 - **Origem:** AT-632
 
@@ -1189,7 +1186,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 2. **Carga sob demanda.** O gráfico mora em `GraficoDeGastoPorDia.tsx`, carregado por `React.lazy` em `GastoPorDia.tsx`, com o SVG de `BarrasPorDia` como fallback. `SpendCharts.tsx` não importa o recharts, porque a aba Sessões importa o `Destaque` dali.
 3. **Recorte dito e alternativa em texto** ([RN-180](parte-02.md#rn-180)): o título diz a janela, a figura tem `aria-label` igual a ele, e `<details>` "Ver como tabela" traz dia, gasto e chamadas. Zero requisição nova ([RN-632](parte-05.md#rn-632)).
 
-- **Código:** `apps/web/src/components/GraficoDeGastoPorDia.tsx:13` (`GraficoDeGastoPorDia`); `apps/web/src/components/GastoPorDia.tsx:16` (`GastoPorDia`)
+- **Código:** `apps/web/src/components/GraficoDeGastoPorDia.tsx:13` (`GraficoDeGastoPorDia`); `apps/web/src/components/GastoPorDia.tsx:5` (`GastoPorDia`)
 - **Teste:** `apps/web/src/components/GraficoDeGastoPorDia.test.tsx` (figura com janela, tabela com os dias, série vazia)
 - **Origem:** AT-658
 
@@ -1198,8 +1195,8 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
 - **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
-- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:973` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-encerrados.tsx:8` (`PassosEncerrados`).
-- **Teste:** `apps/web/src/components/ai-elements/passos-encerrados.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:981` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`).
+- **Teste:** `apps/web/src/components/ai-elements/passos-do-turno.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
 - **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 
 <a id="rn-975"></a>

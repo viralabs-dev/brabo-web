@@ -187,7 +187,6 @@
   },
   "repository": {
     "title": "Repositório",
-    "eyebrow": "git · provider e política",
     "adopted": "Adotado — já existia antes do projeto, e a política de branches é dele.",
     "created": "Criado pelo Brabo, com o bootstrap de Gitflow aplicado.",
     "dismissed": {
@@ -195,12 +194,15 @@
       "strong": "dispensado",
       "after": " na adoção: nenhuma branch ou proteção foi alterada por nós."
     },
-    "divergesTitle": "Este repositório diverge do template:"
+    "divergesTitle": "Este repositório diverge do template:",
+    "none": {
+      "title": "Ainda não provisionado",
+      "subtitle": "Este projeto ainda não tem repositório."
+    }
   },
   "execution": {
     "title": "Execução",
-    "eyebrow": "parada automática do dev agent",
-    "subtitle": "Parada automática dos dev agents — vale a partir da próxima ativação da execução, não afeta agentes já rodando.",
+    "subtitle": "Quando um dev agent para sozinho.",
     "card": {
       "title": "Tarefas bloqueadas seguidas até parar",
       "hintDefault": "usa o padrão ({{default}})",
@@ -211,12 +213,27 @@
     "toast": {
       "success": "Teto da parada automática salvo",
       "error": "Não foi possível salvar"
+    },
+    "teto": {
+      "title": "Teto de gasto por tarefa (US$)",
+      "hintDefault": "usa o padrão (US$ {{default}})",
+      "vale": "Vale também para os agentes já em execução, a partir da próxima volta de cada tarefa.",
+      "saved": "Teto por tarefa salvo"
+    },
+    "semPapel": "Editar exige o papel maintainer no projeto.",
+    "escada": {
+      "title": "Escada de modelos (sobe depois de 2 bloqueios por limite na mesma tarefa)",
+      "hintDefault": "usa o padrão (Haiku 5.5 → Sonnet 5)",
+      "vale": "Do menor ao maior; cada degrau tem o próprio teto por tarefa. Quando a tarefa fecha, o agente volta ao modelo base.",
+      "modelo": "Modelo do degrau {{n}}",
+      "teto": "Teto do degrau {{n}} (US$)",
+      "remover": "Remover degrau {{n}}",
+      "adicionar": "Adicionar degrau"
     }
   },
   "executionMode": {
     "title": "Onde o código mora",
-    "eyebrow": "converter modo de execução",
-    "subtitle": "Muda ONDE o comando deste projeto executa — a pasta gerenciada, uma pasta sua montada por bind-mount, ou uma pasta sua conectada pelo runner.",
+    "subtitle": "Converter muda onde os agentes executam.",
     "needsMaintainer": "Só quem é maintainer ou owner pode converter.",
     "warning": {
       "refuses": "Se algum dev agent estiver trabalhando ou travado agora, a conversão é recusada — espere terminar (ou desbloqueie a tarefa travada) e tente de novo.",
@@ -262,19 +279,14 @@
   },
   "parallelism": {
     "title": "Paralelismo por área",
-    "eyebrow": "quantos agentes sem perguntar",
-    "subtitle": {
-      "before": "Quantos agentes o lead de cada área pode ter ",
-      "strong": "na sessão",
-      "after": " sem pedir sua autorização. Acima do teto ele não sobe nada: o pedido vira uma ação em Aprovações, com o motivo, e espera você. O teto é da sessão inteira e não de cada módulo — contar por módulo deixaria muitos agentes subirem sem autorização nenhuma."
-    },
+    "subtitle": "Quantos agentes trabalham ao mesmo tempo sem perguntar.",
     "empty": {
       "before": "Nenhuma área ainda. Elas nascem quando você ativa a execução, porque os membros da área de dev vêm do ",
       "code": "module_map",
       "after": " do Arquiteto."
     },
     "card": {
-      "title": "Área {{area}}",
+      "title": "{{area}}",
       "lead": "Lead: {{lead}}",
       "membersCount_zero": " — {{count}} membros",
       "membersCount_one": " — {{count}} membro",
@@ -314,6 +326,10 @@
     "toast": {
       "success": "Teto de gasto da área {{area}} salvo",
       "error": "Não foi possível salvar"
+    },
+    "mes": {
+      "rotulo": "Teto de gasto do mês",
+      "descricao": "Quanto o projeto pode gastar por mês (UTC); a virada vem dita no teto."
     }
   },
   "promotion": {
@@ -391,10 +407,15 @@
       "updateCatalog": "Atualizar catálogo",
       "updateCatalogAria": "Atualizar o catálogo de modelos de {{label}}",
       "noModels": "Nenhum modelo deste provider no catálogo ainda — cadastrar a chave não descobre modelo.",
-      "noCatalogSource": "Este provider não publica lista de modelos, então não há o que sincronizar — os modelos dele entram por seed."
+      "noCatalogSource": "Este provider não publica lista de modelos, então não há o que sincronizar — os modelos dele entram por seed.",
+      "openSwapAria": "Informar nova chave de {{label}}",
+      "calls_zero": "nenhuma chamada",
+      "calls_one": "1 chamada",
+      "calls_other": "{{count}} chamadas"
     },
     "toast": {
       "saved": "Credencial salva",
+      "catalogRefreshed": "O catálogo de modelos deste provider foi atualizado.",
       "saveErrorTitle": "Não deu para salvar",
       "testOk": "O provider aceitou a chave",
       "testRefused": "O provider recusou a chave",
@@ -403,7 +424,12 @@
       "testErrorTitle": "Não deu para testar",
       "removed": "Credencial removida",
       "removeErrorTitle": "Não deu para remover"
-    }
+    },
+    "connected_zero": "Conectados: nenhum",
+    "connected_one": "Conectado (1)",
+    "connected_other": "Conectados ({{count}})",
+    "addTitle": "Adicionar provider",
+    "dialogTitle": "Chave de {{label}}"
   },
   "proficiency": {
     "title": "Perfil de proficiência",
@@ -578,5 +604,69 @@
     "retry": "Tentar de novo",
     "cellLoading": "lendo…",
     "cellUnread": "não lido"
+  },
+  "cabecalho": {
+    "naoSalvas_zero": "{{count}} alterações não salvas",
+    "naoSalvas_one": "{{count}} alteração não salva",
+    "naoSalvas_other": "{{count}} alterações não salvas",
+    "descartar": "Descartar",
+    "salvar": "Salvar",
+    "salvando": "Salvando…"
+  },
+  "agentCatalog": {
+    "catalog": {
+      "instructions": "Instruções",
+      "tools": "Ferramentas",
+      "identity": "Identidade",
+      "projectInstruction": "Instrução do projeto (versão {{versao}})",
+      "noProjectInstruction": "Este agente ainda não tem instrução própria neste projeto.",
+      "instructionsUnavailable": "Não foi possível ler as instruções agora.",
+      "missing_one": "Faltam {{count}} caracteres (texto cortado)",
+      "missing_other": "Faltam {{count}} caracteres (texto cortado)",
+      "toolsUnavailable": "Não foi possível ler as ferramentas agora.",
+      "noTools": "Este agente não tem ferramentas.",
+      "note": "Catálogo completo: a cada passo o modelo pode ver só uma parte dele.",
+      "loading": "Carregando…",
+      "error": "Não foi possível ler o catálogo deste agente.",
+      "toolCount_one": "{{count}} ferramenta",
+      "toolCount_other": "{{count}} ferramentas",
+      "missing_zero": "Faltam {{count}} caracteres (texto cortado)",
+      "toolCount_zero": "{{count}} ferramentas"
+    },
+    "title": "Instruções e ferramentas dos agentes",
+    "eyebrow": "somente leitura",
+    "subtitle": "O que cada agente recebe neste projeto. Para ver o histórico de versões ou reverter uma instrução, abra o Avançado.",
+    "history": "Histórico e reversão de instruções"
+  },
+  "autoMerge": {
+    "title": "Merge automático",
+    "eyebrow": "quem entra na main",
+    "subtitle": "Desligado por padrão. Ligado, uma PR deste projeto com todos os gates verdes e sem conflito entra sozinha na branch de trabalho do projeto (a main dele).",
+    "card": {
+      "title": "Entrar sozinha",
+      "hintOff": "Desligado: toda PR espera o seu clique em Merge.",
+      "hintOn": "Ligado: a PR com todos os gates verdes e sem conflito entra sozinha, sem você ver o código antes."
+    },
+    "switchAria": "Merge automático das PRs do projeto",
+    "reason": {
+      "ligar": "Só o owner do workspace liga o merge automático. Peça a um owner.",
+      "desligar": "Só um maintainer ou o owner do workspace desliga o merge automático."
+    },
+    "confirm": {
+      "title": "Ligar o merge automático?",
+      "body": "Com a chave ligada, uma PR com todos os gates verdes e sem conflito entra sozinha na main do projeto, sem você ver o código antes. Os gates passam a ser a única barreira. O aviso de PR pronta deixa de aparecer para essas PRs. Você pode desligar a qualquer momento; o que já entrou não volta.",
+      "manual": "Continua manual: o merge na main dos repositórios do próprio Brabo, e a dev, qa e rc de projeto antigo.",
+      "cancel": "Cancelar",
+      "ok": "Ligar o merge automático"
+    },
+    "toast": {
+      "on": "Merge automático ligado",
+      "off": "Merge automático desligado",
+      "error": "Não foi possível salvar"
+    }
+  },
+  "taskBudget": {
+    "title": "Teto por tarefa e escada de modelos",
+    "subtitle": "Quanto cada tarefa pode gastar e a escada de modelos quando ela bloqueia."
   }
 }

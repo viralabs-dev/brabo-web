@@ -551,3 +551,58 @@
 
 .menuDoUsuario { min-width: 12rem; }
 .larguraTotal { width: 100%; }
+
+.rotuloDoRodape {
+  margin: 0;
+  padding: var(--space-1) 12px;
+  font-size: var(--fs-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Marca + chip do ambiente (`local`) na mesma linha (v9, AT-939). */
+.marcaLinha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.chipAmbiente {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--text-secondary);
+}
+
+/* Atalho da paleta à direita do "Buscar". */
+.atalho {
+  margin-left: auto;
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  color: var(--text-secondary);
+}
+
+/* Seletor do projeto atual (seção PROJETO). */
+.seletor {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: left;
+}

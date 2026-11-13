@@ -1,11 +1,4 @@
 {
-  "chatShell": {
-    "segments": {
-      "chat": "Conversar",
-      "search": "Buscar"
-    },
-    "ariaLabel": "Modo do Chat"
-  },
   "rag": {
     "scopes": {
       "docs": "Docs",
@@ -173,6 +166,11 @@
         "openButton": "Nova conversa",
         "confirmButton": "Abrir sessão consultiva",
         "empty": "Nenhuma conversa ainda. Abra uma para perguntar e pedir contexto sem ativar agente nenhum."
+      },
+      "todas": {
+        "title": "Sessões",
+        "explanation": "Todas as sessões do projeto, de ideação e de conversa. Abra uma nova na sub-aba do tipo que quiser.",
+        "empty": "Nenhuma sessão ainda. Abra uma ideação ou uma conversa."
       }
     },
     "cancelButton": "Cancelar",
@@ -235,6 +233,18 @@
         "errorDetail": "não foi possível carregar",
         "detail": "total do projeto, 30 dias"
       }
+    },
+    "search": {
+      "label": "Buscar nas sessões e no RAG do projeto",
+      "placeholder": "Buscar nas sessões e no RAG do projeto",
+      "ragButton": "Buscar no RAG (Enter)",
+      "noMatch": "Nenhuma sessão casa com a busca. Enter busca no RAG."
+    },
+    "row": {
+      "system": "sistema",
+      "passos_zero": "{{count}} passos",
+      "passos_one": "{{count}} passo",
+      "passos_other": "{{count}} passos"
     }
   }
 }

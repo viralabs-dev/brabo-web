@@ -25,10 +25,15 @@ import { Lightbulb, Pause, RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
 import { useToast } from '../components/ui/ToastProvider.helpers';
-// Mesmo módulo de estilo da Visão geral, de propósito: a seção saiu de lá
-// inteira (achado #15) e precisa continuar idêntica. Duplicar as classes só
-// para ter arquivo próprio abriria a porta para as duas versões divergirem.
-import styles from './ProjectOverviewTab.module.css';
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTrigger,
+} from '@/components/shadcn/popover';
+// Estilo próprio (AT-945): a aba deixou de depender do módulo da Visão geral,
+// que é compartilhado e continua com o que a Visão geral usa.
+import styles from './ProjectInsightsTab.module.css';
 
 /**
  * Aba Insights — hipóteses do Psicólogo (Fase 4b) agrupadas por agente alvo,
@@ -142,7 +147,47 @@ export function ProjectInsightsTab({ projectId }: { projectId: string }) {
     // AT-327: a aba começa no topo como as outras — `.arch` (margem de 28px)
     // é de SEÇÃO que vem depois de outra, e deixava o título 29px abaixo.
     <div>
-      <div className={styles.sectionHeader}>{t('projectInsightsTab.header')}</div>
+      {/* P17 (AT-945): o estado do Psicólogo aparece sempre, com hipótese ou
+          sem. Pausado, o cartão traz "Reativar" — que só EXPLICA como religar
+          (env var + reinício do engine, RN-117); não chama a api. */}
+      {status && (
+        <div className={styles.estado} data-testid="estado-do-psicologo">
+          <div className={styles.estadoIcone}>
+            {psicologoBloqueado ? <Pause size={18} /> : <Lightbulb size={18} />}
+          </div>
+          <div className={styles.estadoCorpo}>
+            <div className={styles.estadoTitulo}>
+              <strong>
+                {t(psicologoBloqueado ? 'projectInsightsTab.estado.pausado' : 'projectInsightsTab.estado.ativo')}
+              </strong>
+              <Badge tone="muted">
+                {t(psicologoBloqueado ? 'projectInsightsTab.estado.pausadoTag' : 'projectInsightsTab.estado.ativoTag')}
+              </Badge>
+            </div>
+            <div>
+              {t(
+                psicologoBloqueado
+                  ? 'projectInsightsTab.estado.pausadoDescricao'
+                  : 'projectInsightsTab.estado.descricao',
+              )}
+            </div>
+            {psicologoBloqueado && (
+              <Popover>
+                <PopoverTrigger
+                  render={<Button variant="secondary" size="sm" className={styles.estadoAcao} />}
+                >
+                  {t('projectInsightsTab.estado.reativar')}
+                </PopoverTrigger>
+                <PopoverContent>
+                  <PopoverDescription>
+                    {t('projectInsightsTab.estado.reativarExplicacao')}
+                  </PopoverDescription>
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+        </div>
+      )}
       {/* Os três estados da RN-088, com o ERRO antes do vazio: `data ?? []`
           seguido de `length === 0` fazia a api respondendo 429 dizer "sem
           hipóteses ainda", que é indistinguível de um projeto que o Psicólogo
@@ -158,16 +203,40 @@ export function ProjectInsightsTab({ projectId }: { projectId: string }) {
       ) : hypothesesQuery.data === undefined ? (
         <div className={styles.sectionSub}><Shimmer>{t('projectInsightsTab.loading')}</Shimmer></div>
       ) : all.length === 0 ? (
-        <EmptyState
-          titulo={t('projectInsightsTab.emptyTitle')}
-          icone={pausadoConhecido ? <Pause size={18} /> : <Lightbulb size={18} />}
-        >
-          {t(
-            pausadoConhecido
-              ? 'projectInsightsTab.emptyPaused'
-              : 'projectInsightsTab.empty',
-          )}
-        </EmptyState>
+        <>
+        {/* Pausado, o cartão de estado já diz; o vazio só cabe com o Psicólogo ativo. */}
+        {!psicologoBloqueado && (
+          <EmptyState
+            titulo={t('projectInsightsTab.emptyTitle')}
+            icone={<Lightbulb size={18} />}
+          >
+            {t('projectInsightsTab.empty')}
+          </EmptyState>
+        )}
+        {/* Cartão de exemplo, rotulado: nunca é uma hipótese real, e Aceitar/
+            Recusar ficam inertes para mostrar a forma sem prometer efeito. */}
+        <div className={styles.exemplo} data-testid="exemplo-de-hipotese">
+          <div className={styles.sectionHeader}>{t('projectInsightsTab.exemplo.titulo')}</div>
+          <div className={styles.exemploCartao}>
+            <div className={styles.exemploCabecalho}>
+              <span className={styles.exemploIcone} aria-hidden="true">Ψ</span>
+              <strong>{t('projectInsightsTab.exemplo.rotulo')}</strong>
+              <Badge tone="muted">{t('projectInsightsTab.exemplo.tag')}</Badge>
+              <span className={styles.exemploAncora}>{t('projectInsightsTab.exemplo.ancorada')}</span>
+            </div>
+            <p>{t('projectInsightsTab.exemplo.observacao')}</p>
+            <p className={styles.exemploSugestao}>{t('projectInsightsTab.exemplo.sugestao')}</p>
+            <div className={styles.exemploAcoes}>
+              <Button variant="secondary" size="sm" disabled title={t('projectInsightsTab.exemplo.inerte')}>
+                {t('projectInsightsTab.exemplo.aceitar')}
+              </Button>
+              <Button variant="ghost" size="sm" disabled title={t('projectInsightsTab.exemplo.inerte')}>
+                {t('projectInsightsTab.exemplo.recusar')}
+              </Button>
+            </div>
+          </div>
+        </div>
+        </>
       ) : (
         <>
           <div className={styles.sectionSub}>
@@ -222,14 +291,6 @@ export function ProjectInsightsTab({ projectId }: { projectId: string }) {
             </div>
           )}
 
-          {/* Pausa GLOBAL — decisão do usuário em 2026-08-10, aguardando
-              refinamento futuro. Fica visível de propósito, não só um toast
-              que some (RN-088). */}
-          {psicologoBloqueado && (
-            <div className={styles.sectionSub} style={{ marginTop: 8 }}>
-              {t('projectInsightsTab.pausedNotice')}
-            </div>
-          )}
 
           {[...byAgent.entries()].map(([agenteAlvo, group]) => (
             <div key={agenteAlvo}>

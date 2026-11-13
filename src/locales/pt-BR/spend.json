@@ -1,5 +1,7 @@
 {
   "shared": {
+    "exportCsv": "Exportar CSV",
+    "avgCallLabel": "Custo médio por chamada",
     "loading": "Carregando…",
     "summing": "Somando…",
     "retry": "Tentar de novo",
@@ -71,10 +73,11 @@
     "callTitle_one": "{{dia}} · {{custo}} · {{count}} chamada",
     "callTitle_other": "{{dia}} · {{custo}} · {{count}} chamadas",
     "actorPerson": "{{id}} (pessoa)",
-    "budgetBlocked": "Este projeto atingiu {{pct}}% do orçamento — novas chamadas de LLM estão BLOQUEADAS até o teto subir.",
-    "budgetWarning": "Este projeto já passou de {{pct}}% do orçamento definido."
+    "budgetBlocked": "Atingiu {{pct}}% do teto do mês — novas chamadas de LLM estão BLOQUEADAS até o teto subir ou o mês virar.",
+    "budgetWarning": "Já passou de {{pct}}% do teto do mês."
   },
   "window": {
+    "month": "Mês",
     "label": "Janela",
     "option": "{{n}} dias"
   },
@@ -107,6 +110,7 @@
     "bySessionEmpty": "Nenhuma sessão gastou nesta janela."
   },
   "team": {
+    "bySessionTitle": "Por sessão do projeto",
     "title": "Gastos do projeto",
     "subtitle": "Últimos {{dias}} dias: o que os agentes gastaram neste projeto. Sem provider nem chave — a fatura é do dono do workspace.",
     "error": "Não consegui carregar o gasto do projeto agora.",
@@ -129,5 +133,25 @@
     "error": "Não consegui salvar o orçamento. Nada mudou.",
     "invalid": "Informe um teto maior que zero.",
     "noRole": "Definir o orçamento exige o papel de maintainer neste projeto."
+  },
+  "teto": {
+    "restantes_zero": "Último dia do mês.",
+    "restantes_one": "1 dia restante.",
+    "restantes_other": "{{count}} dias restantes.",
+    "previsao": "Previsão no fim do mês: {{valor}}.",
+    "virada": "O mês vira em {{quando}} (00:00 UTC).",
+    "projeto": {
+      "titulo": "Teto do mês",
+      "semTeto": "Nenhum teto do mês definido para este projeto ainda.",
+      "editor": "Teto do mês do projeto",
+      "semPapel": "Definir o teto do mês exige o papel de maintainer neste projeto."
+    },
+    "workspace": {
+      "titulo": "Teto do mês do workspace",
+      "semTeto": "Nenhum teto do mês definido para o workspace ainda. Ele soma todos os projetos.",
+      "editor": "Teto do mês do workspace",
+      "semPapel": "Só o owner define o teto do workspace."
+    },
+    "membro": "O teto do mês do workspace é do owner; você o vê só quando uma chamada é recusada por ele."
   }
 }

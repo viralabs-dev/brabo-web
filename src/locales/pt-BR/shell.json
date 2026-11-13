@@ -10,27 +10,29 @@
     "nav": {
       "trilhaAriaLabel": "Projetos e atividades",
       "projectsLabel": "Projetos",
-      "newProject": "Novo projeto"
+      "newProject": "Novo projeto",
+      "projectLabel": "Projeto"
     },
     "projects": {
       "loadError": "Não foi possível carregar os projetos.",
       "retry": "tentar de novo",
-      "expand": "Expandir {{name}}",
-      "collapse": "Recolher {{name}}",
-      "tabsAriaLabel": "Abas de {{name}}"
+      "tabsAriaLabel": "Abas de {{name}}",
+      "switch": "Trocar de projeto: {{name}}"
     },
-    "activities": {
-      "label": "Atividades",
-      "openProjectHint": "Abra um projeto para ver as atividades dos agentes.",
-      "empty": "Nenhum agente entrou em ação na sessão mais recente ainda.",
-      "emptyExecution": "Nenhum agente entrou em ação na sessão de execução ainda.",
+    "agentsNow": {
+      "label": "Agentes agora",
+      "openProjectHint": "Abra um projeto para ver os agentes.",
+      "empty": "Nenhum agente entrou em ação ainda.",
       "noSession": "Este projeto ainda não tem sessão.",
-      "loadError": "Não foi possível carregar as atividades.",
-      "noMarksYet": "sem marcos ainda",
-      "instancesCount_zero": "{{count}} instâncias",
-      "instancesCount_one": "{{count}} instância",
-      "instancesCount_other": "{{count}} instâncias"
+      "loadError": "Não foi possível carregar os agentes.",
+      "status": {
+        "trabalhando": "trabalhando",
+        "aguardando": "aguardando",
+        "ocioso": "ocioso",
+        "falhou": "falhou"
+      }
     },
+    "workspaceLabel": "Workspace",
     "collapseButton": {
       "expand": "Expandir menu",
       "collapse": "Recolher menu"
@@ -43,7 +45,9 @@
     "footer": {
       "accountFallback": "conta",
       "logout": "sair"
-    }
+    },
+    "caixa": "Caixa de decisões",
+    "home": "Início"
   },
   "notificationBell": {
     "label": "Notificações",

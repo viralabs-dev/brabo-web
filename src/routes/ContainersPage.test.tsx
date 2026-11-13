@@ -490,7 +490,7 @@ describe('ContainersPage', () => {
     montar();
 
     expect(screen.getByRole('button', { name: 'Aprovar' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Sempre permitir' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Aprovar e criar regra' })).not.toBeInTheDocument();
   });
 
   // --- RN-521: o terceiro estado e a subida ramificada por modo ---
@@ -829,7 +829,7 @@ describe('ContainersPage — Parar/Remover sem container e o motivo curto (AT-32
     expect(
       screen.getByText('Container removido: não há o que parar nem remover.'),
     ).toBeInTheDocument();
-    expect(screen.queryByText(/Nunca provisionado/)).toBeNull();
+    expect(screen.queryByText(/Nunca provisionado:/)).toBeNull();
   });
 
   it('container de pé: nenhum motivo de "sem container" — o texto não vira ruído em linha saudável', () => {

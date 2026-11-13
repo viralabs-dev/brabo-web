@@ -1,0 +1,111 @@
+/* v9 (AT-943): o topo de Trabalho › Execução. Próprio, porque o ProjectOverviewTab.module.css é da Arquitetura. */
+.resumo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.titulo {
+  margin: 8px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tituloLinha {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.nota {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.areas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.areaTopo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.areaTopo > :last-child {
+  margin-left: auto;
+}
+
+.inicial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--msg-color);
+  background: color-mix(in srgb, var(--msg-color) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--msg-color) 35%, transparent);
+}
+
+.areaLinha {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.areaLinha > :last-child {
+  color: var(--text-primary);
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.fila {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  font-size: 13px;
+}
+
+.fila td {
+  padding: 10px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.fila tr:first-child td {
+  border-top: none;
+}
+
+.fila td:nth-child(n + 2) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.rodape {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

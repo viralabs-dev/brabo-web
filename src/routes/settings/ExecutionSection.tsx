@@ -1,107 +1,95 @@
-import { useState } from 'react';
-import { Play } from 'lucide-react';
-import { Save } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { getProject, updateProject } from '../../lib/api-client';
-import { Ajuda } from '../../components/ui/Ajuda';
+import { getProject, getProjectBudget, setProjectBudget, updateProject } from '../../lib/api-client';
+import { useCurrentWorkspaceWithRole } from '../../lib/hooks';
+import { roleAtLeast } from '../../lib/roles';
 import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
-import { useToast } from '../../components/ui/ToastProvider.helpers';
-import styles from '../ProjectSettingsTab.module.css';
+import { TetoDoMes } from '../../components/TetoDoMes';
 import { MarcaDeHeranca } from './heranca';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
+import { CabecalhoDaSecao } from './CabecalhoDaSecao';
+import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
+import { useSecaoSalvavel } from './secao-salvavel.helpers';
+import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
-import { Item } from '@/components/shadcn/item';
 
 const DEFAULT_MAX_CONSECUTIVE_BLOCKED = 3;
 
 /**
- * Teto do circuit breaker por dev agent (Fase 12b — RN-047): quantas tasks
- * consecutivas terminando `blocked` param o agente do módulo em
- * `idle_tripped`, em vez de continuar reivindicando trabalho.
+ * Execução, como a v9 (P18) a mostra: o teto do circuit breaker por dev agent
+ * (RN-047) e o teto de gasto do MÊS (RN-1200), que subiu do bloco de orçamento.
  *
- * Primeiro campo numérico da aba — sem botão de "voltar ao default": o
- * default É o valor mostrado quando o projeto ainda não tem um próprio
- * (`null` na api), então digitar por cima e salvar já cobre os dois casos.
- *
- * E é exatamente por isso que esta seção precisa da `MarcaDeHeranca`
- * (`settings/heranca.tsx`): o campo mostra `3` tendo ou não valor próprio, de
- * modo que olhar para ele não distingue os dois estados. A marca é a única
- * coisa na linha que distingue.
+ * O número de bloqueadas é escalar e vai para a barra do cabeçalho (RN-1265),
+ * sem botão próprio. O campo mostra `3` tendo ou não valor próprio, então a
+ * `MarcaDeHeranca` é a única coisa na linha que distingue os dois estados. O
+ * teto do mês é o `TetoDoMes`, que tem o salvar dele (componente compartilhado
+ * com a aba Gastos). Teto por tarefa e escada: `TetoPorTarefaSection`.
  */
 export function ExecutionSection({ projectId }: { projectId: string }) {
   const { t } = useTranslation('settings');
   const queryClient = useQueryClient();
-  const { showToast } = useToast();
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
     queryFn: () => getProject(projectId),
     staleTime: FRESCOR_DA_CONFIGURACAO_MS,
   });
-  const [draft, setDraft] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
+  const { data: comPapel } = useCurrentWorkspaceWithRole();
 
-  const valorAtual = project?.maxConsecutiveBlocked ?? DEFAULT_MAX_CONSECUTIVE_BLOCKED;
-  const valorExibido = draft ?? String(valorAtual);
-  const numero = Number(valorExibido);
-  const valido = Number.isInteger(numero) && numero > 0;
-
-  async function handleSave() {
-    if (!valido) return;
-    setSaving(true);
-    try {
-      await updateProject(projectId, { maxConsecutiveBlocked: numero });
-      await queryClient.invalidateQueries({ queryKey: ['project', projectId] });
-      setDraft(null);
-      showToast({ title: t('execution.toast.success'), tone: 'success' });
-    } catch {
-      showToast({ title: t('execution.toast.error'), tone: 'danger' });
-    } finally {
-      setSaving(false);
-    }
-  }
+  const secao = useSecaoSalvavel<{ id: string }, number>({
+    itens: project ? [{ id: 'maxConsecutiveBlocked' }] : undefined,
+    chaveDe: (i) => i.id,
+    textoDoServidor: () => String(project?.maxConsecutiveBlocked ?? DEFAULT_MAX_CONSECUTIVE_BLOCKED),
+    interpretar: (texto) => {
+      const n = Number(texto);
+      return texto.trim() !== '' && Number.isInteger(n) && n > 0
+        ? { valido: true, valor: n }
+        : { valido: false };
+    },
+    salvar: (_chave, n) => updateProject(projectId, { maxConsecutiveBlocked: n }),
+    aoConcluir: () => queryClient.invalidateQueries({ queryKey: ['project', projectId] }),
+    sucessoDeUm: () => t('execution.toast.success'),
+    erroGenerico: t('execution.toast.error'),
+  });
+  usePublicarNoCabecalho('execution', t('execution.title'), secao);
 
   if (!project) return null;
 
   return (
     <SecaoDeConfiguracoes chave="execution">
-      <div className={styles.sectionHead}>
-        <h2 className={styles.title}><Play aria-hidden="true" className={styles.tituloIcone} />{t('execution.title')}</h2>
-        <Ajuda assunto={t('execution.title')}>{t('execution.subtitle')}</Ajuda>
-        <span className={styles.eyebrow}>{t('execution.eyebrow')}</span>
-      </div>
+      <CabecalhoDaSecao titulo={t('execution.title')} subtitulo={t('execution.subtitle')} />
 
-      <Item variant="outline" className={styles.ajusteCard}>
-        <div className={styles.ajusteInfo}>
-          <div className={styles.ajusteTitulo}>{t('execution.card.title')}</div>
-          <div className={styles.ajusteHint}>
-            <MarcaDeHeranca
-              proprio={project.maxConsecutiveBlocked !== null}
-              detalhe={
-                project.maxConsecutiveBlocked === null
-                  ? t('execution.card.hintDefault', {
-                      default: DEFAULT_MAX_CONSECUTIVE_BLOCKED,
-                    })
-                  : t('execution.card.hintConfigured')
-              }
-            />
-          </div>
-        </div>
-        <div className={styles.ajusteNumero}>
-          <Input
-            mono
-            type="number"
-            min={1}
-            value={valorExibido}
-            onChange={(e) => setDraft(e.target.value)}
+      <LinhaDeConfiguracao
+        rotulo={t('execution.card.title')}
+        descricao={
+          <MarcaDeHeranca
+            proprio={project.maxConsecutiveBlocked !== null}
+            detalhe={
+              project.maxConsecutiveBlocked === null
+                ? t('execution.card.hintDefault', { default: DEFAULT_MAX_CONSECUTIVE_BLOCKED })
+                : t('execution.card.hintConfigured')
+            }
           />
-        </div>
-        <Button onClick={handleSave} disabled={!valido || saving}>
-          <Save aria-hidden="true" />
-          {saving ? t('execution.saving') : t('execution.save')}
-        </Button>
-      </Item>
+        }
+      >
+        <Input
+          mono
+          type="number"
+          min={1}
+          aria-label={t('execution.card.title')}
+          value={secao.textoDe({ id: 'maxConsecutiveBlocked' })}
+          onChange={(e) => secao.editar('maxConsecutiveBlocked', e.target.value)}
+        />
+      </LinhaDeConfiguracao>
+
+      <LinhaDeConfiguracao rotulo={t('budget.mes.rotulo')} descricao={t('budget.mes.descricao')}>
+        <TetoDoMes
+          escopo="projeto"
+          queryKey={['budget', projectId]}
+          ler={() => getProjectBudget(projectId)}
+          gravar={(input) => setProjectBudget(projectId, input)}
+          podeEditar={!!comPapel && roleAtLeast(comPapel.role, 'maintainer')}
+        />
+      </LinhaDeConfiguracao>
     </SecaoDeConfiguracoes>
   );
 }

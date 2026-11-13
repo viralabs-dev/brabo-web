@@ -1,0 +1,37 @@
+.cartao {
+  border: 1px dashed var(--accent-panel-border);
+  background: var(--accent-panel);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rotulo {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.titulo {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.texto {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.link {
+  font-size: 13px;
+  color: var(--accent);
+  margin-top: 6px;
+  align-self: flex-start;
+}

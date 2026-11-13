@@ -1,0 +1,42 @@
+.faixa {
+  border: 1px solid var(--accent-panel-border);
+  background: var(--accent-panel);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.titulo {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--text-primary);
+}
+
+.verTodas,
+.nota,
+.vazio {
+  font-size: var(--fs-meta);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--text-primary);
+}

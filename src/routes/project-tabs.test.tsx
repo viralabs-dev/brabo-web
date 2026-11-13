@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { ProjectPage } from './ProjectPage';
+import { ToastProvider } from '../components/ui/ToastProvider';
 import { AbasDoProjeto } from './AbasDoProjeto';
 import { itensDasAbas } from './AbasDoProjeto.helpers';
 import {
@@ -19,7 +20,8 @@ import i18n from '../lib/i18n';
 import {
   ABAS_DO_PROJETO,
   CHAVES_DE_ABA,
-  GRUPOS_DO_PROJETO,
+  SECOES_DO_PROJETO,
+  secaoDaChave,
   abaPorChave,
   ehChaveDeAba,
   resolverChaveDeAba,
@@ -59,6 +61,8 @@ const useProjectPendingActions = vi.fn(() => ({ data: undefined as unknown }));
 // os dois ficarem em `undefined` fixo — sem `vi.fn()` próprio, ninguém aqui
 // varia o retorno.
 vi.mock('../lib/hooks', () => ({
+  useCurrentWorkspaceWithRole: () => ({ data: { role: 'owner', workspace: { id: 'ws-1' } } }),
+  useActiveExecutionSession: () => ({ session: undefined }),
   useBacklog: () => useBacklog(),
   useHypotheses: () => useHypotheses(),
   useLatestSession: () => ({ latest: undefined }),
@@ -72,17 +76,10 @@ vi.mock('./ProjectOverviewTab', () => ({
   ProjectOverviewTab: () => <div>painel de overview</div>,
 }));
 vi.mock('./ProjectSessionsTab', () => ({
-  // FASE 24: `ProjectCriativoTab` continua vindo daqui. `ProjectChatTab`
-  // também continua exportado daqui (o Chat RAG que consome
-  // `./ProjectChatShell`, mockado abaixo, é quem o monta agora — este
-  // registro não importa `ProjectChatTab` mais diretamente).
+  // AT-893: as três sub-abas de Sessões vêm do mesmo módulo.
   ProjectCriativoTab: () => <div>painel de criativo</div>,
-}));
-vi.mock('./ProjectChatShell', () => ({
-  // A fusão da Onda 1: `chat` é UMA aba, controlando por dentro o segmento
-  // Conversar/Buscar — ver `ProjectChatShell.test.tsx` para o comportamento
-  // do segmento. Aqui só importa que a chave `chat` tem painel.
-  ProjectChatShell: () => <div>painel de chat</div>,
+  ProjectTodasTab: () => <div>painel de todas</div>,
+  ProjectChatTab: () => <div>painel de chat</div>,
 }));
 vi.mock('./ProjectCodeTab', () => ({
   ProjectCodeTab: () => <div>painel de code</div>,
@@ -105,6 +102,9 @@ vi.mock('./ProjectBacklogTab', () => ({
 }));
 vi.mock('./ProjectInsightsTab', () => ({
   ProjectInsightsTab: () => <div>painel de insights</div>,
+}));
+vi.mock('./PermissoesDoProjeto', () => ({
+  PermissoesDoProjeto: () => <div>painel de permissoes</div>,
 }));
 vi.mock('./ProjectSpendTab', () => ({
   ProjectSpendTab: () => <div>painel de spend</div>,
@@ -156,7 +156,7 @@ function montar(initialTab?: Parameters<typeof ProjectPage>[0]['initialTab']) {
   return render(
     <QueryClientProvider client={client}>
       <AbasDaSidebar />
-      <ProjectPage projectId="proj-1" initialTab={initialTab} />
+      <ToastProvider><ProjectPage projectId="proj-1" initialTab={initialTab} /></ToastProvider>
     </QueryClientProvider>,
   );
 }
@@ -201,19 +201,15 @@ describe('abas do projeto derivam de um registro só', () => {
   // que o singleton tinha ANTES de `changeLanguage('pt-BR')`. O rótulo certo
   // só existe depois, dentro do corpo do teste.
   it.each(ABAS_DO_PROJETO.map((aba) => aba.key))(
-    'a aba %s tem link na sidebar E painel que renderiza',
+    'a aba %s tem seção na sidebar E painel que renderiza',
     async (key) => {
-      const label = abaPorChave(key)!.label;
+      // Ponto 3: a sidebar tem o item da SEÇÃO da aba (ADR 0294); âncora
+      // no regex para "Chat"/"Código" não baterem por substring.
+      const label = secaoDaChave(key as never).label;
       montar(key as never);
-
-      // Ponto 3: o trilho. Desde o ADR 0126 toda aba — solta ou filha de
-      // grupo — tem botão visível o tempo todo, então o rótulo não depende
-      // mais de nenhum grupo estar aberto. O regex é ANCORADO (início e
-      // fim): sem âncora, "Chat" bateria por SUBSTRING dentro de rótulos
-      // maiores.
       const escapado = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       expect(
-        await screen.findByRole('tab', { name: new RegExp(`^${escapado}$`) }),
+        await screen.findByRole('tab', { name: new RegExp(`^${escapado}\\s*\\d*$`) }),
       ).toBeInTheDocument();
       // Ponto 4: o render. Uma cadeia de `&&` sem esta chave mostraria o
       // cabeçalho do projeto e um corpo vazio. `findBy` porque o painel é um
@@ -230,29 +226,20 @@ describe('abas do projeto derivam de um registro só', () => {
   // deixar os TRÊS grupos abertos ao mesmo tempo. A asserção continua sendo
   // sobre a ORDEM DECLARADA que sai do registro — só que agora achatada, com
   // os cabeçalhos de grupo pontuando a lista sem serem selecionáveis.
-  it('a sidebar mostra as 12 abas juntas, na ordem declarada, com os três grupos abertos', async () => {
+  it('a sidebar mostra as 8 seções, na ordem declarada', async () => {
     montar();
-
     const botoes = await screen.findAllByRole('tab');
-    expect(botoes.map((b) => b.textContent)).toEqual([
+    const sidebar = botoes.filter((b) => b.getAttribute('href'));
+    expect(sidebar.map((b) => b.textContent)).toEqual([
       'Visão geral',
-      'Executores',
-      'Criativo',
-      'Chat',
-      'Percepções',
+      'Sessões',
+      'Trabalho',
       'Código',
-      'PRs',
-      'Aprovações',
-      'Histórias',
+      'Decisões',
       'Arquitetura',
       'Gastos',
       'Configurações',
     ]);
-    // Os cabeçalhos existem e nomeiam a seção — mas não são abas.
-    for (const grupo of ['Agentes', 'Dev', 'Documentação']) {
-      expect(screen.getByText(grupo)).toBeInTheDocument();
-      expect(screen.queryByRole('tab', { name: grupo })).toBeNull();
-    }
   });
 
   it('toda chave do registro é aceita pelo guarda do deep-link', () => {
@@ -281,58 +268,20 @@ describe('abas do projeto derivam de um registro só', () => {
     expect([...ordens].sort((a, b) => a - b)).toEqual(ordens);
   });
 
-  it('o selo numérico de uma aba SOLTA sai do registro, e some quando a fila está vazia', async () => {
+  it('a faixa de sub-abas mostra o selo de CADA fila, e a sidebar só o ponto de Decisões', async () => {
     useProjectPendingActions.mockReturnValue({
-      data: [
-        { status: 'pending', actionType: 'terminal' },
-        { status: 'approved', actionType: 'terminal' },
-      ],
+      data: [{ status: 'pending', actionType: 'terminal', actor: { kind: 'user' } }],
     });
-    useHypotheses.mockReturnValue({
-      data: [{ status: 'proposed' }, { status: 'accepted' }],
-    });
+    useHypotheses.mockReturnValue({ data: [{ status: 'proposed' }] });
     useBacklog.mockReturnValue({ data: [] });
 
-    // Aprovações e Insights são filhas de grupo, e no trilho isso não muda
-    // nada: as duas estão visíveis desde o primeiro paint. Backlog também é
-    // filha (Documentação) e fica vazia neste teste — é o caso "aba sem
-    // contador" verificado logo abaixo.
     montar('approvals' as never);
 
-    expect(
-      await screen.findByRole('tab', { name: /Aprovações\s*1/ }),
-    ).toBeInTheDocument();
-    // E abas sem contador declarado nunca ganham selo.
-    expect(screen.getByRole('tab', { name: 'Código' })).toBeInTheDocument();
-  });
-
-  // ADR 0126: este caso afirmava o contrário — que o grupo FECHADO exibia a
-  // SOMA das filhas (`/^Dev\s*1$/`), o resumo de que a régua horizontal
-  // precisava porque escondia as filhas. Com os três grupos abertos ao mesmo
-  // tempo, a soma não tem o que resumir e apagaria QUAL fila está pedindo
-  // atenção — a separação das cinco filas é decisão de produto, e agora ela
-  // vale sem exceção nenhuma.
-  it('cada fila mantém o selo PRÓPRIO, e o cabeçalho do grupo nunca soma as filhas', async () => {
-    useProjectPendingActions.mockReturnValue({
-      data: [{ status: 'pending', actionType: 'terminal' }],
-    });
-    useHypotheses.mockReturnValue({
-      data: [{ status: 'proposed' }],
-    });
-    useBacklog.mockReturnValue({ data: [] });
-
-    montar();
-
-    // Aprovações (1) e Insights (1) mostram cada uma o seu, lado a lado.
+    // Cada fila no seu número, lado a lado, na faixa da seção Decisões.
     expect(await screen.findByRole('tab', { name: /^Aprovações\s*1$/ })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: /^Percepções\s*1$/ })).toBeInTheDocument();
-    // Fila vazia continua sem selo: zero é ruído, não informação.
-    expect(screen.getByRole('tab', { name: 'Histórias' })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: 'Código' })).toBeInTheDocument();
-    // E o cabeçalho do grupo é só o nome — nenhum número junto dele.
-    expect(screen.getByText('Dev').textContent).toBe('Dev');
-    expect(screen.getByText('Agentes').textContent).toBe('Agentes');
-    expect(screen.getByText('Documentação').textContent).toBe('Documentação');
+    expect(screen.getByRole('tab', { name: /^Hipóteses\s*1$/ })).toBeInTheDocument();
+    // E o item da seção na sidebar não soma: é só o nome.
+    expect(screen.getByRole('tab', { name: 'Decisões' }).textContent).toBe('Decisões');
   });
 
   /**
@@ -345,7 +294,7 @@ describe('abas do projeto derivam de um registro só', () => {
    * Ondas 2/3.
    */
   it('as abas que o handoff não previu continuam no registro, e a fusão Chat/RAG tirou uma chave', () => {
-    expect(ABAS_DO_PROJETO).toHaveLength(12);
+    expect(ABAS_DO_PROJETO).toHaveLength(14);
     const chaves = ABAS_DO_PROJETO.map((aba) => aba.key);
     expect(chaves).toEqual(
       expect.arrayContaining([
@@ -364,75 +313,62 @@ describe('abas do projeto derivam de um registro só', () => {
     expect(ehChaveDeAba('rag')).toBe(false);
   });
 
-  it('a aba `chat` continua rotulada "Chat" — nunca "Chat RAG": RAG virou segmento interno, não aba', async () => {
+  it('a aba `chat` é a sub-aba "Conversa" da seção Sessões — nunca "Chat RAG"', async () => {
     montar('chat' as never);
 
-    expect(await screen.findByRole('tab', { name: 'Chat' })).toBeInTheDocument();
+    expect(await screen.findByRole('tab', { name: 'Conversa' })).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: 'Ideação' })).toBeInTheDocument();
     expect(screen.queryByRole('tab', { name: 'Chat RAG' })).toBeNull();
-
-    const chatAba = ABAS_DO_PROJETO.find((aba) => aba.key === 'chat');
-    expect(chatAba?.label).toBe('Chat');
   });
 
-  describe('resolverChaveDeAba — os aliases que a fusão Chat/RAG aposentou', () => {
-    it('`sessions` e `rag` resolvem para `chat`, a chave de hoje', () => {
-      expect(resolverChaveDeAba('sessions')).toBe('chat');
-      expect(resolverChaveDeAba('rag')).toBe('chat');
+  describe('resolverChaveDeAba — os 15 deep-links de hoje, mais as chaves de seção', () => {
+    const ESPERADO: Record<string, [string, string]> = {
+      overview: ['overview', 'overview'],
+      executores: ['trabalho', 'executores'],
+      criativo: ['sessoes', 'criativo'],
+      chat: ['sessoes', 'chat'],
+      insights: ['decisoes', 'insights'],
+      code: ['codigo', 'code'],
+      prs: ['codigo', 'prs'],
+      approvals: ['decisoes', 'approvals'],
+      permissoes: ['decisoes', 'permissoes'],
+      backlog: ['trabalho', 'backlog'],
+      arquitetura: ['arquitetura', 'arquitetura'],
+      spend: ['spend', 'spend'],
+      settings: ['settings', 'settings'],
+      sessions: ['sessoes', 'chat'],
+      rag: ['sessoes', 'todas'],
+      todas: ['sessoes', 'todas'],
+      historias: ['trabalho', 'backlog'],
+      // chave de seção abre a primeira sub-aba
+      sessoes: ['sessoes', 'todas'],
+      trabalho: ['trabalho', 'backlog'],
+      codigo: ['codigo', 'code'],
+      decisoes: ['decisoes', 'approvals'],
+    };
+    it.each(Object.entries(ESPERADO))('`%s` resolve para %j', (chave, [secao, sub]) => {
+      expect(resolverChaveDeAba(chave)).toEqual({ secao, sub });
     });
 
-    it('uma chave válida continua resolvendo pra ela mesma', () => {
-      expect(resolverChaveDeAba('overview')).toBe('overview');
-      expect(resolverChaveDeAba('chat')).toBe('chat');
-    });
-
-    it('chave desconhecida (nem registro, nem alias) devolve undefined', () => {
+    it('chave desconhecida (ou não-string) devolve undefined', () => {
       expect(resolverChaveDeAba('nao-existe')).toBeUndefined();
       expect(resolverChaveDeAba(undefined)).toBeUndefined();
       expect(resolverChaveDeAba(42)).toBeUndefined();
     });
   });
 
-  describe('GRUPOS_DO_PROJETO — a estrutura que alimenta a régua de dois níveis', () => {
-    it('toda ChaveDeAba pertence a EXATAMENTE um grupo ou está solta — nunca as duas coisas, nunca nenhuma', () => {
-      const vistas = new Set<string>();
-      for (const item of GRUPOS_DO_PROJETO) {
-        const chaves = item.tipo === 'grupo' ? item.abas.map((a) => a.key) : [item.aba.key];
-        for (const chave of chaves) {
-          expect(vistas.has(chave)).toBe(false); // nunca duas vezes
-          vistas.add(chave);
-        }
-      }
-      expect(vistas).toEqual(new Set(CHAVES_DE_ABA)); // nunca nenhuma de fora
+  describe('SECOES_DO_PROJETO — as oito seções', () => {
+    it('são 8, e toda ChaveDeAba pertence a exatamente uma sub-aba de uma seção', () => {
+      expect(SECOES_DO_PROJETO).toHaveLength(8);
+      const vistas = SECOES_DO_PROJETO.flatMap((s) => [...s.subs]);
+      expect(new Set(vistas).size).toBe(vistas.length);
+      expect(new Set(vistas)).toEqual(new Set(CHAVES_DE_ABA));
     });
 
-    it('grupos e filhas saem ordenados pelo próprio `ordem`', () => {
-      const ordensDeTopo = GRUPOS_DO_PROJETO.map((item) =>
-        item.tipo === 'grupo' ? item.ordem : item.aba.ordem,
-      );
-      expect([...ordensDeTopo].sort((a, b) => a - b)).toEqual(ordensDeTopo);
-
-      for (const item of GRUPOS_DO_PROJETO) {
-        if (item.tipo !== 'grupo') continue;
-        const ordensDasFilhas = item.abas.map((aba) => aba.ordem);
-        expect([...ordensDasFilhas].sort((a, b) => a - b)).toEqual(ordensDasFilhas);
+    it('a seção de cada aba bate com o campo `secao` do registro', () => {
+      for (const aba of ABAS_DO_PROJETO) {
+        expect(secaoDaChave(aba.key as never).chave).toBe(aba.secao);
       }
-    });
-
-    it('o mapeamento final: agentes, dev e documentação com as filhas certas', () => {
-      const grupos = Object.fromEntries(
-        GRUPOS_DO_PROJETO.filter((item) => item.tipo === 'grupo').map((item) => [
-          item.chave,
-          item.abas.map((aba) => aba.key),
-        ]),
-      );
-      expect(grupos.agentes).toEqual(['executores', 'criativo', 'chat', 'insights']);
-      expect(grupos.dev).toEqual(['code', 'prs', 'approvals']);
-      expect(grupos.documentacao).toEqual(['backlog', 'arquitetura']);
-
-      const soltas = GRUPOS_DO_PROJETO.filter((item) => item.tipo === 'aba').map(
-        (item) => (item as { aba: { key: string } }).aba.key,
-      );
-      expect(soltas).toEqual(['overview', 'spend', 'settings']);
     });
   });
 });

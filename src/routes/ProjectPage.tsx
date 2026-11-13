@@ -26,6 +26,7 @@ import { ABA_PADRAO, abaPorChave, ehChaveDeAba, secaoDaChave, type ChaveDeAba } 
 import { ContextoDeGrupoInicial, ContextoDeSecaoInicial, ContextoDeTrocaDeGrupo } from './settings/secao-inicial';
 import { ContextoDeHistoriaInicial } from '../lib/historia-inicial';
 import type { ChaveDeSecao, GrupoDoSumario } from './settings/sumario';
+import { ChipsDaArquitetura } from './ChipsDaArquitetura';
 import { FaixaDeSubAbas } from '../components/FaixaDeSubAbas';
 import { Badge } from '../components/ui/Badge';
 import { CabecalhoDePagina } from '../components/shadcn/cabecalho-de-pagina';
@@ -227,6 +228,9 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         className={styles.header}
         titulo={`${project.name} / ${secaoDaChave(tab).label}`}
         descricao={
+          secaoAtual === 'arquitetura' ? (
+            <ChipsDaArquitetura projectId={projectId} />
+          ) : (
           <span className={styles.meta}>
             <ProviderIcon size={14} />
             {repository && (
@@ -250,6 +254,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
               t('repositoryNotProvisioned')
             )}
           </span>
+          )
         }
         acoes={
           <>

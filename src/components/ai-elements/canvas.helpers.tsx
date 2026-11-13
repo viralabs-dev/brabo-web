@@ -32,6 +32,9 @@ export const CONTROLES = {
 
 export function grafoDe(modulos: ModuloDoGrafo[]): { nos: Node[]; arestas: Edge[] } {
   const camada = camadas(modulos);
+  const porCamada = new Map<number, number>();
+  for (const c of camada.values()) porCamada.set(c, (porCamada.get(c) ?? 0) + 1);
+  const topo = Math.max(0, ...camada.values());
   const contagem = new Map<number, number>();
   const nos: Node[] = modulos.map((m) => {
     const c = camada.get(m.name) ?? 0;
@@ -39,7 +42,8 @@ export function grafoDe(modulos: ModuloDoGrafo[]): { nos: Node[]; arestas: Edge[
     contagem.set(c, i + 1);
     return {
       id: m.name,
-      position: { x: i * 240, y: c * 120 },
+      // v9 (AT-946): quem não depende de ninguém fica embaixo; cada camada centrada em x=0.
+      position: { x: (i - ((porCamada.get(c) ?? 1) - 1) / 2) * 240, y: (topo - c) * 120 },
       data: {
         label: (
           <div style={{ textAlign: 'left' }}>

@@ -23,12 +23,17 @@
       "module": "Модуль",
       "stack": "Стек",
       "responsibility": "Ответственность",
-      "dependsOn": "Зависит от"
+      "dependsOn": "Зависит от",
+      "stories": "Истории"
     },
-    "adrWaiting_one": "Одно предложение ADR ожидает вашего одобрения.",
-    "adrWaiting_few": "{{count}} предложения ADR ожидают вашего одобрения.",
-    "adrWaiting_many": "{{count}} предложений ADR ожидают вашего одобрения.",
-    "adrWaiting_other": "{{count}} предложения ADR ожидают вашего одобрения."
+    "proposalTag": "ПРЕДЛОЖЕНИЕ",
+    "adrProposal": "ADR «{{titulo}}» ожидает вашего одобрения, чтобы стать PR.",
+    "decide": "Решить",
+    "header": {
+      "modules": "модули · v{{version}}",
+      "c4": "C4 уровень 2",
+      "byArchitect": "от Arquiteto · {{hora}}"
+    }
   },
   "c4": {
     "titleContext": "Контекст",

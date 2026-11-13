@@ -23,10 +23,17 @@
       "module": "Module",
       "stack": "Stack",
       "responsibility": "Responsibility",
-      "dependsOn": "Depends on"
+      "dependsOn": "Depends on",
+      "stories": "Stories"
     },
-    "adrWaiting_one": "One ADR proposal is waiting for your approval.",
-    "adrWaiting_other": "{{count}} ADR proposals are waiting for your approval."
+    "proposalTag": "PROPOSAL",
+    "adrProposal": "ADR “{{titulo}}” is waiting for your approval to become a PR.",
+    "decide": "Decide",
+    "header": {
+      "modules": "modules · v{{version}}",
+      "c4": "C4 level 2",
+      "byArchitect": "by the Architect · {{hora}}"
+    }
   },
   "c4": {
     "titleContext": "Context",

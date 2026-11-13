@@ -23,11 +23,17 @@
       "module": "Módulo",
       "stack": "Stack",
       "responsibility": "Responsabilidade",
-      "dependsOn": "Depende de"
+      "dependsOn": "Depende de",
+      "stories": "Histórias"
     },
-    "adrWaiting_zero": "Nenhuma proposta de ADR espera sua aprovação.",
-    "adrWaiting_one": "Uma proposta de ADR espera sua aprovação.",
-    "adrWaiting_other": "{{count}} propostas de ADR esperam sua aprovação."
+    "proposalTag": "PROPOSTA",
+    "adrProposal": "ADR “{{titulo}}” espera sua aprovação para virar PR.",
+    "decide": "Decidir",
+    "header": {
+      "modules": "módulos · v{{version}}",
+      "c4": "C4 nível 2",
+      "byArchitect": "pelo Arquiteto · {{hora}}"
+    }
   },
   "c4": {
     "titleContext": "Contexto",

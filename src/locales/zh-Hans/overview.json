@@ -23,9 +23,17 @@
       "module": "模块",
       "stack": "技术栈",
       "responsibility": "职责",
-      "dependsOn": "依赖"
+      "dependsOn": "依赖",
+      "stories": "故事"
     },
-    "adrWaiting_other": "有 {{count}} 个 ADR 提案等待您批准。"
+    "proposalTag": "提案",
+    "adrProposal": "ADR“{{titulo}}”等待您批准后转为 PR。",
+    "decide": "决定",
+    "header": {
+      "modules": "模块 · v{{version}}",
+      "c4": "C4 第 2 级",
+      "byArchitect": "由 Arquiteto 生成 · {{hora}}"
+    }
   },
   "c4": {
     "titleContext": "上下文",

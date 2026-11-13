@@ -1,10 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import overviewPtBR from '../locales/pt-BR/overview.json';
 import { ProjectArchitectureTab } from './ProjectArchitectureTab';
+import { ouvirPedidosDeAba } from '../lib/contagens-do-projeto';
 import type { Architecture } from '../lib/api-types';
 
 // Instância isolada de i18next, mesmo padrão de `AccountPage.test.tsx`: o
@@ -26,12 +27,14 @@ function novaInstanciaI18n() {
 }
 
 const getArchitecture = vi.fn();
+const getBacklog = vi.fn();
 
 vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
   return {
     ...original,
     getArchitecture: (...args: unknown[]) => getArchitecture(...args),
+    listBacklog: (...args: unknown[]) => getBacklog(...args),
   };
 });
 
@@ -52,8 +55,9 @@ const ARQUITETURA_VAZIA: Architecture = {
   c4Diagram: { status: 'sem_diagrama', diagrama: null, version: 0, eventId: null, createdAt: null },
 };
 
-function montar() {
+function montar(backlog?: unknown) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  if (backlog) client.setQueryData(['backlog', 'proj-1'], backlog);
   const i18n = novaInstanciaI18n();
   return render(
     <I18nextProvider i18n={i18n}>
@@ -121,7 +125,9 @@ describe('ProjectArchitectureTab', () => {
     expect(screen.getByText('NestJS')).toBeInTheDocument();
     expect(screen.getByText('Fluxo de pagamento')).toBeInTheDocument();
     expect(screen.getByText('Catalogo')).toBeInTheDocument();
-    expect(screen.getByText('Módulos · v2')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Módulos' })).toBeInTheDocument();
+    // sem cache do backlog, a coluna Histórias mostra "—"
+    expect(screen.getByRole('columnheader', { name: 'Histórias' })).toBeInTheDocument();
   });
 
   it('diagrama `gerado` passa pro C4DiagramView; `sem_diagrama` mostra a frase de pendência', async () => {
@@ -216,5 +222,41 @@ describe('ProjectArchitectureTab', () => {
     expect(screen.getByText('sem módulo vinculado')).toBeInTheDocument();
     expect(screen.getByText('História com módulo inexistente')).toBeInTheDocument();
     expect(screen.getByText('módulo inexistente: ModuloFantasma')).toBeInTheDocument();
+  });
+
+  it('v9: faixa PROPOSTA com o título do ADR pendente e "Decidir" leva a Aprovações', async () => {
+    const pedidos: unknown[] = [];
+    const parar = ouvirPedidosDeAba((p) => pedidos.push(p));
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      adrs: [{ actionId: 'a-2', title: 'Monólito modular', status: 'pending', pullRequestUrl: null }],
+    });
+
+    montar();
+
+    expect(await screen.findByText('ADR “Monólito modular” espera sua aprovação para virar PR.')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Decidir' }));
+    expect(pedidos).toEqual([{ projectId: 'proj-1', tab: 'approvals' }]);
+    parar();
+  });
+
+  it('v9: a coluna Histórias conta as histórias que citam o módulo, lidas do cache do backlog', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      moduleMap: {
+        id: 'mm-1',
+        projectId: 'proj-1',
+        sessionId: 's',
+        version: 1,
+        modules: [{ name: 'booking', stack: 's', responsibility: 'r', dependsOn: [] }],
+        createdAt: '2026-08-10T10:00:00.000Z',
+      },
+    });
+
+    montar([{ id: 'e', stories: [{ id: 's1', moduleIds: ['booking'] }, { id: 's2', moduleIds: ['booking', 'x'] }, { id: 's3' }] }]);
+
+    const linha = (await screen.findByRole('rowheader', { name: 'booking' })).closest('tr')!;
+    expect(linha).toHaveTextContent('2');
+    expect(getBacklog).not.toHaveBeenCalled();
   });
 });

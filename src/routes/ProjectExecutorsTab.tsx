@@ -3,7 +3,7 @@ import { Ajuda } from '@/components/ui/Ajuda';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useBindingsDosAgentes } from '../lib/bindings-resolvidos';
+import { invalidarBindingsResolvidos, useBindingsDosAgentes } from '../lib/bindings-resolvidos';
 import {
   useActiveExecutionSession,
   useArchitecture,
@@ -23,6 +23,7 @@ import {
   listBacklog,
   rearmDevAgent,
   setAgentAutonomy,
+  setAgentModelBinding,
   wakeDevAgent,
 } from '../lib/api-client';
 import { deriveAgentRoster, groupRosterByArea, isExecutorAgentId, isExecutorGroup } from '../lib/agent-status';
@@ -236,6 +237,16 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     };
   }, [sessionId, executionSession?.status, projectId, queryClient]);
 
+  // AT-916: a troca de modelo pelo cartão pede `developer` no endpoint (`PUT agent-bindings`).
+  async function handleModelChange(agentId: string, modelId: string) {
+    try {
+      await setAgentModelBinding(projectId, agentId, modelId);
+      await invalidarBindingsResolvidos(queryClient, projectId);
+    } catch {
+      showToast({ title: t('tab.toast.modelError'), message: nomeDoAgente(agentId), tone: 'danger' });
+    }
+  }
+
   async function handleAutonomyChange(agentId: string, actionType: string, mode: AutonomyMode) {
     try {
       await setAgentAutonomy(projectId, {
@@ -445,6 +456,8 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
               onAutonomyChange={handleAutonomyChange}
               onRearm={handleRearm}
               onWake={handleWake}
+              onModelChange={handleModelChange}
+              modelDisabledReason={podeDecidir ? undefined : t('tab.modelSemPapel')}
             />
           )}
 

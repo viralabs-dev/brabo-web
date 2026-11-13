@@ -211,6 +211,21 @@
     "toast": {
       "success": "Teto da parada automática salvo",
       "error": "Não foi possível salvar"
+    },
+    "teto": {
+      "title": "Teto de gasto por tarefa (US$)",
+      "hintDefault": "usa o padrão (US$ {{default}})",
+      "vale": "Vale também para os agentes já em execução, a partir da próxima volta de cada tarefa."
+    },
+    "semPapel": "Editar exige o papel maintainer no projeto.",
+    "escada": {
+      "title": "Escada de modelos (sobe depois de 2 bloqueios por limite na mesma tarefa)",
+      "hintDefault": "usa o padrão (Haiku 5.5 → Sonnet 5)",
+      "vale": "Do menor ao maior; cada degrau tem o próprio teto por tarefa. Quando a tarefa fecha, o agente volta ao modelo base.",
+      "modelo": "Modelo do degrau {{n}}",
+      "teto": "Teto do degrau {{n}} (US$)",
+      "remover": "Remover degrau {{n}}",
+      "adicionar": "Adicionar degrau"
     }
   },
   "executionMode": {

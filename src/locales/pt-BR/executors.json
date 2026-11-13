@@ -23,10 +23,12 @@
       "rearmed": "Agente rearmado",
       "rearmError": "Não foi possível rearmar o agente",
       "woken": "Procurando tarefa",
-      "wakeError": "Não foi possível acordar o agente"
+      "wakeError": "Não foi possível acordar o agente",
+      "modelError": "Não foi possível trocar o modelo"
     },
     "noExecutorsTitle": "Ninguém em ação agora",
-    "idleWarning": "Nenhum agente está trabalhando agora. A execução está ativa: os agentes aguardam a tarefa de que dependem e acordam quando a dependência for mergeada."
+    "idleWarning": "Nenhum agente está trabalhando agora. A execução está ativa: os agentes aguardam a tarefa de que dependem e acordam quando a dependência for mergeada.",
+    "modelSemPapel": "Trocar o modelo exige o papel developer no projeto."
   },
   "agentCard": {
     "status": {
@@ -42,7 +44,11 @@
       "autoModeHint": "Modo automático: roda qualquer comando, inclusive fora da pasta do projeto. git push e PR ficam liberados; deploy, sudo/doas e merge em branch protegida continuam pedindo sua aprovação."
     },
     "rearm": "rearmar",
-    "wake": "Procurar tarefa de novo"
+    "wake": "Procurar tarefa de novo",
+    "model": {
+      "label": "Modelo de {{agente}}",
+      "escolher": "escolher o modelo"
+    }
   },
   "teamGrid": {
     "leadBadge": "Lead",

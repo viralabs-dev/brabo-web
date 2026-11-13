@@ -54,6 +54,10 @@ export interface AgentTeamGridProps {
   onAutonomyChange: (agentId: string, actionType: string, mode: AutonomyMode) => void;
   onRearm: (agentId: string) => void;
   onWake: (agentId: string) => void;
+  /** AT-916: com isto o cartão troca o modelo; sem, fica só leitura (Visão geral). */
+  onModelChange?: (agentId: string, modelId: string) => void;
+  /** Motivo em texto quando o papel não alcança o mínimo do endpoint de binding. */
+  modelDisabledReason?: string;
 }
 
 export function AgentTeamGrid({
@@ -70,6 +74,8 @@ export function AgentTeamGrid({
   onAutonomyChange,
   onRearm,
   onWake,
+  onModelChange,
+  modelDisabledReason,
 }: AgentTeamGridProps) {
   const { t } = useTranslation('executors');
 
@@ -100,6 +106,10 @@ export function AgentTeamGrid({
         status={r.status}
         badge={badge}
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
+        modelOptions={onModelChange ? allModels.map((m) => ({ id: m.id, name: m.displayName })) : undefined}
+        modelId={modelId}
+        onModelChange={onModelChange ? (id) => onModelChange(r.id, id) : undefined}
+        modelDisabledReason={modelDisabledReason}
         // Sem regra gravada o default do domínio é require_approval —
         // "manual". Mostrar o toggle sempre é o que o design pede, e
         // é o que torna a autonomia AJUSTÁVEL daqui.
@@ -146,6 +156,10 @@ export function AgentTeamGrid({
         status={r.status}
         compact
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
+        modelOptions={onModelChange ? allModels.map((m) => ({ id: m.id, name: m.displayName })) : undefined}
+        modelId={modelId}
+        onModelChange={onModelChange ? (id) => onModelChange(r.id, id) : undefined}
+        modelDisabledReason={modelDisabledReason}
         activity={outcome ? { label: outcome } : undefined}
         tokensMicros={custo}
       />

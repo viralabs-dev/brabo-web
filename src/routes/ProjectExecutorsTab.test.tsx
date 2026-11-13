@@ -574,7 +574,7 @@ describe('ProjectExecutorsTab — bindings em lote (AT-339)', () => {
     }));
     montar();
 
-    expect(await screen.findByText(/Modelo Dois/)).toBeInTheDocument();
+    expect(await screen.findByText(/Modelo Dois ·/)).toBeInTheDocument();
     // Duas leituras: o catálogo (com as áreas) e os extras — só `dev-pagamentos`.
     expect(getResolvedModelBindings).toHaveBeenCalledTimes(2);
     expect(getResolvedModelBindings).toHaveBeenCalledWith('proj-1', ['dev-pagamentos'], []);
@@ -593,7 +593,7 @@ describe('ProjectExecutorsTab — bindings em lote (AT-339)', () => {
 
     expect((await screen.findAllByText('dev-pagamentos')).length).toBeGreaterThan(0);
     await waitFor(() => expect(getResolvedModelBindings).toHaveBeenCalledTimes(2));
-    expect(screen.queryByText(/Modelo Dois/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Modelo Dois ·/)).not.toBeInTheDocument();
     expect(getAgentModelBinding).not.toHaveBeenCalled();
   });
 });

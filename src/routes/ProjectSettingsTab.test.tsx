@@ -489,7 +489,7 @@ describe('ExecutionSection', () => {
 
     const campo = await screen.findByDisplayValue('3');
     fireEvent.change(campo, { target: { value: '7' } });
-    fireEvent.click(screen.getByText('Salvar'));
+    fireEvent.click(screen.getAllByText('Salvar')[0]);
 
     await waitFor(() =>
       expect(updateProject).toHaveBeenCalledWith('proj-1', {
@@ -506,10 +506,10 @@ describe('ExecutionSection', () => {
     const campo = await screen.findByDisplayValue('3');
     fireEvent.change(campo, { target: { value: '0' } });
 
-    const botao = screen.getByText('Salvar').closest('button');
+    const botao = screen.getAllByText('Salvar')[0].closest('button');
     expect(botao?.disabled).toBe(true);
 
-    fireEvent.click(screen.getByText('Salvar'));
+    fireEvent.click(screen.getAllByText('Salvar')[0]);
     expect(updateProject).not.toHaveBeenCalled();
   });
 });

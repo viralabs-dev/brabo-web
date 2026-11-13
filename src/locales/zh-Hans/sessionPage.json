@@ -389,7 +389,13 @@
       "diagnostico": "诊断",
       "agenteTravado": "{{agente}} 已卡住：请先重新启用，再解除阻塞。",
       "orientacao": "给开发者的指引（可选）",
-      "orientacaoDica": "例如：入口由组装方注入；不要单独启动该模块。"
+      "orientacaoDica": "例如：入口由组装方注入；不要单独启动该模块。",
+      "aumentarTeto": "提高每个任务的上限",
+      "tetoCampo": "新的每任务上限（US$）",
+      "gravarTeto": "保存上限",
+      "tetoOk": "项目上限已更新：运行中的代理在下一轮生效。现在只需解除阻塞。",
+      "tetoErro": "无法保存上限。",
+      "tetoSemPapel": "提高上限需要项目中的 maintainer 角色。"
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",

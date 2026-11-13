@@ -130,7 +130,7 @@ function useSaude(baseUrl: string): EstadoDeSaude {
  * que continua submetível, porque quem sabe se o login funcionou é o próprio
  * `POST /auth/login`, não esta sonda.
  */
-export function SinaisDoAmbiente() {
+export function SinaisDoAmbiente({ compacto = false }: { compacto?: boolean }) {
   const { t } = useTranslation('auth');
   const api = useSaude(API_URL);
   const engine = useSaude(ENGINE_URL);
@@ -140,6 +140,23 @@ export function SinaisDoAmbiente() {
     erro: 'erro',
     aguardando: 'aguardando',
   };
+
+  if (compacto) {
+    // Uma linha só (v9, AT-940): o que caiu, ou "no ar". Mesma fonte de dados
+    // das duas linhas do modo cheio, só resumida.
+    const caiu = [api === 'erro' && 'api', engine === 'erro' && 'engine'].filter(Boolean);
+    const aguardando = api === 'aguardando' || engine === 'aguardando';
+    const chave = caiu.length === 2 ? 'erroAmbos' : caiu.length === 1 ? `erro_${caiu[0]}` : aguardando ? 'aguardando' : 'ok';
+    return (
+      <p className={styles.compacto} aria-live="polite">
+        <span
+          className={`${styles.ponto} ${styles[caiu.length ? 'erro' : aguardando ? 'aguardando' : 'ok']}`}
+          aria-hidden="true"
+        />
+        {t(`ambiente.compacto.${chave}`)}
+      </p>
+    );
+  }
 
   return (
     <div className={styles.bloco}>

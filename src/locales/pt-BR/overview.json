@@ -1,4 +1,9 @@
 {
+  "faixa": {
+    "titulo": "Precisa de você",
+    "verTodas": "Ver todas →",
+    "vazio": "Nada espera por você agora."
+  },
   "architectureTab": {
     "title": "Arquitetura",
     "emptyTitle": "Sem arquitetura ainda",
@@ -86,6 +91,9 @@
     "modelosLocaisEmbedding_other": "{{count}} de embedding (só para a busca, não conversam)"
   },
   "activity": {
+    "verEventos": "Eventos",
+    "verTurnos": "Turnos",
+    "turnosVazio": "Nenhum turno terminou ainda.",
     "title": "Atividade",
     "count_zero": "{{count}} eventos",
     "count_one": "{{count}} evento",

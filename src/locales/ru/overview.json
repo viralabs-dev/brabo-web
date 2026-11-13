@@ -1,4 +1,9 @@
 {
+  "faixa": {
+    "titulo": "Ждёт вашего решения",
+    "verTodas": "Все →",
+    "vazio": "Сейчас ничего не ждёт вас."
+  },
   "architectureTab": {
     "title": "Архитектура",
     "emptyTitle": "Архитектуры пока нет",
@@ -91,6 +96,9 @@
     "modelosLocaisEmbedding_other": "{{count}} модели эмбеддингов (только для поиска, не ведут диалог)"
   },
   "activity": {
+    "verEventos": "События",
+    "verTurnos": "Ходы",
+    "turnosVazio": "Ни один ход ещё не завершён.",
     "title": "Активность",
     "count_one": "{{count}} событие",
     "count_few": "{{count}} события",

@@ -1,4 +1,9 @@
 {
+  "faixa": {
+    "titulo": "Needs you",
+    "verTodas": "View all →",
+    "vazio": "Nothing is waiting for you right now."
+  },
   "architectureTab": {
     "title": "Architecture",
     "emptyTitle": "No architecture yet",
@@ -81,6 +86,9 @@
     "modelosLocaisEmbedding_other": "{{count}} embedding models (search only, do not chat)"
   },
   "activity": {
+    "verEventos": "Events",
+    "verTurnos": "Turns",
+    "turnosVazio": "No turn has finished yet.",
     "title": "Activity",
     "count_one": "{{count}} event",
     "count_other": "{{count}} events",

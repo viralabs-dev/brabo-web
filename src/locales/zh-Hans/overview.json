@@ -1,4 +1,9 @@
 {
+  "faixa": {
+    "titulo": "需要你处理",
+    "verTodas": "查看全部 →",
+    "vazio": "目前没有等待你处理的事项。"
+  },
   "architectureTab": {
     "title": "架构",
     "emptyTitle": "尚无架构",
@@ -76,6 +81,9 @@
     "modelosLocaisEmbedding_other": "{{count}} 个 embedding 模型（仅用于搜索，不能对话）"
   },
   "activity": {
+    "verEventos": "事件",
+    "verTurnos": "轮次",
+    "turnosVazio": "尚无已完成的轮次。",
     "title": "活动",
     "count_other": "{{count}} 个事件",
     "loadErrorTitle": "无法加载活动。",

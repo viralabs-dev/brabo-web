@@ -661,6 +661,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/projects/{projectId}/tasks/{taskId}/auto-merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Triggers the auto-merge of the PR of a task (RN-1316)
+         * @description Called only by the engine when a gate resolves. ALL conditions are checked here, never in the engine: switch ON, every gate approved, a PR opened by the task, and no merge of that PR already merged or proposed (RN-663). A refusal is a 409 with a named `code` (`chave_desligada`, `gate_pendente`, `sem_pr`, `pr_ja_mergeado`, `merge_ja_proposto`) and is NOT an error to retry. Otherwise it proposes a `git_merge` with origin `merge_automatico`, the only one `decide()` auto-approves, and only for the working branch. A merge that fails at the provider (conflict, protection) ends `failed` and becomes manual.
+         */
+        post: operations["InternalProjectsController_acionarMerge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/projects/{projectId}/workspace-verification": {
         parameters: {
             query?: never;
@@ -1913,6 +1933,26 @@ export interface paths {
          * @description The area stops having its own default and starts inheriting from the project (or the workspace). Agents that diverged keep diverging: their binding is a different one, and deleting this one cannot decide for them.
          */
         delete: operations["ModelBindingsController_clearAreaBinding"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/auto-merge": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Turns the project's auto-merge switch on or off
+         * @description RN-1316 (AT-902, ADR 0292). When ON, a PR of the project with every gate approved merges by itself into the project's working branch (trunk `main`); `dev`/`qa`/`rc` of legacy projects stay manual. Dedicated route, never `PATCH`, because it lifts a security ceiling. Turning it ON requires the workspace `owner` (403 otherwise); turning it OFF needs `maintainer` and takes effect on the next proposal. Every change is appended to an immutable log; repeating the current value changes nothing.
+         */
+        put: operations["ProjectsController_setAutoMergeRoute"];
+        post?: never;
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -5662,6 +5702,10 @@ export interface components {
             filesSkipped: number;
             chunksCreated: number;
             embedding: components["schemas"]["IndexEmbeddingResponseDto"];
+        };
+        AutoMergeInternalDto: {
+            /** @description The session of the task that just resolved its gate; the `git_merge` is proposed in it. */
+            sessionId: string;
         };
         BindingResolvidoDaChaveResponseDto: {
             /**
@@ -9822,6 +9866,11 @@ export interface components {
              */
             mirrorPath: Record<string, never> | null;
             /**
+             * @description Auto-merge switch (RN-1316, ADR 0292). When `true`, a PR of this project with every gate approved merges by itself into the project's working branch. OFF by default. Set through `PUT /projects/:projectId/auto-merge`.
+             * @example false
+             */
+            mergeAutomatico: boolean;
+            /**
              * @description The PROJECT's language (RN-619): the language of everything with no human author — shared artifacts (product brief, business rules, ADRs) and turns nobody typed (kickoff, dev agents, gates, commit messages, PR bodies). A canonical BCP-47 code, open list. A new project starts with its creator's effective response language (RN-618). Set through `PATCH /projects/:projectId` (`maintainer`). The engine sends it to the model as an ephemeral system message at the end of every LLM call of a turn with no human author (RN-622); an artifact emitted during a person's turn still follows that person's response language.
              * @example pt-BR
              */
@@ -11523,6 +11572,13 @@ export interface components {
              * @example 20
              */
             limitUsd: Record<string, never> | null;
+        };
+        SetAutoMergeDto: {
+            /**
+             * @description Turns the auto-merge switch on (`true`, workspace `owner` only) or off (`false`, `maintainer` is enough). Required: an omitted key is a 400, never an implicit "off".
+             * @example true
+             */
+            habilitado: boolean;
         };
         SetMaxParallelDto: {
             /**
@@ -13696,6 +13752,60 @@ export interface operations {
                 content?: never;
             };
             /** @description Busy instance, runner project or ambiguous task key. */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalProjectsController_acionarMerge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AutoMergeInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProposedActionResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project, task or session not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description A named condition was not met. */
             409: {
                 headers: {
                     [name: string]: unknown;
@@ -17021,6 +17131,66 @@ export interface operations {
                 content?: never;
             };
             /** @description Scope not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_setAutoMergeRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetAutoMergeDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
             404: {
                 headers: {
                     [name: string]: unknown;

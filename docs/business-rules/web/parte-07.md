@@ -156,7 +156,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
 - **Regra:** a S06 (Gastos) mostra ao `owner` o teto do mês do workspace (`GET/PUT workspaces/:id/budget`, 403 para os demais), com o mesmo medidor, previsão e legenda da RN-1200, e o editor (valor e política `block`/`allow`). Quem não é owner não lê o valor (a api recusa): vê, em texto, que o teto é do owner e que só o conhece quando uma chamada é recusada ("Budget do workspace atingiu o teto do mês"). O controle nunca é oferecido a quem a api não deixa usar (RN-102); erro de leitura de quem não edita é silencioso. O teto do workspace soma todos os projetos e é independente dos de projeto, sessão e área: basta um no limite com `block` para recusar.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1350` (`getWorkspaceBudget`).
+- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1354` (`getWorkspaceBudget`).
 - **Teste:** `src/components/TetoDoMes.test.tsx` (owner edita; sem papel fica inerte com o motivo; 403 silencioso).
 - **Origem:** AT-935 (EP-035).
 

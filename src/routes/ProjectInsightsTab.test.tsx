@@ -225,9 +225,8 @@ describe('ProjectInsightsTab — Psicólogo pausado globalmente', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: /^Roda a análise de novo/ }));
 
-    expect(await screen.findByText('Psicólogo pausado')).toBeTruthy();
     expect(
-      screen.getByText(
+      await screen.findByText(
         'O Psicólogo está desativado globalmente por decisão do usuário — aguardando refinamento futuro.',
       ),
     ).toBeTruthy();
@@ -237,9 +236,8 @@ describe('ProjectInsightsTab — Psicólogo pausado globalmente', () => {
     await waitFor(() =>
       expect(screen.getByRole('button', { name: /^Roda a análise de novo/ })).toBeDisabled(),
     );
-    expect(
-      screen.getByText(/O Psicólogo está pausado globalmente por decisão do time/),
-    ).toBeTruthy();
+    expect(screen.getByTestId('estado-do-psicologo').textContent).toContain('Psicólogo pausado');
+    expect(screen.getByRole('button', { name: 'Reativar o Psicólogo' })).toBeTruthy();
   });
 
   it('erro genérico (não 503) não mexe no botão — só o toast de erro comum', async () => {
@@ -266,11 +264,22 @@ describe('ProjectInsightsTab — a pausa se sabe ANTES de clicar (RN-454)', () =
     montar();
 
     expect(
-      await screen.findByText(/nenhuma sessão é analisada até ser reativado/),
+      await screen.findByText(/Nenhuma sessão é analisada até ele ser reativado/),
     ).toBeTruthy();
     expect(
       screen.queryByText(/o Psicólogo analisa cada sessão encerrada/),
     ).toBeNull();
+  });
+
+  it('pausado: o botão Reativar explica como religar e não chama a api', async () => {
+    listHypotheses.mockResolvedValue([]);
+    getPsychologistStatus.mockResolvedValue({ enabled: false });
+    montar();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Reativar o Psicólogo' }));
+
+    expect(await screen.findByText(/PSYCHOLOGIST_ENABLED=true/)).toBeTruthy();
+    expect(reanalyzeSession).not.toHaveBeenCalled();
   });
 
   it('sem hipóteses e ATIVO: mantém a frase original, que aqui é honesta', async () => {
@@ -282,8 +291,9 @@ describe('ProjectInsightsTab — a pausa se sabe ANTES de clicar (RN-454)', () =
       await screen.findByText(/o Psicólogo analisa cada sessão encerrada/),
     ).toBeTruthy();
     expect(
-      screen.queryByText(/nenhuma sessão é analisada até ser reativado/),
+      screen.queryByText(/Nenhuma sessão é analisada até ele ser reativado/),
     ).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Reativar o Psicólogo' })).toBeNull();
   });
 
   it('com hipóteses e pausado: o botão nasce desabilitado, sem precisar de um clique que falha', async () => {
@@ -295,9 +305,7 @@ describe('ProjectInsightsTab — a pausa se sabe ANTES de clicar (RN-454)', () =
     await waitFor(() =>
       expect(screen.getByRole('button', { name: /^Roda a análise de novo/ })).toBeDisabled(),
     );
-    expect(
-      screen.getByText(/O Psicólogo está pausado globalmente por decisão do time/),
-    ).toBeTruthy();
+    expect(screen.getByTestId('estado-do-psicologo').textContent).toContain('Psicólogo pausado');
     expect(reanalyzeSession).not.toHaveBeenCalled();
   });
 });

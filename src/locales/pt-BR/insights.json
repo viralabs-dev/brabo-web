@@ -1,10 +1,8 @@
 {
   "projectInsightsTab": {
-    "header": "Percepções",
     "errorTitle": "Não foi possível carregar as hipóteses.",
     "loading": "Carregando as hipóteses…",
     "empty": "Sem hipóteses ainda — o Psicólogo analisa cada sessão encerrada.",
-    "emptyPaused": "O Psicólogo está pausado — nenhuma sessão é analisada até ser reativado.",
     "summary_zero": "{{count}} hipóteses · {{pending}} aguardando decisão",
     "summary_one": "{{count}} hipótese · {{pending}} aguardando decisão",
     "summary_other": "{{count}} hipóteses · {{pending}} aguardando decisão",
@@ -19,7 +17,6 @@
       "metaHypotheses_other": "{{count}} hipóteses",
       "reanalyzeTitleEnabled": "Roda a análise de novo e gasta orçamento; a anterior fica no histórico"
     },
-    "pausedNotice": "O Psicólogo está pausado globalmente por decisão do time — sem reanálise nova por enquanto. As hipóteses já emitidas continuam aqui.",
     "toasts": {
       "acceptError": "Não foi possível aceitar a hipótese",
       "dismissError": "Não foi possível descartar a hipótese",
@@ -36,13 +33,21 @@
       "ativo": "Psicólogo ativo",
       "pausadoTag": "pausado",
       "ativoTag": "ativo",
-      "descricao": "Quando ativo, ele propõe hipóteses sobre o time ancoradas em eventos reais, e cada uma espera você aceitar ou recusar."
+      "descricao": "Quando ativo, ele propõe hipóteses sobre o time ancoradas em eventos reais, e cada uma espera você aceitar ou recusar.",
+      "pausadoDescricao": "Nenhuma sessão é analisada até ele ser reativado. Quando ativo, ele propõe hipóteses sobre o time ancoradas em eventos reais, e cada uma espera você aceitar ou recusar.",
+      "reativar": "Reativar o Psicólogo",
+      "reativarExplicacao": "A pausa é uma decisão do time. Para religar, quem opera a instalação define PSYCHOLOGIST_ENABLED=true no engine e o reinicia. As hipóteses já emitidas não mudam; novas análises voltam a gastar orçamento."
     },
     "exemplo": {
       "titulo": "Como uma hipótese aparece",
       "rotulo": "Exemplo",
       "observacao": "\"O PO declara perguntas abertas que o Criativo já tinha respondido no brief.\"",
-      "sugestao": "Sugestão: incluir o brief completo no contexto do PO. Aceitar gera um patch de instrução versionado, que é um teto: só você aplica."
+      "sugestao": "Sugestão: incluir o brief completo no contexto do PO. Aceitar gera um patch de instrução versionado, que é um teto: só você aplica.",
+      "tag": "hipótese",
+      "ancorada": "ancorada em 3 eventos",
+      "aceitar": "Aceitar",
+      "recusar": "Recusar",
+      "inerte": "É um exemplo"
     }
   },
   "hypothesisCard": {

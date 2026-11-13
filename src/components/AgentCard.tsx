@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { AgentDef } from '../lib/agents';
 import { BranchIcon, ModelIcon } from './ui/icons';
 import { Badge } from './ui/Badge';
+import { Select } from './ui/Select';
 import { Button as BotaoDeIcone } from '@/components/ui/Button';
 import { Card } from '@/components/shadcn/card';
 import { Shimmer } from './ui/Shimmer';
@@ -40,6 +41,15 @@ interface AgentCardProps {
   agent: AgentDef;
   status: AgentStatus;
   model?: { name: string; provider: string };
+  /**
+   * AT-916: troca o modelo do agente pelo cartão (o mesmo `PUT agent-bindings`
+   * da tela de Modelos). Sem `onModelChange` o modelo é só leitura.
+   */
+  modelOptions?: { id: string; name: string }[];
+  modelId?: string;
+  onModelChange?: (modelId: string) => void;
+  /** Motivo, em TEXTO, de o seletor estar inerte (papel abaixo do mínimo do endpoint). */
+  modelDisabledReason?: string;
   autonomy?: AutonomyMode;
   onAutonomyChange?: (mode: AutonomyMode) => void;
   /**
@@ -79,6 +89,10 @@ export function AgentCard({
   agent,
   status,
   model,
+  modelOptions,
+  modelId,
+  onModelChange,
+  modelDisabledReason,
   autonomy,
   onAutonomyChange,
   autonomyHint,
@@ -145,6 +159,25 @@ export function AgentCard({
           {tokensMicros !== undefined && (
             <span className={styles.tokens}>{formatMicros(tokensMicros)}</span>
           )}
+        </div>
+      )}
+
+      {onModelChange && modelOptions && modelOptions.length > 0 && (
+        <div className={styles.footer}>
+          <Select
+            aria-label={t('agentCard.model.label', { agente: agent.name })}
+            value={modelId ?? ''}
+            disabled={!!modelDisabledReason}
+            onChange={(e) => e.target.value && onModelChange(e.target.value)}
+          >
+            {!modelId && <option value="">{t('agentCard.model.escolher')}</option>}
+            {modelOptions.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </Select>
+          {modelDisabledReason && <span>{modelDisabledReason}</span>}
         </div>
       )}
 

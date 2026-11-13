@@ -154,7 +154,8 @@ describe('padrão único de valor herdado — Execução (circuit breaker)', () 
     getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
     montar(<ExecutionSection projectId="proj-1" />);
 
-    expect(await screen.findByText('Sem valor próprio')).toBeInTheDocument();
+    // A Execução tem 3 ajustes (parada, teto, escada); o primeiro é o da parada.
+    expect((await screen.findAllByText('Sem valor próprio'))[0]).toBeInTheDocument();
     expect(screen.getByText('usa o padrão (3)')).toBeInTheDocument();
     expect(screen.queryByText('Valor próprio')).toBeNull();
   });
@@ -167,7 +168,8 @@ describe('padrão único de valor herdado — Execução (circuit breaker)', () 
     expect(
       screen.getByText('configurado para este projeto'),
     ).toBeInTheDocument();
-    expect(screen.queryByText('Sem valor próprio')).toBeNull();
+    // Só a parada tem valor próprio aqui; o teto e a escada seguem no padrão.
+    expect(screen.getAllByText('Sem valor próprio')).toHaveLength(2);
   });
 });
 
@@ -268,7 +270,7 @@ describe('padrão único de valor herdado — as duas línguas', () => {
     getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
     montar(<ExecutionSection projectId="proj-1" />, 'en');
 
-    expect(await screen.findByText('No value of its own')).toBeInTheDocument();
+    expect((await screen.findAllByText('No value of its own'))[0]).toBeInTheDocument();
     expect(screen.getByText('uses the default (3)')).toBeInTheDocument();
   });
 

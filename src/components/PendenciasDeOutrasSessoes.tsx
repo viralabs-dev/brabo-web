@@ -9,6 +9,7 @@ import {
   mensagemDaApi,
   rearmDevAgent,
   unblockTask,
+  updateProject,
 } from '../lib/api-client';
 import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
 import { usePrsProntas } from '../lib/prs-prontas';
@@ -16,6 +17,9 @@ import { useAgentesTravados } from '../lib/agentes-travados-query';
 import { assinaturaDoBacklog, tarefasBloqueadas, tarefasSemModulo } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
 import { Textarea } from './ui/Textarea';
+import { Input } from './ui/Input';
+import { useCurrentWorkspaceWithRole } from '../lib/hooks';
+import { roleAtLeast } from '../lib/roles';
 import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
@@ -108,6 +112,11 @@ export function PendenciasDeOutrasSessoes({
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
   const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
+  // AT-917: "Aumentar o teto" grava o teto do PROJETO (`PATCH /projects/:id`, `maintainer`).
+  const { data: comPapel } = useCurrentWorkspaceWithRole();
+  const podeEditarTeto = roleAtLeast(comPapel?.role, 'maintainer');
+  const [tetos, setTetos] = useState<Record<string, string>>({});
+  const [retornoDoTeto, setRetornoDoTeto] = useState<Record<string, { tom: 'ok' | 'erro'; texto: string }>>({});
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
   const semModulo = filasDoChat ? tarefasSemModulo(backlogQuery.data) : [];
   // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
@@ -229,6 +238,21 @@ export function PendenciasDeOutrasSessoes({
       setDesbloqueio((d) => ({
         ...d,
         [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.erro')) },
+      }));
+    }
+  }
+
+  async function gravarTeto(task: Task) {
+    const usd = Number(tetos[task.id]);
+    if (!Number.isFinite(usd) || Math.round(usd * 1_000_000) <= 0) return;
+    try {
+      await updateProject(projectId, { taskBudgetMicros: Math.round(usd * 1_000_000) });
+      void queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+      setRetornoDoTeto((r) => ({ ...r, [task.id]: { tom: 'ok', texto: t('pendencias.bloqueadas.tetoOk') } }));
+    } catch (erro) {
+      setRetornoDoTeto((r) => ({
+        ...r,
+        [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.tetoErro')) },
       }));
     }
   }
@@ -540,6 +564,49 @@ export function PendenciasDeOutrasSessoes({
                         <span className={styles.nota}>{t('pendencias.bloqueadas.semPapel')}</span>
                       )}
                     </div>
+                    {task.blockedOrigin === 'politica' && (
+                      <div className={styles.acoesDaLinha} data-testid="aumentar-teto">
+                        {tetos[task.id] === undefined ? (
+                          <Button
+                            variant="secondary"
+                            disabled={!podeEditarTeto}
+                            onClick={() => setTetos((v) => ({ ...v, [task.id]: '' }))}
+                          >
+                            {t('pendencias.bloqueadas.aumentarTeto')}
+                          </Button>
+                        ) : (
+                          <>
+                            <Input
+                              mono
+                              type="number"
+                              min={0.01}
+                              step={0.01}
+                              aria-label={t('pendencias.bloqueadas.tetoCampo')}
+                              value={tetos[task.id]}
+                              onChange={(e) => setTetos((v) => ({ ...v, [task.id]: e.target.value }))}
+                            />
+                            <Button
+                              variant="secondary"
+                              disabled={!(Number(tetos[task.id]) > 0)}
+                              onClick={() => void gravarTeto(task)}
+                            >
+                              {t('pendencias.bloqueadas.gravarTeto')}
+                            </Button>
+                          </>
+                        )}
+                        {!podeEditarTeto && (
+                          <span className={styles.nota}>{t('pendencias.bloqueadas.tetoSemPapel')}</span>
+                        )}
+                        {retornoDoTeto[task.id] && (
+                          <span
+                            className={retornoDoTeto[task.id].tom === 'erro' ? styles.erro : styles.nota}
+                            role={retornoDoTeto[task.id].tom === 'erro' ? 'alert' : 'status'}
+                          >
+                            {retornoDoTeto[task.id].texto}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     {estado && estado !== 'enviando' && (
                       <p
                         className={estado.tom === 'erro' ? styles.erro : styles.nota}

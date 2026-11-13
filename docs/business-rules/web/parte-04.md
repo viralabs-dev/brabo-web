@@ -304,7 +304,7 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
   `:333` (`caminhoForaDaBase`), `:360` (a sugestão);
   `apps/web/src/lib/wizard.ts:143` (`caminhoSugeridoNaBase`) e `:171`
   (`caminhoDentroDaBase`) — as funções puras;
-  `apps/web/src/lib/api-client.ts:305` (`getProjectsBase`)
+  `apps/web/src/lib/api-client.ts:309` (`getProjectsBase`)
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx`
   (`describe('NewProjectWizard — a base de projetos decide o que é
   oferecido')` — base presente, base `null`, consulta recusada com 403, a
@@ -584,7 +584,7 @@ diferença não é escolha de desenho: é a forma do endpoint.
   (as duas consultas e o `ReconhecimentoDeMaquina`),
   `apps/web/src/components/RunnerOnboardingPanel.module.css`
   (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:451`
-  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:812`
+  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:824`
   (`RunnerDeviceKeyListItem`, `RunnerDeviceKeyEspecie`),
   `apps/web/src/locales/{en,pt-BR}/terminal.json` (`agenteDeMaquina.*`)
 - **Teste:** `apps/web/src/lib/agente-de-maquina.test.ts` — o caminho feliz
@@ -1222,7 +1222,7 @@ botão seria um controle que não controla nada; a seção diz isso em texto
   (`RunnerOnboardingPanel`, o mesmo da aba Código);
   `apps/web/src/locales/pt-BR/settings.json:249` e
   `apps/web/src/locales/en/settings.json:249` (`executionMode.nextStep.*`) e
-  `:238` (`executionMode.path.runnerTyped`, reescrito); a cadência medida em
+  `:251` (`executionMode.path.runnerTyped`, reescrito); a cadência medida em
   `apps/runner/src/espera-de-projetos.ts:60` (`CADENCIA_DA_ESPERA_MS`) e a
   lista lida uma vez em `apps/runner/src/index.ts` (`rodarComoAgenteDeMaquina`)
 - **Teste:** o describe `RN-612` em

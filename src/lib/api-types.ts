@@ -87,6 +87,14 @@ export interface WorkspaceWithRole {
   role: Role;
 }
 
+export interface DegrauDaEscada {
+  modelId: string;
+  taskBudgetMicros: number;
+}
+export interface EscadaDeModelos {
+  ladder: DegrauDaEscada[];
+}
+
 export interface Project {
   id: string;
   workspaceId: string;
@@ -96,6 +104,10 @@ export interface Project {
   // Circuit breaker por dev agent (Fase 12b — RN-047). `null` usa o default
   // do domínio (3).
   maxConsecutiveBlocked: number | null;
+  // Teto de gasto por tarefa do dev agent, em micro-USD (RN-1142). `null` = padrão do domínio.
+  taskBudgetMicros?: number | null;
+  // Escada de modelos do projeto (RN-1143/1146). `null` = padrão Haiku 5.5 → Sonnet 5.
+  modelEscalation?: EscadaDeModelos | null;
   // Quem promove história a `ready` (Fase 12c — RN-048). `manual` é o default
   // de projeto novo; os projetos que existiam antes da fase ficaram em `auto`,
   // que é o comportamento anterior.
@@ -1085,6 +1097,8 @@ export interface Task {
   assignedTo: string | null;
   blocked: boolean;
   blockedReason: string | null;
+  /** Origem do bloqueio (ADR 0020/0038); `politica` = teto de gasto. */
+  blockedOrigin?: 'infra' | 'modelo' | 'codigo' | 'politica' | null;
   gateStatus: PrGateStatus | null;
   gateCorrectionCount: number;
   /** Módulo do `module_map` a que a tarefa pertence (AT-880); `null` para a sem módulo. */

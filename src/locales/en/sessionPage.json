@@ -405,7 +405,13 @@
       "diagnostico": "Diagnosis",
       "agenteTravado": "{{agente}} is stuck: re-arm it before unblocking.",
       "orientacao": "Guidance for the dev (optional)",
-      "orientacaoDica": "E.g. the entry point is injected by the composer; do not start the module on its own."
+      "orientacaoDica": "E.g. the entry point is injected by the composer; do not start the module on its own.",
+      "aumentarTeto": "Raise the per-task cap",
+      "tetoCampo": "New per-task cap (US$)",
+      "gravarTeto": "Save the cap",
+      "tetoOk": "Project cap updated: live agents pick it up on the next lap. Now just unblock.",
+      "tetoErro": "Could not save the cap.",
+      "tetoSemPapel": "Raising the cap requires the maintainer role on the project."
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",

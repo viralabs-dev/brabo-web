@@ -22,10 +22,12 @@
       "rearmed": "Agent rearmed",
       "rearmError": "Could not rearm the agent",
       "woken": "Looking for a task",
-      "wakeError": "Could not wake the agent"
+      "wakeError": "Could not wake the agent",
+      "modelError": "Could not change the model"
     },
     "noExecutorsTitle": "Nobody acting right now",
-    "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged."
+    "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged.",
+    "modelSemPapel": "Changing the model requires the developer role on the project."
   },
   "agentCard": {
     "status": {
@@ -41,7 +43,11 @@
       "autoModeHint": "Auto mode: runs any command, even outside the project folder. git push and PR are released; deploy, sudo/doas and merges into a protected branch still ask for your approval."
     },
     "rearm": "rearm",
-    "wake": "Look for a task again"
+    "wake": "Look for a task again",
+    "model": {
+      "label": "Model of {{agente}}",
+      "escolher": "choose the model"
+    }
   },
   "teamGrid": {
     "leadBadge": "Lead",

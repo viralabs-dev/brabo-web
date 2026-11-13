@@ -578,3 +578,20 @@ describe('AT-906 e AT-912: narração', () => {
     expect(c.bad).toBe(false);
   });
 });
+
+describe('AT-916: escada de modelos', () => {
+  it('model_escalated diz de quem para quem, e o teto', () => {
+    const c = classifyEvent(
+      ev('agent.model_escalated', 'system', { agentId: 'dev-api', de: 'haiku', para: 'sonnet', tetoMicros: 2_000_000 }),
+    );
+    expect(c.text).toContain('dev-api subiu de haiku para sonnet');
+    expect(c.text).toContain('US$ 2.00');
+    expect(c.bad).toBe(false);
+  });
+
+  it('model_escalation_exhausted diz "escada esgotada" e é ruim', () => {
+    const c = classifyEvent(ev('agent.model_escalation_exhausted', 'system', { agentId: 'dev-api' }));
+    expect(c.text).toContain('escada esgotada');
+    expect(c.bad).toBe(true);
+  });
+});

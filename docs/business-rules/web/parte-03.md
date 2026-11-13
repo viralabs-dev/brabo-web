@@ -1048,7 +1048,7 @@ Uniformizar a forma pioraria o conteúdo no caminho mais provável da caixa.
   `:135`, `:147` (os três papéis — estas linhas NÃO mudaram),
   `apps/api/src/application/use-cases/iam/resolve-effective-role.use-case.ts:14`
   (`projectRole ?? workspaceRole`, a sobreposição nos dois sentidos),
-  `apps/api/src/infrastructure/persistence/drizzle/project.repository.ts:194`
+  `apps/api/src/infrastructure/persistence/drizzle/project.repository.ts:204`
   (`listMembers` — o `innerJoin` que faz a tabela ser recorte),
   `apps/web/src/routes/settings/MembersSection.tsx:62` (o papel efetivo e por
   que `maintainer`), `:109` (por que convidar não usa `mensagemDaApi`), `:142` e

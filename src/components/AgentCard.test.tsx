@@ -54,6 +54,21 @@ describe('AgentCard', () => {
     expect(screen.getByText('US$ 0.0000')).toBeInTheDocument();
   });
 
+  it('AT-916: o modelo vira seletor com o handler; inerte com o motivo em texto', () => {
+    const onModelChange = vi.fn();
+    const opcoes = [
+      { id: 'm1', name: 'Haiku 5.5' },
+      { id: 'm2', name: 'Sonnet 5' },
+    ];
+    const r = renderCard({ modelOptions: opcoes, modelId: 'm1', onModelChange });
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'm2' } });
+    expect(onModelChange).toHaveBeenCalledWith('m2');
+    r.unmount();
+    renderCard({ modelOptions: opcoes, modelId: 'm1', onModelChange, modelDisabledReason: 'exige developer' });
+    expect(screen.getByRole('combobox')).toBeDisabled();
+    expect(screen.getByText('exige developer')).toBeInTheDocument();
+  });
+
   it('o toggle de autonomia só aparece com o handler, e chama de volta', () => {
     const semHandler = renderCard({ autonomy: 'manual' });
     expect(screen.queryByRole('button', { name: 'Modo automático' })).not.toBeInTheDocument();

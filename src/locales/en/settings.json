@@ -204,6 +204,21 @@
     "toast": {
       "success": "Circuit breaker threshold saved",
       "error": "Could not save"
+    },
+    "teto": {
+      "title": "Spend cap per task (US$)",
+      "hintDefault": "uses the default (US$ {{default}})",
+      "vale": "Also applies to agents already running, from the next lap of each task."
+    },
+    "semPapel": "Editing requires the maintainer role on the project.",
+    "escada": {
+      "title": "Model ladder (climbs after 2 iteration-limit blocks on the same task)",
+      "hintDefault": "uses the default (Haiku 5.5 → Sonnet 5)",
+      "vale": "Smallest to largest; each step has its own per-task cap. When the task closes, the agent goes back to the base model.",
+      "modelo": "Model of step {{n}}",
+      "teto": "Cap of step {{n}} (US$)",
+      "remover": "Remove step {{n}}",
+      "adicionar": "Add step"
     }
   },
   "executionMode": {

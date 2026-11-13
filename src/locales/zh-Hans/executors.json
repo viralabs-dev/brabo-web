@@ -21,10 +21,12 @@
       "rearmed": "智能体已重新启用",
       "rearmError": "无法重新启用智能体",
       "woken": "正在查找任务",
-      "wakeError": "无法唤醒智能体"
+      "wakeError": "无法唤醒智能体",
+      "modelError": "无法更换模型"
     },
     "noExecutorsTitle": "目前无人执行",
-    "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。"
+    "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。",
+    "modelSemPapel": "更换模型需要项目中的 developer 角色。"
   },
   "agentCard": {
     "status": {
@@ -40,7 +42,11 @@
       "autoModeHint": "自动模式：可运行任何命令，包括项目文件夹之外的命令。git push 和 PR 将放行；部署、sudo/doas 以及合并到受保护分支仍需你的批准。"
     },
     "rearm": "重新启用",
-    "wake": "重新查找任务"
+    "wake": "重新查找任务",
+    "model": {
+      "label": "{{agente}} 的模型",
+      "escolher": "选择模型"
+    }
   },
   "teamGrid": {
     "leadBadge": "Lead",

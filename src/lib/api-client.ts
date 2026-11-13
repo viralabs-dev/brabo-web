@@ -62,6 +62,7 @@ import type {
   PermissionsFile,
   MirrorState,
   Project,
+  EscadaDeModelos,
   ProjectBlockedStatus,
   ProjectCardSummary,
   ProjectFolders,
@@ -381,6 +382,9 @@ export const updateProject = (
     storyPromotion?: StoryPromotionMode;
     // O idioma do projeto (RN-619) — `maintainer`, pela mesma rota.
     language?: string;
+    // Teto por tarefa (RN-1142, micro-USD) e escada de modelos (RN-1143/1146): `maintainer`.
+    taskBudgetMicros?: number;
+    modelEscalation?: EscadaDeModelos;
   },
 ) => patch<Project>(`/projects/${projectId}`, input);
 

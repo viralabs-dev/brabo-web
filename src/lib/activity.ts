@@ -479,6 +479,30 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
       text: `task bloqueada: ${payloadField(payload, 'reason') ?? 'sem motivo registrado'}`,
     };
   }
+  // AT-916 (RN-1143/1145): a escada de modelos subiu, ou chegou ao fim.
+  if (type === 'agent.model_escalated') {
+    const agente = payloadField(payload, 'agentId') ?? 'o agente';
+    const teto = Number(payloadField(payload, 'tetoMicros'));
+    return {
+      kind: 'commit',
+      icon: CommitIcon,
+      color: 'var(--warning)',
+      bad: false,
+      text:
+        `${agente} subiu de ${payloadField(payload, 'de') ?? 'o modelo base'} para ${payloadField(payload, 'para') ?? 'o próximo modelo'}` +
+        ' depois de 2 bloqueios por limite de iterações' +
+        (Number.isFinite(teto) && teto > 0 ? ` (teto por tarefa US$ ${(teto / 1_000_000).toFixed(2)})` : ''),
+    };
+  }
+  if (type === 'agent.model_escalation_exhausted') {
+    return {
+      kind: 'commit',
+      icon: CommitIcon,
+      color: 'var(--danger)',
+      bad: true,
+      text: `escada esgotada: ${payloadField(payload, 'agentId') ?? 'o agente'} já está no último modelo e a tarefa continua bloqueada para você`,
+    };
+  }
   // AT-912: tarefa arquivada com motivo; sai da fila e das dependências, fica no histórico.
   if (type === 'backlog.task_archived') {
     return {

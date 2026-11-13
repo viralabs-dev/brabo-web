@@ -21,6 +21,8 @@ const unblockTask = vi.fn();
 const getOpenQuestions = vi.fn();
 const getActiveExecutionSession = vi.fn();
 const rearmDevAgent = vi.fn();
+const listWorkspaces = vi.fn();
+const updateProject = vi.fn();
 
 vi.mock('../lib/api-client', async (importOriginal) => {
   const original = await importOriginal<typeof import('../lib/api-client')>();
@@ -39,6 +41,8 @@ vi.mock('../lib/api-client', async (importOriginal) => {
     getOpenQuestions: (...a: unknown[]) => getOpenQuestions(...a),
     getActiveExecutionSession: (...a: unknown[]) => getActiveExecutionSession(...a),
     rearmDevAgent: (...a: unknown[]) => rearmDevAgent(...a),
+    listWorkspaces: (...a: unknown[]) => listWorkspaces(...a),
+    updateProject: (...a: unknown[]) => updateProject(...a),
   };
 });
 
@@ -103,6 +107,7 @@ beforeEach(() => {
   listBacklog.mockResolvedValue([]);
   getOpenQuestions.mockResolvedValue({ itens: [], total: 0 });
   getActiveExecutionSession.mockResolvedValue(null);
+  listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'maintainer' }]);
 });
 
 describe('PendenciasDeOutrasSessoes (AT-265)', () => {
@@ -617,6 +622,34 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(await within(fila).findByTestId('retorno-desbloqueio')).toHaveTextContent(
       'a tarefa não está bloqueada',
     );
+  });
+
+  it('AT-917: a tarefa bloqueada por orçamento oferece "Aumentar o teto" e grava o teto do projeto (maintainer)', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([{ id: 'tp', title: 'Tarefa P', blocked: true, blockedReason: 'teto', blockedOrigin: 'politica' }]),
+    );
+    updateProject.mockResolvedValue({});
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    fireEvent.click(await within(fila).findByRole('button', { name: 'Aumentar o teto por tarefa' }));
+    fireEvent.change(within(fila).getByLabelText('Novo teto por tarefa (US$)'), { target: { value: '2' } });
+    fireEvent.click(within(fila).getByRole('button', { name: 'Gravar o teto' }));
+    await waitFor(() => expect(updateProject).toHaveBeenCalledWith('proj-1', { taskBudgetMicros: 2_000_000 }));
+  });
+
+  it('AT-917: sem o papel maintainer o botão fica inerte e o motivo aparece em texto', async () => {
+    listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'developer' }]);
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([{ id: 'tq', title: 'Tarefa Q', blocked: true, blockedReason: 'teto', blockedOrigin: 'politica' }]),
+    );
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(await within(fila).findByRole('button', { name: 'Aumentar o teto por tarefa' })).toBeDisabled();
+    expect(within(fila).getByText('Aumentar o teto exige o papel maintainer no projeto.')).toBeInTheDocument();
   });
 
   it('AT-909: a orientação digitada vai no desbloqueio e o botão fica inerte durante o envio (um clique, uma chamada)', async () => {

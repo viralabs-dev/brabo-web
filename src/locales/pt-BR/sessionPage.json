@@ -421,7 +421,13 @@
       "diagnostico": "Diagnóstico",
       "agenteTravado": "O {{agente}} está travado: rearme antes de desbloquear.",
       "orientacao": "Orientação para o dev (opcional)",
-      "orientacaoDica": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho."
+      "orientacaoDica": "Ex.: o ponto de entrada é injetado por quem compõe; não suba o módulo sozinho.",
+      "aumentarTeto": "Aumentar o teto por tarefa",
+      "tetoCampo": "Novo teto por tarefa (US$)",
+      "gravarTeto": "Gravar o teto",
+      "tetoOk": "Teto do projeto atualizado: vale para os agentes vivos na próxima volta. Agora é só desbloquear.",
+      "tetoErro": "Não foi possível gravar o teto.",
+      "tetoSemPapel": "Aumentar o teto exige o papel maintainer no projeto."
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",

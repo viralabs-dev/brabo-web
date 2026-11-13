@@ -1,7 +1,7 @@
 import { renovarSessao, tokenAtual } from './auth';
 import { runtimeConfig } from './runtime-config';
 import { childSpan, logger, newTraceContext } from './logger';
-import type { DecisionInbox } from './api-types';
+import type { DecisionInbox, RoteadorDeFerramentas, ToolRouter } from './api-types';
 import type { LlmCredentialProvider } from './models';
 import type {
   MySpend,
@@ -391,6 +391,12 @@ export const updateProject = (
 /** A chave do merge automático (RN-1316): `owner` liga, `maintainer` desliga. */
 export const setMergeAutomatico = (projectId: string, habilitado: boolean) =>
   put<Project>(`/projects/${projectId}/auto-merge`, { habilitado });
+
+/** O roteador de ferramentas do workspace e a situação do Laya (AT-626): `owner` troca. */
+export const getWorkspaceToolRouter = (workspaceId: string) =>
+  get<ToolRouter>(`/workspaces/${workspaceId}/tool-router`);
+export const setWorkspaceToolRouter = (workspaceId: string, roteador: RoteadorDeFerramentas) =>
+  put<ToolRouter>(`/workspaces/${workspaceId}/tool-router`, { roteador });
 
 /**
  * Converte o `execution_mode` de um projeto EXISTENTE (RN-447..450, ADR

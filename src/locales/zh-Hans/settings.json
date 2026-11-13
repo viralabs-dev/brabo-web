@@ -642,5 +642,62 @@
   "taskBudget": {
     "title": "单任务上限与模型阶梯",
     "subtitle": "每个任务可花费多少，以及被阻塞时的模型阶梯。"
+  },
+  "toolRouter": {
+    "title": "工具路由器",
+    "eyebrow": "适用于所有项目",
+    "subtitle": "由谁为智能体的每一步选择工具。该选择属于工作区，适用于其下所有项目。",
+    "selectAria": "工作区工具路由器",
+    "card": {
+      "title": "由谁选择工具",
+      "hint": "适用于工作区内所有项目，切换后立即保存。"
+    },
+    "opcao": {
+      "jev": {
+        "label": "Jev",
+        "hint": "Jev（默认）：由 Jev 模型为每一步选择工具。"
+      },
+      "laya": {
+        "label": "Laya",
+        "hint": "Laya：由 GPU 上的本地模型选择工具。仅在 Laya 达标时可用。"
+      },
+      "desligado": {
+        "label": "关闭",
+        "hint": "关闭：不对任何步骤做路由，整个工具菜单交给模型。"
+      }
+    },
+    "reason": {
+      "owner": "只有工作区 owner 可以切换路由器。请联系 owner。"
+    },
+    "laya": {
+      "title": "Laya 状态"
+    },
+    "estado": {
+      "nao_configurado": "此安装没有 Laya。它只在带 NVIDIA GPU 并在安装程序中启用时存在。",
+      "sem_resposta": "Laya 服务没有响应。",
+      "sem_gpu": "Laya 服务在没有 GPU 的情况下启动。",
+      "lento": "Laya 太慢，无法做路由。",
+      "proficiente": "Laya 可用：p95 {{ms}} ms · 空闲显存 {{mib}} MiB。"
+    },
+    "motivo": {
+      "sem_gpu": "服务在没有 GPU 的情况下启动（设备：{{dispositivo}}）。",
+      "vram_insuficiente": "空闲显存 {{mib}} MiB，低于 2048 MiB 的下限。",
+      "p95_acima_do_teto": "探测 p95 {{ms}} ms，高于 500 ms 的上限。",
+      "sonda_em_andamento": "正在测量 Laya（启动探测）…",
+      "sonda_falhou": "启动探测失败；请重启服务。"
+    },
+    "nome": {
+      "nao_configurado": "未配置",
+      "sem_resposta": "无响应",
+      "sem_gpu": "无 GPU",
+      "lento": "缓慢",
+      "proficiente": "达标"
+    },
+    "desde": "自 {{quando}} 起如此。",
+    "queda": "已选择 Laya，但它不可用（{{estado}}），自 {{quando}} 起：每一步使用完整的工具目录；本轮不会失败。",
+    "toast": {
+      "saved": "工具路由器已保存",
+      "error": "无法保存"
+    }
   }
 }

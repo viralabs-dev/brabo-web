@@ -454,7 +454,11 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
 
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.title}>{t('approvalsTab.devPrs.title')}</h2>
+          <h2 className={styles.title}>{t('approvalsTab.gates.title')}</h2>
+        </div>
+      <div className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3 className={styles.title}>{t('approvalsTab.devPrs.title')}</h3>
           <span className={styles.eyebrow}>
             {t('approvalsTab.devPrs.eyebrow', { count: gateTasks.length })}
           </span>
@@ -486,10 +490,9 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
           }
         </BlocoDeDados>
       </div>
-
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
-          <h2 className={styles.title}>{t('approvalsTab.infraPrs.title')}</h2>
+          <h3 className={styles.title}>{t('approvalsTab.infraPrs.title')}</h3>
           <span className={styles.eyebrow}>
             {t('approvalsTab.infraPrs.eyebrow', { count: (infraQuery.data ?? []).length })}
           </span>
@@ -527,6 +530,7 @@ export function ProjectApprovalsTab({ projectId }: ProjectApprovalsTabProps) {
             )
           }
         </BlocoDeDados>
+      </div>
       </div>
 
     </div>

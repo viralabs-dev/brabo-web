@@ -135,18 +135,18 @@
       "approve": "Approve",
       "approvePlan": "Approve plan",
       "deny": "Deny",
-      "alwaysAllow": "Always allow",
+      "alwaysAllow": "Approve and create rule",
       "autoMode": "Auto mode"
     },
     "notes": {
-      "alwaysAllow": "Always allow: records, in the project's .brabo/permissions.json, one rule per command segment, by verb + subcommand (e.g. \"npm test\", \"git status\") — the next command with the same verb and subcommand runs without asking.",
-      "alwaysAllowTyped": "Always allow: records, in the project's .brabo/permissions.json, one rule for this action type — the next one of the same type runs without asking.",
-      "alwaysAllowScoped": "Always allow: releases this action type only for {{agent}}, not for the project's other agents.",
+      "alwaysAllow": "Approve and create rule: records, in the project's .brabo/permissions.json, one rule per command segment, by verb + subcommand (e.g. \"npm test\", \"git status\") — the next command with the same verb and subcommand runs without asking.",
+      "alwaysAllowTyped": "Approve and create rule: records, in the project's .brabo/permissions.json, one rule for this action type — the next one of the same type runs without asking.",
+      "alwaysAllowScoped": "Approve and create rule: releases this action type only for {{agent}}, not for the project's other agents.",
       "autoMode": "Auto mode: {{actor}} runs any command without asking, even outside the project folder, including git push and opening a PR. Deploy, sudo/doas, merges into a protected branch, instruction patches, parallelism and removing the container keep asking for your decision; anything in deny stays denied. Turn it off from the agent's card.",
       "autoModeTyped": "Auto mode: {{actor}}'s next actions are approved without asking, including git push and opening a PR. Deploy, merges into a protected branch, instruction patches, parallelism and removing the container keep asking for your decision; anything in deny stays denied. Turn it off from the agent's card.",
       "autoModeNotThis": "Turning on auto mode does not approve this action: it still waits for your Approve.",
       "obsolete": "The action was already decided another way; this card refreshes on its own.",
-      "alwaysAllowCurta": "Always allow records a rule in permissions.json for this action type.",
+      "alwaysAllowCurta": "Approve and create rule records a rule in permissions.json for this action type.",
       "autoModeCurta": "Auto mode: {{actor}}'s next actions are approved without asking."
     },
     "decided": {
@@ -289,15 +289,18 @@
         "algumas_other": "The policy reason for {{count}} of the {{total}} actions below could not be read: reading the log of the session that proposed them failed."
       }
     },
+    "gates": {
+      "title": "PRs at the gates"
+    },
     "devPrs": {
-      "title": "PRs in review",
+      "title": "Dev agent PRs",
       "eyebrow": "{{count}} from dev agents in QA/SecOps gates",
       "loading": "Loading PRs in review…",
       "backlogError": "Couldn't load the backlog.",
       "empty": "No dev agent PR in review yet."
     },
     "infraPrs": {
-      "title": "Infra PRs in review",
+      "title": "Infra PRs",
       "eyebrow": "{{count}} from infra in QA/SecOps gates",
       "loading": "Loading infra PRs…",
       "error": "Couldn't load infra PRs.",

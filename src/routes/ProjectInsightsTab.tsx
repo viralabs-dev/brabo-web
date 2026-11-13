@@ -143,6 +143,18 @@ export function ProjectInsightsTab({ projectId }: { projectId: string }) {
     // é de SEÇÃO que vem depois de outra, e deixava o título 29px abaixo.
     <div>
       <div className={styles.sectionHeader}>{t('projectInsightsTab.header')}</div>
+      {/* P17: o estado do Psicólogo aparece sempre, com hipótese ou sem. */}
+      {status && (
+        <div className={styles.sectionSub} data-testid="estado-do-psicologo">
+          <strong>
+            {t(pausadoConhecido ? 'projectInsightsTab.estado.pausado' : 'projectInsightsTab.estado.ativo')}
+          </strong>{' '}
+          <Badge tone="muted">
+            {t(pausadoConhecido ? 'projectInsightsTab.estado.pausadoTag' : 'projectInsightsTab.estado.ativoTag')}
+          </Badge>
+          <div>{t('projectInsightsTab.estado.descricao')}</div>
+        </div>
+      )}
       {/* Os três estados da RN-088, com o ERRO antes do vazio: `data ?? []`
           seguido de `length === 0` fazia a api respondendo 429 dizer "sem
           hipóteses ainda", que é indistinguível de um projeto que o Psicólogo
@@ -158,6 +170,7 @@ export function ProjectInsightsTab({ projectId }: { projectId: string }) {
       ) : hypothesesQuery.data === undefined ? (
         <div className={styles.sectionSub}><Shimmer>{t('projectInsightsTab.loading')}</Shimmer></div>
       ) : all.length === 0 ? (
+        <>
         <EmptyState
           titulo={t('projectInsightsTab.emptyTitle')}
           icone={pausadoConhecido ? <Pause size={18} /> : <Lightbulb size={18} />}
@@ -168,6 +181,14 @@ export function ProjectInsightsTab({ projectId }: { projectId: string }) {
               : 'projectInsightsTab.empty',
           )}
         </EmptyState>
+        {/* Texto fixo, rotulado Exemplo: nunca é uma hipótese real. */}
+        <div className={styles.sectionSub} data-testid="exemplo-de-hipotese">
+          <div className={styles.sectionHeader}>{t('projectInsightsTab.exemplo.titulo')}</div>
+          <Badge tone="muted">{t('projectInsightsTab.exemplo.rotulo')}</Badge>
+          <p>{t('projectInsightsTab.exemplo.observacao')}</p>
+          <p>{t('projectInsightsTab.exemplo.sugestao')}</p>
+        </div>
+        </>
       ) : (
         <>
           <div className={styles.sectionSub}>

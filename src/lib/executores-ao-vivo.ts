@@ -5,7 +5,7 @@ import { deriveExecutionProgress } from './execution';
 import { tarefaDaBranch } from './prontas-e-bloqueadas';
 
 /**
- * AT-880 (RN-1072/RN-1073): o estado de cada executor da execução vigente para
+ * AT-880 (RN-1303/RN-1073): o estado de cada executor da execução vigente para
  * o carrossel do chat, derivado SÓ de eventos + backlog + `module_map` + PRs.
  * Puro: o texto sai como `{ key, params }` e o componente traduz. A aba
  * Executores continua com `deriveAgentRoster` (outra fronteira).

@@ -43,7 +43,7 @@ describe('ApprovalCard — a decisão em voo e a ação que já saiu de pending 
     fireEvent.click(screen.getByRole('button', { name: 'Aprovar' }));
     expect(onApprove).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('button', { name: 'Negar' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Sempre permitir' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Aprovar e criar regra' })).toBeDisabled();
 
     await act(async () => resolver());
     expect(screen.getByRole('button', { name: 'Negar' })).toBeEnabled();
@@ -55,7 +55,7 @@ describe('ApprovalCard — a decisão em voo e a ação que já saiu de pending 
     );
     render(<ApprovalCard action={acao()} onApprove={vi.fn()} onDeny={vi.fn()} onAlwaysAllow={onAlwaysAllow} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Sempre permitir' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Aprovar e criar regra' }));
 
     const recusa = await screen.findByTestId('recusa-da-decisao');
     expect(recusa).toHaveTextContent('A ação já foi aprovada.');
@@ -86,6 +86,6 @@ describe('ApprovalCard — a decisão em voo e a ação que já saiu de pending 
       />,
     );
     expect(screen.queryByRole('button', { name: 'Aprovar' })).toBeNull();
-    expect(screen.queryByRole('button', { name: 'Sempre permitir' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Aprovar e criar regra' })).toBeNull();
   });
 });

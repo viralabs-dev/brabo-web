@@ -134,6 +134,17 @@ describe('ProjectInsightsTab — aba própria (achado #15)', () => {
     ).toBeTruthy();
   });
 
+  it('P17: mostra o estado do Psicólogo e o exemplo rotulado, que não é hipótese real', async () => {
+    getPsychologistStatus.mockResolvedValue({ enabled: false });
+    listHypotheses.mockResolvedValue([]);
+    montar();
+
+    expect(await screen.findByText('Psicólogo pausado')).toBeTruthy();
+    const exemplo = screen.getByTestId('exemplo-de-hipotese');
+    expect(exemplo.textContent).toContain('Exemplo');
+    expect(exemplo.textContent).toContain('Como uma hipótese aparece');
+  });
+
   it('conta quantas esperam decisão', async () => {
     listHypotheses.mockResolvedValue([
       hipotese(),

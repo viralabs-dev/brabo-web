@@ -774,7 +774,7 @@ export function SessionPage({
             sessionId={sessionId}
             podeDecidir={podeDecidir}
           />
-          {/* AT-880 (RN-1072): os executores da execução vigente, acima do fio (RN-816). */}
+          {/* AT-880 (RN-1303): os executores da execução vigente, acima do fio (RN-816). */}
           {sessaoCriativa && <CarrosselDeExecutores projectId={projectId} sessionId={sessionId} />}
           <ModoAutomaticoNoChat
             projectId={projectId}

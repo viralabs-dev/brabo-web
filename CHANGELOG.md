@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-895): Decisões ganha Hipóteses (P17: estado do Psicólogo, pausado ou ativo, e o bloco "Como uma hipótese aparece" rotulado Exemplo, nunca uma hipótese real), a seção "PRs nos portões" (PRs de dev agents e de infra sob um título) e o rótulo "Aprovar e criar regra" no lugar de "Sempre permitir" (o `approve_always` também aprova a ação atual; só aparece fora dos tetos). Sem RN nova. Divergência da prévia: sem o botão "Reativar o Psicólogo" (não há endpoint). i18n nos quatro idiomas. O regressivo fica para a lane do qa.
 - Feat (AT-899, RN-1300): o "Ativar execução" do Trabalho fica inerte, com o motivo e o link para Containers, enquanto o container não está `running`; a frase do 409 `execucao_sem_container` da api aparece ao lado. i18n nos quatro idiomas. O regressivo de `execucao` fica para a lane do qa. O cartão "aguardando" levar à ação pendente de outra sessão fica para a lane dona de `AgentCard`/`PendenciasDeOutrasSessoes`.
 - Feat (AT-890, RN-1280): a Visão geral abre com a faixa "Precisa de você" (item mais urgente com o `ApprovalCard` e cinco chips separados) e resume cada turno numa linha com o "Gravado neste turno" do engine (Turnos | Eventos); a `ExecutionSection` e a árvore da linha do tempo saem.
 - Feat (AT-937, RN-1270): Configurações › Modelos ganha a seção "Instruções e ferramentas dos agentes" (só leitura, `viewer`, lê `agent-catalog` ao abrir um agente, com botão para o histórico e a reversão em Avançado); os dois blocos saem do cartão de agente na Visão geral e na Executores.
@@ -40,7 +41,7 @@
 
 - Fix (AT-881, RN-1073): o carrossel diz "esperando a fundação de X" também para a tarefa ainda não pega (sem `module`), que herda os `moduleIds` da história; `Story` ganha `moduleIds`. O carrossel ganha `data-testid` (`carrossel-executores`, `carrossel-cartao-<agentId>`, `carrossel-minimizar`).
 
-- Feat (AT-880, RN-1072/RN-1073): o chat do Criativo mostra os executores da execução vigente num carrossel manual acima do fio, com devs, QA e SecOps em cartões próprios, "x de N tarefas", custo, o motivo do ócio derivado do `module_map` e um botão para minimizar (só nome, estado, tempo e gasto; a escolha fica no navegador). `ui/Carousel` ganha `anunciar` e Home/End; `Task` ganha `module`.
+- Feat (AT-880, RN-1303/RN-1073): o chat do Criativo mostra os executores da execução vigente num carrossel manual acima do fio, com devs, QA e SecOps em cartões próprios, "x de N tarefas", custo, o motivo do ócio derivado do `module_map` e um botão para minimizar (só nome, estado, tempo e gasto; a escolha fica no navegador). `ui/Carousel` ganha `anunciar` e Home/End; `Task` ganha `module`.
 
 - CI: repina o brabo-ci na release final `v1.4.0` (`5320046`), para a promoção `dev → main` de 09/11/2026.
 

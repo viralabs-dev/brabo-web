@@ -94,13 +94,13 @@ describe('ModoAutomaticoDoTime (RN-661)', () => {
     expect(nao).toHaveTextContent('deny');
   });
 
-  it('diz o que o PILOTO libera — commit e branch local, composto sem regra, e que "Sempre permitir" não o desliga (RN-670)', () => {
+  it('diz o que o PILOTO libera — commit e branch local, composto sem regra, e que "Aprovar e criar regra" não o desliga (RN-670)', () => {
     montar();
     const libera = screen.getByTestId('piloto-libera');
     expect(libera).toHaveTextContent('mesmo com caminho fora da pasta do projeto');
     expect(libera).toHaveTextContent('comando composto com segmento sem regra');
     expect(libera).toHaveTextContent('git commit e criar branch LOCAL');
-    expect(libera).toHaveTextContent('"Sempre permitir" neste agente não desliga o piloto');
+    expect(libera).toHaveTextContent('"Aprovar e criar regra" neste agente não desliga o piloto');
     // A MESMA lista, sem um segundo texto: aqui ela vem aberta.
     expect(screen.queryByTestId('piloto-detalhe')).toBeNull();
   });

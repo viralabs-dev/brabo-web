@@ -141,18 +141,18 @@
       "approve": "Aprovar",
       "approvePlan": "Aprovar plano",
       "deny": "Negar",
-      "alwaysAllow": "Sempre permitir",
+      "alwaysAllow": "Aprovar e criar regra",
       "autoMode": "Modo automático"
     },
     "notes": {
-      "alwaysAllow": "Sempre permitir: grava em .brabo/permissions.json do projeto uma regra por segmento do comando, por verbo + subcomando (ex.: \"npm test\", \"git status\") — o próximo comando com o mesmo verbo e subcomando roda sem perguntar.",
-      "alwaysAllowTyped": "Sempre permitir: grava em .brabo/permissions.json do projeto uma regra para este tipo de ação — a próxima do mesmo tipo roda sem perguntar.",
-      "alwaysAllowScoped": "Sempre permitir: libera este tipo de ação só para {{agent}}, não para os outros agentes do projeto.",
+      "alwaysAllow": "Aprovar e criar regra: grava em .brabo/permissions.json do projeto uma regra por segmento do comando, por verbo + subcomando (ex.: \"npm test\", \"git status\") — o próximo comando com o mesmo verbo e subcomando roda sem perguntar.",
+      "alwaysAllowTyped": "Aprovar e criar regra: grava em .brabo/permissions.json do projeto uma regra para este tipo de ação — a próxima do mesmo tipo roda sem perguntar.",
+      "alwaysAllowScoped": "Aprovar e criar regra: libera este tipo de ação só para {{agent}}, não para os outros agentes do projeto.",
       "autoMode": "Modo automático: {{actor}} roda qualquer comando sem perguntar, inclusive fora da pasta do projeto, e isso inclui git push e abertura de PR. Continuam pedindo sua decisão deploy, sudo/doas, merge em branch protegida, patch de instrução, paralelismo e remover container; o que estiver em deny segue negado. Desliga no card do agente.",
       "autoModeTyped": "Modo automático: {{actor}} passa a ter as próximas ações aprovadas sem perguntar, inclusive git push e abertura de PR. Continuam pedindo sua decisão deploy, merge em branch protegida, patch de instrução, paralelismo e remover container; o que estiver em deny segue negado. Desliga no card do agente.",
       "autoModeNotThis": "Ligar o modo automático não aprova esta ação: ela continua esperando o seu Aprovar.",
       "obsolete": "A ação já foi decidida por outro caminho; este card se atualiza sozinho.",
-      "alwaysAllowCurta": "Sempre permitir grava uma regra em permissions.json para este tipo de ação.",
+      "alwaysAllowCurta": "Aprovar e criar regra grava uma regra em permissions.json para este tipo de ação.",
       "autoModeCurta": "Modo automático: {{actor}} passa a ter as próximas ações aprovadas sem pedir."
     },
     "decided": {
@@ -307,15 +307,18 @@
         "algumas_other": "Não foi possível ler o motivo da política de {{count}} das {{total}} ações abaixo: a leitura do log da sessão que as propôs falhou."
       }
     },
+    "gates": {
+      "title": "PRs nos portões"
+    },
     "devPrs": {
-      "title": "PRs em revisão",
+      "title": "PRs de dev agents",
       "eyebrow": "{{count}} de dev agents nos gates de QA/SecOps",
       "loading": "Carregando as PRs em revisão…",
       "backlogError": "Não foi possível carregar o backlog.",
       "empty": "Nenhuma PR de dev agent em revisão ainda."
     },
     "infraPrs": {
-      "title": "PRs de infra em revisão",
+      "title": "PRs de infra",
       "eyebrow": "{{count}} de infra nos gates de QA/SecOps",
       "loading": "Carregando as PRs de infra…",
       "error": "Não foi possível carregar as PRs de infra.",

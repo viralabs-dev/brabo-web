@@ -1,0 +1,66 @@
+/* Cabeçalho da v9 (P18): título e uma linha de subtítulo, sem ícone nem rótulo mono. */
+.cabecalho {
+  margin-bottom: 12px;
+}
+
+.titulo {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.subtitulo {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.moldura {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.caminho {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-family: var(--font-mono);
+  font-size: var(--fs-body);
+}
+
+.nao {
+  color: var(--text-muted);
+}
+
+.chip {
+  padding: 2px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.papel {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-right: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-weight: 600;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.linhaDaArea {
+  display: flex;
+  align-items: center;
+}

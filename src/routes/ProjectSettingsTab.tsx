@@ -27,6 +27,7 @@ import { RepositorySection } from './settings/RepositorySection';
 import { ExecutionSection } from './settings/ExecutionSection';
 import { ExecutionModeSection } from './settings/ExecutionModeSection';
 import { ParallelismSection } from './settings/ParallelismSection';
+import { TetoPorTarefaSection } from './settings/TetoPorTarefaSection';
 import { MergeAutomaticoSection } from './settings/MergeAutomaticoSection';
 import { BudgetSection } from './settings/BudgetSection';
 import { PromotionSection } from './settings/PromotionSection';
@@ -85,6 +86,7 @@ export function ProjectSettingsTab({ projectId }: ProjectSettingsTabProps) {
         <ExecutionSection {...p} />
         <ExecutionModeSection {...p} />
         <ParallelismSection {...p} />
+        <TetoPorTarefaSection {...p} />
         <MergeAutomaticoSection {...p} />
         <BudgetSection {...p} />
         <PromotionSection {...p} />

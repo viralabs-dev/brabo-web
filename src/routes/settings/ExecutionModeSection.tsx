@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { Server } from 'lucide-react';
 import { Save } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -17,7 +16,9 @@ import { conversaoSemBroker } from '../containers-subida';
 import type { CicloDeVidaDoContainer, ExecutionMode, Project } from '../../lib/api-types';
 import { Ajuda } from '../../components/ui/Ajuda';
 import { Perigo } from '../../components/ui/Perigo';
-import { Select } from '../../components/ui/Select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
+import { CabecalhoDaSecao } from './CabecalhoDaSecao';
+import cab from './CabecalhoDaSecao.module.css';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { FolderIcon } from '../../components/ui/icons';
@@ -368,38 +369,37 @@ export function ExecutionModeSection({ projectId }: { projectId: string }) {
 
   return (
     <SecaoDeConfiguracoes chave="execution-mode">
-      <div className={styles.sectionHead}>
-        <h2 className={styles.title}><Server aria-hidden="true" className={styles.tituloIcone} />{t('executionMode.title')}</h2>
-        <Ajuda assunto={t('executionMode.title')}>
-          {t('executionMode.subtitle')}
-          {descricaoDoModo ? ` ${t(descricaoDoModo)}` : null}
-        </Ajuda>
-        <span className={styles.eyebrow}>{t('executionMode.eyebrow')}</span>
-      </div>
+      <CabecalhoDaSecao titulo={t('executionMode.title')} subtitulo={t('executionMode.subtitle')} />
       {!podeEditar && (
-        <div className={styles.subtitle}>{t('executionMode.needsMaintainer')}</div>
+        <div className={cab.subtitulo}>{t('executionMode.needsMaintainer')}</div>
       )}
 
       <Item variant="outline" className={styles.ajusteCard} style={{ marginTop: 12 }}>
         <div className={styles.ajusteInfo}>
           <div className={styles.ajusteTitulo}>{t('executionMode.card.title')}</div>
+          {descricaoDoModo && <div className={styles.ajusteHint}>{t(descricaoDoModo)}</div>}
         </div>
         <div className={styles.ajusteControle}>
-          <Select
-            value={modo}
+          {/* v9: controle segmentado; o outro lado só ARMA a conversão (rascunho), que o
+              "Converter" abaixo confirma — a mesma confirmação de antes (RN-612). */}
+          <ToggleGroup
+            variant="chip"
+            size="chip"
+            value={[modo]}
             disabled={!podeEditar || saving}
             aria-label={t('executionMode.selectAria')}
-            onChange={(e) => {
-              setModoDraft(e.target.value as ExecutionMode);
+            onValueChange={(v) => {
+              if (v.length === 0) return;
+              setModoDraft(v[0] as ExecutionMode);
               setCaminhoDraft(null);
             }}
           >
             {MODOS_DE_EXECUCAO.map((m) => (
-              <option key={m.id} value={m.id}>
+              <ToggleGroupItem key={m.id} value={m.id}>
                 {t(m.labelKey)}
-              </option>
+              </ToggleGroupItem>
             ))}
-          </Select>
+          </ToggleGroup>
           {/* O aviso da conversão (RN-560/AT-144) mora no botão de perigo
               (ADR 0243): mesmas condições, mesmo conteúdo, só o lugar mudou. */}
           {mostrarAviso && (

@@ -173,7 +173,6 @@
   },
   "repository": {
     "title": "仓库",
-    "eyebrow": "git · provider 与策略",
     "adopted": "已接管——仓库在项目之前就已存在，分支策略由它自己决定。",
     "created": "由 Brabo 创建，并已应用 Gitflow 初始化。",
     "dismissed": {
@@ -181,12 +180,15 @@
       "strong": "跳过",
       "after": "：我们没有修改任何分支或保护规则。"
     },
-    "divergesTitle": "此仓库与模板存在差异："
+    "divergesTitle": "此仓库与模板存在差异：",
+    "none": {
+      "title": "尚未创建",
+      "subtitle": "此项目还没有仓库。"
+    }
   },
   "execution": {
     "title": "执行",
-    "eyebrow": "dev agent 自动停止",
-    "subtitle": "dev agent 的自动停止——从下一次激活执行起生效，不影响已在运行的智能体。",
+    "subtitle": "dev agent 何时自行停止。",
     "card": {
       "title": "连续阻塞多少个任务后停止",
       "hintDefault": "使用默认值（{{default}}）",
@@ -201,7 +203,8 @@
     "teto": {
       "title": "每个任务的支出上限（US$）",
       "hintDefault": "使用默认值（US$ {{default}}）",
-      "vale": "对已在运行的代理同样生效，从每个任务的下一轮开始。"
+      "vale": "对已在运行的代理同样生效，从每个任务的下一轮开始。",
+      "saved": "单任务上限已保存"
     },
     "semPapel": "编辑需要项目中的 maintainer 角色。",
     "escada": {
@@ -216,8 +219,7 @@
   },
   "executionMode": {
     "title": "代码存放位置",
-    "eyebrow": "转换执行模式",
-    "subtitle": "更改本项目命令的执行位置——托管目录、通过 bind-mount 挂载的你自己的目录，或通过 runner 连接的你自己的目录。",
+    "subtitle": "转换会改变智能体的运行位置。",
     "needsMaintainer": "只有 maintainer 或 owner 可以转换。",
     "warning": {
       "refuses": "如果当前有 dev agent 正在工作或卡住，转换会被拒绝——请等待其完成（或解除卡住的任务）后再试。",
@@ -263,19 +265,14 @@
   },
   "parallelism": {
     "title": "按领域的并行度",
-    "eyebrow": "无需询问可运行多少智能体",
-    "subtitle": {
-      "before": "每个领域的 lead ",
-      "strong": "在会话中",
-      "after": "无需你授权即可拥有的智能体数量。超过上限时它不会启动任何智能体：请求会变成审批中的一项操作，附带原因，等待你处理。上限针对整个会话而非每个模块——按模块计数会让大量智能体在未经授权的情况下启动。"
-    },
+    "subtitle": "无需询问即可同时工作的智能体数量。",
     "empty": {
       "before": "暂无领域。它们在你激活执行时产生，因为 dev 领域的成员来自 Arquiteto 的 ",
       "code": "module_map",
       "after": "。"
     },
     "card": {
-      "title": "领域 {{area}}",
+      "title": "{{area}}",
       "lead": "Lead：{{lead}}",
       "membersCount_other": " — {{count}} 名成员",
       "noMembersYet": " — 暂无成员",
@@ -641,5 +638,9 @@
       "off": "自动合并已关闭",
       "error": "无法保存"
     }
+  },
+  "taskBudget": {
+    "title": "单任务上限与模型阶梯",
+    "subtitle": "每个任务可花费多少，以及被阻塞时的模型阶梯。"
   }
 }

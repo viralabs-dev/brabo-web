@@ -1,26 +1,19 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Wallet } from 'lucide-react';
 import { Ajuda } from '@/components/ui/Ajuda';
-import { Save } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { listAgentAreas, setAreaBudget } from '../../lib/api-client';
 import type { AgentArea } from '../../lib/api-types';
 import { microsParaUsd } from '../../lib/currency';
 import { Input } from '../../components/ui/Input';
-import { Button } from '../../components/ui/Button';
 import { formatarCustoMicros } from './shared';
 import styles from '../ProjectSettingsTab.module.css';
 import { MarcaDeHeranca } from './heranca';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
-import { MarcaDeNaoSalvo } from './secao-salvavel';
 import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
 import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
-import { TetoDoMes } from '../../components/TetoDoMes';
-import { getProjectBudget, setProjectBudget } from '../../lib/api-client';
-import { useCurrentWorkspaceWithRole } from '../../lib/hooks';
-import { roleAtLeast } from '../../lib/roles';
 
 /**
  * O teto de GASTO de cada área, opcional (ADR 0110, RN-443).
@@ -75,7 +68,6 @@ export function BudgetSection({ projectId }: { projectId: string }) {
   });
 
   usePublicarNoCabecalho('budget', t('budget.title'), secao);
-  const papel = useCurrentWorkspaceWithRole();
 
   return (
     <SecaoDeConfiguracoes chave="budget">
@@ -86,19 +78,6 @@ export function BudgetSection({ projectId }: { projectId: string }) {
         {t('budget.subtitle.after')}</Ajuda>
         <span className={styles.eyebrow}>{t('budget.eyebrow')}</span>
       </div>
-
-      <LinhaDeConfiguracao
-        rotulo={t('budget.mes.rotulo')}
-        descricao={t('budget.mes.descricao')}
-      >
-        <TetoDoMes
-          escopo="projeto"
-          queryKey={['budget', projectId]}
-          ler={() => getProjectBudget(projectId)}
-          gravar={(input) => setProjectBudget(projectId, input)}
-          podeEditar={!!papel.data && roleAtLeast(papel.data.role, 'maintainer')}
-        />
-      </LinhaDeConfiguracao>
 
       {!areas || areas.length === 0 ? (
         <div className={styles.subtitle}>
@@ -134,17 +113,6 @@ export function BudgetSection({ projectId }: { projectId: string }) {
               />
             </LinhaDeConfiguracao>
           ))}
-
-          <div className={styles.acoesDaSecao}>
-            <Button
-              onClick={() => void secao.salvarSecao()}
-              disabled={!secao.podeSalvar}
-            >
-              <Save aria-hidden="true" />
-              {secao.salvando ? t('budget.saving') : t('budget.save')}
-            </Button>
-            <MarcaDeNaoSalvo sujas={secao.sujas} invalidas={secao.invalidas} />
-          </div>
         </>
       )}
     </SecaoDeConfiguracoes>

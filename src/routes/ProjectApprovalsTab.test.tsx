@@ -184,7 +184,7 @@ describe('ProjectApprovalsTab — a fila é a do PROJETO, não a da sessão mais
     ]);
     montar();
 
-    fireEvent.click(await screen.findByRole('button', { name: /^Aprovar/ }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Aprovar' }));
 
     await waitFor(() => expect(approveAction).toHaveBeenCalledWith('proj-1', 'exec', 'do-dev'));
     // Nada da fila vem da listagem por sessão.

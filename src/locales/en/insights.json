@@ -27,7 +27,20 @@
       "psychologistPausedFallback": "The Psychologist is globally disabled.",
       "reanalyzeError": "Could not queue the reanalysis"
     },
-    "emptyTitle": "No hypotheses"
+    "emptyTitle": "No hypotheses",
+    "estado": {
+      "pausado": "Psychologist paused",
+      "ativo": "Psychologist active",
+      "pausadoTag": "paused",
+      "ativoTag": "active",
+      "descricao": "When active, it proposes hypotheses about the team anchored in real events, and each one waits for you to accept or dismiss."
+    },
+    "exemplo": {
+      "titulo": "How a hypothesis shows up",
+      "rotulo": "Example",
+      "observacao": "\"The PO declares open questions the Creative had already answered in the brief.\"",
+      "sugestao": "Suggestion: include the full brief in the PO's context. Accepting creates a versioned instruction patch, which is a ceiling: only you apply it."
+    }
   },
   "hypothesisCard": {
     "status": {

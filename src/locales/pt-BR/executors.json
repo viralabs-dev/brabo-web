@@ -128,7 +128,7 @@
       "compound": "comando composto com segmento sem regra no permissions.json",
       "commitBranch": "git commit e criar branch LOCAL",
       "pushPr": "git push e abertura de PR",
-      "alwaysAllow": "clicar \"Sempre permitir\" neste agente não desliga o piloto"
+      "alwaysAllow": "clicar \"Aprovar e criar regra\" neste agente não desliga o piloto"
     },
     "notReleased": {
       "title": "O modo automático NÃO libera — estes continuam pedindo sua aprovação:",

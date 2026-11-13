@@ -24,7 +24,7 @@ function tiposDoBackend(): string[] {
   return [...bloco.matchAll(/'([a-z_]+)'/g)].map((m) => m[1]);
 }
 
-describe('"Sempre permitir" — tipos do teto (AT-320)', () => {
+describe('"Aprovar e criar regra" — tipos do teto (AT-320)', () => {
   it('a cópia do web é IGUAL à lista da api', () => {
     const doBackend = tiposDoBackend();
     expect(doBackend.length).toBeGreaterThan(3);

@@ -108,7 +108,7 @@ describe('ApprovalCard — plano do Dev Lead enxuto, com o piloto no próprio ca
     fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
     expect(screen.getByTestId('nota-sempre-permitir')).toHaveTextContent('permissions.json');
     expect(screen.getByTestId('piloto-libera')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Sempre permitir' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Aprovar e criar regra' })).toBeInTheDocument();
   });
 
   it('o checkbox do piloto nasce marcado e nada grava ao montar', () => {

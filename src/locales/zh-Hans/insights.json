@@ -24,7 +24,20 @@
       "psychologistPausedFallback": "Psicólogo 已全局停用。",
       "reanalyzeError": "无法将重新分析加入队列"
     },
-    "emptyTitle": "暂无假设"
+    "emptyTitle": "暂无假设",
+    "estado": {
+      "pausado": "心理学家已暂停",
+      "ativo": "心理学家已启用",
+      "pausadoTag": "已暂停",
+      "ativoTag": "已启用",
+      "descricao": "启用后，它会基于真实事件提出关于团队的假设，每一条都等待你接受或拒绝。"
+    },
+    "exemplo": {
+      "titulo": "假设的呈现方式",
+      "rotulo": "示例",
+      "observacao": "“PO 提出了创意已在简报中回答过的开放问题。”",
+      "sugestao": "建议：把完整简报放进 PO 的上下文。接受会生成带版本的指令补丁，这是上限：只有你能应用。"
+    }
   },
   "hypothesisCard": {
     "status": {

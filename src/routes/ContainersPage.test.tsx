@@ -490,7 +490,7 @@ describe('ContainersPage', () => {
     montar();
 
     expect(screen.getByRole('button', { name: 'Aprovar' })).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Sempre permitir' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Aprovar e criar regra' })).not.toBeInTheDocument();
   });
 
   // --- RN-521: o terceiro estado e a subida ramificada por modo ---

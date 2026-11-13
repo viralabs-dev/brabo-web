@@ -30,7 +30,20 @@
       "psychologistPausedFallback": "O Psicólogo está desativado globalmente.",
       "reanalyzeError": "Não foi possível enfileirar a reanálise"
     },
-    "emptyTitle": "Sem hipóteses"
+    "emptyTitle": "Sem hipóteses",
+    "estado": {
+      "pausado": "Psicólogo pausado",
+      "ativo": "Psicólogo ativo",
+      "pausadoTag": "pausado",
+      "ativoTag": "ativo",
+      "descricao": "Quando ativo, ele propõe hipóteses sobre o time ancoradas em eventos reais, e cada uma espera você aceitar ou recusar."
+    },
+    "exemplo": {
+      "titulo": "Como uma hipótese aparece",
+      "rotulo": "Exemplo",
+      "observacao": "\"O PO declara perguntas abertas que o Criativo já tinha respondido no brief.\"",
+      "sugestao": "Sugestão: incluir o brief completo no contexto do PO. Aceitar gera um patch de instrução versionado, que é um teto: só você aplica."
+    }
   },
   "hypothesisCard": {
     "status": {

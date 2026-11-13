@@ -271,6 +271,9 @@
         "algumas_other": "无法读取下方 {{total}} 个操作中 {{count}} 个的策略原因：读取提议它们的会话日志失败。"
       }
     },
+    "gates": {
+      "title": "关卡中的 PR"
+    },
     "devPrs": {
       "title": "审查中的 PR",
       "eyebrow": "{{count}} 个来自 dev agent，处于 QA/SecOps gate",

@@ -17,7 +17,7 @@
   border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-1);
 }
 .frase { font-weight: 600; color: var(--text-primary); }
-.chip { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-secondary); border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; }
+.chip { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 1px 8px; }
 .acoes { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
 .secao { display: flex; flex-direction: column; gap: 10px; }
 .secaoTitulo { display: flex; justify-content: space-between; align-items: baseline; margin: 0; font-family: var(--font-heading); font-size: 15px; color: var(--text-primary); }

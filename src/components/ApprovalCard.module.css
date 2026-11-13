@@ -535,7 +535,7 @@
 .chipDoTipo {
   padding: 1px 8px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-secondary);

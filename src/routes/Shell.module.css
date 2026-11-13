@@ -573,7 +573,7 @@
 .chipAmbiente {
   padding: 2px 8px;
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--r-pill);
   font-family: var(--font-mono);
   font-size: var(--fs-label);
   color: var(--text-secondary);

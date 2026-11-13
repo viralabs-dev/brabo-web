@@ -290,15 +290,24 @@ describe('Dashboard — layout estreito (AT-330)', () => {
     const barra = busca.parentElement as HTMLElement;
     expect(barra).toHaveAttribute('data-layout', 'movel');
     expect(screen.getByPlaceholderText('Buscar projetos…')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Novo projeto/ })).toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: /Novo projeto/ }).length).toBeGreaterThan(0);
   });
 
-  it('AT-682: "Novo projeto" é só ícone, com nome e legenda no foco', async () => {
+  it('AT-682/AT-941: no desktop "Novo projeto" tem rótulo; o título é Início', () => {
     useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
     renderDashboard();
-    const b = screen.getByRole('button', { name: 'Novo projeto' });
-    expect(b.textContent).toBe('');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Início');
+    const b = screen.getAllByRole('button', { name: 'Novo projeto' })[0];
+    expect(b.textContent).toBe('Novo projeto');
     expect(b.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('AT-682: no móvel "Novo projeto" é só ícone, com nome e legenda no foco', async () => {
+    largura = simularLayoutMovel(true);
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    renderDashboard();
+    const b = screen.getAllByRole('button', { name: 'Novo projeto' })[0];
+    expect(b.textContent).toBe('');
     act(() => b.focus());
     expect(await screen.findByText('Novo projeto', { selector: '[data-slot="tooltip-content"]' })).toBeTruthy();
   });
@@ -334,5 +343,60 @@ describe('Dashboard — cartões do Início (AT-896, RN-467)', () => {
     renderDashboard();
     expect(screen.getByTestId('cartoes-do-inicio').textContent).toContain('indisponível');
     expect(screen.getByText('Core API')).toBeTruthy();
+  });
+});
+
+const evento = (id: string, minAtras: number) =>
+  ({
+    id,
+    sessionId: 'sess-1',
+    seq: 1,
+    type: 'git.push',
+    actor: { kind: 'agent', id: 'arquiteto' },
+    payload: { branch: `b-${id}` },
+    createdAt: new Date(Date.now() - minAtras * 60_000).toISOString(),
+  }) as ProjectCardSummary['lastEvent'];
+
+describe('Dashboard — Novo projeto e Atividade recente (AT-941)', () => {
+  it('a grade termina no cartão "Novo projeto", que abre o assistente', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    renderDashboard();
+    fireEvent.click(screen.getByText('Comece de um brief ou adote um repositório existente.'));
+    expect(screen.getByTestId('wizard-stub')).toBeInTheDocument();
+  });
+
+  it('o cartão não aparece no primeiro uso nem com busca ativa', () => {
+    useProjectsMock.mockReturnValue({ data: [], isLoading: false });
+    const { unmount } = renderDashboard();
+    expect(screen.queryByText(/Comece de um brief/)).toBeNull();
+    unmount();
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    renderDashboard();
+    fireEvent.change(screen.getByPlaceholderText('Buscar projetos…'), { target: { value: 'core' } });
+    expect(screen.queryByText(/Comece de um brief/)).toBeNull();
+  });
+
+  it('lista o último evento por projeto, do mais recente, no máximo 5', () => {
+    const projetos = Array.from({ length: 7 }, (_, i) => ({ ...PROJECT, id: `p${i}`, name: `Proj ${i}` }));
+    useProjectsMock.mockReturnValue({ data: projetos, isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({
+      data: projetos.map((p, i) => cardDoProjeto({ projectId: p.id, lastEvent: evento(`e${i}`, 10 - i) })),
+      isLoading: false,
+    });
+    renderDashboard();
+    const linhas = screen.getByTestId('atividade-recente').querySelectorAll('li');
+    expect(linhas).toHaveLength(5);
+    expect(linhas[0].textContent).toContain('Proj 6');
+    expect(linhas[4].textContent).toContain('Proj 2');
+  });
+
+  it('sem eventos a seção não aparece; resumo com erro diz "indisponível"', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    const { unmount } = renderDashboard();
+    expect(screen.queryByTestId('atividade-recente')).toBeNull();
+    unmount();
+    useProjectsSummaryMock.mockReturnValue({ data: undefined, isLoading: false, isError: true });
+    renderDashboard();
+    expect(screen.getByTestId('atividade-recente')).toHaveTextContent('Não foi possível ler a atividade recente.');
   });
 });

@@ -627,5 +627,32 @@
     "eyebrow": "read only",
     "subtitle": "What each agent receives in this project. To see the version history or revert an instruction, open Advanced.",
     "history": "Instruction history and revert"
+  },
+  "autoMerge": {
+    "title": "Automatic merge",
+    "eyebrow": "who lands on main",
+    "subtitle": "Off by default. When on, a PR of this project with every gate green and no conflict merges by itself into the project's working branch (its main).",
+    "card": {
+      "title": "Merge by itself",
+      "hintOff": "Off: every PR waits for your Merge click.",
+      "hintOn": "On: a PR with every gate green and no conflict merges by itself, without you seeing the code first."
+    },
+    "switchAria": "Automatic merge of the project's PRs",
+    "reason": {
+      "ligar": "Only the workspace owner turns automatic merge on. Ask an owner.",
+      "desligar": "Only a maintainer or the workspace owner turns automatic merge off."
+    },
+    "confirm": {
+      "title": "Turn automatic merge on?",
+      "body": "With the switch on, a PR with every gate green and no conflict merges by itself into the project's main, without you seeing the code first. The gates become the only barrier. The \"PR ready\" notice stops appearing for those PRs. You can turn it off at any time; what already merged does not come back.",
+      "manual": "Still manual: merging into main of Brabo's own repositories, and dev, qa and rc of an older project.",
+      "cancel": "Cancel",
+      "ok": "Turn automatic merge on"
+    },
+    "toast": {
+      "on": "Automatic merge on",
+      "off": "Automatic merge off",
+      "error": "Could not save"
+    }
   }
 }

@@ -388,6 +388,10 @@ export const updateProject = (
   },
 ) => patch<Project>(`/projects/${projectId}`, input);
 
+/** A chave do merge automático (RN-1316): `owner` liga, `maintainer` desliga. */
+export const setMergeAutomatico = (projectId: string, habilitado: boolean) =>
+  put<Project>(`/projects/${projectId}/auto-merge`, { habilitado });
+
 /**
  * Converte o `execution_mode` de um projeto EXISTENTE (RN-447..450, ADR
  * 0111) — rota DEDICADA, separada de `updateProject`: a api orquestra a

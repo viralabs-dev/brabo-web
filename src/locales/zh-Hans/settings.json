@@ -614,5 +614,32 @@
     "eyebrow": "只读",
     "subtitle": "每个智能体在此项目中获得的内容。查看版本历史或回退指令，请打开“高级”。",
     "history": "指令历史与回退"
+  },
+  "autoMerge": {
+    "title": "自动合并",
+    "eyebrow": "谁进入 main",
+    "subtitle": "默认关闭。开启后，本项目中所有关卡均为绿色且无冲突的 PR 会自动合并到项目的工作分支（即它的 main）。",
+    "card": {
+      "title": "自动合并",
+      "hintOff": "关闭：每个 PR 都等待你点击 Merge。",
+      "hintOn": "开启：所有关卡为绿色且无冲突的 PR 会自动合并，你无需事先查看代码。"
+    },
+    "switchAria": "项目 PR 的自动合并",
+    "reason": {
+      "ligar": "只有工作区 owner 可以开启自动合并。请联系 owner。",
+      "desligar": "只有 maintainer 或工作区 owner 可以关闭自动合并。"
+    },
+    "confirm": {
+      "title": "开启自动合并？",
+      "body": "开启后，所有关卡为绿色且无冲突的 PR 会自动合并到项目的 main，你无需事先查看代码。关卡成为唯一的屏障。这些 PR 不再显示“PR 已就绪”提示。你可以随时关闭；已合并的内容不会撤回。",
+      "manual": "仍为手动：合并到 Brabo 自身仓库的 main，以及旧项目的 dev、qa 和 rc。",
+      "cancel": "取消",
+      "ok": "开启自动合并"
+    },
+    "toast": {
+      "on": "自动合并已开启",
+      "off": "自动合并已关闭",
+      "error": "无法保存"
+    }
   }
 }

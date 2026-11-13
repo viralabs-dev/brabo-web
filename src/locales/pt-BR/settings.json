@@ -640,5 +640,32 @@
     "eyebrow": "somente leitura",
     "subtitle": "O que cada agente recebe neste projeto. Para ver o histórico de versões ou reverter uma instrução, abra o Avançado.",
     "history": "Histórico e reversão de instruções"
+  },
+  "autoMerge": {
+    "title": "Merge automático",
+    "eyebrow": "quem entra na main",
+    "subtitle": "Desligado por padrão. Ligado, uma PR deste projeto com todos os gates verdes e sem conflito entra sozinha na branch de trabalho do projeto (a main dele).",
+    "card": {
+      "title": "Entrar sozinha",
+      "hintOff": "Desligado: toda PR espera o seu clique em Merge.",
+      "hintOn": "Ligado: a PR com todos os gates verdes e sem conflito entra sozinha, sem você ver o código antes."
+    },
+    "switchAria": "Merge automático das PRs do projeto",
+    "reason": {
+      "ligar": "Só o owner do workspace liga o merge automático. Peça a um owner.",
+      "desligar": "Só um maintainer ou o owner do workspace desliga o merge automático."
+    },
+    "confirm": {
+      "title": "Ligar o merge automático?",
+      "body": "Com a chave ligada, uma PR com todos os gates verdes e sem conflito entra sozinha na main do projeto, sem você ver o código antes. Os gates passam a ser a única barreira. O aviso de PR pronta deixa de aparecer para essas PRs. Você pode desligar a qualquer momento; o que já entrou não volta.",
+      "manual": "Continua manual: o merge na main dos repositórios do próprio Brabo, e a dev, qa e rc de projeto antigo.",
+      "cancel": "Cancelar",
+      "ok": "Ligar o merge automático"
+    },
+    "toast": {
+      "on": "Merge automático ligado",
+      "off": "Merge automático desligado",
+      "error": "Não foi possível salvar"
+    }
   }
 }

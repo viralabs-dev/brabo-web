@@ -112,6 +112,8 @@ export interface Project {
   // de projeto novo; os projetos que existiam antes da fase ficaram em `auto`,
   // que é o comportamento anterior.
   storyPromotion: StoryPromotionMode;
+  // Merge automático (RN-1316, ADR 0292): desligado por padrão; só a rota PUT /auto-merge o muda.
+  mergeAutomatico?: boolean;
   // ONDE o comando executa (RN-169/RN-421 — ADR 0072/0104). `container`: a
   // pasta gerenciada pelo produto, que é o default e o comportamento de
   // sempre. `mounted`: a pasta do usuário em `workspacePath`, montada por

@@ -517,6 +517,8 @@
   "avisoDePrPronta": {
     "uma": "PR #{{numero}}“{{titulo}}”已就绪，可以合并：检查已通过。",
     "varias_other": "有 {{count}} 个 PR 已就绪，可以合并。",
+    "destrava_other": "可解锁 {{count}} 个任务。",
+    "destravaA_other": "PR #{{numero}} 可解锁 {{count}} 个任务。",
     "espera": "就绪于{{quando}}。",
     "ver": "查看该 PR",
     "verAs_other": "查看全部 {{count}} 个",

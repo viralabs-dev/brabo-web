@@ -34,6 +34,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 vi.mock('../lib/hooks', () => ({
+  useArchitecture: () => ({ data: undefined }),
   useSessionEvents: () => ({ data: { items: [] } }),
   useSessionEventHistory: () => historicoFalso([]),
   useSessionEvent: () => ({ data: undefined, isError: false }),

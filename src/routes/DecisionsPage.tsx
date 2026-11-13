@@ -18,17 +18,17 @@ export function DecisionsPage() {
     <div className={styles.pagina}>
       <CabecalhoDePagina
         titulo={t('titulo')}
-        descricao={t('subtitulo')}
         acoes={
           <div className={styles.seletor} role="group" aria-label={t('seletor')}>
             {(['pending', 'decided'] as const).map((m) => (
-              <Button key={m} size="sm" variant={modo === m ? 'primary' : 'secondary'} aria-pressed={modo === m} onClick={() => setModo(m)}>
+              <Button key={m} size="sm" variant={modo === m ? 'secondary' : 'ghost'} aria-pressed={modo === m} onClick={() => setModo(m)}>
                 {t(`modo.${m}`)}
               </Button>
             ))}
           </div>
         }
       />
+      <p className={styles.intro}>{t('subtitulo')}</p>
       {inbox.isError && <p role="alert">{t('erro')}</p>}
       {!inbox.data && !inbox.isError && <Shimmer>{t('carregando')}</Shimmer>}
       {inbox.data && workspace && <CaixaDeDecisoes workspaceId={workspace.id} inbox={inbox.data} modo={modo} />}

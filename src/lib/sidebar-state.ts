@@ -1,7 +1,7 @@
 /**
  * Persistência da sidebar (PROGRAMA 28, Onda 2 — RN-195..201).
  *
- * As SEIS chaves do `localStorage` do shell de navegação, no formato exato do
+ * As chaves do `localStorage` do shell de navegação, no formato exato do
  * handoff (`design_handoff_brabo/README.md`, seção "Navigation shell", e
  * `CHECKLIST-CONFRONTO.md`, seção 1). Centralizadas aqui em vez de espalhadas
  * pelo componente — o mesmo motivo de `read-state.ts` e `tema.ts` existirem:
@@ -9,13 +9,12 @@
  *
  * `brabo:last-seen-seq:*` (`read-state.ts`) é OUTRO domínio — não confundir:
  * aquelas chaves marcam até onde o usuário já VIU o event log; estas marcam a
- * FORMA da sidebar (colapsada, quem está aberto, qual projeto/aba é a
- * corrente). Nenhuma lança: preferência de UI não deve derrubar a tela por
+ * FORMA da sidebar (colapsada, qual projeto/aba é a corrente). A
+ * `brabo.sidebar.open` (projetos expandidos, RN-196) deixou de ser lida (AT-939) e fica no navegador, sem apagar. Nenhuma lança: preferência de UI não deve derrubar a tela por
  * causa de um `localStorage` bloqueado (modo privado, storage de iframe).
  */
 
 export const CHAVE_COLAPSADO = 'brabo.sidebar.collapsed';
-export const CHAVE_PROJETOS_ABERTOS = 'brabo.sidebar.open';
 export const CHAVE_PROJETO_ATIVO = 'brabo.project';
 export const CHAVE_ABA_ATIVA = 'brabo.tab';
 
@@ -36,24 +35,6 @@ function gravarString(chave: string, valor: string): void {
   }
 }
 
-function lerConjunto(chave: string): Set<string> {
-  const bruto = lerString(chave);
-  if (!bruto) return new Set();
-  try {
-    const valor: unknown = JSON.parse(bruto);
-    if (!Array.isArray(valor)) return new Set();
-    return new Set(valor.filter((v): v is string => typeof v === 'string'));
-  } catch {
-    // JSON corrompido (edição manual, versão antiga do formato) — degrada
-    // para "nada aberto" em vez de derrubar a sidebar.
-    return new Set();
-  }
-}
-
-function gravarConjunto(chave: string, ids: Set<string>): void {
-  gravarString(chave, JSON.stringify([...ids]));
-}
-
 /** `brabo.sidebar.collapsed` — preferência de colapso do usuário (RN-195). */
 export function lerColapsado(): boolean {
   return lerString(CHAVE_COLAPSADO) === '1';
@@ -61,15 +42,6 @@ export function lerColapsado(): boolean {
 
 export function gravarColapsado(colapsado: boolean): void {
   gravarString(CHAVE_COLAPSADO, colapsado ? '1' : '0');
-}
-
-/** `brabo.sidebar.open` — ids dos projetos expandidos (RN-196). */
-export function lerProjetosAbertos(): Set<string> {
-  return lerConjunto(CHAVE_PROJETOS_ABERTOS);
-}
-
-export function gravarProjetosAbertos(ids: Set<string>): void {
-  gravarConjunto(CHAVE_PROJETOS_ABERTOS, ids);
 }
 
 /**

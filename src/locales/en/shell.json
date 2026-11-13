@@ -10,14 +10,14 @@
     "nav": {
       "trilhaAriaLabel": "Projects and activity",
       "projectsLabel": "Projects",
-      "newProject": "New project"
+      "newProject": "New project",
+      "projectLabel": "Project"
     },
     "projects": {
       "loadError": "Could not load the projects.",
       "retry": "try again",
-      "expand": "Expand {{name}}",
-      "collapse": "Collapse {{name}}",
-      "tabsAriaLabel": "Tabs of {{name}}"
+      "tabsAriaLabel": "Tabs of {{name}}",
+      "switch": "Switch project: {{name}}"
     },
     "agentsNow": {
       "label": "Agents now",
@@ -25,7 +25,6 @@
       "empty": "No agent has acted yet.",
       "noSession": "This project has no session yet.",
       "loadError": "Could not load the agents.",
-      "viewAll": "see all",
       "status": {
         "trabalhando": "working",
         "aguardando": "waiting",
@@ -47,7 +46,8 @@
       "accountFallback": "account",
       "logout": "sign out"
     },
-    "caixa": "Decision inbox"
+    "caixa": "Decision inbox",
+    "home": "Home"
   },
   "notificationBell": {
     "label": "Notifications",

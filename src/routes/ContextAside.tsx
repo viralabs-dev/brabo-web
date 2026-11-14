@@ -29,6 +29,7 @@ import { Card } from '../components/ui/Card';
 import { Skeleton } from '../components/ui/Skeleton';
 import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import { Disclosure } from '../components/ui/Disclosure';
+import { MarkdownMessage } from '../components/ui/MarkdownMessage';
 import { PrIcon, StackIcon } from '../components/ui/icons';
 import styles from './SessionPage.module.css';
 
@@ -401,7 +402,7 @@ export function ContextAside({
       {objetivo && (
         <div className={styles.asideSection} data-testid="aside-objetivo">
           <div className={styles.asideHeader}>{t('aside.objetivo')}</div>
-          <div>{objetivo}</div>
+          <MarkdownMessage text={objetivo} />
         </div>
       )}
 

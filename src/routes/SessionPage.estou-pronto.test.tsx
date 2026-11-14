@@ -144,10 +144,10 @@ afterAll(() => {
   void i18n.changeLanguage('en');
 });
 
-const ROTULO = 'Estou pronto — a necessidade está validada';
+const ROTULO = 'Estou pronto — validar necessidade';
 const CHAVE_DO_DESTINATARIO = `brabo.destinatario.${ID}`;
 
-describe('SessionPage — "Estou pronto — a necessidade está validada" (ADR 0185)', () => {
+describe('SessionPage — "Estou pronto — validar necessidade" (ADR 0185)', () => {
   it('um clique só: chama a prontidão, avisa que a necessidade ficou validada e chama o PO', async () => {
     confirmReadiness.mockResolvedValue({ ok: true });
     montar();

@@ -72,7 +72,7 @@
     "placeholder": "Write a message… (Enter sends, Shift+Enter for a new line)",
     "enviar": "Send",
     "parar": "Stop",
-    "prontoParaProduzir": "I'm ready — the need is validated",
+    "prontoParaProduzir": "I'm ready — validate the need",
     "prontoParaProduzirExplica": "Closes readiness and the need validation, and calls the PO: it joins on its own once the Creative finishes the product brief",
     "prontoParaProduzirDesabilitado": "Capture at least one business rule with the Creative before confirming readiness",
     "confirmarArquitetura": "Confirm architecture ready",
@@ -161,7 +161,8 @@
         "titulo_other": "Search \"{{consulta}}\": {{count}} passages",
         "erro": "The search failed: {{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "More actions"
   },
   "ativacao": {
     "encerradaTitulo": "Session closed",
@@ -580,5 +581,10 @@
       "rfc": "RFC proposed",
       "prototipo": "prototype proposed"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "You",
+    "resumo_one": "I answered {{count}} question",
+    "resumo_other": "I answered {{count}} questions"
   }
 }

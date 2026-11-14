@@ -486,6 +486,8 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
           <MensagemDeConversa
             key={event.id}
             align={autor.tipo === 'voce' ? 'end' : 'start'}
+            // AT-950: o usuário à direita com bolha tingida; o agente à esquerda, neutra.
+            variant={autor.tipo === 'voce' ? 'tinted' : 'muted'}
             data-autor={autor.tipo}
             style={
               deAgente
@@ -573,6 +575,39 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
           />
         ),
       });
+      // AT-950 (RN-712): a resposta vira uma bolha-resumo do USUÁRIO, à direita.
+      if (respostaEvento) {
+        const respostas = (respostaEvento.payload as StructuredQuestionAnsweredPayload).answers ?? {};
+        const baseSeq = fechamento ? fechamento.seq + 0.5 : event.seq;
+        items.push({
+          chave: `${event.id}:resumo`,
+          seq: baseSeq + 0.1,
+          autor: `${respostaEvento.actor.kind}:${respostaEvento.actor.id}`,
+          turno: turnoDoSeq(aberturas, event.seq),
+          origem: origemDoEvento(respostaEvento),
+          mensagem: true, // RN-644: conta no corte do fio
+          node: (
+            <MensagemDeConversa
+              key={`${event.id}:resumo`}
+              align="end"
+              variant="tinted"
+              data-testid="resumo-das-respostas"
+              autor={t('perguntasEstruturadas.resumoAutor')}
+            >
+              <details>
+                <summary>{t('perguntasEstruturadas.resumo', { count: questions.length })}</summary>
+                <ul>
+                  {questions.map((q) => (
+                    <li key={q.id}>
+                      <strong>{q.label}</strong>: {respostas[q.id] ?? '—'}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </MensagemDeConversa>
+          ),
+        });
+      }
     } else if (event.type === 'handoff.offered') {
       // Quem PASSOU é o ator do evento (`create-handoff.use-case.ts` grava o
       // `fromAgent` como actor); o payload traz só o destino. Os dois já

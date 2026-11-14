@@ -161,6 +161,12 @@ describe('SessionPage — autor de cada chat.message (RN-652)', () => {
     expect(autorDa('mensagem minha')).toEqual({ nome: 'eu@brabo.dev', tipo: 'voce' });
     expect(autorDa('mensagem da Ana')).toEqual({ nome: 'Ana Souza', tipo: 'membro' });
     expect(autorDa('mensagem do PO')).toEqual({ nome: 'PO', tipo: 'agente' });
+    // AT-950: o usuário à direita com bolha tingida; o agente à esquerda, neutra.
+    const lado = (t: string) => screen.getByText(t).closest('[data-slot="bubble"]') as HTMLElement;
+    expect(lado('mensagem minha')).toHaveAttribute('data-variant', 'tinted');
+    expect(lado('mensagem do PO')).toHaveAttribute('data-variant', 'muted');
+    expect(screen.getByText('mensagem minha').closest('[data-autor]')).toHaveAttribute('data-align', 'end');
+    expect(screen.getByText('mensagem do PO').closest('[data-autor]')).toHaveAttribute('data-align', 'start');
     // O e-mail de quem vê aparece UMA vez — na mensagem dele, e só nela.
     const fio = screen.getByText('mensagem minha').closest('main') ?? document.body;
     expect(within(fio as HTMLElement).getAllByText('eu@brabo.dev')).toHaveLength(1);

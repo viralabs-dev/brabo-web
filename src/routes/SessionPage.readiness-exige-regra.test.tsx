@@ -13,7 +13,7 @@ import i18n from '../lib/i18n';
  * `confirm_readiness` (e narra a recusa como `agent.error` no fio, com
  * origem "politica") quando a sessão não tem nenhuma
  * `artifact.business_rule` — ver criativo_server.ex. Este arquivo cobre só a
- * UX complementar: o botão "Estou pronto — a necessidade está validada" nasce `disabled`
+ * UX complementar: o botão "Estou pronto — validar necessidade" nasce `disabled`
  * (com a dica em `title`) sem regra nenhuma, e libera assim que a MESMA
  * fonte que já alimenta o painel "Regras de negócio" (session-events) tem
  * pelo menos uma.
@@ -144,12 +144,12 @@ afterAll(() => {
   void i18n.changeLanguage('en');
 });
 
-describe('SessionPage — "Estou pronto — a necessidade está validada" exige regra de negócio', () => {
+describe('SessionPage — "Estou pronto — validar necessidade" exige regra de negócio', () => {
   it('sem nenhuma regra capturada, o botão nasce desabilitado com a dica', async () => {
     montar();
 
     const botao = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
 
     expect(botao).toBeDisabled();
@@ -163,7 +163,7 @@ describe('SessionPage — "Estou pronto — a necessidade está validada" exige 
     montar();
 
     const botao = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
 
     expect(botao).not.toBeDisabled();

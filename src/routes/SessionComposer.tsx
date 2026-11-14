@@ -23,7 +23,8 @@ import { MenuDoComposer } from '../components/ai-elements/menu-do-composer';
 import { idDoItemDoMenu } from '../components/ai-elements/menu-do-composer.helpers';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } from '../components/shadcn/dialog';
 import { fraseDaAcao, SEM_FRASE } from '../lib/aprovacoes';
-import { X } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
 import styles from './SessionPage.module.css';
 
 import { ignorarComposicaoIme } from './SessionComposer.helpers';
@@ -138,7 +139,6 @@ export function SessionComposer({
   if (criativoActive && !prontidaoJaDeclarada)
     acoes.push({
       chave: 'pronto',
-      icone: <ThumbsUp aria-hidden="true" />,
       rotulo: t('composer.prontoParaProduzir'),
       aoClicar: handleReadiness,
       desabilitada: streaming || !hasBusinessRule || !podeDecidir,
@@ -180,6 +180,10 @@ export function SessionComposer({
       desabilitada: !podeDecidir,
       motivo: !podeDecidir ? motivoDePapel : undefined,
     });
+  // AT-950: a barra sobre o campo leva só as ações de passo, com texto; "N perguntas"
+  // fica no contador do cabeçalho e "Endereçar handoff…" mora no menu "+".
+  const barra = acoes.filter((a) => a.chave !== 'perguntas' && a.chave !== 'handoff');
+  const acaoDeHandoff = acoes.find((a) => a.chave === 'handoff');
   const menu = useMenuDoComposer({
     projectId: session?.projectId,
     sessionId: session?.id,
@@ -343,9 +347,9 @@ export function SessionComposer({
 
       {session?.status === 'active' ? (
         <>
-        {(acoes.length > 0 || proximoPasso) && (
+        {(barra.length > 0 || proximoPasso) && (
           <div className={styles.sugestoesRow}>
-            <SugestoesDeAcao acoes={acoes} />
+            <SugestoesDeAcao acoes={barra} />
             {/* RN-824: o próximo passo é um clique HUMANO, dito em texto. */}
             {proximoPasso && (
               <span className={styles.destinatarioAviso} data-testid="proximo-passo-arquitetura">
@@ -538,6 +542,25 @@ export function SessionComposer({
           </Button>
           {/* O clipe vem DEPOIS do Enviar: o Enviar é o primeiro botão (contrato do E2E). */}
           {session?.id && <BotaoDeAnexar sessionId={session.id} desabilitado={streaming && !podeEnfileirar} />}
+          {acaoDeHandoff && (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={<Button variant="secondary" legenda={t('composer.maisAcoes')} />}
+                data-testid="menu-mais-acoes"
+              >
+                <Plus aria-hidden="true" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="top" align="end">
+                <DropdownMenuItem disabled={acaoDeHandoff.desabilitada} onClick={acaoDeHandoff.aoClicar}>
+                  <Forward aria-hidden="true" />
+                  {acaoDeHandoff.rotulo}
+                </DropdownMenuItem>
+                {acaoDeHandoff.motivo && (
+                  <span className="px-2 pb-1 text-xs text-muted-foreground">{acaoDeHandoff.motivo}</span>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
           {/* RN-122: só existe (habilitado) enquanto há turno em curso —
               fora disso não há o que parar. */}
           {streaming && (

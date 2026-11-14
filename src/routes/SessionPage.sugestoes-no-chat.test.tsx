@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import type { Session } from '../lib/api-types';
 import { historicoFalso } from '../test/historico-de-eventos';
@@ -13,7 +14,7 @@ import i18n from '../lib/i18n';
  * `confirm_readiness` (e narra a recusa como `agent.error` no fio, com
  * origem "politica") quando a sessão não tem nenhuma
  * `artifact.business_rule` — ver criativo_server.ex. Este arquivo cobre só a
- * UX complementar: o botão "Estou pronto — a necessidade está validada" nasce `disabled`
+ * UX complementar: o botão "Estou pronto — validar necessidade" nasce `disabled`
  * (com a dica em `title`) sem regra nenhuma, e libera assim que a MESMA
  * fonte que já alimenta o painel "Regras de negócio" (session-events) tem
  * pelo menos uma.
@@ -151,7 +152,7 @@ describe('SessionPage — ações de passo são sugestões acima do destinatári
     eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
     montar();
     const pronto = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
     const para = screen.getByTestId('destinatario-do-chat');
     expect(
@@ -170,9 +171,25 @@ describe('SessionPage — ações de passo são sugestões acima do destinatári
     eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
     montar();
     const pronto = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
     expect(pronto).toBeDisabled();
     expect(screen.getByText('Esta ação exige o papel developer neste workspace.')).toBeVisible();
+  });
+
+  it('AT-950: a barra tem no máximo 3 ações, todas com texto, e "Endereçar handoff…" mora no menu "+"', async () => {
+    eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
+    montar();
+    await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' });
+    const barra = document.querySelector('[data-slot="suggestions"]') as HTMLElement;
+    // O "?" de ajuda é a única coisa sem texto; as AÇÕES são todas com texto.
+    const botoes = within(barra).getAllByRole('button').filter((b) => b.textContent?.trim());
+    expect(botoes.length).toBeGreaterThan(0);
+    expect(botoes.length).toBeLessThanOrEqual(3);
+    expect(within(barra).queryByText(/Endereçar handoff/)).toBeNull();
+    expect(screen.queryByTestId('aviso-perguntas-em-aberto')).toBeNull();
+    const mais = await screen.findByTestId('menu-mais-acoes');
+    await userEvent.click(mais);
+    expect(await screen.findByRole('menuitem', { name: /Endereçar handoff a outro agente/ })).toBeVisible();
   });
 });

@@ -377,12 +377,16 @@ describe('SessionPage — perguntas estruturadas do Criativo (RN-162)', () => {
     expect(screen.queryByRole('button', { name: 'Enviar respostas' })).not.toBeInTheDocument();
 
     // As respostas aparecem, lado a lado com a pergunta.
-    expect(screen.getByText('Qual o nome do produto?')).toBeInTheDocument();
-    expect(screen.getByText('Checkout Fácil')).toBeInTheDocument();
-    expect(screen.getByText('Quem são os usuários?')).toBeInTheDocument();
-    expect(screen.getByText('Lojistas de pequeno porte')).toBeInTheDocument();
-    expect(screen.getByText('Qual plataforma?')).toBeInTheDocument();
-    expect(screen.getByText('Web')).toBeInTheDocument();
+    // AT-950 (RN-712): além do card, a resposta vira uma bolha-resumo do usuário, à direita.
+    expect(screen.getAllByText('Qual o nome do produto?').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Checkout Fácil').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Quem são os usuários?').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Lojistas de pequeno porte').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Qual plataforma?').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Web').length).toBeGreaterThan(0);
+    const resumo = screen.getByTestId('resumo-das-respostas');
+    expect(resumo).toHaveTextContent('Respondi 3 perguntas');
+    expect(resumo.closest('[data-align="end"], [data-slot="message"]')).not.toBeNull();
   });
 });
 

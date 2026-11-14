@@ -735,4 +735,40 @@ describe('AT-799: fila Agentes travados', () => {
     await screen.findByRole('button', { name: /^Aprovações \d/ });
     expect(screen.queryByTestId('fila-agentes-travados')).toBeNull();
   });
+
+  it('AT-950 (RN-626): no Sheet, Tabs só das filas com itens, UMA pergunta por vez e o campo só quando pedido', async () => {
+    const pergunta = (id: string, texto: string) => ({
+      questionId: id, eventId: `ev-${id}`, sessionId: AQUI, pergunta: texto, sugestao: 'Postgres',
+      afeta: { regras: [], historias: [], tarefas: [] }, autor: 'criativo',
+      criadaEm: new Date().toISOString(), status: 'open', autorDaSessao: 'u', resposta: null,
+    });
+    getOpenQuestions.mockResolvedValue({ itens: [pergunta('q1', 'Qual banco?'), pergunta('q2', 'Qual fila?')], total: 2 });
+    getProjectPendingActions.mockResolvedValue([]);
+    const contar = vi.fn();
+    render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <ToastProvider>
+          <PendenciasDeOutrasSessoes
+            modo="sheet"
+            aberto
+            aoContar={contar}
+            projectId="proj-1"
+            sessionId={AQUI}
+            podeDecidir
+          />
+        </ToastProvider>
+      </QueryClientProvider>,
+    );
+    // Só a fila com itens vira aba.
+    const abas = await screen.findAllByRole('tab');
+    expect(abas).toHaveLength(1);
+    expect(abas[0]).toHaveTextContent('Perguntas em aberto');
+    await waitFor(() => expect(contar).toHaveBeenLastCalledWith(2));
+    // Uma pergunta por vez; "Aceitar sugestão" com texto; o campo só abre em "Responder com texto".
+    expect(await screen.findAllByTestId('pergunta-em-aberto')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Aceitar sugestão' })).toHaveTextContent('Aceitar sugestão');
+    expect(screen.queryByRole('textbox', { name: /Sua resposta/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Responder com texto' }));
+    expect(screen.getByRole('textbox', { name: /Sua resposta/ })).toBeInTheDocument();
+  });
 });

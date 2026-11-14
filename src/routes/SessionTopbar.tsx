@@ -103,6 +103,9 @@ export interface SessionTopbarProps {
   handleCancel?: () => Promise<void>;
   asideOpen: boolean;
   setAsideOpen: Dispatch<SetStateAction<boolean>>;
+  /** AT-950: total de pendências do projeto; o contador abre o Sheet (RN-626). */
+  pendencias?: number;
+  abrirPendencias?: () => void;
 }
 
 export function SessionTopbar({
@@ -133,6 +136,8 @@ export function SessionTopbar({
   handleCancel,
   asideOpen,
   setAsideOpen,
+  pendencias = 0,
+  abrirPendencias,
 }: SessionTopbarProps) {
   const { t } = useTranslation('sessionPage');
   const barraRef = useRef<HTMLDivElement>(null);
@@ -367,6 +372,16 @@ export function SessionTopbar({
         <StopSquareIcon size={15} />
         {modo !== 'minima' && t(streaming && handleCancel ? 'topbar.pararTurno' : 'topbar.encerrar')}
       </Button>
+      {pendencias > 0 && abrirPendencias && (
+        <Button
+          variant="secondary"
+          className={styles.acaoDaBarra}
+          onClick={abrirPendencias}
+          data-testid="contador-de-pendencias"
+        >
+          {t('topbar.pendencias')} <Badge tone="accent">{pendencias}</Badge>
+        </Button>
+      )}
       {/* Aberto é `secondary` (fundo e borda), fechado é `ghost`: o controle diz
           se o painel está aberto — antes ele tinha uma aparência só. */}
       <Button

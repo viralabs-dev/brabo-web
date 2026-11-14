@@ -36,7 +36,8 @@
     "encerrarSessao": "Завершить сессию",
     "pararTurno": "Остановить ход",
     "trilha": "Путь сессии",
-    "sessoes": "Сессии"
+    "sessoes": "Сессии",
+    "pendencias": "Ожидает"
   },
   "convite": {
     "criativa": {
@@ -167,7 +168,8 @@
         "titulo_other": "Поиск \"{{consulta}}\": {{count}} фрагмента",
         "erro": "Поиск не удался: {{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "Ещё действия"
   },
   "ativacao": {
     "encerradaTitulo": "Сессия завершена",
@@ -394,7 +396,7 @@
     "raciocinioTokens_other": "{{count}} токена"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» выше.",
+    "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» панели ожидающих пунктов.",
     "titulo": "Ожидающие решения из других сессий этого проекта",
     "tituloDoProjeto": "Ожидающие решения в этом проекте",
     "nota": "Быстрый путь к решению: те же карточки и те же эндпоинты, что на вкладке «Утверждения». Ни один потолок не меняется — merge в защищённую ветку остаётся вашим жестом («Merge» просит вашего подтверждения).",
@@ -471,7 +473,8 @@
       "respondida": "Отвечено. Ответ записан как решение.",
       "corrigir": "Исправить историю",
       "corrigirHistoria": "Затронутая история: {{titulo}}",
-      "dispensar": "Отклонить"
+      "dispensar": "Отклонить",
+      "responderComTexto": "Ответить текстом"
     },
     "verOCartao": "Показать карточку",
     "saidas": {
@@ -506,7 +509,11 @@
     },
     "semModulo": {
       "motivo": "Нет модуля: никто её не возьмёт. Назначьте через план или архивируйте задачу во вкладке Backlog."
-    }
+    },
+    "linhaNoFio_one": "{{count}} ожидающий пункт · Открыть",
+    "linhaNoFio_few": "{{count}} ожидающих пункта · Открыть",
+    "linhaNoFio_many": "{{count}} ожидающих пунктов · Открыть",
+    "linhaNoFio_other": "{{count}} ожидающего пункта · Открыть"
   },
   "mergearNoChat": {
     "botao": "Выполнить merge",
@@ -642,5 +649,12 @@
       "rfc": "предложенный RFC",
       "prototipo": "предложенный прототип"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "Вы",
+    "resumo_one": "Я ответил на {{count}} вопрос",
+    "resumo_few": "Я ответил на {{count}} вопроса",
+    "resumo_many": "Я ответил на {{count}} вопросов",
+    "resumo_other": "Я ответил на {{count}} вопроса"
   }
 }

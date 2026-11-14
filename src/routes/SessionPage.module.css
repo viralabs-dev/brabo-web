@@ -1223,3 +1223,12 @@
 .trilha a {
   color: inherit;
 }
+
+/* AT-950 (RN-626): uma linha discreta no fio quando há pendências; o resto mora no Sheet. */
+.linhaDePendencias {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 2px 24px;
+  font-size: 12px;
+}

@@ -57,6 +57,7 @@ import { montarTimeline } from './session-timeline-montagem';
 import { SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
 import { SessionFio } from './SessionFio';
+import { Button } from '../components/ui/Button';
 import { ConversationScrollButton } from '../components/ai-elements/conversation';
 import { PainelDaFila } from './PainelDaFila';
 import { SessionComposer } from './SessionComposer';
@@ -150,6 +151,9 @@ export function SessionPage({
   // AT-328: no móvel o painel nasce fechado e abre como gaveta sobre o fio.
   const movel = useLayoutMovel();
   const [asideOpen, setAsideOpen] = usePainelDeContexto(movel, !!highlightEvent);
+  // AT-950: o Sheet de pendências e o total que o contador do cabeçalho mostra.
+  const [pendenciasAbertas, setPendenciasAbertas] = useState(false);
+  const [totalDePendencias, setTotalDePendencias] = useState(0);
   // Log completo de eventos — fechado por padrão, mas abre sozinho quando
   // a navegação traz um `highlightEvent` (chip de evidência do Psicólogo).
   const [logOpen, setLogOpen] = useState(!!highlightEvent);
@@ -759,21 +763,31 @@ export function SessionPage({
         handleClose={pedirEncerramento}
         asideOpen={asideOpen}
         setAsideOpen={setAsideOpen}
+        pendencias={totalDePendencias}
+        abrirPendencias={() => setPendenciasAbertas(true)}
       />
 
       <div className={styles.body}>
         <div className={styles.chatColumn}>
-          {/* AT-265: as pendências que os agentes propuseram em OUTRAS sessões do
-              projeto (a de execução), decididas aqui — atalho, RN-467. AT-298:
-              em QUALQUER estado da sessão — encerrada e técnica inclusive. A
-              decisão é sobre a ação da OUTRA sessão, não conversa nesta, e
-              quem abre uma sessão encerrada para ver o histórico era
-              justamente quem não via que havia algo esperando por ele. RN-816: acima do fio. */}
+          {/* AT-265 (RN-626, AT-950): as pendências do projeto (as ações de OUTRAS sessões, PRs
+              prontas, perguntas…) moram num Sheet à direita, aberto pelo contador do cabeçalho:
+              nunca por cima da conversa. AT-298: em QUALQUER estado da sessão. Atalho, RN-467. */}
           <PendenciasDeOutrasSessoes
+            modo="sheet"
             projectId={projectId}
             sessionId={sessionId}
             podeDecidir={podeDecidir}
+            aberto={pendenciasAbertas}
+            aoMudarAberto={setPendenciasAbertas}
+            aoContar={setTotalDePendencias}
           />
+          {totalDePendencias > 0 && (
+            <div className={styles.linhaDePendencias} data-testid="linha-de-pendencias">
+              <Button variant="ghost" size="sm" onClick={() => setPendenciasAbertas(true)}>
+                {t('pendencias.linhaNoFio', { count: totalDePendencias })}
+              </Button>
+            </div>
+          )}
           {/* AT-880 (RN-1303): os executores da execução vigente, acima do fio (RN-816). */}
           {sessaoCriativa && <CarrosselDeExecutores projectId={projectId} sessionId={sessionId} />}
           <ModoAutomaticoNoChat

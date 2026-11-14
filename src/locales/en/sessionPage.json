@@ -36,7 +36,8 @@
     "encerrarSessao": "Close the session",
     "pararTurno": "Stop turn",
     "trilha": "Session breadcrumb",
-    "sessoes": "Sessions"
+    "sessoes": "Sessions",
+    "pendencias": "Pending"
   },
   "convite": {
     "criativa": {
@@ -369,7 +370,7 @@
     "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",
+    "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue of the pendencies panel.",
     "titulo": "Pending decisions from other sessions in this project",
     "tituloDoProjeto": "Pending decisions in this project",
     "nota": "A shortcut to the decision: the same cards and endpoints as the Approvals tab. No ceiling changes — merging into a protected branch stays your own gesture (Merge asks for your confirmation).",
@@ -434,7 +435,8 @@
       "respondida": "Answered. The answer was saved as a decision.",
       "corrigir": "Fix the story",
       "corrigirHistoria": "Affected story: {{titulo}}",
-      "dispensar": "Dismiss"
+      "dispensar": "Dismiss",
+      "responderComTexto": "Answer with text"
     },
     "verOCartao": "See the card",
     "saidas": {
@@ -459,7 +461,9 @@
     },
     "semModulo": {
       "motivo": "No module: nobody will pick it up. Assign it through the plan or archive the task in the Backlog tab."
-    }
+    },
+    "linhaNoFio_one": "{{count}} pending item · Open",
+    "linhaNoFio_other": "{{count}} pending items · Open"
   },
   "mergearNoChat": {
     "botao": "Merge",

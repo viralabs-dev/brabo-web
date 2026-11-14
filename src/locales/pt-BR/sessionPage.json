@@ -36,7 +36,8 @@
     "encerrarSessao": "Encerrar a sessão",
     "pararTurno": "Parar turno",
     "trilha": "Trilha da sessão",
-    "sessoes": "Sessões"
+    "sessoes": "Sessões",
+    "pendencias": "Pendências"
   },
   "convite": {
     "criativa": {
@@ -382,7 +383,7 @@
     "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" acima.",
+    "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" do painel de pendências.",
     "titulo": "Pendências de outras sessões deste projeto",
     "tituloDoProjeto": "Pendências deste projeto",
     "nota": "Atalho para a decisão: os mesmos cards e os mesmos endpoints da aba Aprovações. Nenhum teto muda — o merge em branch protegida segue sendo gesto seu (Mergear pede a sua confirmação).",
@@ -453,7 +454,8 @@
       "respondida": "Respondida. A resposta foi gravada como decisão.",
       "corrigir": "Corrigir a história",
       "corrigirHistoria": "História afetada: {{titulo}}",
-      "dispensar": "Dispensar"
+      "dispensar": "Dispensar",
+      "responderComTexto": "Responder com texto"
     },
     "verOCartao": "Ver o cartão",
     "saidas": {
@@ -483,7 +485,10 @@
     },
     "semModulo": {
       "motivo": "Sem módulo: ninguém vai pegar. Atribua pelo plano ou arquive a tarefa na aba Backlog."
-    }
+    },
+    "linhaNoFio_one": "{{count}} pendência · Abrir",
+    "linhaNoFio_other": "{{count}} pendências · Abrir",
+    "linhaNoFio_zero": "{{count}} pendências · Abrir"
   },
   "mergearNoChat": {
     "botao": "Mergear",
@@ -616,6 +621,7 @@
   "perguntasEstruturadas": {
     "resumoAutor": "Você",
     "resumo_one": "Respondi {{count}} pergunta",
-    "resumo_other": "Respondi {{count}} perguntas"
+    "resumo_other": "Respondi {{count}} perguntas",
+    "resumo_zero": "Respondi {{count}} perguntas"
   }
 }

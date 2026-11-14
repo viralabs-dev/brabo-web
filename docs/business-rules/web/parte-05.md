@@ -21,6 +21,16 @@ depois de a ação já ter saído de `pending`), e reabrir a sessão com um turn
 curso devolvia o composer livre e o 409. As quatro correções são de TELA — a
 api, o engine e todo teto ficam como estão.
 
+> **Revisada pela AT-950 (14/11/2026):** o bloco de pendências deixou de ficar
+> acima do fio. Ele mora num Sheet à direita, aberto pelo contador "Pendências
+> N" do cabeçalho da sessão (`SessionTopbar`), com uma aba por fila (só as com
+> itens) e UMA pergunta por vez; no fio fica no máximo uma linha discreta
+> "N pendências · Abrir". Os eventos `EVENTO_ABRIR_PERGUNTAS` e
+> `EVENTO_ABRIR_FILA` (e o "Responder perguntas" do menu `/`) abrem o Sheet. Os
+> cartões, os endpoints e todo teto seguem os mesmos. Onde este texto disser
+> "acima do fio" ou "no bloco do chat", leia "no Sheet de pendências". A aba
+> Executores continua com o bloco inline.
+
 1. **O card fica inerte e diz a frase da api (AT-256).** `ApprovalCard` segura
    os botões enquanto a decisão está em voo (o duplo clique era um 409 certo) e,
    quando a chamada devolve promessa que rejeita, mostra a frase que a api
@@ -92,16 +102,16 @@ pendências de outras sessões tem o teto de 20 cards, e o resto continua na aba
 Aprovações; (d) as pendências de arquitetura e as hipóteses do Psicólogo
 continuam SEM decisão inline (não há `ApprovalCard` para elas).
 
-- **Código:** `apps/web/src/components/ApprovalCard.tsx:273` (`decidir`, a
+- **Código:** `apps/web/src/components/ApprovalCard.tsx:281` (`decidir`, a
   decisão em voo e a recusa no card); `apps/web/src/lib/session-turno.ts:59`
   (`turnoEmCursoNoLog`), `:536` (`useRetomarTurnoDoLog`);
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
   `:56` (`separarPendenciasDeOutrasSessoes`);
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:76`
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:90`
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
-  `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:266`
-  (`useRetomarTurnoDoLog`), `:771` (`PendenciasDeOutrasSessoes`)
+  `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:272`
+  (`useRetomarTurnoDoLog`), `:775` (`PendenciasDeOutrasSessoes`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -208,10 +218,10 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:228` (`agentesEmConversa`),
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
-  `apps/web/src/routes/SessionComposer.tsx:368` (`destinatarioRow`), `:266`
-  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
-  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:588`
-  (`handoffIdDoEvento`), `:596` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
+  `apps/web/src/routes/SessionComposer.tsx:372` (`destinatarioRow`), `:270`
+  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:348`
+  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:625`
+  (`handoffIdDoEvento`), `:589` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
   (escolha → envio ao escolhido; dois agentes sem escolha não enviam e dizem
@@ -958,7 +968,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
   (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
-  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:146`
+  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:151`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)
@@ -1021,7 +1031,7 @@ sempre dele.
 - **Código:** `apps/web/src/lib/autor-da-mensagem.ts:52` (`autorDaMensagem`);
   `apps/web/src/lib/autoria-da-sessao.ts:45` (`useAutoriaDaSessao`), `:18`
   (`comporMembros`);
-  `apps/web/src/routes/session-timeline-montagem.tsx:186` (`rotuloDoAutor`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:190` (`rotuloDoAutor`),
   `:405` (o `chat.message`), `:687` (a devolução de história);
   `apps/web/src/routes/SessionPage.tsx:133` (`autoria`)
 - **Teste:** `apps/web/src/routes/SessionPage.autor-da-mensagem.test.tsx:147`
@@ -1159,8 +1169,8 @@ E o composer e os campos de texto das perguntas estruturadas levam
 `data-form-type="other"`): cada foco abria o popup de autofill do navegador.
 
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:15` (`conversaComecou`),
-  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:428`
-  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:512`
+  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:434`
+  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:516`
   (`SEM_AUTOFILL`); `apps/web/src/routes/StructuredQuestionCard.tsx:242`
   (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/SessionPage.sessao.test.tsx:316` (Criativo
@@ -1338,7 +1348,10 @@ linhas empurrava a conversa para fora da tela. Desde a AT-375:
   `textoPlanoDoMarkdown`: `**`, `##`, réguas, tabelas e crases viram texto
   corrido. A faixa é prévia; a resposta renderizada continua sendo a bolha do
   fim do turno (RN-460), e o store do streaming não muda (RN-639);
-- **formulário respondido** — a api reenvia as respostas ao agente como
+- **formulário respondido** — (AT-950: a resposta agora vira uma bolha-resumo do
+  USUÁRIO, à direita, "Respondi N perguntas", recolhível, com cada pergunta e a
+  resposta; o card respondido segue como registro. O eco abaixo continua fora do
+  fio e fora do envio ao agente.) a api reenvia as respostas ao agente como
   `chat.message` do usuário; a bolha cujo texto é EXATAMENTE o que a api monta
   (`"<n>. <rótulo>: <resposta>"`), primeira mensagem de usuário depois da
   resposta, sai do fio, porque o card respondido já as mostra. Mensagem

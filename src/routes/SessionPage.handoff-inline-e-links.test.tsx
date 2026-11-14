@@ -23,6 +23,7 @@ import i18n from '../lib/i18n';
  *    um link extra pra aba Executores quando `toAgent === 'dev-lead'`.
  */
 
+import { abrirMaisAcoes } from '../test/mais-acoes';
 const getSession = vi.fn();
 const acceptHandoff = vi.fn();
 
@@ -292,9 +293,8 @@ describe('SessionPage — item 3: CTA de handoff pro Dev Lead aponta pra Executo
       await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
 
-    const link = screen.getByRole('link', {
-      name: /Acompanhe a execução em Executores/,
-    });
+    await abrirMaisAcoes();
+    const link = await screen.findByRole('link', { name: /Acompanhe a execução em Executores/ });
     expect(link).toHaveAttribute('href', '/projects/proj-1?tab=executores');
   });
 
@@ -328,9 +328,8 @@ describe('SessionPage — item 3: CTA de handoff pro Dev Lead aponta pra Executo
     montar();
 
     await screen.findByRole('button', { name: 'Aceitar e passar a PO' });
-    expect(
-      screen.queryByRole('link', { name: /Acompanhe a execução em Executores/ }),
-    ).not.toBeInTheDocument();
+    // Sem Dev Lead, não há menu "⋯" nem link de acompanhamento.
+    expect(screen.queryByTestId('mais-acoes-do-cartao')).not.toBeInTheDocument();
   });
 });
 
@@ -354,7 +353,7 @@ describe('SessionPage — item 2: link do PO pras histórias criadas, direto pro
     // RN-157: aviso COMPACTO (pill), não bolha grande — o verbo e o título
     // vivem na mesma frase.
     expect(
-      await screen.findByText('criou o épico "Autenticação de usuários"'),
+      await screen.findByText('criou o épico'),
     ).toBeInTheDocument();
 
     const link = screen.getByRole('link', { name: /Ver em Histórias/ });
@@ -385,7 +384,7 @@ describe('SessionPage — item 2: link do PO pras histórias criadas, direto pro
 
     // RN-157: mesmo formato compacto do épico, com o verbo próprio de história.
     expect(
-      await screen.findByText('criou a história "Login com e-mail e senha"'),
+      await screen.findByText('criou a história'),
     ).toBeInTheDocument();
 
     const link = screen.getByRole('link', { name: /Ver em Histórias/ });

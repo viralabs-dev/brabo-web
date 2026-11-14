@@ -36,7 +36,8 @@
     "encerrarSessao": "Close the session",
     "pararTurno": "Stop turn",
     "trilha": "Session breadcrumb",
-    "sessoes": "Sessions"
+    "sessoes": "Sessions",
+    "pendencias": "Pending"
   },
   "convite": {
     "criativa": {
@@ -72,7 +73,7 @@
     "placeholder": "Write a message… (Enter sends, Shift+Enter for a new line)",
     "enviar": "Send",
     "parar": "Stop",
-    "prontoParaProduzir": "I'm ready — the need is validated",
+    "prontoParaProduzir": "I'm ready — validate the need",
     "prontoParaProduzirExplica": "Closes readiness and the need validation, and calls the PO: it joins on its own once the Creative finishes the product brief",
     "prontoParaProduzirDesabilitado": "Capture at least one business rule with the Creative before confirming readiness",
     "confirmarArquitetura": "Confirm architecture ready",
@@ -161,7 +162,8 @@
         "titulo_other": "Search \"{{consulta}}\": {{count}} passages",
         "erro": "The search failed: {{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "More actions"
   },
   "ativacao": {
     "encerradaTitulo": "Session closed",
@@ -368,7 +370,7 @@
     "raciocinioTokens_other": "{{count}} tokens"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",
+    "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue of the pendencies panel.",
     "titulo": "Pending decisions from other sessions in this project",
     "tituloDoProjeto": "Pending decisions in this project",
     "nota": "A shortcut to the decision: the same cards and endpoints as the Approvals tab. No ceiling changes — merging into a protected branch stays your own gesture (Merge asks for your confirmation).",
@@ -433,7 +435,8 @@
       "respondida": "Answered. The answer was saved as a decision.",
       "corrigir": "Fix the story",
       "corrigirHistoria": "Affected story: {{titulo}}",
-      "dispensar": "Dismiss"
+      "dispensar": "Dismiss",
+      "responderComTexto": "Answer with text"
     },
     "verOCartao": "See the card",
     "saidas": {
@@ -458,7 +461,9 @@
     },
     "semModulo": {
       "motivo": "No module: nobody will pick it up. Assign it through the plan or archive the task in the Backlog tab."
-    }
+    },
+    "linhaNoFio_one": "{{count}} pending item · Open",
+    "linhaNoFio_other": "{{count}} pending items · Open"
   },
   "mergearNoChat": {
     "botao": "Merge",
@@ -580,5 +585,13 @@
       "rfc": "RFC proposed",
       "prototipo": "prototype proposed"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "You",
+    "resumo_one": "I answered {{count}} question",
+    "resumo_other": "I answered {{count}} questions"
+  },
+  "cartao": {
+    "maisAcoes": "More actions"
   }
 }

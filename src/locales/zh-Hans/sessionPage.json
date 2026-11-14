@@ -36,7 +36,8 @@
     "encerrarSessao": "结束会话",
     "pararTurno": "停止本轮",
     "trilha": "会话路径",
-    "sessoes": "会话"
+    "sessoes": "会话",
+    "pendencias": "待处理"
   },
   "convite": {
     "criativa": {
@@ -158,7 +159,8 @@
         "titulo_other": "搜索“{{consulta}}”:{{count}} 段",
         "erro": "搜索失败:{{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "更多操作"
   },
   "ativacao": {
     "encerradaTitulo": "会话已结束",
@@ -355,7 +357,7 @@
     "raciocinioTokens_other": "{{count}} 个 token"
   },
   "pendencias": {
-    "referenciaNoFio": "已提出合并 — 请在上方“可合并的 PR”队列中决定。",
+    "referenciaNoFio": "已提出合并 — 请在待处理面板的“可合并的 PR”队列中决定。",
     "titulo": "本项目其他会话的待处理事项",
     "tituloDoProjeto": "本项目的待处理事项",
     "nota": "决定的快捷方式：与“批准”标签页相同的卡片和相同的端点。没有任何上限改变 — 合并到受保护分支仍是你的操作（“合并”会请你确认）。",
@@ -414,7 +416,8 @@
       "respondida": "已回答。回答已记录为决定。",
       "corrigir": "修正用户故事",
       "corrigirHistoria": "受影响的用户故事：{{titulo}}",
-      "dispensar": "忽略"
+      "dispensar": "忽略",
+      "responderComTexto": "用文字回答"
     },
     "verOCartao": "查看卡片",
     "saidas": {
@@ -434,7 +437,8 @@
     },
     "semModulo": {
       "motivo": "没有模块：没人会接手。请通过计划分配，或在 Backlog 标签页归档该任务。"
-    }
+    },
+    "linhaNoFio_other": "{{count}} 项待处理 · 打开"
   },
   "mergearNoChat": {
     "botao": "合并",
@@ -549,5 +553,12 @@
       "rfc": "已提议的 RFC",
       "prototipo": "已提议的原型"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "你",
+    "resumo_other": "我回答了 {{count}} 个问题"
+  },
+  "cartao": {
+    "maisAcoes": "更多操作"
   }
 }

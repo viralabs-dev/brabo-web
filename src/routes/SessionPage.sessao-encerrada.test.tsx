@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import type { Session } from '../lib/api-types';
 import { historicoFalso } from '../test/historico-de-eventos';
@@ -175,7 +176,7 @@ describe('SessionPage — 409 de conversa em sessão encerrada (AT-154)', () => 
     confirmReadiness.mockRejectedValue(RECUSA);
 
     montar();
-    fireEvent.click(await screen.findByRole('button', { name: 'Estou pronto — a necessidade está validada' }));
+    fireEvent.click(await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' }));
 
     expect(await screen.findByText(FRASE)).toBeInTheDocument();
     expect(screen.queryByText('Não foi possível confirmar prontidão')).not.toBeInTheDocument();
@@ -244,6 +245,9 @@ describe('SessionPage — pendências de outras sessões em QUALQUER estado (AT-
 
       montar();
 
+      // AT-950 (RN-626): o contador do cabeçalho avisa; o Sheet abre por ele, nunca sobre o fio.
+      expect(screen.queryByTestId('pendencias-de-outras-sessoes')).not.toBeInTheDocument();
+      await userEvent.click(await screen.findByTestId('contador-de-pendencias'));
       expect(await screen.findByTestId('pendencias-de-outras-sessoes')).toBeInTheDocument();
     },
   );

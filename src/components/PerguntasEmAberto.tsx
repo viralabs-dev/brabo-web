@@ -38,6 +38,11 @@ interface PerguntasEmAbertoProps {
   historias?: readonly Story[];
   /** `developer` no endpoint de correção (RN-727, RN-102). */
   podeCorrigir?: boolean;
+  /**
+   * AT-950 (RN-861): no Sheet de pendências, UMA pergunta por vez; "Aceitar sugestão" é o botão
+   * principal e o campo de texto só abre em "Responder com texto".
+   */
+  compacto?: boolean;
 }
 
 /**
@@ -57,11 +62,12 @@ export function PerguntasEmAberto({
   aoDispensar,
   historias,
   podeCorrigir = false,
+  compacto = false,
 }: PerguntasEmAbertoProps) {
   const { t } = useTranslation('sessionPage');
   // AT-680 (RN-975): 3 por página; as respondidas ficam fora da paginação.
   const [paginaPedida, setPaginaPedida] = useState(0);
-  const pagina = paginar(perguntas, paginaPedida);
+  const pagina = paginar(perguntas, paginaPedida, compacto ? 1 : undefined);
   const abertas = new Set(perguntas.map((p) => p.questionId));
   const jaRespondidas = respondidas.filter((p) => !abertas.has(p.questionId));
   if (perguntas.length === 0 && jaRespondidas.length === 0) return null;
@@ -83,6 +89,7 @@ export function PerguntasEmAberto({
           pergunta={p}
           tarefas={tarefas}
           aoResponder={aoResponder}
+          compacto={compacto}
         />
       ))}
       {jaRespondidas.map((p) => (
@@ -114,17 +121,22 @@ function CartaoDaPergunta({
   pergunta,
   tarefas,
   aoResponder,
+  compacto,
 }: {
   projectId: string;
   pergunta: OpenQuestion;
   tarefas?: readonly Task[];
   aoResponder?: (pergunta: OpenQuestion) => void;
+  compacto?: boolean;
 }) {
   const { t } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
   const [texto, setTexto] = useState('');
   const [enviando, setEnviando] = useState<'resposta' | 'sugestao' | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+  // Compacto: com sugestão, o campo só aparece quando pedido; sem ela, é o único caminho.
+  const [escrevendo, setEscrevendo] = useState(false);
+  const campoVisivel = !compacto || !pergunta.sugestao || escrevendo;
   const eAutor = pergunta.autorDaSessao !== null && pergunta.autorDaSessao === userIdDaSessao();
 
   const afeta = [
@@ -188,11 +200,18 @@ function CartaoDaPergunta({
             disabled={!eAutor || enviando !== null}
             loading={enviando === 'sugestao'}
             onClick={() => void responder({ aceitarSugestao: true })}
-            legenda={t('pendencias.perguntas.aceitar')}
+            legenda={compacto ? undefined : t('pendencias.perguntas.aceitar')}
           >
             <ThumbsUp aria-hidden="true" />
+            {compacto && t('pendencias.perguntas.aceitar')}
           </Button>
         )}
+        {compacto && pergunta.sugestao && !escrevendo && (
+          <Button variant="ghost" onClick={() => setEscrevendo(true)}>
+            {t('pendencias.perguntas.responderComTexto')}
+          </Button>
+        )}
+        {campoVisivel && (<>
         <input
           type="text"
           className={styles.campo}
@@ -213,6 +232,7 @@ function CartaoDaPergunta({
         >
           <Reply aria-hidden="true" />
         </Button>
+        </>)}
       </div>
       {!eAutor && <p className={styles.nota}>{t('pendencias.perguntas.soOAutor')}</p>}
       {erro && (

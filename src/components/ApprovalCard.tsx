@@ -43,6 +43,8 @@ import { TetoDoPlano } from './TetoDoPlano';
 import { Checkbox } from './shadcn/checkbox';
 import styles from './ApprovalCard.module.css';
 import { Check, X, ShieldCheck, Plane } from 'lucide-react';
+import { MaisAcoes } from './ai-elements/mais-acoes';
+import { DropdownMenuItem } from './shadcn/dropdown-menu';
 
 export type ApprovalUrgency = 'critico' | 'alta' | 'normal';
 
@@ -226,6 +228,11 @@ interface ApprovalCardProps {
    */
   detalheRecolhido?: boolean;
   /**
+   * AT-950 (RN-728): no FIO, "Aprovar" e "Negar" ficam à vista e "Sempre permitir" e "Modo
+   * automático" vão para o menu "⋯". As outras superfícies seguem com todos os botões.
+   */
+  compacto?: boolean;
+  /**
    * AT-944 (v9): a frase da ação e o motivo da política em duas colunas
    * rotuladas ("O que acontece se aprovar" / "Por que está aqui"). Opcional e
    * ligada só pela aba Aprovações; é o mesmo texto, em outro arranjo — o card
@@ -249,6 +256,7 @@ export function ApprovalCard({
   decisaoDaPolitica,
   bloqueio,
   detalheRecolhido,
+  compacto = false,
   explicado,
   nomeDaSessao,
 }: ApprovalCardProps) {
@@ -545,26 +553,49 @@ export function ApprovalCard({
             {/* Patch de instrução NUNCA é auto-aprovável (teto em decide.ts):
                 gravar a regra em permissions.json não muda nada, então o botão
                 prometia um efeito que não existe. */}
-            {podeSemprePermitir && !ehPlano && (
-              <Button variant="secondary" disabled={inerte} onClick={() => void decidir(() => onAlwaysAllow())}>
-                <ShieldCheck aria-hidden="true" />
-                {t('approvalCard.actions.alwaysAllow')}
-              </Button>
-            )}
-            {/* "Auto mode" (RN-153) — só quando quem chama já confirmou papel
-                maintainer e passou o callback; ausente some o botão em vez de
-                desabilitar sem explicar (action.actor.kind === 'user' também
-                cai aqui: não há AGENTE pra confiar). */}
-            {onActivateAutoMode && podeSemprePermitir && !ehPlano && (
-              <Button
-                variant="ghost"
-                legenda={t('approvalCard.actions.autoMode')}
-                disabled={inerte}
-                onClick={onActivateAutoMode}
-              >
-                <Plane aria-hidden="true" />
-              </Button>
-            )}
+            {(() => {
+              const sempre = podeSemprePermitir && !ehPlano;
+              const modoAuto = !!onActivateAutoMode && sempre;
+              const aSempre = () => void decidir(() => onAlwaysAllow());
+              if (compacto && (sempre || modoAuto))
+                return (
+                  <MaisAcoes>
+                    {sempre && (
+                      <DropdownMenuItem disabled={inerte} onClick={aSempre}>
+                        <ShieldCheck aria-hidden="true" />
+                        {t('approvalCard.actions.alwaysAllow')}
+                      </DropdownMenuItem>
+                    )}
+                    {modoAuto && (
+                      <DropdownMenuItem disabled={inerte} onClick={onActivateAutoMode}>
+                        <Plane aria-hidden="true" />
+                        {t('approvalCard.actions.autoMode')}
+                      </DropdownMenuItem>
+                    )}
+                  </MaisAcoes>
+                );
+              return (
+                <>
+                  {sempre && (
+                    <Button variant="secondary" disabled={inerte} onClick={aSempre}>
+                      <ShieldCheck aria-hidden="true" />
+                      {t('approvalCard.actions.alwaysAllow')}
+                    </Button>
+                  )}
+                  {/* "Auto mode" (RN-153): só com papel maintainer e o callback; ausente, some. */}
+                  {modoAuto && (
+                    <Button
+                      variant="ghost"
+                      legenda={t('approvalCard.actions.autoMode')}
+                      disabled={inerte}
+                      onClick={onActivateAutoMode}
+                    >
+                      <Plane aria-hidden="true" />
+                    </Button>
+                  )}
+                </>
+              );
+            })()}
           </div>
           {ehPlano && negando && (
             <div data-testid="motivo-da-negacao">

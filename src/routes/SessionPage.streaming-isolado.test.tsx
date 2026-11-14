@@ -176,7 +176,7 @@ afterAll(() => {
 
 async function montarComCanal() {
   montar();
-  await screen.findByRole('button', { name: 'Estou pronto — a necessidade está validada' });
+  await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' });
   await waitFor(() => expect(canalHandlers?.onAgentDelta).toBeDefined());
   return canalHandlers!;
 }

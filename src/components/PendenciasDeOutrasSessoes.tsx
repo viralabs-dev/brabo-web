@@ -36,6 +36,8 @@ import { Alert } from './ui/Alert';
 import { MergearNoChat } from '../routes/MergearNoChat';
 import { entradasDaFila, saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
 import { PaginadorDaFila } from './PaginadorDaFila';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './shadcn/sheet';
+import { Tabs, TabsCount, TabsList, TabsTrigger } from './shadcn/tabs';
 import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
@@ -61,6 +63,15 @@ interface PendenciasDeOutrasSessoesProps {
    * orçamento dela (RN-794) passa `false`.
    */
   filasDoChat?: boolean;
+  /**
+   * AT-950 (RN-626): `sheet` tira as pendências de cima do fio — elas moram num Sheet à direita,
+   * aberto pelo contador do cabeçalho; `inline` (padrão) é o bloco da aba Executores.
+   */
+  modo?: 'inline' | 'sheet';
+  aberto?: boolean;
+  aoMudarAberto?: (aberto: boolean) => void;
+  /** Só no modo `sheet`: o total de pendências, para o contador do cabeçalho e a linha do fio. */
+  aoContar?: (total: number) => void;
 }
 
 /**
@@ -81,7 +92,12 @@ export function PendenciasDeOutrasSessoes({
   sessionId,
   podeDecidir,
   filasDoChat = true,
+  modo = 'inline',
+  aberto = false,
+  aoMudarAberto,
+  aoContar,
 }: PendenciasDeOutrasSessoesProps) {
+  const noSheet = modo === 'sheet';
   const { t } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
   // RN-825/826 (AT-497): as PRs prontas e as tarefas bloqueadas, pelas MESMAS
@@ -142,10 +158,18 @@ export function PendenciasDeOutrasSessoes({
   // continua MONTADO (só `hidden`), para o "Responder perguntas" ter alvo e o
   // cartão de merge seguir registrado no fio (RN-843).
   const [aberta, setAberta] = useState<ChaveDeFila | null>(null);
+  const aoMudarRef = useRef(aoMudarAberto);
+  aoMudarRef.current = aoMudarAberto;
   useEffect(() => {
-    const abrir = () => setAberta('perguntas');
+    const abrir = () => {
+      setAberta('perguntas');
+      aoMudarRef.current?.(true);
+    };
     // AT-753: o evento genérico abre qualquer aba (o `detail` é a fila).
-    const abrirFila = (e: Event) => setAberta((e as CustomEvent<ChaveDeFila>).detail);
+    const abrirFila = (e: Event) => {
+      setAberta((e as CustomEvent<ChaveDeFila>).detail);
+      aoMudarRef.current?.(true);
+    };
     window.addEventListener(EVENTO_ABRIR_PERGUNTAS, abrir);
     window.addEventListener(EVENTO_ABRIR_FILA, abrirFila);
     return () => {
@@ -189,7 +213,7 @@ export function PendenciasDeOutrasSessoes({
     if (novas.length > 0) setAberta((a) => a ?? 'prontas');
   }, [idsDasProntas]);
   const painel = (chave: ChaveDeFila, conteudo: React.ReactNode) => (
-    <div hidden={aberta !== chave}>{conteudo}</div>
+    <div hidden={abertaDeFato !== chave}>{conteudo}</div>
   );
   const [paginas, setPaginas] = useState<Record<string, number>>({});
   const paginaDe = (chave: string) => paginas[chave] ?? 0;
@@ -214,6 +238,13 @@ export function PendenciasDeOutrasSessoes({
     [...pAprovacoes.itens, ...pMerges.itens],
     SEM_EVENTOS_LOCAIS,
   );
+
+  // AT-950: o contador do cabeçalho soma as filas; cada aba segue com o PRÓPRIO número (RN-467).
+  const totalGeral =
+    total + prontas.length + bloqueadas.length + travados.length + semModulo.length + totalDePerguntas;
+  useEffect(() => {
+    if (noSheet) aoContar?.(totalGeral);
+  }, [noSheet, aoContar, totalGeral]);
 
   if (
     saidas === null &&
@@ -388,21 +419,19 @@ export function PendenciasDeOutrasSessoes({
     semModulo: semModulo.length,
     perguntas: totalDePerguntas,
   };
+  // AT-950: no Sheet nenhuma aba fica sem escolha — abre a primeira fila com itens.
+  const filasComItens = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const).filter(
+    (chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0),
+  );
+  const abertaDeFato = noSheet ? (aberta ?? filasComItens[0] ?? null) : aberta;
   const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
     .join(' · ');
 
-  return (
-    <div className={styles.wrapper} data-testid="pendencias-de-outras-sessoes">
-      <Disclosure
-        titulo={t(filasDoChat ? 'pendencias.tituloDoProjeto' : 'pendencias.titulo')}
-        trailing={<span className={styles.presenca}>{presenca}</span>}
-        padraoAberto
-        className={styles.disclosure}
-        classNameCabecalho={styles.cabecalho}
-      >
+  const corpo = (
+    <>
         {falhas > 0 && (
           <p className={styles.nota} data-testid="motivo-nao-lido">
             {t(
@@ -427,6 +456,18 @@ export function PendenciasDeOutrasSessoes({
             </Button>
           </div>
         )}
+        {noSheet ? (
+          // AT-950: no Sheet, Tabs por fila (só as com itens).
+          <Tabs value={abertaDeFato} onValueChange={(v) => setAberta(v as ChaveDeFila)}>
+            <TabsList variant="line" aria-label={t('pendencias.abas')} className={styles.abasDoSheet}>
+              {filasComItens.map((chave) => (
+                <TabsTrigger key={chave} value={chave}>
+                  {t(`pendencias.filas.${chave}`)} <TabsCount>{contagens[chave]}</TabsCount>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        ) : (
         <ToggleGroup
           className={styles.abas}
           variant="outline"
@@ -444,7 +485,8 @@ export function PendenciasDeOutrasSessoes({
               </ToggleGroupItem>
             ))}
         </ToggleGroup>
-        <div className={styles.lista}>
+        )}
+        <div className={noSheet ? styles.listaDoSheet : styles.lista}>
           {painel('perguntas', <PerguntasEmAberto
             projectId={projectId}
             perguntas={perguntas}
@@ -459,6 +501,7 @@ export function PendenciasDeOutrasSessoes({
               setRespondidas((atual) => atual.filter((p) => p.questionId !== id))
             }
             podeCorrigir={podeDecidir}
+            compacto={noSheet}
           />)}
           {painel('aprovacoes', fila('aprovacoes', pAprovacoes))}
           {painel('merges', fila('merges', pMerges))}
@@ -693,6 +736,32 @@ export function PendenciasDeOutrasSessoes({
             </section>
           ))}
         </div>
+    </>
+  );
+
+  if (noSheet)
+    return (
+      <Sheet open={aberto} onOpenChange={(o) => aoMudarAberto?.(o)}>
+        <SheetContent side="right" className={styles.sheet} data-testid="pendencias-de-outras-sessoes">
+          <SheetHeader>
+            <SheetTitle>{t('pendencias.tituloDoProjeto')}</SheetTitle>
+            <SheetDescription>{presenca}</SheetDescription>
+          </SheetHeader>
+          <div className={styles.corpoDoSheet}>{corpo}</div>
+        </SheetContent>
+      </Sheet>
+    );
+
+  return (
+    <div className={styles.wrapper} data-testid="pendencias-de-outras-sessoes">
+      <Disclosure
+        titulo={t(filasDoChat ? 'pendencias.tituloDoProjeto' : 'pendencias.titulo')}
+        trailing={<span className={styles.presenca}>{presenca}</span>}
+        padraoAberto
+        className={styles.disclosure}
+        classNameCabecalho={styles.cabecalho}
+      >
+        {corpo}
       </Disclosure>
     </div>
   );

@@ -1223,3 +1223,20 @@
 .trilha a {
   color: inherit;
 }
+
+/* AT-950 (RN-626): uma linha discreta no fio quando há pendências; o resto mora no Sheet. */
+.linhaDePendencias {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  padding: 2px 24px;
+  font-size: var(--fs-meta);
+}
+
+/* AT-950: o aviso/motivo que acompanha um item de menu "⋯" ou "+", em texto visível (RN-102). */
+.motivoNoMenu {
+  display: block;
+  padding: 0 8px 4px;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}

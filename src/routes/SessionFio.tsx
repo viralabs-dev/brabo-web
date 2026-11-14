@@ -195,6 +195,7 @@ export function SessionFio({
       {optimisticUser && (
         <MensagemDeConversa
           align="end"
+          variant="tinted"
           style={{ ['--msg-color' as string]: 'var(--accent)' } as CSSProperties}
           avatar={
             <span className={[styles.avatar, styles.user].join(' ')}>
@@ -210,6 +211,7 @@ export function SessionFio({
       {naoEnviada && !optimisticUser && (
         <MensagemDeConversa
           align="end"
+          variant="tinted"
           style={{ ['--msg-color' as string]: 'var(--accent)' } as CSSProperties}
           data-testid="mensagem-nao-enviada"
           avatar={

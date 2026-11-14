@@ -459,7 +459,7 @@ export function PendenciasDeOutrasSessoes({
         {noSheet ? (
           // AT-950: no Sheet, Tabs por fila (só as com itens).
           <Tabs value={abertaDeFato} onValueChange={(v) => setAberta(v as ChaveDeFila)}>
-            <TabsList variant="line" aria-label={t('pendencias.abas')} className="flex-wrap">
+            <TabsList variant="line" aria-label={t('pendencias.abas')} className={styles.abasDoSheet}>
               {filasComItens.map((chave) => (
                 <TabsTrigger key={chave} value={chave}>
                   {t(`pendencias.filas.${chave}`)} <TabsCount>{contagens[chave]}</TabsCount>
@@ -742,7 +742,7 @@ export function PendenciasDeOutrasSessoes({
   if (noSheet)
     return (
       <Sheet open={aberto} onOpenChange={(o) => aoMudarAberto?.(o)}>
-        <SheetContent side="right" className="w-full gap-0 sm:max-w-md" data-testid="pendencias-de-outras-sessoes">
+        <SheetContent side="right" className={styles.sheet} data-testid="pendencias-de-outras-sessoes">
           <SheetHeader>
             <SheetTitle>{t('pendencias.tituloDoProjeto')}</SheetTitle>
             <SheetDescription>{presenca}</SheetDescription>

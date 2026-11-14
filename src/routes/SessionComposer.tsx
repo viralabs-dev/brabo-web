@@ -556,7 +556,7 @@ export function SessionComposer({
                   {acaoDeHandoff.rotulo}
                 </DropdownMenuItem>
                 {acaoDeHandoff.motivo && (
-                  <span className="px-2 pb-1 text-xs text-muted-foreground">{acaoDeHandoff.motivo}</span>
+                  <span className={styles.motivoNoMenu}>{acaoDeHandoff.motivo}</span>
                 )}
               </DropdownMenuContent>
             </DropdownMenu>

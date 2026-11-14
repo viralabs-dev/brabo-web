@@ -681,7 +681,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                     <Play aria-hidden="true" />
                     <span>
                       {t('handoff.ativarExecucao')}
-                      <span className="block text-xs text-muted-foreground" data-testid="aviso-ativar-sem-plano">
+                      <span className={styles.motivoNoMenu} data-testid="aviso-ativar-sem-plano">
                         {t('handoff.ativarSemPlanoAviso')}
                       </span>
                     </span>

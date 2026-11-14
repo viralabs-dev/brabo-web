@@ -141,7 +141,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
   `apps/web/src/routes/session-timeline-montagem.tsx:984` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:445` (`continuarRespostaCortada`),
-  `:685` (`enviarMensagem`)
+  `:691` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
   (RN-749)`: as duas linhas reconhecidas; resposta inteira e a frase no meio do
   texto não)
@@ -889,7 +889,7 @@ keywords: [regras de negócio, web]
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
-  (`PerguntasEmAberto`), `:127` (`eAutor`), `:297`
+  (`PerguntasEmAberto`), `:140` (`eAutor`), `:317`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PerguntasEmAberto.test.tsx` ("fila

@@ -340,7 +340,7 @@ com `key`, e quem escreve `active` recebe a chave crua do
 - **Onde:** `apps/web/src/routes/project-tabs.ts:95` (as duas entradas),
   `apps/web/src/routes/ProjectSessionsTab.tsx:114` (o filtro pelo `kind`
   gravado) e `:98` (o CTA criando no `kind` da aba),
-  `apps/web/src/routes/SessionPage.tsx:715` (`conviteVisivel`, a única
+  `apps/web/src/routes/SessionPage.tsx:721` (`conviteVisivel`, a única
   pergunta que a topbar e o convite compartilham)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx`,
   `apps/web/src/routes/project-tabs.test.tsx`,

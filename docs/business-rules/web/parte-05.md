@@ -102,12 +102,12 @@ pendências de outras sessões tem o teto de 20 cards, e o resto continua na aba
 Aprovações; (d) as pendências de arquitetura e as hipóteses do Psicólogo
 continuam SEM decisão inline (não há `ApprovalCard` para elas).
 
-- **Código:** `apps/web/src/components/ApprovalCard.tsx:273` (`decidir`, a
+- **Código:** `apps/web/src/components/ApprovalCard.tsx:281` (`decidir`, a
   decisão em voo e a recusa no card); `apps/web/src/lib/session-turno.ts:59`
   (`turnoEmCursoNoLog`), `:536` (`useRetomarTurnoDoLog`);
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
   `:56` (`separarPendenciasDeOutrasSessoes`);
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:76`
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:90`
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
   `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:266`
@@ -219,8 +219,8 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
   `apps/web/src/routes/SessionComposer.tsx:372` (`destinatarioRow`), `:266`
-  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
-  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:588`
+  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:348`
+  (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:625`
   (`handoffIdDoEvento`), `:596` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
@@ -968,7 +968,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
   (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
-  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:146`
+  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:151`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)
@@ -1169,8 +1169,8 @@ E o composer e os campos de texto das perguntas estruturadas levam
 `data-form-type="other"`): cada foco abria o popup de autofill do navegador.
 
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:15` (`conversaComecou`),
-  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:428`
-  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:512`
+  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:434`
+  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:516`
   (`SEM_AUTOFILL`); `apps/web/src/routes/StructuredQuestionCard.tsx:242`
   (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/SessionPage.sessao.test.tsx:316` (Criativo

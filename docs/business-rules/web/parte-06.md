@@ -29,7 +29,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
   `apps/web/src/routes/SessionPage.tsx:812` (`otimistaJaNoLog`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:651`
+  `apps/web/src/routes/session-timeline-montagem.tsx:678`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
   tira a otimista; falha: id ausente ou de outro tipo a mantém; o nome é o da
@@ -281,7 +281,7 @@ keywords: [regras de negócio, web]
   vocabulário lê os JSON, e o enum entrava pela interpolação em runtime;
   `i18n-enum-cru.test.ts` reprova `t(…, { status: x.status })`.
 - **Onde:** `apps/web/src/routes/ConfirmarEncerramento.tsx:13`
-  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:602`
+  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:625`
   (`statusGenerico`)
 - **Teste:** `apps/web/src/routes/ConfirmarEncerramento.test.tsx` (sem
   execução encerra direto; com execução só encerra ao confirmar; cancelar não
@@ -888,7 +888,7 @@ keywords: [regras de negócio, web]
   e de "Confirmar arquitetura pronta", o composer avisa "N perguntas em
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
-- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:47`
+- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
   (`PerguntasEmAberto`), `:127` (`eAutor`), `:297`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
@@ -973,7 +973,7 @@ keywords: [regras de negócio, web]
   com ela aberta (`?historia=`). Não aciona o PO (decisão do dono, 14/10). Não
   corrigível: o link não existe e o motivo é dito em texto (RN-102). A régua é
   a MESMA função da aba Histórias, movida para `lib/`.
-- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:232`
+- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:255`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
   (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:464`
   (`useHistoriaInicial`)

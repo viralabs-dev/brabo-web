@@ -22,7 +22,10 @@ keywords: [regras de negócio, web]
   conviviam durante o turno, uma com o nome e outra com o e-mail. (2) No card
   "passou o bastão ao Dev Lead", aceitar o handoff é o gesto primário e
   "Ativar execução" é SECUNDÁRIO, com o aviso do que pula: sem plano, os devs
-  pegam as tarefas como estão ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
+  pegam as tarefas como estão (AT-950: o aceite é o ÚNICO botão à vista; "Ativar
+  execução", com o aviso, e "Acompanhe a execução" moram no menu "⋯" do card; o
+  mesmo vale para o `ApprovalCard` no fio: Aprovar e Negar à vista, "Sempre
+  permitir" e "Modo automático" no "⋯") ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
   `apps/web/src/routes/SessionPage.tsx:795` (`otimistaJaNoLog`),
@@ -463,9 +466,11 @@ keywords: [regras de negócio, web]
 - **Regra:** bloco que chega DEPOIS do primeiro paint não fica acima do botão
   que a pessoa vai clicar, e o que precisa ficar acima tem o espaço reservado
   enquanto carrega. Na Sessão as pendências de outras sessões
-  ([RN-626](parte-05.md#rn-626)) moram ACIMA do fio — entre o fio e o composer elas o
+  ([RN-626](parte-05.md#rn-626)) moravam ACIMA do fio — entre o fio e o composer elas o
   encolhiam por baixo e, com o "acompanha o fim" ([RN-751](#rn-751)), o card
-  final ("Aceitar handoff e iniciar…") subia sob o cursor. Na aba Executores
+  final ("Aceitar handoff e iniciar…") subia sob o cursor. Desde a AT-950
+  (14/11/2026) elas saem da coluna: moram num Sheet à direita, aberto pelo
+  contador do cabeçalho, e o fio ocupa a coluna inteira. Na aba Executores
   elas vêm DEPOIS de "Parar execução" e da oferta em lote. Na aba PRs o Merge
   vem primeiro na coluna da linha, e a esteira do gate, que depende do backlog,
   tem altura reservada (esqueleto) enquanto ele carrega. Declarado: a reserva
@@ -868,7 +873,7 @@ keywords: [regras de negócio, web]
 
 ### RN-861 — As perguntas em aberto são fila própria no chat, e o aviso de prontidão não bloqueia {#rn-861}
 
-- **Regra:** o bloco de pendências do chat ganha a fila "Perguntas em
+- **Regra:** (AT-950: no Sheet de pendências a fila mostra UMA pergunta por vez, com "Aceitar sugestão" em texto como principal e o campo só em "Responder com texto".) o bloco de pendências do chat ganha a fila "Perguntas em
   aberto", com título e contagem PRÓPRIOS (o `total` da api, nunca somado às
   outras filas — RN-467) e recorte declarado quando a lista vem com teto
   (RN-180). Cada cartão diz a pergunta, o agente que perguntou, o que ela
@@ -1203,7 +1208,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 ### RN-975 — O painel de pendências do chat é uma faixa de abas, e cada fila pagina de 3 em 3 {#rn-975}
 
-- **Regra:** o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). Exceção (AT-810, [RN-1063](parte-07.md#rn-1063)): PR que entra na fila `prontas` abre essa aba sozinha quando nenhuma está aberta. O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
+- **Regra:** (AT-950: no chat o painel mora num Sheet à direita, com `Tabs` no lugar do `ToggleGroup`, a primeira fila com itens aberta e UMA pergunta por vez na aba Perguntas; a faixa de `ToggleGroup` abaixo vale para a aba Executores — [RN-626](parte-05.md#rn-626)) o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). Exceção (AT-810, [RN-1063](parte-07.md#rn-1063)): PR que entra na fila `prontas` abre essa aba sozinha quando nenhuma está aberta. O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
 - **Onde:** `apps/web/src/lib/paginacao-de-fila.ts:16` (`paginar`), `apps/web/src/components/PaginadorDaFila.tsx:11` (`PaginadorDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:76` (`PendenciasDeOutrasSessoes`).
 - **Teste:** `apps/web/src/lib/paginacao-de-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`, `apps/web/src/components/PerguntasEmAberto.test.tsx`.
 - **Origem:** AT-680 (EP-031).
@@ -1212,7 +1217,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 
 ### RN-976 — As ações de passo da conversa são sugestões acima do destinatário, com o mesmo predicado e o mesmo endpoint, e a inércia é dita em texto {#rn-976}
 
-- **Regra:** "Estou pronto", "Confirmar arquitetura pronta", "Responder N perguntas em aberto" e "Endereçar handoff a outro agente…" saem de dentro e de cima do composer e viram uma fileira de sugestões fixa, ACIMA da linha "Para". O predicado de cada uma e o handler (e o endpoint) são os de antes (RN-142, RN-657, RN-672, RN-861, RN-712); a caixa de mensagem fica sozinha na linha e ocupa a largura do fio (780px, antes ~448px). O clique só chama o handler da página, nunca escreve no campo (RN-882), e nada é clicado sozinho; merge nunca vira sugestão. Ação inerte diz o motivo em TEXTO visível, nunca em `title` (RN-102, ADR 0064); as de prontidão e o handoff manual ficam inertes sem o papel `developer`, o mínimo do endpoint, com o motivo de papel dito uma vez. A ordem no DOM (a fileira antes do "Para", e o Enviar como primeiro botão do composer) é contrato do E2E `turno-pelo-canal`.
+- **Regra:** "Estou pronto", "Confirmar arquitetura pronta", "Responder N perguntas em aberto" e "Endereçar handoff a outro agente…" saem de dentro e de cima do composer e viram uma fileira de sugestões fixa, ACIMA da linha "Para". **AT-950 (14/11/2026): a fileira tem no máximo 3 ações, todas com TEXTO — "Estou pronto — validar necessidade" nunca é só ícone —; "N perguntas em aberto" sai dela (o contador "Pendências" do cabeçalho leva ao Sheet; o comando `/` segue) e "Endereçar handoff a outro agente…" vai para o menu "+" do composer (`menu-mais-acoes`).** O predicado de cada uma e o handler (e o endpoint) são os de antes (RN-142, RN-657, RN-672, RN-861, RN-712); a caixa de mensagem fica sozinha na linha e ocupa a largura do fio (780px, antes ~448px). O clique só chama o handler da página, nunca escreve no campo (RN-882), e nada é clicado sozinho; merge nunca vira sugestão. Ação inerte diz o motivo em TEXTO visível, nunca em `title` (RN-102, ADR 0064); as de prontidão e o handoff manual ficam inertes sem o papel `developer`, o mínimo do endpoint, com o motivo de papel dito uma vez. A ordem no DOM (a fileira antes do "Para", e o Enviar como primeiro botão do composer) é contrato do E2E `turno-pelo-canal`.
 - **Onde:** `apps/web/src/routes/SessionComposer.tsx:150` (`acoes`), `apps/web/src/components/ai-elements/suggestion.tsx:50` (`SugestoesDeAcao`).
 - **Teste:** `apps/web/src/routes/SessionPage.sugestoes-no-chat.test.tsx`, `apps/web/src/components/ai-elements/suggestion.test.tsx`.
 - **Origem:** AT-681 (EP-031).

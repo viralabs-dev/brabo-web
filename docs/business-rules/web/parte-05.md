@@ -21,6 +21,16 @@ depois de a ação já ter saído de `pending`), e reabrir a sessão com um turn
 curso devolvia o composer livre e o 409. As quatro correções são de TELA — a
 api, o engine e todo teto ficam como estão.
 
+> **Revisada pela AT-950 (14/11/2026):** o bloco de pendências deixou de ficar
+> acima do fio. Ele mora num Sheet à direita, aberto pelo contador "Pendências
+> N" do cabeçalho da sessão (`SessionTopbar`), com uma aba por fila (só as com
+> itens) e UMA pergunta por vez; no fio fica no máximo uma linha discreta
+> "N pendências · Abrir". Os eventos `EVENTO_ABRIR_PERGUNTAS` e
+> `EVENTO_ABRIR_FILA` (e o "Responder perguntas" do menu `/`) abrem o Sheet. Os
+> cartões, os endpoints e todo teto seguem os mesmos. Onde este texto disser
+> "acima do fio" ou "no bloco do chat", leia "no Sheet de pendências". A aba
+> Executores continua com o bloco inline.
+
 1. **O card fica inerte e diz a frase da api (AT-256).** `ApprovalCard` segura
    os botões enquanto a decisão está em voo (o duplo clique era um 409 certo) e,
    quando a chamada devolve promessa que rejeita, mostra a frase que a api
@@ -1338,7 +1348,10 @@ linhas empurrava a conversa para fora da tela. Desde a AT-375:
   `textoPlanoDoMarkdown`: `**`, `##`, réguas, tabelas e crases viram texto
   corrido. A faixa é prévia; a resposta renderizada continua sendo a bolha do
   fim do turno (RN-460), e o store do streaming não muda (RN-639);
-- **formulário respondido** — a api reenvia as respostas ao agente como
+- **formulário respondido** — (AT-950: a resposta agora vira uma bolha-resumo do
+  USUÁRIO, à direita, "Respondi N perguntas", recolhível, com cada pergunta e a
+  resposta; o card respondido segue como registro. O eco abaixo continua fora do
+  fio e fora do envio ao agente.) a api reenvia as respostas ao agente como
   `chat.message` do usuário; a bolha cujo texto é EXATAMENTE o que a api monta
   (`"<n>. <rótulo>: <resposta>"`), primeira mensagem de usuário depois da
   resposta, sai do fio, porque o card respondido já as mostra. Mensagem

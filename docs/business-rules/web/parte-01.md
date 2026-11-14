@@ -733,7 +733,7 @@ qualquer dos dois caminhos. O que mudou é que a PRIMEIRA MENSAGEM agora também
 conta como esse gesto: ninguém deveria precisar de um clique à parte antes de falar
 com quem a tela já o convidou a falar.
 
-- **Onde:** `apps/web/src/routes/SessionPage.tsx:690` (`handleSend`)
+- **Onde:** `apps/web/src/routes/SessionPage.tsx:696` (`handleSend`)
 - **Teste:** `apps/web/src/routes/SessionPage.ideacao-automatica.test.tsx`
 - **Caso de borda:** sessão `consultiva` não tem agente Criativo — a regra
   não se aplica, e o caminho SSE genérico segue sendo o certo para ela.

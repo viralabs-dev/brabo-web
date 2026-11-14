@@ -218,7 +218,7 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:228` (`agentesEmConversa`),
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
-  `apps/web/src/routes/SessionComposer.tsx:368` (`destinatarioRow`), `:266`
+  `apps/web/src/routes/SessionComposer.tsx:372` (`destinatarioRow`), `:266`
   (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:342`
   (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:588`
   (`handoffIdDoEvento`), `:596` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
@@ -1031,7 +1031,7 @@ sempre dele.
 - **Código:** `apps/web/src/lib/autor-da-mensagem.ts:52` (`autorDaMensagem`);
   `apps/web/src/lib/autoria-da-sessao.ts:45` (`useAutoriaDaSessao`), `:18`
   (`comporMembros`);
-  `apps/web/src/routes/session-timeline-montagem.tsx:186` (`rotuloDoAutor`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:190` (`rotuloDoAutor`),
   `:405` (o `chat.message`), `:687` (a devolução de história);
   `apps/web/src/routes/SessionPage.tsx:133` (`autoria`)
 - **Teste:** `apps/web/src/routes/SessionPage.autor-da-mensagem.test.tsx:147`

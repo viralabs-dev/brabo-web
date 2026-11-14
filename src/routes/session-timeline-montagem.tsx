@@ -66,6 +66,8 @@ import { MergearNoChat } from './MergearNoChat';
 import { jaHaMergeDaPr, prAbertaDaAcao } from './MergearNoChat.helpers';
 import { gatePendenteNoMerge } from '../lib/gate-do-merge';
 import { StructuredQuestionCard } from './StructuredQuestionCard';
+import { MaisAcoes } from '../components/ai-elements/mais-acoes';
+import { DropdownMenuItem } from '../components/shadcn/dropdown-menu';
 import { ecosDeRespostaEstruturada } from '../lib/eco-de-formulario';
 import { agruparNarracoesDoTurno } from './session-fio';
 import { camposDoArtefato } from '../lib/artefato-do-fio';
@@ -660,50 +662,38 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
               <ThumbsUp aria-hidden="true" />
               {t('handoff.aceitarEPassar', { agente: nomeDoAgente(oferta!.toAgent) })}
             </Button>
-            {/* Handoff pro Dev Lead é o início da EXECUÇÃO — quem aceita
-                precisa saber onde acompanhar depois (RN-125). As outras
-                ofertas (PO, Arquiteto…) continuam na própria sessão, então
-                não ganham o link: não há "onde mais olhar" pra elas. */}
+            {/* Handoff pro Dev Lead é o início da EXECUÇÃO — quem aceita precisa saber onde
+                acompanhar depois (RN-125). AT-950 (RN-728): o aceite é o ÚNICO botão à vista;
+                "Ativar execução" (atalho de RN-137 que pula o plano, ou o aviso de que falta
+                repositório, RN-582) e "Acompanhar a execução" moram no menu "⋯". */}
             {toAgent === 'dev-lead' && (
-              <>
-                {/* Atalho pra quem já sabe o que quer (RN-137): ativa a
-                    execução direto daqui, sem passar pela conversa com o
-                    Dev Lead — mesma `activateExecution` da Visão Geral.
-                    Sem repositório ele SAI (RN-582) e o card diz por quê:
-                    o aceite ao lado é a segunda porta que o provisiona, e
-                    é o gesto que resolve — ativar daria 409. */}
+              <MaisAcoes>
                 {semRepositorio ? (
                   <span className={styles.timelineLink} data-testid="sem-repositorio-no-handoff">
                     {t('handoff.semRepositorio')}
                   </span>
                 ) : (
-                  // RN-728 (AT-410): o aceite é o primário; ativar daqui é
-                  // SECUNDÁRIO e diz o que pula — o plano do Dev Lead.
-                  <>
-                    <Button
-                      variant="secondary"
-                      loading={ativandoExecucao}
-                      onClick={handleActivateExecution}
-                      data-testid="ativar-execucao-no-handoff"
-                    >
-                      <Play aria-hidden="true" />
+                  <DropdownMenuItem
+                    disabled={ativandoExecucao}
+                    onClick={handleActivateExecution}
+                    data-testid="ativar-execucao-no-handoff"
+                  >
+                    <Play aria-hidden="true" />
+                    <span>
                       {t('handoff.ativarExecucao')}
-                    </Button>
-                    <span className={styles.timelineLink} data-testid="aviso-ativar-sem-plano">
-                      {t('handoff.ativarSemPlanoAviso')}
+                      <span className="block text-xs text-muted-foreground" data-testid="aviso-ativar-sem-plano">
+                        {t('handoff.ativarSemPlanoAviso')}
+                      </span>
                     </span>
-                  </>
+                  </DropdownMenuItem>
                 )}
-                <Link
-                  to="/projects/$projectId"
-                  params={{ projectId }}
-                  search={{ tab: 'executores' }}
-                  className={styles.timelineLink}
+                <DropdownMenuItem
+                  render={<Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'executores' }} />}
                 >
                   {t('handoff.acompanheExecucao')}
                   <ChevronRightIcon size={11} />
-                </Link>
-              </>
+                </DropdownMenuItem>
+              </MaisAcoes>
             )}
           </AlertShadcn>
         ) : (
@@ -802,7 +792,8 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 <span className={styles.handoffAgent} style={corDoAgente(event.actor.id)}>
                   {nomeDoAgente(event.actor.id)}
                 </span>
-                {t(verboKey)} &quot;{titulo}&quot;
+                {/* AT-950: o título já é a linha do cartão — não se repete no selo. */}
+                {t(verboKey)}
               </Badge>
             }
             acao={
@@ -1389,6 +1380,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
         <CartaoOuReferenciaNoFio action={action}>
         <ApprovalCard
           action={action}
+          compacto
           decisaoDaPolitica={decisaoDaPoliticaDaAcao(action.id, events)}
           // AT-256: devolve a promessa (o card segura os botões e diz a frase
           // da api) e refaz a lista MESMO na recusa — um 409 quer dizer que a

@@ -590,5 +590,8 @@
     "resumoAutor": "You",
     "resumo_one": "I answered {{count}} question",
     "resumo_other": "I answered {{count}} questions"
+  },
+  "cartao": {
+    "maisAcoes": "More actions"
   }
 }

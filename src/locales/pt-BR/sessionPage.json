@@ -623,5 +623,8 @@
     "resumo_one": "Respondi {{count}} pergunta",
     "resumo_other": "Respondi {{count}} perguntas",
     "resumo_zero": "Respondi {{count}} perguntas"
+  },
+  "cartao": {
+    "maisAcoes": "Mais ações"
   }
 }

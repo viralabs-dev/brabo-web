@@ -20,6 +20,7 @@ import i18n from '../lib/i18n';
  *   corria numa sessão NOVA.
  */
 
+import { itemDoMenu } from '../test/mais-acoes';
 const acceptHandoff = vi.fn();
 const activateExecution = vi.fn();
 const getSession = vi.fn();
@@ -296,7 +297,7 @@ describe('AT-295 — depois de "Ativar execução", a tela vai à sessão de exe
     activateExecution.mockResolvedValue({ sessionId: 'sessao-exec', modules: ['core'] });
 
     montar();
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     await waitFor(() => expect(irParaSessao).toHaveBeenCalledWith('sessao-exec'));
     expect(activateExecution).toHaveBeenCalledWith('proj-1', ID);
@@ -308,7 +309,7 @@ describe('AT-295 — depois de "Ativar execução", a tela vai à sessão de exe
     activateExecution.mockRejectedValue(new Error('Papel insuficiente para esta ação'));
 
     montar();
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     await waitFor(() => expect(activateExecution).toHaveBeenCalled());
     await screen.findByText(/Papel insuficiente|Não foi possível ativar/);
@@ -320,7 +321,7 @@ describe('AT-295 — depois de "Ativar execução", a tela vai à sessão de exe
     activateExecution.mockResolvedValue({ sessionId: 'sessao-exec', modules: [] });
 
     montar(false);
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     expect(await screen.findByText('Execução ativada')).toBeInTheDocument();
     expect(screen.queryByText('Levando você à sessão de execução.')).not.toBeInTheDocument();

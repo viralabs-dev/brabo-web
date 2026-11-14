@@ -557,5 +557,8 @@
   "perguntasEstruturadas": {
     "resumoAutor": "你",
     "resumo_other": "我回答了 {{count}} 个问题"
+  },
+  "cartao": {
+    "maisAcoes": "更多操作"
   }
 }

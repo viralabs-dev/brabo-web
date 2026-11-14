@@ -874,7 +874,7 @@ describe('RN-157 — aviso compacto do PO ao criar épico/história', () => {
 
     montar();
 
-    const pill = await screen.findByText('criou o épico "Autenticação de usuários"');
+    const pill = await screen.findByText('criou o épico');
     expect(pill).toBeInTheDocument();
 
     // O nome do agente continua visível, só que dentro da pílula compacta —
@@ -911,7 +911,7 @@ describe('RN-157 — aviso compacto do PO ao criar épico/história', () => {
     montar();
 
     expect(
-      await screen.findByText('criou a história "Login com e-mail e senha"'),
+      await screen.findByText('criou a história'),
     ).toBeInTheDocument();
     const link = screen.getByRole('link', { name: /Ver em Histórias/ });
     expect(link).toHaveAttribute('href', '/projects/proj-1?tab=backlog');

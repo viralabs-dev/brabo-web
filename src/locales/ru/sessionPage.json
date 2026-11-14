@@ -656,5 +656,8 @@
     "resumo_few": "Я ответил на {{count}} вопроса",
     "resumo_many": "Я ответил на {{count}} вопросов",
     "resumo_other": "Я ответил на {{count}} вопроса"
+  },
+  "cartao": {
+    "maisAcoes": "Ещё действия"
   }
 }

@@ -6,6 +6,7 @@ import i18n from '../lib/i18n';
 
 const getOpenQuestions = vi.fn();
 const answerOpenQuestion = vi.fn();
+const acceptOpenQuestionSuggestions = vi.fn();
 const getProjectPendingActions = vi.fn();
 const listSessionEvents = vi.fn();
 const getOpenPullRequestsDoChat = vi.fn();
@@ -18,6 +19,7 @@ vi.mock('../lib/api-client', async (importOriginal) => {
     ...original,
     getOpenQuestions: (...a: unknown[]) => getOpenQuestions(...a),
     answerOpenQuestion: (...a: unknown[]) => answerOpenQuestion(...a),
+    acceptOpenQuestionSuggestions: (...a: unknown[]) => acceptOpenQuestionSuggestions(...a),
     getProjectPendingActions: (...a: unknown[]) => getProjectPendingActions(...a),
     listSessionEvents: (...a: unknown[]) => listSessionEvents(...a),
     getOpenPullRequestsDoChat: (...a: unknown[]) => getOpenPullRequestsDoChat(...a),
@@ -197,5 +199,42 @@ describe('Perguntas em aberto — paginação (AT-680, RN-975)', () => {
     await abrir();
     const fila = await screen.findByTestId('fila-perguntas-em-aberto');
     expect(within(fila).queryByRole('status')).toBeNull();
+  });
+});
+
+describe('AT-997: aceitar as sugestões do mesmo agente em lote', () => {
+  it('o botão só aparece com ≥ 2 do mesmo agente; a confirmação lista as N e marca a de regra', async () => {
+    getOpenQuestions.mockResolvedValue({
+      itens: [pergunta('a'), pergunta('b', { afeta: { regras: [], historias: [], tarefas: [] } }), pergunta('c', { autor: 'arquiteto' })],
+      total: 3,
+    });
+    acceptOpenQuestionSuggestions.mockResolvedValue({
+      resultados: [
+        { questionId: 'a', status: 'answered' },
+        { questionId: 'b', status: 'answered' },
+      ],
+    });
+    montar(pendencias());
+    await abrir();
+    const botoes = await screen.findAllByTestId('aceitar-lote');
+    expect(botoes).toHaveLength(1);
+    expect(botoes[0]!.textContent).toContain('Aceitar as 2 sugestões de Criativo');
+    fireEvent.click(botoes[0]!);
+    const conf = await screen.findByTestId('confirmacao-do-lote');
+    expect(within(conf).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(conf).getAllByTestId('lote-toca-regra')).toHaveLength(1);
+    expect(acceptOpenQuestionSuggestions).not.toHaveBeenCalled();
+    fireEvent.click(within(conf).getByRole('button', { name: /Confirmar as 2 sugestões/ }));
+    await waitFor(() =>
+      expect(acceptOpenQuestionSuggestions).toHaveBeenCalledWith('proj-1', ['a', 'b']),
+    );
+  });
+
+  it('com uma só sugestão do agente, não há botão de lote', async () => {
+    getOpenQuestions.mockResolvedValue({ itens: [pergunta('a'), pergunta('c', { autor: 'arquiteto' })], total: 2 });
+    montar(pendencias());
+    await abrir();
+    await screen.findAllByTestId('pergunta-em-aberto');
+    expect(screen.queryByTestId('aceitar-lote')).toBeNull();
   });
 });

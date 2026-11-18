@@ -38,7 +38,11 @@
   "erroDeCarregamento": {
     "defaultMessage": "Não foi possível falar com a api.",
     "trace": "trace {{traceId}}",
-    "retry": "Tentar de novo"
+    "retry": "Tentar de novo",
+    "rateLimited": "O servidor recusou a leitura (429). Isto não quer dizer que o projeto não tem {{coisa}}.",
+    "faixa429": "Muitas requisições agora. O que está na tela pode estar desatualizado.",
+    "faixaGenerica": "Não deu para atualizar agora. O que está na tela pode estar desatualizado.",
+    "tentarAgora": "Tentar agora"
   },
   "codeBlock": {
     "copiar": "Copiar",

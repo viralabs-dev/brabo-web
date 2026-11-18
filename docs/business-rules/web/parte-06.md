@@ -187,7 +187,7 @@ keywords: [regras de negócio, web]
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
 - **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
-  `apps/web/src/routes/Shell.tsx:477` (`abaDaRota`),
+  `apps/web/src/routes/Shell.tsx:485` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
   `apps/web/src/components/ModelCatalogSection.module.css` (`.barraDeLote`),
@@ -975,7 +975,7 @@ keywords: [regras de negócio, web]
   a MESMA função da aba Histórias, movida para `lib/`.
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:255`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
-  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:464`
+  (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:482`
   (`useHistoriaInicial`)
 - **Teste:** `apps/web/src/components/PerguntasRespondidas.test.tsx` ("caminho
   feliz: história draft sem tarefa em execução ganha o link para a aba

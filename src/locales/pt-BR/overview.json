@@ -33,7 +33,9 @@
       "modules": "módulos · v{{version}}",
       "c4": "C4 nível 2",
       "byArchitect": "pelo Arquiteto · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "Não deu para carregar a Arquitetura",
+    "loadErrorThing": "módulos nem ADRs"
   },
   "c4": {
     "titleContext": "Contexto",

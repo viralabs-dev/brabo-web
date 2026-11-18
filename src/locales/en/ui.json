@@ -37,7 +37,11 @@
   "erroDeCarregamento": {
     "defaultMessage": "Could not reach the api.",
     "trace": "trace {{traceId}}",
-    "retry": "Try again"
+    "retry": "Try again",
+    "rateLimited": "The server refused the read (429). This does not mean the project has no {{coisa}}.",
+    "faixa429": "Too many requests right now. What is on screen may be out of date.",
+    "faixaGenerica": "Could not refresh right now. What is on screen may be out of date.",
+    "tentarAgora": "Try now"
   },
   "codeBlock": {
     "copiar": "Copy",

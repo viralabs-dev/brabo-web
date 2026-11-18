@@ -5,6 +5,7 @@ import i18next from 'i18next';
 import uiPtBR from '../locales/pt-BR/ui.json';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import { ProjectBacklogTab } from './ProjectBacklogTab';
+import { ApiError } from '../lib/api-client';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import type { Epic, Story } from '../lib/api-types';
 import backlogEn from '../locales/en/backlog.json';
@@ -20,6 +21,10 @@ const updateStoryTitle = vi.fn();
 const listWorkspaces = vi.fn();
 
 vi.mock('../lib/api-client', () => ({
+  ApiError: class ApiError extends Error {
+    status = 429;
+    traceId = undefined;
+  },
   listBacklog: (...args: unknown[]) => listBacklog(...args),
   getCoverage: (...args: unknown[]) => getCoverage(...args),
   promoteStories: (...args: unknown[]) => promoteStories(...args),
@@ -455,5 +460,16 @@ describe('ProjectBacklogTab — arquivar tarefa (AT-912)', () => {
     expect(item.getByText('arquivada')).toBeTruthy();
     expect(item.getByText('Motivo: duplicada')).toBeTruthy();
     expect(item.queryByRole('button', { name: 'Arquivar' })).toBeNull();
+  });
+});
+
+describe('ProjectBacklogTab — erro de carga não é vazio (AT-965)', () => {
+  it('com a leitura recusada (429), não diz "sem épicos" e oferece Tentar de novo', async () => {
+    listBacklog.mockRejectedValue(new ApiError(429, {}));
+    montar();
+
+    expect(await screen.findByText('Não deu para carregar o Backlog')).toBeInTheDocument();
+    expect(screen.queryByText(backlogPtBR.empty.epics)).not.toBeInTheDocument();
+    expect(screen.getAllByRole('button', { name: 'Tentar de novo' }).length).toBeGreaterThan(0);
   });
 });

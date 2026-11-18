@@ -121,5 +121,11 @@
   },
   "historia": {
     "perguntas_other": "{{count}} 个问题"
+  },
+  "loadError": {
+    "epics": "无法加载待办列表",
+    "epicsThing": "史诗或故事",
+    "rules": "无法加载规则覆盖",
+    "rulesThing": "规则"
   }
 }

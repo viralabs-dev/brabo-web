@@ -886,3 +886,16 @@ describe('Shell — sidebar em altura baixa (AT-964)', () => {
     expect(screen.queryByTestId('agentes-parados')).toBeNull();
   });
 });
+
+describe('Shell — lista de projetos falha dentro de um projeto (AT-965)', () => {
+  it('mantém o projeto da rota e as 8 seções, com o aviso numa linha acima', () => {
+    estado.projects = [];
+    estado.projectsQuery = { isError: true, error: new ApiError(429, { message: 'Limite de requisições excedido' }), refetch: vi.fn() };
+    estado.pathname = `/projects/${PROJECT.id}`;
+    renderShell();
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Limite de requisições excedido');
+    const lista = screen.getByRole('tablist');
+    expect(within(lista).getAllByRole('tab')).toHaveLength(8);
+  });
+});

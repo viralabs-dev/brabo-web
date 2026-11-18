@@ -33,7 +33,9 @@
       "modules": "模块 · v{{version}}",
       "c4": "C4 第 2 级",
       "byArchitect": "由 Arquiteto 生成 · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "无法加载架构",
+    "loadErrorThing": "模块或 ADR"
   },
   "c4": {
     "titleContext": "上下文",

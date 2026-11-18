@@ -1282,8 +1282,8 @@ e o sumário acompanha a ordem.
 `?tab=settings&section=models`; o catálogo, que o passo antigo abria, também é
 de `/providers`.
 
-- **Onde:** `apps/web/src/lib/primeiros-passos.ts:37` (`derivarPrimeirosPassos`),
-  `apps/web/src/components/PrimeirosPassos.tsx:22` (`PrimeirosPassos`)
+- **Onde:** `apps/web/src/lib/primeiros-passos.ts:40` (`derivarPrimeirosPassos`),
+  `apps/web/src/components/PrimeirosPassos.tsx:28` (`PrimeirosPassos`)
 - **Teste:** `apps/web/src/lib/primeiros-passos.test.ts` (caminho feliz e "insumo
   não lido não vira pendente") e `apps/web/src/routes/ProjectOverviewTab.test.tsx`
   ("primeiros passos (RN-708, AT-372)")

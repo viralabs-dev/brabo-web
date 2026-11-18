@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { historicoFalso } from '../test/historico-de-eventos';
 
@@ -127,7 +127,7 @@ describe('SessionPage — o modelo pedido acompanha o agente ativo', () => {
     });
     montar();
     fireEvent.change(
-      within(await screen.findByTestId('destinatario-do-chat')).getByRole('combobox'),
+      await screen.findByTestId('destinatario-do-chat'),
       { target: { value: 'po' } },
     );
 

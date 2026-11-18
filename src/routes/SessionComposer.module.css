@@ -1,0 +1,30 @@
+/* AT-960: estilos do composer em caixa única. O que era de SessionPage.module.css
+   (.destinatarioRow, .composerComDestinatario) fica lá, morto, até a AT-956 apagar. */
+
+/* Âncora do menu de @/ em volta do campo: sem isto o campo fica na largura do conteúdo. */
+.ancoraDoCampo {
+  /* O InputGroup do composer é COLUNA e centraliza os filhos: sem `align-self: stretch`
+     a âncora fica com a largura do conteúdo (179px medidos num grupo de 1224px). */
+  display: flex;
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+}
+
+.paraLabel {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.paraSelect {
+  min-width: 140px;
+  max-width: 220px;
+  width: auto;
+}
+
+/* Empurra Parar e Enviar para a direita da barra. */
+.espaco {
+  flex: 1 1 0;
+}

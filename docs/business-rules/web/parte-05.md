@@ -631,7 +631,7 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
-  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:426`
+  `:44` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:426`
   (`movel`), `:446` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:72` (`movel`)
@@ -973,8 +973,8 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 `position: absolute` dentro de controles abaixo da dobra, não algo cortado.
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
-  (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
-  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:151`
+  (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
+  (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:151`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)

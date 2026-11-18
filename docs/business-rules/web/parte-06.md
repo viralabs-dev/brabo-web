@@ -28,7 +28,7 @@ keywords: [regras de negócio, web]
   permitir" e "Modo automático" no "⋯") ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
-  `apps/web/src/routes/SessionPage.tsx:812` (`otimistaJaNoLog`),
+  `apps/web/src/routes/SessionPage.tsx:797` (`otimistaJaNoLog`),
   `apps/web/src/routes/session-timeline-montagem.tsx:678`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
@@ -835,7 +835,7 @@ keywords: [regras de negócio, web]
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:772` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:781` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
   `apps/web/src/routes/session-timeline-montagem.tsx:1380` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
@@ -1108,7 +1108,7 @@ keywords: [regras de negócio, web]
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
 - **Regra:** refina a RN-626, a RN-825, a RN-826 e a RN-861. Dentro do bloco do chat moram cinco filas, e só aprovações e merges são filtradas por "outra sessão"; perguntas em aberto, PRs prontas e tarefas bloqueadas são do projeto inteiro (a pergunta da PRÓPRIA sessão aparece ali de propósito, porque o aviso do composer lê a mesma query). Por isso, com `filasDoChat` (o chat) o título é "Pendências deste projeto" (`pendencias.tituloDoProjeto`, nos quatro locales); com `filasDoChat={false}` (aba Executores, só aprovações e merges) o título segue "Pendências de outras sessões deste projeto". Nenhuma fila é filtrada, nenhum teto muda e o `data-testid` não muda.
-- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:747` (`tituloDoProjeto`).
+- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:756` (`tituloDoProjeto`).
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 

@@ -152,6 +152,8 @@
     "decided": {
       "denied": "Denied",
       "alwaysAllowed": "Always allowed · recorded in permissions.json",
+      "autoMerged": "Merged by automatic merge",
+      "autoMergedDesligar": "turn off",
       "failed": "Failed",
       "approvedTerminal": "Approved · command running",
       "approved": "Approved",

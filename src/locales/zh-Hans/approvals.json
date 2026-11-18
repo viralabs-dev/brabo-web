@@ -146,6 +146,8 @@
     "decided": {
       "denied": "已拒绝",
       "alwaysAllowed": "始终允许 · 已写入 permissions.json",
+      "autoMerged": "由自动合并完成合并",
+      "autoMergedDesligar": "关闭",
       "failed": "失败",
       "approvedTerminal": "已批准 · 命令执行中",
       "approved": "已批准",

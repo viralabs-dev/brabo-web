@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-987, RN-1316): o `git_merge` auto-aprovado pelo merge automático (`payload.origem: 'merge_automatico'`) diz "Mergeado pelo merge automático · desligar" (link para Configurações › Projeto e execução) no lugar do "Sempre permitido", que era falso. Chaves i18n nos quatro idiomas.
+
 - Feat (AT-997, RN-858): com 2 ou mais perguntas em aberto do mesmo agente, com sugestão e da própria pessoa, a fila mostra "Aceitar as N sugestões de <agente>". A confirmação lista as N (pergunta e sugestão) e marca as que tocam regra de negócio; só o clique da pessoa responde (`POST .../open-questions/accept-suggestions`). `fixados/openapi.json` e os tipos regenerados.
 
 - Feat (AT-955, RN-976): o kit ganha `Marker` e `Scroll Fade` (cópia, sem pacote npm). Os divisores de handoff do fio usam o Marker; a fileira de sugestões de ação esmaece só a borda que transborda (limite de 3 ações intocado). O Message Scroller vai com a AT-959.

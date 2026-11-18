@@ -164,6 +164,8 @@
     "decided": {
       "denied": "Отклонено",
       "alwaysAllowed": "Всегда разрешено · записано в permissions.json",
+      "autoMerged": "Слито автоматическим слиянием",
+      "autoMergedDesligar": "отключить",
       "failed": "Ошибка",
       "approvedTerminal": "Одобрено · команда выполняется",
       "approved": "Одобрено",

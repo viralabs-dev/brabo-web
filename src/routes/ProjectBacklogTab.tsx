@@ -30,6 +30,7 @@ import { Badge, type BadgeTone } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Ajuda } from '../components/ui/Ajuda';
 import { EmptyState } from '../components/ui/EmptyState';
+import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { Modal } from '../components/ui/Modal';
 import { Textarea } from '../components/ui/Textarea';
 import { useToast } from '../components/ui/ToastProvider.helpers';
@@ -75,14 +76,16 @@ const TASK_STATE_LABEL_KEY: Record<EstadoDaTarefa, string> = {
 
 export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('backlog');
-  const { data: epics } = useBacklog(projectId);
+  const epicsQuery = useBacklog(projectId);
+  const epics = epicsQuery.data;
   // RN-727: editar/arquivar pedem `developer` no ENDPOINT — o papel de
   // WORKSPACE, com a lacuna declarada da RN-471 (o de projeto pode sobrepor).
   const { data: workspaceComPapel } = useCurrentWorkspaceWithRole();
   const podeEscrever = roleAtLeast(workspaceComPapel?.role, 'developer');
   // AT-912: arquivar tarefa é gesto do dono (o Dev Lead arquiva a que ele criou, pela ferramenta).
   const podeArquivarTarefa = roleAtLeast(workspaceComPapel?.role, 'owner');
-  const { data: coverage } = useCoverage(projectId);
+  const coverageQuery = useCoverage(projectId);
+  const coverage = coverageQuery.data;
   const propostas = aguardandoPromocao(epics);
   const [visao, setVisao] = useState<'epico' | 'quadro'>('epico');
   const [busca, setBusca] = useState('');
@@ -143,7 +146,15 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
             </Button>
           ))}
         </div>
-        {visao === 'quadro' ? (
+        {!epics && epicsQuery.isError ? (
+          // Erro de carga não é "sem épicos" (AT-965, RN-088).
+          <ErroDeCarregamento
+            titulo={t('loadError.epics')}
+            erro={epicsQuery.error}
+            coisa={t('loadError.epicsThing')}
+            onTentarDeNovo={() => void epicsQuery.refetch()}
+          />
+        ) : visao === 'quadro' ? (
           <QuadroDeTarefas epics={epicsVisiveis} />
         ) : !epics || epics.length === 0 ? (
           <EmptyState titulo={t('empty.epicsTitle')} icone={<ListTree size={18} />}>{t('empty.epics')}</EmptyState>
@@ -172,7 +183,14 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
             </Badge>
           )}
         </div>
-        {!coverage || coverage.rules.length === 0 ? (
+        {!coverage && coverageQuery.isError ? (
+          <ErroDeCarregamento
+            titulo={t('loadError.rules')}
+            erro={coverageQuery.error}
+            coisa={t('loadError.rulesThing')}
+            onTentarDeNovo={() => void coverageQuery.refetch()}
+          />
+        ) : !coverage || coverage.rules.length === 0 ? (
           <EmptyState titulo={t('empty.rulesTitle')} icone={<ListTree size={18} />}>{t('empty.rules')}</EmptyState>
         ) : (
           coverage.rules.map((r) => (

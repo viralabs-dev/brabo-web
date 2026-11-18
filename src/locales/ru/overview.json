@@ -33,7 +33,9 @@
       "modules": "модули · v{{version}}",
       "c4": "C4 уровень 2",
       "byArchitect": "от Arquiteto · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "Не удалось загрузить архитектуру",
+    "loadErrorThing": "модулей и ADR"
   },
   "c4": {
     "titleContext": "Контекст",

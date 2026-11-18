@@ -17,7 +17,8 @@
       "loadError": "无法加载项目。",
       "retry": "重试",
       "tabsAriaLabel": "{{name}} 的标签页",
-      "switch": "切换项目：{{name}}"
+      "switch": "切换项目：{{name}}",
+      "unknownProject": "项目"
     },
     "agentsNow": {
       "label": "当前智能体",

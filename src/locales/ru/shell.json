@@ -17,7 +17,8 @@
       "loadError": "Не удалось загрузить проекты.",
       "retry": "попробовать снова",
       "tabsAriaLabel": "Вкладки {{name}}",
-      "switch": "Сменить проект: {{name}}"
+      "switch": "Сменить проект: {{name}}",
+      "unknownProject": "Проект"
     },
     "agentsNow": {
       "label": "Агенты сейчас",

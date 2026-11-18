@@ -142,6 +142,8 @@ o motivo existia só no console. No dashboard era pior que branco: `!projects`
 também era verdadeiro no erro, então a tela convidava a criar o **primeiro**
 projeto de um workspace que podia ter vinte.
 
+**Complemento (AT-965).** O estado vazio só renderiza com a leitura concluída e vazia: Arquitetura e Backlog (épicos e cobertura de regras) passaram a seguir a regra, e a Arquitetura mostra esqueleto enquanto carrega. Com 429 o erro diz "O servidor recusou a leitura (429). Isto não quer dizer que o projeto não tem ‹coisa›." (`ErroDeCarregamento`, prop `coisa`). Com dado em cache e a revalidação em erro, a tela mantém o dado e `FaixaDeRevalidacao` mostra uma linha no topo da página do projeto com "Tentar agora" (sem contagem regressiva: o cliente não sabe quando a próxima tentativa roda). A sidebar mantém o projeto da rota e as oito seções quando `useProjects` falha. Testes: `ProjectArchitectureTab.test.tsx`, `ProjectBacklogTab.test.tsx`, `FaixaDeRevalidacao.test.tsx`, `Shell.test.tsx`.
+
 É a [RN-059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-059) do outro lado do fio: falha nunca vira resposta vazia.
 Quem falha, diz.
 

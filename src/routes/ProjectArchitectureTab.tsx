@@ -10,6 +10,8 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { useQuery } from '@tanstack/react-query';
 import { listBacklog } from '../lib/api-client';
 import { Button } from '../components/ui/Button';
+import { Skeleton } from '../components/ui/Skeleton';
+import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { pedirAba } from '../lib/contagens-do-projeto';
 import styles from './ProjectArchitectureTab.module.css';
 
@@ -27,13 +29,27 @@ import styles from './ProjectArchitectureTab.module.css';
  * (`C4DiagramView.tsx`/`Modal.tsx`).
  */
 export function ProjectArchitectureTab({ projectId }: { projectId: string }) {
-  const { data: architecture } = useArchitecture(projectId);
+  const { t } = useTranslation('overview');
+  const query = useArchitecture(projectId);
+  const architecture = query.data;
   // Histórias por módulo: lidas só do cache do backlog (RN-1220, RN-632), sem requisição nova.
   const { data: backlog } = useQuery({
     queryKey: ['backlog', projectId],
     queryFn: () => listBacklog(projectId),
     enabled: false,
   });
+  // Vazio só com a leitura CONCLUÍDA e vazia: erro e carga não são "sem arquitetura" (AT-965, RN-088).
+  if (!architecture && query.isError) {
+    return (
+      <ErroDeCarregamento
+        titulo={t('architectureTab.loadErrorTitle')}
+        erro={query.error}
+        coisa={t('architectureTab.loadErrorThing')}
+        onTentarDeNovo={() => void query.refetch()}
+      />
+    );
+  }
+  if (!architecture) return <Skeleton width={260} height={20} />;
   return <ArchitectureContent architecture={architecture} projectId={projectId} backlog={backlog} />;
 }
 

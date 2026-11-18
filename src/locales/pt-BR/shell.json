@@ -17,7 +17,8 @@
       "loadError": "Não foi possível carregar os projetos.",
       "retry": "tentar de novo",
       "tabsAriaLabel": "Abas de {{name}}",
-      "switch": "Trocar de projeto: {{name}}"
+      "switch": "Trocar de projeto: {{name}}",
+      "unknownProject": "Projeto"
     },
     "agentsNow": {
       "label": "Agentes agora",

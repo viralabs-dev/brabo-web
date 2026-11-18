@@ -4,6 +4,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import overviewPtBR from '../locales/pt-BR/overview.json';
+import uiPtBR from '../locales/pt-BR/ui.json';
+import { ApiError } from '../lib/api-client';
 import { ProjectArchitectureTab } from './ProjectArchitectureTab';
 import { ouvirPedidosDeAba } from '../lib/contagens-do-projeto';
 import type { Architecture } from '../lib/api-types';
@@ -15,11 +17,11 @@ import type { Architecture } from '../lib/api-types';
 function novaInstanciaI18n() {
   const instancia = i18next.createInstance();
   void instancia.use(initReactI18next).init({
-    resources: { 'pt-BR': { overview: overviewPtBR } },
+    resources: { 'pt-BR': { overview: overviewPtBR, ui: uiPtBR } },
     lng: 'pt-BR',
     fallbackLng: 'pt-BR',
     defaultNS: 'overview',
-    ns: ['overview'],
+    ns: ['overview', 'ui'],
     interpolation: { escapeValue: false },
     returnNull: false,
   });
@@ -258,5 +260,24 @@ describe('ProjectArchitectureTab', () => {
     const linha = (await screen.findByRole('rowheader', { name: 'booking' })).closest('tr')!;
     expect(linha).toHaveTextContent('2');
     expect(getBacklog).not.toHaveBeenCalled();
+  });
+});
+
+describe('ProjectArchitectureTab — erro de carga não é vazio (AT-965)', () => {
+  it('429 simulado: mostra o erro com Tentar de novo e NUNCA "Sem arquitetura ainda"', async () => {
+    getArchitecture.mockRejectedValue(new ApiError(429, { message: 'Limite de requisições excedido' }));
+
+    montar();
+
+    expect(await screen.findByText('Não deu para carregar a Arquitetura')).toBeInTheDocument();
+    expect(screen.getByText(/O servidor recusou a leitura \(429\)\. Isto não quer dizer que o projeto não tem módulos nem ADRs\./)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeInTheDocument();
+    expect(screen.queryByText(/Sem arquitetura ainda/)).not.toBeInTheDocument();
+  });
+
+  it('enquanto carrega também não diz "Sem arquitetura ainda"', () => {
+    getArchitecture.mockReturnValue(new Promise(() => {}));
+    montar();
+    expect(screen.queryByText(/Sem arquitetura ainda/)).not.toBeInTheDocument();
   });
 });

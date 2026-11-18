@@ -17,7 +17,8 @@
       "loadError": "Could not load the projects.",
       "retry": "try again",
       "tabsAriaLabel": "Tabs of {{name}}",
-      "switch": "Switch project: {{name}}"
+      "switch": "Switch project: {{name}}",
+      "unknownProject": "Project"
     },
     "agentsNow": {
       "label": "Agents now",

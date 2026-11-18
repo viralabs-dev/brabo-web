@@ -18,6 +18,7 @@ import {
 import { setLastSeenSeq } from '../lib/read-state';
 import { MedidorDeGasto } from '../components/MedidorDeGasto';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
+import { FaixaDeRevalidacao } from '../components/FaixaDeRevalidacao';
 import { Skeleton } from '../components/ui/Skeleton';
 import { CarregandoRota } from '../components/CarregandoRota';
 import { useLayoutMovel } from '../lib/layout-movel';
@@ -279,6 +280,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
             {/* Cada painel é um chunk próprio (AT-300): o `Suspense` fica AQUI,
                 em volta só do painel, para que trocar de aba nunca apague o
                 cabeçalho enquanto o chunk chega. */}
+            <FaixaDeRevalidacao projectId={projectId} />
             <FaixaDeSubAbas ativa={tab} contagens={filasDoProjeto.contagens} onChange={trocarSub} />
             <Suspense fallback={<CarregandoRota />}>
               <PainelDaAba projectId={projectId} />

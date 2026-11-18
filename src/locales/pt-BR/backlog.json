@@ -151,5 +151,11 @@
     "perguntas_zero": "nenhuma pergunta",
     "perguntas_one": "{{count}} pergunta",
     "perguntas_other": "{{count}} perguntas"
+  },
+  "loadError": {
+    "epics": "Não deu para carregar o Backlog",
+    "epicsThing": "épicos nem histórias",
+    "rules": "Não deu para carregar a cobertura de regras",
+    "rulesThing": "regras"
   }
 }

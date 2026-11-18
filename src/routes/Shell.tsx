@@ -453,7 +453,15 @@ export function Shell() {
     gravarColapsado(proximo);
   }
 
-  const currentProject = (projects ?? []).find((p) => pathname.startsWith(`/projects/${p.id}`));
+  // Com a lista falha ou ainda sem resposta o projeto atual vem da ROTA, para a
+  // sidebar manter as oito seções em vez de perdê-las (AT-965). Só `id` e `name`
+  // são lidos daqui; o nome volta ao real assim que a lista chega.
+  const idDaRota = /^\/projects\/([^/?#]+)/.exec(pathname)?.[1];
+  const currentProject: Project | undefined =
+    (projects ?? []).find((p) => pathname.startsWith(`/projects/${p.id}`)) ??
+    (idDaRota && projectsQuery.isError
+      ? ({ id: idDaRota, name: t('sidebar.projects.unknownProject') } as Project)
+      : undefined);
   // --- Abas do projeto (ADR 0211) ---------------------------------
   // A sidebar é a ÚNICA navegação do projeto desde o ADR 0211: o trilho
   // vertical (ADR 0126) saiu, e tudo o que só ele tinha mora aqui. Os cinco

@@ -166,5 +166,11 @@
     "perguntas_few": "{{count}} вопроса",
     "perguntas_many": "{{count}} вопросов",
     "perguntas_other": "{{count}} вопроса"
+  },
+  "loadError": {
+    "epics": "Не удалось загрузить бэклог",
+    "epicsThing": "эпиков и историй",
+    "rules": "Не удалось загрузить покрытие правил",
+    "rulesThing": "правил"
   }
 }

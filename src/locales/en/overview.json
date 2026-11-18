@@ -33,7 +33,9 @@
       "modules": "modules · v{{version}}",
       "c4": "C4 level 2",
       "byArchitect": "by the Architect · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "Could not load Architecture",
+    "loadErrorThing": "modules or ADRs"
   },
   "c4": {
     "titleContext": "Context",

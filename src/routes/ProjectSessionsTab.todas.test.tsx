@@ -13,7 +13,10 @@ afterAll(() => {
 });
 
 const { navigateMock } = vi.hoisted(() => ({ navigateMock: vi.fn() }));
-vi.mock('@tanstack/react-router', () => ({ useNavigate: () => navigateMock }));
+vi.mock('@tanstack/react-router', () => ({
+  useNavigate: () => navigateMock,
+  Link: ({ children }: { children: React.ReactNode }) => <a href="#">{children}</a>,
+}));
 
 // A busca do RAG é medida (RN-479..481): o painel só monta com Enter/botão.
 vi.mock('./ProjectRagTab', () => ({

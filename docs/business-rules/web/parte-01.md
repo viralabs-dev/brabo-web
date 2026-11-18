@@ -211,6 +211,11 @@ espaços) conta como **ausência**, tanto na criação quanto ao renomear:
 gravar `''` transformaria o rótulo em `" · #a1b2c3d4"`, pior que a hashtag
 sozinha. `null` no corpo do `PATCH` é o jeito de **desfazer**.
 
+Na lista de sessões do projeto, o **título é o link da sessão** (clique ou
+Enter abrem) e **renomear é um controle próprio**: o lápis "Renomear sessão"
+(24 px no mínimo), visível ao passar o mouse ou focar a linha e sempre
+alcançável pelo Tab (AT-962). Enter confirma, Esc desiste, em branco apaga.
+
 Renomear **não** é evento de sessão. O log de eventos é o que a sessão
 viveu, e o nome é um rótulo de navegação, trocado quantas vezes se
 quiser — N eventos de renomeação empurrariam justamente o que importa para

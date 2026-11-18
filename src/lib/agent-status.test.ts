@@ -354,6 +354,19 @@ describe('deriveAgentRoster — o lead de QA depois da falha do subagente (RN-72
     expect(statusOf(roster, 'qa')).toBe('trabalhando');
   });
 
+  it('bloqueio da tarefa do gate depois do parecer encerra o trabalhando (AT-982)', () => {
+    const roster = deriveAgentRoster(
+      [
+        ev('pr.gate_changed', 'qa-agent', { gateStatus: 'awaiting_qa', taskId: 't1' }),
+        ev('backlog.task_blocked', 'dev-web', { taskId: 't1' }),
+      ],
+      moduleMap,
+      true,
+      [],
+    );
+    expect(statusOf(roster, 'qa')).toBe('ocioso');
+  });
+
   it('delegação falhada depois do parecer encerra o trabalhando', () => {
     const roster = deriveAgentRoster(
       [

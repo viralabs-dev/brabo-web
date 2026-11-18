@@ -19,6 +19,9 @@
     "pendenciesLabel": "Pendências de validação cruzada",
     "reasonNoModule": "sem módulo vinculado",
     "reasonMissingModule": "módulo inexistente: {{missing}}",
+    "contractsLabel": "Contratos entre módulos",
+    "noContracts": "Sem contrato declarado ainda — o Arquiteto declara o que cada módulo expõe.",
+    "contractTypes": {"funcao": "função", "rota": "rota", "evento": "evento", "dado": "dado", "tabela": "tabela", "identidade": "identidade"},
     "cols": {
       "module": "Módulo",
       "stack": "Stack",

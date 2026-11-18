@@ -19,6 +19,9 @@
     "pendenciesLabel": "交叉验证待办",
     "reasonNoModule": "未关联模块",
     "reasonMissingModule": "模块不存在：{{missing}}",
+    "contractsLabel": "模块契约",
+    "noContracts": "尚未声明契约——架构师会声明每个模块对外提供的内容。",
+    "contractTypes": {"funcao": "函数", "rota": "路由", "evento": "事件", "dado": "数据", "tabela": "表", "identidade": "身份"},
     "cols": {
       "module": "模块",
       "stack": "技术栈",

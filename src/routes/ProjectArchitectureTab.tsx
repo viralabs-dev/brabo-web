@@ -75,13 +75,14 @@ function ArchitectureContent({
   const adrs = architecture?.adrs ?? [];
   const pendencies = architecture?.pendencies ?? [];
   const c4Diagram = architecture?.c4Diagram;
+  const contratos = architecture?.contratos ?? [];
 
   const pendente = adrs.find((a) => a.status === 'pending');
   // Quantas histórias citam o módulo em `moduleIds`; sem cache do backlog, nulo ("—").
   const historias = (nome: string) =>
     backlog ? backlog.flatMap((e) => e.stories).filter((st) => (st.moduleIds ?? []).includes(nome)).length : null;
 
-  const isEmpty = !moduleMap && adrs.length === 0 && pendencies.length === 0;
+  const isEmpty = !moduleMap && adrs.length === 0 && pendencies.length === 0 && contratos.length === 0;
 
   return (
     // AT-327: a aba começa no topo como as outras — `.arch` (margem de 28px)
@@ -180,6 +181,28 @@ function ArchitectureContent({
                 </li>
               ))}
             </ul>
+          )}
+
+          <div className={styles.archLabel}>{t('architectureTab.contractsLabel')}</div>
+          {contratos.length === 0 ? (
+            <div className={styles.sectionSub}>{t('architectureTab.noContracts')}</div>
+          ) : (
+            contratos.map((c) => (
+              <section key={c.modulo} aria-label={c.modulo} className={styles.contrato}>
+                <h3 className={styles.contratoModulo}>{c.modulo}</h3>
+                <ul className={styles.adrList}>
+                  {c.expoe.map((i, n) => (
+                    <li key={`${i.tipo}-${n}`} className={styles.contratoItem}>
+                      <Badge tone={i.tipo === 'tabela' || i.tipo === 'identidade' ? 'accent' : 'neutral'}>
+                        {t(`architectureTab.contractTypes.${i.tipo}`)}
+                      </Badge>
+                      <code className={styles.assinatura}>{i.assinatura}</code>
+                      <span className={styles.sectionSub}>{i.descricao}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))
           )}
 
           {pendencies.length > 0 && (

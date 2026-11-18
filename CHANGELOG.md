@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-981, RN-1387, RN-1388): a aba Arquitetura ganha a seção "Contratos entre módulos" (tipo, assinatura e descrição por módulo; `tabela` e `identidade` em destaque) e a timeline rotula `artifact.module_contracts`. `fixados/openapi.json` e os tipos regenerados da api (`contratos` no `architecture`, `dependeDe`/`levantamento` em `Task`). Regressivo `brabo-qa`: `conhecimento-c4.spec.ts` segue valendo, sem ajuste.
+
 - Feat (AT-960, RN-1357, RN-1358, RN-976, RN-1063): o composer vira uma caixa só, com o "Para" na barra de baixo (entre o "+" e o Enviar; `data-testid` `destinatario-do-chat` no `select` e `enviar-mensagem` no Enviar); o aviso de PR pronta vira um `Item` de 44 px; o "Mergear" confirma num Popover (Esc fecha, o foco volta ao botão). Ajuste no `brabo-qa`: `turno-pelo-canal`, `execucao-pr-pronta` e `git-mergear-no-chat`.
 
 - Fix (AT-977, RN-1333): nenhum texto abaixo de 11 px (`--fs-label` é o piso) e `font-size` dos módulos só por tokens `--fs-*`; "Ver todas" e cabeçalhos de ordenação com alvo de 24 px. Teste estático `tipografia-minima.test.ts`. Grupos do kit (`text-[10px]`) e eixos do canvas também em 11 px.

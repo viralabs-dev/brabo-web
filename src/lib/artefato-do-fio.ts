@@ -22,6 +22,12 @@ export function camposDoArtefato(
         : [];
       return { descricao: corta(nomes.join(', ') || undefined) };
     }
+    case 'artifact.module_contracts': {
+      const nomes = Array.isArray(p.contratos)
+        ? p.contratos.map((c) => txt((c as { modulo?: unknown } | null)?.modulo)).filter(Boolean)
+        : [];
+      return { descricao: corta(nomes.join(', ') || undefined) };
+    }
     case 'artifact.c4_diagram':
       return { titulo: txt(p.systemName), descricao: corta(txt(p.systemDescription)) };
     case 'artifact.project_image':

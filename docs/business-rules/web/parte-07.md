@@ -317,3 +317,21 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/MergearNoChat.tsx`.
 - **Teste:** `src/routes/MergearNoChat.test.tsx` ("Popover; Esc fecha").
 - **Origem:** AT-960 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1387"></a>
+
+### RN-1387 — A aba Arquitetura mostra os contratos vigentes por módulo, com o tipo de cada item {#rn-1387}
+
+- **Regra:** abaixo do diagrama C4 e dos ADRs, a seção "Contratos entre módulos" lista, por módulo, o que ele expõe (`contratos` de `GET /projects/:id/backlog/architecture`, [RN-684](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-684)): o tipo (`funcao`, `rota`, `evento`, `dado`, `tabela`, `identidade`), a assinatura e a descrição. `tabela` e `identidade` levam o Badge de destaque. Sem contrato declarado, a seção diz que o Arquiteto ainda não declarou; erro e carga seguem os estados da aba ([RN-088](parte-01.md#rn-088)). Só leitura.
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/routes/ProjectArchitectureTab.module.css`.
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` ("tabela agendamento sob agenda").
+- **Origem:** AT-981 (EP-036).
+
+<a id="rn-1388"></a>
+
+### RN-1388 — O evento `artifact.module_contracts` aparece na timeline com rótulo próprio {#rn-1388}
+
+- **Regra:** o fio da sessão rotula o evento do contrato declarado ("declarou o contrato entre módulos") e o cartão de artefato lista os módulos do contrato (`contratos[].modulo`); antes o evento caía sem rótulo. A recusa do contrato é erro da ferramenta, não evento, e não ganha rótulo.
+- **Onde:** `src/lib/timeline-tree.ts`, `src/lib/artefato-do-fio.ts`, `src/locales/*/executors.json` (`artifactModuleContracts`).
+- **Teste:** `src/lib/artefato-do-fio.test.ts`.
+- **Origem:** AT-981 (EP-036).

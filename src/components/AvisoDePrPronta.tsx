@@ -6,7 +6,7 @@ import { usePrsProntas } from '../lib/prs-prontas';
 import { tarefaDaBranch } from '../lib/prontas-e-bloqueadas';
 import { abrirFilaDePendencias } from '../lib/perguntas-em-aberto';
 import { MergearNoChat } from '../routes/MergearNoChat';
-import { Alert } from './ui/Alert';
+import { Item, ItemActions, ItemContent, ItemMedia } from './shadcn/item';
 import { Button } from './ui/Button';
 import { esperaRelativa, tarefasQueODestrava, tituloComContador } from './AvisoDePrPronta.helpers';
 import styles from './AvisoDePrPronta.module.css';
@@ -61,9 +61,12 @@ export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
 
   return (
     <div className={styles.aviso}>
-      <Alert tone="accent" role="status" icon={<GitMerge size={15} aria-hidden="true" />}>
-        <div className={styles.corpo} data-testid="aviso-pr-pronta">
-          <span>
+      <Item variant="outline" size="xs" role="status" className={styles.item} data-testid="aviso-pr-pronta">
+        <ItemMedia variant="icon">
+          <GitMerge size={15} aria-hidden="true" />
+        </ItemMedia>
+        <ItemContent className={styles.corpo}>
+          <span className={styles.texto}>
             {unica
               ? t('avisoDePrPronta.uma', { numero: unica.pr.number, titulo: unica.pr.title })
               : t('avisoDePrPronta.varias', { count: avisadas.length })}
@@ -71,7 +74,8 @@ export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
             {topo.destrava > 0 &&
               ` ${t(unica ? 'avisoDePrPronta.destrava' : 'avisoDePrPronta.destravaA', { count: topo.destrava, numero: topo.pr.number })}`}
           </span>
-          <div className={styles.acoes}>
+        </ItemContent>
+          <ItemActions className={styles.acoes}>
             {unica && !unica.mergeDaSessao ? (
               <MergearNoChat
                 projectId={projectId}
@@ -96,9 +100,8 @@ export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
             >
               {t('avisoDePrPronta.agoraNao')}
             </Button>
-          </div>
-        </div>
-      </Alert>
+          </ItemActions>
+      </Item>
     </div>
   );
 }

@@ -26,6 +26,7 @@ import { fraseDaAcao, SEM_FRASE } from '../lib/aprovacoes';
 import { Plus, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
 import styles from './SessionPage.module.css';
+import estilos from './SessionComposer.module.css';
 
 import { ignorarComposicaoIme } from './SessionComposer.helpers';
 /**
@@ -360,89 +361,7 @@ export function SessionComposer({
             )}
           </div>
         )}
-        {/*
-          O destinatário da mensagem, VISÍVEL e escolhido (RN-631, AT-251).
-          Antes ele não aparecia em lugar nenhum: era "o último agente
-          ativado na janela de 200 eventos", e um handoff aceito por outro
-          caminho trocava a quem a próxima mensagem ia sem a pessoa ver.
-          Agora a linha nomeia quem recebe ANTES do envio; com duas ou mais
-          opções e nenhuma escolha, o envio trava e o motivo é dito em TEXTO
-          (tooltip em botão desabilitado não abre).
-        */}
-        <div className={styles.destinatarioRow} data-testid="destinatario-do-chat">
-          {opcoesDeDestinatario.length === 0 ? (
-            /*
-              RN-682 (AT-254): sem agente, a mensagem NÃO vai a lugar
-              nenhum. Até aqui ela ia ao modelo cru (o SSE de
-              `POST .../chat`), sem histórico nem prompt de sistema, e a
-              resposta saía assinada pelo nome do modelo. Agora a linha
-              PEDE um agente e mostra quem pode ser chamado — os agentes
-              que conversam (`AGENTES_DE_CHAT`) e ainda não estão na
-              sessão —, e o envio fica travado. Chamar é o MESMO handoff
-              manual de sempre (ADR 0109/RN-440): a oferta aparece no fio,
-              e aceitá-la faz do agente o destinatário (RN-631).
-            */
-            <>
-              <label className={styles.destinatarioLabel} htmlFor="destinatario-do-chat">
-                {t('composer.destinatarioLabel')}
-              </label>
-              <Select
-                id="destinatario-do-chat"
-                value={manualHandoffTarget}
-                disabled={enviandoHandoffManual || !isActive}
-                onChange={(e) => setManualHandoffTarget(e.target.value)}
-              >
-                <option value="">{t('composer.destinatarioPlaceholder')}</option>
-                {agentesParaChamar(activeFor).map((agente) => (
-                  <option key={agente} value={agente}>
-                    {nomeDoAgente(agente)}
-                  </option>
-                ))}
-              </Select>
-              <Button
-                variant="secondary"
-                loading={enviandoHandoffManual}
-                disabled={!manualHandoffTarget}
-                onClick={handleRequestManualHandoff}
-              >
-                {t('composer.chamarAgente')}
-              </Button>
-              <span className={styles.destinatarioAviso}>{t('composer.semAgente')}</span>
-            </>
-          ) : (
-            <>
-              <label className={styles.destinatarioLabel} htmlFor="destinatario-do-chat">
-                {t('composer.destinatarioLabel')}
-              </label>
-              <Select
-                id="destinatario-do-chat"
-                value={destinatario ?? ''}
-                disabled={streaming}
-                onChange={(e) => {
-                  menu.limparChips();
-                  if (e.target.value) escolherDestinatario(e.target.value, true);
-                }}
-              >
-                {destinatario === null && (
-                  <option value="" disabled>
-                    {t('composer.destinatarioPlaceholder')}
-                  </option>
-                )}
-                {opcoesDeDestinatario.map((agente) => (
-                  <option key={agente} value={agente}>
-                    {nomeDoAgente(agente)}
-                  </option>
-                ))}
-              </Select>
-              {precisaEscolherDestinatario && (
-                <span className={styles.destinatarioAviso}>
-                  {t('composer.destinatarioPrecisaEscolher')}
-                </span>
-              )}
-            </>
-          )}
-        </div>
-        <div className={`${styles.composer} ${styles.composerComDestinatario}`}>
+        <div className={`${styles.composer}`}>
         <InputGroup className={styles.composerEntrada}>
           {session?.id && <AnexosPendentes sessionId={session.id} />}
           {menu.destinatarios.length > 0 && (
@@ -498,7 +417,7 @@ export function SessionComposer({
           {/* RN-882: o campo é dono do valor durante a digitação. O menu só LÊ o nó. */}
           <div
             ref={setAncora}
-            className={styles.ancoraDoCampo}
+            className={estilos.ancoraDoCampo}
             onInput={(e) => menu.ler(e.target as HTMLTextAreaElement)}
             onClick={(e) => e.target instanceof HTMLTextAreaElement && menu.ler(e.target)}
             onKeyUp={(e) => e.target instanceof HTMLTextAreaElement && menu.ler(e.target)}
@@ -530,18 +449,6 @@ export function SessionComposer({
             aoEscolher={menu.escolher}
           />
           <PromptInputToolbar>
-          <Button
-            onClick={menu.enviar}
-            legenda={streaming ? t('composer.enfileirar') : t('composer.enviar')}
-            disabled={
-              (streaming && !podeEnfileirar) || !draft.trim() || destinatario === null ||
-              (streaming && menu.destinatarios.length > 1)
-            }
-          >
-            {streaming ? <ListPlus aria-hidden="true" /> : <SendHorizontal aria-hidden="true" />}
-          </Button>
-          {/* O clipe vem DEPOIS do Enviar: o Enviar é o primeiro botão (contrato do E2E). */}
-          {session?.id && <BotaoDeAnexar sessionId={session.id} desabilitado={streaming && !podeEnfileirar} />}
           {acaoDeHandoff && (
             <DropdownMenu>
               <DropdownMenuTrigger
@@ -561,6 +468,76 @@ export function SessionComposer({
               </DropdownMenuContent>
             </DropdownMenu>
           )}
+          {/* AT-960: o contrato do E2E é o data-testid, não a posição do botão. */}
+          {session?.id && <BotaoDeAnexar sessionId={session.id} desabilitado={streaming && !podeEnfileirar} />}
+          {/* AT-960: o destinatário (RN-631) mora na barra de baixo, entre o "+" e o Enviar. */}
+          {opcoesDeDestinatario.length === 0 ? (
+            <>
+              <label className={estilos.paraLabel} htmlFor="destinatario-do-chat">
+                {t('composer.destinatarioLabel')}
+              </label>
+              <div className={estilos.paraSelect}>
+              <Select
+                id="destinatario-do-chat"
+                data-testid="destinatario-do-chat"
+                value={manualHandoffTarget}
+                disabled={enviandoHandoffManual || !isActive}
+                onChange={(e) => setManualHandoffTarget(e.target.value)}
+              >
+                <option value="">{t('composer.destinatarioPlaceholder')}</option>
+                {agentesParaChamar(activeFor).map((agente) => (
+                  <option key={agente} value={agente}>
+                    {nomeDoAgente(agente)}
+                  </option>
+                ))}
+              </Select>
+              </div>
+              <Button
+                variant="secondary"
+                loading={enviandoHandoffManual}
+                disabled={!manualHandoffTarget}
+                onClick={handleRequestManualHandoff}
+              >
+                {t('composer.chamarAgente')}
+              </Button>
+              <span className={styles.destinatarioAviso}>{t('composer.semAgente')}</span>
+            </>
+          ) : (
+            <>
+              <label className={estilos.paraLabel} htmlFor="destinatario-do-chat">
+                {t('composer.destinatarioLabel')}
+              </label>
+              <div className={estilos.paraSelect}>
+              <Select
+                id="destinatario-do-chat"
+                data-testid="destinatario-do-chat"
+                value={destinatario ?? ''}
+                disabled={streaming}
+                onChange={(e) => {
+                  menu.limparChips();
+                  if (e.target.value) escolherDestinatario(e.target.value, true);
+                }}
+              >
+                {destinatario === null && (
+                  <option value="" disabled>
+                    {t('composer.destinatarioPlaceholder')}
+                  </option>
+                )}
+                {opcoesDeDestinatario.map((agente) => (
+                  <option key={agente} value={agente}>
+                    {nomeDoAgente(agente)}
+                  </option>
+                ))}
+              </Select>
+              </div>
+              {precisaEscolherDestinatario && (
+                <span className={styles.destinatarioAviso}>
+                  {t('composer.destinatarioPrecisaEscolher')}
+                </span>
+              )}
+            </>
+          )}
+          <span className={estilos.espaco} />
           {/* RN-122: só existe (habilitado) enquanto há turno em curso —
               fora disso não há o que parar. */}
           {streaming && (
@@ -568,6 +545,17 @@ export function SessionComposer({
               <Square aria-hidden="true" />
             </Button>
           )}
+          <Button
+            data-testid="enviar-mensagem"
+            onClick={menu.enviar}
+            legenda={streaming ? t('composer.enfileirar') : t('composer.enviar')}
+            disabled={
+              (streaming && !podeEnfileirar) || !draft.trim() || destinatario === null ||
+              (streaming && menu.destinatarios.length > 1)
+            }
+          >
+            {streaming ? <ListPlus aria-hidden="true" /> : <SendHorizontal aria-hidden="true" />}
+          </Button>
           </PromptInputToolbar>
         </InputGroup>
         </div>

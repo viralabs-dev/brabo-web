@@ -516,11 +516,7 @@
     },
     "semModulo": {
       "motivo": "Нет модуля: никто её не возьмёт. Назначьте через план или архивируйте задачу во вкладке Backlog."
-    },
-    "linhaNoFio_one": "{{count}} ожидающий пункт · Открыть",
-    "linhaNoFio_few": "{{count}} ожидающих пункта · Открыть",
-    "linhaNoFio_many": "{{count}} ожидающих пунктов · Открыть",
-    "linhaNoFio_other": "{{count}} ожидающего пункта · Открыть"
+    }
   },
   "mergearNoChat": {
     "botao": "Выполнить merge",
@@ -666,5 +662,21 @@
   },
   "cartao": {
     "maisAcoes": "Ещё действия"
+  },
+  "faixa": {
+    "abrir": "Исполнители",
+    "esperam_one": "{{count}} ожидает",
+    "esperam_few": "{{count}} ожидают",
+    "esperam_many": "{{count}} ожидают",
+    "esperam_other": "{{count}} ожидают"
+  },
+  "painel": {
+    "titulo": "Панель сессии",
+    "abas": "Панель сессии",
+    "contexto": "Контекст",
+    "executores": "Исполнители",
+    "pendencias": "Ожидают",
+    "pendenciasVazio": "В этом проекте нет ожидающих пунктов.",
+    "executoresVazio": "Выполнение не идёт."
   }
 }

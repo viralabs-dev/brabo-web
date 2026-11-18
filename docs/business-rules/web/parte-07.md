@@ -117,12 +117,14 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 <a id="rn-1303"></a>
 
-### RN-1303 — O chat de sessão criativa mostra os executores da execução vigente num carrossel manual acima do fio, que se minimiza e some quando a execução termina {#rn-1303}
+### RN-1303 — O chat de sessão criativa mostra a execução vigente numa faixa de uma linha acima do fio, e o detalhe dos executores mora na aba Executores do painel {#rn-1303}
 
-- **Regra:** quando a sessão aberta é `kind=criativa` e há execução vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)) com `module_map`, uma faixa FIXA acima do fio (RN-816), logo abaixo das pendências de outras sessões, mostra um cartão por executor: os dev agents (um por módulo) e, com evidência (`pr.gate_changed`, `artifact.qa_verdict`/`artifact.secops_verdict`, `delegation.*`), QA e SecOps em cartões próprios, com o gate que julgam, a PR, o último veredito e há quanto tempo. A lista lê a sessão de execução (outra sessão, mesmas chaves de cache de `useAgentesTravados`) e se mantém viva pelo heartbeat dela; sem endpoint nem evento novo. O cabeçalho traz "x de N tarefas" (`done` sobre o backlog vigente, mesmo conjunto da [RN-794](parte-06.md#rn-794)) com barra `role="progressbar"`, a contagem por estado, o custo total e o link para Executores. O casco é o `ui/Carousel` ([RN-148](parte-02.md#rn-148)) com páginas de 3 cartões (1 no celular), SEM autoplay (decisão do dono), e `anunciar={false}` para não falar a cada evento: só o resumo tem `role="status"`. A ordem é a de atenção primeiro: travado, bloqueado, falhou, trabalhando, aguardando, ocioso, concluído, e dentro do estado a do `module_map`. Cada cartão mostra o estado (badge), a tarefa, o texto do estado, a última ação, o tempo (minutos, sem tique), o custo (`token-usage` da execução) e "Ver no fio" (`?highlightEvent=` do último evento). **Minimizar:** um botão com `aria-expanded` reduz cada executor a um chip com nome, estado, tempo e gasto (somem tarefa, última ação, motivo e link do fio) e a barra continua; a escolha fica em `localStorage` (`brabo:carrossel-de-executores:minimizado`, em try/catch) e vale ao recarregar; sem escolha salva, o celular abre minimizado (o "recolhido" do levantamento é o mesmo estado). **Fim:** quando a execução deixa de ser a vigente, a faixa vira uma linha de resumo ("execução concluída" com todas as tarefas `done`, senão "execução parada") com o "x de N", o custo e "Ver Executores", dispensável no ×.
-- **Onde:** `apps/web/src/components/CarrosselDeExecutores.tsx:71` (`CarrosselDeExecutores`), `apps/web/src/lib/executores-ao-vivo-query.ts:23` (`useExecutoresAoVivo`), `apps/web/src/lib/executores-ao-vivo.ts:226` (`cartoesDaExecucao`), `apps/web/src/components/ui/Carousel.tsx:47` (`anunciar`, Home/End), `apps/web/src/routes/SessionPage.tsx:775` (montagem).
-- **Teste:** `apps/web/src/components/CarrosselDeExecutores.test.tsx`, `apps/web/src/lib/executores-ao-vivo.test.ts`, `apps/web/src/components/ui/Carousel.test.tsx`.
-- **Origem:** AT-880 (EP-031); decisão do dono, 09/11/2026 (carrossel manual, resumo no fim, atenção primeiro, devs + QA + SecOps, minimizar).
+> **Revisada pela AT-957 (v10):** o carrossel saiu de cima do fio. O "minimizar" e a chave `localStorage` `brabo:carrossel-de-executores:minimizado` não existem mais; a faixa é a [RN-1354](#rn-1354) e a lista é a aba Executores do painel ([RN-1353](#rn-1353)).
+
+- **Regra:** quando a sessão aberta é `kind=criativa` e há execução vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)) com `module_map`, o painel da sessão ganha a aba Executores com UM item por executor: os dev agents (um por módulo) e, com evidência (`pr.gate_changed`, `artifact.qa_verdict`/`artifact.secops_verdict`, `delegation.*`), QA e SecOps, com estado (badge), tarefa, texto do estado (o motivo da espera), última ação, tempo (minutos, sem tique), custo (`token-usage` da execução) e "Ver no fio" (`?highlightEvent=` do último evento) na própria linha. A ordem é a de atenção primeiro: travado, bloqueado, falhou, trabalhando, aguardando, ocioso, concluído, e dentro do estado a do `module_map`. A leitura é a de sempre: a sessão de execução (outra sessão, mesmas chaves de cache de `useAgentesTravados`), viva pelo heartbeat dela; sem endpoint nem evento novo. **Fim:** quando a execução deixa de ser a vigente, a faixa vira o resumo ("execução concluída" com todas as tarefas `done`, senão "execução parada") com o "x de N" e o custo, dispensável no ×.
+- **Onde:** `src/routes/ListaDeExecutores.tsx` (`ListaDeExecutores`), `src/routes/FaixaDeEstado.tsx` (`FaixaDeEstado`), `src/lib/executores-ao-vivo-query.ts` (`useExecutoresAoVivo`), `src/lib/executores-ao-vivo.ts` (`cartoesDaExecucao`).
+- **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`, `src/lib/executores-ao-vivo.test.ts`.
+- **Origem:** AT-880 (EP-031); decisão do dono, 09/11/2026 (resumo no fim, atenção primeiro, devs + QA + SecOps); AT-957 (EP-035), v10 de 14/11/2026 (carrossel sai do topo).
 
 <a id="rn-1073"></a>
 
@@ -299,3 +301,21 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/tipografia-minima.test.ts` (`violacoes`), `src/components/FaixaPrecisaDeVoce.module.css` (`.verTodas`), `src/components/ui/Table.module.css` (`.ordenar`), `design/tokens.css` (`--fs-label`).
 - **Teste:** `src/tipografia-minima.test.ts` (reprova `font-size` literal abaixo de 15 px nos módulos).
 - **Origem:** AT-977 (EP-035), v11 de 14/11/2026.
+
+<a id="rn-1353"></a>
+
+### RN-1353 — O painel da sessão é UM só, com as abas Contexto, Executores e Pendências; abaixo de 1024 px ele é o Sheet {#rn-1353}
+
+- **Regra:** o lado direito da sessão é um painel único de 360 px com `Tabs`: **Contexto** (o `ContextAside`, sem mudar o conteúdo), **Executores** (a lista da [RN-1303](#rn-1303); só em sessão criativa) e **Pendências** (o corpo de `PendenciasDeOutrasSessoes`, [RN-626](parte-05.md#rn-626), com o contador na aba). As filas continuam separadas dentro da aba e o contador não soma filas ([RN-467](parte-03.md#rn-467)); a aba mostra uma pergunta por vez, como o Sheet de antes. O contador "Pendências N" do cabeçalho e a faixa abrem o painel na aba certa. Abaixo de 1024 px (consulta própria `(max-width: 1023px)`; o corte da sidebar da [RN-643](parte-05.md#rn-643), 767 px, não muda) o painel é o `Sheet` do chat compacto, com as mesmas três abas, e nasce fechado. **Sempre montado:** recolhido, o painel segue montado (`hidden` no desktop, `keepMounted` no Sheet) e a aba Pendências mantém os ouvintes de `brabo:abrir-fila`/`brabo:abrir-perguntas` (que abrem o painel na aba Pendências, na fila pedida), o contador e o registro do cartão de merge no fio ([RN-843](parte-06.md#rn-843)); Contexto e Executores só montam com o painel aberto, sem leitura nova na rede. O `data-modo` do painel diz `aba` (desktop) ou `sheet`.
+- **Onde:** `src/routes/PainelDaSessao.tsx` (`PainelDaSessao`), `src/lib/layout-movel.ts` (`usePainelEmSheet`), `src/components/PendenciasDeOutrasSessoes.tsx` (`modo="painel"`), `src/components/shadcn/sheet.tsx` (`keepMounted`), `src/routes/SessionPage.tsx` (montagem).
+- **Teste:** `src/routes/PainelDaSessao.test.tsx`, `src/components/PendenciasDeOutrasSessoes.test.tsx`.
+- **Origem:** AT-957 (EP-035), v10 de 14/11/2026; decisão do dono de 14/11/2026 na AT-954.
+
+<a id="rn-1354"></a>
+
+### RN-1354 — A execução vigente é uma faixa de 40 px que nunca cresce: progresso, quantos esperam e custo {#rn-1354}
+
+- **Regra:** em sessão criativa com execução vigente, uma linha de 40 px fixos acima do fio mostra "x de N tarefas" (`role="progressbar"`, mesmo conjunto da [RN-794](parte-06.md#rn-794)), quantos executores esperam (aguardando, ocioso, bloqueado ou travado) e o custo total; o botão "Executores" abre o painel na aba Executores. Ela reforça a [RN-816](parte-06.md#rn-816): a coluna do chat não ganha altura com o número de executores. A região viva (`role="status"`) é só a contagem de espera.
+- **Onde:** `src/routes/FaixaDeEstado.tsx` (`FaixaDeEstado`), `src/routes/FaixaDeEstado.module.css` (`.faixa`).
+- **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`.
+- **Origem:** AT-957 (EP-035), v10 de 14/11/2026.

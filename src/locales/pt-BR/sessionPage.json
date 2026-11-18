@@ -492,10 +492,7 @@
     },
     "semModulo": {
       "motivo": "Sem módulo: ninguém vai pegar. Atribua pelo plano ou arquive a tarefa na aba Backlog."
-    },
-    "linhaNoFio_one": "{{count}} pendência · Abrir",
-    "linhaNoFio_other": "{{count}} pendências · Abrir",
-    "linhaNoFio_zero": "{{count}} pendências · Abrir"
+    }
   },
   "mergearNoChat": {
     "botao": "Mergear",
@@ -633,5 +630,20 @@
   },
   "cartao": {
     "maisAcoes": "Mais ações"
+  },
+  "faixa": {
+    "abrir": "Executores",
+    "esperam_zero": "{{count}} esperando",
+    "esperam_one": "{{count}} esperando",
+    "esperam_other": "{{count}} esperando"
+  },
+  "painel": {
+    "titulo": "Painel da sessão",
+    "abas": "Painel da sessão",
+    "contexto": "Contexto",
+    "executores": "Executores",
+    "pendencias": "Pendências",
+    "pendenciasVazio": "Nenhuma pendência neste projeto.",
+    "executoresVazio": "Nenhuma execução em andamento."
   }
 }

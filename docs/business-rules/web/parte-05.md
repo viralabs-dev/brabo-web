@@ -31,6 +31,12 @@ api, o engine e todo teto ficam como estão.
 > "acima do fio" ou "no bloco do chat", leia "no Sheet de pendências". A aba
 > Executores continua com o bloco inline.
 
+> **Revisada pela AT-957 (v10):** no desktop o Sheet de pendências deixou de
+> existir: as pendências são a aba Pendências do painel único da sessão, e
+> abaixo de 1024 px o painel (com as mesmas três abas) é o Sheet. A linha "N
+> pendências · Abrir" do fio saiu; o contador do cabeçalho e o da aba bastam.
+> Eventos, cartões, endpoints e tetos seguem os mesmos (RN-1353).
+
 1. **O card fica inerte e diz a frase da api (AT-256).** `ApprovalCard` segura
    os botões enquanto a decisão está em voo (o duplo clique era um 409 certo) e,
    quando a chamada devolve promessa que rejeita, mostra a frase que a api

@@ -1,0 +1,39 @@
+/* AT-957: a faixa de estado da execução — 40px fixos, uma linha, nunca cresce (RN-816). */
+.faixa {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-1);
+  font-size: var(--fs-meta);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.texto,
+.espera {
+  color: var(--text-secondary);
+}
+
+.barra {
+  flex: 0 1 120px;
+  min-width: 40px;
+  height: 4px;
+  border-radius: var(--radius-full);
+  background: var(--border-strong);
+  overflow: hidden;
+}
+
+.barraPreenchida {
+  height: 100%;
+  background: var(--accent);
+}
+
+.custo {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}

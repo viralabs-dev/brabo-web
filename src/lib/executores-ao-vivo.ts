@@ -240,3 +240,7 @@ export function contagemPorEstado(cartoes: CartaoDeExecutor[]): Record<EstadoDoC
   for (const c of cartoes) r[c.estado] += 1;
   return r;
 }
+
+export function dolar(micros: number | undefined): string {
+  return `US$ ${((micros ?? 0) / 1_000_000).toFixed(4)}`;
+}

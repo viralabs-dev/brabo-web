@@ -1,3 +1,4 @@
+import type React from 'react';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import userEvent from '@testing-library/user-event';
@@ -32,7 +33,8 @@ vi.mock('@tanstack/react-router', () => ({
   ),
 }));
 
-const { CarrosselDeExecutores } = await import('./CarrosselDeExecutores');
+const { FaixaDeEstado } = await import('./FaixaDeEstado');
+const { ListaDeExecutores } = await import('./ListaDeExecutores');
 
 beforeAll(async () => {
   await i18n.changeLanguage('pt-BR');
@@ -55,17 +57,16 @@ function tarefa(id: string, module: string, status: string, title = `tarefa ${mo
   };
 }
 
-function montar() {
+function montar(ui: React.ReactNode) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={qc}>
-      <CarrosselDeExecutores projectId="p1" sessionId={AQUI} />
+      {ui}
     </QueryClientProvider>,
   );
 }
 
 beforeEach(() => {
-  window.localStorage.clear();
   getActiveExecutionSession.mockResolvedValue({ id: EXEC, status: 'active' });
   listSessionEvents.mockResolvedValue({
     items: [
@@ -84,47 +85,48 @@ beforeEach(() => {
   getOpenPullRequestsDoChat.mockResolvedValue({ items: [] });
 });
 
-describe('CarrosselDeExecutores', () => {
-  it('expandido: cartão com tarefa, motivo do ócio, custo, barra e link do fio', async () => {
-    montar();
-    const api = await screen.findByRole('group', { name: /dev-api, trabalhando/ });
+describe('FaixaDeEstado (AT-957)', () => {
+  it('uma linha: progresso x de N, quantos esperam e custo; o clique abre a aba Executores', async () => {
+    const u = userEvent.setup();
+    const abrir = vi.fn();
+    montar(<FaixaDeEstado projectId="p1" sessionId={AQUI} aoAbrirExecutores={abrir} />);
+    const barra = await screen.findByRole('progressbar');
+    expect(barra).toHaveAttribute('aria-valuenow', '1');
+    expect(barra).toHaveAttribute('aria-valuemax', '3');
+    const faixa = screen.getByTestId('faixa-de-estado');
+    expect(within(faixa).getByText('1 de 3 tarefas')).toBeInTheDocument();
+    expect(within(faixa).getByText('1 esperando')).toBeInTheDocument();
+    expect(within(faixa).getByText('US$ 0.4120')).toBeInTheDocument();
+    // Nada de cartão nem de carrossel na faixa: o detalhe mora no painel.
+    expect(screen.queryByText('Login')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('carrossel-executores')).not.toBeInTheDocument();
+    await u.click(screen.getByTestId('faixa-abrir-executores'));
+    expect(abrir).toHaveBeenCalledTimes(1);
+  });
+
+  it('sem execução vigente e sem retrato anterior não renderiza nada', async () => {
+    getActiveExecutionSession.mockResolvedValue(null);
+    const { container } = montar(<FaixaDeEstado projectId="p1" sessionId={AQUI} aoAbrirExecutores={vi.fn()} />);
+    await vi.waitFor(() => expect(getActiveExecutionSession).toHaveBeenCalled());
+    expect(container).toBeEmptyDOMElement();
+  });
+});
+
+describe('ListaDeExecutores (AT-957)', () => {
+  it('um item por executor, com tarefa, motivo da espera, custo e a ação "Ver no fio" na linha', async () => {
+    montar(<ListaDeExecutores projectId="p1" sessionId={AQUI} />);
+    const api = await screen.findByTestId('executor-dev-api');
+    expect(within(api).getByText('trabalhando')).toBeInTheDocument();
     expect(within(api).getByText('Login')).toBeInTheDocument();
     expect(within(api).getByText('US$ 0.4120')).toBeInTheDocument();
     expect(within(api).getByText('Ver no fio')).toBeInTheDocument();
-    const web = screen.getByRole('group', { name: /dev-web, ocioso/ });
+    const web = screen.getByTestId('executor-dev-web');
     expect(within(web).getByText(/Esperando a fundação de api/)).toBeInTheDocument();
-    const barra = screen.getByRole('progressbar');
-    expect(barra).toHaveAttribute('aria-valuenow', '1');
-    expect(barra).toHaveAttribute('aria-valuemax', '3');
-    expect(screen.getByRole('button', { name: 'Minimizar o carrossel de executores' })).toHaveAttribute('aria-expanded', 'true');
   });
 
-  it('minimizado: só nome, estado, tempo e gasto; a barra fica; a escolha persiste', async () => {
-    const u = userEvent.setup();
-    const { unmount } = montar();
-    await screen.findByRole('group', { name: /dev-api/ });
-    await u.click(screen.getByRole('button', { name: 'Minimizar o carrossel de executores' }));
-
-    const lista = screen.getByRole('list', { name: 'Executores (resumo)' });
-    expect(within(lista).getByText('dev-api')).toBeInTheDocument();
-    expect(within(lista).getByText('trabalhando')).toBeInTheDocument();
-    expect(within(lista).getByText('US$ 0.4120')).toBeInTheDocument();
-    expect(screen.queryByText('Login')).not.toBeInTheDocument();
-    expect(screen.queryByText('Ver no fio')).not.toBeInTheDocument();
-    expect(screen.queryByText(/Esperando a fundação/)).not.toBeInTheDocument();
-    expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    expect(window.localStorage.getItem('brabo:carrossel-de-executores:minimizado')).toBe('1');
-
-    unmount();
-    montar();
-    expect(await screen.findByRole('list', { name: 'Executores (resumo)' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Mostrar os detalhes dos executores' })).toHaveAttribute('aria-expanded', 'false');
-  });
-
-  it('sem execução vigente não renderiza nada', async () => {
+  it('sem execução vigente diz que não há execução', async () => {
     getActiveExecutionSession.mockResolvedValue(null);
-    const { container } = montar();
-    await vi.waitFor(() => expect(getActiveExecutionSession).toHaveBeenCalled());
-    expect(container).toBeEmptyDOMElement();
+    montar(<ListaDeExecutores projectId="p1" sessionId={AQUI} />);
+    expect(await screen.findByText('Nenhuma execução em andamento.')).toBeInTheDocument();
   });
 });

@@ -187,7 +187,7 @@ keywords: [regras de negócio, web]
   reproduzida no navegador; a correção cobre a classe (conteúdo que encolhe e
   volta).
 - **Onde:** `apps/web/src/routes/project-tabs.ts:342` (`abaDaRota`),
-  `apps/web/src/routes/Shell.tsx:400` (`abaDaRota`),
+  `apps/web/src/routes/Shell.tsx:477` (`abaDaRota`),
   `estaPertoDoFim` (removido na RN-951, `apps/web/src/lib/session-rolagem.ts`),
   `estavaNoFimRef`, `aoRolarOFio` (removidos),
   `apps/web/src/components/ModelCatalogSection.module.css` (`.barraDeLote`),

@@ -35,8 +35,9 @@ import { desempateDoProjeto, nomesRepetidos } from '../lib/project-label';
 import { deriveAgentRoster } from '../lib/agent-status';
 import { AgentesAgora } from '../components/AgentesAgora';
 import { useLayoutMovel } from '../lib/layout-movel';
+import { useAlturaBaixa } from '../lib/altura-baixa';
 import { INTERVALO_DO_PROJETO_MS } from '../lib/canal-vivo';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
 import { alternarTema, observarTema, temaAtual, type Tema } from '../lib/tema';
 import { pedirAba, useAbaDaSessao, useAbaPublicada, useContagensDoProjeto } from '../lib/contagens-do-projeto';
 import { AbasDoProjeto } from './AbasDoProjeto';
@@ -50,7 +51,7 @@ import {
   lerColapsado,
 } from '../lib/sidebar-state';
 import type { Project, ProjectCardSummary } from '../lib/api-types';
-import { Activity, Inbox, CircleUser, Container, House, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
+import { Activity, Inbox, CircleUser, Ellipsis, Container, House, KeyRound, LogOut, PanelLeft, PanelLeftOpen, RotateCcw, SearchIcon, SunMoon, Wallet } from 'lucide-react';
 import { caixaTemAlgo } from '../lib/caixa-de-decisoes';
 import caixaStyles from '../components/CaixaDeDecisoes.module.css';
 import { deveAbrirPaleta } from '../lib/paleta-de-comandos';
@@ -223,6 +224,82 @@ function LinkDoRodape({
         {icone}
         {!colapsado && <span>{rotulo}</span>}
       </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
+/** Há conteúdo abaixo da dobra do `SidebarContent`? Alimenta o esmaecido (AT-964). */
+function useTemMaisAbaixo() {
+  const ref = useRef<HTMLDivElement>(null);
+  const [tem, setTem] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const medir = () => setTem(el.scrollHeight - el.scrollTop - el.clientHeight > 1);
+    medir();
+    el.addEventListener('scroll', medir, { passive: true });
+    const ro = typeof ResizeObserver === 'undefined' ? undefined : new ResizeObserver(medir);
+    ro?.observe(el);
+    // O conteúdo cresce sem o contêiner mudar de tamanho (projetos, agentes).
+    const mo = new MutationObserver(medir);
+    mo.observe(el, { childList: true, subtree: true });
+    return () => {
+      el.removeEventListener('scroll', medir);
+      ro?.disconnect();
+      mo.disconnect();
+    };
+  }, []);
+  return [ref, tem] as const;
+}
+
+/**
+ * Com altura útil < 800 px os quatro links de Workspace viram UMA linha que
+ * abre este menu, com "Recolher menu" junto (AT-964).
+ */
+function MenuWorkspaceCompacto({
+  rotuloDoColapso,
+  onAlternarColapso,
+  mostrarColapso,
+}: {
+  rotuloDoColapso: string;
+  onAlternarColapso: () => void;
+  mostrarColapso: boolean;
+}) {
+  const { t } = useTranslation('shell');
+  const { t: tComum } = useTranslation('common');
+  const itens = [
+    { to: '/containers', icone: <Container aria-hidden="true" />, rotulo: tComum('sidebar.containers') },
+    { to: '/providers', icone: <KeyRound aria-hidden="true" />, rotulo: tComum('sidebar.providers') },
+    { to: '/spend', icone: <Wallet aria-hidden="true" />, rotulo: tComum('sidebar.spend') },
+    { to: '/status', icone: <Activity aria-hidden="true" />, rotulo: tComum('sidebar.status') },
+  ];
+  return (
+    <SidebarMenuItem>
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={<SidebarMenuButton data-testid="menu-workspace" title={t('sidebar.workspaceLabel')} aria-label={t('sidebar.workspaceLabel')} />}
+        >
+          <Ellipsis size={15} aria-hidden="true" />
+          <span>{t('sidebar.workspaceLabel')}</span>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="top" align="start" className={styles.menuDoUsuario}>
+          {itens.map((i) => (
+            <DropdownMenuItem key={i.to} render={<Link to={i.to} />}>
+              {i.icone}
+              {i.rotulo}
+            </DropdownMenuItem>
+          ))}
+          {mostrarColapso && (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={onAlternarColapso}>
+                <PanelLeft aria-hidden="true" />
+                {rotuloDoColapso}
+              </DropdownMenuItem>
+            </>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
     </SidebarMenuItem>
   );
 }
@@ -493,6 +570,11 @@ export function Shell() {
     [events, moldura.moduleMap, pendentesDaMoldura],
   );
 
+  const alturaBaixa = useAlturaBaixa();
+  const [conteudoRef, temMaisAbaixo] = useTemMaisAbaixo();
+  // Compacta só expandida: recolhida (48 px) não muda.
+  const compacto = alturaBaixa && !colapsado;
+
   const rotuloDoColapso = colapsado
     ? t('sidebar.collapseButton.expand')
     : t('sidebar.collapseButton.collapse');
@@ -544,7 +626,11 @@ export function Shell() {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent>
+      <SidebarContent
+        ref={conteudoRef}
+        className={styles.conteudo}
+        data-mais-abaixo={temMaisAbaixo ? 'true' : undefined}
+      >
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -612,9 +698,12 @@ export function Shell() {
         ) : (
           <>
             <SidebarGroup>
-              <SidebarGroupLabel className={styles.rotulo}>
-                {currentProject ? t('sidebar.nav.projectLabel') : t('sidebar.nav.projectsLabel')}
-              </SidebarGroupLabel>
+              {/* O seletor de projeto já diz "projeto": com pouca altura o rótulo cede o lugar. */}
+              {!(compacto && currentProject) && (
+                <SidebarGroupLabel className={styles.rotulo}>
+                  {currentProject ? t('sidebar.nav.projectLabel') : t('sidebar.nav.projectsLabel')}
+                </SidebarGroupLabel>
+              )}
               {/* A lista falhou: a sidebar DIZ, em vez de ficar vazia como se o
                   workspace não tivesse projeto nenhum (RN-088). */}
               {projectsQuery.isError && (
@@ -727,6 +816,7 @@ export function Shell() {
                   <AgentesAgora
                     roster={roster}
                     colapsado={false}
+                    compacto={compacto}
                     onVerTodos={() => irParaAba(currentProject.id, 'executores')}
                   />
                 )}
@@ -738,24 +828,34 @@ export function Shell() {
 
       <SidebarFooter>
         <SidebarMenu>
-          {!colapsado && <p className={styles.rotuloDoRodape}>{t('sidebar.workspaceLabel')}</p>}
-          <LinkDoRodape to="/containers" icone={<Container size={15} aria-hidden="true" />} rotulo={tComum('sidebar.containers')} colapsado={colapsado} />
-          <LinkDoRodape to="/providers" icone={<KeyRound size={15} aria-hidden="true" />} rotulo={tComum('sidebar.providers')} colapsado={colapsado} />
-          <LinkDoRodape to="/spend" icone={<Wallet size={15} aria-hidden="true" />} rotulo={tComum('sidebar.spend')} colapsado={colapsado} />
-          <LinkDoRodape to="/status" icone={<Activity size={15} aria-hidden="true" />} rotulo={tComum('sidebar.status')} colapsado={colapsado} />
-          {/* Na gaveta não há o que recolher — ela já some inteira. */}
-          {!movel && (
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                aria-expanded={!colapsado}
-                title={rotuloDoColapso}
-                aria-label={rotuloDoColapso}
-                onClick={() => definirColapso(!colapsado)}
-              >
-                {colapsado ? <PanelLeftOpen size={15} aria-hidden="true" /> : <PanelLeft size={15} aria-hidden="true" />}
-                {!colapsado && <span>{t('sidebar.collapseButton.collapse')}</span>}
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+          {compacto ? (
+            <MenuWorkspaceCompacto
+              rotuloDoColapso={rotuloDoColapso}
+              onAlternarColapso={() => definirColapso(!colapsado)}
+              mostrarColapso={!movel}
+            />
+          ) : (
+            <>
+              {!colapsado && <p className={styles.rotuloDoRodape}>{t('sidebar.workspaceLabel')}</p>}
+              <LinkDoRodape to="/containers" icone={<Container size={15} aria-hidden="true" />} rotulo={tComum('sidebar.containers')} colapsado={colapsado} />
+              <LinkDoRodape to="/providers" icone={<KeyRound size={15} aria-hidden="true" />} rotulo={tComum('sidebar.providers')} colapsado={colapsado} />
+              <LinkDoRodape to="/spend" icone={<Wallet size={15} aria-hidden="true" />} rotulo={tComum('sidebar.spend')} colapsado={colapsado} />
+              <LinkDoRodape to="/status" icone={<Activity size={15} aria-hidden="true" />} rotulo={tComum('sidebar.status')} colapsado={colapsado} />
+              {/* Na gaveta não há o que recolher — ela já some inteira. */}
+              {!movel && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    aria-expanded={!colapsado}
+                    title={rotuloDoColapso}
+                    aria-label={rotuloDoColapso}
+                    onClick={() => definirColapso(!colapsado)}
+                  >
+                    {colapsado ? <PanelLeftOpen size={15} aria-hidden="true" /> : <PanelLeft size={15} aria-hidden="true" />}
+                    {!colapsado && <span>{t('sidebar.collapseButton.collapse')}</span>}
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
+            </>
           )}
         </SidebarMenu>
 

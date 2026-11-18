@@ -625,8 +625,8 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
-  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:349`
-  (`movel`), `:369` (`fecharAoSeguirLink`);
+  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:426`
+  (`movel`), `:446` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:72` (`movel`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — layout móvel
@@ -885,7 +885,7 @@ genérico, que ao lado de um brief ou de uma regra da mesma sessão parecia nega
 que eles existissem — o escopo da seção (PR e backlog, [RN-159](parte-02.md#rn-159)) não
 muda.
 
-- **Código:** `apps/web/src/routes/Shell.tsx:454` (`execucao`), `:468`
+- **Código:** `apps/web/src/routes/Shell.tsx:532` (`execucao`), `:546`
   (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:153` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);

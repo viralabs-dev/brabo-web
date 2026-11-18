@@ -1,3 +1,4 @@
+import { ScrollFade } from '@/components/shadcn/scroll-fade';
 import { Button } from '@/components/shadcn/button';
 import { Ajuda } from '@/components/ui/Ajuda';
 
@@ -51,13 +52,14 @@ export function SugestoesDeAcao({ acoes }: { acoes: AcaoSugerida[] }) {
   const explicas = acoes.filter((a) => a.explica);
   return (
     <div data-slot="suggestions" className="flex flex-col gap-1">
-      <div className="flex flex-wrap gap-2">
+      <ScrollFade className="flex gap-2">
         {acoes.map((a) => (
           <Button
             key={a.chave}
             type="button"
             variant="outline"
             size="sm"
+            className="shrink-0"
             data-testid={a.testId}
             disabled={a.desabilitada}
             onClick={a.aoClicar}
@@ -74,7 +76,7 @@ export function SugestoesDeAcao({ acoes }: { acoes: AcaoSugerida[] }) {
             ))}
           </Ajuda>
         )}
-      </div>
+      </ScrollFade>
       {motivos.map((m) => (
         <span key={m} className="text-xs text-muted-foreground">
           {m}

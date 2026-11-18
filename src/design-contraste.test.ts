@@ -84,6 +84,10 @@ describe.each([
   ['escuro (tema primário)', ESCURO],
   ['claro', CLARO],
 ] as const)('contraste — tema %s', (_nome, tema) => {
+  it('Marker (divisor de handoff): texto --text-secondary sobre --surface-0 e linha --border (AT-955)', () => {
+    expect(contraste(tema.textSecondary, tema.surface0)).toBeGreaterThanOrEqual(AA_TEXTO);
+  });
+
   it('rodapé da sidebar: papel RBAC (--text-secondary) sobre --surface-1', () => {
     expect(contraste(tema.textSecondary, tema.surface1)).toBeGreaterThanOrEqual(AA_TEXTO);
   });

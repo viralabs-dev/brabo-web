@@ -251,6 +251,25 @@ function awaitingApproval(pendingActionAgentIds: Set<string>, agentId: string): 
   return pendingActionAgentIds.has(agentId);
 }
 
+// A tarefa do gate bloqueou DEPOIS do último parecer: o `markBlocked` mantém
+// `awaiting_qa` sem emitir `pr.gate_changed`, então só o `task_blocked` da
+// mesma tarefa diz que ninguém está julgando (AT-982).
+function bloqueouDepoisDoGate(last: SessionEvent, posterior: SessionEvent[]): boolean {
+  const taskId = (last.payload as { taskId?: string }).taskId;
+  return (
+    !!taskId &&
+    posterior.some(
+      (e) => e.type === 'backlog.task_blocked' && (e.payload as { taskId?: string }).taskId === taskId,
+    )
+  );
+}
+
+/** O último parecer do gate foi seguido do bloqueio da própria tarefa. */
+export function gateParadoPorBloqueio(events: SessionEvent[]): boolean {
+  const last = lastEventFor(events, (e) => e.type === 'pr.gate_changed' || e.type === 'infra.gate_changed');
+  return !!last && bloqueouDepoisDoGate(last, events.slice(events.indexOf(last) + 1));
+}
+
 // QA/SecOps são singletons por projeto — o `gateStatus` do parecer MAIS
 // RECENTE (dev OU infra) diz qual dos dois está com a bola: awaiting_qa =
 // QA trabalhando, awaiting_secops = SecOps trabalhando, awaiting_user/blocked
@@ -270,6 +289,7 @@ export function gateStatus(events: SessionEvent[], gate: 'qa' | 'secops'): Agent
   // "trabalhando": o lead diz `falhou`, nunca trabalho que não existe.
   const membros: readonly string[] = AREAS[gate]?.members ?? [];
   const posterior = events.slice(events.indexOf(last) + 1);
+  if (bloqueouDepoisDoGate(last, posterior)) return 'ocioso';
   const falhou = posterior.some(
     (e) =>
       e.type === 'delegation.failed' &&

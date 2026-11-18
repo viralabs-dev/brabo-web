@@ -1479,6 +1479,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/sessions/{sessionId}/tasks/{taskId}/levantamento": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Writes the survey (levantamento) of a task
+         * @description Replaces `levantamento` (`arquivos`, `expoe`, `consome`, `dependenciasNpm`, `aceite`). The execution plan reads it to validate `dependeDe` and `consome` (RN-1371).
+         */
+        put: operations["InternalSessionsController_levantamentoRoute"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/sessions/{sessionId}/tasks/{taskId}/status": {
         parameters: {
             query?: never;
@@ -5614,6 +5634,8 @@ export interface components {
             /** @description Story↔map cross-validation. An empty list is the healthy state. */
             pendencies: components["schemas"]["ArchitecturePendencyResponseDto"][];
             c4Diagram: components["schemas"]["EstadoDoC4DiagramaResponseDto"];
+            /** @description Current module contracts (what each module exposes, incl. `tabela` and `identidade` items). Empty until the Architect declares them. */
+            contratos: components["schemas"]["ContratoDeModuloResponseDto"][];
         };
         ArchiveStoryDto: {
             /**
@@ -7413,6 +7435,12 @@ export interface components {
             moduleContract: components["schemas"]["ContratoDeModuloResponseDto"] | null;
             /** @description Whether this is the FIRST task of the module: the oldest `backlog.task_claimed` of the project for `module` is this task. The engine gives it twice the per-task budget (RN-774). `false` without `module`. */
             primeiraDoModulo: boolean;
+            /** @description AT-982: true when no OTHER non-archived task of the project is open (every one is done). The engine then asks the QA gate for the end-to-end proof of the deliverable. */
+            ultimaDoProjeto: boolean;
+            /** @description AT-982: the business rules of ALL stories of the project (at most 50); empty unless `ultimaDoProjeto`. */
+            regrasDoProjeto: components["schemas"]["DevContextBusinessRuleResponseDto"][];
+            /** @description Real number of project rules — larger than `regrasDoProjeto.length` when the list was cut. */
+            regrasDoProjetoTotal: number;
             /** @description RN-859: the user's decisions tied to this task, its story or its rules by `afeta` — they win over RF/DoR on conflict. Newest first, at most 10, each text cut at 1,500 characters. */
             decisoes: components["schemas"]["DevContextDecisaoResponseDto"][];
             /** @description RN-872 (ADR 0215): the project's OTHER decisions — those whose `afeta` does not touch this task. Separate section, inside the SAME cap of 10 as `decisoes` (task decisions take the cap first), newest first. */
@@ -8274,7 +8302,7 @@ export interface components {
              * @example funcao
              * @enum {string}
              */
-            tipo: "funcao" | "rota" | "evento" | "dado";
+            tipo: "funcao" | "rota" | "evento" | "dado" | "tabela" | "identidade";
             /**
              * @description How another module uses it. Up to 300 characters.
              * @example placePiece(board: Board, piece: Piece, pos: Pos): Board
@@ -8288,7 +8316,7 @@ export interface components {
              * @example funcao
              * @enum {string}
              */
-            tipo: "funcao" | "rota" | "evento" | "dado";
+            tipo: "funcao" | "rota" | "evento" | "dado" | "tabela" | "identidade";
             /** @example placePiece(board: Board, piece: Piece, pos: Pos): Board */
             assinatura: string;
             /** @example Returns a new board; never mutates the one passed in. */
@@ -8382,6 +8410,35 @@ export interface components {
             vramLivreMiB: number | null;
             /** @example 59 */
             p95Ms: number | null;
+        };
+        LevantamentoInternalDto: {
+            /**
+             * Format: uuid
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: string;
+            /**
+             * @example [
+             *       "src/agenda/agenda.service.ts"
+             *     ]
+             */
+            arquivos: string[];
+            /**
+             * @example [
+             *       "AgendaService.listar"
+             *     ]
+             */
+            expoe: string[];
+            /**
+             * @example [
+             *       "CadastroService.buscar"
+             *     ]
+             */
+            consome: string[];
+            /** @example [] */
+            dependenciasNpm: string[];
+            /** @example GET /agenda lista os horários do dia. */
+            aceite: string;
         };
         LlmMessageResponseDto: {
             /**
@@ -10838,7 +10895,7 @@ export interface components {
              * @description Present only when `reiniciou: false`.
              * @enum {string}
              */
-            motivo?: "sem_container" | "tempo_esgotado" | "falha_no_exec" | "app_saiu" | "sem_app";
+            motivo?: "sem_container" | "tempo_esgotado" | "falha_no_exec" | "app_saiu" | "sem_app" | "alvo_pendente";
             /**
              * @description Present only when `motivo: app_saiu`.
              * @example 1
@@ -12200,6 +12257,30 @@ export interface components {
              * @example false
              */
             fundacao: boolean;
+            /**
+             * @description The Dev Lead survey of the task (AT-990, RN-1370): `{ arquivos, expoe, consome, dependenciasNpm, aceite }`. `null` until written.
+             * @example {
+             *       "arquivos": [
+             *         "src/agenda/agenda.service.ts"
+             *       ],
+             *       "expoe": [
+             *         "AgendaService.listar"
+             *       ],
+             *       "consome": [
+             *         "CadastroService.buscar"
+             *       ],
+             *       "dependenciasNpm": [],
+             *       "aceite": "GET /agenda lista os horários"
+             *     }
+             */
+            levantamento: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * @description Tasks that must be `done` before this one is claimable (AT-990, RN-1372). Empty = the module rule (RN-1005).
+             * @example []
+             */
+            dependeDe: string[];
             /**
              * Format: date-time
              * @example 2026-07-25T10:00:00.000Z
@@ -15781,6 +15862,52 @@ export interface operations {
                 content?: never;
             };
             /** @description Session, project, or resource not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalSessionsController_levantamentoRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LevantamentoInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description Malformed survey. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project, or is archived. */
             404: {
                 headers: {
                     [name: string]: unknown;

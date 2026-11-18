@@ -19,6 +19,9 @@
     "pendenciesLabel": "Незакрытые вопросы перекрёстной проверки",
     "reasonNoModule": "нет связанного модуля",
     "reasonMissingModule": "несуществующий модуль: {{missing}}",
+    "contractsLabel": "Контракты модулей",
+    "noContracts": "Контракт ещё не объявлен — Архитектор объявляет, что открывает каждый модуль.",
+    "contractTypes": {"funcao": "функция", "rota": "маршрут", "evento": "событие", "dado": "данные", "tabela": "таблица", "identidade": "идентичность"},
     "cols": {
       "module": "Модуль",
       "stack": "Стек",

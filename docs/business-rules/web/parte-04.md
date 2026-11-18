@@ -1088,7 +1088,7 @@ delas estava coberta pela comparação com o vocabulário do engine.
   (`dev.started`), `:212` (`dev.working` com o título), `:230`
   (`dev.blocked_by_container`), `:235` (`dev.error`), `:255`
   (`TRADUCAO_FORA`), `:307` (o `ativo` lido do painel), `:96`
-  (`ChaveDeRotulo`, AT-134), `:135` (`tradutorDaArvore`);
+  (`ChaveDeRotulo`, AT-134), `:139` (`tradutorDaArvore`);
   `apps/web/src/locales/{en,pt-BR}/executors.json` (`timelineTree.label`,
   `timelineTree.now`, `timelineTree.detail`);
   `apps/web/src/lib/agent-status.ts:134` (`statusDoEventoDev`);

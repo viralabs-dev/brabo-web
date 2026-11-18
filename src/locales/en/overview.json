@@ -19,6 +19,9 @@
     "pendenciesLabel": "Cross-validation pendencies",
     "reasonNoModule": "no module linked",
     "reasonMissingModule": "missing module: {{missing}}",
+    "contractsLabel": "Module contracts",
+    "noContracts": "No contract declared yet — the Architect declares what each module exposes.",
+    "contractTypes": {"funcao": "function", "rota": "route", "evento": "event", "dado": "data", "tabela": "table", "identidade": "identity"},
     "cols": {
       "module": "Module",
       "stack": "Stack",

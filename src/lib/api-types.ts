@@ -1439,6 +1439,8 @@ export interface Architecture {
   adrs: AdrRef[];
   pendencies: ArchitecturePendency[];
   c4Diagram: EstadoDoC4Diagrama;
+  /** Contratos vigentes por módulo (AT-981, RN-684); vazio até o Arquiteto declarar. */
+  contratos?: components['schemas']['ContratoDeModuloResponseDto'][];
 }
 
 // --- Execução (Fase 4a — dev agents) ---

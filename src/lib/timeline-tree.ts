@@ -107,6 +107,7 @@ export type ChaveDeRotulo =
   | 'artifactBusinessRuleRetired'
   | 'artifactModuleMap'
   | 'artifactModuleRouting'
+  | 'artifactModuleContracts'
   | 'artifactInsight'
   | 'delegationCompleted'
   | 'delegationFailed'
@@ -193,6 +194,7 @@ const TRADUCAO: Record<string, Traducao> = {
     detalhe: (p) => texto(p.reason),
   },
   'artifact.module_map': { tipo: 'artefato', rotulo: 'artifactModuleMap' },
+  'artifact.module_contracts': { tipo: 'artefato', rotulo: 'artifactModuleContracts' },
   'artifact.module_routing': { tipo: 'artefato', rotulo: 'artifactModuleRouting' },
   'artifact.insight': { tipo: 'artefato', rotulo: 'artifactInsight' },
   'delegation.completed': {

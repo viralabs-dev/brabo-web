@@ -90,6 +90,7 @@
       "artifactBusinessRuleRetired": "retired a business rule",
       "artifactModuleMap": "issued the module_map",
       "artifactModuleRouting": "routed modules to infra",
+      "artifactModuleContracts": "declared the module contracts",
       "artifactInsight": "issued a hypothesis",
       "delegationCompleted": "subagent finished",
       "delegationFailed": "subagent failed",

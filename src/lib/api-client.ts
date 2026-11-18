@@ -1582,6 +1582,13 @@ export const answerOpenQuestion = (
     corpo,
   );
 
+/** AT-997 (RN-858): aceita a sugestão de várias perguntas num gesto humano. */
+export const acceptOpenQuestionSuggestions = (projectId: string, questionIds: string[]) =>
+  post<{ resultados: { questionId: string; status: string }[] }>(
+    `/projects/${projectId}/open-questions/accept-suggestions`,
+    { questionIds },
+  );
+
 // AT-843: a fila e o aviso de PR pronta do chat escapam do portão da imagem (RN-825).
 export const getOpenPullRequestsDoChat = (projectId: string) =>
   get<CodePullRequestList>(`/projects/${projectId}/git/open-pull-requests`);

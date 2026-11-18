@@ -889,7 +889,7 @@ keywords: [regras de negócio, web]
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
-  (`PerguntasEmAberto`), `:140` (`eAutor`), `:317`
+  (`PerguntasEmAberto`), `:229` (`eAutor`), `:406`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PerguntasEmAberto.test.tsx` ("fila
@@ -973,7 +973,7 @@ keywords: [regras de negócio, web]
   com ela aberta (`?historia=`). Não aciona o PO (decisão do dono, 14/10). Não
   corrigível: o link não existe e o motivo é dito em texto (RN-102). A régua é
   a MESMA função da aba Histórias, movida para `lib/`.
-- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:255`
+- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:344`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
   (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:482`
   (`useHistoriaInicial`)

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Reply, ThumbsUp, X } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
-import { answerOpenQuestion, mensagemDaApi } from '../lib/api-client';
+import { acceptOpenQuestionSuggestions, answerOpenQuestion, mensagemDaApi } from '../lib/api-client';
 import type { OpenQuestion, Story, Task } from '../lib/api-types';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { nomeDoAgente } from '../lib/agents';
@@ -69,6 +69,39 @@ export function PerguntasEmAberto({
   const [paginaPedida, setPaginaPedida] = useState(0);
   const pagina = paginar(perguntas, paginaPedida, compacto ? 1 : undefined);
   const abertas = new Set(perguntas.map((p) => p.questionId));
+  const queryClient = useQueryClient();
+  const [lote, setLote] = useState<{ autor: string; enviando: boolean; erro: string | null } | null>(
+    null,
+  );
+  // AT-997: ≥ 2 perguntas abertas do mesmo agente, com sugestão, da própria pessoa.
+  const doLote = lote ? sugestoesDoAgente(perguntas, lote.autor) : [];
+  const agentesEmLote = [
+    ...new Set(
+      perguntas.filter((p) => sugestoesDoAgente(perguntas, p.autor).length >= 2).map((p) => p.autor),
+    ),
+  ];
+  async function aceitarLote() {
+    if (!lote) return;
+    setLote({ ...lote, enviando: true, erro: null });
+    try {
+      const r = await acceptOpenQuestionSuggestions(
+        projectId,
+        doLote.map((p) => p.questionId),
+      );
+      for (const p of doLote) {
+        if (r.resultados.find((x) => x.questionId === p.questionId)?.status === 'answered') {
+          aoResponder?.(p);
+        }
+      }
+      const puladas = r.resultados.filter((x) => x.status !== 'answered').length;
+      setLote(puladas > 0 ? { ...lote, enviando: false, erro: t('pendencias.perguntas.loteParcial', { n: puladas }) } : null);
+    } catch (e) {
+      setLote({ ...lote, enviando: false, erro: mensagemDaApi(e, t('pendencias.perguntas.loteErro')) });
+    } finally {
+      void queryClient.invalidateQueries({ queryKey: ['open-questions', projectId] });
+      void queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
+    }
+  }
   const jaRespondidas = respondidas.filter((p) => !abertas.has(p.questionId));
   if (perguntas.length === 0 && jaRespondidas.length === 0) return null;
   return (
@@ -82,6 +115,55 @@ export function PerguntasEmAberto({
         {t('pendencias.filas.perguntas')}
         <span className={styles.contagem}>{total}</span>
       </h4>
+      {agentesEmLote.map((autor) => (
+        <div key={autor} className={styles.acoesDaLinha}>
+          <Button
+            variant="secondary"
+            disabled={lote?.enviando}
+            onClick={() => setLote({ autor, enviando: false, erro: null })}
+            data-testid="aceitar-lote"
+          >
+            <ThumbsUp aria-hidden="true" />
+            {t('pendencias.perguntas.loteAceitar', {
+              n: sugestoesDoAgente(perguntas, autor).length,
+              agente: nomeDoAgente(autor),
+            })}
+          </Button>
+        </div>
+      ))}
+      {lote && doLote.length > 0 && (
+        <div className={styles.grupo} data-testid="confirmacao-do-lote">
+          <p>
+            {t('pendencias.perguntas.loteTitulo', {
+              n: doLote.length,
+              agente: nomeDoAgente(lote.autor),
+            })}
+          </p>
+          <ul>
+            {doLote.map((p) => (
+              <li key={p.questionId}>
+                {p.pergunta} — {p.sugestao}
+                {p.afeta.regras.length > 0 && (
+                  <strong data-testid="lote-toca-regra"> ({t('pendencias.perguntas.loteRegra')})</strong>
+                )}
+              </li>
+            ))}
+          </ul>
+          <div className={styles.acoesDaLinha}>
+            <Button variant="primary" loading={lote.enviando} onClick={() => void aceitarLote()}>
+              {t('pendencias.perguntas.loteConfirmar', { n: doLote.length })}
+            </Button>
+            <Button variant="ghost" disabled={lote.enviando} onClick={() => setLote(null)}>
+              {t('pendencias.perguntas.loteCancelar')}
+            </Button>
+          </div>
+          {lote.erro && (
+            <p className={styles.erro} role="alert">
+              {lote.erro}
+            </p>
+          )}
+        </div>
+      )}
       {pagina.itens.map((p) => (
         <CartaoDaPergunta
           key={p.questionId}
@@ -113,6 +195,13 @@ export function PerguntasEmAberto({
         </p>
       )}
     </section>
+  );
+}
+
+function sugestoesDoAgente(perguntas: readonly OpenQuestion[], autor: string) {
+  const eu = userIdDaSessao();
+  return perguntas.filter(
+    (p) => p.autor === autor && !!p.sugestao && eu !== null && p.autorDaSessao === eu,
   );
 }
 

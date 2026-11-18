@@ -621,6 +621,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/projects/{projectId}/qa-environments/{taskId}/compose": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Proves the clean clone with a real `docker compose up` (RN-1328)
+         * @description Asks the broker (ADR 0297; up to 10 min). Never an error for lack of proof: no broker, `runner` project, infra origin or ceiling -> `veredito: aprova_com_aviso` with `aviso: "sem prova de compose"`. `falhou` is the project's own failure. Auto-approved QA step, outside the RN-418 ceiling.
+         */
+        post: operations["InternalQaEnvironmentsController_provarCompose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/projects/{projectId}/qa-environments/{taskId}/remove": {
         parameters: {
             query?: never;
@@ -2782,6 +2802,26 @@ export interface paths {
          * @description Only the author of the session where the question was born answers. Writes a `decision_record` (actor: the user, with `questionId`) and `open_question.answered`, and asks the engine to resume the parked QA gate of each affected task (RN-860), best effort.
          */
         post: operations["OpenQuestionsController_answer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/open-questions/accept-suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accepts the suggestion of several open questions at once (RN-858)
+         * @description Always a human gesture. Each question closes like `answer` with `aceitarSugestao`; one that is already answered, has no suggestion, was not opened by the caller or does not exist is skipped with its status (idempotent, never 409).
+         */
+        post: operations["OpenQuestionsController_acceptSuggestions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5031,6 +5071,19 @@ export interface components {
              */
             module: string;
         };
+        AcceptSuggestionsDto: {
+            /** @description Questions whose suggestion the user accepts (max 50). */
+            questionIds: string[];
+        };
+        AcceptSuggestionsItemDto: {
+            /** Format: uuid */
+            questionId: string;
+            /** @enum {string} */
+            status: "answered" | "already_answered" | "sem_sugestao" | "nao_autor" | "nao_encontrada";
+        };
+        AcceptSuggestionsResponseDto: {
+            resultados: components["schemas"]["AcceptSuggestionsItemDto"][];
+        };
         AceiteAutomaticoResponseDto: {
             /** @example true */
             aceito: boolean;
@@ -6377,6 +6430,24 @@ export interface components {
              * @description RN-859 (ADR 0214): an open question the user ALREADY answered — only then a `ready` story (no task in execution) can be corrected.
              */
             questionId?: string;
+        };
+        ComposeProofRecusaDto: {
+            /** @example privileged */
+            campo: string;
+            motivo: string;
+        };
+        ComposeProofResultadoDto: {
+            subiu: boolean;
+            sondas: components["schemas"]["ComposeProofSondaDto"][];
+            recusas?: components["schemas"]["ComposeProofRecusaDto"][];
+            /** @enum {string} */
+            origem: "projeto" | "infra";
+        };
+        ComposeProofSondaDto: {
+            /** @example /docs */
+            caminho: string;
+            /** @description HTTP status; 0 when the probe got no answer. */
+            status: number;
         };
         ConfirmacaoDeArquiteturaResponseDto: {
             /**
@@ -10359,6 +10430,22 @@ export interface components {
              */
             enabled: boolean;
         };
+        QaComposeProofResponseDto: {
+            /**
+             * @description `falhou` is the PROJECT's fault (a verdict item); `aprova_com_aviso` means the proof could not run (no broker, runner, infra origin, ceiling).
+             * @enum {string}
+             */
+            veredito: "provou" | "falhou" | "aprova_com_aviso";
+            /**
+             * @description The warning the verdict must carry; `null` otherwise.
+             * @example sem prova de compose
+             */
+            aviso: string | null;
+            motivo: string | null;
+            /** @example a1b2c3d4 */
+            chave: string;
+            resultado: components["schemas"]["ComposeProofResultadoDto"] | null;
+        };
         QaEnvironmentResponseDto: {
             /** @description `false` when the broker refused; `motivo` explains. */
             sucesso: boolean;
@@ -13674,6 +13761,49 @@ export interface operations {
             };
             /** @description Project does not exist. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalQaEnvironmentsController_provarCompose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QaComposeProofResponseDto"];
+                };
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project or task (of that project) not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ambiguous task key. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -19691,6 +19821,52 @@ export interface operations {
             };
             /** @description Already answered — `reason: "pergunta_ja_respondida"`. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OpenQuestionsController_acceptSuggestions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcceptSuggestionsDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcceptSuggestionsResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };

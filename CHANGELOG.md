@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-997, RN-858): com 2 ou mais perguntas em aberto do mesmo agente, com sugestão e da própria pessoa, a fila mostra "Aceitar as N sugestões de <agente>". A confirmação lista as N (pergunta e sugestão) e marca as que tocam regra de negócio; só o clique da pessoa responde (`POST .../open-questions/accept-suggestions`). `fixados/openapi.json` e os tipos regenerados.
+
 - Feat (AT-955, RN-976): o kit ganha `Marker` e `Scroll Fade` (cópia, sem pacote npm). Os divisores de handoff do fio usam o Marker; a fileira de sugestões de ação esmaece só a borda que transborda (limite de 3 ações intocado). O Message Scroller vai com a AT-959.
 - Fix (AT-962, RN-098, RN-104): na lista de sessões o título vira o link que abre a sessão (clique e Enter) e renomear passa para o lápis "Renomear sessão" (24 px, aparece no hover/foco da linha); o título da tela e a aba do registro dizem "Conversa" em pt-BR e zh-Hans. i18n nos quatro idiomas.
 - Fix (AT-982, AT-985, AT-984, RN-1332): o cartão do QA/SecOps diz o estado real do gate. Tarefa bloqueada depois do parecer deixa de aparecer como "Julgando" ("A tarefa bloqueou: o gate espera a correção"); tarefa `todo` com o gate aberto diz "A PR #N espera voltar ao QA" (fila do dev ou bloqueada); o texto do dev travado aponta "Rearmar aqui nas pendências ou em Executores". i18n nos quatro idiomas.

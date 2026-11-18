@@ -1,5 +1,5 @@
 import type { CodePullRequestSummary, Epic, ModuleMap, SessionEvent, Task } from './api-types';
-import { agentesTravados, devAgentId, gateStatus, statusDoEventoDev } from './agent-status';
+import { agentesTravados, devAgentId, gateParadoPorBloqueio, gateStatus, statusDoEventoDev } from './agent-status';
 import { classifyEvent } from './activity';
 import { deriveExecutionProgress } from './execution';
 import { tarefaDaBranch } from './prontas-e-bloqueadas';
@@ -175,6 +175,18 @@ function cartaoDoGate(gate: 'qa' | 'secops', c: Contexto): CartaoDeExecutor | nu
   const tarefas = todasAsTarefas(c.epics);
   const estado = gateStatus(c.eventos, gate);
   if (estado === 'falhou') return { ...base, estado, texto: { key: 'gateFalhou' } };
+  // Estado real do backlog (AT-985): a tarefa voltou a `todo` com o gate aberto.
+  const aberto = gate === 'qa' ? 'awaiting_qa' : 'awaiting_secops';
+  const espera = tarefas.find((t) => t.status === 'todo' && t.gateStatus === aberto);
+  if (espera) {
+    const pr = prDaTarefa(espera.id, c);
+    return {
+      ...base,
+      estado: 'ocioso',
+      tarefa: espera.title,
+      texto: { key: k(espera.blocked ? 'gateEsperaDesbloqueio' : 'gateEsperaVolta', pr), params: pr === undefined ? {} : { pr } },
+    };
+  }
   if (estado === 'trabalhando') {
     const g = [...c.eventos].reverse().find((e) => e.type === 'pr.gate_changed' || e.type === 'infra.gate_changed');
     const taskId = (g?.payload as { taskId?: string } | undefined)?.taskId;
@@ -188,6 +200,7 @@ function cartaoDoGate(gate: 'qa' | 'secops', c: Contexto): CartaoDeExecutor | nu
       texto: titulo ? { key: k('gateJulga', pr), params } : { key: 'gateJulgaSemTarefa' },
     };
   }
+  if (gateParadoPorBloqueio(c.eventos)) return { ...base, estado: 'ocioso', texto: { key: 'gateTarefaBloqueada' } };
   const v = [...c.eventos].reverse().find((e) => e.type === tipoVeredito && e.actor.id === gate);
   if (!v) return { ...base, estado: 'ocioso', texto: { key: 'gateOcioso' } };
   const p = v.payload as { taskId?: string; veredito?: string };

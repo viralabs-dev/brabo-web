@@ -4,7 +4,7 @@ import { Input as CampoDeRenomear } from '../components/shadcn/input';
 import { useState, type FormEvent, type KeyboardEvent, type MouseEvent } from 'react';
 import { SEM_AUTOFILL } from '../lib/conversa-comecou';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from '@tanstack/react-router';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   getProjectSpendTeam,
@@ -427,26 +427,38 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
                     }}
                   />
                 ) : (
-                  // Botão, não `span`: clicar no nome (ou no lápis) abre a
-                  // edição SEM navegar — `stopPropagation` impede o clique
-                  // de também disparar o `onClick` da linha, que abre a
-                  // sessão. Só clicar fora deste controle navega.
-                  <button
-                    type="button"
-                    className={styles.rowId}
-                    title={t('sessionsTab.rowTitle', {
-                      rotulo: rotuloDaSessao(session.id, session.name),
-                    })}
-                    onClick={(e: MouseEvent<HTMLButtonElement>) => {
-                      e.stopPropagation();
-                      setRascunho({ id: session.id, valor: session.name ?? '' });
-                    }}
-                  >
-                    <span className={styles.rowIdTexto}>
-                      {rotuloDaSessao(session.id, session.name)}
-                    </span>
-                    <PencilIcon size={12} className={styles.rowIdPencil} />
-                  </button>
+                  // O título é o LINK da sessão (clique e Enter abrem; o
+                  // `stopPropagation` evita a linha navegar de novo). Renomear
+                  // é o lápis ao lado: controle próprio, sempre focável.
+                  <>
+                    <Link
+                      to="/projects/$projectId/sessions/$sessionId"
+                      params={{ projectId, sessionId: session.id }}
+                      className={styles.rowId}
+                      title={t('sessionsTab.rowTitle', {
+                        rotulo: rotuloDaSessao(session.id, session.name),
+                      })}
+                      onClick={(e: MouseEvent<HTMLAnchorElement>) => e.stopPropagation()}
+                    >
+                      <span className={styles.rowIdTexto}>
+                        {rotuloDaSessao(session.id, session.name)}
+                      </span>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      icon
+                      className={styles.rowIdPencil}
+                      aria-label={t('sessionsTab.renameButton.ariaLabel')}
+                      title={t('sessionsTab.renameButton.ariaLabel')}
+                      onClick={(e: MouseEvent<HTMLButtonElement>) => {
+                        e.stopPropagation();
+                        setRascunho({ id: session.id, valor: session.name ?? '' });
+                      }}
+                    >
+                      <PencilIcon size={12} />
+                    </Button>
+                  </>
                 )}
                 <Badge tone={session.technical ? 'muted' : TIPOS_DE_SESSAO[session.kind].tom}>
                   {session.technical ? t('sessionsTab.row.system') : TIPOS_DE_SESSAO[session.kind].rotulo}

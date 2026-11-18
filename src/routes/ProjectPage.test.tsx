@@ -37,7 +37,10 @@ vi.mock('../lib/api-client', async () => {
 });
 
 let papelDoTeste: string | undefined = 'developer';
-vi.mock('@tanstack/react-router', () => ({ useNavigate: () => vi.fn() }));
+vi.mock('@tanstack/react-router', () => ({
+  useNavigate: () => vi.fn(),
+  Link: ({ children }: { children: React.ReactNode }) => <a href="#">{children}</a>,
+}));
 vi.mock('../lib/hooks', () => ({
   useCurrentWorkspaceWithRole: () => ({ data: { role: papelDoTeste, workspace: { id: 'ws-1' } } }),
   useActiveExecutionSession: () => ({ session: undefined }),

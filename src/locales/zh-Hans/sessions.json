@@ -138,7 +138,7 @@
         "empty": "还没有构思。开启一个，让 Criativo 和你一起梳理产品的业务规则。"
       },
       "consultiva": {
-        "title": "聊天",
+        "title": "对话",
         "openButton": "新对话",
         "confirmButton": "开启咨询会话",
         "empty": "还没有对话。开启一个来提问和获取背景信息，不会激活任何智能体。"
@@ -177,11 +177,14 @@
     },
     "loadError": "无法加载本项目的会话。",
     "filterEmpty": "此筛选下没有会话。",
+    "renameButton": {
+      "ariaLabel": "重命名会话"
+    },
     "renameInput": {
       "ariaLabel": "会话名称",
       "placeholder": "无名称——会话显示为 {{hashtag}}"
     },
-    "rowTitle": "会话 {{rotulo}}——点击重命名",
+    "rowTitle": "打开会话 {{rotulo}}",
     "kpis": {
       "sessionsInProject": {
         "label": "项目中的会话",

@@ -135,11 +135,12 @@ export function PendenciasDeOutrasSessoes({
   const [tetos, setTetos] = useState<Record<string, string>>({});
   const [retornoDoTeto, setRetornoDoTeto] = useState<Record<string, { tom: 'ok' | 'erro'; texto: string }>>({});
   const bloqueadas = tarefasBloqueadas(backlogQuery.data);
-  const semModulo = filasDoChat ? tarefasSemModulo(backlogQuery.data) : [];
   // AT-799: agentes travados pelo disjuntor (RN-047), lidos dos eventos da
   // sessão de execução ativa (mesma chave da aba Executores, sem rota nova).
   const { sessionId: execucaoId, travados } = useAgentesTravados(filasDoChat ? projectId : undefined);
   const idsTravados = new Set(travados.map((a) => a.agentId));
+  // RN-1397: antes do plano (sem execução ativa) o módulo é do Dev Lead, não pendência do dono.
+  const semModulo = filasDoChat && execucaoId ? tarefasSemModulo(backlogQuery.data) : [];
   const [rearme, setRearme] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});

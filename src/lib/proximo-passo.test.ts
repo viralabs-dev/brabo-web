@@ -30,7 +30,7 @@ const CASOS: [TipoDoPasso, Partial<Fatos>][] = [
   ['agente_trabalhando', { agenteTrabalhando: 'Criativo' }],
   ['continuar_ideacao', { historias: 0 }],
   ['confirmar_arquitetura', { arquiteturaPendente: true }],
-  ['ligar_modulo', { semModulo: 2 }],
+  ['ligar_modulo', { semModulo: 2, execucaoAtiva: true }],
   ['desbloquear', { bloqueadas: 1 }],
   ['ativar_execucao', { prontas: 8 }],
   ['acompanhar_execucao', { execucaoAtiva: true, emAndamento: 2 }],
@@ -38,6 +38,10 @@ const CASOS: [TipoDoPasso, Partial<Fatos>][] = [
 ];
 
 describe('derivarProximoPasso (RN-1162)', () => {
+  it('RN-1397: sem execução ativa (antes do plano) `ligar_modulo` não vale', () => {
+    expect(derivarProximoPasso({ ...NADA, semModulo: 2, execucaoAtiva: false })).toBeNull();
+  });
+
   it.each(CASOS)('situação %s vale sozinha', (tipo, fatos) => {
     expect(derivarProximoPasso({ ...NADA, ...fatos })).toBe(tipo);
   });

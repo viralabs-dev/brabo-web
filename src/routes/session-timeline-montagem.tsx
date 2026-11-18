@@ -24,6 +24,7 @@ import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Alert as AlertShadcn } from '../components/shadcn/alert';
+import { Marker } from '../components/shadcn/marker';
 import { MensagemDeConversa } from '../components/ai-elements/message';
 import { Reasoning } from '../components/ai-elements/reasoning';
 import { ArtifactCard } from '../components/ai-elements/artifact';
@@ -697,7 +698,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             )}
           </AlertShadcn>
         ) : (
-          <div className={styles.handoffDivider} key={event.id}>
+          <Marker key={event.id}>
             <Badge tone="muted" size="md">
               {origem}
               <ChevronRightIcon size={13} />
@@ -706,7 +707,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 {nomeDoAgente(toAgent)}
               </span>
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (
@@ -724,8 +725,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       empurrar({
         desfecho: true,
         node: (
-          <div
-            className={styles.handoffDivider}
+          <Marker
             key={event.id}
             data-testid="handoff-aceite-automatico"
           >
@@ -735,7 +735,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 regras: payload.criterio?.regras ?? 0,
               })}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (event.type === 'handoff.auto_accept_failed') {
@@ -743,8 +743,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       empurrar({
         desfecho: true,
         node: (
-          <div
-            className={styles.handoffDivider}
+          <Marker
             key={event.id}
             data-testid="handoff-aceite-automatico-falhou"
           >
@@ -754,7 +753,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 erro: payload.error ?? '',
               })}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (
@@ -868,12 +867,12 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
 
       empurrar({
         node: (
-          <div className={styles.handoffDivider} key={event.id}>
+          <Marker key={event.id}>
             <Badge tone="muted" size="md">
               <StackIcon size={13} />
               {t('historia.estevePendente', { titulo })}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (event.type === 'backlog.story_promotion_returned') {
@@ -1312,7 +1311,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       empurrar({
         agentId: event.actor.kind === 'agent' ? event.actor.id : undefined,
         node: (
-          <div className={styles.handoffDivider} key={event.id}>
+          <Marker key={event.id}>
             {/* A frase de `classifyEvent` JÁ nomeia o subagente e a área —
                 prefixar o lead produziria "QA Lead QA Automação concluiu a
                 delegação (qa)". */}
@@ -1320,7 +1319,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
               <display.icon size={13} />
               {display.text}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     }

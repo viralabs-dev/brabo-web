@@ -466,3 +466,5 @@ Erro de campo (senha curta, confirmação diferente) vai **sob o campo** com
 `aria-invalid`; erro de formulário (credencial recusada, link inválido, falha
 de rede) vai no **`Alert` do topo do card**. Quem lê a mensagem não deveria
 precisar dela para saber onde mexer.
+
+> **AT-977 (v11):** piso tipográfico de 11 px (`--fs-label`) em todas as telas; `font-size` dos módulos só por tokens `--fs-*` (RN-1333).

@@ -24,7 +24,7 @@
 
 .contagem {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -63,7 +63,7 @@
 }
 
 .nome {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -72,12 +72,12 @@
 }
 
 .estado {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
 .link {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--accent);
   white-space: nowrap;
 }

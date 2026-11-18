@@ -11,7 +11,7 @@
 
 .rotulo {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -24,13 +24,13 @@
 }
 
 .texto {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin: 0;
 }
 
 .link {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--accent);
   margin-top: 6px;
   align-self: flex-start;

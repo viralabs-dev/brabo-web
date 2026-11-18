@@ -16,7 +16,7 @@
 
 /* Os três estados da RN-088. O erro vem ANTES do vazio, e diz o que fazer. */
 .estado {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   padding: var(--space-4);
   text-align: center;
@@ -36,7 +36,7 @@
 
 .nota {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
   color: var(--text-muted);
   max-width: 68ch;

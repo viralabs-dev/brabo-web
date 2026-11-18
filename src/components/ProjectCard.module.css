@@ -71,7 +71,7 @@
 
 .providerLabel {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -103,7 +103,7 @@
   bottom: -4px;
   right: -6px;
   font-family: var(--font-mono);
-  font-size: 9px;
+  font-size: var(--fs-label);
   line-height: 1;
   color: var(--text-primary);
   background: var(--surface-2);
@@ -120,7 +120,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   background: var(--surface-2);
   box-shadow: 0 0 0 2px var(--surface-1);
@@ -141,7 +141,7 @@
   gap: 8px;
   padding-top: 12px;
   border-top: 1px solid var(--border);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 

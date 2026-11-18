@@ -23,7 +23,7 @@ function CodeBlockHeader({ className, ...props }: React.ComponentProps<"div">) {
     <div
       data-slot="code-block-header"
       className={cn(
-        "flex items-center justify-between gap-2 border-b border-[var(--border)] px-2.5 py-1 font-[family-name:var(--font-mono)] text-[10px] uppercase tracking-[0.06em] text-[var(--text-muted)]",
+        "flex items-center justify-between gap-2 border-b border-[var(--border)] px-2.5 py-1 font-[family-name:var(--font-mono)] text-[11px] uppercase tracking-[0.06em] text-[var(--text-muted)]",
         className
       )}
       {...props}
@@ -49,7 +49,7 @@ function CodeBlockCopyButton({ code }: { code: string }) {
     }
   }
   return (
-    <Button type="button" variant="ghost" className="px-1.5 py-0 text-[10px] normal-case tracking-normal" onClick={copiar}>
+    <Button type="button" variant="ghost" className="px-1.5 py-0 text-[11px] normal-case tracking-normal" onClick={copiar}>
       {estado === "ok" ? t("codeBlock.copiado") : estado === "erro" ? t("codeBlock.falhaAoCopiar") : t("codeBlock.copiar")}
     </Button>
   )

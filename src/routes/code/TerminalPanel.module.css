@@ -31,6 +31,6 @@
 .overlayTexto {
   margin: 0;
   max-width: 440px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
 }

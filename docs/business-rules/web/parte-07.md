@@ -292,3 +292,10 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/lib/agent-status.ts` (`gateStatus`, `gateParadoPorBloqueio`), `src/lib/executores-ao-vivo.ts` (`cartaoDoGate`), `src/locales/*/executors.json` (`gateEsperaVolta*`, `gateEsperaDesbloqueio*`, `gateTarefaBloqueada`, `travado`).
 - **Teste:** `src/lib/agent-status.test.ts`, `src/lib/executores-ao-vivo.test.ts`.
 - **Origem:** AT-982 (achado 44), AT-985 (achado 34) e AT-984 (passo 8); Rodada 382.
+
+### RN-1333 — Nenhum texto fica abaixo de 11 px e links e cabeçalhos de ordenação têm alvo de pelo menos 24 px {#rn-1333}
+
+- **Regra:** o piso tipográfico é `--fs-label` (11 px); não existe token menor. Todo `font-size` dos `*.module.css` usa os tokens `--fs-*` (nenhum literal em px de 14,5 px para baixo), e as utilidades do kit (`text-[…px]`) e o texto do canvas seguem o mesmo piso. Links de texto ("Ver todas →") e cabeçalhos de ordenação das tabelas têm `min-height: 24px`, sem mudar o tamanho visual do texto.
+- **Onde:** `src/tipografia-minima.test.ts` (`violacoes`), `src/components/FaixaPrecisaDeVoce.module.css` (`.verTodas`), `src/components/ui/Table.module.css` (`.ordenar`), `design/tokens.css` (`--fs-label`).
+- **Teste:** `src/tipografia-minima.test.ts` (reprova `font-size` literal abaixo de 15 px nos módulos).
+- **Origem:** AT-977 (EP-035), v11 de 14/11/2026.

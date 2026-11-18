@@ -22,7 +22,7 @@
 
 .topoRotulo {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -84,7 +84,7 @@
 
 .railItemDesabilitadoLetra {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
 }
 
 .painelLateral {
@@ -121,7 +121,7 @@
   border: none;
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   cursor: pointer;
 }
 

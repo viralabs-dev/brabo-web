@@ -20,7 +20,7 @@
 
 .cabecalho {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
   padding: 8px 12px;
 }
@@ -28,7 +28,7 @@
 .nota {
   margin: 0;
   padding: 0 12px 8px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
 }
 
@@ -55,7 +55,7 @@
   gap: 8px;
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -75,20 +75,20 @@
 
 .presenca {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
 }
 
 .origem {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 .recorte {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -102,7 +102,7 @@
 
 .erro {
   margin: 0;
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--danger);
 }
 
@@ -128,7 +128,7 @@
 
 .paginadorTexto {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 

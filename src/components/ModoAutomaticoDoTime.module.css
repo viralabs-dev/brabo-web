@@ -14,13 +14,13 @@
 
 .titulo {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
 }
 
 .texto {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
@@ -37,13 +37,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
 }
 
 .desfecho {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
 }
 

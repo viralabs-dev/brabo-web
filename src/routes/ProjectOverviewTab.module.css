@@ -90,7 +90,7 @@
 }
 
 .sectionSub {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   margin-bottom: 16px;
 }
@@ -99,7 +99,7 @@
    frase que explica a seção continua em `.sectionSub`, em corpo. */
 .sectionCount {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -142,7 +142,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
@@ -160,7 +160,7 @@
 .moduleName {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
 }
 
@@ -200,7 +200,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .adrLink {
@@ -226,7 +226,7 @@
 }
 
 .pendTitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -256,7 +256,7 @@
   border: 1px solid var(--accent-panel-border);
   background: var(--accent-panel);
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 /* Faixa de análises do Psicólogo (Fase 4b) — tier + custo por sessão
@@ -282,7 +282,7 @@
 
 .analysisSession {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--accent);
   text-decoration: none;
 }
@@ -292,14 +292,14 @@
 }
 
 .analysisMeta {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .analysisCost {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
 }
 

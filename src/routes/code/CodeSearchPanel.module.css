@@ -9,7 +9,7 @@
   flex-shrink: 0;
   padding: 10px 14px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -37,7 +37,7 @@
 
 .estado {
   padding: 14px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -46,7 +46,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--danger);
 }
 
@@ -79,7 +79,7 @@
 
 .resultadoCaminho {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,6 +101,6 @@
 
 .rodape {
   padding: 8px 14px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }

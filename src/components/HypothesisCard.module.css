@@ -49,7 +49,7 @@
 }
 
 .hipotese {
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
   line-height: 1.45;
 }
@@ -78,7 +78,7 @@
 }
 
 .label {
-  font-size: 11px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
@@ -112,7 +112,7 @@
   align-items: center;
   min-height: 24px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   padding: 3px 9px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border);

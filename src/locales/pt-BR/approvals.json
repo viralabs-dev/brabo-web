@@ -158,6 +158,8 @@
     "decided": {
       "denied": "Negado",
       "alwaysAllowed": "Sempre permitido · gravado em permissions.json",
+      "autoMerged": "Mergeado pelo merge automático",
+      "autoMergedDesligar": "desligar",
       "failed": "Falhou",
       "approvedTerminal": "Aprovado · comando em execução",
       "approved": "Aprovado",

@@ -192,11 +192,14 @@
     },
     "loadError": "Could not load this project's sessions.",
     "filterEmpty": "No sessions in this filter.",
+    "renameButton": {
+      "ariaLabel": "Rename session"
+    },
     "renameInput": {
       "ariaLabel": "Session name",
       "placeholder": "No name — the session stays {{hashtag}}"
     },
-    "rowTitle": "Session {{rotulo}} — click to rename",
+    "rowTitle": "Open session {{rotulo}}",
     "kpis": {
       "sessionsInProject": {
         "label": "Sessions in project",

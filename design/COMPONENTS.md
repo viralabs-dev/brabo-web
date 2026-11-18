@@ -44,6 +44,13 @@ Cada peça é conferida contra a prévia `13-design/v9-estrutura/`. Decisão: [A
 
 **Tokens novos:** escala de tipo 14/11/12 e títulos 24/20, `--surface-3` (degrau de hover e item ativo) e `--ag-*` (oito papéis, nos dois temas). Aplicação em `tokens.css`: AT-884.
 
+## Marker e Scroll Fade (AT-955)
+
+| peça | onde | o que é | não faz |
+|---|---|---|---|
+| `Marker` (`components/shadcn/marker.tsx`) | divisores de handoff do fio | texto centrado com uma linha de cada lado, cor e espaço de `tokens.css` | não leva `data-slot="alert"` |
+| `ScrollFade` (`components/shadcn/scroll-fade.tsx`) | fileira de `SugestoesDeAcao` | rolagem horizontal que esmaece só a borda com conteúdo escondido (`data-fade`) | não limita o número de ações (RN-976) |
+
 ## Tipografia — a escala do handoff
 
 As três famílias e o que cada uma carrega. A carga é auto-hospedada

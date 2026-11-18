@@ -370,6 +370,6 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1393 — Durante o turno a linha de trabalho nasce aberta, com o título em brilho e sem segundos {#rn-1393}
 
 - **Regra:** a faixa do turno (`TurnActivityStrip`) põe o raciocínio em curso, o plano (RN-967) e os passos dentro da MESMA `LinhaDeTrabalho`, aberta, "Trabalhando · N passos". Não há duração em curso (a fonte é o `duracaoMs` do fecho), então o "9 s" da prancha não existe. O brilho é o `Shimmer` e respeita `prefers-reduced-motion`. A faixa continua montada acima da doca; levá-la ao fio é da AT-959. Quando a resposta chega, a faixa some e o turno passa a ter a linha fechada da RN-1392.
-- **Onde:** `src/components/TurnActivityStrip.tsx:84` (`TurnActivityStrip`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
+- **Onde:** `src/components/TurnActivityStrip.tsx:49` (`TurnActivityStrip`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
 - **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/components/TurnActivityStrip.test.tsx`.
 - **Origem:** AT-958 (EP-035).

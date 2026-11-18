@@ -384,6 +384,25 @@ describe('ApprovalCard', () => {
     expect(screen.getByText(/comando destrutivo/)).toBeInTheDocument();
   });
 
+  it('AT-987: git_merge do merge automático diz "Mergeado pelo merge automático" com "desligar", nunca "Sempre permitido"', () => {
+    render(
+      <ApprovalCard
+        action={makeAction({
+          actionType: 'git_merge',
+          payload: { pullRequestId: 'pr-1', origem: 'merge_automatico' },
+          status: 'auto_approved',
+          resolvedPolicy: 'auto_approve',
+        })}
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/Mergeado pelo merge automático/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'desligar' }).getAttribute('href')).toContain('tab=settings&group=projeto');
+    expect(screen.queryByText(/Sempre permitido/)).toBeNull();
+  });
+
   it('mostra "sempre permitido" quando auto_approved com política auto_approve', () => {
     render(
       <ApprovalCard

@@ -780,6 +780,24 @@ function DecidedLine({ action }: { action: ProposedAction }) {
       </div>
     );
   }
+  // AT-987 (RN-1316): o merge automático avisa o que é; "Sempre permitido" seria falso.
+  if (
+    action.status === 'auto_approved' &&
+    action.actionType === 'git_merge' &&
+    action.payload.origem === 'merge_automatico'
+  ) {
+    return (
+      <div className={styles.decided} style={{ ['--decided-color' as string]: 'var(--accent)' } as CSSProperties}>
+        <span className={styles.decidedDot} />
+        <span className={styles.decidedText} data-testid="merge-automatico-aviso">
+          {t('approvalCard.decided.autoMerged')}{' · '}
+          <a href={`/projects/${action.projectId}?tab=settings&group=projeto`}>
+            {t('approvalCard.decided.autoMergedDesligar')}
+          </a>
+        </span>
+      </div>
+    );
+  }
   if (action.status === 'auto_approved' && action.resolvedPolicy === 'auto_approve') {
     return (
       <div className={styles.decided} style={{ ['--decided-color' as string]: 'var(--accent)' } as CSSProperties}>

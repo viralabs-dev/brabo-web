@@ -222,11 +222,14 @@
     },
     "loadError": "Не удалось загрузить сессии этого проекта.",
     "filterEmpty": "По этому фильтру сессий нет.",
+    "renameButton": {
+      "ariaLabel": "Переименовать сессию"
+    },
     "renameInput": {
       "ariaLabel": "Название сессии",
       "placeholder": "Без названия — сессия останется {{hashtag}}"
     },
-    "rowTitle": "Сессия {{rotulo}} — нажмите, чтобы переименовать",
+    "rowTitle": "Открыть сессию {{rotulo}}",
     "kpis": {
       "sessionsInProject": {
         "label": "Сессии в проекте",

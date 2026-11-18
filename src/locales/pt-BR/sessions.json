@@ -162,7 +162,7 @@
         "empty": "Nenhuma ideação ainda. Abra uma para o Criativo levantar com você as regras de negócio do produto."
       },
       "consultiva": {
-        "title": "Chat",
+        "title": "Conversa",
         "openButton": "Nova conversa",
         "confirmButton": "Abrir sessão consultiva",
         "empty": "Nenhuma conversa ainda. Abra uma para perguntar e pedir contexto sem ativar agente nenhum."
@@ -207,11 +207,14 @@
     },
     "loadError": "Não foi possível carregar as sessões deste projeto.",
     "filterEmpty": "Nenhuma sessão neste filtro.",
+    "renameButton": {
+      "ariaLabel": "Renomear sessão"
+    },
     "renameInput": {
       "ariaLabel": "Nome da sessão",
       "placeholder": "Sem nome — a sessão fica {{hashtag}}"
     },
-    "rowTitle": "Sessão {{rotulo}} — clique para renomear",
+    "rowTitle": "Abrir a sessão {{rotulo}}",
     "kpis": {
       "sessionsInProject": {
         "label": "Sessões no projeto",

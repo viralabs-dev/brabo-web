@@ -49,6 +49,11 @@ const { navigateMock } = vi.hoisted(() => ({ navigateMock: vi.fn() }));
 
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => navigateMock,
+  Link: ({ to, params, children, ...rest }: { to: string; params: Record<string, string>; children: React.ReactNode }) => (
+    <a href={to.replace('$projectId', params.projectId).replace('$sessionId', params.sessionId)} {...rest}>
+      {children}
+    </a>
+  ),
 }));
 
 vi.mock('../lib/api-client', async () => {
@@ -336,7 +341,7 @@ describe('ProjectSessionsTab — renomear direto da lista', () => {
 
     montar();
 
-    const botao = await screen.findByTitle(/clique para renomear/);
+    const botao = await screen.findByRole('button', { name: 'Renomear sessão' });
     fireEvent.click(botao);
 
     const campo = screen.getByLabelText('Nome da sessão');
@@ -353,14 +358,14 @@ describe('ProjectSessionsTab — renomear direto da lista', () => {
     expect(await screen.findByText('Onboarding · #11111111')).toBeTruthy();
   });
 
-  it('clicar no controle de edição (nome ou lápis) NÃO navega pra dentro da sessão', async () => {
+  it('clicar no lápis NÃO navega pra dentro da sessão', async () => {
     listSessions.mockResolvedValue([
       sessao('11111111-aaaa', '2026-08-01T00:00:00.000Z'),
     ]);
 
     montar();
 
-    const botao = await screen.findByTitle(/clique para renomear/);
+    const botao = await screen.findByRole('button', { name: 'Renomear sessão' });
     fireEvent.click(botao);
     expect(navigateMock).not.toHaveBeenCalled();
 
@@ -368,6 +373,19 @@ describe('ProjectSessionsTab — renomear direto da lista', () => {
     // posicionar o cursor E entrar na sessão no mesmo clique.
     const campo = screen.getByLabelText('Nome da sessão');
     fireEvent.click(campo);
+    expect(navigateMock).not.toHaveBeenCalled();
+  });
+
+  it('o título é um link para a sessão e clicar nele não navega duas vezes', async () => {
+    listSessions.mockResolvedValue([
+      sessao('11111111-aaaa', '2026-08-01T00:00:00.000Z'),
+    ]);
+
+    montar();
+
+    const link = await screen.findByRole('link', { name: /#11111111/ });
+    expect(link.getAttribute('href')).toBe('/projects/proj-1/sessions/11111111-aaaa');
+    fireEvent.click(link);
     expect(navigateMock).not.toHaveBeenCalled();
   });
 
@@ -396,7 +414,7 @@ describe('ProjectSessionsTab — renomear direto da lista', () => {
 
     montar();
 
-    fireEvent.click(await screen.findByTitle(/clique para renomear/));
+    fireEvent.click(await screen.findByRole('button', { name: 'Renomear sessão' }));
     const campo = screen.getByLabelText('Nome da sessão');
     fireEvent.change(campo, { target: { value: 'Rascunho perdido' } });
     fireEvent.keyDown(campo, { key: 'Escape' });
@@ -515,7 +533,7 @@ describe('ProjectSessionsTab — cada aba é um tipo', () => {
     transitionSession.mockResolvedValue({});
 
     montarAba(ProjectChatTab);
-    await screen.findByText('Chat');
+    await screen.findByText('Conversa');
     fireEvent.click(screen.getByRole('button', { name: 'Nova conversa' }));
     fireEvent.change(screen.getByLabelText('Nome (opcional)'), {
       target: { value: '   ' },
@@ -952,9 +970,9 @@ describe('ProjectSessionsTab — layout estreito (AT-330)', () => {
     largura = simularLayoutMovel(true);
     montar();
 
-    const botao = await screen.findByTitle(/clique para renomear/);
-    expect(botao.textContent).toContain('#ae1e5746');
-    const lista = botao.closest('[data-layout]');
+    const link = await screen.findByRole('link', { name: /#ae1e5746/ });
+    const botao = screen.getByRole('button', { name: 'Renomear sessão' });
+    const lista = link.closest('[data-layout]');
     expect(lista).toHaveAttribute('data-layout', 'movel');
 
     // Renomear continua sem navegar — a quebra de linha não muda o clique.
@@ -966,7 +984,7 @@ describe('ProjectSessionsTab — layout estreito (AT-330)', () => {
   it('no desktop, a linha continua única — a lista não se marca como móvel', async () => {
     montar();
 
-    const botao = await screen.findByTitle(/clique para renomear/);
+    const botao = await screen.findByRole('button', { name: 'Renomear sessão' });
     expect(botao.closest('[data-layout]')).toBeNull();
   });
 });

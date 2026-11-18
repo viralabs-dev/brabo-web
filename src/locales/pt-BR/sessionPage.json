@@ -363,6 +363,8 @@
     "raciocinioChars_one": "{{count}} caractere",
     "raciocinioChars_other": "{{count}} caracteres",
     "passosDoTurno": "Passos do turno",
+    "trabalhou": "Trabalhou",
+    "trabalhando": "Trabalhando",
     "consultado": "Consultado neste turno",
     "fonteN": "Fonte {{n}}: {{rotulo}}",
     "consultadoCorte": "mostrando {{shown}} de {{total}}",

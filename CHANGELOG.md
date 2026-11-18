@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Feat (AT-958, RN-1392, RN-1393, RN-1185): cada turno mostra UMA linha de trabalho (`Trace`) que abre no lugar, com raciocínio, "Consultado neste turno" e passos dentro: fechada diz "Trabalhou 14,0 s · 5 passos" (`duracaoMs` do fecho; sem o campo, sem "0 s"); em curso nasce aberta, "Trabalhando · N passos", sem segundos. O `ResumoDeTurno` sai do fio. i18n nos quatro idiomas. Ajuste no `brabo-qa`: nenhum (`raciocinio-do-turno` mantido).
 - Feat (AT-957, RN-1303, RN-1353, RN-1354, RN-626): a execução vigente vira uma faixa de 40 px acima do fio (progresso, quantos esperam, custo) e o painel da sessão passa a ser único (360 px), com as abas Contexto, Executores e Pendências; abaixo de 1024 px é o Sheet. O carrossel de executores, o minimizar (`localStorage`), o Sheet de pendências do desktop e a linha "N pendências" do fio saem. As pendências seguem montadas com o painel recolhido (RN-843).
 - Feat (AT-981, RN-1387, RN-1388): a aba Arquitetura ganha a seção "Contratos entre módulos" (tipo, assinatura e descrição por módulo; `tabela` e `identidade` em destaque) e a timeline rotula `artifact.module_contracts`. `fixados/openapi.json` e os tipos regenerados da api (`contratos` no `architecture`, `dependeDe`/`levantamento` em `Task`). Regressivo `brabo-qa`: `conhecimento-c4.spec.ts` segue valendo, sem ajuste.
 

@@ -29,8 +29,8 @@ import { MensagemDeConversa } from '../components/ai-elements/message';
 import { Reasoning } from '../components/ai-elements/reasoning';
 import { ArtifactCard } from '../components/ai-elements/artifact';
 import { PassosDoTurno } from '../components/ai-elements/passos-do-turno';
-import { ResumoDeTurno } from '../components/ResumoDeTurno';
-import { custoDoPayload, gravadoDoPayload, numeroDoPayload } from '../lib/resumo-de-turno';
+import { LinhaDeTrabalho } from '../components/ai-elements/linha-de-trabalho';
+import { custoDoPayload, numeroDoPayload } from '../lib/resumo-de-turno';
 import { passosDoTurno } from '../lib/passos-do-turno';
 import { citacoesDoTurno, fontesDoTurno } from '../lib/fontes-do-turno';
 import { ConsultadoNesteTurno } from '../components/ai-elements/sources';
@@ -442,8 +442,6 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
   // como `chat.message` do usuário (a api reenvia as respostas como texto).
   // O card respondido já as mostra — a bolha repetida sai do fio.
   const ecosDeFormulario = ecosDeRespostaEstruturada(events);
-  // AT-891: o turno ABERTO é o último `agent.response`; os anteriores viram uma linha.
-  const ultimaRespostaId = events.reduce<string | null>((id, e) => (e.type === 'agent.response' ? e.id : id), null);
 
   for (const event of events) {
     // RN-695 (AT-355): a Anamnese NÃO fala no fio. A análise dela é sobre a
@@ -1004,54 +1002,36 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       );
       // RN-974: sem `mensagem: true`, o bloco não conta no corte (RN-644).
       const ferramentas = passosDoTurno(events, event);
-      if (ferramentas.length > 0) {
-        const custo = custoDoPayload(payload);
-        const duracaoMs = numeroDoPayload(payload, 'duracaoMs');
-        const bloco = <PassosDoTurno passos={ferramentas} custo={custo} duracaoMs={duracaoMs} />;
-        empurrar({
-          node:
-            event.id === ultimaRespostaId ? (
-              <div key={`${event.id}-cadeia`}>{bloco}</div>
-            ) : (
-              <ResumoDeTurno
-                key={`${event.id}-cadeia`}
-                agente={event.actor.id}
-                passos={ferramentas.length}
-                gravado={gravadoDoPayload(payload)}
-                custo={custo}
-              >
-                {bloco}
-              </ResumoDeTurno>
-            ),
-        });
-      }
+      const custo = custoDoPayload(payload);
+      const duracaoMs = numeroDoPayload(payload, 'duracaoMs');
       const rac = payload as { raciocinio?: unknown; raciocinioTotal?: unknown };
-      if (typeof rac.raciocinio === 'string' && rac.raciocinio !== '') {
-        const tokens = numeroDoPayload(payload, 'raciocinioTokens');
-        const total = typeof rac.raciocinioTotal === 'number' ? rac.raciocinioTotal : rac.raciocinio.length;
-        empurrar({
-          node: (
-            <Reasoning
-              key={`${event.id}-raciocinio`}
-              titulo={t('turno.raciocinio')}
-              contagem={tokens !== null ? t('turno.raciocinioTokens', { count: tokens }) : t('turno.raciocinioChars', { count: total })}
-              texto={rac.raciocinio}
-            />
-          ),
-        });
-      }
       const consultado = fontesDoTurno(event.payload);
-      if (consultado.fontes.length > 0) {
+      const temRaciocinio = typeof rac.raciocinio === 'string' && rac.raciocinio !== '';
+      if (ferramentas.length > 0 || temRaciocinio || consultado.fontes.length > 0) {
+        // RN-1392: raciocínio, consultas e passos viram UMA linha de trabalho por turno.
+        const tokens = numeroDoPayload(payload, 'raciocinioTokens');
+        const total = typeof rac.raciocinioTotal === 'number' ? rac.raciocinioTotal : String(rac.raciocinio ?? '').length;
         empurrar({
           node: (
-            <ConsultadoNesteTurno
-              key={`${event.id}-fontes`}
-              fontes={consultado.fontes}
-              total={consultado.total}
-              projectId={projectId}
-              sessionId={sessionId}
-              eventId={event.id}
-            />
+            <LinhaDeTrabalho key={`${event.id}-trabalho`} passos={ferramentas.length} duracaoMs={duracaoMs}>
+              {temRaciocinio && (
+                <Reasoning
+                  titulo={t('turno.raciocinio')}
+                  contagem={tokens !== null ? t('turno.raciocinioTokens', { count: tokens }) : t('turno.raciocinioChars', { count: total })}
+                  texto={rac.raciocinio as string}
+                />
+              )}
+              {consultado.fontes.length > 0 && (
+                <ConsultadoNesteTurno
+                  fontes={consultado.fontes}
+                  total={consultado.total}
+                  projectId={projectId}
+                  sessionId={sessionId}
+                  eventId={event.id}
+                />
+              )}
+              {ferramentas.length > 0 && <PassosDoTurno passos={ferramentas} custo={custo} duracaoMs={duracaoMs} />}
+            </LinhaDeTrabalho>
           ),
         });
       }

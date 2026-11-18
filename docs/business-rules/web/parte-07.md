@@ -285,3 +285,10 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/settings/RoteadorDeFerramentasSection.tsx` (`RoteadorDeFerramentasSection`), `src/lib/api-client.ts` (`getWorkspaceToolRouter`, `setWorkspaceToolRouter`).
 - **Teste:** `src/routes/settings/RoteadorDeFerramentasSection.test.tsx` (um caso por estado e motivo, não-owner, PUT, 409, aviso de queda).
 - **Origem:** AT-626 (Rodada C), decisão do dono de 13/11/2026.
+
+### RN-1332 — O cartão do QA e do SecOps diz o estado real do gate: tarefa bloqueada ou de volta na fila do dev nunca aparece como "Julgando" {#rn-1332}
+
+- **Regra:** o `markBlocked` mantém `gate_status = awaiting_qa` sem emitir `pr.gate_changed`, então o último parecer não basta. (a) Um `backlog.task_blocked` da MESMA `taskId` depois do último `pr.gate_changed`/`infra.gate_changed` encerra o "trabalhando" do gate (`gateStatus` devolve `ocioso`; o carrossel e a aba Executores usam a mesma função), com o texto "A tarefa bloqueou: o gate espera a correção". (b) Se o backlog tem tarefa `todo` com `gateStatus` aberto do gate (`awaiting_qa` no QA, `awaiting_secops` no SecOps), o cartão diz "A PR #N espera voltar ao QA: a tarefa está na fila do dev" ou, com `blocked`, "… a tarefa está bloqueada"; esse estado vale mais que o último parecer. Os campos novos da api (`origin`, `blockedBy`) não são exigidos. O texto do dev travado aponta o botão que existe: "Use Rearmar aqui nas pendências ou em Executores."
+- **Onde:** `src/lib/agent-status.ts` (`gateStatus`, `gateParadoPorBloqueio`), `src/lib/executores-ao-vivo.ts` (`cartaoDoGate`), `src/locales/*/executors.json` (`gateEsperaVolta*`, `gateEsperaDesbloqueio*`, `gateTarefaBloqueada`, `travado`).
+- **Teste:** `src/lib/agent-status.test.ts`, `src/lib/executores-ao-vivo.test.ts`.
+- **Origem:** AT-982 (achado 44), AT-985 (achado 34) e AT-984 (passo 8); Rodada 382.

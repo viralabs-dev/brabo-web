@@ -8,6 +8,10 @@ import { historicoFalso } from '../test/historico-de-eventos';
 // é o idioma DEFAULT (mesmo padrão de ProjectExecutorsTab.test.tsx).
 import i18n from '../lib/i18n';
 
+// AT-957: o painel da sessão também tem abas (Contexto · Executores · Pendências); só as do carrossel contam aqui.
+const abasDoCarrossel = () =>
+  screen.queryAllByRole('tab').filter((t) => !t.closest('[data-testid="painel-da-sessao"]'));
+
 /**
  * O bug: `promocoesPendentes`/`ehLevaDeHistorias` eram calculadas só a
  * partir da JANELA de `useSessionEvents` (últimos 200 eventos da sessão,
@@ -247,7 +251,7 @@ describe('SessionPage — carrossel de histórias sobrevive à janela de eventos
     expect(
       screen.getByText('história "Login com e-mail e senha" pronta, aguardando sua promoção'),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('tab')).toHaveLength(3);
+    expect(abasDoCarrossel()).toHaveLength(3);
     expect(screen.getByRole('button', { name: 'Aprovar todas' })).toBeInTheDocument();
   });
 
@@ -274,7 +278,7 @@ describe('SessionPage — carrossel de histórias sobrevive à janela de eventos
     expect(
       await screen.findByRole('group', { name: '3 histórias aguardando promoção' }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('tab')).toHaveLength(3);
+    expect(abasDoCarrossel()).toHaveLength(3);
 
     // As três histórias estão representadas nos dots/slides — navega até
     // achar as três, inclusive a que só existe no backlog (sem evento na

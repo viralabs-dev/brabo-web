@@ -173,3 +173,11 @@
 .abasDoSheet {
   flex-wrap: wrap;
 }
+
+/* AT-957: o corpo da aba Pendências do painel da sessão; o painel já tem o próprio padding e rolagem. */
+.corpoDoPainel {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

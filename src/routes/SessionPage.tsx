@@ -12,8 +12,6 @@ import {
   sendAgentMessage,
   startAgent,
 } from '../lib/api-client';
-import { CarrosselDeExecutores } from '../components/CarrosselDeExecutores';
-import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSessoes';
 import { roleAtLeast } from '../lib/roles';
 import { useRetomarTurnoDoLog, useTurnoDoAgente } from '../lib/session-turno';
 import { subirAnexosPendentes } from '../lib/anexos';
@@ -57,7 +55,6 @@ import { montarTimeline } from './session-timeline-montagem';
 import { SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
 import { SessionFio } from './SessionFio';
-import { Button } from '../components/ui/Button';
 import { ConversationScrollButton } from '../components/ai-elements/conversation';
 import { PainelDaFila } from './PainelDaFila';
 import { SessionComposer } from './SessionComposer';
@@ -74,9 +71,10 @@ import { usePromocaoDeHistorias } from '../lib/session-promocao';
 import { useAcoesDeHandoff } from '../lib/session-acoes-de-handoff';
 import { useAcoesDaSessao } from '../lib/session-acoes-da-sessao';
 import { DevolverHistoriaModal } from './DevolverHistoriaModal';
-import { GavetaDoContexto } from './GavetaDoContexto';
+import { FaixaDeEstado } from './FaixaDeEstado';
+import { PainelDaSessao, type AbaDoPainel } from './PainelDaSessao';
 import { usePainelDeContexto } from '../lib/painel-de-contexto';
-import { useLayoutMovel } from '../lib/layout-movel';
+import { usePainelEmSheet } from '../lib/layout-movel';
 
 /**
  * O vazio ESTÁVEL (AT-301): `?? []` cria um array novo a cada render, e todo
@@ -149,11 +147,15 @@ export function SessionPage({
   // Mesmo papel de WORKSPACE (a lacuna da RN-471 já declarada acima).
   const podeReabrir = roleAtLeast(workspaceComPapel?.role, 'developer');
   // AT-328: no móvel o painel nasce fechado e abre como gaveta sobre o fio.
-  const movel = useLayoutMovel();
-  const [asideOpen, setAsideOpen] = usePainelDeContexto(movel, !!highlightEvent);
+  const emSheet = usePainelEmSheet();
+  const [asideOpen, setAsideOpen] = usePainelDeContexto(emSheet, !!highlightEvent);
   // AT-950: o Sheet de pendências e o total que o contador do cabeçalho mostra.
-  const [pendenciasAbertas, setPendenciasAbertas] = useState(false);
+  const [abaDoPainel, setAbaDoPainel] = useState<AbaDoPainel>('contexto');
   const [totalDePendencias, setTotalDePendencias] = useState(0);
+  const abrirAba = (aba: AbaDoPainel) => {
+    setAbaDoPainel(aba);
+    setAsideOpen(true);
+  };
   // Log completo de eventos — fechado por padrão, mas abre sozinho quando
   // a navegação traz um `highlightEvent` (chip de evidência do Psicólogo).
   const [logOpen, setLogOpen] = useState(!!highlightEvent);
@@ -764,32 +766,15 @@ export function SessionPage({
         asideOpen={asideOpen}
         setAsideOpen={setAsideOpen}
         pendencias={totalDePendencias}
-        abrirPendencias={() => setPendenciasAbertas(true)}
+        abrirPendencias={() => abrirAba('pendencias')}
       />
 
       <div className={styles.body}>
         <div className={styles.chatColumn}>
-          {/* AT-265 (RN-626, AT-950): as pendências do projeto (as ações de OUTRAS sessões, PRs
-              prontas, perguntas…) moram num Sheet à direita, aberto pelo contador do cabeçalho:
-              nunca por cima da conversa. AT-298: em QUALQUER estado da sessão. Atalho, RN-467. */}
-          <PendenciasDeOutrasSessoes
-            modo="sheet"
-            projectId={projectId}
-            sessionId={sessionId}
-            podeDecidir={podeDecidir}
-            aberto={pendenciasAbertas}
-            aoMudarAberto={setPendenciasAbertas}
-            aoContar={setTotalDePendencias}
-          />
-          {totalDePendencias > 0 && (
-            <div className={styles.linhaDePendencias} data-testid="linha-de-pendencias">
-              <Button variant="ghost" size="sm" onClick={() => setPendenciasAbertas(true)}>
-                {t('pendencias.linhaNoFio', { count: totalDePendencias })}
-              </Button>
-            </div>
+          {/* AT-957 (RN-1303): a execução vigente é UMA faixa de 40px acima do fio; o detalhe mora na aba Executores. */}
+          {sessaoCriativa && (
+            <FaixaDeEstado projectId={projectId} sessionId={sessionId} aoAbrirExecutores={() => abrirAba('executores')} />
           )}
-          {/* AT-880 (RN-1303): os executores da execução vigente, acima do fio (RN-816). */}
-          {sessaoCriativa && <CarrosselDeExecutores projectId={projectId} sessionId={sessionId} />}
           <ModoAutomaticoNoChat
             projectId={projectId}
             comExecucao={isActive && sessaoTemExecucao(events, ativadosNaSessaoInteira)}
@@ -885,8 +870,20 @@ export function SessionPage({
           />
         </div>
 
-        {asideOpen && (
-          <GavetaDoContexto movel={movel} aoFechar={() => setAsideOpen(false)}>
+        {/* AT-957: o painel fica montado recolhido (as pendências escutam `brabo:abrir-fila`, RN-843). */}
+        <PainelDaSessao
+          projectId={projectId}
+          sessionId={sessionId}
+          aberto={asideOpen}
+          emSheet={emSheet}
+          aoFechar={() => setAsideOpen(false)}
+          aba={abaDoPainel}
+          aoMudarAba={abrirAba}
+          comExecutores={sessaoCriativa}
+          podeDecidir={podeDecidir}
+          totalDePendencias={totalDePendencias}
+          aoContarPendencias={setTotalDePendencias}
+          contexto={
             <ContextAside
               projectId={projectId}
               sessionId={sessionId}
@@ -901,8 +898,8 @@ export function SessionPage({
               citedEvent={citedEvent}
               citedEventMissing={citedEventQuery.isError}
             />
-          </GavetaDoContexto>
-        )}
+          }
+        />
       </div>
 
       <DevolverHistoriaModal

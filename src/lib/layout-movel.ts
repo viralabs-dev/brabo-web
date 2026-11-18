@@ -21,21 +21,39 @@ function temMatchMedia(): boolean {
   return typeof window !== 'undefined' && typeof window.matchMedia === 'function';
 }
 
-function assinar(aoMudar: () => void): () => void {
-  if (!temMatchMedia()) return () => {};
-  const mql = window.matchMedia(CONSULTA_MOVEL);
-  mql.addEventListener('change', aoMudar);
-  return () => mql.removeEventListener('change', aoMudar);
+function assinar(consulta: string) {
+  return (aoMudar: () => void): (() => void) => {
+    if (!temMatchMedia()) return () => {};
+    const mql = window.matchMedia(consulta);
+    mql.addEventListener('change', aoMudar);
+    return () => mql.removeEventListener('change', aoMudar);
+  };
 }
 
-function ler(): boolean {
+function ler(consulta: string): boolean {
   // Sem `matchMedia` (jsdom sem mock, SSR): DESKTOP — é o layout de sempre, e
   // o móvel é o que precisa ser AFIRMADO pela consulta, nunca suposto.
   if (!temMatchMedia()) return false;
-  return window.matchMedia(CONSULTA_MOVEL).matches;
+  return window.matchMedia(consulta).matches;
 }
+
+const assinarMovel = assinar(CONSULTA_MOVEL);
+const lerMovel = () => ler(CONSULTA_MOVEL);
 
 /** `true` abaixo do breakpoint móvel; re-renderiza quando a janela cruza o corte. */
 export function useLayoutMovel(): boolean {
-  return useSyncExternalStore(assinar, ler, () => false);
+  return useSyncExternalStore(assinarMovel, lerMovel, () => false);
+}
+
+/**
+ * AT-957 (RN-1303): abaixo de 1024px o painel da sessão (Contexto · Executores · Pendências) vira
+ * o Sheet do chat compacto. Consulta PRÓPRIA: o corte da sidebar (RN-643, 767px) não muda, e entre
+ * 768 e 1023px a sidebar segue como está enquanto o painel já é Sheet.
+ */
+export const CONSULTA_PAINEL_EM_SHEET = '(max-width: 1023px)';
+const assinarPainel = assinar(CONSULTA_PAINEL_EM_SHEET);
+const lerPainel = () => ler(CONSULTA_PAINEL_EM_SHEET);
+
+export function usePainelEmSheet(): boolean {
+  return useSyncExternalStore(assinarPainel, lerPainel, () => false);
 }

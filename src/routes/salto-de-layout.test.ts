@@ -16,12 +16,14 @@ function fonte(arquivo: string): string {
 }
 
 describe('blocos tardios não empurram o botão (RN-816)', () => {
-  it('Sessão: as pendências de outras sessões moram ACIMA do fio, não entre ele e o composer', () => {
+  it('Sessão: a faixa de estado da execução mora ACIMA do fio (AT-957), não entre ele e o composer', () => {
     const s = fonte('SessionPage.tsx');
-    const pendencias = s.indexOf('<PendenciasDeOutrasSessoes');
-    expect(pendencias).toBeGreaterThan(-1);
-    expect(pendencias).toBeLessThan(s.indexOf('className={styles.messages}'));
-    expect(pendencias).toBeLessThan(s.indexOf('<SessionComposer'));
+    const faixa = s.indexOf('<FaixaDeEstado');
+    expect(faixa).toBeGreaterThan(-1);
+    expect(faixa).toBeLessThan(s.indexOf('className={styles.messages}'));
+    expect(faixa).toBeLessThan(s.indexOf('<SessionComposer'));
+    // As pendências moram no painel ao lado, nunca no fluxo da coluna do chat.
+    expect(s).not.toContain('<PendenciasDeOutrasSessoes');
   });
 
   it('Executores: "Parar execução" e a oferta em lote vêm antes das pendências de outras sessões', () => {

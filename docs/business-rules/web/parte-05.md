@@ -31,6 +31,12 @@ api, o engine e todo teto ficam como estão.
 > "acima do fio" ou "no bloco do chat", leia "no Sheet de pendências". A aba
 > Executores continua com o bloco inline.
 
+> **Revisada pela AT-957 (v10):** no desktop o Sheet de pendências deixou de
+> existir: as pendências são a aba Pendências do painel único da sessão, e
+> abaixo de 1024 px o painel (com as mesmas três abas) é o Sheet. A linha "N
+> pendências · Abrir" do fio saiu; o contador do cabeçalho e o da aba bastam.
+> Eventos, cartões, endpoints e tetos seguem os mesmos (RN-1353).
+
 1. **O card fica inerte e diz a frase da api (AT-256).** `ApprovalCard` segura
    os botões enquanto a decisão está em voo (o duplo clique era um 409 certo) e,
    quando a chamada devolve promessa que rejeita, mostra a frase que a api
@@ -111,7 +117,7 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
   `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:272`
-  (`useRetomarTurnoDoLog`), `:775` (`PendenciasDeOutrasSessoes`)
+  (`useRetomarTurnoDoLog`), `:874` (`PainelDaSessao`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -625,7 +631,7 @@ os achados X1–X3 da auditoria. A duplicação de navegação por abas (gaveta 
 barra) fechou no ADR 0211.
 
 - **Código:** `apps/web/src/lib/layout-movel.ts:18` (`CONSULTA_MOVEL`),
-  `:39` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:426`
+  `:44` (`useLayoutMovel`); `apps/web/src/routes/Shell.tsx:426`
   (`movel`), `:446` (`fecharAoSeguirLink`);
   `apps/web/src/routes/ProjectPage.tsx:115` (`movel`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:72` (`movel`)
@@ -967,8 +973,8 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 `position: absolute` dentro de controles abaixo da dobra, não algo cortado.
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
-  (`usePainelDeContexto`); `apps/web/src/routes/GavetaDoContexto.tsx:14`
-  (`GavetaDoContexto`); `apps/web/src/routes/SessionTopbar.tsx:151`
+  (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
+  (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:151`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)

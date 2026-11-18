@@ -36,7 +36,7 @@ Cinco cartões de fila, cada um com o próprio número e nunca somados (RN-467):
 Faixa "Precisa de você" (`--accent-panel`) com o item mais urgente e as ações; cartões do time; "O que aconteceu" com o seletor Turnos | Eventos (um turno é uma linha: agente, passos, "Gravado neste turno", custo, hora); coluna lateral com Próximo passo (regra da AT-936) e Ambiente.
 
 ### C30 / C31 — Sessão
-Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor da sessão. Fio com a linha de passos recolhida (N passos, até 3 chips de ferramenta, custo do turno), texto do agente em 62ch e aprovação em linha (variante única). Passos abertos agrupados por intenção, a partir de um mapa tipado ferramenta para grupo; o bloco Raciocínio só para `developer` ou mais (ADR 0249). Painel de contexto de 340 px.
+Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor da sessão. Fio com a linha de passos recolhida (N passos, até 3 chips de ferramenta, custo do turno), texto do agente em 62ch e aprovação em linha (variante única). Passos abertos agrupados por intenção, a partir de um mapa tipado ferramenta para grupo; o bloco Raciocínio só para `developer` ou mais (ADR 0249). Painel único de 360 px com as abas Contexto, Executores e Pendências; abaixo de 1024 px é o Sheet (AT-957, RN-1353). A execução vigente é uma faixa de 40 px acima do fio (RN-1354).
 
 ### Demais telas
 P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), P16, P21, P18 a P20 e S00 a S06, H01 seguem a imagem de mesmo id.
@@ -213,7 +213,7 @@ scrollável de `EventItem`; estado vazio com mensagem contextual.
 ## Sessão / Chat (`Brabo Session.dc.html`)
 
 Layout: `flex-direction:column`, topbar (60px) + corpo (`flex:1` chat +
-aside opcional 320px).
+painel único opcional de 360px, AT-957).
 
 **Topbar**: dot pulsante verde + título da sessão + metadata mono
 (`"{projeto} · #{id-curto} · {duração}"`); `ModelPicker` (dropdown,

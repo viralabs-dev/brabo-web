@@ -67,7 +67,7 @@ interface PendenciasDeOutrasSessoesProps {
    * AT-950 (RN-626): `sheet` tira as pendências de cima do fio — elas moram num Sheet à direita,
    * aberto pelo contador do cabeçalho; `inline` (padrão) é o bloco da aba Executores.
    */
-  modo?: 'inline' | 'sheet';
+  modo?: 'inline' | 'sheet' | 'painel';
   aberto?: boolean;
   aoMudarAberto?: (aberto: boolean) => void;
   /** Só no modo `sheet`: o total de pendências, para o contador do cabeçalho e a linha do fio. */
@@ -97,7 +97,8 @@ export function PendenciasDeOutrasSessoes({
   aoMudarAberto,
   aoContar,
 }: PendenciasDeOutrasSessoesProps) {
-  const noSheet = modo === 'sheet';
+  // AT-957: `painel` é o corpo da aba Pendências do painel da sessão (mesmo desenho compacto do Sheet, sem o invólucro).
+  const noSheet = modo !== 'inline';
   const { t } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
   // RN-825/826 (AT-497): as PRs prontas e as tarefas bloqueadas, pelas MESMAS
@@ -738,6 +739,14 @@ export function PendenciasDeOutrasSessoes({
         </div>
     </>
   );
+
+  if (modo === 'painel')
+    return (
+      <div className={styles.corpoDoPainel} data-testid="pendencias-de-outras-sessoes">
+        <p className={styles.nota}>{presenca}</p>
+        {corpo}
+      </div>
+    );
 
   if (noSheet)
     return (

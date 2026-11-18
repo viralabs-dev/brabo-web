@@ -444,8 +444,7 @@
     },
     "semModulo": {
       "motivo": "没有模块：没人会接手。请通过计划分配，或在 Backlog 标签页归档该任务。"
-    },
-    "linhaNoFio_other": "{{count}} 项待处理 · 打开"
+    }
   },
   "mergearNoChat": {
     "botao": "合并",
@@ -567,5 +566,18 @@
   },
   "cartao": {
     "maisAcoes": "更多操作"
+  },
+  "faixa": {
+    "abrir": "执行者",
+    "esperam_other": "{{count}} 项等待中"
+  },
+  "painel": {
+    "titulo": "会话面板",
+    "abas": "会话面板",
+    "contexto": "上下文",
+    "executores": "执行者",
+    "pendencias": "待处理",
+    "pendenciasVazio": "此项目没有待处理项。",
+    "executoresVazio": "没有正在进行的执行。"
   }
 }

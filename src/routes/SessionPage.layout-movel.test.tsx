@@ -175,14 +175,14 @@ describe('SessionPage — layout móvel (AT-328)', () => {
     alternar.focus();
     fireEvent.click(alternar);
 
-    const gaveta = screen.getByRole('dialog', { name: TITULO_DO_PAINEL });
+    const gaveta = screen.getByRole('dialog', { name: 'Painel da sessão' });
     expect(gaveta).toHaveAttribute('aria-modal', 'true');
     expect(gaveta).toHaveTextContent(TITULO_DO_PAINEL);
     const fechar = screen.getByRole('button', { name: 'Fechar painel de contexto' });
     await waitFor(() => expect(document.activeElement).toBe(fechar));
 
     fireEvent.keyDown(document, { key: 'Escape' });
-    await waitFor(() => expect(screen.queryByRole('dialog', { name: TITULO_DO_PAINEL })).toBeNull());
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Painel da sessão' })).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(alternar));
   });
 

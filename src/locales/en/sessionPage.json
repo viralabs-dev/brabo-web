@@ -468,9 +468,7 @@
     },
     "semModulo": {
       "motivo": "No module: nobody will pick it up. Assign it through the plan or archive the task in the Backlog tab."
-    },
-    "linhaNoFio_one": "{{count}} pending item · Open",
-    "linhaNoFio_other": "{{count}} pending items · Open"
+    }
   },
   "mergearNoChat": {
     "botao": "Merge",
@@ -600,5 +598,19 @@
   },
   "cartao": {
     "maisAcoes": "More actions"
+  },
+  "faixa": {
+    "abrir": "Executors",
+    "esperam_one": "{{count}} waiting",
+    "esperam_other": "{{count}} waiting"
+  },
+  "painel": {
+    "titulo": "Session panel",
+    "abas": "Session panel",
+    "contexto": "Context",
+    "executores": "Executors",
+    "pendencias": "Pending",
+    "pendenciasVazio": "No pending items in this project.",
+    "executoresVazio": "No execution in progress."
   }
 }

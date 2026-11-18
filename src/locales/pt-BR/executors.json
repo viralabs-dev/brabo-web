@@ -94,6 +94,7 @@
       "artifactBusinessRuleRetired": "retirou regra de negócio",
       "artifactModuleMap": "emitiu o module_map",
       "artifactModuleRouting": "roteou módulos para infra",
+      "artifactModuleContracts": "declarou o contrato entre módulos",
       "artifactInsight": "emitiu hipótese",
       "delegationCompleted": "subagente concluiu",
       "delegationFailed": "subagente falhou",

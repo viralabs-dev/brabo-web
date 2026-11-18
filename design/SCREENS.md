@@ -23,7 +23,7 @@ Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`
 | Trabalho | Backlog, Execução | P12, P11 |
 | Código | Arquivos, PRs | P22, P15 |
 | Decisões | Aprovações, Hipóteses, Permissões | P14, P17 |
-| Arquitetura | — | P16 |
+| Arquitetura (módulos, C4, ADRs, contratos — RN-1387) | — | P16 |
 | Gastos | — | P21 |
 | Configurações | Modelos, Projeto e execução, Pessoas e acesso, Avançado | P18, P19, P20 |
 

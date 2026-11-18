@@ -114,3 +114,32 @@
   font-size: var(--fs-label);
   color: var(--text-muted);
 }
+
+/* AT-981: contratos por módulo; tabela e identidade levam o Badge de destaque. */
+.contrato {
+  margin-bottom: 14px;
+}
+
+.contratoModulo {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.contratoItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font-size: var(--fs-sm);
+}
+
+.assinatura {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.contratoItem .sectionSub {
+  margin-bottom: 0;
+}

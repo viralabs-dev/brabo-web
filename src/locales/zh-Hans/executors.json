@@ -86,6 +86,7 @@
       "artifactBusinessRuleRetired": "撤销了业务规则",
       "artifactModuleMap": "发布了 module_map",
       "artifactModuleRouting": "将模块路由给 Infra",
+      "artifactModuleContracts": "声明了模块间契约",
       "artifactInsight": "发布了假设",
       "delegationCompleted": "子智能体已完成",
       "delegationFailed": "子智能体失败",

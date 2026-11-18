@@ -55,6 +55,7 @@ const ARQUITETURA_VAZIA: Architecture = {
   adrs: [],
   pendencies: [],
   c4Diagram: { status: 'sem_diagrama', diagrama: null, version: 0, eventId: null, createdAt: null },
+  contratos: [],
 };
 
 function montar(backlog?: unknown) {
@@ -91,6 +92,40 @@ beforeEach(() => {
  * pendências.
  */
 describe('ProjectArchitectureTab', () => {
+  // AT-981, RN-1387: a aba mostra os contratos por módulo, com o tipo (tabela/identidade em destaque).
+  it('mostra a tabela agendamento sob agenda com o tipo "tabela"', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      contratos: [
+        {
+          modulo: 'agenda',
+          expoe: [
+            { tipo: 'tabela', assinatura: 'agendamento(id, clienteId:int)', descricao: 'dono: agenda' },
+            { tipo: 'identidade', assinatura: 'profissional.usuarioId -> usuario.id', descricao: 'vínculo' },
+          ],
+        },
+      ],
+    });
+
+    montar();
+
+    const secao = await screen.findByRole('region', { name: 'agenda' });
+    expect(secao).toHaveTextContent('tabela');
+    expect(secao).toHaveTextContent('agendamento(id, clienteId:int)');
+    expect(secao).toHaveTextContent('identidade');
+  });
+
+  it('sem contrato declarado, diz que o Arquiteto ainda não declarou', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      adrs: [{ actionId: 'a1', title: 'ADR', status: 'approved', pullRequestUrl: null }],
+    });
+
+    montar();
+
+    expect(await screen.findByText(/Sem contrato declarado ainda/)).toBeInTheDocument();
+  });
+
   it('sem arquitetura nenhuma, mostra a frase de vazio', async () => {
     getArchitecture.mockResolvedValue(ARQUITETURA_VAZIA);
 

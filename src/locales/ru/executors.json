@@ -98,6 +98,7 @@
       "artifactBusinessRuleRetired": "отозвал бизнес-правило",
       "artifactModuleMap": "выпустил module_map",
       "artifactModuleRouting": "распределил модули для инфраструктуры",
+      "artifactModuleContracts": "объявил контракты между модулями",
       "artifactInsight": "выпустил гипотезу",
       "delegationCompleted": "субагент завершил",
       "delegationFailed": "субагент дал сбой",

@@ -11,7 +11,7 @@
 }
 
 .subtitulo {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -48,6 +48,6 @@
 
 .fluxoDaPr {
   margin: 16px 0 0;
-  font-size: var(--fs-meta, 12px);
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }

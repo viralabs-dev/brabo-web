@@ -40,3 +40,10 @@
   gap: 4px;
   color: var(--text-primary);
 }
+
+/* Alvo de clique de 24 px (AT-977) sem mudar o tamanho do texto. */
+.verTodas {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}

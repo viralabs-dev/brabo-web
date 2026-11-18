@@ -13,7 +13,7 @@
 
 .subtitulo {
   margin: 2px 0 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
 }
 
@@ -43,7 +43,7 @@
   border: 1px solid var(--border);
   border-radius: var(--r-pill);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 

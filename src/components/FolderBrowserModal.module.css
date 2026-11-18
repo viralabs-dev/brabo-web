@@ -40,7 +40,7 @@
   border-radius: 6px;
   background: transparent;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   text-align: left;
   cursor: pointer;
 }
@@ -71,7 +71,7 @@
   border-bottom: 1px solid var(--border);
   background: var(--surface-1);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   overflow-x: auto;
 }
 
@@ -128,7 +128,7 @@
   border-radius: 6px;
   background: transparent;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   text-align: left;
   cursor: pointer;
 }
@@ -162,7 +162,7 @@
 .estado {
   padding: 12px 8px;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   text-align: center;
 }
 
@@ -173,7 +173,7 @@
   padding: 6px 10px;
   border-top: 1px solid var(--border);
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: var(--fs-label);
 }
 
 .detalhes {
@@ -204,13 +204,13 @@
 
 .detalhesNome {
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
   word-break: break-word;
 }
 
 .detalhesLinha {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -237,6 +237,6 @@
 .origemNota {
   margin: 0;
   color: var(--text-muted);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
 }

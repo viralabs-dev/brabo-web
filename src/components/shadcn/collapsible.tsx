@@ -62,7 +62,7 @@ function CollapsibleTrailing({ className, ...props }: React.ComponentProps<"span
   return (
     <span
       data-slot="collapsible-trailing"
-      className={cn("shrink-0 font-[family-name:var(--font-mono)] text-[10px] font-normal text-[var(--text-muted)]", className)}
+      className={cn("shrink-0 font-[family-name:var(--font-mono)] text-[11px] font-normal text-[var(--text-muted)]", className)}
       {...props}
     />
   )

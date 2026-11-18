@@ -26,7 +26,7 @@
 
 .estado {
   padding: 14px 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 

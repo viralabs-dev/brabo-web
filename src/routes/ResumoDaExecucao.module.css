@@ -22,7 +22,7 @@
 
 .nota {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -50,7 +50,7 @@
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--msg-color);
   background: color-mix(in srgb, var(--msg-color) 15%, transparent);
   border: 1px solid color-mix(in srgb, var(--msg-color) 35%, transparent);
@@ -61,7 +61,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 6px 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
 }
 
@@ -78,7 +78,7 @@
   border-collapse: collapse;
   border: 1px solid var(--border);
   border-radius: var(--r-sm);
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .fila td {

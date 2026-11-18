@@ -15,7 +15,7 @@
 
 .aba {
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
 }
 
 .conteudo {
@@ -39,7 +39,7 @@
 .terminalVazio p {
   margin: 0;
   max-width: 440px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
 }
 
@@ -71,14 +71,14 @@
 }
 
 .cicloDeVidaDetalhe {
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 .cicloDeVidaFalha {
   margin: 0;
   max-width: 440px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--danger);
   width: 100%;
 }

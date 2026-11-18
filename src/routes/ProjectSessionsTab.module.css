@@ -24,7 +24,7 @@
 .title {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
 }
 
@@ -80,7 +80,7 @@
   gap: 6px;
   min-height: 24px;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   text-decoration: none;
   flex: 1;
@@ -139,7 +139,7 @@ a.rowId:focus-visible,
    linha salta no instante em que se clica para renomear. */
 .rowIdEditavel {
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   flex: 1;
   min-width: 0;
@@ -155,7 +155,7 @@ a.rowId:focus-visible,
 
 .rowDate {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -163,7 +163,7 @@ a.rowId:focus-visible,
    isso, e tudo o que existia estava preso à sessão mais recente. */
 .rowApprovals {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   white-space: nowrap;
 }
@@ -174,7 +174,7 @@ a.rowId:focus-visible,
 
 .subtitle {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   margin-bottom: 16px;
 }
@@ -213,7 +213,7 @@ a.rowId:focus-visible,
 }
 
 .rowMeta {
-  font-size: var(--fs-meta, 11px);
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   white-space: nowrap;
 }

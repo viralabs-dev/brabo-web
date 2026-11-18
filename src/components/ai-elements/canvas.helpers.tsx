@@ -48,7 +48,7 @@ export function grafoDe(modulos: ModuloDoGrafo[]): { nos: Node[]; arestas: Edge[
         label: (
           <div style={{ textAlign: 'left' }}>
             <div style={{ fontWeight: 600 }}>{m.name}</div>
-            <div title={m.stack} style={{ fontSize: 10, opacity: 0.75, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div title={m.stack} style={{ fontSize: 11, opacity: 0.75, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {m.stack}
             </div>
           </div>

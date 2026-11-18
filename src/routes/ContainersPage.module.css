@@ -24,13 +24,13 @@
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin: 0;
 }
 
 .loading {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
 }
@@ -58,7 +58,7 @@
 
 .imagemTexto {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -66,23 +66,23 @@
 }
 
 .versao {
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 .recursos {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .desde {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .naoVerificado {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   font-style: italic;
 }
@@ -106,7 +106,7 @@
 }
 
 .motivo {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   margin: 0;
 }
@@ -117,13 +117,13 @@
    nativo e acessível por teclado — nada de `title` num botão desabilitado. */
 
 .detalheDoMotivo {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
   margin: 4px 0 0;
 }
 
 .ressalva {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -131,7 +131,7 @@
 /* Projeto que NUNCA provisionou container (RN-521) — texto próprio, nunca um
    traço nem um badge de status que ele não tem. */
 .semRegistro {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   font-style: italic;
 }
@@ -142,7 +142,7 @@
   justify-content: flex-end;
   gap: 12px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   color: var(--text-secondary);
 }

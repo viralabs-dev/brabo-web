@@ -31,7 +31,7 @@
 .branches {
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -110,7 +110,7 @@
 
 .itemPrMeta {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -120,7 +120,7 @@
 .itemPrEstado {
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 2px 7px;
@@ -146,7 +146,7 @@
 
 .label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -185,7 +185,7 @@
 
 .caminho {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -195,13 +195,13 @@
 .selo {
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
 }
 
 .contadores {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
 }
 
 .add { color: var(--success); }
@@ -209,7 +209,7 @@
 
 .semTexto {
   padding: 10px 4px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -243,6 +243,6 @@
 
 .truncado {
   padding: 6px 2px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--warning);
 }

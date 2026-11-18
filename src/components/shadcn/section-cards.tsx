@@ -33,7 +33,7 @@ function SectionCards({
           data-slot="section-card"
           className="bg-gradient-to-t from-[var(--accent-soft)] to-card"
         >
-          <p className="flex items-center gap-1.5 font-mono text-[10px] font-semibold tracking-[0.05em] text-muted-foreground uppercase">
+          <p className="flex items-center gap-1.5 font-mono text-[11px] font-semibold tracking-[0.05em] text-muted-foreground uppercase">
             {m.icone}
             {m.rotulo}
           </p>

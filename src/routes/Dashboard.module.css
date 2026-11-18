@@ -71,7 +71,7 @@
  */
 .summary {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
@@ -117,7 +117,7 @@
 }
 
 .novoCartao span {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 

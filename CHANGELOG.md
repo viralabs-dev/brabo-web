@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix (AT-977, RN-1333): nenhum texto abaixo de 11 px (`--fs-label` é o piso) e `font-size` dos módulos só por tokens `--fs-*`; "Ver todas" e cabeçalhos de ordenação com alvo de 24 px. Teste estático `tipografia-minima.test.ts`. Grupos do kit (`text-[10px]`) e eixos do canvas também em 11 px.
+
 - Feat (AT-997, RN-858): com 2 ou mais perguntas em aberto do mesmo agente, com sugestão e da própria pessoa, a fila mostra "Aceitar as N sugestões de <agente>". A confirmação lista as N (pergunta e sugestão) e marca as que tocam regra de negócio; só o clique da pessoa responde (`POST .../open-questions/accept-suggestions`). `fixados/openapi.json` e os tipos regenerados.
 
 - Feat (AT-955, RN-976): o kit ganha `Marker` e `Scroll Fade` (cópia, sem pacote npm). Os divisores de handoff do fio usam o Marker; a fileira de sugestões de ação esmaece só a borda que transborda (limite de 3 ações intocado). O Message Scroller vai com a AT-959.

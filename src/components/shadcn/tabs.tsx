@@ -88,7 +88,7 @@ function TabsCount({ className, ...props }: React.ComponentProps<"span">) {
   return (
     <span
       data-slot="tabs-count"
-      className={cn("inline-flex items-center rounded-[var(--radius-full)] bg-[var(--accent)] px-[7px] py-px font-[family-name:var(--font-mono)] text-[10px] font-medium text-[var(--on-accent)]", className)}
+      className={cn("inline-flex items-center rounded-[var(--radius-full)] bg-[var(--accent)] px-[7px] py-px font-[family-name:var(--font-mono)] text-[11px] font-medium text-[var(--on-accent)]", className)}
       {...props}
     />
   )

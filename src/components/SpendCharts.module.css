@@ -9,7 +9,7 @@
 
 .legenda {
   font-family: var(--font-heading);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -28,12 +28,12 @@
   display: flex;
   justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 .eixoVazio {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -51,7 +51,7 @@
   padding-bottom: var(--space-2);
   border-bottom: 1px solid var(--border);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -93,7 +93,7 @@
 .rankingRotulo {
   grid-area: rotulo;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   /* Quebra em vez de cortar: nome de modelo não tem teto de tamanho, e
      `anywhere` é o que impede a linha de estourar a coluna. */
@@ -119,14 +119,14 @@
 .rankingDetalhe {
   grid-area: detalhe;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 .rankingValor {
   grid-area: valor;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   text-align: right;
 }
@@ -143,7 +143,7 @@
 
 .destaqueRotulo {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
@@ -158,7 +158,7 @@
 
 .destaqueDetalhe {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
 }
 

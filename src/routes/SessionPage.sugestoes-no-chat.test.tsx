@@ -148,7 +148,7 @@ afterAll(() => {
 });
 
 describe('SessionPage — ações de passo são sugestões acima do destinatário (RN-976, AT-681)', () => {
-  it('a sugestão vem antes do "Para", e o Enviar é o primeiro botão do composer (contrato do E2E)', async () => {
+  it('a sugestão vem antes do "Para", que fica na barra do composer; o Enviar tem data-testid (contrato do E2E)', async () => {
     eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
     montar();
     const pronto = await screen.findByRole('button', {
@@ -158,12 +158,20 @@ describe('SessionPage — ações de passo são sugestões acima do destinatári
     expect(
       pronto.compareDocumentPosition(para) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    const composer = para.nextElementSibling as HTMLElement;
-    const enviar = within(composer).getAllByRole('button')[0];
+    // AT-960: o "Para" mora na barra do composer; o Enviar se acha pelo data-testid.
+    const enviar = screen.getByTestId('enviar-mensagem');
+    expect(para.tagName).toBe('SELECT');
+    // Tab: campo, "+", destinatário, enviar (ordem do DOM).
+    const campo = screen.getByRole('textbox');
+    const ordem = [campo, para, enviar];
+    ordem.slice(1).forEach((el, i) =>
+      expect(ordem[i]!.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(),
+    );
+    expect(enviar.closest('[data-slot=input-group]')).toBe(para.closest('[data-slot=input-group]'));
     // AT-713: Enviar é só ícone; o nome vem da legenda e o ícone é aria-hidden.
     expect(enviar).toHaveAccessibleName('Enviar');
     expect(enviar.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
-    expect(composer).not.toContainElement(pronto);
+    expect(enviar.closest('[data-slot=input-group]')).not.toContainElement(pronto);
   });
 
   it('viewer: a sugestão fica inerte e o motivo de papel aparece em texto', async () => {

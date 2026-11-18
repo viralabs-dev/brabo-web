@@ -6,6 +6,7 @@ import { CHAVE_DAS_PENDENCIAS_DO_PROJETO } from '../lib/pendencias-do-projeto';
 import { userIdDaSessao } from '../lib/auth';
 import type { GitActionFailureResult, ProposedAction } from '../lib/api-types';
 import { Button } from '../components/ui/Button';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/shadcn/popover';
 import styles from './SessionPage.module.css';
 import { GitMerge } from 'lucide-react';
 
@@ -45,7 +46,7 @@ function causaDaFalha(r: ProposedAction['executionResult']): string | null {
  * "Mergear" na linha da PR (AT-266, RN-626; AT-753 UX-2): o dono decide sem
  * trocar para a aba PRs e sem um cartão separado.
  *
- * O botão abre a confirmação na própria linha ("Mergear #6 em dev? Confirmar /
+ * O botão abre um Popover de confirmação ("Mergear #6 em dev? Confirmar /
  * Cancelar"). Confirmar PROPÕE a `git_merge` (ator `user`, esta sessão) e a
  * APROVA no mesmo gesto, pelos MESMOS endpoints do cartão: a proposta e a
  * aprovação seguem no log. O gesto é do humano — nada é automatizado: merge em
@@ -104,32 +105,32 @@ export function MergearNoChat({
   const rotuloDaPr = `#${numero ?? pr.pullRequestId}`;
   return (
     <div className={styles.mergearNoChat}>
-      {confirmando ? (
-        <>
-          <span className={styles.mergearNota} data-testid="mergear-confirmacao">
+      {/* AT-960: a confirmação é um Popover do botão (Esc fecha e o foco volta a ele). */}
+      <Popover open={confirmando} onOpenChange={(o) => !enviando && setConfirmando(o)}>
+        <PopoverTrigger
+          render={<Button variant="primary" disabled={!podeDecidir || resultado?.tom === 'ok'} />}
+        >
+          <GitMerge aria-hidden="true" />
+          {t('mergearNoChat.botao')}
+        </PopoverTrigger>
+        <PopoverContent side="top" align="end" data-testid="mergear-confirmacao">
+          <span className={styles.mergearNota}>
             {t('mergearNoChat.confirmacao', { pr: rotuloDaPr, alvo: pr.targetBranch ?? '?' })}
           </span>
-          <Button variant="primary" loading={enviando} onClick={() => void confirmar()}>
-            {t('mergearNoChat.confirmar')}
-          </Button>
-          <Button variant="secondary" disabled={enviando} onClick={() => setConfirmando(false)}>
-            {t('mergearNoChat.cancelar')}
-          </Button>
-        </>
-      ) : (
-        <>
-          <Button
-            variant="primary"
-            disabled={!podeDecidir || resultado?.tom === 'ok'}
-            onClick={() => setConfirmando(true)}
-          >
-            <GitMerge aria-hidden="true" />
-            {t('mergearNoChat.botao')}
-          </Button>
-          <span className={styles.mergearNota} data-testid="mergear-nota">
-            {podeDecidir ? t('mergearNoChat.nota') : t('mergearNoChat.semPapel')}
-          </span>
-        </>
+          <div className={styles.mergearNoChat}>
+            <Button variant="primary" loading={enviando} onClick={() => void confirmar()}>
+              {t('mergearNoChat.confirmar')}
+            </Button>
+            <Button variant="secondary" disabled={enviando} onClick={() => setConfirmando(false)}>
+              {t('mergearNoChat.cancelar')}
+            </Button>
+          </div>
+        </PopoverContent>
+      </Popover>
+      {!confirmando && (
+        <span className={styles.mergearNota} data-testid="mergear-nota">
+          {podeDecidir ? t('mergearNoChat.nota') : t('mergearNoChat.semPapel')}
+        </span>
       )}
       {gatePendente && (
         <span className={styles.mergearAvisoDeGate} data-testid="aviso-gate-pendente">

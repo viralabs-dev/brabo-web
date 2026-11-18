@@ -224,7 +224,7 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:228` (`agentesEmConversa`),
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
-  `apps/web/src/routes/SessionComposer.tsx:372` (`destinatarioRow`), `:270`
+  `apps/web/src/routes/SessionComposer.tsx:518` (`escolherDestinatario`), `:270`
   (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:348`
   (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:625`
   (`handoffIdDoEvento`), `:589` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
@@ -1176,7 +1176,7 @@ E o composer e os campos de texto das perguntas estruturadas levam
 
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:15` (`conversaComecou`),
   `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:434`
-  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:516`
+  (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:435`
   (`SEM_AUTOFILL`); `apps/web/src/routes/StructuredQuestionCard.tsx:242`
   (`SEM_AUTOFILL`)
 - **Teste:** `apps/web/src/routes/SessionPage.sessao.test.tsx:316` (Criativo

@@ -3,6 +3,8 @@
 ## Unreleased
 
 - Feat (AT-957, RN-1303, RN-1353, RN-1354, RN-626): a execução vigente vira uma faixa de 40 px acima do fio (progresso, quantos esperam, custo) e o painel da sessão passa a ser único (360 px), com as abas Contexto, Executores e Pendências; abaixo de 1024 px é o Sheet. O carrossel de executores, o minimizar (`localStorage`), o Sheet de pendências do desktop e a linha "N pendências" do fio saem. As pendências seguem montadas com o painel recolhido (RN-843).
+- Feat (AT-960, RN-1357, RN-1358, RN-976, RN-1063): o composer vira uma caixa só, com o "Para" na barra de baixo (entre o "+" e o Enviar; `data-testid` `destinatario-do-chat` no `select` e `enviar-mensagem` no Enviar); o aviso de PR pronta vira um `Item` de 44 px; o "Mergear" confirma num Popover (Esc fecha, o foco volta ao botão). Ajuste no `brabo-qa`: `turno-pelo-canal`, `execucao-pr-pronta` e `git-mergear-no-chat`.
+
 - Fix (AT-977, RN-1333): nenhum texto abaixo de 11 px (`--fs-label` é o piso) e `font-size` dos módulos só por tokens `--fs-*`; "Ver todas" e cabeçalhos de ordenação com alvo de 24 px. Teste estático `tipografia-minima.test.ts`. Grupos do kit (`text-[10px]`) e eixos do canvas também em 11 px.
 - Feat (AT-987, RN-1316): o `git_merge` auto-aprovado pelo merge automático (`payload.origem: 'merge_automatico'`) diz "Mergeado pelo merge automático · desligar" (link para Configurações › Projeto e execução) no lugar do "Sempre permitido", que era falso. Chaves i18n nos quatro idiomas.
 

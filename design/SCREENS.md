@@ -248,6 +248,7 @@ interação de digitar é implícita) — implementar como um input de texto
 multi-linha fixo no rodapé do chat, estilo consistente com os outros
 inputs (`COMPONENTS.md`), com botão de enviar; desabilitado durante
 streaming.
+AT-960 (v10): é uma caixa só (`InputGroup`) com o campo em cima e, na barra de baixo, "+", anexo, "Para: <agente>" e Parar/Enviar; o aviso de PR pronta é um `Item` de 44 px acima dela (doca ≤ 168 px) e o "Mergear" confirma num `Popover`.
 
 ## Aprovações (`Brabo Approvals.dc.html`)
 

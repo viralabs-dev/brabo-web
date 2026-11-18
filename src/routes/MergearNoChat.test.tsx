@@ -157,6 +157,17 @@ describe('MergearNoChat (AT-266, AT-753 UX-2)', () => {
     expect(alerta).not.toHaveTextContent('Detalhes longos');
   });
 
+  it('AT-960: a confirmação é um Popover; Esc fecha e o foco volta ao botão', async () => {
+    montar();
+    const botao = screen.getByRole('button', { name: 'Mergear' });
+    fireEvent.click(botao);
+    expect(screen.getByTestId('mergear-confirmacao').closest('[data-slot=popover-content]')).not.toBeNull();
+    fireEvent.keyDown(screen.getByTestId('mergear-confirmacao'), { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByTestId('mergear-confirmacao')).toBeNull());
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Mergear' })).toHaveFocus());
+    expect(proposeAction).not.toHaveBeenCalled();
+  });
+
   it('gate pendente é AVISO (AT-249, RN-663): o texto nomeia o gate e o botão segue ativo', async () => {
     montar(true, 'qa-verificada');
 

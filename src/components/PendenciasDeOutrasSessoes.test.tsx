@@ -488,7 +488,7 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(getCodePullRequests).not.toHaveBeenCalled();
   });
 
-  it('AT-753 (UX-2): Mergear confirma na própria linha; Confirmar propõe e aprova, Cancelar não chama nada', async () => {
+  it('AT-753 (UX-2): Mergear confirma num Popover (AT-960); Confirmar propõe e aprova, Cancelar não chama nada', async () => {
     getProjectPendingActions.mockResolvedValue([]);
     getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
@@ -502,11 +502,12 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     );
     const fila = await screen.findByTestId('fila-prs-prontas');
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
-    expect(within(fila).getByText('Mergear #1 em dev?')).toBeInTheDocument();
-    await user.click(within(fila).getByRole('button', { name: 'Cancelar' }));
+    // O Popover vive em portal, fora da fila.
+    expect(screen.getByText('Mergear #1 em dev?')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(proposeAction).not.toHaveBeenCalled();
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
-    await user.click(within(fila).getByRole('button', { name: 'Confirmar' }));
+    await user.click(screen.getByRole('button', { name: 'Confirmar' }));
     await waitFor(() => expect(approveAction).toHaveBeenCalledWith('proj-1', AQUI, 'm-vis'));
     expect(proposeAction).toHaveBeenCalledTimes(1);
     expect(await within(fila).findByText('Mergeada')).toBeInTheDocument();

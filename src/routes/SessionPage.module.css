@@ -422,42 +422,10 @@
   width: 100%;
 }
 
-/* O destinatário da mensagem (RN-631) — a primeira linha do composer, com a
-   borda de cima dele; o `.composer` logo abaixo perde a própria borda para
-   os dois lerem como um bloco só. */
-.destinatarioRow {
-  flex-shrink: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  border-top: 1px solid var(--border);
-  padding: 10px 24px 0;
-  width: 100%;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.destinatarioRow > div {
-  min-width: 160px;
-  max-width: 220px;
-}
-
-.destinatarioLabel {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
 .destinatarioAviso {
   font-size: var(--fs-sm);
   line-height: 1.45;
   color: var(--text-secondary);
-}
-
-.composerComDestinatario {
-  border-top: none;
-  padding-top: 8px;
 }
 
 /* Handoff manual a agente à escolha (ADR 0109/RN-440) — fita fina acima do
@@ -526,18 +494,6 @@
 .composerEntrada {
   flex: 1 1 320px;
   min-width: min(100%, 240px);
-}
-
-/* Âncora do menu de @/ em volta do campo: sem isto o campo fica na largura do conteúdo. */
-.ancoraDoCampo {
-  /* O InputGroup do composer é COLUNA (o addon vai embaixo) e centraliza os
-     filhos: sem `align-self: stretch` a âncora fica com a largura do conteúdo
-     (179px medidos num grupo de 1224px). */
-  display: flex;
-  flex: 1 1 auto;
-  align-self: stretch;
-  width: 100%;
-  min-width: 0;
 }
 
 .textarea {

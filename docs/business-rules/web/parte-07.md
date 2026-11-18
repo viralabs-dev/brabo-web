@@ -355,3 +355,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/lib/timeline-tree.ts`, `src/lib/artefato-do-fio.ts`, `src/locales/*/executors.json` (`artifactModuleContracts`).
 - **Teste:** `src/lib/artefato-do-fio.test.ts`.
 - **Origem:** AT-981 (EP-036).
+
+<a id="rn-1389"></a>
+
+### RN-1389 — A Sessão ocupa a janela: só o fio rola {#rn-1389}
+
+- **Regra:** a página da sessão tem a altura da janela e não rola; barra, faixa de estado, avisos e doca (aviso de PR, fila e composer) têm altura de conteúdo e não encolhem, e o fio (`role="log"`) é o único elemento com rolagem vertical. O composer nunca fica cortado ([RN-751](parte-06.md#rn-751), item 1, não muda).
+- **Onde:** `src/routes/SessionPage.module.css` (`.wrapper`, `.chatColumn`, `.messages`).
+- **Teste:** `src/routes/SessionPage.altura-fixa.test.ts` (estrutura do CSS; a altura medida é do Playwright).
+- **Origem:** AT-956 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1390"></a>
+
+### RN-1390 — A barra da sessão tem 56 px {#rn-1390}
+
+- **Regra:** no desktop a barra da sessão tem 56 px (eram 60); abaixo de 1024 px ela quebra linha e fica com altura automática, como antes.
+- **Onde:** `src/routes/SessionPage.module.css` (`.topbar`).
+- **Teste:** `src/routes/SessionPage.altura-fixa.test.ts`.
+- **Origem:** AT-956 (EP-035).
+
+<a id="rn-1391"></a>
+
+### RN-1391 — Com pendência, execução e aviso de PR, o fio tem ao menos 70% da coluna em 1366 × 768 {#rn-1391}
+
+- **Regra:** o orçamento da coluna do chat em 1366 × 768 é 768 − 56 (barra) = 712; faixa de 40, aviso de PR de 44 e composer de 124 deixam 504 px para o fio (70,8%). Revê o critério de 70% da AT-950 sem afrouxar. Se o `ModoAutomaticoNoChat` estourar a folga, ele vai para o topo da aba Executores, com o mesmo predicado.
+- **Onde:** `src/routes/SessionPage.module.css`; medida em `brabo-qa` (`sessao-e-canal-altura`, AT-956).
+- **Teste:** `src/routes/SessionPage.altura-fixa.test.ts` (conta do orçamento).
+- **Origem:** AT-956 (EP-035).

@@ -477,7 +477,7 @@ keywords: [regras de negócio, web]
   da esteira é a altura de uma esteira de uma linha de etapas, não medida no
   navegador, e jsdom não faz layout — o teste prova a ORDEM e a reserva, não o
   deslocamento em pixels.
-- **Onde:** `apps/web/src/routes/SessionPage.tsx` (`PendenciasDeOutrasSessoes`
+- **Onde:** `apps/web/src/routes/SessionPage.tsx` (`FaixaDeEstado`
   antes de `styles.messages`), `apps/web/src/routes/ProjectExecutorsTab.tsx`,
   `apps/web/src/routes/ProjectPrsTab.tsx:83` (`ProjectPrsTab`),
   `apps/web/src/routes/ProjectPrsTab.module.css` (`.reservaDaEsteira`)

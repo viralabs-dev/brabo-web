@@ -24,6 +24,7 @@
       "openProjectHint": "打开项目以查看其智能体。",
       "empty": "还没有智能体行动。",
       "noSession": "该项目还没有会话。",
+      "idleMore_other": "+ {{count}} 个空闲 · 查看全部",
       "loadError": "无法加载智能体。",
       "status": {
         "trabalhando": "工作中",

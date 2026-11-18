@@ -24,6 +24,8 @@
       "openProjectHint": "Open a project to see its agents.",
       "empty": "No agent has acted yet.",
       "noSession": "This project has no session yet.",
+      "idleMore_one": "+ {{count}} idle · see all",
+      "idleMore_other": "+ {{count}} idle · see all",
       "loadError": "Could not load the agents.",
       "status": {
         "trabalhando": "working",

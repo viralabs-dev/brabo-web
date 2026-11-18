@@ -824,3 +824,65 @@ describe('Shell — tema no menu do usuário', () => {
     expect(await abrirMenu()).toHaveTextContent('Tema escuro');
   });
 });
+
+/** AT-964: matchMedia que responde por consulta — só `max-height` liga a altura baixa. */
+function simularAltura(baixa: boolean) {
+  const anterior = window.matchMedia;
+  window.matchMedia = vi.fn((consulta: string) => ({
+    matches: consulta.includes('max-height') ? baixa : false,
+    media: consulta,
+    onchange: null,
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    addListener: () => {},
+    removeListener: () => {},
+    dispatchEvent: () => true,
+  })) as unknown as typeof window.matchMedia;
+  return () => {
+    window.matchMedia = anterior;
+  };
+}
+
+describe('Shell — sidebar em altura baixa (AT-964)', () => {
+  const ev = (seq: number, id: string) => ({
+    id: `ev-${seq}`,
+    sessionId: 's1',
+    seq,
+    type: 'agent.response',
+    actor: { kind: 'agent', id },
+    payload: { content: 'x' },
+    createdAt: new Date().toISOString(),
+  });
+  let restaurar = () => {};
+  afterEach(() => restaurar());
+
+  it('altura baixa: Workspace vira uma linha com menu, o rótulo PROJETO some e há "+ N parados"', async () => {
+    restaurar = simularAltura(true);
+    estado.pathname = `/projects/${PROJECT.id}`;
+    estado.execSession = { id: 's1' };
+    estado.eventosPorSessao = { s1: [ev(1, 'criativo'), ev(2, 'po')] };
+    renderShell();
+
+    expect(screen.queryByRole('link', { name: 'Containers' })).toBeNull();
+    expect(screen.queryByText('Projeto')).toBeNull();
+    expect(screen.getByTestId('agentes-parados')).toHaveTextContent(/^\+ \d+ parados · ver todos$/);
+
+    fireEvent.click(screen.getByTestId('menu-workspace'));
+    for (const nome of ['Containers', 'Providers', 'Gastos', 'Status']) {
+      expect(await screen.findByRole('menuitem', { name: nome })).toBeInTheDocument();
+    }
+    expect(screen.getByRole('menuitem', { name: 'Recolher menu' })).toBeInTheDocument();
+  });
+
+  it('altura normal: os quatro links de Workspace ficam abertos e o rótulo PROJETO fica', () => {
+    restaurar = simularAltura(false);
+    estado.pathname = `/projects/${PROJECT.id}`;
+    renderShell();
+
+    expect(screen.getByRole('link', { name: 'Containers' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Status' })).toBeInTheDocument();
+    expect(screen.queryByTestId('menu-workspace')).toBeNull();
+    expect(screen.getByText('Projeto')).toBeInTheDocument();
+    expect(screen.queryByTestId('agentes-parados')).toBeNull();
+  });
+});

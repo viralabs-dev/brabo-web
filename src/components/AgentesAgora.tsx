@@ -22,14 +22,19 @@ const COR_DO_PONTO: Record<PontoDeAgente, string> = {
 export function AgentesAgora({
   roster,
   colapsado,
+  compacto = false,
   onVerTodos,
 }: {
   roster: readonly RosterEntry[];
   colapsado: boolean;
+  /** Altura baixa (AT-964): só quem trabalha, espera ou falhou; o resto vira "+ N parados". */
+  compacto?: boolean;
   onVerTodos: () => void;
 }) {
   const { t } = useTranslation('shell');
-  const itens = agentesAgora(roster);
+  const todos = agentesAgora(roster);
+  const itens = compacto ? todos.filter((a) => a.ponto !== 'ocioso') : todos;
+  const parados = todos.length - itens.length;
   return (
     <SidebarMenu data-testid="agentes-agora">
       {itens.map((a) => {
@@ -58,6 +63,13 @@ export function AgentesAgora({
           </SidebarMenuItem>
         );
       })}
+      {parados > 0 && (
+        <SidebarMenuItem>
+          <SidebarMenuButton data-testid="agentes-parados" className={styles.parados} onClick={onVerTodos}>
+            <span>{t('sidebar.agentsNow.idleMore', { count: parados })}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      )}
     </SidebarMenu>
   );
 }

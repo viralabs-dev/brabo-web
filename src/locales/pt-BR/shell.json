@@ -24,6 +24,9 @@
       "openProjectHint": "Abra um projeto para ver os agentes.",
       "empty": "Nenhum agente entrou em ação ainda.",
       "noSession": "Este projeto ainda não tem sessão.",
+      "idleMore_zero": "+ {{count}} parados · ver todos",
+      "idleMore_one": "+ {{count}} parado · ver todos",
+      "idleMore_other": "+ {{count}} parados · ver todos",
       "loadError": "Não foi possível carregar os agentes.",
       "status": {
         "trabalhando": "trabalhando",

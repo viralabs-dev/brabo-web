@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "草稿",
-    "ready": "就绪",
-    "inProgress": "进行中",
+    "ready": "可执行",
+    "inProgress": "执行中",
     "done": "已完成"
   },
   "sectionLabel": {
@@ -117,7 +117,7 @@
     "recorte": "问题计数只是片段：{{total}} 个中仅包含前 50 个。"
   },
   "epico": {
-    "progresso_other": "{{count}} 个故事 · {{prontas}}/{{count}} 已完成"
+    "progresso_other": "{{prontas}}/{{count}} 已完成"
   },
   "historia": {
     "perguntas_other": "{{count}} 个问题"

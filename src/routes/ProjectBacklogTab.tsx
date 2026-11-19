@@ -23,6 +23,8 @@ import { Chip } from '../components/ui/Chip';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { useHistoriaInicial } from '../lib/historia-inicial';
 import { Checkbox } from '../components/shadcn/checkbox';
+import { NativeSelect } from '../components/shadcn/native-select';
+import { Progress } from '../components/shadcn/progress';
 import { Item, ItemGroup } from '../components/shadcn/item';
 import { Input } from '../components/ui/Input';
 import type { Epic, Story, StoryStatus, Task } from '../lib/api-types';
@@ -46,7 +48,7 @@ import { historiaPassaNoFiltro } from '../lib/trabalho-v9';
 import { aguardandoPromocao } from './ProjectBacklogTab.helpers';
 const STATUS_TONE: Record<StoryStatus, BadgeTone> = {
   draft: 'muted',
-  ready: 'accent',
+  ready: 'neutral',
   in_progress: 'warning',
   done: 'success',
 };
@@ -110,6 +112,7 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   );
 
   return (
+    <div className={styles.pagina}>
     <div className={styles.wrapper}>
       <div className={styles.tree}>
         {propostas.length > 0 && (
@@ -120,32 +123,34 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
         <div className={styles.visoes}>
           <AtivarExecucao projectId={projectId} />
         </div>
-        <div className={styles.visoes}>
+        <div className={styles.filtros} data-testid="filtros-do-backlog">
           <Input
-            label={t('busca.label')}
+            className={styles.busca}
+            placeholder={t('busca.label')}
+            aria-label={t('busca.label')}
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />
           <Chip pressed={soComPergunta} onClick={() => setSoComPergunta((v) => !v)}>
             {t('filtro.comPergunta', { count: totalComPergunta })}
           </Chip>
-          <select aria-label={t('filtro.modulo')} value={modulo} onChange={(e) => setModulo(e.target.value)}>
+          <NativeSelect wrapperClassName={styles.modulo} aria-label={t('filtro.modulo')} value={modulo} onChange={(e) => setModulo(e.target.value)}>
             <option value="">{t('filtro.todosModulos')}</option>
             {modulos.map((m) => (
               <option key={m} value={m}>
                 {m}
               </option>
             ))}
-          </select>
-        </div>
-        {recorte && <p className={styles.description}>{t('filtro.recorte', { total: perguntasQuery?.total })}</p>}
-        <div role="group" aria-label={t('visao.label')} className={styles.visoes}>
+          </NativeSelect>
+          <div role="group" aria-label={t('visao.label')} className={styles.visoesDoFiltro}>
           {(['epico', 'quadro'] as const).map((v) => (
             <Button key={v} variant={visao === v ? 'secondary' : 'ghost'} aria-pressed={visao === v} onClick={() => setVisao(v)}>
               {t(`visao.${v}`)}
             </Button>
           ))}
+          </div>
         </div>
+        {recorte && <p className={styles.description}>{t('filtro.recorte', { total: perguntasQuery?.total })}</p>}
         {!epics && epicsQuery.isError ? (
           // Erro de carga não é "sem épicos" (AT-965, RN-088).
           <ErroDeCarregamento
@@ -215,6 +220,7 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
           ))
         )}
       </aside>
+    </div>
     </div>
   );
 }
@@ -423,6 +429,7 @@ function EpicNode({
 }) {
   const { t } = useTranslation('backlog');
   const [open, setOpen] = useState(true);
+  const concluidas = epic.stories.filter((st) => st.status === 'done').length;
   return (
     <div className={styles.epic}>
       <button
@@ -440,8 +447,13 @@ function EpicNode({
         <StackIcon size={15} />
         <span className={styles.epicTitle}>{epic.title}</span>
         <span className={styles.count}>
-          {t('epico.progresso', { count: epic.stories.length, prontas: epic.stories.filter((st) => st.status === 'done').length })}
+          {t('epico.progresso', { count: epic.stories.length, prontas: concluidas })}
         </span>
+        <Progress
+          className={styles.progresso}
+          value={epic.stories.length === 0 ? 0 : (100 * concluidas) / epic.stories.length}
+          aria-hidden="true"
+        />
       </button>
       {open && (
         <div className={styles.stories}>

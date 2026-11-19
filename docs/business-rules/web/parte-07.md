@@ -527,6 +527,33 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/SessionPage.layout-movel.test.tsx`.
 - **Origem:** AT-961 (EP-035).
 
+<a id="rn-1447"></a>
+
+### RN-1447 — Os filtros do Backlog ficam numa linha que quebra {#rn-1447}
+
+- **Regra:** a barra de filtros é um `flex` com `gap` de 8 px e `flex-wrap`, na ordem busca (`flex: 1 1 260px`, máximo 420 px), "Com pergunta aberta" com contador, seletor de módulo (`NativeSelect` do kit) e, à direita, "Por épico / Quadro". Nenhum item usa posição absoluta nem margem negativa, então nenhum par de controles se sobrepõe em 1848, 1366 ou 589 px. O rótulo da busca é `placeholder` com `aria-label` igual.
+- **Onde:** `src/routes/ProjectBacklogTab.tsx`, `src/routes/ProjectBacklogTab.module.css` (`.filtros`).
+- **Teste:** `src/routes/ProjectBacklogTab.test.tsx`.
+- **Origem:** AT-969 (EP-035), prancha L04 da v11.
+
+<a id="rn-1448"></a>
+
+### RN-1448 — O Backlog diz o status por extenso e o épico conta só as concluídas {#rn-1448}
+
+- **Regra:** o selo da história mostra "pronta para executar" (`ready`, tom neutro), "em execução" (`in_progress`) ou "concluída" (`done`); `draft` segue "rascunho". O épico diz "N de M concluídas", contando só histórias `done`, com uma barra `Progress` ao lado. O número de tarefas da história não quebra linha.
+- **Onde:** `src/routes/ProjectBacklogTab.tsx` (`STATUS_TONE`, `EpicNode`), `src/locales/*/backlog.json` (`statusLabel`, `epico.progresso`).
+- **Teste:** `src/routes/ProjectBacklogTab.test.tsx`.
+- **Origem:** AT-969 (EP-035).
+
+<a id="rn-1449"></a>
+
+### RN-1449 — A Rastreabilidade vai para baixo da lista no estreito {#rn-1449}
+
+- **Regra:** o contêiner da aba é uma grade `minmax(0, 1fr) 320px` a partir de 1100 px de largura do contêiner (container query) e uma coluna abaixo disso, com a Rastreabilidade depois da lista.
+- **Onde:** `src/routes/ProjectBacklogTab.module.css` (`.pagina`, `.wrapper`).
+- **Teste:** `src/routes/ProjectBacklogTab.test.tsx` cobre a estrutura; a largura se confere na captura (CSS de contêiner não roda no jsdom).
+- **Origem:** AT-969 (EP-035).
+
 <a id="rn-1434"></a>
 
 ### RN-1434 — No telefone o aviso de PR cabe em uma linha {#rn-1434}

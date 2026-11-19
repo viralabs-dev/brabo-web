@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "rascunho",
-    "ready": "pronta",
-    "inProgress": "em progresso",
+    "ready": "pronta para executar",
+    "inProgress": "em execução",
     "done": "concluída"
   },
   "sectionLabel": {
@@ -144,8 +144,8 @@
   },
   "epico": {
     "progresso_zero": "nenhuma história",
-    "progresso_one": "{{count}} história · {{prontas}} de {{count}} prontas",
-    "progresso_other": "{{count}} histórias · {{prontas}} de {{count}} prontas"
+    "progresso_one": "{{prontas}} de {{count}} concluída",
+    "progresso_other": "{{prontas}} de {{count}} concluídas"
   },
   "historia": {
     "perguntas_zero": "nenhuma pergunta",

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-969, EP-035, RN-1447, RN-1448, RN-1449): o Backlog tem os filtros numa linha que quebra (busca como placeholder, `NativeSelect`), empilha a Rastreabilidade abaixo da lista abaixo de 1100 px do contêiner e usa um vocabulário de status ("pronta para executar", "em execução", "concluída"; épico "N de M concluídas" com `Progress`).
+
 - Feat (AT-980, EP-036, RN-1445, RN-1446): o cartão de uma ação de container que falhou mostra o `motivo` (inclusive "o container subiu sem rede: DNS de X falhou") no lugar do "Falhou" mudo; `/containers` ganha a seção "Remoção pendente" (`GET /workspaces/:id/containers/remocoes-pendentes`), que some sem pendência. `openapi.json` fixado e tipos regenerados da api `dev`. i18n nos quatro idiomas. Regressivo `brabo-qa`: nenhum ajuste previsto.
 
 - Feat (AT-999, EP-035, RN-1442, RN-1443, RN-1444): o cartão "Fazer sozinho daqui em diante" / "Não, continue perguntando" aparece no chat para `automacao.oferecida` e vira o desfecho nos eventos `aceita`/`recusada`; `automacao.aplicada` é narrada ("feito sozinho pela regra de …, desde …") e `automacao.outro_caminho` lista as saídas sem botão de automatizar. Configurações › Projeto ganha "Regras de fazer sozinho" com "Desfazer" por linha (`maintainer`). `openapi.json` fixado (brabo-api `c254fcbd`) e tipos regenerados. i18n nos quatro idiomas. Regressivo `brabo-qa`: spec novo da oferta (aprovar 3 vezes, aceitar, 4ª sai sozinha, desfazer) e globs `src/routes/OfertaDeAutomacao*`, `src/routes/settings/RegrasDeOferta*`, `src/lib/automacao-oferta*` em `aprovacao-inline`.

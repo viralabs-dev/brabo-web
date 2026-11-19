@@ -97,6 +97,6 @@ it('AT-676: o raciocínio ao vivo aparece como trecho recolhível, sem linhas ne
   const { container } = render(<TurnActivityStrip estado={estado} agente="po" pensandoVisivel={false} />);
   expect(screen.getByText('Raciocinando…')).toBeInTheDocument();
   expect(container.textContent).not.toContain('pensando alto');
-  fireEvent.click(screen.getByRole('button'));
+  fireEvent.click(screen.getByText('Raciocinando…').closest('button')!);
   expect(container.textContent).toContain('pensando alto');
 });

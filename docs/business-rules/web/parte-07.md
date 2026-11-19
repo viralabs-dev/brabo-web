@@ -166,8 +166,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1185 — Os passos do turno se recolhem numa linha e se agrupam por INTENÇÃO, num mapa tipado; nenhum passo some {#rn-1185}
 
-- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Os turnos ANTERIORES ao último `agent.response` mostram o bloco de passos como UMA linha (`ResumoDeTurno`: agente, passos, `gravadoNoTurno` do engine, custo) que expande no lugar; a mensagem do agente continua inteira no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
-- **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ResumoDeTurno.tsx:17` (`ResumoDeTurno`), `src/routes/session-timeline-montagem.tsx:443` (`ultimaRespostaId`).
+- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Desde a AT-958 (RN-1392) o raciocínio, as consultas e os passos de cada turno, o último e os anteriores, moram dentro de UMA linha de trabalho (`LinhaDeTrabalho`); `ResumoDeTurno` saiu do fio (segue na visão geral do projeto). A mensagem do agente continua inteira no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
+- **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
 - **Teste:** `src/lib/grupos-de-ferramenta.test.ts`, `src/components/ai-elements/passos-do-turno.test.tsx` (seletor Agrupados | Em ordem).
 - **Origem:** AT-891 (EP-035), ADR 0290/0294.
 
@@ -355,6 +355,24 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/lib/timeline-tree.ts`, `src/lib/artefato-do-fio.ts`, `src/locales/*/executors.json` (`artifactModuleContracts`).
 - **Teste:** `src/lib/artefato-do-fio.test.ts`.
 - **Origem:** AT-981 (EP-036).
+
+<a id="rn-1392"></a>
+
+### RN-1392 — Cada turno mostra UMA linha de trabalho que abre no lugar: raciocínio, consultas e passos dentro {#rn-1392}
+
+- **Regra:** o `agent.response` encerrado ganha, depois da bolha, um só `Trace` recolhido ("Trabalhou 14,0 s · 5 passos") no lugar dos três blocos separados (passos, raciocínio, "Consultado neste turno"). Ao abrir, mostra nessa ordem o `Reasoning` (`data-testid` `raciocinio-do-turno`), o "Consultado neste turno" e os passos (`PassosDoTurno`, com o seletor da RN-1185). A duração é o `duracaoMs` do fecho do turno, nunca relógio da tela; sem o campo o título diz "Trabalhou · N passos", sem "0 s". Turno sem passos, raciocínio nem fontes não gera linha. O raciocínio só chega a quem a api autoriza (ADR 0249, RN-993): o web mostra o que vier. A linha não conta no corte do fio (RN-974, RN-644) e a chave é `${event.id}-trabalho`.
+- **Onde:** `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`), `src/routes/session-timeline-montagem.tsx:1016` (`LinhaDeTrabalho`).
+- **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/routes/session-timeline-montagem.raciocinio.test.tsx`.
+- **Origem:** AT-958 (EP-035), v10 (K02).
+
+<a id="rn-1393"></a>
+
+### RN-1393 — Durante o turno a linha de trabalho nasce aberta, com o título em brilho e sem segundos {#rn-1393}
+
+- **Regra:** a faixa do turno (`TurnActivityStrip`) põe o raciocínio em curso, o plano (RN-967) e os passos dentro da MESMA `LinhaDeTrabalho`, aberta, "Trabalhando · N passos". Não há duração em curso (a fonte é o `duracaoMs` do fecho), então o "9 s" da prancha não existe. O brilho é o `Shimmer` e respeita `prefers-reduced-motion`. A faixa continua montada acima da doca; levá-la ao fio é da AT-959. Quando a resposta chega, a faixa some e o turno passa a ter a linha fechada da RN-1392.
+- **Onde:** `src/components/TurnActivityStrip.tsx:49` (`TurnActivityStrip`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
+- **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/components/TurnActivityStrip.test.tsx`.
+- **Origem:** AT-958 (EP-035).
 
 <a id="rn-1389"></a>
 

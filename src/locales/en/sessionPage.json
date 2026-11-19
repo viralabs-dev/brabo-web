@@ -352,6 +352,8 @@
     "raciocinioChars_one": "{{count}} character",
     "raciocinioChars_other": "{{count}} characters",
     "passosDoTurno": "Turn steps",
+    "trabalhou": "Worked",
+    "trabalhando": "Working",
     "consultado": "Consulted this turn",
     "fonteN": "Source {{n}}: {{rotulo}}",
     "consultadoCorte": "showing {{shown}} of {{total}}",

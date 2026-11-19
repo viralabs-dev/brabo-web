@@ -35,7 +35,8 @@ Cada peça é conferida contra a prévia `13-design/v9-estrutura/`. Decisão: [A
 |---|---|---|---|
 | `CaixaDeDecisoes` | S07 | filas de vários projetos, um cartão por fila (5) | não soma filas |
 | `FaixaPrecisaDeVoce` | P10 | o item mais urgente e a contagem por fila | não decide sozinha; usa o `ApprovalCard` |
-| `ResumoDeTurno` | P10, C30 | uma linha por turno: agente, passos, "Gravado neste turno", custo | não usa texto do modelo |
+| `ResumoDeTurno` | P10 | uma linha por turno: agente, passos, "Gravado neste turno", custo | não usa texto do modelo |
+| `LinhaDeTrabalho` | C30, C31 | UM `Trace` por turno: "Trabalhou 14,0 s · 5 passos", abre com raciocínio, consultas e passos; em curso nasce aberta | não tem segundos em curso; não mostra raciocínio que a api não enviou |
 | `PassosDoTurno` | C30, C31 | linha recolhida e lista agrupada ou em ordem | o grupo vem do mapa tipado |
 | `MedidorDeGasto` | cabeçalho, P21 | gasto contra o teto, barra, teto | não estima sem fonte |
 | `AgentesAgora` | sidebar | até 5 agentes com status | não mostra contagem de eventos |

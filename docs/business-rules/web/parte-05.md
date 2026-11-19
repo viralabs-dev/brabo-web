@@ -1037,7 +1037,7 @@ sempre dele.
 - **Código:** `apps/web/src/lib/autor-da-mensagem.ts:52` (`autorDaMensagem`);
   `apps/web/src/lib/autoria-da-sessao.ts:45` (`useAutoriaDaSessao`), `:18`
   (`comporMembros`);
-  `apps/web/src/routes/session-timeline-montagem.tsx:190` (`rotuloDoAutor`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:195` (`rotuloDoAutor`),
   `:405` (o `chat.message`), `:687` (a devolução de história);
   `apps/web/src/routes/SessionPage.tsx:133` (`autoria`)
 - **Teste:** `apps/web/src/routes/SessionPage.autor-da-mensagem.test.tsx:147`

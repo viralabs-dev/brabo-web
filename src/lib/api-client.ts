@@ -1611,3 +1611,12 @@ export const acceptOpenQuestionSuggestions = (projectId: string, questionIds: st
 // AT-843: a fila e o aviso de PR pronta do chat escapam do portão da imagem (RN-825).
 export const getOpenPullRequestsDoChat = (projectId: string) =>
   get<CodePullRequestList>(`/projects/${projectId}/git/open-pull-requests`);
+
+/** AT-999 (RN-1442): responde à oferta de "fazer sozinho" (`maintainer`); 404 sem oferta, 409 já respondida. */
+export const responderAutomacao = (
+  projectId: string,
+  body: { categoria: string; chave: string; escopo?: string; decisao: 'aceitar' | 'recusar' },
+) => post<AutomacaoDoProjeto[]>(`/projects/${projectId}/automacoes`, body);
+/** AT-999 (RN-1443): desfaz a regra (na aprovação a `chave` é `<tipo>@<agente>`). */
+export const desfazerAutomacao = (projectId: string, categoria: string, chave: string) =>
+  del<void>(`/projects/${projectId}/automacoes/${encodeURIComponent(categoria)}/${encodeURIComponent(chave)}`);

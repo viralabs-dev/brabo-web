@@ -59,7 +59,8 @@ export default function GraficoDeGastoPorDia({
         </ChartContainer>
       </div>
       )}
-      <details>
+      {/* Sem gasto não há tabela a ver: o vazio já disse tudo (AT-973). */}
+      {!(serie.length > 0 && serie.every((p) => p.costMicros === 0)) && <details>
         <summary className={styles.resumo}>
           {t('charts.viewAsTable')}
         </summary>
@@ -81,7 +82,7 @@ export default function GraficoDeGastoPorDia({
             ))}
           </TableBody>
         </Table>
-      </details>
+      </details>}
     </figure>
   );
 }
@@ -187,7 +188,7 @@ export function GraficoEmpilhadoPorAgente({
           </ChartContainer>
         </div>
       )}
-      <details>
+      {agentes.length > 0 && <details>
         <summary className={styles.resumo}>{t('charts.viewAsTable')}</summary>
         <Table>
           <TableHeader>
@@ -211,7 +212,7 @@ export function GraficoEmpilhadoPorAgente({
             ))}
           </TableBody>
         </Table>
-      </details>
+      </details>}
     </figure>
   );
 }

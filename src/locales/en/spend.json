@@ -6,7 +6,8 @@
     "summing": "Adding up…",
     "retry": "Try again",
     "tokensDetail": "{{input}} in · {{output}} out",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "callsLabel": "Calls"
   },
   "role": {
     "error": "I couldn't find out your role in this workspace, and that's what decides which report to show."
@@ -74,7 +75,8 @@
   "window": {
     "month": "Month",
     "label": "Window",
-    "option": "{{n}} days"
+    "option": "{{n}} days",
+    "sinceStart": "Since the start · {{n}} days"
   },
   "subscription": {
     "label": "Subscription",
@@ -114,7 +116,9 @@
     "byAgentEmpty": "No agent spent in this window.",
     "byAreaTitle": "By area",
     "byAreaEmpty": "No area spent in this window.",
-    "noArea": "no area"
+    "noArea": "no area",
+    "showAll": "See all {{count}} agents",
+    "showTop": "Show only the top 3"
   },
   "budgetEditor": {
     "title": "Project budget",
@@ -122,7 +126,7 @@
     "policyLabel": "When the limit is reached",
     "block": "block new calls",
     "allow": "only warn",
-    "save": "Save budget",
+    "save": "Save cap",
     "saving": "Saving…",
     "saved": "Budget saved.",
     "error": "I could not save the budget. Nothing changed.",

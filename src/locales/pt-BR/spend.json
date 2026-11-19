@@ -6,7 +6,8 @@
     "summing": "Somando…",
     "retry": "Tentar de novo",
     "tokensDetail": "{{input}} entrada · {{output}} saída",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "callsLabel": "Chamadas"
   },
   "role": {
     "error": "Não consegui descobrir o seu papel neste workspace, e é ele que diz qual relatório mostrar."
@@ -79,7 +80,8 @@
   "window": {
     "month": "Mês",
     "label": "Janela",
-    "option": "{{n}} dias"
+    "option": "{{n}} dias",
+    "sinceStart": "Desde o início · {{n}} dias"
   },
   "subscription": {
     "label": "Assinatura",
@@ -119,7 +121,9 @@
     "byAgentEmpty": "Nenhum agente gastou nesta janela.",
     "byAreaTitle": "Por área",
     "byAreaEmpty": "Nenhuma área gastou nesta janela.",
-    "noArea": "sem área"
+    "noArea": "sem área",
+    "showAll": "Ver os {{count}} agentes",
+    "showTop": "Ver só os 3 maiores"
   },
   "budgetEditor": {
     "title": "Orçamento do projeto",
@@ -127,7 +131,7 @@
     "policyLabel": "Ao atingir o teto",
     "block": "bloquear novas chamadas",
     "allow": "só avisar",
-    "save": "Salvar orçamento",
+    "save": "Salvar teto",
     "saving": "Salvando…",
     "saved": "Orçamento salvo.",
     "error": "Não consegui salvar o orçamento. Nada mudou.",

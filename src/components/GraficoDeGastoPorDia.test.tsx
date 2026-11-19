@@ -28,6 +28,12 @@ describe('GraficoDeGastoPorDia', () => {
     expect(screen.getByText('3')).toBeTruthy();
   });
 
+  it('sem gasto na janela mostra o vazio e não oferece a tabela', () => {
+    render(<GraficoDeGastoPorDia serie={[{ dia: '2026-10-31', costMicros: 0, chamadas: 0 }]} titulo="Gasto por dia" />);
+    expect(screen.getByText('Nenhum gasto nesta janela.')).toBeTruthy();
+    expect(screen.queryByText('Ver como tabela')).toBeNull();
+  });
+
   it('série vazia não quebra: tabela sem linhas', () => {
     render(<GraficoDeGastoPorDia serie={[]} titulo="Gasto por dia" />);
     expect(screen.getByRole('img', { name: /Gasto por dia/ })).toBeTruthy();

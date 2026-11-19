@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertTexto } from './shadcn/alert';
 import { Badge } from './shadcn/badge';
+import { Card } from './shadcn/card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
@@ -14,6 +15,19 @@ import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
 import { alertaDeOrcamento, viradaDoMesLocal } from '../lib/spend';
 import type { Budget, BudgetPolicy } from '../lib/api-types';
 import styles from '../routes/ProjectSpendTab.module.css';
+
+/** Destino de `?tab=spend#teto`: rola até o cartão quando ele monta com a âncora no endereço (AT-973). */
+function rolarSeForAncora(el: HTMLElement | null) {
+  if (el && window.location.hash === '#teto') el.scrollIntoView?.({ block: 'start' });
+}
+
+function CartaoDoTeto({ children }: { children: React.ReactNode }) {
+  return (
+    <Card id="teto" ref={rolarSeForAncora} className={styles.cartaoDoTeto}>
+      {children}
+    </Card>
+  );
+}
 
 type Gravar = (input: { limitUsd: number; policy: BudgetPolicy }) => Promise<Budget>;
 
@@ -50,21 +64,21 @@ export function TetoDoMes({
   );
 
   if (budget.isLoading) return null;
-  if (budget.isError) return podeEditar ? editor : null;
+  if (budget.isError) return podeEditar ? <CartaoDoTeto>{editor}</CartaoDoTeto> : null;
   if (!budget.data) {
     return (
-      <div className={styles.orcamentoProjeto}>
+      <CartaoDoTeto>
         <Badge variant="outline">{t('budget.notConfigured')}</Badge>
         <p className={styles.nota}>{t(`teto.${escopo}.semTeto`)}</p>
         {editor}
-      </div>
+      </CartaoDoTeto>
     );
   }
 
   const b = budget.data;
   const alerta = alertaDeOrcamento(b);
   return (
-    <div className={styles.orcamentoProjeto}>
+    <CartaoDoTeto>
       <p className={styles.nota}>{t(`teto.${escopo}.titulo`)}</p>
       <TokenMeter
         unitLabel="USD"
@@ -86,7 +100,7 @@ export function TetoDoMes({
         </Alert>
       )}
       {editor}
-    </div>
+    </CartaoDoTeto>
   );
 }
 
@@ -152,12 +166,9 @@ function EditorDoTeto({
           </Select>
         </Field>
         <div className={styles.acoes}>
-          <Button
-            type="submit"
-            disabled={!podeEditar || salvar.isPending}
-            legenda={salvar.isPending ? t('budgetEditor.saving') : t('budgetEditor.save')}
-          >
+          <Button type="submit" disabled={!podeEditar || salvar.isPending}>
             <Save aria-hidden="true" />
+            {salvar.isPending ? t('budgetEditor.saving') : t('budgetEditor.save')}
           </Button>
         </div>
       </div>

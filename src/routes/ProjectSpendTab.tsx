@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Ajuda } from '../components/ui/Ajuda';
 import { Shimmer } from '../components/ui/Shimmer';
 import { Coins, MessageSquare, Wallet } from 'lucide-react';
@@ -16,12 +17,12 @@ import {
 } from '../lib/api-client';
 import { useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
-import { hashtagDaSessao } from '../lib/session-label';
 import { numberFmt } from '../lib/currency';
 import { GastoPorDia } from '../components/GastoPorDia';
 import { Ranking } from '../components/SpendCharts';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 import { GastoDoTimeNoProjeto, GastoDoWorkspace } from '../components/SpendPaineis';
+import { useRotuloDaSessao } from '../lib/use-rotulo-da-sessao';
 import { comoRanking } from '../lib/spend-ranking';
 import styles from './ProjectSpendTab.module.css';
 
@@ -68,25 +69,24 @@ export function ProjectSpendTab({ projectId }: { projectId: string }) {
 
       {papel.data &&
         (papel.data.role === 'owner' ? (
-          <GastoDoProjetoDoOwner projectId={projectId} />
+          <GastoDoProjetoDoOwner
+            projectId={projectId}
+            teto={<OrcamentoDoProjeto projectId={projectId} podeEditar />}
+          />
         ) : (
           <>
             <GastoDoTimeNoProjeto projectId={projectId} />
             <MeuConsumo projectId={projectId} />
+            {/* O orçamento é do PROJETO, não da audiência — o owner o vê à direita
+                dos indicadores; aqui, para o membro, ao pé (`maintainer`+ edita).
+                Fica silencioso em erro (403 de quem não é maintainer): pedir 403
+                de propósito é o ruído que a RN-060 já evita. */}
+            <OrcamentoDoProjeto
+              projectId={projectId}
+              podeEditar={roleAtLeast(papel.data.role, 'maintainer')}
+            />
           </>
         ))}
-
-      {/* O orçamento é do PROJETO, não da audiência — mostra para as duas
-          quando o papel alcança (`maintainer`+). Fica silencioso em erro
-          (403 de quem não é maintainer no projeto): pedir 403 de propósito
-          é o mesmo ruído que a RN-060 já evita para a fatura do owner, e é o
-          mesmo padrão do `TokenMeter` compacto em `ProjectPage.tsx`. */}
-      {papel.data && (
-        <OrcamentoDoProjeto
-          projectId={projectId}
-          podeEditar={roleAtLeast(papel.data.role, 'maintainer')}
-        />
-      )}
     </div>
   );
 }
@@ -111,17 +111,18 @@ function OrcamentoDoProjeto({
 }
 
 /** O owner na aba do projeto: SÓ este projeto (`?projectId=`, RN-952). */
-function GastoDoProjetoDoOwner({ projectId }: { projectId: string }) {
+function GastoDoProjetoDoOwner({ projectId, teto }: { projectId: string; teto: ReactNode }) {
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
     queryFn: () => getProject(projectId),
   });
-  return <GastoDoWorkspace workspaceId={project?.workspaceId} projectId={projectId} />;
+  return <GastoDoWorkspace workspaceId={project?.workspaceId} projectId={projectId} teto={teto} />;
 }
 
 /** A audiência do membro. */
 function MeuConsumo({ projectId }: { projectId: string }) {
   const { t } = useTranslation('spend');
+  const rotuloDaSessao = useRotuloDaSessao(projectId);
   const meu = useQuery({
     queryKey: ['my-spend', projectId, DIAS],
     queryFn: () => getMySpend(projectId, DIAS),
@@ -199,7 +200,7 @@ function MeuConsumo({ projectId }: { projectId: string }) {
 titulo={t('member.bySessionTitle')}
             linhas={comoRanking(
               meu.data.porSessao,
-              (l) => hashtagDaSessao(l.chave),
+              (l) => rotuloDaSessao(l.chave),
               t,
             )}
             vazio={t('member.bySessionEmpty')}

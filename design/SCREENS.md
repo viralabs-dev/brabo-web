@@ -24,7 +24,7 @@ Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`
 | Código | Arquivos, PRs | P22, P15 |
 | Decisões | Aprovações, Hipóteses, Permissões | P14, P17 |
 | Arquitetura (módulos, C4, ADRs, contratos — RN-1387) | — | P16 |
-| Gastos | — | P21 |
+| Gastos (quatro indicadores, período "Desde o início", cartão `#teto` à direita, "Por sessão" pelo nome — RN-1450 a RN-1452) | — | P21, L08 |
 | Configurações | Modelos, Projeto e execução, Pessoas e acesso, Avançado | P18, P19, P20 |
 
 As chaves de URL de hoje viram as chaves das sub-abas; todo link antigo abre a mesma tela.

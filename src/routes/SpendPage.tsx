@@ -45,14 +45,18 @@ export function SpendPage() {
         workspaceId &&
         (roleAtLeast(papel.data.role, 'owner') ? (
           <>
-            <TetoDoMes
-              escopo="workspace"
-              queryKey={['workspace-budget', workspaceId]}
-              ler={() => getWorkspaceBudget(workspaceId)}
-              gravar={(input) => setWorkspaceBudget(workspaceId, input)}
-              podeEditar
+            <GastoDoWorkspace
+              workspaceId={workspaceId}
+              teto={
+                <TetoDoMes
+                  escopo="workspace"
+                  queryKey={['workspace-budget', workspaceId]}
+                  ler={() => getWorkspaceBudget(workspaceId)}
+                  gravar={(input) => setWorkspaceBudget(workspaceId, input)}
+                  podeEditar
+                />
+              }
             />
-            <GastoDoWorkspace workspaceId={workspaceId} />
             <OrcamentosDosProjetos workspaceId={workspaceId} />
           </>
         ) : (

@@ -117,7 +117,7 @@
     "byAreaTitle": "By area",
     "byAreaEmpty": "No area spent in this window.",
     "noArea": "no area",
-    "showAll": "See all {{count}} agents",
+    "showAll": "See all {{n}} agents",
     "showTop": "Show only the top 3"
   },
   "budgetEditor": {

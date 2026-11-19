@@ -122,7 +122,7 @@
     "byAreaTitle": "Por área",
     "byAreaEmpty": "Nenhuma área gastou nesta janela.",
     "noArea": "sem área",
-    "showAll": "Ver os {{count}} agentes",
+    "showAll": "Ver os {{n}} agentes",
     "showTop": "Ver só os 3 maiores"
   },
   "budgetEditor": {

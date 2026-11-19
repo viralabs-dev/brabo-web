@@ -498,7 +498,7 @@ titulo={t('team.byAgentTitle')}
               rodape={
                 agentes.length > 3 && (
                   <Button variant="ghost" size="sm" onClick={() => setTodosOsAgentes((v) => !v)}>
-                    {todosOsAgentes ? t('team.showTop') : t('team.showAll', { count: agentes.length })}
+                    {todosOsAgentes ? t('team.showTop') : t('team.showAll', { n: agentes.length })}
                   </Button>
                 )
               }

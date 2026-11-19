@@ -112,7 +112,7 @@
     "byAreaTitle": "按领域",
     "byAreaEmpty": "此时间范围内没有领域产生支出。",
     "noArea": "无领域",
-    "showAll": "查看全部 {{count}} 个智能体",
+    "showAll": "查看全部 {{n}} 个智能体",
     "showTop": "只看前 3 名"
   },
   "budgetEditor": {

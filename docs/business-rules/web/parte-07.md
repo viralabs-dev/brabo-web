@@ -23,7 +23,7 @@ keywords: [regras de negócio, web]
 ### RN-979 — Decisão, mapa de módulos, C4, imagem e parecer de QA/SecOps ganham cartão no fio {#rn-979}
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:142` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:147` (`ARTEFATOS_DO_FIO`).
 - **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:145` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
@@ -60,7 +60,7 @@ keywords: [regras de negócio, web]
 ### RN-994 — Na Sessão, a pergunta estruturada vem depois da mensagem do agente que a introduz {#rn-994}
 
 - **Regra:** revisa a [RN-162](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-162) só na posição. O agente pergunta no meio do turno e fecha com o `agent.response`, então o `chat.structured_question` tem `seq` menor que a resposta; o fio põe o cartão (aberto ou já respondido) logo DEPOIS da bolha de `agent.response` do MESMO agente com `seq` maior, antes da próxima `chat.message` do usuário. Sem resposta depois (turno em curso), o cartão fica onde está. Move-se o item, não o evento, e o item mantém a flag `mensagem` do corte da [RN-644](parte-05.md#rn-644). Raciocínio e "Passos do turno" seguem antes da resposta. Decisão do dono (03/11/2026).
-- **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:155` (`montarTimeline`).
+- **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:160` (`montarTimeline`).
 - **Teste:** `apps/web/src/routes/session-timeline-montagem.perguntas.test.tsx` (resposta antes do cartão; turno em curso; duas perguntas na ordem; não pula para a resposta do turno seguinte).
 - **Origem:** pedido do dono, 03/11/2026.
 

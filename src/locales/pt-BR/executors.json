@@ -277,7 +277,9 @@
       "resumoTarefas_one": "{{count}} tarefa",
       "resumoTarefas_other": "{{count}} tarefas",
       "agente": "Executa: {{agente}}",
-      "esperaCom": "Espera {{itens}} da tarefa «{{titulo}}» entrar na main"
+      "esperaCom": "Espera {{itens}} da tarefa «{{titulo}}» entrar na main",
+      "resumoMergeadas_zero": "{{count}} mergeadas",
+      "resumoTarefas_zero": "{{count}} tarefas"
     }
   },
   "acoes": {

@@ -108,9 +108,9 @@ export interface SessionTopbarProps {
   abrirPendencias?: () => void;
 }
 
-export function SessionTopbar({
+export function SessionTopbar(props: SessionTopbarProps) {
+  const {
   projectId,
-  sessionId,
   session,
   rascunhoDoNome,
   setRascunhoDoNome,
@@ -119,64 +119,19 @@ export function SessionTopbar({
   rotulo,
   metaDaSessao,
   tipo,
-  modelsByCategory,
-  resolvedBinding,
-  budget,
-  queryClient,
-  destinatario,
-  isActive,
-  sessaoCriativa,
-  criativoActive,
-  conviteVisivel,
-  ideacaoComecou = false,
-  handleStartIdeation,
-  handleClose,
-  streaming = false,
   events = [],
-  handleCancel,
   asideOpen,
   setAsideOpen,
   pendencias = 0,
   abrirPendencias,
-}: SessionTopbarProps) {
+  } = props;
   const { t } = useTranslation('sessionPage');
   const barraRef = useRef<HTMLDivElement>(null);
   const modo = modoDaBarra(useLarguraObservada(barraRef));
-  const emLinha = modo === 'completa';
   const cadeia = cadeiaDeAgentes(events, (id) => AGENTS[id as keyof typeof AGENTS]?.name ?? null);
-  // AT-328: no telefone a barra QUEBRA — saída, estado e título na primeira
-  // linha, o resto (tipo, ajustes, ideação, Encerrar, painel) na segunda, e
-  // de novo se precisar. Em 390px "Iniciar ideação" e "Encerrar" saíam pela
-  // borda direita; aqui nenhum item encolhe nem some, só desce de linha.
+  // AT-961 (RN-1432): no telefone a barra tem 52px — voltar, título e o botão do painel com o
+  // contador de pendências. O resto (tipo, ajustes, ideação, Encerrar) vive na aba Contexto.
   const movel = useLayoutMovel();
-
-  const seletorDeModelo = modelsByCategory && (
-    <ModelPicker
-      variant="topbar"
-      models={modelsByCategory}
-      selectedModelId={resolvedBinding?.modelId}
-      onSelect={(model) =>
-        setSessionModelBinding(projectId, sessionId, model.id).then(() =>
-          queryClient.invalidateQueries({ queryKey: ['session-model-binding', projectId, sessionId] }),
-        )
-      }
-    />
-  );
-  const medidor = (
-    <>
-      <Suspense fallback={null}>
-        <JanelaDoAgente projectId={projectId} sessionId={sessionId} agente={destinatario} />
-      </Suspense>
-      {budget && <TokenMeter
-      variant="live"
-      unitLabel="USD"
-      used={budget.spentMicros / 1_000_000}
-      limit={budget.limitMicros / 1_000_000}
-      costBRL={0}
-      costUSD={budget.spentMicros / 1_000_000}
-    />}
-    </>
-  );
 
   return (
     <div
@@ -217,13 +172,13 @@ export function SessionTopbar({
           truncado sem forma de ler o resto é informação perdida. */}
       <div className={styles.titleBlock}>
         {/* Trilha (v9 C30): "Sessões" volta à lista do projeto, o título é a página atual. */}
-        <nav className={styles.trilha} aria-label={t('topbar.trilha')}>
+        {!movel && <nav className={styles.trilha} aria-label={t('topbar.trilha')}>
           <Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'chat' }}>
             {t('topbar.sessoes')}
           </Link>
           <span aria-hidden="true"> / </span>
           <span>{rotulo}</span>
-        </nav>
+        </nav>}
         {rascunhoDoNome !== null ? (
           /* Renomear no LUGAR do título, e não num diálogo: o campo ocupa a
              posição exata do texto que ele muda. Enter confirma, Esc
@@ -254,15 +209,89 @@ export function SessionTopbar({
             {t(!session?.name && tipo === TIPO_DE_EXECUCAO ? 'topbar.tituloExecucao' : 'topbar.tituloSessao', { rotulo })}
           </button>
         )}
-        <div className={styles.meta} title={metaDaSessao}>
-          {metaDaSessao}
-          {cadeia.length > 0 && ` · ${cadeia.join(' → ')}`}
-        </div>
+        {!movel && (
+          <div className={styles.meta} title={metaDaSessao}>
+            {metaDaSessao}
+            {cadeia.length > 0 && ` · ${cadeia.join(' → ')}`}
+          </div>
+        )}
       </div>
-      {/* A quebra de linha do layout móvel: tudo depois dela começa embaixo. */}
-      {movel && (
-        <span className={styles.quebraDaBarra} aria-hidden="true" data-testid="quebra-da-barra" />
+      {!movel && <ControlesDaSessao {...props} modo={modo} />}
+      {!movel && pendencias > 0 && abrirPendencias && (
+        <Button
+          variant="secondary"
+          className={styles.acaoDaBarra}
+          onClick={abrirPendencias}
+          data-testid="contador-de-pendencias"
+        >
+          {t('topbar.pendencias')} <Badge tone="accent">{pendencias}</Badge>
+        </Button>
       )}
+      {/* Aberto é `secondary` (fundo e borda), fechado é `ghost`: o controle diz
+          se o painel está aberto — antes ele tinha uma aparência só. */}
+      <Button
+        type="button"
+        icon
+        variant={asideOpen ? 'secondary' : 'ghost'}
+        className={styles.toggleAside}
+        onClick={() =>
+          movel && pendencias > 0 && !asideOpen && abrirPendencias ? abrirPendencias() : setAsideOpen((v) => !v)
+        }
+        aria-expanded={asideOpen}
+        legenda={t(asideOpen ? 'topbar.recolherPainel' : 'topbar.abrirPainel')}
+      >
+        <LayoutSidebarIcon size={17} />
+        {movel && pendencias > 0 && (
+          <Badge tone="accent" data-testid="contador-no-botao-do-painel">
+            {pendencias}
+          </Badge>
+        )}
+      </Button>
+    </div>
+  );
+}
+
+/**
+ * Tipo, modelo, idioma, medidor, ideação e Encerrar. Na barra larga são filhos diretos dela; no
+ * telefone (AT-961, RN-1432) a barra só tem voltar, título e botão do painel, e estes controles
+ * moram na aba Contexto do painel (o `SessionPage` os monta lá).
+ */
+export function ControlesDaSessao(p: SessionTopbarProps & { modo: ModoDaBarra }) {
+  const { t } = useTranslation('sessionPage');
+  const { modo, projectId, sessionId, session, tipo, modelsByCategory, resolvedBinding, budget, queryClient,
+    destinatario, isActive, sessaoCriativa, criativoActive, conviteVisivel, ideacaoComecou = false,
+    handleStartIdeation, handleClose, streaming = false, handleCancel } = p;
+  const emLinha = modo === 'completa';
+  const seletorDeModelo = modelsByCategory && (
+    <ModelPicker
+      variant="topbar"
+      models={modelsByCategory}
+      selectedModelId={resolvedBinding?.modelId}
+      onSelect={(model) =>
+        setSessionModelBinding(projectId, sessionId, model.id).then(() =>
+          queryClient.invalidateQueries({ queryKey: ['session-model-binding', projectId, sessionId] }),
+        )
+      }
+    />
+  );
+  const medidor = (
+    <>
+      <Suspense fallback={null}>
+        <JanelaDoAgente projectId={projectId} sessionId={sessionId} agente={destinatario} />
+      </Suspense>
+      {budget && <TokenMeter
+      variant="live"
+      unitLabel="USD"
+      used={budget.spentMicros / 1_000_000}
+      limit={budget.limitMicros / 1_000_000}
+      costBRL={0}
+      costUSD={budget.spentMicros / 1_000_000}
+    />}
+    </>
+  );
+
+  return (
+    <>
       {/* O tipo, VISÍVEL e imutável (RN-097). É ele que diz por que esta
           sessão tem — ou não tem — o botão de iniciar a ideação. */}
       {tipo && (
@@ -373,30 +402,7 @@ export function SessionTopbar({
         <StopSquareIcon size={15} />
         {modo !== 'minima' && t(streaming && handleCancel ? 'topbar.pararTurno' : 'topbar.encerrar')}
       </Button>
-      {pendencias > 0 && abrirPendencias && (
-        <Button
-          variant="secondary"
-          className={styles.acaoDaBarra}
-          onClick={abrirPendencias}
-          data-testid="contador-de-pendencias"
-        >
-          {t('topbar.pendencias')} <Badge tone="accent">{pendencias}</Badge>
-        </Button>
-      )}
-      {/* Aberto é `secondary` (fundo e borda), fechado é `ghost`: o controle diz
-          se o painel está aberto — antes ele tinha uma aparência só. */}
-      <Button
-        type="button"
-        icon
-        variant={asideOpen ? 'secondary' : 'ghost'}
-        className={styles.toggleAside}
-        onClick={() => setAsideOpen((v) => !v)}
-        aria-expanded={asideOpen}
-        legenda={t(asideOpen ? 'topbar.recolherPainel' : 'topbar.abrirPainel')}
-      >
-        <LayoutSidebarIcon size={17} />
-      </Button>
-    </div>
+    </>
   );
 }
 

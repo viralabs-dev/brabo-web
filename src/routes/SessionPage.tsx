@@ -52,7 +52,7 @@ import { useSessionReadiness } from '../lib/session-readiness';
 import { agruparTimelinePorAgente, dividirFio } from './session-fio';
 import { AvisoDePrPronta } from '../components/AvisoDePrPronta';
 import { montarTimeline } from './session-timeline-montagem';
-import { SessionTopbar } from './SessionTopbar';
+import { ControlesDaSessao, SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
 import { SessionFio } from './SessionFio';
 import { TrilhoDeTurnos } from './TrilhoDeTurnos';
@@ -75,7 +75,7 @@ import { DevolverHistoriaModal } from './DevolverHistoriaModal';
 import { FaixaDeEstado } from './FaixaDeEstado';
 import { PainelDaSessao, type AbaDoPainel } from './PainelDaSessao';
 import { usePainelDeContexto } from '../lib/painel-de-contexto';
-import { usePainelEmSheet } from '../lib/layout-movel';
+import { useLayoutMovel, usePainelEmSheet } from '../lib/layout-movel';
 
 /**
  * O vazio ESTÁVEL (AT-301): `?? []` cria um array novo a cada render, e todo
@@ -149,6 +149,7 @@ export function SessionPage({
   const podeReabrir = roleAtLeast(workspaceComPapel?.role, 'developer');
   // AT-328: no móvel o painel nasce fechado e abre como gaveta sobre o fio.
   const emSheet = usePainelEmSheet();
+  const movel = useLayoutMovel();
   const [asideOpen, setAsideOpen] = usePainelDeContexto(emSheet, !!highlightEvent);
   // AT-950: o Sheet de pendências e o total que o contador do cabeçalho mostra.
   const [abaDoPainel, setAbaDoPainel] = useState<AbaDoPainel>('contexto');
@@ -737,39 +738,41 @@ export function SessionPage({
     .filter(Boolean)
     .join(' · ');
 
+  const propsDaBarra = {
+    events,
+    streaming,
+    handleCancel,
+    projectId,
+    sessionId,
+    session,
+    rascunhoDoNome,
+    setRascunhoDoNome,
+    handleRename,
+    hashtag,
+    rotulo,
+    metaDaSessao,
+    tipo,
+    modelsByCategory,
+    resolvedBinding,
+    budget,
+    queryClient,
+    destinatario,
+    isActive,
+    sessaoCriativa,
+    criativoActive,
+    conviteVisivel,
+    ideacaoComecou: handoffs.length > 0 || events.some((e) => e.actor.kind === 'agent'),
+    handleStartIdeation,
+    handleClose: pedirEncerramento,
+    asideOpen,
+    setAsideOpen,
+    pendencias: totalDePendencias,
+    abrirPendencias: () => abrirAba('pendencias'),
+  };
+
   return (
     <div className={styles.wrapper}>
-      <SessionTopbar
-        events={events}
-        streaming={streaming}
-        handleCancel={handleCancel}
-        projectId={projectId}
-        sessionId={sessionId}
-        session={session}
-        rascunhoDoNome={rascunhoDoNome}
-        setRascunhoDoNome={setRascunhoDoNome}
-        handleRename={handleRename}
-        hashtag={hashtag}
-        rotulo={rotulo}
-        metaDaSessao={metaDaSessao}
-        tipo={tipo}
-        modelsByCategory={modelsByCategory}
-        resolvedBinding={resolvedBinding}
-        budget={budget}
-        queryClient={queryClient}
-        destinatario={destinatario}
-        isActive={isActive}
-        sessaoCriativa={sessaoCriativa}
-        criativoActive={criativoActive}
-        conviteVisivel={conviteVisivel}
-        ideacaoComecou={handoffs.length > 0 || events.some((e) => e.actor.kind === 'agent')}
-        handleStartIdeation={handleStartIdeation}
-        handleClose={pedirEncerramento}
-        asideOpen={asideOpen}
-        setAsideOpen={setAsideOpen}
-        pendencias={totalDePendencias}
-        abrirPendencias={() => abrirAba('pendencias')}
-      />
+      <SessionTopbar {...propsDaBarra} />
 
       <div className={styles.body}>
         <div className={styles.chatColumn}>
@@ -891,6 +894,12 @@ export function SessionPage({
           totalDePendencias={totalDePendencias}
           aoContarPendencias={setTotalDePendencias}
           contexto={
+            <>
+            {movel && (
+              <div className={styles.controlesNoPainel} data-testid="controles-no-painel">
+                <ControlesDaSessao {...propsDaBarra} modo="completa" />
+              </div>
+            )}
             <ContextAside
               projectId={projectId}
               sessionId={sessionId}
@@ -905,6 +914,7 @@ export function SessionPage({
               citedEvent={citedEvent}
               citedEventMissing={citedEventQuery.isError}
             />
+            </>
           }
         />
       </div>

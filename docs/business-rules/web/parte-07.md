@@ -42,7 +42,7 @@ keywords: [regras de negócio, web]
 ### RN-981 — Na Sessão, as caixas de pergunta e de aprovação ficam na borda do fio, e o contexto e o esqueleto de carregamento ganham o tratamento R3 {#rn-981}
 
 - **Regra:** revisa a [RN-171](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-171) e a [RN-173](parte-02.md#rn-173) no alinhamento: a caixa de pergunta estruturada e o contêiner da ação no fio deixam de ser centralizados (`margin: auto`) e ficam encostados na borda esquerda do fio, mantendo o teto de 560px. Decisão do dono (03/11/2026). O resto da RN-171 (texto livre) e da RN-173 (um só `ApprovalCard`) fica. Junto: o botão do contexto tem só ícone, com legenda "Recolher contexto"/"Abrir contexto" e `aria-expanded`; o fio mostra "Carregando sessão…" com esqueleto na mesma condição que adia o convite (RN-131); "Arquivos tocados" é um `Disclosure` com a contagem; a faixa de sessão encerrada tem ícone, título e explicação, e "Reabrir sessão" segue com a regra de papel da RN-650.
-- **Onde:** `apps/web/src/routes/SessionPage.module.css:1261` (`.acaoNoFio`), `apps/web/src/routes/SessionFio.tsx:59` (`SessionFio`), `apps/web/src/routes/SessionTopbar.tsx:108` (`SessionTopbar`).
+- **Onde:** `apps/web/src/routes/SessionPage.module.css:1261` (`.acaoNoFio`), `apps/web/src/routes/SessionFio.tsx:59` (`SessionFio`), `apps/web/src/routes/SessionTopbar.tsx:111` (`SessionTopbar`).
 - **Teste:** `apps/web/src/routes/SessionPage.layout-movel.test.tsx` (legenda e `aria-expanded`), `apps/web/src/routes/SessionPage.sessao-encerrada.test.tsx`.
 - **Origem:** AT-720 (EP-031).
 
@@ -508,3 +508,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/SessionTopbar.tsx` (`topbar.tituloExecucao`, `TIPO_DE_EXECUCAO`).
 - **Teste:** `src/routes/SessionTopbar.test.tsx` (AT-978).
 - **Origem:** AT-978 (EP-035).
+
+<a id="rn-1432"></a>
+
+### RN-1432 — No telefone a barra da sessão tem 52 px e uma linha {#rn-1432}
+
+- **Regra:** abaixo de 768 px (`useLayoutMovel`, RN-643) a barra da sessão deixa de quebrar linha: 52 px, com voltar ao projeto, estado, UM título com reticências e o botão do painel. O botão mostra o contador de pendências (`Badge`) e, havendo pendência e o painel fechado, abre o Sheet já na aba Pendências (RN-626). O botão "Pendências N" da barra de desktop não aparece no telefone. Trilha e metadados também saem da barra. Alvos de toque de 40 px.
+- **Onde:** `src/routes/SessionTopbar.tsx` (`SessionTopbar`), `src/routes/SessionPage.module.css` (`.topbarMovel`).
+- **Teste:** `src/routes/SessionPage.layout-movel.test.tsx`.
+- **Origem:** AT-961 (EP-035), v10 prancha K05.
+
+<a id="rn-1433"></a>
+
+### RN-1433 — No telefone os ajustes da sessão moram na aba Contexto {#rn-1433}
+
+- **Regra:** tipo da sessão, modelo, idioma das respostas (RN-620), medidor da janela (RN-969), "Iniciar ideação" e Encerrar saem da barra e ficam no topo da aba Contexto do painel (Sheet), com os mesmos comportamentos e nomes acessíveis. Na faixa de estado, no composer e no Mergear os alvos de toque têm 40 px. Nada some: só muda de lugar.
+- **Onde:** `src/routes/SessionTopbar.tsx` (`ControlesDaSessao`), `src/routes/SessionPage.tsx` (`controlesNoPainel`), `src/routes/FaixaDeEstado.module.css`.
+- **Teste:** `src/routes/SessionPage.layout-movel.test.tsx`.
+- **Origem:** AT-961 (EP-035).
+
+<a id="rn-1434"></a>
+
+### RN-1434 — No telefone o aviso de PR cabe em uma linha {#rn-1434}
+
+- **Regra:** o aviso do PR aberto no fio ("Mergear" + nota) fica em uma linha abaixo de 768 px: a nota é cortada com reticências e o botão Mergear fica sempre visível.
+- **Onde:** `src/routes/MergearNoChat.tsx` (`MergearNoChat`), `src/routes/SessionPage.module.css` (`.mergearNoChat`).
+- **Teste:** `src/routes/MergearNoChat.test.tsx`.
+- **Origem:** AT-961 (EP-035).

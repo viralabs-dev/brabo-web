@@ -481,3 +481,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/TrilhoDeTurnos.tsx`, `src/lib/trilho-de-turnos.ts` (`pontosDoTrilho`).
 - **Teste:** `src/routes/TextoDoAgente.test.tsx` (trilho).
 - **Origem:** AT-959 (EP-035).
+
+<a id="rn-1426"></a>
+
+### RN-1426 — "Gasto por agente" lê o resumo da sessão {#rn-1426}
+
+- **Regra:** o bloco "Gasto por agente" do painel de contexto usa a mesma fonte do custo da faixa de execução, o resumo de gasto da sessão (`GET /projects/:projectId/sessions/:sessionId/token-usage`, AT-931), e não a soma do `custoMicros` dos eventos baixados. Só aparecem agentes com custo maior que zero. Nenhuma rota nova.
+- **Onde:** `src/routes/ContextAside.tsx` (`aside-gasto`), `src/lib/hooks.ts` (`useSessionTokenUsage`).
+- **Teste:** `src/routes/ContextAside.gasto.test.tsx`.
+- **Origem:** AT-978 (EP-035), v11 de 14/11/2026.
+
+<a id="rn-1427"></a>
+
+### RN-1427 — "Sem gasto ainda" só quando o resumo veio com zero {#rn-1427}
+
+- **Regra:** enquanto o resumo não chegou o bloco mostra carregando; se a leitura falha, mostra "Não foi possível ler o gasto da sessão" (EP-020: erro nunca vira estado vazio). "Sem gasto ainda" só aparece quando o resumo chegou sem custo. Com gasto de execução acima de zero o texto não está no documento.
+- **Onde:** `src/routes/ContextAside.tsx`, `aside.gastoErro` e `aside.gastoVazio` em `sessionPage.json` (4 idiomas).
+- **Teste:** `src/routes/ContextAside.gasto.test.tsx`.
+- **Origem:** AT-978 (EP-035).
+
+<a id="rn-1428"></a>
+
+### RN-1428 — A sessão de execução usa a página da v10 e se chama "Execução · #hash" {#rn-1428}
+
+- **Regra:** a sessão de execução não tem layout próprio: é a mesma `SessionPage` da v10 (altura fixa RN-1389, faixa de 40 px e painel com abas RN-1353, composer em caixa RN-1357). Sem nome, o título diz o tipo: "Execução · #6fcfa54b"; com nome vale o nome (RN-098); sessão que não é de execução segue "Sessão #hash".
+- **Onde:** `src/routes/SessionTopbar.tsx` (`topbar.tituloExecucao`, `TIPO_DE_EXECUCAO`).
+- **Teste:** `src/routes/SessionTopbar.test.tsx` (AT-978).
+- **Origem:** AT-978 (EP-035).

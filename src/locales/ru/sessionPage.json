@@ -709,14 +709,14 @@
     "recusada": "Хорошо: продолжаю спрашивать.",
     "semPapel": "Для ответа нужна роль maintainer в проекте.",
     "erroTitulo": "Не удалось ответить на предложение",
-    "aplicada": "Сделано само по правилу {{regra}}, с {{desde}}.",
+    "aplicada": "Сделано само по правилу {{regra}}, с {{desde}}",
     "outroCaminho": "Это повторилось без решения, поэтому сам я не буду. Варианты: {{opcoes}}.",
     "opcao": {
       "trocar_modelo": "сменить модель этой задачи",
       "pedir_ao_dev_lead": "спросить Dev Lead",
       "arquivar": "архивировать"
     },
-    "aplicadaSemData": "Сделано само по правилу {{regra}}.",
+    "aplicadaSemData": "Сделано само по правилу {{regra}}",
     "desfazerAntes": "Отменить можно в разделе",
     "desfazerDepois": ".",
     "desfazerLink": "отменить"

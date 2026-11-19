@@ -92,7 +92,7 @@ describe('a timeline mostra a automação (RN-1442, RN-1444)', () => {
       ev(2, 'automacao.outro_caminho', { categoria: 'aprovacao', chave: 'x@dev', opcoes: ['trocar_modelo', 'arquivar'] }),
     ]);
     expect(screen.getByTestId('automacao-aplicada').textContent).toContain('Feito sozinho pela regra de git_commit · dev');
-    expect(screen.getByTestId('automacao-aplicada').textContent).toMatch(/· desfazer$/);
+    expect(screen.getByTestId('automacao-aplicada').textContent).toMatch(/git_commit · dev, desde \S+ · desfazer$/);
     expect(screen.getByTestId('automacao-aplicada-desfazer').getAttribute('href')).toBe(
       '/projects/p1?tab=settings&group=projeto&section=regras-de-oferta',
     );

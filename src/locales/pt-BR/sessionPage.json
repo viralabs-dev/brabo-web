@@ -675,14 +675,14 @@
     "recusada": "Tudo bem: continuo perguntando.",
     "semPapel": "Responder exige o papel maintainer no projeto.",
     "erroTitulo": "Não foi possível responder à oferta",
-    "aplicada": "Feito sozinho pela regra de {{regra}}, desde {{desde}}.",
+    "aplicada": "Feito sozinho pela regra de {{regra}}, desde {{desde}}",
     "outroCaminho": "Isto já repetiu sem resolver, então não vou fazer sozinho. Saídas: {{opcoes}}.",
     "opcao": {
       "trocar_modelo": "trocar o modelo desta tarefa",
       "pedir_ao_dev_lead": "pedir ao Dev Lead",
       "arquivar": "arquivar"
     },
-    "aplicadaSemData": "Feito sozinho pela regra de {{regra}}.",
+    "aplicadaSemData": "Feito sozinho pela regra de {{regra}}",
     "desfazerAntes": "Dá para desfazer em",
     "desfazerDepois": ".",
     "desfazerLink": "desfazer"

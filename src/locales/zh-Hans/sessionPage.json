@@ -607,14 +607,14 @@
     "recusada": "好的：我会继续询问。",
     "semPapel": "回复需要项目中的 maintainer 角色。",
     "erroTitulo": "无法回复该提议",
-    "aplicada": "已按 {{regra}} 的规则自动完成，自 {{desde}} 起。",
+    "aplicada": "已按 {{regra}} 的规则自动完成，自 {{desde}} 起",
     "outroCaminho": "这已重复多次仍未解决，所以我不会自动处理。可选做法：{{opcoes}}。",
     "opcao": {
       "trocar_modelo": "更换此任务的模型",
       "pedir_ao_dev_lead": "请 Dev Lead 处理",
       "arquivar": "归档"
     },
-    "aplicadaSemData": "已按 {{regra}} 的规则自动完成。",
+    "aplicadaSemData": "已按 {{regra}} 的规则自动完成",
     "desfazerAntes": "可以在",
     "desfazerDepois": "撤销。",
     "desfazerLink": "撤销"

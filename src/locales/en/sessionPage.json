@@ -641,14 +641,14 @@
     "recusada": "Fine: I keep asking.",
     "semPapel": "Replying requires the maintainer role in the project.",
     "erroTitulo": "Could not reply to the offer",
-    "aplicada": "Done on its own by the rule of {{regra}}, since {{desde}}.",
+    "aplicada": "Done on its own by the rule of {{regra}}, since {{desde}}",
     "outroCaminho": "This has repeated without being resolved, so I will not do it on my own. Ways out: {{opcoes}}.",
     "opcao": {
       "trocar_modelo": "switch this task's model",
       "pedir_ao_dev_lead": "ask the Dev Lead",
       "arquivar": "archive"
     },
-    "aplicadaSemData": "Done on its own by the rule of {{regra}}.",
+    "aplicadaSemData": "Done on its own by the rule of {{regra}}",
     "desfazerAntes": "You can undo it in",
     "desfazerDepois": ".",
     "desfazerLink": "undo"

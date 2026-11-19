@@ -1,16 +1,22 @@
+/* AT-974: o controle começa logo depois do rótulo (340 + 520, fixos). */
 .linha {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: minmax(220px, 340px) minmax(0, 520px);
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  gap: 32px;
   padding: 14px 0;
   border-top: 1px solid var(--border);
 }
 
+@media (max-width: 720px) {
+  .linha {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+}
+
 .texto {
-  flex: 1;
-  min-width: 260px;
+  min-width: 0;
 }
 
 .rotulo {
@@ -29,5 +35,5 @@
 }
 
 .controle {
-  min-width: 150px;
+  min-width: 0;
 }

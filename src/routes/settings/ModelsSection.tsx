@@ -16,7 +16,7 @@ import {
   syncModelCatalog,
   setAreaModelBinding,
 } from '../../lib/api-client';
-import { AGENT_LIST, areaFor, nomeDoAgente } from '../../lib/agents';
+import { AGENT_LIST, AGENTS, areaFor, nomeDoAgente } from '../../lib/agents';
 import { useCurrentWorkspaceWithRole } from '../../lib/hooks';
 import { roleAtLeast } from '../../lib/roles';
 import type {
@@ -39,6 +39,7 @@ import { AGENTE_DE_START, herdouDoCriativo, montarCadeia } from './cascata.helpe
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { useAplicacaoEmLote } from './aplicar-a-todos';
 import { PreferenciaDeRoteamento } from './PreferenciaDeRoteamento';
+import { useCapacidadesDosProviders } from './PreferenciaDeRoteamento.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import {
   invalidarBindingsResolvidos,
@@ -47,6 +48,7 @@ import {
 import { AvisoDeBindingsNaoLidos, MarcaDeBindingNaoLido } from './LeituraDosBindings';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Item } from '@/components/shadcn/item';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 
 /**
  * Modelos por agente — a primeira seção do mockup (`design/SCREENS.md`).
@@ -254,6 +256,29 @@ async function sincronizarCatalogo() {
   const custoPorAgente = new Map(
     (custos ?? []).map((c) => [c.actorId, c.costMicros]),
   );
+  // Agentes com gasto primeiro (v11, L09); os outros ficam atrás de um botão.
+  const [mostrarOutros, setMostrarOutros] = useState(false);
+  const comGasto = AGENT_LIST.filter((a) => custoPorAgente.has(a.key));
+  const semGasto = AGENT_LIST.filter((a) => !custoPorAgente.has(a.key));
+  // Sem gasto lido (ou nenhum agente com gasto) a tabela não esconde nada: mostrar
+  // "0 agentes" seria afirmar o que a tela não leu (EP-020).
+  const podeResumir = custos !== undefined && comGasto.length > 0 && semGasto.length > 0;
+  const linhas = podeResumir && !mostrarOutros ? comGasto : [...comGasto, ...semGasto];
+
+  // O aviso de roteamento vale para a tabela inteira: sai da linha e vem UMA vez
+  // acima da tabela (RN-1454), por provider que não declara a capability.
+  const { data: capacidades } = useCapacidadesDosProviders(allModels.length > 0);
+  const providersSemRoteamento = [
+    ...new Set(
+      AGENT_LIST.flatMap((a) => {
+        const modelo = allModels.find((m) => m.id === bindings.doAgente(a.key)?.modelId);
+        const doProvider = modelo && capacidades?.find((c) => c.provider === modelo.provider);
+        return modelo && doProvider && !doProvider.capabilities.routingPreference
+          ? [modelo.provider]
+          : [];
+      }),
+    ),
+  ];
   const custoTotalMicros = (custos ?? []).reduce(
     (soma, c) => soma + c.costMicros,
     0,
@@ -617,6 +642,7 @@ async function sincronizarCatalogo() {
               }
               podeEditar={editavel}
               alvo={agent.name}
+              semAvisoDeCapability
               onChange={(preferencia) =>
                 resolved &&
                 handleRoutingChange(agent.key, resolved.modelId, preferencia)
@@ -688,19 +714,38 @@ async function sincronizarCatalogo() {
             </span>
           );
         }
+        const herdadoDoCriativo = herdadoDoStartDe(agent.key, resolved);
+        const textoDoChip = !resolved
+          ? t('modelsSection.deOndeVem.semModelo')
+          : herdadoDoCriativo
+            ? t('modelsSection.deOndeVem.herdaDoCriativo', { nome: AGENTS[AGENTE_DE_START].name })
+            : divergiu
+              ? t('modelsSection.deOndeVem.proprio')
+              : t(`modelsSection.deOndeVem.herda.${resolved.origin}`);
         return (
           <span className={styles.origem}>
-            <CadeiaDeCascata
-              niveis={cadeiaDoAgente(agent.key, resolved)}
-              rotulos={
-                areaDoAgente
-                  ? { area: t('cascata.niveisComNome.area', { area: areaDoAgente.label }) }
-                  : undefined
-              }
-              nomeDoModelo={nomeDoModelo}
-              rotuloSemModelo={t('modelsSection.originChainNoModel')}
-              tituloSemModelo={t('modelsSection.originChainNoModelTitle')}
-            />
+            {/* A cadeia da cascata mora no Popover do chip, e não na linha (RN-470). */}
+            <Popover>
+              <PopoverTrigger
+                className={styles.chipDeOndeVem}
+                aria-label={t('modelsSection.deOndeVem.abrir', { agente: agent.name })}
+              >
+                {textoDoChip}
+              </PopoverTrigger>
+              <PopoverContent className={styles.cadeiaNoPopover} align="start">
+                <CadeiaDeCascata
+                  niveis={cadeiaDoAgente(agent.key, resolved)}
+                  rotulos={
+                    areaDoAgente
+                      ? { area: t('cascata.niveisComNome.area', { area: areaDoAgente.label }) }
+                      : undefined
+                  }
+                  nomeDoModelo={nomeDoModelo}
+                  rotuloSemModelo={t('modelsSection.originChainNoModel')}
+                  tituloSemModelo={t('modelsSection.originChainNoModelTitle')}
+                />
+              </PopoverContent>
+            </Popover>
             {divergiu && (
               <Button
                 variant="ghost"
@@ -888,17 +933,32 @@ async function sincronizarCatalogo() {
         />
       )}
 
+      {providersSemRoteamento.length > 0 && (
+        <p className={styles.subtitle} data-roteamento="faixa">
+          {providersSemRoteamento
+            .map((provider) => t('roteamento.notSupportedCurto', { provider }))
+            .join(' · ')}
+        </p>
+      )}
+
       {/* Rolagem horizontal DENTRO da tabela: com a navegação lateral a coluna do modelo ficava estreita. */}
       <div className={styles.rolagemHorizontal}>
         <div className={styles.larguraMinima}>
           <Table
             columns={columns}
-            rows={AGENT_LIST}
+            rows={linhas}
             rowKey={(a) => a.key}
             emptyMessage={t('modelsSection.emptyMessage')}
           />
         </div>
       </div>
+      {podeResumir && (
+        <Button variant="ghost" size="sm" onClick={() => setMostrarOutros((v) => !v)}>
+          {mostrarOutros
+            ? t('modelsSection.deOndeVem.esconderOutros')
+            : t('modelsSection.deOndeVem.mostrarOutros', { count: semGasto.length })}
+        </Button>
+      )}
       {allModels.length === 0 && (
         <div className={styles.subtitle}>
           {t('modelsSection.noModelsAvailable')}{' '}

@@ -229,7 +229,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1265 — Configurações tem linhas de configuração e um Salvar no cabeçalho que cumpre a RN-469 {#rn-1265}
 
-- **Regra:** desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`).
+- **Regra:** (revisada na AT-974, [RN-1455](#rn-1455): a linha do teto do mês passou a mostrar só o valor e o link para Gastos, sem formulário; a linha vira grade com o controle ao lado do rótulo.) Desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`).
 - **Onde:** `src/routes/settings/salvar-do-cabecalho.tsx:21` (`ProvedorDoSalvarDoCabecalho`), `src/routes/settings/salvar-do-cabecalho.tsx:100` (`BarraDeSalvar`), `src/routes/settings/secao-salvavel.helpers.ts:118` (`salvarSecao`), `src/routes/settings/LinhaDeConfiguracao.tsx:5` (`LinhaDeConfiguracao`), `src/routes/settings/TetoPorTarefaSection.tsx:39` (`TetoPorTarefaSection`), `src/routes/settings/CabecalhoDaSecao.tsx:5` (`CabecalhoDaSecao`).
 - **Teste:** `src/routes/settings/salvar-do-cabecalho.test.tsx` (tudo em série e desfecho parcial nomeado).
 - **Origem:** AT-896 lane F (EP-035), ADR 0294; revisada na AT-946 (P18).
@@ -580,3 +580,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/session-timeline-montagem.tsx`.
 - **Teste:** `src/routes/OfertaDeAutomacao.test.tsx` (montagem do fio).
 - **Origem:** AT-999 (EP-035).
+
+<a id="rn-1453"></a>
+
+### RN-1453 — O convite de membro do projeto é por e-mail {#rn-1453}
+
+- **Regra:** em Configurações › Pessoas e acesso o campo do convite é "E-mail" (antes pedia o UUID do usuário); a tela envia `{ email, role }` e a api resolve o e-mail entre os membros do workspace do projeto. E-mail de fora devolve 404 com a frase da api, mostrada na linha do convite. Tabelas vazias de membros, tokens e chaves mostram uma frase só, sem cabeçalho de colunas. Regra da api: `brabo-api` RN-1453.
+- **Onde:** `src/routes/settings/MembersSection.tsx` (`handleInvite`), `src/components/ui/Table.tsx` (`semCabecalhoSeVazia`), `src/lib/api-client.ts` (`addProjectMember`).
+- **Teste:** `src/routes/settings/papel-na-secao-de-membros.test.tsx`.
+- **Origem:** AT-974 (EP-035), prancha L09 da v11.
+
+<a id="rn-1454"></a>
+
+### RN-1454 — Em Modelos por agente a linha diz só a origem; a cadeia abre num Popover e o aviso de roteamento vem uma vez {#rn-1454}
+
+- **Regra:** a coluna "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) abre num Popover do chip. Os agentes com gasto no mês vêm primeiro e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa acima da tabela, por provider. A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px`: o controle começa logo depois do rótulo.
+- **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/settings/PreferenciaDeRoteamento.tsx` (`semAvisoDeCapability`), `src/routes/settings/LinhaDeConfiguracao.module.css`.
+- **Teste:** `src/routes/settings/cascata.test.tsx`, `src/routes/settings/bindings-em-lote.test.tsx`.
+- **Origem:** AT-974 (EP-035), prancha L09 da v11; decisão do dono de 17/11 (v11 vale sobre a revisão visual).
+
+<a id="rn-1455"></a>
+
+### RN-1455 — O teto do mês tem um lugar só, Gastos; Configurações mostra o valor e o caminho {#rn-1455}
+
+- **Regra:** em Configurações › Projeto e execução a linha "Teto de gasto do mês" só mostra "<gasto> de <teto> · N%" (ou "Sem teto neste mês", ou "Não foi possível ler o teto") e o link "Editar em Gastos" para `?tab=spend#teto`; o formulário saiu (revisa a RN-1265 e a RN-1200 nesta tela). O cartão do teto em Gastos é da AT-973.
+- **Onde:** `src/routes/settings/ExecutionSection.tsx`.
+- **Teste:** `src/routes/ProjectSettingsTab.test.tsx` (ExecutionSection).
+- **Origem:** AT-974 (EP-035), decisão do dono de 17/11.

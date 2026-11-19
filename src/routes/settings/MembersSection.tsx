@@ -64,7 +64,8 @@ export function MembersSection({ projectId }: { projectId: string }) {
     queryFn: () => listProjectMembers(projectId),
     staleTime: FRESCOR_DA_CONFIGURACAO_MS,
   });
-  const [inviteUserId, setInviteUserId] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [erroDoConvite, setErroDoConvite] = useState<string | null>(null);
   const [inviteRole, setInviteRole] = useState<Role>('developer');
 
   /**
@@ -114,36 +115,18 @@ export function MembersSection({ projectId }: { projectId: string }) {
     queryClient.invalidateQueries({ queryKey: ['members', projectId] });
   }
 
-  /**
-   * Convidar — o ÚNICO dos três que NÃO usa `mensagemDaApi`, e é deliberado.
-   *
-   * As duas funções abaixo recebem um `userId` que veio da própria lista, então
-   * ele existe: o que sobra ali é 403 (papel vencido) e rede, e nesses casos a
-   * frase da api é a informação mais útil que existe. Aqui o `userId` é DIGITADO
-   * à mão, e o erro que uma pessoa realmente alcança é apontar para um usuário
-   * que não existe — um UUID bem formado passa pelo `@IsUUID()` do
-   * `AddMemberDto`, chega ao `insert` e estoura a FK `project_members.user_id →
-   * users.id`. Nenhum dos cinco filtros globais (`main.ts:119`) trata violação
-   * de FK, então o Nest responde o 500 padrão e `body.message` é
-   * "Internal server error" — `mensagemDaApi` devolveria EXATAMENTE essa frase,
-   * porque o `padrao` dela só vale para erro que não é `ApiError`.
-   *
-   * Trocar a dica por ela seria uniformizar a forma e PIORAR o conteúdo, no
-   * caminho mais provável desta caixa. Uniformizar por simetria é o que estaria
-   * errado; a régua é qual das duas frases ajuda quem está lendo.
-   */
+  /** Convidar por e-mail (AT-974, RN-1453): a api resolve o e-mail no workspace e o 404 dela diz o que faltou. */
   async function handleInvite() {
-    if (!inviteUserId.trim()) return;
+    if (!inviteEmail.trim()) return;
+    setErroDoConvite(null);
     try {
-      await addProjectMember(projectId, { userId: inviteUserId.trim(), role: inviteRole });
-      setInviteUserId('');
+      await addProjectMember(projectId, { email: inviteEmail.trim(), role: inviteRole });
+      setInviteEmail('');
       invalidate();
-    } catch {
-      showToast({
-        title: t('members.toast.inviteErrorTitle'),
-        message: t('members.toast.inviteErrorMessage'),
-        tone: 'danger',
-      });
+    } catch (erro) {
+      // O convite é por e-mail (RN-1453): a api responde 404 com a frase clara
+      // para quem não é do workspace, e ela vai na linha do convite.
+      setErroDoConvite(mensagemDaApi(erro, t('members.toast.inviteErrorMessage')));
     }
   }
 
@@ -297,13 +280,14 @@ export function MembersSection({ projectId }: { projectId: string }) {
       <div className={styles.inviteBar}>
         <div className={styles.inviteInput}>
           <Input
-            mono
             placeholder={t('members.invite.placeholder')}
             // A barra inteira, e não só o botão: um campo aberto sobre um botão
             // inerte convida a digitar um UUID para nada.
             disabled={!podeEditar}
-            value={inviteUserId}
-            onChange={(e) => setInviteUserId(e.target.value)}
+            type="email"
+            aria-label={t('members.invite.label')}
+            value={inviteEmail}
+            onChange={(e) => setInviteEmail(e.target.value)}
           />
         </div>
         <div className={styles.inviteRole}>
@@ -324,11 +308,18 @@ export function MembersSection({ projectId }: { projectId: string }) {
         </Button>
       </div>
 
+      {erroDoConvite && (
+        <p role="alert" className={styles.subtitle}>
+          {erroDoConvite}
+        </p>
+      )}
+
       <Table
         columns={columns}
         rows={members ?? []}
         rowKey={(m) => m.userId}
         emptyMessage={t('members.emptyMessage')}
+        semCabecalhoSeVazia
       />
     </SecaoDeConfiguracoes>
   );

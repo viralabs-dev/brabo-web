@@ -156,7 +156,24 @@
         "partial": "O padrão da área foi gravado, mas o modelo próprio de {{agent}} não foi removido ({{reason}})"
       }
     },
-    "ajudaRoteamento": "Roteamento: a preferência (menor preço, maior vazão, menor latência) só é declarada para um provider depois de provada contra a API real. Sem prova, a linha diz que não está provado."
+    "ajudaRoteamento": "Roteamento: a preferência (menor preço, maior vazão, menor latência) só é declarada para um provider depois de provada contra a API real. Sem prova, a linha diz que não está provado.",
+    "deOndeVem": {
+      "semModelo": "sem modelo",
+      "herdaDoCriativo": "herda do {{nome}}",
+      "herda": {
+        "agent": "herda de outro agente",
+        "session": "herda da sessão",
+        "area": "herda da área",
+        "project": "herda do projeto",
+        "workspace": "herda do workspace"
+      },
+      "proprio": "definido neste agente",
+      "abrir": "De onde vem o modelo de {{agente}}",
+      "esconderOutros": "Esconder os agentes sem gasto",
+      "mostrarOutros_one": "Mostrar o outro agente",
+      "mostrarOutros_zero": "Mostrar os outros {{count}} agentes",
+      "mostrarOutros_other": "Mostrar os outros {{count}} agentes"
+    }
   },
   "members": {
     "title": "Membros e papéis",
@@ -165,7 +182,8 @@
     "subtitleCascata": " O papel desta tabela substitui o do workspace neste projeto, nos dois sentidos — definir viewer aqui rebaixa até quem é owner do workspace. Quem alcança o projeto só pelo workspace não aparece na lista.",
     "subtitleNeedsMaintainer": " Exige papel maintainer para convidar, trocar o papel ou remover alguém.",
     "invite": {
-      "placeholder": "ID do usuário (UUID)",
+      "placeholder": "E-mail",
+      "label": "E-mail de quem já é do workspace",
       "button": "Convidar"
     },
     "table": {
@@ -329,7 +347,11 @@
     },
     "mes": {
       "rotulo": "Teto de gasto do mês",
-      "descricao": "Quanto o projeto pode gastar por mês (UTC); a virada vem dita no teto."
+      "descricao": "Quanto o projeto pode gastar por mês (UTC); a virada vem dita no teto.",
+      "semTeto": "Sem teto neste mês",
+      "valor": "{{gasto}} de {{teto}} · {{pct}}%",
+      "editarEmGastos": "Editar em Gastos",
+      "naoLido": "Não foi possível ler o teto"
     }
   },
   "promotion": {

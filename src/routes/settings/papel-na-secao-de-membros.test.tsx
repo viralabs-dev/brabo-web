@@ -146,7 +146,7 @@ async function cenario({
 
   return {
     convidar: screen.getByRole('button', { name: 'Convidar' }),
-    campoDeConvite: screen.getByPlaceholderText('ID do usuário (UUID)'),
+    campoDeConvite: screen.getByPlaceholderText('E-mail'),
     remover: screen.getByRole('button', { name: 'Remover Ana Lima' }),
     /** O `Select` da LINHA da Ana — o da barra de convite é o primeiro. */
     papelDaAna: screen.getAllByRole('combobox').at(-1)!,
@@ -352,28 +352,22 @@ describe('membros — a recusa da api tem desfecho na tela', () => {
     ).toBeInTheDocument();
   });
 
-  it('convidar mantém a DICA fixa, e não a frase da api — decisão, não descuido', async () => {
-    // O `userId` daqui é DIGITADO, e o erro que se alcança de verdade é apontar
-    // para um usuário que não existe: um UUID bem formado passa pelo
-    // `@IsUUID()`, estoura a FK `project_members.user_id → users.id`, e nenhum
-    // filtro global trata isso — o Nest responde o 500 padrão. `mensagemDaApi`
-    // devolveria "Internal server error", que é PIOR do que a dica. Nas duas
-    // ações acima o `userId` veio da lista e existe, então lá a frase da api é
-    // a informação mais útil que há. Formas diferentes, por conteúdo.
+  it('convidar vai por e-mail (RN-1453) e a frase da api (404) aparece na linha do convite', async () => {
     const { campoDeConvite, convidar } = await cenario({ noWorkspace: 'maintainer' });
-    addProjectMember.mockRejectedValue(
-      new ApiError(500, { message: 'Internal server error' }),
+    addProjectMember.mockRejectedValueOnce(
+      new ApiError(404, { message: 'Nenhum usuário do workspace tem este e-mail' }),
     );
 
-    fireEvent.change(campoDeConvite, {
-      target: { value: '3f1b2c8e-5a4d-4b7e-9c10-2d6f8a1b4c33' },
-    });
+    fireEvent.change(campoDeConvite, { target: { value: 'fora@brabo.dev' } });
     fireEvent.click(convidar);
 
     expect(
-      await screen.findByText('Verifique se o ID do usuário existe'),
+      await screen.findByText('Nenhum usuário do workspace tem este e-mail'),
     ).toBeInTheDocument();
-    expect(screen.queryByText('Internal server error')).toBeNull();
+    expect(addProjectMember).toHaveBeenCalledWith(expect.anything(), {
+      email: 'fora@brabo.dev',
+      role: 'developer',
+    });
   });
 });
 

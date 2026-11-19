@@ -315,6 +315,8 @@ relógio); tabela densa (AGENTE com avatar+nome, MODELO VIGENTE =
 `ModelPicker` inline dropdown, ORIGEM = badge colorido pelo nível da
 cascata, FALLBACK mono, EST. MÊS).
 
+**AT-974 (v11, L09):** a linha de configuração é grade (rótulo até 340px, controle até 520px, `gap: 32px`). Em Modelos a coluna "De onde vem" é um chip (a cadeia da cascata abre num Popover), os agentes com gasto vêm primeiro ("Mostrar os outros N agentes") e o aviso de roteamento aparece uma vez, numa faixa acima da tabela. Em Projeto e execução o teto do mês é só o valor com "Editar em Gastos" (`?tab=spend#teto`). O convite de membro é por e-mail e as tabelas vazias mostram uma frase sem cabeçalho.
+
 **Seção "Membros e papéis"**: subtítulo; barra de convite (input de
 e-mail + select de papel + botão "Convidar"); tabela de membros
 (MEMBRO = avatar gradiente+nome+email, PAPEL NO PROJETO = select inline,

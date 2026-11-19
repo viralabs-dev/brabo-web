@@ -271,10 +271,10 @@ describe('tabela de agentes — quem NÃO pode editar', () => {
 
     // O modelo vigente continua legível no gatilho desabilitado...
     expect(picker).toHaveTextContent(DO_AGENTE);
-    // ...a cadeia de origem continua na tela...
+    // ...a origem (chip "De onde vem") continua na tela...
     expect(
       within(screen.getByRole('region', { name: REGIAO_AGENTES })).getAllByText(
-        'agente',
+        'definido neste agente',
       ).length,
     ).toBeGreaterThan(0);
     // ...e o botão CONTINUA existindo: ele é o que diz que esta linha

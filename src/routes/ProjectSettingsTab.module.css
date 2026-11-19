@@ -876,3 +876,27 @@
   font-size: var(--fs-body);
   color: var(--text-muted);
 }
+
+/* AT-974: "De onde vem" é um chip que abre a cadeia da cascata num Popover. */
+.chipDeOndeVem {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-meta);
+  cursor: pointer;
+}
+
+.chipDeOndeVem:hover,
+.chipDeOndeVem[data-popup-open] {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.cadeiaNoPopover {
+  width: auto;
+  max-width: min(92vw, 560px);
+}

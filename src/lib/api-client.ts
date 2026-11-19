@@ -436,7 +436,7 @@ export const listWorkspaceMembers = (workspaceId: string) =>
   get<WorkspaceMemberWithUser[]>(`/workspaces/${workspaceId}/members`);
 export const addProjectMember = (
   projectId: string,
-  input: { userId: string; role: Role },
+  input: { userId: string; role: Role } | { email: string; role: Role },
 ) => post<void>(`/projects/${projectId}/members`, input);
 export const removeProjectMember = (projectId: string, userId: string) =>
   del<void>(`/projects/${projectId}/members/${userId}`);

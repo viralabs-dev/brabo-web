@@ -34,9 +34,11 @@ interface TableProps<T> {
   rows: T[];
   rowKey: (row: T) => string;
   emptyMessage?: string;
+  /** Sem linhas: só a frase, sem o cabeçalho de colunas (AT-974). */
+  semCabecalhoSeVazia?: boolean;
 }
 
-export function Table<T>({ columns, rows, rowKey, emptyMessage }: TableProps<T>) {
+export function Table<T>({ columns, rows, rowKey, emptyMessage, semCabecalhoSeVazia }: TableProps<T>) {
   const { t } = useTranslation('ui');
   const mensagemVazia = emptyMessage ?? t('table.emptyMessage');
   const gridTemplateColumns = columns.map((c) => c.width ?? '1fr').join(' ');
@@ -50,6 +52,14 @@ export function Table<T>({ columns, rows, rowKey, emptyMessage }: TableProps<T>)
   // cabeçalho some porque não há mais coluna para ele encabeçar. Coluna sem
   // rótulo (a das ações, em várias telas) ou marcada `largaNoMovel` ocupa a
   // largura inteira do cartão, com o rótulo em cima.
+  if (semCabecalhoSeVazia && rows.length === 0) {
+    return (
+      <Grade>
+        <GradeVazia>{mensagemVazia}</GradeVazia>
+      </Grade>
+    );
+  }
+
   if (movel) {
     return (
       <Grade data-layout="pilha">

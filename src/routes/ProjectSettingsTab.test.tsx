@@ -480,6 +480,16 @@ describe('BudgetSection (ADR 0110, RN-443)', () => {
 });
 
 describe('ExecutionSection', () => {
+  it('o teto do mês tem um lugar só (RN-1455): aqui é o valor e o caminho para Gastos, sem formulário', async () => {
+    getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
+    montar();
+
+    expect(await screen.findByText('Sem teto neste mês', { exact: false })).toBeTruthy();
+    const link = screen.getByRole('link', { name: 'Editar em Gastos' });
+    expect(link.getAttribute('href')).toBe('/projects/proj-1?tab=spend#teto');
+    expect(screen.queryByRole('button', { name: /salvar/i })).toBeNull();
+  });
+
   it('sem valor próprio: mostra o default (3), pré-preenchido no campo', async () => {
     getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
     montar();

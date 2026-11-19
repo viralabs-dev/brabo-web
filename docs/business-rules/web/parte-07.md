@@ -166,7 +166,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1185 — Os passos do turno se recolhem numa linha e se agrupam por INTENÇÃO, num mapa tipado; nenhum passo some {#rn-1185}
 
-- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Desde a AT-958 (RN-1392) o raciocínio, as consultas e os passos de cada turno, o último e os anteriores, moram dentro de UMA linha de trabalho (`LinhaDeTrabalho`); `ResumoDeTurno` saiu do fio (segue na visão geral do projeto). A mensagem do agente continua inteira no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
+- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Desde a AT-958 (RN-1392) o raciocínio, as consultas e os passos de cada turno, o último e os anteriores, moram dentro de UMA linha de trabalho (`LinhaDeTrabalho`); `ResumoDeTurno` saiu do fio (segue na visão geral do projeto). A mensagem do agente (a última de todas inteira; as anteriores em 3 linhas com "Ver resposta inteira", RN-1406) continua no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
 - **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
 - **Teste:** `src/lib/grupos-de-ferramenta.test.ts`, `src/components/ai-elements/passos-do-turno.test.tsx` (seletor Agrupados | Em ordem).
 - **Origem:** AT-891 (EP-035), ADR 0290/0294.
@@ -427,3 +427,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/SessionPage.module.css`; medida em `brabo-qa` (`sessao-e-canal-altura`, AT-956).
 - **Teste:** `src/routes/SessionPage.altura-fixa.test.ts` (conta do orçamento).
 - **Origem:** AT-956 (EP-035).
+
+<a id="rn-1405"></a>
+
+### RN-1405 — "Ir ao fim · N novas" e a âncora ao enviar {#rn-1405}
+
+- **Regra:** revisa a [RN-977](parte-06.md#rn-977), que mantém limiar de 80 px, pausa, gatilhos e `?highlightEvent`. Com o fio pausado, o botão diz "Ir ao fim · N novas", onde N é o número de mensagens (`chat.message` e `agent.response`) com `seq` maior que o do último evento visto quando a pessoa subiu; o clique, ou a volta ao fim, zera. Ao ENVIAR uma mensagem (não ao enfileirar), o fio retoma o acompanhamento e sobe o turno do usuário (`[data-autor="voce"]`) ao topo da janela; quando a resposta passa da janela vale o "segue no fim". A casca é o Message Scroller do kit, sem `use-stick-to-bottom`: quem decide seguir ou pausar continua sendo `useRolagemDoFio`.
+- **Onde:** `src/lib/session-rolagem.ts` (`useRolagemDoFio`, `novasDepoisDe`, `ancorarNoEnvio`), `src/components/shadcn/message-scroller.tsx`, `src/routes/SessionPage.tsx` (`enviarMensagem`).
+- **Teste:** `src/lib/session-rolagem.test.tsx` (novas, âncora).
+- **Origem:** AT-959 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1406"></a>
+
+### RN-1406 — O turno antigo fica em 3 linhas {#rn-1406}
+
+- **Regra:** revisa a [RN-1185](#rn-1185) no trecho da mensagem inteira. Toda `agent.response` que não é a última do fio fica recolhida em 3 linhas (`line-clamp` por CSS, o próprio texto, sem resumo gerado) e tem "Ver resposta inteira" quando passa de 240 caracteres ou de 3 linhas; o texto inteiro permanece no DOM. A última resposta não recolhe (RN-138).
+- **Onde:** `src/routes/TextoDoAgente.tsx`, `src/routes/session-timeline-montagem.tsx` (`ultimaRespostaId`).
+- **Teste:** `src/routes/TextoDoAgente.test.tsx`.
+- **Origem:** AT-959 (EP-035), decisão do dono de 14/11/2026.
+
+<a id="rn-1407"></a>
+
+### RN-1407 — O trilho de turnos mostra só o carregado {#rn-1407}
+
+- **Regra:** à direita do fio, em 28 px, um ponto por mensagem da janela de eventos já baixada (RN-632, nenhuma leitura nova), na cor do agente; âmbar quando o agente tem ação `pending`. Passar o mouse mostra o turno (`HoverCard`); clicar leva a ele; cada ponto é um botão com nome acessível. Se a janela não começa no primeiro evento (`events[0].seq > 1`), o trilho marca "…" e diz que mostra só os turnos carregados. Some abaixo de 768 px e com menos de 2 pontos.
+- **Onde:** `src/routes/TrilhoDeTurnos.tsx`, `src/lib/trilho-de-turnos.ts` (`pontosDoTrilho`).
+- **Teste:** `src/routes/TextoDoAgente.test.tsx` (trilho).
+- **Origem:** AT-959 (EP-035).

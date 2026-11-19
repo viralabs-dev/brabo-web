@@ -52,6 +52,14 @@ Cada peça é conferida contra a prévia `13-design/v9-estrutura/`. Decisão: [A
 | `Marker` (`components/shadcn/marker.tsx`) | divisores de handoff do fio | texto centrado com uma linha de cada lado, cor e espaço de `tokens.css` | não leva `data-slot="alert"` |
 | `ScrollFade` (`components/shadcn/scroll-fade.tsx`) | fileira de `SugestoesDeAcao` | rolagem horizontal que esmaece só a borda com conteúdo escondido (`data-fade`) | não limita o número de ações (RN-976) |
 
+## Message Scroller (AT-959)
+
+| peça | onde | o que é | não faz |
+|---|---|---|---|
+| `MessageScroller`, `MessageScrollerContent`, `MessageScrollerButton` (`components/shadcn/message-scroller.tsx`) | o fio da Sessão | Viewport (`role="log"`), conteúdo e o botão "Ir ao fim · N novas" | não decide seguir ou pausar: é o `useRolagemDoFio` (RN-977, RN-1405); sem `use-stick-to-bottom` |
+
+O trilho de turnos (`TrilhoDeTurnos`, 28 px, RN-1407) e o turno antigo em 3 linhas (`TextoDoAgente`, RN-1406) completam a v10 do fio.
+
 ## Tipografia — a escala do handoff
 
 As três famílias e o que cada uma carrega. A carga é auto-hospedada

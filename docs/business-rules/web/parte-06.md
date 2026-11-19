@@ -1227,6 +1227,6 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-977 — O fio da Sessão para de seguir quando a pessoa sobe e oferece "Ir ao fim" {#rn-977}
 
 - **Regra:** revisa a [RN-951](#rn-951), que não é editada (decisão do dono de 02/11, AT-683). O fio acompanha a última mensagem — por identidade de evento/ação, texto do streaming e `ResizeObserver` — SÓ enquanto a pessoa está no fim. Rolou para mais de 80 px do fim: o acompanhamento PAUSA (nenhum gatilho rola) e aparece o botão "Ir ao fim" (`afastado`); o clique, ou voltar ao fim rolando à mão, retoma e rola ao fim. Rolagem instantânea (`block: 'end'`), foco intocado, `?highlightEvent` como na RN-951. O texto por token continua fora do estado da página (RN-639): `SessionPage.streaming-isolado.test.tsx` segue verde.
-- **Onde:** `apps/web/src/lib/session-rolagem.ts:36` (`useRolagemDoFio`), `apps/web/src/components/ai-elements/conversation.tsx:10` (`ConversationScrollButton`).
+- **Onde:** `apps/web/src/lib/session-rolagem.ts:36` (`useRolagemDoFio`), `src/components/shadcn/message-scroller.tsx` (`MessageScrollerButton`, que substituiu o `ConversationScrollButton` na AT-959; texto e âncora ao enviar: [RN-1405](parte-07.md#rn-1405)).
 - **Teste:** `apps/web/src/lib/session-rolagem.test.tsx` (para ao subir, mostra o botão, o clique retoma; perto do fim não pausa), `apps/web/src/routes/SessionPage.streaming-isolado.test.tsx`.
 - **Origem:** AT-683 (EP-031).

@@ -1,4 +1,5 @@
 import type { Epic, Task } from './api-types';
+import { devAgentId } from './agent-status';
 
 /**
  * AT-993 (RN-1408 a RN-1410): o plano da execução como níveis do grafo de `dependeDe`.
@@ -10,8 +11,10 @@ export interface LaneDoPlano {
   id: string;
   titulo: string;
   etapa: EtapaDaLane;
-  /** Títulos das dependências ainda não mergeadas (vazio quando nada barra a lane). */
-  esperaPor: string[];
+  /** Agente que executa: o da tarefa, ou o dev do módulo; `null` sem nenhum dos dois. */
+  agente: string | null;
+  /** Dependências ainda não mergeadas; `itens` é o que a lane consome delas, vindo do levantamento (vazio sem). */
+  esperaPor: { titulo: string; itens: string[] }[];
 }
 
 export interface RodadaDoPlano {
@@ -47,15 +50,30 @@ export function planoPorRodada(epics: Epic[] | undefined): RodadaDoPlano[] {
 
   const rodadas = new Map<number, LaneDoPlano[]>();
   for (const t of tarefas) {
-    const esperaPor = deps(t).map((id) => porId.get(id)!).filter((d) => d.status !== 'done').map((d) => d.title);
+    const consome = t.levantamento?.consome ?? [];
+    const esperaPor = deps(t)
+      .map((id) => porId.get(id)!)
+      .filter((d) => d.status !== 'done')
+      .map((d) => {
+        const expoe = d.levantamento?.expoe ?? [];
+        const casados = expoe.filter((x) => consome.includes(x));
+        return { titulo: d.title, itens: (casados.length > 0 ? casados : expoe).slice(0, 2) };
+      });
     const lane: LaneDoPlano = {
       id: t.id,
       titulo: t.title,
       etapa: etapaDaTarefa(t, esperaPor.length > 0),
+      agente: t.assignedTo ?? (t.module ? devAgentId(t.module) : null),
       esperaPor,
     };
     const n = nivelDe(t, new Set());
     rodadas.set(n, [...(rodadas.get(n) ?? []), lane]);
   }
   return [...rodadas.entries()].sort((a, b) => a[0] - b[0]).map(([nivel, lanes]) => ({ nivel, lanes }));
+}
+
+/** A rodada em curso é a primeira com lane não mergeada (a última, se tudo mergeou); só ela nasce aberta. */
+export function rodadaAtual(plano: RodadaDoPlano[]): number {
+  const i = plano.findIndex((r) => r.lanes.some((l) => l.etapa !== 'mergeada'));
+  return i === -1 ? plano.length - 1 : i;
 }

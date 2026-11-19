@@ -252,7 +252,12 @@
         "mergeada": "已合并"
       },
       "espera": "等待“{{titulo}}”进入 main",
-      "esperaVarias": "等待 {{n}} 个任务进入 main：“{{titulo}}”等"
+      "esperaVarias": "等待 {{n}} 个任务进入 main：“{{titulo}}”等",
+      "rodadaFechada": "第 {{n}} 轮 · {{resumo}}",
+      "resumoMergeadas_other": "已合并 {{count}} 个",
+      "resumoTarefas_other": "{{count}} 个任务",
+      "agente": "执行者：{{agente}}",
+      "esperaCom": "等待任务“{{titulo}}”的 {{itens}} 进入 main"
     }
   },
   "acoes": {

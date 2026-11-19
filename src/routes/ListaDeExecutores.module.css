@@ -107,3 +107,12 @@
   border-radius: var(--radius-md);
   background: var(--surface-2);
 }
+
+.rodadaBotao {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}

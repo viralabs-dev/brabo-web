@@ -261,7 +261,14 @@
         "mergeada": "merged"
       },
       "espera": "Waiting for \"{{titulo}}\" to reach main",
-      "esperaVarias": "Waiting for {{n}} tasks to reach main: \"{{titulo}}\" and others"
+      "esperaVarias": "Waiting for {{n}} tasks to reach main: \"{{titulo}}\" and others",
+      "rodadaFechada": "Round {{n}} · {{resumo}}",
+      "resumoMergeadas_one": "{{count}} merged",
+      "resumoMergeadas_other": "{{count}} merged",
+      "resumoTarefas_one": "{{count}} task",
+      "resumoTarefas_other": "{{count}} tasks",
+      "agente": "Runs: {{agente}}",
+      "esperaCom": "Waiting for {{itens}} from task \"{{titulo}}\" to reach main"
     }
   },
   "acoes": {

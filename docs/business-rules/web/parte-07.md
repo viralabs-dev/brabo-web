@@ -432,7 +432,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1408 — A aba Executores agrupa as tarefas por rodada, calculada no web {#rn-1408}
 
-- **Regra:** quando alguma tarefa não arquivada depende de outra (`Task.dependeDe`, RN-1372), a aba Executores mostra o plano da execução em grupos "Rodada N de M". O nível de uma tarefa é 1 mais o maior nível das suas dependências (sem dependência, 1); a api não manda nível. Sem dependência nenhuma, ou só com tarefa arquivada, o plano não aparece (é uma rodada só).
+- **Regra:** quando alguma tarefa não arquivada depende de outra (`Task.dependeDe`, RN-1372), a aba Executores mostra o plano da execução em grupos "Rodada N de M". Só a rodada em curso (a primeira com lane não mergeada) nasce aberta; as outras são uma linha ("Rodada 1 · 3 mergeadas") que abre no clique. O nível de uma tarefa é 1 mais o maior nível das suas dependências (sem dependência, 1); a api não manda nível. Sem dependência nenhuma, ou só com tarefa arquivada, o plano não aparece (é uma rodada só).
 - **Onde:** `src/lib/plano-por-rodada.ts` (`planoPorRodada`), `src/routes/ListaDeExecutores.tsx`.
 - **Teste:** `src/lib/plano-por-rodada.test.ts`, `src/routes/FaixaEListaDeExecutores.test.tsx`.
 - **Origem:** AT-993 (EP-035, AT-952 desenho 5).
@@ -441,8 +441,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1409 — Cada lane diz a etapa {#rn-1409}
 
-- **Regra:** a etapa vem de `status` e `gateStatus`: `done` = mergeada; `in_progress` = implementando; `in_review` com gate aberto = no gate; `in_review` sem gate = pronta; `todo` = esperando (há dependência não mergeada) ou na fila. Filas não são somadas num número só (RN-467).
-- **Onde:** `src/lib/plano-por-rodada.ts` (`etapaDaTarefa`).
+- **Regra:** a etapa vem de `status` e `gateStatus`: `done` = mergeada; `in_progress` = implementando; `in_review` com gate aberto = no gate; `in_review` sem gate = pronta; `todo` = esperando (há dependência não mergeada) ou na fila. Cor só no que pede ação: verde mergeada, amarelo esperando, azul (`--ag-infra`) pronta (espera o merge de quem decide) e no gate; implementando e na fila ficam neutros. A linha diz o agente que executa (`assignedTo`, ou o dev do módulo). Filas não são somadas num número só (RN-467).
+- **Onde:** `src/lib/plano-por-rodada.ts` (`etapaDaTarefa`, `agente`), `src/routes/ListaDeExecutores.tsx` (`TOM_DA_ETAPA`).
 - **Teste:** `src/lib/plano-por-rodada.test.ts`.
 - **Origem:** AT-993 (EP-035).
 
@@ -450,7 +450,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1410 — A lane que espera diz por quê, e a rodada é só visão {#rn-1410}
 
-- **Regra:** a lane com dependência não mergeada mostra "Espera «título» entrar na main" (com mais de uma, o primeiro título e a contagem). A rodada não tem botão nem barreira: nada de "fechar rodada"; a única barreira é a rodada de integração, que não é desenhada aqui (RN-1005 segue valendo no claim).
+- **Regra:** a lane com dependência não mergeada mostra o que falta: "Espera `criarAcesso` da tarefa «título» entrar na main", com os símbolos de `levantamento.expoe` da dependência (os que a lane consome, de `levantamento.consome`, quando casam); sem levantamento, "Espera «título» entrar na main"; com mais de uma, o primeiro título e a contagem. A rodada não tem botão nem barreira: nada de "fechar rodada"; a única barreira é a rodada de integração, que não é desenhada aqui (RN-1005 segue valendo no claim).
 - **Onde:** `src/routes/ListaDeExecutores.tsx` (`plano-por-rodada`).
 - **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`.
 - **Origem:** AT-993 (EP-035), decisão 3 da AT-951/952 (14/11).

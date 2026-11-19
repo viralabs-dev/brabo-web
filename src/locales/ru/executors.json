@@ -279,7 +279,18 @@
         "mergeada": "влита"
       },
       "espera": "Ждёт попадания «{{titulo}}» в main",
-      "esperaVarias": "Ждёт попадания {{n}} задач в main: «{{titulo}}» и других"
+      "esperaVarias": "Ждёт попадания {{n}} задач в main: «{{titulo}}» и других",
+      "rodadaFechada": "Раунд {{n}} · {{resumo}}",
+      "resumoMergeadas_one": "{{count}} влита",
+      "resumoMergeadas_few": "{{count}} влиты",
+      "resumoMergeadas_many": "{{count}} влито",
+      "resumoMergeadas_other": "{{count}} влито",
+      "resumoTarefas_one": "{{count}} задача",
+      "resumoTarefas_few": "{{count}} задачи",
+      "resumoTarefas_many": "{{count}} задач",
+      "resumoTarefas_other": "{{count}} задач",
+      "agente": "Выполняет: {{agente}}",
+      "esperaCom": "Ждёт попадания {{itens}} из задачи «{{titulo}}» в main"
     }
   },
   "acoes": {

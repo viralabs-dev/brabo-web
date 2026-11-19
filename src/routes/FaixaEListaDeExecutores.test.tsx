@@ -124,24 +124,39 @@ describe('ListaDeExecutores (AT-957)', () => {
     expect(within(web).getByText(/Esperando a fundação de api/)).toBeInTheDocument();
   });
 
-  it('com dependeDe, agrupa as lanes por rodada e diz o motivo da espera com o título (AT-993)', async () => {
-    const t = (id: string, status: string, dependeDe: string[], title: string) => ({
-      ...tarefa(id, 'api', status, title), dependeDe, archivedAt: null,
+  it('com dependeDe: só a rodada em curso aberta, as outras numa linha que abre no clique; agente, cor e o que falta (AT-993)', async () => {
+    const u = userEvent.setup();
+    const t = (id: string, status: string, dependeDe: string[], title: string, extra: object = {}) => ({
+      ...tarefa(id, 'api', status, title), dependeDe, archivedAt: null, ...extra,
     });
     listBacklog.mockResolvedValue([
       { id: 'ep', stories: [{ id: 's', tasks: [
-        t('t1', 'done', [], 'Criar acesso'), t('t2', 'in_progress', ['t1'], 'Login'),
-        t('t3', 'todo', ['t2'], 'Sessão'), t('t4', 'todo', ['t3'], 'Logout'),
+        t('t1', 'done', [], 'Criar acesso'), t('t0', 'done', [], 'Base'),
+        t('t2', 'in_progress', ['t1'], 'Login', { assignedTo: 'dev-api', levantamento: { expoe: ['criarAcesso'] } }),
+        t('t3', 'todo', ['t2'], 'Sessão', { levantamento: { consome: ['criarAcesso'] } }),
+        t('t4', 'todo', ['t3'], 'Logout'),
       ] }] },
     ]);
     montar(<ListaDeExecutores projectId="p1" sessionId={AQUI} />);
     const plano = await screen.findByTestId('plano-por-rodada');
-    expect(within(plano).getAllByRole('heading').map((h) => h.textContent)).toEqual([
-      'Rodada 1 de 4', 'Rodada 2 de 4', 'Rodada 3 de 4', 'Rodada 4 de 4',
-    ]);
-    expect(within(screen.getByTestId('rodada-1')).getByText('mergeada')).toBeInTheDocument();
-    expect(within(screen.getByTestId('rodada-2')).getByText('implementando')).toBeInTheDocument();
-    expect(within(screen.getByTestId('lane-t3')).getByText('Espera «Login» entrar na main')).toBeInTheDocument();
+    // 1: rodada 1 fechada em uma linha; a 2 (em curso) aberta
+    expect(within(screen.getByTestId('rodada-1')).getByRole('button')).toHaveTextContent('Rodada 1 · 2 mergeadas');
+    expect(screen.queryByTestId('lane-t1')).not.toBeInTheDocument();
+    expect(screen.getByTestId('lane-t2')).toBeInTheDocument();
+    expect(within(plano).getByRole('button', { name: 'Rodada 3 · 1 tarefa' })).toBeInTheDocument();
+    await u.click(within(screen.getByTestId('rodada-1')).getByRole('button'));
+    expect(within(screen.getByTestId('lane-t1')).getByText('mergeada')).toBeInTheDocument();
+    // 2: cor só no que pede ação
+    expect(within(screen.getByTestId('lane-t1')).getByText('mergeada').className).toMatch(/success/);
+    expect(within(screen.getByTestId('lane-t2')).getByText('implementando').className).toMatch(/text-secondary/);
+    // 4: o agente
+    expect(within(screen.getByTestId('lane-t2')).getByText('Executa: dev-api')).toBeInTheDocument();
+    await u.click(screen.getByRole('button', { name: 'Rodada 3 · 1 tarefa' }));
+    // 3: o que falta; sem levantamento, só o título
+    expect(within(screen.getByTestId('lane-t3')).getByText('Espera criarAcesso da tarefa «Login» entrar na main')).toBeInTheDocument();
+    expect(within(screen.getByTestId('lane-t3')).getByText('esperando').className).toMatch(/warning/);
+    await u.click(await screen.findByRole('button', { name: 'Rodada 4 · 1 tarefa' }));
+    expect(screen.getByText('Espera «Sessão» entrar na main')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /fechar rodada/i })).not.toBeInTheDocument();
   });
 

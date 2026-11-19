@@ -270,7 +270,14 @@
         "mergeada": "mergeada"
       },
       "espera": "Espera «{{titulo}}» entrar na main",
-      "esperaVarias": "Espera {{n}} tarefas entrarem na main: «{{titulo}}» e outras"
+      "esperaVarias": "Espera {{n}} tarefas entrarem na main: «{{titulo}}» e outras",
+      "rodadaFechada": "Rodada {{n}} · {{resumo}}",
+      "resumoMergeadas_one": "{{count}} mergeada",
+      "resumoMergeadas_other": "{{count}} mergeadas",
+      "resumoTarefas_one": "{{count}} tarefa",
+      "resumoTarefas_other": "{{count}} tarefas",
+      "agente": "Executa: {{agente}}",
+      "esperaCom": "Espera {{itens}} da tarefa «{{titulo}}» entrar na main"
     }
   },
   "acoes": {

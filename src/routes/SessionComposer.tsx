@@ -25,6 +25,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle } f
 import { fraseDaAcao, SEM_FRASE } from '../lib/aprovacoes';
 import { Plus, X } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/shadcn/dropdown-menu';
+import { useLayoutMovel } from '../lib/layout-movel';
 import styles from './SessionPage.module.css';
 import estilos from './SessionComposer.module.css';
 
@@ -130,6 +131,7 @@ export function SessionComposer({
   podeDecidir = true,
 }: SessionComposerProps) {
   const { t } = useTranslation('sessionPage');
+  const movel = useLayoutMovel();
   const [handoffManualAberto, setHandoffManualAberto] = useState(false);
   const [ancora, setAncora] = useState<HTMLDivElement | null>(null);
   const perguntas = usePerguntasEmAberto(session?.projectId).data?.total ?? 0;
@@ -361,7 +363,7 @@ export function SessionComposer({
             )}
           </div>
         )}
-        <div className={`${styles.composer}`}>
+        <div className={`${styles.composer}`} data-layout={movel ? 'movel' : undefined}>
         <InputGroup className={styles.composerEntrada}>
           {session?.id && <AnexosPendentes sessionId={session.id} />}
           {menu.destinatarios.length > 0 && (

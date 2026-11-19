@@ -7,6 +7,7 @@ import { userIdDaSessao } from '../lib/auth';
 import type { GitActionFailureResult, ProposedAction } from '../lib/api-types';
 import { Button } from '../components/ui/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/shadcn/popover';
+import { useLayoutMovel } from '../lib/layout-movel';
 import styles from './SessionPage.module.css';
 import { GitMerge } from 'lucide-react';
 
@@ -104,7 +105,7 @@ export function MergearNoChat({
 
   const rotuloDaPr = `#${numero ?? pr.pullRequestId}`;
   return (
-    <div className={styles.mergearNoChat}>
+    <div className={styles.mergearNoChat} data-layout={useLayoutMovel() ? 'movel' : undefined}>
       {/* AT-960: a confirmação é um Popover do botão (Esc fecha e o foco volta a ele). */}
       <Popover open={confirmando} onOpenChange={(o) => !enviando && setConfirmando(o)}>
         <PopoverTrigger

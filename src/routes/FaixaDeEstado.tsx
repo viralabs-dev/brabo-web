@@ -5,6 +5,7 @@ import { Button } from '../components/ui/Button';
 import { XIcon } from '../components/ui/icons';
 import { useExecutoresAoVivo } from '../lib/executores-ao-vivo-query';
 import { contagemPorEstado, dolar } from '../lib/executores-ao-vivo';
+import { useLayoutMovel } from '../lib/layout-movel';
 import styles from './FaixaDeEstado.module.css';
 
 /**
@@ -22,6 +23,7 @@ export function FaixaDeEstado({
   sessionId: string;
   aoAbrirExecutores: () => void;
 }) {
+  const movel = useLayoutMovel();
   const { t } = useTranslation('executors');
   const { t: tp } = useTranslation('sessionPage');
   const dados = useExecutoresAoVivo(projectId, sessionId);
@@ -41,7 +43,7 @@ export function FaixaDeEstado({
     if (!encerrada || dispensada) return null;
     const concluida = encerrada.total > 0 && encerrada.done === encerrada.total;
     return (
-      <section className={styles.faixa} aria-label={t('carrossel.regiao')} data-testid="faixa-de-estado">
+      <section className={styles.faixa} data-layout={movel ? 'movel' : undefined} aria-label={t('carrossel.regiao')} data-testid="faixa-de-estado">
         <Badge tone={concluida ? 'success' : 'muted'}>
           {t(concluida ? 'carrossel.fim.concluida' : 'carrossel.fim.parada')}
         </Badge>
@@ -59,7 +61,7 @@ export function FaixaDeEstado({
   const contagem = contagemPorEstado(dados.cartoes);
   const esperam = contagem.aguardando + contagem.ocioso + contagem.bloqueado + contagem.travado;
   return (
-    <section className={styles.faixa} aria-label={t('carrossel.regiao')} data-testid="faixa-de-estado">
+    <section className={styles.faixa} data-layout={movel ? 'movel' : undefined} aria-label={t('carrossel.regiao')} data-testid="faixa-de-estado">
       <span className={styles.texto}>{t('carrossel.progresso', { done, total })}</span>
       <div
         className={styles.barra}

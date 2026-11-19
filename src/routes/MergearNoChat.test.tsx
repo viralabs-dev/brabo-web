@@ -199,3 +199,13 @@ it('AT-682: o ícone do botão é decorativo (aria-hidden) e o nome vem do texto
   expect(botao.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   expect(botao.textContent?.trim().length).toBeGreaterThan(0);
 });
+
+describe('MergearNoChat — telefone (AT-961, RN-1434)', () => {
+  it('abaixo de 768px o aviso marca o layout móvel (uma linha, Mergear visível)', async () => {
+    const { simularLayoutMovel } = await import('../test/match-media');
+    const largura = simularLayoutMovel(true);
+    montar();
+    expect(screen.getByRole('button', { name: /Mergear/ }).parentElement).toHaveAttribute('data-layout', 'movel');
+    largura.restaurar();
+  });
+});

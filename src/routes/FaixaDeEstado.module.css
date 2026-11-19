@@ -37,3 +37,9 @@
   font-family: var(--font-mono);
   color: var(--text-secondary);
 }
+
+/* AT-961 (RN-1433): no telefone os botões da faixa têm alvo de toque de 40px. */
+.faixa[data-layout='movel'] button {
+  min-height: 40px;
+  min-width: 40px;
+}

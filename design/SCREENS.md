@@ -212,8 +212,9 @@ scrollável de `EventItem`; estado vazio com mensagem contextual.
 
 ## Sessão / Chat (`Brabo Session.dc.html`)
 
-Layout: `flex-direction:column`, topbar (60px) + corpo (`flex:1` chat +
-painel único opcional de 360px, AT-957).
+Layout: `flex-direction:column`, topbar (56px) + corpo (`flex:1` chat +
+painel único opcional de 360px, AT-957). Altura fixa (AT-956, RN-1389): a página
+não rola, faixa e doca não encolhem e só o fio rola.
 
 **Topbar**: dot pulsante verde + título da sessão + metadata mono
 (`"{projeto} · #{id-curto} · {duração}"`); `ModelPicker` (dropdown,

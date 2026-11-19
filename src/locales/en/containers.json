@@ -150,5 +150,14 @@
       "nomeReservado": "reserved name"
     },
     "ajuda": "Container network"
+  },
+  "remocoes": {
+    "title": "Pending removal",
+    "help": "Deleted projects whose containers will still be removed when the broker is back.",
+    "recursos_one": "{{count}} resource",
+    "recursos_other": "{{count}} resources",
+    "tentativas_one": "{{count}} attempt",
+    "tentativas_other": "{{count}} attempts",
+    "semMotivo": "no reason recorded"
   }
 }

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-980, EP-036, RN-1445, RN-1446): o cartão de uma ação de container que falhou mostra o `motivo` (inclusive "o container subiu sem rede: DNS de X falhou") no lugar do "Falhou" mudo; `/containers` ganha a seção "Remoção pendente" (`GET /workspaces/:id/containers/remocoes-pendentes`), que some sem pendência. `openapi.json` fixado e tipos regenerados da api `dev`. i18n nos quatro idiomas. Regressivo `brabo-qa`: nenhum ajuste previsto.
+
 - Feat (AT-961, EP-035, RN-1432, RN-1433, RN-1434): a sessão no telefone segue a v10 (K05). Abaixo de 768 px a barra tem 52 px e uma linha (voltar, título, botão do painel com o contador de pendências, que abre o Sheet na aba Pendências); tipo, modelo, idioma, medidor, ideação e Encerrar vão para o topo da aba Contexto (`ControlesDaSessao`); alvos de toque de 40 px na faixa, no composer e no Mergear; o aviso de PR cabe em uma linha. Já estavam prontos: Sheet do painel (AT-957), trilho que some (AT-959), composer em caixa (AT-960), altura fixa (AT-956). Regressivo `brabo-qa`: nenhum spec móvel existente muda; a spec de altura da AT-956 em 390 × 844 fica para o qa.
 - Fix (AT-978, RN-1426, RN-1427, RN-1428): "Gasto por agente" do painel de contexto lê o resumo de gasto da sessão (`token-usage`, a mesma fonte da faixa de execução) em vez dos eventos baixados; carregando mostra esqueleto, falha mostra o erro, "Sem gasto ainda" só com o resumo em zero. Sessão de execução sem nome se chama "Execução · #hash". A página de execução já seguia a v10 (AT-956/957/960). i18n nos quatro idiomas. Regressivo `brabo-qa`: nenhum ajuste (`sessao-e-canal` já cobre `src/routes/ContextAside*`; sem seletor novo).
 

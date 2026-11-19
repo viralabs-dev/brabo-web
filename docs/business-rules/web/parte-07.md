@@ -535,3 +535,21 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/MergearNoChat.tsx` (`MergearNoChat`), `src/routes/SessionPage.module.css` (`.mergearNoChat`).
 - **Teste:** `src/routes/MergearNoChat.test.tsx`.
 - **Origem:** AT-961 (EP-035).
+
+<a id="rn-1445"></a>
+
+### RN-1445 — A falha de uma ação de container mostra o motivo no cartão {#rn-1445}
+
+- **Regra:** o cartão de aprovação de uma ação que falhou lê a causa de `executionResult.error` (ações git) OU de `executionResult.motivo` (ações de container, inclusive "o container subiu sem rede: DNS de X falhou"), em texto não vazio: 1ª frase, teto de 160 caracteres, no `Alert` abaixo de "Falhou". Sem nenhum dos dois, fica só "Falhou".
+- **Onde:** `src/components/ApprovalCard.tsx` (`causaDaFalha`), `src/lib/api-types.ts` (`ContainerActionResult`).
+- **Teste:** `src/components/ApprovalCard.falha-com-causa.test.tsx`.
+- **Origem:** AT-980 (EP-036), achado 7c.
+
+<a id="rn-1446"></a>
+
+### RN-1446 — `/containers` mostra a remoção pendente {#rn-1446}
+
+- **Regra:** a página global lê `GET /workspaces/:workspaceId/containers/remocoes-pendentes` (papel `viewer`, poll como a lista) e, havendo pendência, mostra a seção "Remoção pendente": projetos apagados cujos containers ainda serão removidos quando o broker voltar. Cada linha traz o nome (ou o `projectId` encurtado em 8 caracteres quando `projetoNome` é nulo), os recursos, as tentativas, quando e o motivo. Sem pendência, a seção não aparece.
+- **Onde:** `src/routes/ContainersPage.tsx`, `src/lib/hooks.ts` (`useRemocoesPendentes`), `src/lib/api-client.ts` (`getRemocoesPendentes`), `src/locales/*/containers.json` (`remocoes`).
+- **Teste:** `src/routes/ContainersPage.test.tsx`.
+- **Origem:** AT-980 (EP-036), lane L8.

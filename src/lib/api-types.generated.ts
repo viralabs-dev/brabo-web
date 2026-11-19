@@ -2011,7 +2011,11 @@ export interface paths {
          */
         get: operations["ProjectsController_listAutomacoesRoute"];
         put?: never;
-        post?: never;
+        /**
+         * Answers an automation offer: accept it (becomes a rule) or refuse
+         * @description RN-1436/RN-1437 (AT-998). Answers the `automacao.oferecida` session event with the same `categoria`/`chave`/`escopo`. `aceitar` writes the rule (`origem: oferta`, project scope) and logs `automacao.aceita`; `recusar` logs `automacao.recusada` and the offer never comes back. Unknown offer: 404; already answered: 409; a type that is capped today (e.g. `open_infra_pr` after a git credential was linked): 400.
+         */
+        post: operations["ProjectsController_answerOfferRoute"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2032,7 +2036,11 @@ export interface paths {
          */
         put: operations["ProjectsController_setAutomacaoRoute"];
         post?: never;
-        delete?: never;
+        /**
+         * Undoes an automation rule (puts the decision back on the person)
+         * @description RN-1437 (AT-998). Turns the rule OFF (the row stays, `origem: manual`, with who and when), so the next case asks again and the offer is not re-made. `chave` is the rule key as listed (`<tipo>@<agente>` for approvals). Unknown rule: 400.
+         */
+        delete: operations["ProjectsController_undoAutomacaoRoute"];
         options?: never;
         head?: never;
         patch?: never;
@@ -4531,6 +4539,26 @@ export interface paths {
          * @description One row per project of the workspace — since RN-521 a project that never provisioned a container is PRESENT with `registrado: null` instead of absent, because this page is the human path to start the first one. The observed state is asked of the broker only for rows `provisioning`/`running`, and only up to a per-load budget — see `naoVerificado` on rows that were skipped, and ADR 0136 for the reasoning.
          */
         get: operations["ContainersOverviewController_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/workspaces/{workspaceId}/containers/remocoes-pendentes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists deleted projects whose host resources are still pending removal
+         * @description RN-1439: one row per deleted project of the workspace whose containers (work or QA) the broker has not removed yet. A separate route, not extra rows of the list above, because that list is per-project and the project no longer exists.
+         */
+        get: operations["ContainersOverviewController_remocoesPendentes"];
         put?: never;
         post?: never;
         delete?: never;
@@ -10968,6 +10996,29 @@ export interface components {
              */
             exitCode?: number;
         };
+        RemocaoPendenteResponseDto: {
+            /**
+             * Format: uuid
+             * @description Id of the deleted project.
+             */
+            projectId: string;
+            /** @description Project name saved when it was deleted; null on rows older than migration 0096. */
+            projetoNome: string | null;
+            /**
+             * @description Resources (work container and QA instances) still to remove.
+             * @example 2
+             */
+            recursos: number;
+            /** @description Last failure reason of the cleanup. */
+            motivo: string | null;
+            /**
+             * @description Cleanup attempts so far.
+             * @example 3
+             */
+            tentativas: number;
+            /** Format: date-time */
+            atualizadoEm: string;
+        };
         RenameSessionDto: {
             /**
              * @description The new name. `null` (or a blank string) CLEARS the name and the session goes back to identifying itself only by the hashtag — this is the undo path, which is why the field accepts null instead of requiring a removal route.
@@ -11069,6 +11120,19 @@ export interface components {
              * @example secops
              */
             herdadoDoLead?: string;
+        };
+        ResponderOfertaDto: {
+            /** @enum {string} */
+            categoria: "aprovacao" | "handoff" | "desbloqueio";
+            /** @example container_start */
+            chave: string;
+            /**
+             * @description Who proposed it (the offer payload `escopo`); default empty.
+             * @example infra
+             */
+            escopo?: string;
+            /** @enum {string} */
+            decisao: "aceitar" | "recusar";
         };
         ResultadoPorProviderResponseDto: {
             /**
@@ -12476,6 +12540,8 @@ export interface components {
              * @example dev-api
              */
             agentId: string;
+            /** @description RN-1430: guidance recorded on the unblock event, same as the human one. */
+            orientacao?: string;
         };
         UnreadCursorDto: {
             /**
@@ -17585,6 +17651,66 @@ export interface operations {
             };
         };
     };
+    ProjectsController_answerOfferRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResponderOfertaDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     ProjectsController_setAutomacaoRoute: {
         parameters: {
             query?: never;
@@ -17616,6 +17742,57 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_undoAutomacaoRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                categoria: string;
+                chave: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
             };
             /** @description No token, expired token, or invalid signature. */
             401: {
@@ -25397,6 +25574,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContainerOverviewItemResponseDto"][];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role in the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Workspace doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContainersOverviewController_remocoesPendentes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemocaoPendenteResponseDto"][];
                 };
             };
             /** @description No token, expired token, or invalid signature. */

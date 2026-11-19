@@ -69,4 +69,14 @@ describe('ApprovalCard — falha com causa e próximo passo (UX-8)', () => {
     );
     expect(screen.queryByRole('alert')).toBeNull();
   });
+
+  it('AT-980 (RN-1445): container_recreate falho mostra o `motivo`, na 1ª frase', () => {
+    montar(
+      falhou(
+        { motivo: 'o container subiu sem rede: DNS de registry.npmjs.org falhou. Detalhe longo.' },
+        { actionType: 'container_recreate', payload: {} },
+      ),
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent(/^o container subiu sem rede: DNS de registry\.npmjs\.org falhou\.$/);
+  });
 });

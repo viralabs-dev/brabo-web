@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import {
   useContainersOverview,
+  useRemocoesPendentes,
   useCurrentWorkspaceWithRole,
 } from '../lib/hooks';
 import type { ContainerOverviewItem } from '../lib/api-types';
@@ -47,6 +48,8 @@ export function ContainersPage() {
   // 403. É o defeito reparável (termina em toast), não o invisível.
   const papel = atual?.role;
   const query = useContainersOverview(workspace?.id);
+  // AT-980 (RN-1446): projeto apagado cujo container o broker ainda vai remover.
+  const remocoes = useRemocoesPendentes(workspace?.id).data ?? [];
 
   // Ordenar e paginar no CLIENTE (nenhuma query nova): o react-table só decide
   // a ORDEM e a PÁGINA; o desenho segue sendo a Grade da casa.
@@ -234,6 +237,24 @@ export function ContainersPage() {
       {!query.isError && !query.isPending && (
         <>
           <SectionCards metricas={metricas} />
+          {remocoes.length > 0 && (
+            <section className={styles.remocoes} aria-labelledby="remocoes-titulo" data-testid="remocoes-pendentes">
+              <h2 id="remocoes-titulo" className={styles.remocoesTitulo}>
+                {t('remocoes.title')} <Ajuda assunto={t('remocoes.title')}>{t('remocoes.help')}</Ajuda>
+              </h2>
+              <ul className={styles.remocoesLista}>
+                {remocoes.map((r) => (
+                  <li key={r.projectId} className={styles.remocoesItem}>
+                    <strong>{r.projetoNome ?? r.projectId.slice(0, 8)}</strong>
+                    <span>{t('remocoes.recursos', { count: r.recursos })}</span>
+                    <span>{t('remocoes.tentativas', { count: r.tentativas })}</span>
+                    <span>{new Date(r.atualizadoEm).toLocaleString(i18n.language)}</span>
+                    <span className={styles.remocoesMotivo}>{r.motivo ?? t('remocoes.semMotivo')}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           <Table
             columns={columns}
             rows={tabela.getRowModel().rows.map((r) => r.original)}

@@ -72,9 +72,11 @@ function montar(eventos: SessionEvent[]) {
 describe('montarTimeline — raciocínio do agente (AT-676)', () => {
   it('mostra o bloco recolhido e abre com o texto inteiro e o total', () => {
     const container = montar([resposta({ content: 'ok', raciocinio: 'pensei muito', raciocinioTotal: 99 })]);
+    expect(container.textContent).not.toContain('pensei muito');
+    // RN-1392: o raciocínio mora dentro da linha de trabalho, que abre no lugar.
+    fireEvent.click(container.querySelector('[data-testid="linha-de-trabalho"] button')!);
     const bloco = container.querySelector('[data-testid="raciocinio-do-turno"]');
     expect(bloco).toBeTruthy();
-    expect(container.textContent).not.toContain('pensei muito');
     expect(bloco?.textContent).toContain('99');
     fireEvent.click(bloco!.querySelector('button')!);
     expect(container.textContent).toContain('pensei muito');

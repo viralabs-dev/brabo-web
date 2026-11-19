@@ -161,6 +161,7 @@
     "tentativas_other": "{{count}} tentativas",
     "semMotivo": "sem motivo registrado",
     "recursos_zero": "{{count}} recurso",
-    "tentativas_zero": "{{count}} tentativa"
+    "tentativas_zero": "{{count}} tentativa",
+    "apagado": "projeto apagado · {{id}}"
   }
 }

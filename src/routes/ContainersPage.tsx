@@ -47,6 +47,8 @@ export function ContainersPage() {
   // REBAIXADO num projeto específico ainda vê o botão aqui, e a api recusa com
   // 403. É o defeito reparável (termina em toast), não o invisível.
   const papel = atual?.role;
+  // O mesmo formato da coluna "Desde" e das linhas de remoção pendente.
+  const desde = (iso: string) => new Date(iso).toLocaleString(i18n.language);
   const query = useContainersOverview(workspace?.id);
   // AT-980 (RN-1446): projeto apagado cujo container o broker ainda vai remover.
   const remocoes = useRemocoesPendentes(workspace?.id).data ?? [];
@@ -192,7 +194,7 @@ export function ContainersPage() {
       render: (item) =>
         item.registrado ? (
           <span className={styles.desde}>
-            {new Date(item.registrado.statusChangedAt).toLocaleString(i18n.language)}
+            {desde(item.registrado.statusChangedAt)}
           </span>
         ) : (
           <span className={styles.semRegistro}>{t('table.sinceNone')}</span>
@@ -245,10 +247,10 @@ export function ContainersPage() {
               <ul className={styles.remocoesLista}>
                 {remocoes.map((r) => (
                   <li key={r.projectId} className={styles.remocoesItem}>
-                    <strong>{r.projetoNome ?? r.projectId.slice(0, 8)}</strong>
+                    <strong>{r.projetoNome ?? t('remocoes.apagado', { id: r.projectId.slice(0, 8) })}</strong>
                     <span>{t('remocoes.recursos', { count: r.recursos })}</span>
                     <span>{t('remocoes.tentativas', { count: r.tentativas })}</span>
-                    <span>{new Date(r.atualizadoEm).toLocaleString(i18n.language)}</span>
+                    <span>{desde(r.atualizadoEm)}</span>
                     <span className={styles.remocoesMotivo}>{r.motivo ?? t('remocoes.semMotivo')}</span>
                   </li>
                 ))}

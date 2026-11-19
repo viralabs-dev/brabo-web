@@ -935,7 +935,8 @@ it('AT-980 (RN-1446): remoção pendente lista o projeto apagado; sem pendência
   montar();
   const secao = screen.getByTestId('remocoes-pendentes');
   expect(secao).toHaveTextContent('Remoção pendente');
-  expect(secao).toHaveTextContent('aaaaaaaa');
+  expect(secao).toHaveTextContent('projeto apagado · aaaaaaaa');
+  expect(secao).toHaveTextContent(new Date('2026-11-19T10:00:00.000Z').toLocaleString(i18n.language));
   expect(secao).toHaveTextContent('2 recursos');
   expect(secao).toHaveTextContent('3 tentativas');
   expect(secao).toHaveTextContent('broker fora do ar');

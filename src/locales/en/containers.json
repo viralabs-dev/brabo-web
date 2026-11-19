@@ -158,6 +158,7 @@
     "recursos_other": "{{count}} resources",
     "tentativas_one": "{{count}} attempt",
     "tentativas_other": "{{count}} attempts",
-    "semMotivo": "no reason recorded"
+    "semMotivo": "no reason recorded",
+    "apagado": "deleted project · {{id}}"
   }
 }

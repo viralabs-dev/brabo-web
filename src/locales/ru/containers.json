@@ -164,6 +164,7 @@
     "recursos_few": "{{count}} ресурса",
     "recursos_many": "{{count}} ресурсов",
     "tentativas_few": "{{count}} попытки",
-    "tentativas_many": "{{count}} попыток"
+    "tentativas_many": "{{count}} попыток",
+    "apagado": "проект удалён · {{id}}"
   }
 }

@@ -155,6 +155,7 @@
     "help": "已删除项目的容器将在 broker 恢复后移除。",
     "recursos_other": "{{count}} 个资源",
     "tentativas_other": "{{count}} 次尝试",
-    "semMotivo": "未记录原因"
+    "semMotivo": "未记录原因",
+    "apagado": "已删除的项目 · {{id}}"
   }
 }

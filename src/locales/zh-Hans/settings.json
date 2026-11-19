@@ -639,6 +639,26 @@
       "error": "无法保存"
     }
   },
+  "passagensSemClique": {
+    "title": "智能体之间无需点击的交接",
+    "eyebrow": "当条件满足时",
+    "subtitle": "默认开启。开关打开时，条件一旦满足，Brabo 会自动把工作交给下一个智能体；关闭后，交接会重新等待你点击“接受”。",
+    "arquitetoInfra": {
+      "title": "架构师到 Infra",
+      "hint": "有模块图、已提出的 ADR 且架构师没有未决问题时自动接受。"
+    },
+    "infraDevLead": {
+      "title": "Infra 到 Dev Lead",
+      "hint": "基础设施 PR 已合并且项目容器已启动并验证网络时自动接受。"
+    },
+    "reason": "只有 maintainer 或工作区 owner 能更改这些开关。",
+    "switchAria": "无需点击的交接 {{passagem}}",
+    "toast": {
+      "on": "已开启无需点击的交接",
+      "off": "已关闭无需点击的交接",
+      "error": "无法保存"
+    }
+  },
   "taskBudget": {
     "title": "单任务上限与模型阶梯",
     "subtitle": "每个任务可花费多少，以及被阻塞时的模型阶梯。"

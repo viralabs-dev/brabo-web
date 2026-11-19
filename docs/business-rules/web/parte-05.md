@@ -116,7 +116,7 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:90`
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:55` (`MergearNoChat`);
-  `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:272`
+  `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:276`
   (`useRetomarTurnoDoLog`), `:881` (`PainelDaSessao`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
@@ -225,7 +225,7 @@ cláusula própria no engine. Nenhuma mudança de api nem de engine.
   `:255` (`resolverDestinatario`), `:290` (`useDestinatarioDoChat`), `:116`
   (`useAtivadosNaSessaoInteira`), `:141` (`ativadosSemJanela`);
   `apps/web/src/routes/SessionComposer.tsx:518` (`escolherDestinatario`), `:270`
-  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:348`
+  (`ofertasForaDaJanela`); `apps/web/src/routes/SessionPage.tsx:352`
   (`aceitarHandoff`); `apps/web/src/routes/session-timeline-montagem.tsx:629`
   (`handoffIdDoEvento`), `:593` (`origem`); `apps/web/src/lib/session-handoffs.ts:68`
   (`activeFor`), `:120` (`ofertasAcionaveis`), `:142` (`ofertasForaDaJanela`)
@@ -974,7 +974,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
   (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
-  (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:149`
+  (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:141`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)
@@ -1175,7 +1175,7 @@ E o composer e os campos de texto das perguntas estruturadas levam
 `data-form-type="other"`): cada foco abria o popup de autofill do navegador.
 
 - **Onde:** `apps/web/src/lib/conversa-comecou.ts:15` (`conversaComecou`),
-  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:434`
+  `:29` (`SEM_AUTOFILL`); `apps/web/src/routes/SessionPage.tsx:438`
   (`conversaComecou`); `apps/web/src/routes/SessionComposer.tsx:435`
   (`SEM_AUTOFILL`); `apps/web/src/routes/StructuredQuestionCard.tsx:242`
   (`SEM_AUTOFILL`)

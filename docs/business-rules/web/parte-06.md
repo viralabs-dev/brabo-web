@@ -28,7 +28,7 @@ keywords: [regras de negócio, web]
   permitir" e "Modo automático" no "⋯") ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)).
 - **Onde:** `apps/web/src/lib/mensagem-otimista.ts:14` (`otimistaJaNoLog`),
   `apps/web/src/lib/mensagem-otimista.ts:22` (`nomeDaMensagemOtimista`),
-  `apps/web/src/routes/SessionPage.tsx:797` (`otimistaJaNoLog`),
+  `apps/web/src/routes/SessionPage.tsx:803` (`otimistaJaNoLog`),
   `apps/web/src/routes/session-timeline-montagem.tsx:682`
   (`handleActivateExecution`)
 - **Teste:** `apps/web/src/lib/mensagem-otimista.test.ts` (feliz: o id no log
@@ -140,7 +140,7 @@ keywords: [regras de negócio, web]
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
   `apps/web/src/routes/session-timeline-montagem.tsx:984` (`respostaCortada`),
-  `apps/web/src/routes/SessionPage.tsx:445` (`continuarRespostaCortada`),
+  `apps/web/src/routes/SessionPage.tsx:449` (`continuarRespostaCortada`),
   `:695` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
   (RN-749)`: as duas linhas reconhecidas; resposta inteira e a frase no meio do

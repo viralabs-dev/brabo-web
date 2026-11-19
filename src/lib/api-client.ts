@@ -37,6 +37,7 @@ import type {
   BudgetPolicy,
   CicloDeVidaDoContainer,
   ContainerOverviewItem,
+  RemocaoPendente,
   CodeBlame,
   CodeBranchDetailList,
   CodeDiff,
@@ -588,6 +589,9 @@ export const getContainerLifecycle = (projectId: string) =>
 
 export const getContainersOverview = (workspaceId: string) =>
   get<ContainerOverviewItem[]>(`/workspaces/${workspaceId}/containers`);
+
+export const getRemocoesPendentes = (workspaceId: string) =>
+  get<RemocaoPendente[]>(`/workspaces/${workspaceId}/containers/remocoes-pendentes`);
 
 // --- Aba Code, só leitura (FASE 26) ---
 //

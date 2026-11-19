@@ -151,5 +151,17 @@
       "nomeReservado": "nome reservado"
     },
     "ajuda": "Rede do container"
+  },
+  "remocoes": {
+    "title": "Remoção pendente",
+    "help": "Projetos apagados cujos containers ainda serão removidos quando o broker voltar.",
+    "recursos_one": "{{count}} recurso",
+    "recursos_other": "{{count}} recursos",
+    "tentativas_one": "{{count}} tentativa",
+    "tentativas_other": "{{count}} tentativas",
+    "semMotivo": "sem motivo registrado",
+    "recursos_zero": "{{count}} recurso",
+    "tentativas_zero": "{{count}} tentativa",
+    "apagado": "projeto apagado · {{id}}"
   }
 }

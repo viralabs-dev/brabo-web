@@ -152,5 +152,19 @@
       "nomeReservado": "зарезервированное имя"
     },
     "ajuda": "Сеть контейнера"
+  },
+  "remocoes": {
+    "title": "Ожидает удаления",
+    "help": "Удалённые проекты, чьи контейнеры будут удалены, когда брокер вернётся.",
+    "recursos_one": "{{count}} ресурс",
+    "recursos_other": "{{count}} ресурса",
+    "tentativas_one": "{{count}} попытка",
+    "tentativas_other": "{{count}} попытки",
+    "semMotivo": "причина не записана",
+    "recursos_few": "{{count}} ресурса",
+    "recursos_many": "{{count}} ресурсов",
+    "tentativas_few": "{{count}} попытки",
+    "tentativas_many": "{{count}} попыток",
+    "apagado": "проект удалён · {{id}}"
   }
 }

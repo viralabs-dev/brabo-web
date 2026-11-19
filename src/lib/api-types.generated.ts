@@ -4547,6 +4547,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspaceId}/containers/remocoes-pendentes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists deleted projects whose host resources are still pending removal
+         * @description RN-1439: one row per deleted project of the workspace whose containers (work or QA) the broker has not removed yet. A separate route, not extra rows of the list above, because that list is per-project and the project no longer exists.
+         */
+        get: operations["ContainersOverviewController_remocoesPendentes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspaceId}/credential-spend": {
         parameters: {
             query?: never;
@@ -10975,6 +10995,29 @@ export interface components {
              * @example 1
              */
             exitCode?: number;
+        };
+        RemocaoPendenteResponseDto: {
+            /**
+             * Format: uuid
+             * @description Id of the deleted project.
+             */
+            projectId: string;
+            /** @description Project name saved when it was deleted; null on rows older than migration 0096. */
+            projetoNome: string | null;
+            /**
+             * @description Resources (work container and QA instances) still to remove.
+             * @example 2
+             */
+            recursos: number;
+            /** @description Last failure reason of the cleanup. */
+            motivo: string | null;
+            /**
+             * @description Cleanup attempts so far.
+             * @example 3
+             */
+            tentativas: number;
+            /** Format: date-time */
+            atualizadoEm: string;
         };
         RenameSessionDto: {
             /**
@@ -25531,6 +25574,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContainerOverviewItemResponseDto"][];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role in the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Workspace doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContainersOverviewController_remocoesPendentes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemocaoPendenteResponseDto"][];
                 };
             };
             /** @description No token, expired token, or invalid signature. */

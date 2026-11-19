@@ -625,7 +625,7 @@ uma.
 
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:290`
   (`useDestinatarioDoChat`, desde a RN-631),
-  `apps/web/src/lib/api-client.ts:1238` (`getSessionModelBinding`, o
+  `apps/web/src/lib/api-client.ts:1242` (`getSessionModelBinding`, o
   `agentId`), `apps/api/src/interfaces/http/llm/model-bindings.controller.ts:166`
   (`getSessionBinding`, `@Query('agentId')`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
@@ -654,7 +654,7 @@ OPCIONAL, padrão `false`: os outros consumidores do hook (Overview, Code,
 Provisioning, AdoptionPlan) não têm turno conversacional em andamento e
 ficam como estavam.
 
-- **Onde:** `apps/web/src/lib/hooks.ts:250` (`useSessionEvents`),
+- **Onde:** `apps/web/src/lib/hooks.ts:260` (`useSessionEvents`),
   `apps/web/src/routes/SessionPage.tsx:269` (`eventsQuery`)
 - **Teste:** `apps/web/src/lib/hooks.pausar-poll.test.tsx`
 - **Caso de borda:** pausar o timer não é desabilitar a query — a invalidação

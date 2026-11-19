@@ -1,7 +1,7 @@
 import type React from 'react';
 import { describe, expect, it, vi, beforeEach, beforeAll, afterAll, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen, waitFor, fireEvent, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { ContainersPage } from './ContainersPage';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import type {
@@ -42,12 +42,14 @@ vi.mock('../lib/api-client', async (importOriginal) => {
 const useContainersOverview = vi.fn();
 const useCurrentWorkspaceWithRole = vi.fn();
 const useLatestSession = vi.fn();
+const useRemocoesPendentes = vi.fn(() => ({ data: [] as unknown[] }));
 
 vi.mock('../lib/hooks', () => ({
   useContainersOverview: (...args: unknown[]) => useContainersOverview(...args),
   useCurrentWorkspaceWithRole: (...args: unknown[]) =>
     useCurrentWorkspaceWithRole(...args),
   useLatestSession: (...args: unknown[]) => useLatestSession(...args),
+  useRemocoesPendentes: () => useRemocoesPendentes(),
 }));
 
 vi.mock('../lib/auth', () => ({
@@ -918,4 +920,25 @@ it('AT-682: Parar/Remover/Subir são só ícone, com nome e legenda no hover e n
   const nome = botao.getAttribute('aria-label')!;
   act(() => botao.focus());
   expect(await screen.findByText(nome, { selector: '[data-slot="tooltip-content"]' })).toBeTruthy();
+});
+
+it('AT-980 (RN-1446): remoção pendente lista o projeto apagado; sem pendência, a seção some', () => {
+  useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
+  montar();
+  expect(screen.queryByTestId('remocoes-pendentes')).toBeNull();
+  cleanup();
+  useRemocoesPendentes.mockReturnValue({
+    data: [
+      { projectId: 'aaaaaaaa-1111-2222-3333-444444444444', projetoNome: null, recursos: 2, motivo: 'broker fora do ar', tentativas: 3, atualizadoEm: '2026-11-19T10:00:00.000Z' },
+    ],
+  });
+  montar();
+  const secao = screen.getByTestId('remocoes-pendentes');
+  expect(secao).toHaveTextContent('Remoção pendente');
+  expect(secao).toHaveTextContent('projeto apagado · aaaaaaaa');
+  expect(secao).toHaveTextContent(new Date('2026-11-19T10:00:00.000Z').toLocaleString(i18n.language));
+  expect(secao).toHaveTextContent('2 recursos');
+  expect(secao).toHaveTextContent('3 tentativas');
+  expect(secao).toHaveTextContent('broker fora do ar');
+  useRemocoesPendentes.mockReturnValue({ data: [] });
 });

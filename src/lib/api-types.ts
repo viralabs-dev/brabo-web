@@ -532,6 +532,11 @@ export interface GitActionFailureResult {
   conflictingFiles?: string[];
 }
 
+/** O que a ação de container grava ao falhar (AT-980): o motivo, em texto. */
+export interface ContainerActionResult {
+  motivo?: string;
+}
+
 export interface ProposedAction {
   id: string;
   projectId: string;
@@ -545,7 +550,12 @@ export interface ProposedAction {
   decidedBy: string | null;
   decidedAt: string | null;
   rejectionReason: string | null;
-  executionResult: TerminalExecutionResult | GitActionFailureResult | GitMergeExecutionResult | null;
+  executionResult:
+    | TerminalExecutionResult
+    | GitActionFailureResult
+    | GitMergeExecutionResult
+    | ContainerActionResult
+    | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1633,6 +1643,16 @@ export interface RegistroDeContainer {
  * container quanto quando não deu para perguntar —
  * `naoObservado`/`naoVerificado` distinguem os dois motivos de ausência.
  */
+/** Projeto apagado cujos containers ainda serão removidos (AT-980, RN-1446). */
+export interface RemocaoPendente {
+  projectId: string;
+  projetoNome: string | null;
+  recursos: number;
+  motivo: string | null;
+  tentativas: number;
+  atualizadoEm: string;
+}
+
 export interface ContainerOverviewItem {
   projectId: string;
   projectName: string;

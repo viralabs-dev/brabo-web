@@ -750,7 +750,9 @@ function causaDaFalha(
   r: ProposedAction['executionResult'],
   t: (key: string, options?: Record<string, unknown>) => string,
 ): string | null {
-  const falha = falhaGit(r);
+  // As ações de container gravam o motivo em `motivo` (AT-980), as de git em `error`.
+  const motivo = r && 'motivo' in r && typeof r.motivo === 'string' ? r.motivo : '';
+  const falha = falhaGit(r) ?? (motivo.trim() !== '' ? { error: motivo, conflictingFiles: [] } : null);
   if (!falha) return null;
   const arquivos = (falha.conflictingFiles ?? []).filter((f) => typeof f === 'string' && f !== '');
   if (arquivos.length > 0) {

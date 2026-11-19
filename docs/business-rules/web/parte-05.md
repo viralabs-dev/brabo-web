@@ -311,8 +311,8 @@ não dizia quais abas estavam abertas, e a leitura de que `/containers` estava
 numa delas é inferência pelos 106 ≈ 9 × 12.
 
 - **Código:** `apps/web/src/lib/canal-vivo.ts:54` (`INTERVALO_DO_PROJETO_MS`),
-  `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:153`
-  (`useProjectSessions`), `:184` (`useLatestSession`);
+  `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:163`
+  (`useProjectSessions`), `:194` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
   `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:221` (`invalidador`),
@@ -466,7 +466,7 @@ o do chat.
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
   (a chave por prefixo); `apps/web/src/components/PendenciasDeOutrasSessoes.tsx`
   (`porSessao`, `presenca`); `apps/web/src/components/ApprovalCard.tsx`
-  (`detalheRecolhido`); `apps/web/src/lib/hooks.ts:455`
+  (`detalheRecolhido`); `apps/web/src/lib/hooks.ts:468`
   (`useProjectPendingActions`); `apps/web/src/lib/precisa-de-voce.ts`
   (`acoesPendentes`)
 - **Teste:** `apps/web/src/routes/ProjectApprovalsTab.test.tsx` (a pendente da
@@ -767,7 +767,7 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
 
 - **Código:** `apps/web/src/lib/query-policy.ts:111`
   (`FRESCOR_DA_CONFIGURACAO_MS`); `apps/web/src/lib/hooks.ts:29`
-  (`useCurrentWorkspaceWithRole`), `:561` (`useProficiency`);
+  (`useCurrentWorkspaceWithRole`), `:571` (`useProficiency`);
   `apps/web/src/routes/settings/InstructionVersionsSection.tsx:31`
   (`instruction-versions`, sem poll); as seções de `apps/web/src/routes/settings/`
   e `apps/web/src/components/ModelCatalogSection.tsx`;
@@ -893,7 +893,7 @@ muda.
 
 - **Código:** `apps/web/src/routes/Shell.tsx:540` (`execucao`), `:554`
   (`estadoDaAtividade`);
-  `apps/web/src/lib/hooks.ts:153` (`useProjectSessions`, `frescorMs`);
+  `apps/web/src/lib/hooks.ts:163` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);
   `apps/web/src/routes/ContextAside.tsx:55` (`quantos`), `:362`
   (`totalDeArtefatos`)
@@ -1418,7 +1418,7 @@ resumo ganha — a pendente nova de uma sessão longa passa a contar em
 vivo) continua escrevendo a lista à mão: invalidar não grava dado.
 
 - **Onde:** `apps/web/src/lib/acoes-da-sessao.ts:76` (`chaveDasAcoesDaSessao`),
-  `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:461`
+  `:80` (`consultaDasAcoesDaSessao`); `apps/web/src/lib/hooks.ts:471`
   (`usePendingActions`); `apps/web/src/routes/ProjectSessionsTab.tsx:260`
   (`acoesPorSessao`)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx` (describe "a

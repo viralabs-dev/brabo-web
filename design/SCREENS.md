@@ -44,6 +44,8 @@ Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor 
 ### Demais telas
 P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), P16, P21, P18 a P20 e S00 a S06, H01 seguem a imagem de mesmo id.
 
+**Containers (`/containers`, AT-980).** Entre as métricas e a tabela aparece a seção "Remoção pendente" quando há projeto apagado com container ainda por remover: uma linha por projeto (nome, ou o id encurtado, recursos, tentativas, quando) e o motivo embaixo. Sem pendência, a seção não existe. O cartão de aprovação de uma ação de container que falhou mostra o motivo num alerta sob "Falhou" (RN-1445, RN-1446).
+
 ### Fora da v9
 Superfície quente (decisão do dono, 11/11/2026). Vistas "ADRs" e "Contratos" da Arquitetura e sub-aba "Commits" dependem de fonte (AT-883). O que a tela mostra precisa de fonte: o que ainda não tem (teto mensal, teto do workspace, "Próximo passo") entra pelas AT-934 a AT-936 e fica fora da tela até lá.
 

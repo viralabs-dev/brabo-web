@@ -77,3 +77,42 @@
   color: var(--text-secondary);
   font-size: var(--fs-meta);
 }
+
+/* AT-993: o plano por rodada (só visão, sem botão de fechar rodada). */
+.plano {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rodada {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rodadaTitulo {
+  margin: 0;
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+}
+
+.lane {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.rodadaBotao {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}

@@ -239,6 +239,25 @@
       "gateUltimoAprovadoPr": "最近结论：已通过（PR #{{pr}}）。",
       "gateUltimoMudancas": "最近结论：需要修改。",
       "gateUltimoMudancasPr": "最近结论：需要修改（PR #{{pr}}）。"
+    },
+    "plano": {
+      "titulo": "按轮次的计划",
+      "rodada": "第 {{n}} 轮，共 {{total}} 轮",
+      "etapa": {
+        "aFazer": "排队中",
+        "espera": "等待中",
+        "implementando": "实现中",
+        "noGate": "在关卡中",
+        "pronta": "就绪",
+        "mergeada": "已合并"
+      },
+      "espera": "等待“{{titulo}}”进入 main",
+      "esperaVarias": "等待 {{n}} 个任务进入 main：“{{titulo}}”等",
+      "rodadaFechada": "第 {{n}} 轮 · {{resumo}}",
+      "resumoMergeadas_other": "已合并 {{count}} 个",
+      "resumoTarefas_other": "{{count}} 个任务",
+      "agente": "执行者：{{agente}}",
+      "esperaCom": "等待任务“{{titulo}}”的 {{itens}} 进入 main"
     }
   },
   "acoes": {

@@ -59,6 +59,7 @@ export const SECOES_DE_CONFIGURACOES = [
   { chave: 'parallelism', grupo: 'projeto', ns: 'settings', titulo: 'parallelism.title' },
   { chave: 'task-budget', grupo: 'projeto', ns: 'settings', titulo: 'taskBudget.title' },
   { chave: 'auto-merge', grupo: 'projeto', ns: 'settings', titulo: 'autoMerge.title' },
+  { chave: 'passagens-sem-clique', grupo: 'projeto', ns: 'settings', titulo: 'passagensSemClique.title' },
   { chave: 'budget', grupo: 'projeto', ns: 'settings', titulo: 'budget.title' },
   { chave: 'promotion', grupo: 'projeto', ns: 'settings', titulo: 'promotion.title' },
   { chave: 'project-language', grupo: 'projeto', ns: 'settings', titulo: 'projectLanguage.title' },

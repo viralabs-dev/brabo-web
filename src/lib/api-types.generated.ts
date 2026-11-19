@@ -1998,6 +1998,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/projects/{projectId}/automacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists the project's automation keys (RN-1421, AT-994)
+         * @description The handoff passages that happen without a click (Architect→Infra, Infra→Dev Lead). A key with no row is ON by default (`origem: padrao`).
+         */
+        get: operations["ProjectsController_listAutomacoesRoute"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/automacoes/{categoria}/{chave}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Turns one automation key of the project on or off
+         * @description RN-1421 (AT-994). `categoria`/`chave` today: `handoff` + `arquiteto->infra` or `infra->dev-lead`. OFF puts the click back on that passage; the row keeps who changed it and when. Unknown key: 400.
+         */
+        put: operations["ProjectsController_setAutomacaoRoute"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/projects/{projectId}/backlog": {
         parameters: {
             query?: never;
@@ -5113,7 +5153,7 @@ export interface components {
              * @example regras_sem_historia
              * @enum {string}
              */
-            motivo?: "nao_e_po_para_arquiteto" | "oferta_nao_pendente" | "sem_regras_de_negocio" | "regras_sem_historia" | "repositorio_nao_local" | "credencial_de_git_no_projeto" | "autor_sem_papel" | "falhou";
+            motivo?: "passagem_sem_aceite_automatico" | "passagem_desligada" | "sem_module_map" | "sem_adr_proposta" | "pergunta_em_aberto" | "pr_de_infra_nao_mergeada" | "container_nao_rodando" | "oferta_nao_pendente" | "sem_regras_de_negocio" | "regras_sem_historia" | "repositorio_nao_local" | "credencial_de_git_no_projeto" | "autor_sem_papel" | "falhou";
         };
         AceiteResponseDto: {
             /**
@@ -5777,6 +5817,27 @@ export interface components {
             filesSkipped: number;
             chunksCreated: number;
             embedding: components["schemas"]["IndexEmbeddingResponseDto"];
+        };
+        AutomacaoResponseDto: {
+            /** @example handoff */
+            categoria: string;
+            /** @example arquiteto->infra */
+            chave: string;
+            /** @example true */
+            ligada: boolean;
+            /**
+             * @example padrao
+             * @enum {string}
+             */
+            origem: "padrao" | "oferta" | "manual";
+            /** @example null */
+            userId: string | null;
+            /**
+             * Format: date-time
+             * @description When the key was last changed; null while it is the default.
+             * @example null
+             */
+            alteradaEm: string | null;
         };
         AutoMergeInternalDto: {
             /** @description The session of the task that just resolved its gate; the `git_merge` is proposed in it. */
@@ -7178,15 +7239,20 @@ export interface components {
         };
         CriterioDoAceiteResponseDto: {
             /**
-             * @description Business rules in the project.
+             * @description Business rules in the project (PO → Architect only).
              * @example 4
              */
-            regras: number;
+            regras?: number;
             /**
              * @description Rules cited by at least one story — equal to `regras`.
              * @example 4
              */
-            cobertas: number;
+            cobertas?: number;
+            /**
+             * @description Which later passage was accepted without a click (RN-1421..1424).
+             * @enum {string}
+             */
+            passagem?: "arquiteto->infra" | "infra->dev-lead";
             /**
              * @description `local`: the project already had a `local` repository. `a_provisionar_local`: none yet — the accept provisions a `local` one.
              * @example a_provisionar_local
@@ -11716,6 +11782,13 @@ export interface components {
              * @example 20
              */
             limitUsd: Record<string, never> | null;
+        };
+        SetAutomacaoDto: {
+            /**
+             * @description Turns the automation on or off. Required: an omitted key is a 400.
+             * @example false
+             */
+            ligada: boolean;
         };
         SetAutoMergeDto: {
             /**
@@ -17424,6 +17497,117 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProjectResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_listAutomacoesRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_setAutomacaoRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                categoria: string;
+                chave: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetAutomacaoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
                 };
             };
             /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */

@@ -124,6 +124,27 @@ describe('ListaDeExecutores (AT-957)', () => {
     expect(within(web).getByText(/Esperando a fundação de api/)).toBeInTheDocument();
   });
 
+  it('com dependeDe, agrupa as lanes por rodada e diz o motivo da espera com o título (AT-993)', async () => {
+    const t = (id: string, status: string, dependeDe: string[], title: string) => ({
+      ...tarefa(id, 'api', status, title), dependeDe, archivedAt: null,
+    });
+    listBacklog.mockResolvedValue([
+      { id: 'ep', stories: [{ id: 's', tasks: [
+        t('t1', 'done', [], 'Criar acesso'), t('t2', 'in_progress', ['t1'], 'Login'),
+        t('t3', 'todo', ['t2'], 'Sessão'), t('t4', 'todo', ['t3'], 'Logout'),
+      ] }] },
+    ]);
+    montar(<ListaDeExecutores projectId="p1" sessionId={AQUI} />);
+    const plano = await screen.findByTestId('plano-por-rodada');
+    expect(within(plano).getAllByRole('heading').map((h) => h.textContent)).toEqual([
+      'Rodada 1 de 4', 'Rodada 2 de 4', 'Rodada 3 de 4', 'Rodada 4 de 4',
+    ]);
+    expect(within(screen.getByTestId('rodada-1')).getByText('mergeada')).toBeInTheDocument();
+    expect(within(screen.getByTestId('rodada-2')).getByText('implementando')).toBeInTheDocument();
+    expect(within(screen.getByTestId('lane-t3')).getByText('Espera «Login» entrar na main')).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /fechar rodada/i })).not.toBeInTheDocument();
+  });
+
   it('sem execução vigente diz que não há execução', async () => {
     getActiveExecutionSession.mockResolvedValue(null);
     montar(<ListaDeExecutores projectId="p1" sessionId={AQUI} />);

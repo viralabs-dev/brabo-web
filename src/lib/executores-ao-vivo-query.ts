@@ -12,6 +12,7 @@ import { connectSessionHeartbeat } from './session-channel';
 import { criarInvalidadorDoCanal, intervaloDaSessao, useCanalDaSessaoVivo } from './canal-vivo';
 import { pollQueParaNoErro } from './query-policy';
 import { cartoesDaExecucao, progressoDaExecucao } from './executores-ao-vivo';
+import { planoPorRodada } from './plano-por-rodada';
 
 /**
  * AT-880: o que o carrossel do chat lê da execução VIGENTE (RN-139), que roda
@@ -83,11 +84,13 @@ export function useExecutoresAoVivo(projectId: string, sessionId: string) {
     [execId, moduleMap, eventos.data, backlog.data, prs.data],
   );
   const progresso = useMemo(() => progressoDaExecucao(backlog.data), [backlog.data]);
+  const plano = useMemo(() => planoPorRodada(backlog.data), [backlog.data]);
   const usos = custo.data ?? [];
   return {
     execId,
     cartoes,
     progresso,
+    plano,
     custoDe: (agentId: string) => usos.find((u) => u.actorId === agentId)?.costMicros,
     custoTotal: usos.reduce((n, u) => n + u.costMicros, 0),
   };

@@ -257,6 +257,20 @@
       "gateUltimoAprovadoPr": "Último veredito: aprovado (PR #{{pr}}).",
       "gateUltimoMudancas": "Último veredito: mudanças solicitadas.",
       "gateUltimoMudancasPr": "Último veredito: mudanças solicitadas (PR #{{pr}})."
+    },
+    "plano": {
+      "titulo": "Plano por rodada",
+      "rodada": "Rodada {{n}} de {{total}}",
+      "etapa": {
+        "aFazer": "na fila",
+        "espera": "esperando",
+        "implementando": "implementando",
+        "noGate": "no gate",
+        "pronta": "pronta",
+        "mergeada": "mergeada"
+      },
+      "espera": "Espera «{{titulo}}» entrar na main",
+      "esperaVarias": "Espera {{n}} tarefas entrarem na main: «{{titulo}}» e outras"
     }
   },
   "acoes": {

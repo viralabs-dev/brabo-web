@@ -1111,6 +1111,8 @@ export interface Task {
   /** AT-912: quando e por quê a tarefa `todo` foi arquivada; a arquivada fica no histórico. */
   archivedAt?: string | null;
   archivedReason?: string | null;
+  /** AT-990 (RN-1372): tarefas que precisam estar `done` antes desta ser pegável. */
+  dependeDe?: string[];
   createdAt: string;
   updatedAt: string;
 }

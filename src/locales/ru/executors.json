@@ -266,6 +266,20 @@
       "gateUltimoAprovadoPr": "Последний вердикт: одобрено (PR #{{pr}}).",
       "gateUltimoMudancas": "Последний вердикт: нужны изменения.",
       "gateUltimoMudancasPr": "Последний вердикт: нужны изменения (PR #{{pr}})."
+    },
+    "plano": {
+      "titulo": "План по раундам",
+      "rodada": "Раунд {{n}} из {{total}}",
+      "etapa": {
+        "aFazer": "в очереди",
+        "espera": "ожидание",
+        "implementando": "в работе",
+        "noGate": "на проверке",
+        "pronta": "готова",
+        "mergeada": "влита"
+      },
+      "espera": "Ждёт попадания «{{titulo}}» в main",
+      "esperaVarias": "Ждёт попадания {{n}} задач в main: «{{titulo}}» и других"
     }
   },
   "acoes": {

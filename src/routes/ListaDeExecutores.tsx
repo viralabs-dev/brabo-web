@@ -45,6 +45,34 @@ export function ListaDeExecutores({ projectId, sessionId }: { projectId: string;
       <Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'executores' }} className={styles.link}>
         {t('carrossel.verExecutores')}
       </Link>
+      {dados.plano.length > 0 && (
+        <section className={styles.plano} aria-label={t('carrossel.plano.titulo')} data-testid="plano-por-rodada">
+          {dados.plano.map((r, i) => (
+            <div key={r.nivel} className={styles.rodada} data-testid={`rodada-${i + 1}`}>
+              <h4 className={styles.rodadaTitulo}>
+                {t('carrossel.plano.rodada', { n: i + 1, total: dados.plano.length })}
+              </h4>
+              <ul className={styles.itens}>
+                {r.lanes.map((l) => (
+                  <li key={l.id} className={styles.lane} data-testid={`lane-${l.id}`}>
+                    <span>{l.titulo}</span>
+                    <Badge tone={l.etapa === 'mergeada' ? 'success' : l.etapa === 'espera' ? 'warning' : 'muted'}>
+                      {t(`carrossel.plano.etapa.${l.etapa}`)}
+                    </Badge>
+                    {l.esperaPor.length > 0 && (
+                      <p className={styles.texto}>
+                        {l.esperaPor.length === 1
+                          ? t('carrossel.plano.espera', { titulo: l.esperaPor[0] })
+                          : t('carrossel.plano.esperaVarias', { n: l.esperaPor.length, titulo: l.esperaPor[0] })}
+                      </p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
+      )}
       <ul className={styles.itens} aria-label={t('carrossel.titulo')}>
         {dados.cartoes.map((c) => (
           <li key={c.agentId} className={styles.item} data-testid={`executor-${c.agentId}`}>

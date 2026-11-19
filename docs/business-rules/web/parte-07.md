@@ -33,7 +33,7 @@ keywords: [regras de negócio, web]
 ### RN-980 — As Configurações do projeto são uma página por grupo, com os grupos como abas dentro da página; só o grupo aberto monta {#rn-980}
 
 - **Regra:** revisa a [RN-645](parte-05.md#rn-645) no item 3. O sumário lateral deixa de existir: cada grupo do registro (`modelos`, `projeto`, `pessoas`, `avancado`) é uma PÁGINA, e os quatro são ABAS numa faixa no topo da página de Configurações (setas, Home e End; `aria-selected`/`aria-controls`); "Configurações" segue UM item só da barra lateral, sem sub-itens (decisão do dono, 03/11). O endereço é `?tab=settings&group=<grupo>`; Modelos é a página padrão. `?section=` continua valendo: abre a página do grupo da seção e rola até ela, e vence um `group` incoerente; chave aposentada ([RN-911](parte-06.md#rn-911)) ou desconhecida abre Modelos no topo. O grupo é derivado do campo `grupo` do registro, nunca de outra lista. Só as seções do grupo aberto montam, então a carga busca só o que é da página (abrindo em Modelos, no máximo 21 requisições, contra 30; teto em `configuracoes.orcamento.test.tsx`). Os itens 1 e 2 da RN-645 (frescor de um minuto, sem poll) não mudam, e trocar de página dentro do minuto não refaz busca. Trocar de página descarta rascunho não salvo, como trocar de aba.
-- **Onde:** `apps/web/src/routes/settings/sumario.ts:114` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:119` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`).
+- **Onde:** `apps/web/src/routes/settings/sumario.ts:115` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:120` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:71` (`ProjectSettingsTab`).
 - **Teste:** `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (página só com as seções do grupo; todo `?section=` antigo cai no seu grupo; rola até a seção), `apps/web/src/routes/configuracoes.orcamento.test.tsx` (carga de Modelos não busca o resto), `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (a faixa de abas e o teclado).
 - **Origem:** AT-719 (EP-031).
 
@@ -158,7 +158,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
 - **Regra:** a S06 (Gastos) mostra ao `owner` o teto do mês do workspace (`GET/PUT workspaces/:id/budget`, 403 para os demais), com o mesmo medidor, previsão e legenda da RN-1200, e o editor (valor e política `block`/`allow`). Quem não é owner não lê o valor (a api recusa): vê, em texto, que o teto é do owner e que só o conhece quando uma chamada é recusada ("Budget do workspace atingiu o teto do mês"). O controle nunca é oferecido a quem a api não deixa usar (RN-102); erro de leitura de quem não edita é silencioso. O teto do workspace soma todos os projetos e é independente dos de projeto, sessão e área: basta um no limite com `block` para recusar.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1360` (`getWorkspaceBudget`).
+- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1375` (`getWorkspaceBudget`).
 - **Teste:** `src/components/TetoDoMes.test.tsx` (owner edita; sem papel fica inerte com o motivo; 403 silencioso).
 - **Origem:** AT-935 (EP-035).
 

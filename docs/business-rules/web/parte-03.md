@@ -913,8 +913,8 @@ consegue nomear.
   quatro estados e o nó do Criativo), `:73` (`herdouDoCriativo` — a dedução e
   seu limite), `apps/web/src/routes/settings/cascata.tsx:196` (`CadeiaDeCascata`),
   `apps/web/src/routes/settings/ModelsSection.tsx:178` (`cadeiaDoAgente`),
-  `:345` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
-  por que a linha só relê no sucesso), `:427` (`handleClearAgentBinding` — os
+  `:370` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
+  por que a linha só relê no sucesso), `:452` (`handleClearAgentBinding` — os
   três desfechos, e por que o 404 tem o dele), `:359` (coluna Origem), `:429`
   (`não há nível abaixo`), `:448` (`sem gasto ainda`),
   `apps/web/src/components/ModelPicker.tsx:102` (`selected` sai do prop — o

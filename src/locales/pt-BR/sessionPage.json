@@ -660,5 +660,29 @@
     "pendencias": "Pendências",
     "pendenciasVazio": "Nenhuma pendência neste projeto.",
     "executoresVazio": "Nenhuma execução em andamento."
+  },
+  "ofertaDeAutomacao": {
+    "texto": {
+      "aprovacao": "Você aprovou {{acao}} de {{agente}} {{n}} vezes seguidas, sem mudar nada. Quer que eu faça isso sozinho neste projeto? Continua pedindo você: o que muda de risco, de custo ou de destino.",
+      "handoff": "Você aceitou a passagem {{chave}} {{n}} vezes seguidas. Quer que eu faça essa passagem sozinho neste projeto? Continua pedindo você: o que sai do critério.",
+      "desbloqueio": "Você desbloqueou tarefas do mesmo tipo ({{chave}}) {{n}} vezes seguidas. Quer que eu desbloqueie sozinho neste projeto? Continua pedindo você: o que o critério não cobre.",
+      "generico": "Você repetiu a decisão {{chave}}. Quer que eu a tome sozinho neste projeto?"
+    },
+    "desfazer": "Dá para desfazer em {{onde}}.",
+    "ondePadrao": "Configurações › Projeto",
+    "aceitar": "Fazer sozinho daqui em diante",
+    "recusar": "Agora não",
+    "aceita": "Combinado: daqui em diante eu faço sozinho.",
+    "recusada": "Tudo bem: continuo perguntando.",
+    "semPapel": "Responder exige o papel maintainer no projeto.",
+    "erroTitulo": "Não foi possível responder à oferta",
+    "aplicada": "Feito sozinho pela regra de {{regra}}, desde {{desde}}.",
+    "outroCaminho": "Isto já repetiu sem resolver, então não vou fazer sozinho. Saídas: {{opcoes}}.",
+    "opcao": {
+      "trocar_modelo": "trocar o modelo desta tarefa",
+      "pedir_ao_dev_lead": "pedir ao Dev Lead",
+      "arquivar": "arquivar"
+    },
+    "aplicadaSemData": "Feito sozinho pela regra de {{regra}}."
   }
 }

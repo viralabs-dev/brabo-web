@@ -76,6 +76,8 @@ import { agruparNarracoesDoTurno } from './session-fio';
 import { camposDoArtefato } from '../lib/artefato-do-fio';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
 import { DestravarExecucao } from './DestravarExecucao';
+import { OfertaDeAutomacao } from './OfertaDeAutomacao';
+import { respostaDaOferta } from '../lib/automacao-oferta';
 import { textoDaExecucaoParada } from './DestravarExecucao.helpers';
 import { execucaoParadaDe, type ExecucaoParada } from '../lib/execution';
 import { RetomarGateEstacionado } from './RetomarGateEstacionado';
@@ -1208,6 +1210,63 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             }
           >
             {t('gateInterrompido.aviso', { gate: ciclo.gate, taskId: ciclo.taskId, hora })}
+          </MensagemDeConversa>
+        ),
+      });
+    } else if (event.type === 'automacao.oferecida') {
+      // RN-1442 (AT-999): a oferta de "fazer sozinho daqui em diante"; o desfecho
+      // vem dos eventos `automacao.aceita`/`recusada` que a seguem no fio.
+      empurrar({
+        node: (
+          <MensagemDeConversa
+            key={event.id}
+            data-testid="automacao-oferecida"
+            avatar={
+              <span className={styles.avatar}>
+                <AlertCircleIcon size={15} />
+              </span>
+            }
+          >
+            <OfertaDeAutomacao
+              projectId={projectId}
+              payload={event.payload as never}
+              resposta={respostaDaOferta(events, event)}
+              podeResponder={podeAtivarAutoMode}
+            />
+          </MensagemDeConversa>
+        ),
+      });
+    } else if (event.type === 'automacao.aplicada') {
+      // RN-1444 (AT-999): o que a regra fez sozinha, com a data em que nasceu.
+      const p = event.payload as Record<string, string | undefined>;
+      // O payload da aprovação não traz `categoria` (só `actionType`/`agente`); handoff traz `chave`, desbloqueio `regra`.
+      const regra = p.actionType ? `${p.actionType} · ${p.agente ?? ''}` : (p.chave ?? p.regra ?? '');
+      const desde = p.regraDesde ? new Date(p.regraDesde).toLocaleDateString() : '';
+      empurrar({
+        node: (
+          <MensagemDeConversa key={event.id} data-testid="automacao-aplicada">
+            {t(desde ? 'ofertaDeAutomacao.aplicada' : 'ofertaDeAutomacao.aplicadaSemData', { regra, desde })}
+          </MensagemDeConversa>
+        ),
+      });
+    } else if (event.type === 'automacao.outro_caminho') {
+      // RN-1444 (AT-999): o anti-laço — sem botão de automatizar, só as saídas.
+      const p = event.payload as { opcoes?: string[] };
+      const opcoes = (p.opcoes ?? [])
+        .map((o) => t(`ofertaDeAutomacao.opcao.${o}`, { defaultValue: o }))
+        .join(' · ');
+      empurrar({
+        node: (
+          <MensagemDeConversa
+            key={event.id}
+            data-testid="automacao-outro-caminho"
+            avatar={
+              <span className={styles.avatar}>
+                <AlertCircleIcon size={15} />
+              </span>
+            }
+          >
+            {t('ofertaDeAutomacao.outroCaminho', { opcoes })}
           </MensagemDeConversa>
         ),
       });

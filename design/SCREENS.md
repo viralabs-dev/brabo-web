@@ -38,6 +38,9 @@ Faixa "Precisa de você" (`--accent-panel`) com o item mais urgente e as ações
 ### C30 / C31 — Sessão
 Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor da sessão. Fio com UMA linha de trabalho por turno, recolhida ("Trabalhou 14,0 s · 5 passos", AT-958, RN-1392) que abre no lugar com raciocínio, consultas e passos (até 3 chips de ferramenta e custo no bloco de passos); em curso nasce aberta, sem segundos (RN-1393). Texto do agente em 62ch e aprovação em linha (variante única). Passos abertos agrupados por intenção, a partir de um mapa tipado ferramenta para grupo; o bloco Raciocínio só para `developer` ou mais (ADR 0249). Painel único de 360 px com as abas Contexto, Executores e Pendências; abaixo de 1024 px é o Sheet (AT-957, RN-1353). A execução vigente é uma faixa de 40 px acima do fio (RN-1354). No telefone (< 768 px, K05, AT-961) a barra tem 52 px e uma linha: voltar, título e o botão do painel com o contador de pendências; tipo, modelo, idioma, medidor, ideação e Encerrar ficam no topo da aba Contexto (RN-1432, RN-1433); alvos de toque de 40 px e aviso de PR em uma linha (RN-1434).
 
+### Oferta de "fazer sozinho" (AT-999)
+- No fio, `OfertaDeAutomacao`: frase da categoria, onde desfazer e duas ações em texto ("Fazer sozinho daqui em diante" primária, "Agora não" secundária), na faixa `.mergearNoChat` dos cartões do fio; respondida, só a frase do desfecho. Configurações › Projeto: "Regras de fazer sozinho", uma linha (`Item` outline) por regra com "Desfazer" à direita, abaixo de "Passagens entre agentes sem clique".
+
 ### Demais telas
 P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), P16, P21, P18 a P20 e S00 a S06, H01 seguem a imagem de mesmo id.
 

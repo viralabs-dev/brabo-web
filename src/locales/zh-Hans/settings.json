@@ -719,5 +719,21 @@
       "saved": "工具路由器已保存",
       "error": "无法保存"
     }
+  },
+  "regrasDeOferta": {
+    "title": "自动完成规则",
+    "eyebrow": "在聊天中接受",
+    "subtitle": "你在聊天中通过“今后自动完成”接受的规则。撤销后会重新由你点击确认。",
+    "categoria": {
+      "aprovacao": "批准",
+      "handoff": "代理之间的交接",
+      "desbloqueio": "解除阻塞"
+    },
+    "desfazer": "撤销",
+    "reason": "只有 maintainer 或工作区 owner 可以撤销这些规则。",
+    "toast": {
+      "ok": "规则已撤销",
+      "error": "无法撤销"
+    }
   }
 }

@@ -42,7 +42,7 @@ Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor 
 - No fio, `OfertaDeAutomacao`: frase da categoria, onde desfazer e duas ações em texto ("Fazer sozinho daqui em diante" primária, "Não, continue perguntando" secundária), na faixa `.mergearNoChat` dos cartões do fio; respondida, só a frase do desfecho. Configurações › Projeto: "Regras de fazer sozinho", uma linha (`Item` outline) por regra com "Desfazer" à direita, abaixo de "Passagens entre agentes sem clique".
 
 ### Demais telas
-Backlog (L04, AT-969, RN-1447 a RN-1449): filtros numa linha que quebra (busca, "Com pergunta aberta", módulo, Por épico/Quadro); lista + Rastreabilidade de 320 px a partir de 1100 px do contêiner, uma coluna abaixo; selo "pronta para executar" / "em execução" / "concluída" e épico "N de M concluídas" com barra.
+Backlog (L04, AT-969, RN-1447 a RN-1449): filtros numa linha que quebra (busca, "Com pergunta aberta", módulo, Por épico/Quadro); lista + Rastreabilidade de 320 px a partir de 1000 px do contêiner, uma coluna abaixo; selo "pronta para executar" / "em execução" / "concluída" e épico "N de M concluídas" com barra.
 
 P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), P16, P21, P18 a P20 e S00 a S06, H01 seguem a imagem de mesmo id.
 

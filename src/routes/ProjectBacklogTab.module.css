@@ -1,4 +1,4 @@
-/* RN-1449: uma coluna no estreito; lista + Rastreabilidade (320px) a partir de 1100px do contêiner. */
+/* RN-1449: uma coluna no estreito; lista + Rastreabilidade (320px) a partir de 1000px do contêiner. */
 .pagina {
   container-type: inline-size;
 }
@@ -10,7 +10,7 @@
   align-items: start;
 }
 
-@container (min-width: 1100px) {
+@container (min-width: 1000px) {
   .wrapper {
     grid-template-columns: minmax(0, 1fr) 320px;
   }

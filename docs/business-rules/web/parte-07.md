@@ -549,7 +549,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1449 — A Rastreabilidade vai para baixo da lista no estreito {#rn-1449}
 
-- **Regra:** o contêiner da aba é uma grade `minmax(0, 1fr) 320px` a partir de 1100 px de largura do contêiner (container query) e uma coluna abaixo disso, com a Rastreabilidade depois da lista.
+- **Regra:** o contêiner da aba é uma grade `minmax(0, 1fr) 320px` a partir de 1000 px de largura do contêiner (container query; o corte é do contêiner, não da janela: cerca de 1304 px de janela, então em 1366 × 768 a Rastreabilidade fica ao lado) e uma coluna abaixo disso, com a Rastreabilidade depois da lista.
 - **Onde:** `src/routes/ProjectBacklogTab.module.css` (`.pagina`, `.wrapper`).
 - **Teste:** `src/routes/ProjectBacklogTab.test.tsx` cobre a estrutura; a largura se confere na captura (CSS de contêiner não roda no jsdom).
 - **Origem:** AT-969 (EP-035).

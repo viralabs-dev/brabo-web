@@ -469,7 +469,16 @@
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "会话对话",
-    "irAoFim": "跳到末尾"
+    "irAoFim": "跳到末尾",
+    "irAoFimComNovas_other": "跳到末尾 · {{count}} 条新消息",
+    "verRespostaInteira": "查看完整回复",
+    "recolherResposta": "收起回复"
+  },
+  "trilho": {
+    "rotulo": "对话轮次",
+    "voce": "你",
+    "turnoN": "第 {{n}} 轮：{{nome}}",
+    "recorte": "仅显示已加载的轮次；之前还有更多"
   },
   "fila": {
     "painel": "队列中的消息",

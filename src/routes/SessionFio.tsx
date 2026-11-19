@@ -196,6 +196,7 @@ export function SessionFio({
         <MensagemDeConversa
           align="end"
           variant="tinted"
+          data-autor="voce"
           style={{ ['--msg-color' as string]: 'var(--accent)' } as CSSProperties}
           avatar={
             <span className={[styles.avatar, styles.user].join(' ')}>

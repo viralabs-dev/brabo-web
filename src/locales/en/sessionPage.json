@@ -495,7 +495,17 @@
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "Session conversation",
-    "irAoFim": "Go to end"
+    "irAoFim": "Go to end",
+    "irAoFimComNovas_one": "Go to end · {{count}} new",
+    "irAoFimComNovas_other": "Go to end · {{count}} new",
+    "verRespostaInteira": "View full response",
+    "recolherResposta": "Collapse response"
+  },
+  "trilho": {
+    "rotulo": "Conversation turns",
+    "voce": "You",
+    "turnoN": "Turn {{n}}: {{nome}}",
+    "recorte": "Only the loaded turns; there are more before"
   },
   "fila": {
     "painel": "Queued messages",

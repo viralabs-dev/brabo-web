@@ -547,7 +547,19 @@
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "Разговор сессии",
-    "irAoFim": "К концу"
+    "irAoFim": "К концу",
+    "irAoFimComNovas_one": "К концу · новых: {{count}}",
+    "irAoFimComNovas_few": "К концу · новых: {{count}}",
+    "irAoFimComNovas_many": "К концу · новых: {{count}}",
+    "irAoFimComNovas_other": "К концу · новых: {{count}}",
+    "verRespostaInteira": "Показать весь ответ",
+    "recolherResposta": "Свернуть ответ"
+  },
+  "trilho": {
+    "rotulo": "Ходы беседы",
+    "voce": "Вы",
+    "turnoN": "Ход {{n}}: {{nome}}",
+    "recorte": "Только загруженные ходы; раньше есть ещё"
   },
   "fila": {
     "painel": "Сообщения в очереди",

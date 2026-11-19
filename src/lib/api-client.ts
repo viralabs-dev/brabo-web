@@ -392,6 +392,21 @@ export const updateProject = (
 export const setMergeAutomatico = (projectId: string, habilitado: boolean) =>
   put<Project>(`/projects/${projectId}/auto-merge`, { habilitado });
 
+/** As passagens entre agentes sem clique (RN-1421, AT-994): `maintainer` liga e desliga. */
+export interface AutomacaoDoProjeto {
+  categoria: string;
+  chave: 'arquiteto->infra' | 'infra->dev-lead' | (string & {});
+  ligada: boolean;
+  origem: 'padrao' | 'oferta' | 'manual';
+}
+export const listAutomacoes = (projectId: string) =>
+  get<AutomacaoDoProjeto[]>(`/projects/${projectId}/automacoes`);
+export const setAutomacao = (projectId: string, categoria: string, chave: string, ligada: boolean) =>
+  put<AutomacaoDoProjeto[]>(
+    `/projects/${projectId}/automacoes/${encodeURIComponent(categoria)}/${encodeURIComponent(chave)}`,
+    { ligada },
+  );
+
 /** O roteador de ferramentas do workspace e a situação do Laya (AT-626): `owner` troca. */
 export const getWorkspaceToolRouter = (workspaceId: string) =>
   get<ToolRouter>(`/workspaces/${workspaceId}/tool-router`);

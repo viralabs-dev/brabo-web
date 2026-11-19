@@ -35,8 +35,15 @@ describe('OfertaDeAutomacao (RN-1442)', () => {
         categoria: 'aprovacao', chave: 'git_commit@dev', escopo: 'projeto', decisao: 'aceitar',
       }),
     );
-    fireEvent.click(screen.getByRole('button', { name: /Agora não/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Não, continue perguntando/ }));
     await waitFor(() => expect(responderAutomacao).toHaveBeenLastCalledWith('p1', expect.objectContaining({ decisao: 'recusar' })));
+  });
+
+  it('o "dá para desfazer" é link para a seção das regras, montado na web', () => {
+    render(<OfertaDeAutomacao projectId="p1" payload={{ ...payload, comoDesfazer: 'DELETE /x' } as never} resposta="pendente" podeResponder />);
+    const link = screen.getByTestId('oferta-de-automacao-desfazer');
+    expect(link.getAttribute('href')).toBe('/projects/p1?tab=settings&group=projeto&section=regras-de-oferta');
+    expect(screen.getByTestId('oferta-de-automacao').textContent).not.toContain('DELETE');
   });
 
   it('respondida some com os botões e diz o desfecho', () => {
@@ -47,7 +54,7 @@ describe('OfertaDeAutomacao (RN-1442)', () => {
 
   it('sem o papel os botões ficam inertes com o motivo', () => {
     render(<OfertaDeAutomacao projectId="p1" payload={payload} resposta="pendente" podeResponder={false} />);
-    expect(screen.getByRole('button', { name: /Agora não/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Não, continue perguntando/ })).toBeDisabled();
     expect(screen.getByText(/maintainer/)).toBeTruthy();
   });
 });
@@ -85,6 +92,10 @@ describe('a timeline mostra a automação (RN-1442, RN-1444)', () => {
       ev(2, 'automacao.outro_caminho', { categoria: 'aprovacao', chave: 'x@dev', opcoes: ['trocar_modelo', 'arquivar'] }),
     ]);
     expect(screen.getByTestId('automacao-aplicada').textContent).toContain('Feito sozinho pela regra de git_commit · dev');
+    expect(screen.getByTestId('automacao-aplicada').textContent).toMatch(/· desfazer$/);
+    expect(screen.getByTestId('automacao-aplicada-desfazer').getAttribute('href')).toBe(
+      '/projects/p1?tab=settings&group=projeto&section=regras-de-oferta',
+    );
     expect(screen.getByTestId('automacao-outro-caminho').textContent).toContain('trocar o modelo desta tarefa · arquivar');
     expect(screen.queryByRole('button', { name: /Fazer sozinho/ })).toBeNull();
   });

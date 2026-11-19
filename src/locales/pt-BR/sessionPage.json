@@ -668,10 +668,9 @@
       "desbloqueio": "Você desbloqueou tarefas do mesmo tipo ({{chave}}) {{n}} vezes seguidas. Quer que eu desbloqueie sozinho neste projeto? Continua pedindo você: o que o critério não cobre.",
       "generico": "Você repetiu a decisão {{chave}}. Quer que eu a tome sozinho neste projeto?"
     },
-    "desfazer": "Dá para desfazer em {{onde}}.",
     "ondePadrao": "Configurações › Projeto",
     "aceitar": "Fazer sozinho daqui em diante",
-    "recusar": "Agora não",
+    "recusar": "Não, continue perguntando",
     "aceita": "Combinado: daqui em diante eu faço sozinho.",
     "recusada": "Tudo bem: continuo perguntando.",
     "semPapel": "Responder exige o papel maintainer no projeto.",
@@ -683,6 +682,9 @@
       "pedir_ao_dev_lead": "pedir ao Dev Lead",
       "arquivar": "arquivar"
     },
-    "aplicadaSemData": "Feito sozinho pela regra de {{regra}}."
+    "aplicadaSemData": "Feito sozinho pela regra de {{regra}}.",
+    "desfazerAntes": "Dá para desfazer em",
+    "desfazerDepois": ".",
+    "desfazerLink": "desfazer"
   }
 }

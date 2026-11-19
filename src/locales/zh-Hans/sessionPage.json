@@ -600,10 +600,9 @@
       "desbloqueio": "你已连续 {{n}} 次解除同类任务（{{chave}}）的阻塞。要我在这个项目里自动解除吗？标准未覆盖的情况仍会询问你。",
       "generico": "你重复了 {{chave}} 这个决定。要我在这个项目里自动决定吗？"
     },
-    "desfazer": "可以在{{onde}}撤销。",
     "ondePadrao": "设置 › 项目",
     "aceitar": "今后自动完成",
-    "recusar": "暂不",
+    "recusar": "不，继续询问",
     "aceita": "好的：今后我会自动完成。",
     "recusada": "好的：我会继续询问。",
     "semPapel": "回复需要项目中的 maintainer 角色。",
@@ -615,6 +614,9 @@
       "pedir_ao_dev_lead": "请 Dev Lead 处理",
       "arquivar": "归档"
     },
-    "aplicadaSemData": "已按 {{regra}} 的规则自动完成。"
+    "aplicadaSemData": "已按 {{regra}} 的规则自动完成。",
+    "desfazerAntes": "可以在",
+    "desfazerDepois": "撤销。",
+    "desfazerLink": "撤销"
   }
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import { mensagemDaApi, responderAutomacao } from '../lib/api-client';
-import { partesDaChave, type RespostaDaOferta } from '../lib/automacao-oferta';
+import { destinoDasRegras, partesDaChave, type RespostaDaOferta } from '../lib/automacao-oferta';
 import { Button } from '../components/ui/Button';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import styles from './SessionPage.module.css';
@@ -51,7 +51,11 @@ export function OfertaDeAutomacao({ projectId, payload, resposta, podeResponder 
         })}
       </p>
       <p className={styles.mergearNota}>
-        {t('ofertaDeAutomacao.desfazer', { onde: t('ofertaDeAutomacao.ondePadrao') })}
+        {t('ofertaDeAutomacao.desfazerAntes')}{' '}
+        <a href={destinoDasRegras(projectId)} data-testid="oferta-de-automacao-desfazer">
+          {t('ofertaDeAutomacao.ondePadrao')}
+        </a>
+        {t('ofertaDeAutomacao.desfazerDepois')}
       </p>
       {resposta === 'pendente' ? (
         <div className={styles.mergearNoChat}>

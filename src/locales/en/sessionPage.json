@@ -634,10 +634,9 @@
       "desbloqueio": "You unblocked tasks of the same kind ({{chave}}) {{n}} times in a row. Want me to unblock them on my own in this project? You are still asked about what the criteria do not cover.",
       "generico": "You repeated the {{chave}} decision. Want me to make it on my own in this project?"
     },
-    "desfazer": "You can undo it in {{onde}}.",
     "ondePadrao": "Settings › Project",
     "aceitar": "Do it on my own from now on",
-    "recusar": "Not now",
+    "recusar": "No, keep asking",
     "aceita": "Done: from now on I do it on my own.",
     "recusada": "Fine: I keep asking.",
     "semPapel": "Replying requires the maintainer role in the project.",
@@ -649,6 +648,9 @@
       "pedir_ao_dev_lead": "ask the Dev Lead",
       "arquivar": "archive"
     },
-    "aplicadaSemData": "Done on its own by the rule of {{regra}}."
+    "aplicadaSemData": "Done on its own by the rule of {{regra}}.",
+    "desfazerAntes": "You can undo it in",
+    "desfazerDepois": ".",
+    "desfazerLink": "undo"
   }
 }

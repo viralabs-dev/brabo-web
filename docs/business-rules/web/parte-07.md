@@ -540,7 +540,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1442 — A oferta de "fazer sozinho" aparece no chat e vira estado respondido {#rn-1442}
 
-- **Regra:** o evento `automacao.oferecida` vira um cartão no fio com o texto da categoria (aprovação, passagem ou desbloqueio), onde se desfaz e duas ações visíveis: "Fazer sozinho daqui em diante" (`POST /projects/:id/automacoes` com `decisao: 'aceitar'`) e "Agora não" (`recusar`). Só `maintainer` responde; os demais veem os botões inertes com o motivo em texto. O cartão deixa de pedir clique quando `automacao.aceita` ou `automacao.recusada` da mesma categoria e chave o segue no fio, e passa a dizer só o desfecho.
+- **Regra:** o evento `automacao.oferecida` vira um cartão no fio com o texto da categoria (aprovação, passagem ou desbloqueio), onde se desfazer (link para `?tab=settings&group=projeto&section=regras-de-oferta`, montado na web; o `comoDesfazer` do payload é um `DELETE` e não é mostrado) e duas ações visíveis: "Fazer sozinho daqui em diante" (`POST /projects/:id/automacoes` com `decisao: 'aceitar'`) e "Não, continue perguntando" (`recusar`). Só `maintainer` responde; os demais veem os botões inertes com o motivo em texto. O cartão deixa de pedir clique quando `automacao.aceita` ou `automacao.recusada` da mesma categoria e chave o segue no fio, e passa a dizer só o desfecho.
 - **Onde:** `src/routes/OfertaDeAutomacao.tsx`, `src/lib/automacao-oferta.ts` (`respostaDaOferta`), `src/routes/session-timeline-montagem.tsx`.
 - **Teste:** `src/routes/OfertaDeAutomacao.test.tsx`, `src/lib/automacao-oferta.test.ts`.
 - **Origem:** AT-999 (EP-035, AT-953).
@@ -549,7 +549,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1443 — As regras de oferta se desfazem em Configurações › Projeto {#rn-1443}
 
-- **Regra:** abaixo de "Passagens entre agentes sem clique", a seção "Regras de fazer sozinho" lista as regras com origem `oferta` (`GET /projects/:id/automacoes`), cada uma com "Desfazer" (`DELETE /projects/:id/automacoes/:categoria/:chave`; na aprovação a chave é `<tipo>@<agente>`). Só `maintainer` desfaz; os demais veem o botão inerte com o motivo. Sem regra de oferta, a seção não aparece.
+- **Regra:** abaixo de "Passagens entre agentes sem clique", a seção "Regras de fazer sozinho" lista as regras com origem `oferta` (`GET /projects/:id/automacoes`), cada uma com "Desfazer" (`DELETE /projects/:id/automacoes/:categoria/:chave`; na aprovação a chave é `<tipo>@<agente>`). Só `maintainer` desfaz; os demais veem o botão inerte com o motivo. Sem regra de oferta, a seção não aparece. As saídas do `automacao.outro_caminho` (RN-1444) ainda são só texto, não clicáveis.
 - **Onde:** `src/routes/settings/RegrasDeOfertaSection.tsx`.
 - **Teste:** `src/routes/settings/RegrasDeOfertaSection.test.tsx`.
 - **Origem:** AT-999 (EP-035).
@@ -558,7 +558,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1444 — O fio narra o que a regra fez e o anti-laço não oferece automatizar {#rn-1444}
 
-- **Regra:** `automacao.aplicada` vira a linha "Feito sozinho pela regra de …, desde …". `automacao.outro_caminho` diz que a decisão já repetiu sem resolver e lista as saídas (trocar o modelo da tarefa, pedir ao Dev Lead, arquivar), sem o botão de automatizar.
+- **Regra:** `automacao.aplicada` vira a linha "Feito sozinho pela regra de …, desde … · desfazer", e "desfazer" é o link para Configurações › Projeto, seção "Regras de fazer sozinho". `automacao.outro_caminho` diz que a decisão já repetiu sem resolver e lista as saídas (trocar o modelo da tarefa, pedir ao Dev Lead, arquivar), sem o botão de automatizar.
 - **Onde:** `src/routes/session-timeline-montagem.tsx`.
 - **Teste:** `src/routes/OfertaDeAutomacao.test.tsx` (montagem do fio).
 - **Origem:** AT-999 (EP-035).

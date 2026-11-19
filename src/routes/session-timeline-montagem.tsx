@@ -1,5 +1,5 @@
 import type { CSSProperties, Dispatch, ReactNode, SetStateAction } from 'react';
-import { CheckCheck, Play, ThumbsUp } from 'lucide-react';
+import { CheckCheck, Play, ThumbsUp, Workflow } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import type { TFunction } from 'i18next';
@@ -77,7 +77,7 @@ import { camposDoArtefato } from '../lib/artefato-do-fio';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
 import { DestravarExecucao } from './DestravarExecucao';
 import { OfertaDeAutomacao } from './OfertaDeAutomacao';
-import { respostaDaOferta } from '../lib/automacao-oferta';
+import { destinoDasRegras, respostaDaOferta } from '../lib/automacao-oferta';
 import { textoDaExecucaoParada } from './DestravarExecucao.helpers';
 import { execucaoParadaDe, type ExecucaoParada } from '../lib/execution';
 import { RetomarGateEstacionado } from './RetomarGateEstacionado';
@@ -1223,7 +1223,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             data-testid="automacao-oferecida"
             avatar={
               <span className={styles.avatar}>
-                <AlertCircleIcon size={15} />
+                <Workflow size={15} aria-hidden="true" />
               </span>
             }
           >
@@ -1246,6 +1246,10 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
         node: (
           <MensagemDeConversa key={event.id} data-testid="automacao-aplicada">
             {t(desde ? 'ofertaDeAutomacao.aplicada' : 'ofertaDeAutomacao.aplicadaSemData', { regra, desde })}
+            {' · '}
+            <a href={destinoDasRegras(projectId)} data-testid="automacao-aplicada-desfazer">
+              {t('ofertaDeAutomacao.desfazerLink')}
+            </a>
           </MensagemDeConversa>
         ),
       });

@@ -23,3 +23,7 @@ export function partesDaChave(chave: string): { acao: string; agente: string } {
   const i = chave.indexOf('@');
   return i < 0 ? { acao: chave, agente: '' } : { acao: chave.slice(0, i), agente: chave.slice(i + 1) };
 }
+
+/** RN-1443: o destino de "desfazer", montado na web (o `comoDesfazer` do payload é um `DELETE`, não serve a quem lê). */
+export const destinoDasRegras = (projectId: string) =>
+  `/projects/${projectId}?tab=settings&group=projeto&section=regras-de-oferta`;

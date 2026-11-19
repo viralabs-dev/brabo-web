@@ -665,6 +665,26 @@
       "error": "Não foi possível salvar"
     }
   },
+  "passagensSemClique": {
+    "title": "Passagens entre agentes sem clique",
+    "eyebrow": "quando o critério fecha",
+    "subtitle": "Ligadas por padrão. Com a chave ligada, o Brabo passa o trabalho ao agente seguinte sozinho quando o critério fecha; desligada, a passagem volta a esperar o seu clique em Aceitar.",
+    "arquitetoInfra": {
+      "title": "Arquiteto para Infra",
+      "hint": "Aceita sozinho quando há mapa de módulos, ADR proposta e nenhuma pergunta do Arquiteto em aberto."
+    },
+    "infraDevLead": {
+      "title": "Infra para Dev Lead",
+      "hint": "Aceita sozinho quando a PR de infra foi mergeada e o container do projeto está de pé com rede provada."
+    },
+    "reason": "Só um maintainer ou o owner do workspace muda estas chaves.",
+    "switchAria": "Passagem {{passagem}} sem clique",
+    "toast": {
+      "on": "Passagem sem clique ligada",
+      "off": "Passagem sem clique desligada",
+      "error": "Não foi possível salvar"
+    }
+  },
   "taskBudget": {
     "title": "Teto por tarefa e escada de modelos",
     "subtitle": "Quanto cada tarefa pode gastar e a escada de modelos quando ela bloqueia."

@@ -55,7 +55,8 @@ import { montarTimeline } from './session-timeline-montagem';
 import { SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
 import { SessionFio } from './SessionFio';
-import { ConversationScrollButton } from '../components/ai-elements/conversation';
+import { TrilhoDeTurnos } from './TrilhoDeTurnos';
+import { MessageScroller, MessageScrollerButton, MessageScrollerContent } from '../components/shadcn/message-scroller';
 import { PainelDaFila } from './PainelDaFila';
 import { SessionComposer } from './SessionComposer';
 import {
@@ -291,7 +292,7 @@ export function SessionPage({
   // A rolagem do fio (achado 10, Fase 4b, RN-173) mora em
   // `../lib/session-rolagem` desde o PR 7 do ADR 0176 — os mesmos refs e
   // efeitos, chamados neste mesmo ponto.
-  const { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, irAoFim } = useRolagemDoFio({
+  const { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, irAoFim, ancorarNoEnvio } = useRolagemDoFio({
     highlightEvent,
     logOpen,
     events,
@@ -575,6 +576,7 @@ export function SessionPage({
     if (!destino) return;
 
     if (!agenteForcado) setDraft('');
+    ancorarNoEnvio(); // RN-977: o turno novo sobe ao topo da janela
     setIdDaOtimista(null);
     setOptimisticUser(text);
     setStreaming(true);
@@ -783,8 +785,9 @@ export function SessionPage({
             sessaoAtiva={isActive}
             podeLigar={roleAtLeast(workspaceComPapel?.role, 'maintainer')}
           />
-          <div className={styles.messages} ref={scrollContainerRef} role="log" aria-label={t('fio.rotuloDoFio')}>
-            <div className={styles.messagesInner} ref={messagesInnerRef}>
+          <MessageScroller className={styles.messages} ref={scrollContainerRef} aria-label={t('fio.rotuloDoFio')}>
+            <MessageScrollerContent className={styles.messagesInner} ref={messagesInnerRef}>
+              <TrilhoDeTurnos events={events} actions={actions} noInicioDaSessao={!(events.length > 0 && events[0].seq > 1)} />
               <SessionFio
                 conviteVisivel={conviteVisivel}
                 carregando={!!session && eventsQuery.isPending}
@@ -806,9 +809,13 @@ export function SessionPage({
               {/* Sentinela do achado 10 — alvo do scroll de abertura e do
                   "acompanha o fim" enquanto o usuário está perto dele. */}
               <div ref={messagesEndRef} />
-              <ConversationScrollButton visivel={afastado} rotulo={t('fio.irAoFim')} onClick={irAoFim} />
-            </div>
-          </div>
+              <MessageScrollerButton
+                visivel={afastado}
+                rotulo={novas > 0 ? t('fio.irAoFimComNovas', { count: novas }) : t('fio.irAoFim')}
+                onClick={irAoFim}
+              />
+            </MessageScrollerContent>
+          </MessageScroller>
 
           {/* A faixa de atividade do turno — narra em tempo real o que um
               agente conversacional está fazendo, FORA da área que rola (o

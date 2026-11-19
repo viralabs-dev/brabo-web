@@ -24,7 +24,7 @@ keywords: [regras de negócio, web]
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
 - **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:142` (`ARTEFATOS_DO_FIO`).
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:140` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:145` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
 
@@ -33,7 +33,7 @@ keywords: [regras de negócio, web]
 ### RN-980 — As Configurações do projeto são uma página por grupo, com os grupos como abas dentro da página; só o grupo aberto monta {#rn-980}
 
 - **Regra:** revisa a [RN-645](parte-05.md#rn-645) no item 3. O sumário lateral deixa de existir: cada grupo do registro (`modelos`, `projeto`, `pessoas`, `avancado`) é uma PÁGINA, e os quatro são ABAS numa faixa no topo da página de Configurações (setas, Home e End; `aria-selected`/`aria-controls`); "Configurações" segue UM item só da barra lateral, sem sub-itens (decisão do dono, 03/11). O endereço é `?tab=settings&group=<grupo>`; Modelos é a página padrão. `?section=` continua valendo: abre a página do grupo da seção e rola até ela, e vence um `group` incoerente; chave aposentada ([RN-911](parte-06.md#rn-911)) ou desconhecida abre Modelos no topo. O grupo é derivado do campo `grupo` do registro, nunca de outra lista. Só as seções do grupo aberto montam, então a carga busca só o que é da página (abrindo em Modelos, no máximo 21 requisições, contra 30; teto em `configuracoes.orcamento.test.tsx`). Os itens 1 e 2 da RN-645 (frescor de um minuto, sem poll) não mudam, e trocar de página dentro do minuto não refaz busca. Trocar de página descarta rascunho não salvo, como trocar de aba.
-- **Onde:** `apps/web/src/routes/settings/sumario.ts:114` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:119` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`).
+- **Onde:** `apps/web/src/routes/settings/sumario.ts:115` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:120` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:71` (`ProjectSettingsTab`).
 - **Teste:** `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (página só com as seções do grupo; todo `?section=` antigo cai no seu grupo; rola até a seção), `apps/web/src/routes/configuracoes.orcamento.test.tsx` (carga de Modelos não busca o resto), `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (a faixa de abas e o teclado).
 - **Origem:** AT-719 (EP-031).
 
@@ -111,7 +111,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1063 — PR que entra na fila de prontas avisa na borda do fio e no título da aba, com Mergear e o tempo de espera, e se dispensa {#rn-1063}
 
 - **Regra:** estende a [RN-825](parte-06.md#rn-825)/[RN-841](parte-06.md#rn-841). Quando há PR pronta para o dono mergear (a fila `prontas`: gates aprovados, ou PR sem tarefa), um `Item` de 44 px (AT-960; antes `Alert` accent) fica FIXO na borda do fio, entre o fio e o composer (RN-981), com `role="status"`: "PR #3 "título" está pronta para você mergear: os gates passaram", com "Pronta há N min" (sobre o `updatedAt` da tarefa da PR, quando há) e o `MergearNoChat` com a confirmação num Popover ([RN-1358](#rn-1358); antes na linha, AT-753 P1). Com várias: "N PRs prontas para você mergear" e "Ver as N", que abre a aba `prontas` ([RN-975](parte-06.md#rn-975)). "Agora não" dispensa as PRs avisadas; o aviso só volta se ENTRAR uma PR nova. Quando a PR sai da fila (mergeada), o aviso some. O título da aba mostra o contador enquanto houver PR pronta ("(1) Brabo"), mesmo com o aviso dispensado, e volta ao normal quando a fila esvazia. PR que ENTRA na fila (na primeira leitura, as que já esperavam) abre sozinha a aba `prontas` do painel de pendências quando nenhuma está aberta (exceção declarada à "nenhuma aba nasce aberta" da RN-975). Sem evento novo, sem mudança em api ou engine e sem notificação do navegador: o aviso lê as mesmas prontas do painel (`usePrsProntas`, cache compartilhado), pela releitura de 15 s do backlog. **Destrava (AT-902):** a faixa diz quantas tarefas o merge destrava ("Destrava N tarefas"; com várias, "A PR #X destrava N tarefas" para a do topo): as `todo` dos módulos que dependem (`dependsOn` direto) do módulo da tarefa da PR, contadas só quando essa tarefa é a última aberta do módulo (a régua da [RN-1005](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1005)); a conta usa só o backlog e o `module_map` já lidos. Com várias prontas, a que destrava mais vem primeiro (empate: a ordem da fila). O título da aba segue "(N) Brabo". O merge segue gesto humano ([RN-418](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-418)/[RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)): o aviso só oferece o `MergearNoChat`.
-- **Onde:** `apps/web/src/components/AvisoDePrPronta.tsx:29` (`AvisoDePrPronta`), `apps/web/src/components/AvisoDePrPronta.helpers.ts` (`tarefasQueODestrava`), `apps/web/src/lib/prs-prontas.ts:14` (`usePrsProntas`), `apps/web/src/lib/saidas-da-fila.ts:30` (`entradasDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:208` (`idsDasProntas`), `apps/web/src/routes/SessionPage.tsx:830` (`AvisoDePrPronta`).
+- **Onde:** `apps/web/src/components/AvisoDePrPronta.tsx:29` (`AvisoDePrPronta`), `apps/web/src/components/AvisoDePrPronta.helpers.ts` (`tarefasQueODestrava`), `apps/web/src/lib/prs-prontas.ts:14` (`usePrsProntas`), `apps/web/src/lib/saidas-da-fila.ts:30` (`entradasDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:208` (`idsDasProntas`), `apps/web/src/routes/SessionPage.tsx:837` (`AvisoDePrPronta`).
 - **Teste:** `apps/web/src/components/AvisoDePrPronta.test.tsx`, `apps/web/src/components/AvisoDePrPronta.destrava.test.ts`, `apps/web/src/lib/saidas-da-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`.
 - **Origem:** AT-810 (EP-031); decisão do dono, 07/11/2026 (aviso fixo na borda do fio; contador no título da aba; sem notificação do navegador).
 
@@ -158,7 +158,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
 - **Regra:** a S06 (Gastos) mostra ao `owner` o teto do mês do workspace (`GET/PUT workspaces/:id/budget`, 403 para os demais), com o mesmo medidor, previsão e legenda da RN-1200, e o editor (valor e política `block`/`allow`). Quem não é owner não lê o valor (a api recusa): vê, em texto, que o teto é do owner e que só o conhece quando uma chamada é recusada ("Budget do workspace atingiu o teto do mês"). O controle nunca é oferecido a quem a api não deixa usar (RN-102); erro de leitura de quem não edita é silencioso. O teto do workspace soma todos os projetos e é independente dos de projeto, sessão e área: basta um no limite com `block` para recusar.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1360` (`getWorkspaceBudget`).
+- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1375` (`getWorkspaceBudget`).
 - **Teste:** `src/components/TetoDoMes.test.tsx` (owner edita; sem papel fica inerte com o motivo; 403 silencioso).
 - **Origem:** AT-935 (EP-035).
 
@@ -166,7 +166,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1185 — Os passos do turno se recolhem numa linha e se agrupam por INTENÇÃO, num mapa tipado; nenhum passo some {#rn-1185}
 
-- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Desde a AT-958 (RN-1392) o raciocínio, as consultas e os passos de cada turno, o último e os anteriores, moram dentro de UMA linha de trabalho (`LinhaDeTrabalho`); `ResumoDeTurno` saiu do fio (segue na visão geral do projeto). A mensagem do agente continua inteira no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
+- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Desde a AT-958 (RN-1392) o raciocínio, as consultas e os passos de cada turno, o último e os anteriores, moram dentro de UMA linha de trabalho (`LinhaDeTrabalho`); `ResumoDeTurno` saiu do fio (segue na visão geral do projeto). A mensagem do agente (a última de todas inteira; as anteriores em 3 linhas com "Ver resposta inteira", RN-1406) continua no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
 - **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
 - **Teste:** `src/lib/grupos-de-ferramenta.test.ts`, `src/components/ai-elements/passos-do-turno.test.tsx` (seletor Agrupados | Em ordem).
 - **Origem:** AT-891 (EP-035), ADR 0290/0294.
@@ -361,7 +361,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1392 — Cada turno mostra UMA linha de trabalho que abre no lugar: raciocínio, consultas e passos dentro {#rn-1392}
 
 - **Regra:** o `agent.response` encerrado ganha, depois da bolha, um só `Trace` recolhido ("Trabalhou 14,0 s · 5 passos") no lugar dos três blocos separados (passos, raciocínio, "Consultado neste turno"). Ao abrir, mostra nessa ordem o `Reasoning` (`data-testid` `raciocinio-do-turno`), o "Consultado neste turno" e os passos (`PassosDoTurno`, com o seletor da RN-1185). A duração é o `duracaoMs` do fecho do turno, nunca relógio da tela; sem o campo o título diz "Trabalhou · N passos", sem "0 s". Turno sem passos, raciocínio nem fontes não gera linha. O raciocínio só chega a quem a api autoriza (ADR 0249, RN-993): o web mostra o que vier. A linha não conta no corte do fio (RN-974, RN-644) e a chave é `${event.id}-trabalho`.
-- **Onde:** `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`), `src/routes/session-timeline-montagem.tsx:1016` (`LinhaDeTrabalho`).
+- **Onde:** `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`), `src/routes/session-timeline-montagem.tsx:1022` (`LinhaDeTrabalho`).
 - **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/routes/session-timeline-montagem.raciocinio.test.tsx`.
 - **Origem:** AT-958 (EP-035), v10 (K02).
 
@@ -454,3 +454,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/ListaDeExecutores.tsx` (`plano-por-rodada`).
 - **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`.
 - **Origem:** AT-993 (EP-035), decisão 3 da AT-951/952 (14/11).
+
+<a id="rn-1405"></a>
+
+### RN-1405 — "Ir ao fim · N novas" e a âncora ao enviar {#rn-1405}
+
+- **Regra:** revisa a [RN-977](parte-06.md#rn-977), que mantém limiar de 80 px, pausa, gatilhos e `?highlightEvent`. Com o fio pausado, o botão diz "Ir ao fim · N novas", onde N é o número de mensagens (`chat.message` e `agent.response`) com `seq` maior que o do último evento visto quando a pessoa subiu; o clique, ou a volta ao fim, zera. Ao ENVIAR uma mensagem (não ao enfileirar), o fio retoma o acompanhamento e sobe o turno do usuário (`[data-autor="voce"]`) ao topo da janela; quando a resposta passa da janela vale o "segue no fim". A casca é o Message Scroller do kit, sem `use-stick-to-bottom`: quem decide seguir ou pausar continua sendo `useRolagemDoFio`.
+- **Onde:** `src/lib/session-rolagem.ts` (`useRolagemDoFio`, `novasDepoisDe`, `ancorarNoEnvio`), `src/components/shadcn/message-scroller.tsx`, `src/routes/SessionPage.tsx` (`enviarMensagem`).
+- **Teste:** `src/lib/session-rolagem.test.tsx` (novas, âncora).
+- **Origem:** AT-959 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1406"></a>
+
+### RN-1406 — O turno antigo fica em 3 linhas {#rn-1406}
+
+- **Regra:** revisa a [RN-1185](#rn-1185) no trecho da mensagem inteira. Toda `agent.response` que não é a última do fio fica recolhida em 3 linhas (`line-clamp` por CSS, o próprio texto, sem resumo gerado) e tem "Ver resposta inteira" quando passa de 240 caracteres ou de 3 linhas; o texto inteiro permanece no DOM. A última resposta não recolhe (RN-138).
+- **Onde:** `src/routes/TextoDoAgente.tsx`, `src/routes/session-timeline-montagem.tsx` (`ultimaRespostaId`).
+- **Teste:** `src/routes/TextoDoAgente.test.tsx`.
+- **Origem:** AT-959 (EP-035), decisão do dono de 14/11/2026.
+
+<a id="rn-1407"></a>
+
+### RN-1407 — O trilho de turnos mostra só o carregado {#rn-1407}
+
+- **Regra:** à direita do fio, em 28 px, um ponto por mensagem da janela de eventos já baixada (RN-632, nenhuma leitura nova), na cor do agente; âmbar quando o agente tem ação `pending`. Passar o mouse mostra o turno (`HoverCard`); clicar leva a ele; cada ponto é um botão com nome acessível. Se a janela não começa no primeiro evento (`events[0].seq > 1`), o trilho marca "…" e diz que mostra só os turnos carregados. Some abaixo de 768 px e com menos de 2 pontos.
+- **Onde:** `src/routes/TrilhoDeTurnos.tsx`, `src/lib/trilho-de-turnos.ts` (`pontosDoTrilho`).
+- **Teste:** `src/routes/TextoDoAgente.test.tsx` (trilho).
+- **Origem:** AT-959 (EP-035).

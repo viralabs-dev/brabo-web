@@ -1169,3 +1169,62 @@
   font-size: var(--fs-meta);
   color: var(--text-muted);
 }
+
+/* AT-959: o turno antigo em 3 linhas (o próprio texto) e o trilho de turnos de 28 px. */
+.textoRecolhido {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.verRespostaInteira {
+  margin-top: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: var(--fs-meta);
+  color: var(--accent);
+  cursor: pointer;
+}
+.trilhoAncora {
+  position: sticky;
+  top: 0;
+  height: 0;
+  align-self: flex-end;
+  z-index: 1;
+  margin-bottom: -20px;
+}
+.trilho {
+  position: absolute;
+  top: 0;
+  right: calc(-1 * var(--space-4) - 6px);
+  width: 28px;
+  max-height: 60vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.trilhoRecorte {
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+.trilhoPonto {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--msg-color, var(--text-muted));
+  cursor: pointer;
+}
+.trilhoPonto[data-esperando] {
+  background: var(--warning);
+}
+@media (max-width: 767px) {
+  .trilhoAncora {
+    display: none;
+  }
+}

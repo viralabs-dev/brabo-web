@@ -347,7 +347,7 @@ com `key`, e quem escreve `active` recebe a chave crua do
 - **Onde:** `apps/web/src/routes/project-tabs.ts:95` (as duas entradas),
   `apps/web/src/routes/ProjectSessionsTab.tsx:114` (o filtro pelo `kind`
   gravado) e `:98` (o CTA criando no `kind` da aba),
-  `apps/web/src/routes/SessionPage.tsx:721` (`conviteVisivel`, a única
+  `apps/web/src/routes/SessionPage.tsx:725` (`conviteVisivel`, a única
   pergunta que a topbar e o convite compartilham)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx`,
   `apps/web/src/routes/project-tabs.test.tsx`,
@@ -625,7 +625,7 @@ uma.
 
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:290`
   (`useDestinatarioDoChat`, desde a RN-631),
-  `apps/web/src/lib/api-client.ts:1223` (`getSessionModelBinding`, o
+  `apps/web/src/lib/api-client.ts:1238` (`getSessionModelBinding`, o
   `agentId`), `apps/api/src/interfaces/http/llm/model-bindings.controller.ts:166`
   (`getSessionBinding`, `@Query('agentId')`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
@@ -740,7 +740,7 @@ qualquer dos dois caminhos. O que mudou é que a PRIMEIRA MENSAGEM agora também
 conta como esse gesto: ninguém deveria precisar de um clique à parte antes de falar
 com quem a tela já o convidou a falar.
 
-- **Onde:** `apps/web/src/routes/SessionPage.tsx:696` (`handleSend`)
+- **Onde:** `apps/web/src/routes/SessionPage.tsx:700` (`handleSend`)
 - **Teste:** `apps/web/src/routes/SessionPage.ideacao-automatica.test.tsx`
 - **Caso de borda:** sessão `consultiva` não tem agente Criativo — a regra
   não se aplica, e o caminho SSE genérico segue sendo o certo para ela.

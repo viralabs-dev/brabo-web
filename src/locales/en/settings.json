@@ -652,6 +652,26 @@
       "error": "Could not save"
     }
   },
+  "passagensSemClique": {
+    "title": "Handoffs without a click",
+    "eyebrow": "when the criteria are met",
+    "subtitle": "On by default. With the switch on, Brabo hands the work to the next agent by itself once the criteria are met; off, the handoff waits for your click on Accept again.",
+    "arquitetoInfra": {
+      "title": "Architect to Infra",
+      "hint": "Accepted automatically once there is a module map, a proposed ADR and no open Architect question."
+    },
+    "infraDevLead": {
+      "title": "Infra to Dev Lead",
+      "hint": "Accepted automatically once the infra PR is merged and the project container is up with a proven network."
+    },
+    "reason": "Only a maintainer or the workspace owner can change these switches.",
+    "switchAria": "Handoff {{passagem}} without a click",
+    "toast": {
+      "on": "Handoff without a click turned on",
+      "off": "Handoff without a click turned off",
+      "error": "Could not save"
+    }
+  },
   "taskBudget": {
     "title": "Per-task cap and model ladder",
     "subtitle": "How much each task may spend, and the model ladder when it gets blocked."

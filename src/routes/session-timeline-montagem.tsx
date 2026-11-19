@@ -25,6 +25,8 @@ import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Alert as AlertShadcn } from '../components/shadcn/alert';
 import { Marker } from '../components/shadcn/marker';
+import { TextoDoAgente } from './TextoDoAgente';
+import { ehLongo } from '../lib/trilho-de-turnos';
 import { MensagemDeConversa } from '../components/ai-elements/message';
 import { Reasoning } from '../components/ai-elements/reasoning';
 import { ArtifactCard } from '../components/ai-elements/artifact';
@@ -442,6 +444,8 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
   // como `chat.message` do usuário (a api reenvia as respostas como texto).
   // O card respondido já as mostra — a bolha repetida sai do fio.
   const ecosDeFormulario = ecosDeRespostaEstruturada(events);
+  // AT-959: só a ÚLTIMA resposta de agente fica aberta; as anteriores recolhem em 3 linhas.
+  const ultimaRespostaId = events.findLast((e) => e.type === 'agent.response')?.id;
 
   for (const event of events) {
     // RN-695 (AT-355): a Anamnese NÃO fala no fio. A análise dela é sobre a
@@ -486,6 +490,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
         node: (
           <MensagemDeConversa
             key={event.id}
+            id={`turno-${event.id}`}
             align={autor.tipo === 'voce' ? 'end' : 'start'}
             // AT-950: o usuário à direita com bolha tingida; o agente à esquerda, neutra.
             variant={autor.tipo === 'voce' ? 'tinted' : 'muted'}
@@ -936,6 +941,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       const bolha = (text: string, key: string) => (
           <MensagemDeConversa
             key={key}
+            id={key === event.id ? `turno-${event.id}` : undefined}
             style={corDoAgente(event.actor.id)}
             /* RN-829: quem fala é o AGENTE — o modelo fica só no chip. */
             avatar={<AvatarDoAgente id={event.actor.id} />}
@@ -994,9 +1000,9 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 RN-158: Markdown leve só em `agent.response`; `chat.message` é
                 texto DIGITADO. */}
             {text === '' ? t('mensagens.respostaVazia') : (
-              <div className={styles.textoDoAgente}>
+              <TextoDoAgente recolhivel={event.id !== ultimaRespostaId && ehLongo(text)}>
                 <MarkdownMessage text={text} selo={seloDoTurno(event, projectId, sessionId)} />
-              </div>
+              </TextoDoAgente>
             )}
           </MensagemDeConversa>
       );

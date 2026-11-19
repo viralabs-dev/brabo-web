@@ -12,6 +12,15 @@ function rolarParaOFim(el: HTMLElement | null) {
   el?.scrollIntoView?.({ block: 'end' });
 }
 
+/** Mensagem no fio (a mesma régua do corte, RN-644): o que "Ir ao fim · N novas" conta. */
+const TIPOS_DE_MENSAGEM = new Set(['chat.message', 'agent.response']);
+
+/** Quantas mensagens chegaram depois do `seq` visto quando a pessoa subiu (RN-977, AT-959). */
+export function novasDepoisDe(events: readonly SessionEvent[], seqVisto: number | null): number {
+  if (seqVisto === null) return 0;
+  return events.filter((e) => TIPOS_DE_MENSAGEM.has(e.type) && e.seq > seqVisto).length;
+}
+
 /**
  * A identidade do que há no fio (RN-951): o `seq` do último evento e os ids
  * das ações. Muda quando chega conteúdo novo mesmo que o TAMANHO das listas
@@ -57,6 +66,10 @@ export function useRolagemDoFio({
   // A pessoa subiu: nada a segue até ela voltar ao fim.
   const pausadoRef = useRef(false);
   const [afastado, setAfastado] = useState(false);
+  // O `seq` do último evento no instante da pausa; `null` com o fio no fim.
+  const [seqVisto, setSeqVisto] = useState<number | null>(null);
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
 
   // Navegação de evidência (Fase 4b): rola até o evento assim que ele existir.
   useEffect(() => {
@@ -121,8 +134,11 @@ export function useRolagemDoFio({
     if (!el) return;
     const aoRolar = () => {
       const longe = el.scrollHeight - el.scrollTop - el.clientHeight > 80;
+      const subiuAgora = longe && !pausadoRef.current;
       pausadoRef.current = longe;
       setAfastado(longe);
+      if (!longe) setSeqVisto(null);
+      else if (subiuAgora) setSeqVisto(eventsRef.current.reduce((m, e) => (e.seq > m ? e.seq : m), 0));
     };
     el.addEventListener('scroll', aoRolar, { passive: true });
     return () => el.removeEventListener('scroll', aoRolar);
@@ -131,8 +147,28 @@ export function useRolagemDoFio({
   const irAoFim = useCallback(() => {
     pausadoRef.current = false;
     setAfastado(false);
+    setSeqVisto(null);
     rolarParaOFim(messagesEndRef.current);
   }, []);
 
-  return { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, irAoFim };
+  // Ao ENVIAR (RN-977, AT-959): retoma o acompanhamento e sobe o turno do
+  // usuário (o último `[data-autor="voce"]`) ao topo da janela; a resposta
+  // cresce abaixo e, passando da janela, vale o "segue no fim". Roda na volta
+  // seguinte porque a mensagem otimista ainda não está no DOM.
+  const ancorarNoEnvio = useCallback(() => {
+    pausadoRef.current = false;
+    seguindoRef.current = true;
+    setAfastado(false);
+    setSeqVisto(null);
+    setTimeout(() => {
+      const meus = messagesInnerRef.current?.querySelectorAll?.('[data-autor="voce"]');
+      const ultimo = meus && meus.length > 0 ? (meus[meus.length - 1] as HTMLElement) : null;
+      if (ultimo?.scrollIntoView) ultimo.scrollIntoView({ block: 'start' });
+      else rolarParaOFim(messagesEndRef.current);
+    }, 0);
+  }, []);
+
+  const novas = novasDepoisDe(events, seqVisto);
+
+  return { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, irAoFim, ancorarNoEnvio };
 }

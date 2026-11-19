@@ -521,7 +521,18 @@
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "Conversa da sessão",
-    "irAoFim": "Ir ao fim"
+    "irAoFim": "Ir ao fim",
+    "irAoFimComNovas_zero": "Ir ao fim",
+    "irAoFimComNovas_one": "Ir ao fim · {{count}} nova",
+    "irAoFimComNovas_other": "Ir ao fim · {{count}} novas",
+    "verRespostaInteira": "Ver resposta inteira",
+    "recolherResposta": "Recolher resposta"
+  },
+  "trilho": {
+    "rotulo": "Turnos da conversa",
+    "voce": "Você",
+    "turnoN": "Turno {{n}}: {{nome}}",
+    "recorte": "Só os turnos carregados; há mais antes"
   },
   "fila": {
     "painel": "Mensagens na fila",

@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeAll } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import type { SessionEvent } from '../lib/api-types';
@@ -40,7 +41,7 @@ describe('ContextAside — Objetivo em Markdown (AT-950)', () => {
 
   it('renderiza negrito e lista', () => {
     render(
-      <ContextAside projectId="p1" sessionId="s1" actions={[]} pausarPoll={false} logOpen={true} onToggleLog={() => {}} />,
+      <QueryClientProvider client={new QueryClient()}><ContextAside projectId="p1" sessionId="s1" actions={[]} pausarPoll={false} logOpen={true} onToggleLog={() => {}} /></QueryClientProvider>,
     );
     const secao = screen.getByTestId('aside-objetivo');
     expect(secao.querySelector('strong')).toHaveTextContent('estúdio');

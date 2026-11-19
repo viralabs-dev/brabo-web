@@ -895,7 +895,7 @@ muda.
   (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:153` (`useProjectSessions`, `frescorMs`);
   `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);
-  `apps/web/src/routes/ContextAside.tsx:51` (`quantos`), `:350`
+  `apps/web/src/routes/ContextAside.tsx:55` (`quantos`), `:362`
   (`totalDeArtefatos`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — Atividades": sem
   execução lê a sessão da Visão geral e o Criativo aparece; com execução lê a
@@ -1242,7 +1242,7 @@ cartão pendente apareceu só DURANTE a sessão ao vivo — estado transitório 
 tela, não da api nem da janela. A próxima rodada da AT-015 captura a rede no
 momento em que ele aparecer, antes de qualquer correção.
 
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:431` (`trailing`), `:515`
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:443` (`trailing`), `:531`
   (`nadaNaJanela`)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
   ("RN-701 (AT-365): com as regras fora da janela, o contador não afirma 0";

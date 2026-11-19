@@ -23,6 +23,7 @@
     "semNomeFicaHashtag": "Sem nome — a sessão fica {{hashtag}}",
     "tituloRenomear": "Sessão {{rotulo}} — clique para renomear",
     "tituloSessao": "Sessão {{rotulo}}",
+    "tituloExecucao": "Execução · {{rotulo}}",
     "trazCriativo": "traz o Criativo pra conversa",
     "iniciarIdeacao": "Iniciar ideação",
     "iniciarIdeacaoTitulo": "Traz o Criativo para conduzir a ideação desta sessão — ele ainda não entrou",
@@ -336,6 +337,7 @@
     "perguntasAbertas": "Perguntas abertas",
     "gastoPorAgente": "Gasto por agente",
     "gastoVazio": "Sem gasto ainda.",
+    "gastoErro": "Não foi possível ler o gasto da sessão.",
     "detalhes": "Detalhes da sessão"
   },
   "turno": {

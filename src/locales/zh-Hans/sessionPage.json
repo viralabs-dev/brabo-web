@@ -23,6 +23,7 @@
     "semNomeFicaHashtag": "不命名时会话显示为 {{hashtag}}",
     "tituloRenomear": "会话 {{rotulo}} — 点击重命名",
     "tituloSessao": "会话 {{rotulo}}",
+    "tituloExecucao": "执行 · {{rotulo}}",
     "trazCriativo": "让 Criativo 加入对话",
     "iniciarIdeacao": "开始构思",
     "iniciarIdeacaoTitulo": "让 Criativo 主持本会话的构思 — 他还没有加入",
@@ -316,6 +317,7 @@
     "perguntasAbertas": "未决问题",
     "gastoPorAgente": "按智能体统计的花费",
     "gastoVazio": "暂无花费。",
+    "gastoErro": "无法读取会话花费。",
     "detalhes": "会话详情"
   },
   "turno": {

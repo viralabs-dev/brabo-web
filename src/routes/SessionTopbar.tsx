@@ -34,7 +34,7 @@ import { Button } from '../components/ui/Button';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/shadcn/popover';
 import { Badge } from '../components/ui/Badge';
 import { LIMITE_DO_NOME } from '../lib/session-label';
-import { TIPOS_DE_SESSAO } from '../lib/session-kind';
+import { TIPOS_DE_SESSAO, TIPO_DE_EXECUCAO } from '../lib/session-kind';
 import {
   ArrowLeftIcon,
   BulbIcon,
@@ -250,7 +250,8 @@ export function SessionTopbar({
             onClick={() => setRascunhoDoNome(session?.name ?? '')}
             disabled={!session}
           >
-            {t('topbar.tituloSessao', { rotulo })}
+            {/* RN-1428: sessão de execução sem nome diz o tipo no título. */}
+            {t(!session?.name && tipo === TIPO_DE_EXECUCAO ? 'topbar.tituloExecucao' : 'topbar.tituloSessao', { rotulo })}
           </button>
         )}
         <div className={styles.meta} title={metaDaSessao}>

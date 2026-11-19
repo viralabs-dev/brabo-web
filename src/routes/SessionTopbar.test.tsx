@@ -12,6 +12,7 @@ import {
   modoDaBarra,
 } from '../lib/modo-da-barra-da-sessao';
 import { SessionTopbar, type SessionTopbarProps } from './SessionTopbar';
+import { TIPO_DE_EXECUCAO } from '../lib/session-kind';
 
 /**
  * A barra do topo da Sessão pela largura que ela TEM (AT-317).
@@ -331,5 +332,16 @@ describe('janela do modelo do destinatário (AT-654, RN-969)', () => {
     await screen.findByTestId('ajustes-da-sessao').catch(() => null);
     await new Promise((r) => setTimeout(r, 20));
     expect(screen.queryByTestId('janela-do-agente')).toBeNull();
+  });
+});
+
+describe('título da sessão de execução (AT-978, RN-1428)', () => {
+  it('sem nome e em execução diz "Execução · #hash"; com nome, segue "Sessão"', () => {
+    montar({ tipo: TIPO_DE_EXECUCAO });
+    expect(screen.getByRole('button', { name: /^Execução · #0a9a882b$/ })).toBeTruthy();
+  });
+  it('sessão comum sem nome continua "Sessão #hash"', () => {
+    montar({ tipo: undefined });
+    expect(screen.getByRole('button', { name: /^Sessão #0a9a882b$/ })).toBeTruthy();
   });
 });

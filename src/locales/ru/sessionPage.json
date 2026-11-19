@@ -23,6 +23,7 @@
     "semNomeFicaHashtag": "Без названия — сессия останется {{hashtag}}",
     "tituloRenomear": "Сессия {{rotulo}} — нажмите, чтобы переименовать",
     "tituloSessao": "Сессия {{rotulo}}",
+    "tituloExecucao": "Выполнение · {{rotulo}}",
     "trazCriativo": "приглашает Criativo в разговор",
     "iniciarIdeacao": "Начать генерацию идей",
     "iniciarIdeacaoTitulo": "Приглашает Criativo провести генерацию идей в этой сессии — он ещё не подключился",
@@ -346,6 +347,7 @@
     "perguntasAbertas": "Открытые вопросы",
     "gastoPorAgente": "Расходы по агентам",
     "gastoVazio": "Расходов пока нет.",
+    "gastoErro": "Не удалось получить расходы сессии.",
     "detalhes": "Детали сессии"
   },
   "turno": {

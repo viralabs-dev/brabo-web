@@ -214,7 +214,11 @@ scrollável de `EventItem`; estado vazio com mensagem contextual.
 
 Layout: `flex-direction:column`, topbar (56px) + corpo (`flex:1` chat +
 painel único opcional de 360px, AT-957). Altura fixa (AT-956, RN-1389): a página
-não rola, faixa e doca não encolhem e só o fio rola.
+não rola, faixa e doca não encolhem e só o fio rola. A sessão de execução usa esta
+mesma página (sem layout próprio) e, sem nome, o título é "Execução · #hash"
+(AT-978, RN-1428). Na aba Contexto, "Gasto por agente" lê o resumo de gasto da
+sessão, o mesmo número da faixa (RN-1426); sem leitura, esqueleto ou erro, nunca
+"Sem gasto ainda" (RN-1427).
 
 **Topbar**: dot pulsante verde + título da sessão + metadata mono
 (`"{projeto} · #{id-curto} · {duração}"`); `ModelPicker` (dropdown,

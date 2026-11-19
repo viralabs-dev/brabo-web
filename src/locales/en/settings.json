@@ -732,5 +732,21 @@
       "saved": "Tool router saved",
       "error": "Could not save"
     }
+  },
+  "regrasDeOferta": {
+    "title": "Do-it-yourself rules",
+    "eyebrow": "accepted in chat",
+    "subtitle": "The rules you accepted in chat with \"Do it on my own from now on\". Undoing returns the question to your click.",
+    "categoria": {
+      "aprovacao": "Approval",
+      "handoff": "Handoff between agents",
+      "desbloqueio": "Unblock"
+    },
+    "desfazer": "Undo",
+    "reason": "Only a maintainer or the workspace owner can undo these rules.",
+    "toast": {
+      "ok": "Rule undone",
+      "error": "Could not undo"
+    }
   }
 }

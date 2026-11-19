@@ -23,7 +23,7 @@ keywords: [regras de negócio, web]
 ### RN-979 — Decisão, mapa de módulos, C4, imagem e parecer de QA/SecOps ganham cartão no fio {#rn-979}
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:142` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:147` (`ARTEFATOS_DO_FIO`).
 - **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:145` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
@@ -60,7 +60,7 @@ keywords: [regras de negócio, web]
 ### RN-994 — Na Sessão, a pergunta estruturada vem depois da mensagem do agente que a introduz {#rn-994}
 
 - **Regra:** revisa a [RN-162](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-162) só na posição. O agente pergunta no meio do turno e fecha com o `agent.response`, então o `chat.structured_question` tem `seq` menor que a resposta; o fio põe o cartão (aberto ou já respondido) logo DEPOIS da bolha de `agent.response` do MESMO agente com `seq` maior, antes da próxima `chat.message` do usuário. Sem resposta depois (turno em curso), o cartão fica onde está. Move-se o item, não o evento, e o item mantém a flag `mensagem` do corte da [RN-644](parte-05.md#rn-644). Raciocínio e "Passos do turno" seguem antes da resposta. Decisão do dono (03/11/2026).
-- **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:155` (`montarTimeline`).
+- **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:160` (`montarTimeline`).
 - **Teste:** `apps/web/src/routes/session-timeline-montagem.perguntas.test.tsx` (resposta antes do cartão; turno em curso; duas perguntas na ordem; não pula para a resposta do turno seguinte).
 - **Origem:** pedido do dono, 03/11/2026.
 
@@ -535,3 +535,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/MergearNoChat.tsx` (`MergearNoChat`), `src/routes/SessionPage.module.css` (`.mergearNoChat`).
 - **Teste:** `src/routes/MergearNoChat.test.tsx`.
 - **Origem:** AT-961 (EP-035).
+
+<a id="rn-1442"></a>
+
+### RN-1442 — A oferta de "fazer sozinho" aparece no chat e vira estado respondido {#rn-1442}
+
+- **Regra:** o evento `automacao.oferecida` vira um cartão no fio com o texto da categoria (aprovação, passagem ou desbloqueio), onde se desfazer (link para `?tab=settings&group=projeto&section=regras-de-oferta`, montado na web; o `comoDesfazer` do payload é um `DELETE` e não é mostrado) e duas ações visíveis: "Fazer sozinho daqui em diante" (`POST /projects/:id/automacoes` com `decisao: 'aceitar'`) e "Não, continue perguntando" (`recusar`). Só `maintainer` responde; os demais veem os botões inertes com o motivo em texto. O cartão deixa de pedir clique quando `automacao.aceita` ou `automacao.recusada` da mesma categoria e chave o segue no fio, e passa a dizer só o desfecho.
+- **Onde:** `src/routes/OfertaDeAutomacao.tsx`, `src/lib/automacao-oferta.ts` (`respostaDaOferta`), `src/routes/session-timeline-montagem.tsx`.
+- **Teste:** `src/routes/OfertaDeAutomacao.test.tsx`, `src/lib/automacao-oferta.test.ts`.
+- **Origem:** AT-999 (EP-035, AT-953).
+
+<a id="rn-1443"></a>
+
+### RN-1443 — As regras de oferta se desfazem em Configurações › Projeto {#rn-1443}
+
+- **Regra:** abaixo de "Passagens entre agentes sem clique", a seção "Regras de fazer sozinho" lista as regras com origem `oferta` (`GET /projects/:id/automacoes`), cada uma com "Desfazer" (`DELETE /projects/:id/automacoes/:categoria/:chave`; na aprovação a chave é `<tipo>@<agente>`). Só `maintainer` desfaz; os demais veem o botão inerte com o motivo. Sem regra de oferta, a seção não aparece. As saídas do `automacao.outro_caminho` (RN-1444) ainda são só texto, não clicáveis.
+- **Onde:** `src/routes/settings/RegrasDeOfertaSection.tsx`.
+- **Teste:** `src/routes/settings/RegrasDeOfertaSection.test.tsx`.
+- **Origem:** AT-999 (EP-035).
+
+<a id="rn-1444"></a>
+
+### RN-1444 — O fio narra o que a regra fez e o anti-laço não oferece automatizar {#rn-1444}
+
+- **Regra:** `automacao.aplicada` vira a linha "Feito sozinho pela regra de …, desde … · desfazer", e "desfazer" é o link para Configurações › Projeto, seção "Regras de fazer sozinho". `automacao.outro_caminho` diz que a decisão já repetiu sem resolver e lista as saídas (trocar o modelo da tarefa, pedir ao Dev Lead, arquivar), sem o botão de automatizar.
+- **Onde:** `src/routes/session-timeline-montagem.tsx`.
+- **Teste:** `src/routes/OfertaDeAutomacao.test.tsx` (montagem do fio).
+- **Origem:** AT-999 (EP-035).

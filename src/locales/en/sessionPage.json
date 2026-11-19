@@ -626,5 +626,31 @@
     "pendencias": "Pending",
     "pendenciasVazio": "No pending items in this project.",
     "executoresVazio": "No execution in progress."
+  },
+  "ofertaDeAutomacao": {
+    "texto": {
+      "aprovacao": "You approved {{acao}} from {{agente}} {{n}} times in a row, with no changes. Want me to do this on my own in this project? You are still asked about anything that changes risk, cost or destination.",
+      "handoff": "You accepted the {{chave}} handoff {{n}} times in a row. Want me to do this handoff on my own in this project? You are still asked when the criteria are not met.",
+      "desbloqueio": "You unblocked tasks of the same kind ({{chave}}) {{n}} times in a row. Want me to unblock them on my own in this project? You are still asked about what the criteria do not cover.",
+      "generico": "You repeated the {{chave}} decision. Want me to make it on my own in this project?"
+    },
+    "ondePadrao": "Settings › Project",
+    "aceitar": "Do it on my own from now on",
+    "recusar": "No, keep asking",
+    "aceita": "Done: from now on I do it on my own.",
+    "recusada": "Fine: I keep asking.",
+    "semPapel": "Replying requires the maintainer role in the project.",
+    "erroTitulo": "Could not reply to the offer",
+    "aplicada": "Done on its own by the rule of {{regra}}, since {{desde}}",
+    "outroCaminho": "This has repeated without being resolved, so I will not do it on my own. Ways out: {{opcoes}}.",
+    "opcao": {
+      "trocar_modelo": "switch this task's model",
+      "pedir_ao_dev_lead": "ask the Dev Lead",
+      "arquivar": "archive"
+    },
+    "aplicadaSemData": "Done on its own by the rule of {{regra}}",
+    "desfazerAntes": "You can undo it in",
+    "desfazerDepois": ".",
+    "desfazerLink": "undo"
   }
 }

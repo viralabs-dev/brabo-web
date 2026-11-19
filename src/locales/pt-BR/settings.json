@@ -745,5 +745,21 @@
       "saved": "Roteador de ferramentas salvo",
       "error": "Não foi possível salvar"
     }
+  },
+  "regrasDeOferta": {
+    "title": "Regras de fazer sozinho",
+    "eyebrow": "aceitas no chat",
+    "subtitle": "As regras que você aceitou no chat com \"Fazer sozinho daqui em diante\". Desfazer devolve a pergunta ao seu clique.",
+    "categoria": {
+      "aprovacao": "Aprovação",
+      "handoff": "Passagem entre agentes",
+      "desbloqueio": "Desbloqueio"
+    },
+    "desfazer": "Desfazer",
+    "reason": "Só um maintainer ou o owner do workspace desfaz estas regras.",
+    "toast": {
+      "ok": "Regra desfeita",
+      "error": "Não foi possível desfazer"
+    }
   }
 }

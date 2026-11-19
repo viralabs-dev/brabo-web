@@ -527,14 +527,25 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fila).getByText('o diagnóstico longo')).toBeInTheDocument();
   });
 
-  it('AT-912: a tarefa sem módulo em história de vários módulos aparece, e a de um módulo só não', async () => {
+  it('AT-912/RN-1397: com a execução ativa, a tarefa sem módulo em história de vários módulos aparece', async () => {
     getProjectPendingActions.mockResolvedValue([]);
+    getActiveExecutionSession.mockResolvedValue({ id: 'exec-1', status: 'active' });
     listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a', 'b']));
     montar();
     await abrir('Tarefas sem módulo');
     const fila = await screen.findByTestId('fila-tarefas-sem-modulo');
     expect(within(fila).getByText('Tarefa 7')).toBeInTheDocument();
     expect(within(fila).getByText(/Sem módulo: ninguém vai pegar/)).toBeInTheDocument();
+  });
+
+  it('RN-1397 (falha): antes do plano (sem execução ativa) a fila "Tarefas sem módulo" não aparece', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    getActiveExecutionSession.mockResolvedValue(null);
+    listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a', 'b']));
+    montar();
+    await waitFor(() => expect(listBacklog).toHaveBeenCalled());
+    await waitFor(() => expect(getActiveExecutionSession).toHaveBeenCalled());
+    expect(screen.queryByTestId('fila-tarefas-sem-modulo')).toBeNull();
   });
 
   it('AT-912 (falha): história de um módulo só não gera a fila', async () => {

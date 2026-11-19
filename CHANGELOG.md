@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-986, RN-1395, RN-1396, RN-1397, RN-1210, RN-708, RN-1162): os primeiros passos ficam claros. Com chave de nuvem, o time no modelo local deixa o passo "modelo" pendente, com o aviso "O time está no modelo local" e o botão "Aplicar Claude Haiku 5.5 ao time" (`maintainer`); "Definir teto" do cabeçalho abre `?tab=spend#teto`; "Começar a ideação" cria e abre a sessão do Criativo; a fila "Tarefas sem módulo" e o próximo passo `ligar_modulo` só valem com a execução ativa. i18n nos quatro idiomas. Regressivo `brabo-qa`: acrescentar a uma funcionalidade (`projetos` ou `execucao`) os globs `src/components/PrimeirosPassos*`, `src/components/ProximoPasso*`, `src/components/ComecarIdeacao*`, `src/components/MedidorDeGasto*`, `src/routes/ProjectPage.tsx` e `src/lib/{primeiros-passos,proximo-passo}*`.
+
 - Feat (AT-958, RN-1392, RN-1393, RN-1185): cada turno mostra UMA linha de trabalho (`Trace`) que abre no lugar, com raciocínio, "Consultado neste turno" e passos dentro: fechada diz "Trabalhou 14,0 s · 5 passos" (`duracaoMs` do fecho; sem o campo, sem "0 s"); em curso nasce aberta, "Trabalhando · N passos", sem segundos. O `ResumoDeTurno` sai do fio. i18n nos quatro idiomas. Ajuste no `brabo-qa`: nenhum (`raciocinio-do-turno` mantido).
 
 - Feat (AT-956, RN-1389, RN-1390, RN-1391): a sessão ocupa a janela e só o fio rola (`.wrapper` sem rolagem, doca e faixas sem encolher); a barra da sessão passa de 60 para 56 px; some a classe morta `.handoffDivider`. Teste estrutural `SessionPage.altura-fixa.test.ts`; a medida (fio ≥ 70% em 1366 × 768) é do Playwright no `brabo-qa`.

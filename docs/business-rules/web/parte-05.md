@@ -1265,9 +1265,11 @@ de 02/10, instalação nova). Desde a AT-372 a Visão geral abre com o cartão
   carga dela tem orçamento: ela só roda quando o time ainda não tem modelo;
   com modelo resolvido, o passo conta como coberto;
 - **modelo** — o binding resolvido do Criativo não é nulo (o lote da RN-654,
-  a mesma `queryKey` de Configurações);
+  a mesma `queryKey` de Configurações); com chave de nuvem cadastrada, o
+  modelo LOCAL deixa o passo pendente (RN-1395);
 - **ideação** — o projeto tem ao menos uma sessão (a lista que a página já
-  polla).
+  polla); o link vira o botão "Começar a ideação", que cria e abre a sessão
+(RN-1396).
 
 Nenhuma rota nova. Insumo ainda não lido (ou com erro) é "não sei" (RN-470), e
 o cartão NÃO aparece enquanto houver um — afirmar "falta credencial" sem ter
@@ -1280,8 +1282,8 @@ e o sumário acompanha a ordem.
 `?tab=settings&section=models`; o catálogo, que o passo antigo abria, também é
 de `/providers`.
 
-- **Onde:** `apps/web/src/lib/primeiros-passos.ts:37` (`derivarPrimeirosPassos`),
-  `apps/web/src/components/PrimeirosPassos.tsx:22` (`PrimeirosPassos`)
+- **Onde:** `apps/web/src/lib/primeiros-passos.ts:40` (`derivarPrimeirosPassos`),
+  `apps/web/src/components/PrimeirosPassos.tsx:28` (`PrimeirosPassos`)
 - **Teste:** `apps/web/src/lib/primeiros-passos.test.ts` (caminho feliz e "insumo
   não lido não vira pendente") e `apps/web/src/routes/ProjectOverviewTab.test.tsx`
   ("primeiros passos (RN-708, AT-372)")

@@ -172,12 +172,18 @@
     "modelo": {
       "titulo": "Ativar um modelo e aplicá-lo ao time",
       "pendente": "Nenhum agente tem modelo ainda: ative um modelo em Providers e escolha-o aqui.",
-      "link": "Escolher o modelo →"
+      "link": "Escolher o modelo →",
+      "pendenteLocal": "O time está no modelo local {{modelo}}. Escolha um modelo do seu provedor.",
+      "aplicar": "Aplicar {{modelo}} ao time",
+      "aplicarSemPapel": "Só quem mantém o projeto (maintainer) aplica o modelo ao time.",
+      "aplicarSemHaiku": "O Claude Haiku 5.5 não está ativo no catálogo: ative-o em Providers.",
+      "aplicarFalhou": "Não deu para aplicar o modelo ao time. Tente de novo."
     },
     "ideacao": {
       "titulo": "Começar a primeira ideação",
       "pendente": "Conte a ideia ao Criativo — é daí que saem as histórias.",
-      "link": "Abrir o Criativo →"
+      "link": "Começar a ideação",
+      "semPapel": "Criar sessão pede o papel developer."
     }
   },
   "proximoPasso": {

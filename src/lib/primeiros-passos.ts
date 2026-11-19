@@ -7,7 +7,8 @@
  * - `credencial`: a conta tem ao menos uma credencial de LLM
  *   (`GET /users/me/credentials`, a MESMA chave `['credentials']` da seção);
  * - `modelo`: o time tem modelo — o binding resolvido do Criativo, do LOTE da
- *   RN-654 (a mesma `queryKey` de Configurações), não é nulo;
+ *   RN-654 (a mesma `queryKey` de Configurações), não é nulo — e, havendo chave
+ *   de nuvem cadastrada, não é um modelo LOCAL (RN-1395);
  * - `ideacao`: o projeto tem ao menos uma sessão de trabalho.
  *
  * `undefined` em qualquer insumo é "não sei" (RN-470): o cartão não aparece
@@ -26,6 +27,8 @@ export interface InsumosDosPrimeirosPassos {
   credenciais: number | undefined;
   /** O time tem modelo resolvido; `undefined` = não lido. */
   timeComModelo: boolean | undefined;
+  /** O modelo do Criativo é local; `undefined` = não lido (RN-1395). */
+  modeloLocal?: boolean | undefined;
   /** O projeto tem sessão de trabalho; `undefined` = não lido. */
   temSessao: boolean | undefined;
 }
@@ -35,13 +38,15 @@ export interface InsumosDosPrimeirosPassos {
  * deve aparecer: algum insumo ainda não lido, ou todos feitos.
  */
 export function derivarPrimeirosPassos(insumos: InsumosDosPrimeirosPassos): Passo[] | null {
-  const { credenciais, timeComModelo, temSessao } = insumos;
+  const { credenciais, timeComModelo, temSessao, modeloLocal } = insumos;
   if (credenciais === undefined || timeComModelo === undefined || temSessao === undefined) {
     return null;
   }
   const passos: Passo[] = [
-    { chave: 'credencial', feito: credenciais > 0 },
-    { chave: 'modelo', feito: timeComModelo },
+    // Local não pede chave: com modelo no time a credencial está coberta.
+    { chave: 'credencial', feito: credenciais > 0 || timeComModelo },
+    // RN-1395: com chave de nuvem, o time no modelo local não é "modelo aplicado".
+    { chave: 'modelo', feito: timeComModelo && !(modeloLocal && credenciais > 0) },
     { chave: 'ideacao', feito: temSessao },
   ];
   return passos.every((p) => p.feito) ? null : passos;
@@ -53,3 +58,4 @@ export const DESTINO_DO_PASSO: Record<ChaveDoPasso, 'providers' | { tab: 'settin
   modelo: { tab: 'settings', section: 'models' },
   ideacao: { tab: 'criativo' },
 };
+

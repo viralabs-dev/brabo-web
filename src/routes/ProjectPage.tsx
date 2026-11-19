@@ -97,13 +97,14 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
     }
   }
   // Trocar de sub-aba: estado local + o endereço acompanha (como `trocarGrupo`).
-  function trocarSub(chave: ChaveDeAba) {
+  function trocarSub(chave: ChaveDeAba, ancora = '') {
     setTab(chave);
     try {
       const url = new URL(window.location.href);
       url.searchParams.set('tab', chave);
       url.searchParams.delete('section');
       url.searchParams.delete('group');
+      url.hash = ancora;
       window.history.replaceState(window.history.state, '', url);
     } catch {
       // sem `window` (teste/SSR): só a troca local
@@ -260,7 +261,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         acoes={
           <>
             {budget !== undefined && (
-              <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('settings')} />
+              <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('spend', 'teto')} />
             )}
             {acaoPrimaria}
           </>

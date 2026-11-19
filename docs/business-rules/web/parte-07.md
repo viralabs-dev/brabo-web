@@ -139,8 +139,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1162 — A Visão geral diz UM próximo passo do projeto, tirado de uma tabela tipada e ordenada; sem situação verdadeira, o cartão some {#rn-1162}
 
-- **Regra:** depois dos "Primeiros passos" (RN-708) a Visão geral não dizia mais o que fazer. Desde a AT-936 o cartão "Próximo passo" mostra UMA situação, a primeira verdadeira de uma tabela ordenada: (1) primeiro passo pendente da RN-708, (2) agente conversacional trabalhando, (3) continuar a ideação (há sessão e o backlog não tem histórias), (4) confirmar a arquitetura (há histórias e o mapa de módulos falta ou tem pendência), (5) ligar tarefas a um módulo (RN-1085), (6) desbloquear tarefas, (7) ativar a execução (tarefas prontas e execução inativa), (8) acompanhar a execução (execução ativa com tarefa em andamento), (9) rodar o entregável (todas as tarefas não arquivadas concluídas). O passo 1 reusa o texto e o destino da RN-708, sem duplicar a regra. A regra só ORDENA fatos que a aba já lê: nenhuma leitura nova (o orçamento de carga da Visão geral não muda), e insumo ainda não lido é "não sei" (RN-470), então o cartão espera. Decisões pendentes (aprovações, PRs, hipóteses, promoções) ficam de fora de propósito: já são a faixa "Precisa de você" (RN-467). Tarefa arquivada não conta. Sem situação verdadeira o cartão não aparece, sem texto inventado. "Mapa de módulos sem confirmação" não existe como dado no web: vale "mapa ausente ou com pendência".
-- **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:18` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
+- **Regra:** depois dos "Primeiros passos" (RN-708) a Visão geral não dizia mais o que fazer. Desde a AT-936 o cartão "Próximo passo" mostra UMA situação, a primeira verdadeira de uma tabela ordenada: (1) primeiro passo pendente da RN-708, (2) agente conversacional trabalhando, (3) continuar a ideação (há sessão e o backlog não tem histórias), (4) confirmar a arquitetura (há histórias e o mapa de módulos falta ou tem pendência), (5) ligar tarefas a um módulo (RN-1085; só com a execução ativa, RN-1397), (6) desbloquear tarefas, (7) ativar a execução (tarefas prontas e execução inativa), (8) acompanhar a execução (execução ativa com tarefa em andamento), (9) rodar o entregável (todas as tarefas não arquivadas concluídas). O passo 1 reusa o texto e o destino da RN-708, sem duplicar a regra. A regra só ORDENA fatos que a aba já lê: nenhuma leitura nova (o orçamento de carga da Visão geral não muda), e insumo ainda não lido é "não sei" (RN-470), então o cartão espera. Decisões pendentes (aprovações, PRs, hipóteses, promoções) ficam de fora de propósito: já são a faixa "Precisa de você" (RN-467). Tarefa arquivada não conta. Sem situação verdadeira o cartão não aparece, sem texto inventado. "Mapa de módulos sem confirmação" não existe como dado no web: vale "mapa ausente ou com pendência".
+- **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:19` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
 - **Teste:** `apps/web/src/lib/proximo-passo.test.ts` (um caso por situação, precedência, "nenhuma" e tarefa arquivada), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (describe "próximo passo": fixture da P10, bloqueada, cartão que some).
 - **Origem:** AT-936 (EP-035); prévia em `13-design/proximo-passo`. Revisa a RN-708: o primeiro passo pendente dela é a situação 1 desta tabela.
 
@@ -184,7 +184,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1210 — O cabeçalho do projeto tem trilha, chips, medidor de gasto do mês e UMA ação primária por seção {#rn-1210}
 
-- **Regra:** desde a AT-888 o cabeçalho (56 px) mostra a trilha `Projeto / Seção` (a seção vem de `secaoDaChave`), os chips `provider · visibilidade` e a branch padrão do repositório (não a checada), o `MedidorDeGasto` e a ação primária da seção: Visão geral e Sessões = "Nova sessão"; Trabalho = "Ativar execução" só na sub-aba Backlog (some com a execução já ativa; em Execução o cartão de chamada tem a ação, RN-1220); demais = nenhuma. O medidor lê `GET projects/:id/budget`: gasto do mês, barra por faixa (70% aviso, 90% perigo) e a previsão de `periodo.previsaoMicros` só quando a api a devolve; sem teto (`null`) diz "sem teto" com barra neutra e leva a Configurações. "Nova sessão" cria `consultiva` em Sessões › Conversa e `criativa` nos demais lugares, ativa e navega, pelo MESMO `useCriarSessao` da aba (uma régua só). "Ativar execução" usa `useAtivarExecucao`: recusa por repositório ausente confirmado (RN-582) e toast com a causa real da api. Papel mínimo do controle = o do endpoint (RN-102): `developer` para criar sessão, `maintainer` para ativar. O chip "Precisa de você" fica até a AT-889.
+- **Regra:** desde a AT-888 o cabeçalho (56 px) mostra a trilha `Projeto / Seção` (a seção vem de `secaoDaChave`), os chips `provider · visibilidade` e a branch padrão do repositório (não a checada), o `MedidorDeGasto` e a ação primária da seção: Visão geral e Sessões = "Nova sessão"; Trabalho = "Ativar execução" só na sub-aba Backlog (some com a execução já ativa; em Execução o cartão de chamada tem a ação, RN-1220); demais = nenhuma. O medidor lê `GET projects/:id/budget`: gasto do mês, barra por faixa (70% aviso, 90% perigo) e a previsão de `periodo.previsaoMicros` só quando a api a devolve; sem teto (`null`) diz "sem teto" com barra neutra e "Definir teto" leva a `?tab=spend#teto` (Gastos#teto: o teto tem um lugar só). "Nova sessão" cria `consultiva` em Sessões › Conversa e `criativa` nos demais lugares, ativa e navega, pelo MESMO `useCriarSessao` da aba (uma régua só). "Ativar execução" usa `useAtivarExecucao`: recusa por repositório ausente confirmado (RN-582) e toast com a causa real da api. Papel mínimo do controle = o do endpoint (RN-102): `developer` para criar sessão, `maintainer` para ativar. O chip "Precisa de você" fica até a AT-889.
 - **Onde:** `apps/web/src/routes/ProjectPage.tsx` (`ProjectPage`), `apps/web/src/components/MedidorDeGasto.tsx:14` (`MedidorDeGasto`), `apps/web/src/lib/use-criar-sessao.ts:17` (`useCriarSessao`), `apps/web/src/lib/use-ativar-execucao.ts:12` (`useAtivarExecucao`).
 - **Teste:** `apps/web/src/components/MedidorDeGasto.test.tsx` (com teto, faixa e previsão; sem teto).
 - **Origem:** AT-888 (EP-035), ADR 0294 e 0296 (previsão: AT-934).
@@ -373,6 +373,33 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/TurnActivityStrip.tsx:49` (`TurnActivityStrip`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
 - **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/components/TurnActivityStrip.test.tsx`.
 - **Origem:** AT-958 (EP-035).
+
+<a id="rn-1395"></a>
+
+### RN-1395 — Com chave de nuvem, o time no modelo local não é "modelo aplicado" {#rn-1395}
+
+- **Regra:** no passo `modelo` dos Primeiros passos (RN-708), o time no modelo LOCAL (o `modelId` do Criativo está em `modelsByCategory.local`, da mesma `['models', projectId]` que a Visão geral já lê) só conta como feito quando a conta NÃO tem credencial de nuvem. Com chave de nuvem, o passo fica pendente: "O time está no modelo local ‹nome›. Escolha um modelo do seu provedor.", com "Escolher o modelo" e o botão "Aplicar Claude Haiku 5.5 ao time", que grava o modelo do PROJETO (`PUT /projects/:id/model-binding`, `maintainer`, RN-102). Sem o papel, ou sem o Haiku ativo no catálogo (RN-043), o botão fica inerte com o motivo visível; falha da api é dita ao lado. A leitura de credenciais passa a ligar também com o time no modelo local (com modelo de nuvem segue desligada, orçamento da Visão geral). Sem a lista de modelos lida, o cartão espera (RN-470).
+- **Onde:** `src/lib/primeiros-passos.ts` (`derivarPrimeirosPassos`), `src/components/PrimeirosPassos.helpers.ts` (`useModeloDoTime`), `src/components/PrimeirosPassos.tsx`.
+- **Teste:** `src/lib/primeiros-passos.test.ts`, `src/routes/ProjectOverviewTab.test.tsx` ("time no modelo local").
+- **Origem:** AT-986 (EP-035), decisão do dono de 17/11 (P1 = A).
+
+<a id="rn-1396"></a>
+
+### RN-1396 — "Começar a ideação" cria e abre a sessão do Criativo {#rn-1396}
+
+- **Regra:** o passo `ideacao` dos Primeiros passos e o "Próximo passo" que o reusa deixam de ser link para a lista de sessões: o botão "Começar a ideação" cria, ativa e abre a sessão `criativa` pelo `useCriarSessao` (a régua única da RN-1210), desabilitado enquanto cria. Papel mínimo `developer` (RN-102); sem ele o botão fica inerte com o motivo visível.
+- **Onde:** `src/components/ComecarIdeacao.tsx`, `src/components/PrimeirosPassos.tsx`, `src/components/ProximoPasso.tsx`.
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx` ("Começar a ideação" cria, ativa e abre a sessão).
+- **Origem:** AT-986 (EP-035).
+
+<a id="rn-1397"></a>
+
+### RN-1397 — "Tarefas sem módulo" e `ligar_modulo` só valem com a execução ativa {#rn-1397}
+
+- **Regra:** antes do plano do Dev Lead (sem execução ativa) atribuir o módulo da tarefa é trabalho dele (RN-678), não pendência do dono. A fila "Tarefas sem módulo" (RN-1085) só aparece com a execução ativa, e o próximo passo `ligar_modulo` (RN-1162) só vale com `execucaoAtiva`. Sem execução, a fila e o passo somem, sem texto no lugar.
+- **Onde:** `src/components/PendenciasDeOutrasSessoes.tsx` (`semModulo`), `src/lib/proximo-passo.ts` (`PASSOS`).
+- **Teste:** `src/lib/proximo-passo.test.ts`, `src/components/PendenciasDeOutrasSessoes.test.tsx` (RN-1397).
+- **Origem:** AT-986 (EP-035), decisão do dono de 17/11 (P2 = A).
 
 <a id="rn-1389"></a>
 

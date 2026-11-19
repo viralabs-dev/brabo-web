@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { I18nextProvider } from 'react-i18next';
 // A instância REAL (não uma isolada): `ErroDeCarregamento` (namespace `ui`)
 // é filho de `ProjectPage` e usa `useTranslation('ui')` — sem uma instância
@@ -213,6 +213,15 @@ describe('ProjectPage — falha de carga não vira tela branca', () => {
     montar();
     expect(await screen.findByRole('button', { name: 'Nova sessão' })).toBeDisabled();
     papelDoTeste = 'developer';
+  });
+
+  // RN-1210 (AT-986): "Definir teto" leva à aba Gastos, âncora #teto — o teto tem um lugar só.
+  it('"Definir" do medidor sem teto abre Gastos na âncora do teto', async () => {
+    getProject.mockResolvedValue(PROJETO);
+    montar();
+    fireEvent.click(await screen.findByRole('button', { name: 'Definir teto' }));
+    expect(window.location.search).toContain('tab=spend');
+    expect(window.location.hash).toBe('#teto');
   });
 
   it('a utilidade no-scrollbar existe no CSS do shadcn', () => {

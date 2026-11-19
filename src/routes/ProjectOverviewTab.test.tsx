@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
@@ -33,6 +33,7 @@ function novaInstanciaI18n() {
 // `ProjectInsightsTab.test.tsx`.
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children }: { children?: ReactNode }) => <a>{children}</a>,
+  useNavigate: () => navegar,
 }));
 import type {
   Architecture,
@@ -42,6 +43,10 @@ import type {
   SessionEvent,
 } from '../lib/api-types';
 
+const navegar = vi.fn();
+const createSession = vi.fn();
+const transitionSession = vi.fn();
+const setProjectModelBinding = vi.fn();
 const listSessions = vi.fn();
 const listSessionEvents = vi.fn();
 const listHandoffs = vi.fn();
@@ -67,6 +72,9 @@ vi.mock('../lib/api-client', async () => {
     ApiError: real.ApiError,
     mensagemDaApi: real.mensagemDaApi,
     listSessions: (...args: unknown[]) => listSessions(...args),
+    createSession: (...args: unknown[]) => createSession(...args),
+    transitionSession: (...args: unknown[]) => transitionSession(...args),
+    setProjectModelBinding: (...args: unknown[]) => setProjectModelBinding(...args),
     listSessionEvents: (...args: unknown[]) => listSessionEvents(...args),
     listHandoffs: (...args: unknown[]) => listHandoffs(...args),
     listActions: (...args: unknown[]) => listActions(...args),
@@ -391,11 +399,87 @@ describe('primeiros passos (RN-708, AT-372)', () => {
     expect(within(cartao).getByText('0 de 3 feitos')).toBeInTheDocument();
     expect(within(cartao).getByText('Cadastrar a chave →')).toBeInTheDocument();
     expect(within(cartao).getByText('Escolher o modelo →')).toBeInTheDocument();
-    expect(within(cartao).getByText('Abrir o Criativo →')).toBeInTheDocument();
+    expect(within(cartao).getByRole('button', { name: 'Começar a ideação' })).toBeInTheDocument();
     // Sem sessão, a coluna de atividade é um vazio de verdade, não um esqueleto parado.
     expect(
       await screen.findByText('Nenhuma atividade ainda: ela começa com a primeira sessão do projeto.'),
     ).toBeInTheDocument();
+  });
+
+  // RN-1396 (AT-986): o passo da ideação cria e abre a sessão, sem cair na lista vazia.
+  it('"Começar a ideação" cria, ativa e abre a sessão do Criativo', async () => {
+    listSessions.mockResolvedValue([]);
+    listCredentials.mockResolvedValue([]);
+    getResolvedModelBindings.mockResolvedValue({ agents: [{ key: 'criativo', binding: null }], areas: [] });
+    createSession.mockResolvedValue({ id: 'sess-novo' });
+    transitionSession.mockResolvedValue({});
+    montar();
+    const cartao = await screen.findByTestId('primeiros-passos');
+    await vi.waitFor(() => expect(within(cartao).getByRole('button', { name: 'Começar a ideação' })).toBeEnabled());
+    fireEvent.click(within(cartao).getByRole('button', { name: 'Começar a ideação' }));
+    await vi.waitFor(() => expect(createSession).toHaveBeenCalledWith('proj-1', { kind: 'criativa', name: undefined }));
+    await vi.waitFor(() =>
+      expect(navegar).toHaveBeenCalledWith({
+        to: '/projects/$projectId/sessions/$sessionId',
+        params: { projectId: 'proj-1', sessionId: 'sess-novo' },
+      }),
+    );
+  });
+
+  // RN-1395 (AT-986): time no modelo local + chave de nuvem = passo pendente, com o botão do Haiku.
+  describe('time no modelo local', () => {
+    const LOCAL = { id: 'm-loc', provider: 'ollama', name: 'qwen2.5-coder:7b', displayName: 'Qwen 7B' };
+    const HAIKU = { id: 'm-hk', provider: 'anthropic', name: 'claude-haiku-5-5', displayName: 'Claude Haiku 5.5' };
+    const NO_LOCAL = {
+      agents: [{ key: 'criativo', binding: { modelId: 'm-loc', origin: 'workspace', routingPreference: null, skipped: [] } }],
+      areas: [],
+    };
+
+    it('com chave de nuvem o passo do modelo fica pendente e "Aplicar" grava o Haiku no projeto', async () => {
+      listSessions.mockResolvedValue([]);
+      listCredentials.mockResolvedValue([{ id: 'c-1' }]);
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: { geral: [HAIKU] } });
+      getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
+      listWorkspaces.mockResolvedValue([{ workspace: { id: 'ws-1' }, role: 'maintainer' }]);
+      setProjectModelBinding.mockResolvedValue(undefined);
+      montar();
+      const cartao = await screen.findByTestId('primeiros-passos');
+      const passo = await vi.waitFor(() => {
+        const el = cartao.querySelector('[data-passo="modelo"]') as HTMLElement;
+        expect(el.getAttribute('data-feito')).toBe('nao');
+        return el;
+      });
+      expect(within(passo).getByText(/O time está no modelo local Qwen 7B/)).toBeInTheDocument();
+      expect(within(passo).getByText('Escolher o modelo →')).toBeInTheDocument();
+      const botao = await within(passo).findByRole('button', { name: 'Aplicar Claude Haiku 5.5 ao time' });
+      await vi.waitFor(() => expect(botao).toBeEnabled());
+      fireEvent.click(botao);
+      await vi.waitFor(() => expect(setProjectModelBinding).toHaveBeenCalledWith('proj-1', 'm-hk'));
+    });
+
+    it('sem o papel maintainer o botão fica inerte, com o motivo visível', async () => {
+      listSessions.mockResolvedValue([]);
+      listCredentials.mockResolvedValue([{ id: 'c-1' }]);
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: { geral: [HAIKU] } });
+      getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
+      listWorkspaces.mockResolvedValue([{ workspace: { id: 'ws-1' }, role: 'developer' }]);
+      montar();
+      const botao = await screen.findByRole('button', { name: 'Aplicar Claude Haiku 5.5 ao time' });
+      expect(botao).toBeDisabled();
+      expect(screen.getByText(/Só quem mantém o projeto/)).toBeInTheDocument();
+    });
+
+    it('sem chave de nuvem o local conta como feito: o passo do modelo não fica pendente', async () => {
+      listSessions.mockResolvedValue([]);
+      listCredentials.mockResolvedValue([]);
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: {} });
+      getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
+      montar();
+      const cartao = await screen.findByTestId('primeiros-passos');
+      await vi.waitFor(() =>
+        expect((cartao.querySelector('[data-passo="modelo"]') as HTMLElement).getAttribute('data-feito')).toBe('sim'),
+      );
+    });
   });
 
   it('tudo feito: o cartão não aparece', async () => {

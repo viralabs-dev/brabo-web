@@ -165,12 +165,18 @@
     "modelo": {
       "titulo": "Activate a model and apply it to the team",
       "pendente": "No agent has a model yet: activate one in Providers and pick it here.",
-      "link": "Pick the model →"
+      "link": "Pick the model →",
+      "pendenteLocal": "The team is on the local model {{modelo}}. Pick a model from your provider.",
+      "aplicar": "Apply {{modelo}} to the team",
+      "aplicarSemPapel": "Only project maintainers can apply the model to the team.",
+      "aplicarSemHaiku": "Claude Haiku 5.5 is not active in the catalog: activate it in Providers.",
+      "aplicarFalhou": "Could not apply the model to the team. Try again."
     },
     "ideacao": {
       "titulo": "Start the first ideation",
       "pendente": "Tell the Creative agent your idea — that is where the stories come from.",
-      "link": "Open the Creative agent →"
+      "link": "Start the ideation",
+      "semPapel": "Creating a session needs the developer role."
     }
   },
   "proximoPasso": {

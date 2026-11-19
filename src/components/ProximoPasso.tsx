@@ -6,6 +6,7 @@ import { useBacklog } from '../lib/hooks';
 import { DESTINO_DO_PASSO } from '../lib/primeiros-passos';
 import { DESTINO, derivarProximoPasso, fatosDoBacklog } from '../lib/proximo-passo';
 import { usePrimeirosPassos } from './PrimeirosPassos.helpers';
+import { ComecarIdeacao } from './ComecarIdeacao';
 import styles from './ProximoPasso.module.css';
 
 /**
@@ -65,7 +66,9 @@ export function ProximoPasso({
       <span className={styles.rotulo}>{t('proximoPasso.titulo')}</span>
       <h2 className={styles.titulo}>{titulo}</h2>
       <p className={styles.texto}>{texto}</p>
-      {alvo === 'providers' ? (
+      {chave === 'ideacao' ? (
+        <ComecarIdeacao projectId={projectId} className={styles.link} />
+      ) : alvo === 'providers' ? (
         <Link to="/providers" className={styles.link}>
           {rotulo}
         </Link>

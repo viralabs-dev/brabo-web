@@ -158,12 +158,18 @@
     "modelo": {
       "titulo": "启用一个模型并应用到团队",
       "pendente": "还没有智能体配置模型：请在 Providers 中启用一个，再在此处选择。",
-      "link": "选择模型 →"
+      "link": "选择模型 →",
+      "pendenteLocal": "团队正在使用本地模型 {{modelo}}。请选择您的提供商的模型。",
+      "aplicar": "将 {{modelo}} 应用到团队",
+      "aplicarSemPapel": "只有项目 maintainer 才能把模型应用到团队。",
+      "aplicarSemHaiku": "Claude Haiku 5.5 在目录中未启用：请在 Providers 中启用。",
+      "aplicarFalhou": "无法将模型应用到团队，请重试。"
     },
     "ideacao": {
       "titulo": "开始第一次构思",
       "pendente": "把想法告诉 Criativo —— 用户故事就从这里产生。",
-      "link": "打开 Criativo →"
+      "link": "开始构思",
+      "semPapel": "创建会话需要 developer 角色。"
     }
   },
   "proximoPasso": {

@@ -79,7 +79,8 @@
     },
     "overLimit": "{{pct}}% do limite mensal",
     "savingsPct": "{{pct}}% de tokens poupados este ciclo",
-    "noBudgetCta": "Definir orçamento",
+    "semTeto": "sem teto do mês",
+    "definir": "definir",
     "compactFooter": {
       "spent": "gasto {{value}}",
       "balance": "saldo {{value}}"

@@ -27,7 +27,7 @@ export interface TokenMeterProps {
    * o CHAMADOR quem sabe distinguir "ainda carregando" de "confirmado sem
    * orçamento" — este componente só recebe a resposta já resolvida (ADR:
    * fidelidade do dashboard). Efeito: variante `compact` mostra o CTA
-   * "Definir orçamento" no lugar da barra/percentual, nunca "0/0 · 0%".
+   * "sem teto do mês · definir" no lugar da barra/percentual, nunca "0/0 · 0%".
    */
   noBudget?: boolean;
   /** Acionado ao clicar no CTA de `noBudget` — só usado na variante `compact`. */
@@ -94,11 +94,14 @@ export function TokenMeter({
         data-testid="token-meter"
         data-threshold="ok"
       >
-        <span
-          role="button"
-          tabIndex={0}
-          className={styles.noBudgetCta}
-          data-testid="token-meter-no-budget-cta"
+        {/* AT-967: texto, não botão — "sem teto do mês · definir", com "definir" como link. */}
+        <span className={styles.semTeto}>
+          {t('tokenMeter.semTeto')} ·{' '}
+          <span
+            role="link"
+            tabIndex={0}
+            className={styles.noBudgetCta}
+            data-testid="token-meter-no-budget-cta"
           // stopPropagation: o card do dashboard inteiro é clicável (navega
           // pro projeto) — sem isto o clique no CTA dispararia os DOIS
           // destinos ao mesmo tempo. Não é `<button>` de propósito: o
@@ -116,7 +119,8 @@ export function TokenMeter({
             }
           }}
         >
-          {t('tokenMeter.noBudgetCta')}
+            {t('tokenMeter.definir')}
+          </span>
         </span>
       </div>
     );

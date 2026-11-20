@@ -321,8 +321,8 @@ interface ProjectSearch {
 const projectRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/projects/$projectId',
-  // `tab` só existe pra deep-link (ex.: CTA "Definir orçamento" do card do
-  // dashboard indo direto pra Configurações) — a navegação normal entre
+  // `tab` só existe pra deep-link (ex.: o link "definir" do card do dashboard
+  // indo direto pro cartão #teto dos Gastos) — a navegação normal entre
   // abas continua em estado local, sem escrever na URL a cada clique.
   //
   // `resolverChaveDeAba` (não `ehChaveDeAba` sozinho) porque também aceita

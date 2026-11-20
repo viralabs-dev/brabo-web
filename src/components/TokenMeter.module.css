@@ -130,23 +130,16 @@
   padding: 0;
 }
 
-.noBudgetCta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 8px 10px;
-  border-radius: var(--radius-sm, 4px);
-  border: 1px dashed var(--border-strong);
+.semTeto {
   color: var(--text-secondary);
   font-size: var(--fs-meta);
-  font-weight: 600;
-  cursor: pointer;
 }
 
-.noBudgetCta:hover {
-  background: var(--surface-2);
+.noBudgetCta {
+  /* --text-primary e não --accent: o terracota sobre --surface-0 do tema claro não fecha AA. */
   color: var(--text-primary);
+  cursor: pointer;
+  text-decoration: underline;
 }
 
 .noBudgetCta:focus-visible {

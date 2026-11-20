@@ -73,7 +73,8 @@
     },
     "overLimit": "月度上限的 {{pct}}%",
     "savingsPct": "本周期节省了 {{pct}}% 的 tokens",
-    "noBudgetCta": "设置预算",
+    "semTeto": "本月无上限",
+    "definir": "设置",
     "compactFooter": {
       "spent": "已花费 {{value}}",
       "balance": "余额 {{value}}"

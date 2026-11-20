@@ -29,6 +29,9 @@ Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`
 
 As chaves de URL de hoje viram as chaves das sub-abas; todo link antigo abre a mesma tela.
 
+### L02 — Início (`/`, v11, AT-967)
+Quatro cartões de indicador no topo: Projetos ativos (só os não parados, com "N parados há mais de 30 dias"), Agentes agora, Gasto do mês e Caixa de decisões (uma contagem por fila, nunca somadas, e "a mais antiga espera há X" quando as filas vêm inteiras; RN-1461). Abaixo, "Projetos" com o seletor Ativos · N | Parados · N | Todos à direita (padrão Ativos, escolha em `localStorage`; parado = último evento há mais de 30 dias, RN-1460). O cartão do projeto tem o nome na primeira linha inteira, os chips (aguardando você, online, aprovações) na linha de baixo, os agentes (até 4 e "+N") com o nome por extenso, o medidor do mês ou o texto "sem teto do mês · definir" (link para `?tab=spend#teto`; nenhum botão "Definir orçamento") e o rodapé de atividade; o cartão tracejado "Novo projeto" fecha a grade. "Atividade recente" lista só evento com sujeito e resultado (RN-1462). Fonte: prancha L02 da `13-design/v11-todas-as-telas/`; prévia em `13-design/inicio-v11/`.
+
 ### S07 — Caixa de decisões (`/decisions`)
 Cinco cartões de fila, cada um com o próprio número e nunca somados (RN-467): Aprovações, PRs para mergear, Hipóteses, Promoções de história e Pendências de arquitetura. Abaixo, uma seção por fila com os itens de todos os projetos (avatar, ação, tipo, projeto, idade, motivo, e Aprovar, Negar e Abrir). Fila vazia tem texto próprio. Fonte: AT-928.
 

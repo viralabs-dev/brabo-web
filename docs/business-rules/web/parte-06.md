@@ -1125,6 +1125,8 @@ keywords: [regras de negócio, web]
 
 ### RN-963 — O gasto tem página GLOBAL e aba do PROJETO, e o orçamento tem editor {#rn-963}
 
+> **Revisada pela AT-967 ([RN-1460](parte-07.md#rn-1460)):** o botão "Definir orçamento" do cartão do projeto (item 3) saiu; o cartão diz "sem teto do mês · definir" e o link vai para `?tab=spend#teto`.
+
 Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" e convive com a [RN-060](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-060), a [RN-952](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-952), a [RN-953](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-953) e a [RN-954](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-954).
 
 1. **Página global.** `/spend`, no menu global ao lado de Containers e Providers, serve todo papel: o `owner` vê o workspace inteiro (janela 30/90/180, por modelo, provider, projeto e ator), os orçamentos de todos os projetos e a fatura por chave (`CredentialSpendSection`, que saiu de Providers); quem não é `owner` vê só o PRÓPRIO consumo por projeto (`spend/me` do workspace) e nunca provider nem credencial.

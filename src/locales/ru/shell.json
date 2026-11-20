@@ -82,7 +82,8 @@
     },
     "overLimit": "{{pct}}% месячного лимита",
     "savingsPct": "{{pct}}% токенов сэкономлено в этом цикле",
-    "noBudgetCta": "Задать бюджет",
+    "semTeto": "без лимита на месяц",
+    "definir": "задать",
     "compactFooter": {
       "spent": "потрачено {{value}}",
       "balance": "остаток {{value}}"

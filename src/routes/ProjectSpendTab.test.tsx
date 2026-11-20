@@ -423,8 +423,11 @@ describe('ProjectSpendTab — o orçamento do projeto', () => {
 
     const texto = await screen.findByTestId('periodo-do-teto');
     expect(texto).toHaveTextContent(/18 dias restantes/);
-    expect(texto).toHaveTextContent(/Previsão no fim do mês/);
-    expect(texto).toHaveTextContent(/00:00 UTC/);
+    // AT-1005: o cartão fechado resume numa linha; a frase inteira vai no `title`.
+    expect(texto).toHaveTextContent(/Previsão US\$\s5,00 · o mês vira/);
+    expect(texto.title).toMatch(/Previsão no fim do mês/);
+    expect(texto.title).toMatch(/00:00 UTC/);
+    expect(texto.textContent).not.toMatch(/\n/);
   });
 
   /** RN-213: leitura pura de `lastThresholdNotified`, nunca recalculado aqui. */
@@ -642,5 +645,73 @@ describe('ProjectSpendTab — ajustes da prévia (AT-973)', () => {
     await screen.findByText('O meu consumo');
     const abreviados = await screen.findAllByText(/mi$/);
     expect(abreviados.some((e) => e.getAttribute('title') === '50.400.000')).toBe(true);
+  });
+});
+
+// As sobras da v11 (AT-1005, L08): gráfico ao lado do teto, segunda linha dos indicadores, tokens do membro, link.
+describe('ProjectSpendTab — as sobras da v11 (AT-1005)', () => {
+  const jovem = (): WorkspaceSpendReport => ({
+    ...doWorkspace,
+    porDia: Array.from({ length: 30 }, (_, i) => ({
+      dia: `2026-10-${String(i + 1).padStart(2, '0')}`,
+      costMicros: i >= 25 ? 2_400 : 0,
+      chamadas: i >= 25 ? 2 : 0,
+    })),
+  });
+
+  it('owner: o gráfico por dia e o cartão #teto dividem a mesma faixa, depois dos indicadores', async () => {
+    listWorkspaces.mockResolvedValue([{ id: 'ws-1', role: 'owner' }]);
+    getWorkspaceSpendReport.mockResolvedValue(jovem());
+    montar();
+    await screen.findByText('desde 26/10');
+    await screen.findByText('Sem teto do mês');
+    const cartao = document.getElementById('teto')!;
+    const faixa = cartao.parentElement!;
+    const indicadores = document.querySelector('[data-slot="section-cards"]')!;
+    expect(faixa.contains(indicadores)).toBe(false);
+    expect(faixa.contains(await screen.findByText(/^Gasto por dia/))).toBe(true);
+    expect(indicadores.compareDocumentPosition(faixa) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('Total diz "desde" o primeiro dia com gasto e Chamadas diz o modelo e a fatia, lidos do relatório', async () => {
+    listWorkspaces.mockResolvedValue([{ id: 'ws-1', role: 'owner' }]);
+    getWorkspaceSpendReport.mockResolvedValue(jovem());
+    montar();
+    expect(await screen.findByText('desde 26/10')).toBeInTheDocument();
+    expect(screen.getByText('caro/modelo em 71%')).toBeInTheDocument();
+  });
+
+  it('sem leitura por modelo, Chamadas fica sem nota (a tela não afirma o que não leu)', async () => {
+    listWorkspaces.mockResolvedValue([{ id: 'ws-1', role: 'owner' }]);
+    getWorkspaceSpendReport.mockResolvedValue({ ...jovem(), porModelo: [] });
+    montar();
+    await screen.findByText('desde 26/10');
+    expect(screen.queryByText(/ em \d+%$/)).not.toBeInTheDocument();
+  });
+
+  it('membro: nenhum número de tokens com mais de 6 dígitos fica visível (o inteiro vai no title)', async () => {
+    listWorkspaces.mockResolvedValue([{ id: 'ws-1', role: 'developer' }]);
+    getMySpend.mockResolvedValue({ ...meu, inputTokens: 50_000_000, outputTokens: 400_000 });
+    montar();
+    await screen.findByText('O meu consumo');
+    await screen.findAllByText(/mi$/);
+    const cartoes = [...document.querySelectorAll('[data-slot="section-card"]')].map((c) => c.textContent).join(' ');
+    expect(cartoes).not.toMatch(/\d{1,3}(\.\d{3}){2,}/);
+    expect(document.querySelector('[title="50.000.000 entrada · 400.000 saída"]')).not.toBeNull();
+  });
+
+  it('"Ver os N agentes" é um link à esquerda, não o botão neutro centralizado', async () => {
+    listWorkspaces.mockResolvedValue([{ id: 'ws-1', role: 'developer' }]);
+    const agente = (chave: string) => ({
+      chave, rotulo: null, actorKind: 'agent', costMicros: 1_000, inputTokens: 1, outputTokens: 1, chamadas: 1,
+    });
+    getProjectSpendTeam.mockResolvedValue({
+      projectId: 'p-1', dias: 30, totalMicros: 4_000, inputTokens: 4, outputTokens: 4, chamadas: 4,
+      porAgente: ['po', 'dev', 'qa', 'infra'].map(agente), porArea: [],
+    });
+    montar();
+    const ver = await screen.findByRole('button', { name: 'Ver os 4 agentes' });
+    expect(ver).not.toHaveAttribute('data-slot', 'button');
+    expect(ver.className).toMatch(/link/);
   });
 });

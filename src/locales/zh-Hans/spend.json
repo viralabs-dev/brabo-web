@@ -7,6 +7,8 @@
     "retry": "重试",
     "tokensDetail": "{{input}} 输入 · {{output}} 输出",
     "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "自 {{dia}}",
+    "topModelCalls": "{{modelo}} 占 {{pct}}%",
     "callsLabel": "调用次数"
   },
   "role": {
@@ -134,6 +136,7 @@
     "restantes_other": "剩余 {{count}} 天。",
     "previsao": "月末预测：{{valor}}。",
     "virada": "月份将在 {{quando}} 切换（00:00 UTC）。",
+    "resumo": "预测 {{valor}} · {{quando}} 换月",
     "projeto": {
       "titulo": "月度上限",
       "semTeto": "此项目尚未设置月度上限。",

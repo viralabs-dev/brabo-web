@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Bot, Coins, Cpu, Folder, MessageSquare, Phone, RotateCcw, Server, User, Wallet } from 'lucide-react';
 import { Button } from './ui/Button';
+import { BotaoLink } from './ui/BotaoLink';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useTranslation } from 'react-i18next';
 import {
@@ -20,6 +21,8 @@ import {
   diasDoMesUtc,
   janelaDesdeOInicio,
   linhasParaCsv,
+  primeiroDiaComGasto,
+  diaCurto,
   rotuloDoAtor,
   type SpendPorDia,
 } from '../lib/spend';
@@ -139,6 +142,18 @@ function Estado({
   );
 }
 
+/** "12,3 mi entrada · 4,1 mi saída", com os inteiros no `title` (RN-1451). */
+export function DetalheDeTokens({ entrada, saida }: { entrada: number; saida: number }) {
+  const { t } = useTranslation('spend');
+  return (
+    <span
+      title={t('shared.tokensDetail', { input: numberFmt.format(entrada), output: numberFmt.format(saida) })}
+    >
+      {t('shared.tokensDetail', { input: abreviarTokens(entrada), output: abreviarTokens(saida) })}
+    </span>
+  );
+}
+
 function DestaquesDoTotal({
   total,
   assinatura,
@@ -147,6 +162,8 @@ function DestaquesDoTotal({
   saida,
   rotuloTotal,
   modelo,
+  desde,
+  modeloDeChamadas,
 }: {
   total: number;
   assinatura?: number;
@@ -156,6 +173,10 @@ function DestaquesDoTotal({
   rotuloTotal: string;
   /** Modelo de maior gasto, quando o relatório o traz. */
   modelo?: string;
+  /** Primeiro dia com gasto (`YYYY-MM-DD`), da série densa; sem ele, o Total fica sem nota. */
+  desde?: string | null;
+  /** Modelo com mais chamadas e a fatia, só quando a aba já leu o gasto por modelo. */
+  modeloDeChamadas?: { modelo: string; pct: number } | null;
 }) {
   const { t } = useTranslation('spend');
   const media = custoMedioPorChamada(total, chamadas);
@@ -166,20 +187,21 @@ function DestaquesDoTotal({
           icone: <Wallet aria-hidden="true" size={12} />,
           rotulo: rotuloTotal,
           valor: formatarUsd(total),
+          nota: desde ? t('shared.sinceDay', { dia: diaCurto(desde) }) : undefined,
         },
         {
           icone: <Phone aria-hidden="true" size={12} />,
           rotulo: t('shared.callsLabel'),
           valor: numberFmt.format(chamadas),
+          nota: modeloDeChamadas
+            ? t('shared.topModelCalls', { modelo: modeloDeChamadas.modelo, pct: modeloDeChamadas.pct })
+            : undefined,
         },
         {
           icone: <Coins aria-hidden="true" size={12} />,
           rotulo: t('workspace.tokensLabel'),
           valor: <span title={numberFmt.format(entrada + saida)}>{abreviarTokens(entrada + saida)}</span>,
-          nota: t('shared.tokensDetail', {
-            input: numberFmt.format(entrada),
-            output: numberFmt.format(saida),
-          }),
+          nota: <DetalheDeTokens entrada={entrada} saida={saida} />,
         },
         {
           rotulo: t('shared.avgCallLabel'),
@@ -198,6 +220,12 @@ function DestaquesDoTotal({
       ]}
     />
   );
+}
+
+/** O modelo com mais chamadas e a sua fatia (%); `null` sem leitura por modelo. */
+function modeloDeChamadas(linhas: { chave: string; chamadas: number }[], total: number) {
+  const topo = [...linhas].sort((a, b) => b.chamadas - a.chamadas)[0];
+  return topo && total > 0 ? { modelo: topo.chave, pct: Math.round((topo.chamadas / total) * 100) } : null;
 }
 
 /**
@@ -273,21 +301,28 @@ export function GastoDoWorkspace({
         erro={t('workspace.error')}
       />
 
+      {r && (
+        <DestaquesDoTotal
+          total={r.totalMicros}
+          assinatura={r.assinaturaMicros}
+          chamadas={r.chamadas}
+          entrada={r.inputTokens}
+          saida={r.outputTokens}
+          rotuloTotal={t('workspace.totalLabel', { dias })}
+          modelo={r.porModelo[0]?.chave}
+          desde={primeiroDiaComGasto(base.data?.porDia ?? [])}
+          modeloDeChamadas={modeloDeChamadas(r.porModelo, r.chamadas)}
+        />
+      )}
+
       {/* O teto é o destino de `?tab=spend#teto`: fica numa posição estável (não
-          remonta quando o relatório chega) e não some se ele falhar. */}
+          remonta quando o relatório chega) e não some se ele falhar. O gráfico
+          ocupa a coluna ao lado dele (AT-1005, L08); sem teto, o gráfico é a faixa. */}
       {(teto || r) && (
-        <div className={teto ? styles.comTeto : undefined}>
+        <div className={teto ? styles.comTeto : styles.faixa}>
           <div className={styles.colunaDosIndicadores}>
             {r && (
-              <DestaquesDoTotal
-                total={r.totalMicros}
-                assinatura={r.assinaturaMicros}
-                chamadas={r.chamadas}
-                entrada={r.inputTokens}
-                saida={r.outputTokens}
-                rotuloTotal={t('workspace.totalLabel', { dias })}
-                modelo={r.porModelo[0]?.chave}
-              />
+              <GastoPorDiaEAgente linhas={r.porDiaEAgente ?? []} dias={dias} titulo={t('workspace.dailySpendTitle')} />
             )}
           </div>
           {teto}
@@ -296,9 +331,6 @@ export function GastoDoWorkspace({
 
       {r && (
         <>
-          <div className={styles.faixa}>
-            <GastoPorDiaEAgente linhas={r.porDiaEAgente ?? []} dias={dias} titulo={t('workspace.dailySpendTitle')} />
-          </div>
           {r.totalMicros === 0 && r.chamadas === 0 ? (
             <p className={styles.nota}>{t('workspace.whereEmpty')}</p>
           ) : (
@@ -501,9 +533,9 @@ titulo={t('team.byAgentTitle')}
               vazio={t('team.byAgentEmpty')}
               rodape={
                 agentes.length > 3 && (
-                  <Button variant="ghost" size="sm" onClick={() => setTodosOsAgentes((v) => !v)}>
+                  <BotaoLink onClick={() => setTodosOsAgentes((v) => !v)}>
                     {todosOsAgentes ? t('team.showTop') : t('team.showAll', { n: agentes.length })}
-                  </Button>
+                  </BotaoLink>
                 )
               }
             />

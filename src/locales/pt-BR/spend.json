@@ -7,6 +7,8 @@
     "retry": "Tentar de novo",
     "tokensDetail": "{{input}} entrada · {{output}} saída",
     "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "desde {{dia}}",
+    "topModelCalls": "{{modelo}} em {{pct}}%",
     "callsLabel": "Chamadas"
   },
   "role": {
@@ -148,6 +150,7 @@
     "restantes_other": "{{count}} dias restantes.",
     "previsao": "Previsão no fim do mês: {{valor}}.",
     "virada": "O mês vira em {{quando}} (00:00 UTC).",
+    "resumo": "Previsão {{valor}} · o mês vira {{quando}}",
     "projeto": {
       "titulo": "Teto do mês",
       "semTeto": "Nenhum teto do mês definido para este projeto ainda.",

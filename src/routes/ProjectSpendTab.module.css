@@ -80,7 +80,7 @@
   gap: var(--space-2);
 }
 
-/* Indicadores à esquerda, cartão do teto (320 px) à direita (AT-973). */
+/* Gráfico à esquerda, cartão do teto (320 px) à direita (AT-973, AT-1005). */
 .comTeto {
   display: grid;
   gap: var(--space-4);
@@ -94,7 +94,15 @@
   }
 }
 
+/* A coluna do gráfico: o `<figure>` enche a faixa ao lado do cartão (AT-1005). */
 .colunaDosIndicadores { min-width: 0; }
+
+/* O resumo do cartão fechado cabe numa linha; o texto inteiro vai no `title`. */
+.resumoDoTeto {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 .cartaoDoTeto {
   display: flex;

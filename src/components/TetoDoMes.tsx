@@ -103,10 +103,16 @@ export function TetoDoMes({
         costUSD={b.spentMicros / 1_000_000}
       />
       {b.periodo && (
-        <p className={styles.nota} data-testid="periodo-do-teto">
-          {t('teto.restantes', { count: b.periodo.diasRestantes })}{' '}
-          {t('teto.previsao', { valor: formatarUsd(b.periodo.previsaoMicros) })}{' '}
-          {t('teto.virada', { quando: viradaDoMesLocal(b.periodo.fim, i18n.language) })}
+        <p
+          className={`${styles.nota} ${styles.resumoDoTeto}`}
+          data-testid="periodo-do-teto"
+          title={`${t('teto.restantes', { count: b.periodo.diasRestantes })} ${t('teto.previsao', { valor: formatarUsd(b.periodo.previsaoMicros) })} ${t('teto.virada', { quando: viradaDoMesLocal(b.periodo.fim, i18n.language) })}`}
+        >
+          <span className="sr-only">{t('teto.restantes', { count: b.periodo.diasRestantes })} </span>
+          {t('teto.resumo', {
+            valor: formatarUsd(b.periodo.previsaoMicros),
+            quando: viradaDoMesLocal(b.periodo.fim, i18n.language),
+          })}
         </p>
       )}
       {alerta && (

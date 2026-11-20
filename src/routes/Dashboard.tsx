@@ -13,8 +13,8 @@ import {
 import {
   useProjectsUnread,
   useNotificationGroups,
-  storiesAwaitingPromotion,
 } from '../lib/notifications';
+import { itensQuePrecisamDeVoce, totalQuePrecisaDeVoce } from '../lib/notificacoes';
 import { setLastSeenSeq } from '../lib/read-state';
 import { groupRosterByArea, rosterFromFacts } from '../lib/agent-status';
 import { classifyEvent } from '../lib/activity';
@@ -211,6 +211,7 @@ function CartoesDoInicio({ workspaceId }: { workspaceId: string | undefined }) {
 
 export function Dashboard() {
   const { t } = useTranslation('dashboard');
+  const { t: tDecisoes } = useTranslation('decisions');
   const { data: workspace } = useCurrentWorkspace();
   const projectsQuery = useProjects(workspace?.id);
   const projects = projectsQuery.data;
@@ -237,12 +238,11 @@ export function Dashboard() {
     sinoAberto,
     workspace?.id,
   );
-  // Duas fontes, um número. As promoções pendentes (Fase 12c) NÃO entram em
-  // `unreadCount`: aquele é consumido por `seq`, e o `onMarkRead` abaixo o
-  // zeraria — abrir o sino cancelaria a fila de decisões do usuário.
-  const aguardandoPromocao = storiesAwaitingPromotion(cards);
-  const totalUnread =
-    unread.reduce((sum, u) => sum + u.unreadCount, 0) + aguardandoPromocao;
+  // O selo conta SÓ o que precisa de você (as filas da Caixa, RN-1469); a
+  // atividade por `seq` fica na gaveta e não entra no número (RN-1470).
+  const precisam = inboxQuery.data
+    ? itensQuePrecisamDeVoce(inboxQuery.data, tDecisoes('terminal'))
+    : undefined;
 
   const filtered = (projects ?? []).filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
   // AT-330 (achado N6): em 390px a busca encolhia para "Bus" e "Novo projeto"
@@ -263,8 +263,12 @@ export function Dashboard() {
         </div>
         <div className={styles.spacer} />
         <NotificationBell
+          precisam={precisam}
+          precisamTotal={totalQuePrecisaDeVoce(inboxQuery.data)}
+          precisamErro={inboxQuery.isError}
           groups={notificationGroups}
-          unreadCount={totalUnread}
+          onAbrirItem={(i) => navigate({ to: '/projects/$projectId', params: { projectId: i.projectId }, search: { tab: i.tab } })}
+          onAbrirProjeto={(projectId) => navigate({ to: '/projects/$projectId', params: { projectId } })}
           open={sinoAberto}
           onOpenChange={setSinoAberto}
           onMarkRead={() => {

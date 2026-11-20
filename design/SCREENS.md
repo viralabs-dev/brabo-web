@@ -34,6 +34,7 @@ Quatro cartões de indicador no topo: Projetos ativos (só os não parados, com 
 
 ### S07 — Caixa de decisões (`/decisions`)
 Cinco cartões de fila, cada um com o próprio número e nunca somados (RN-467): Aprovações, PRs para mergear, Hipóteses, Promoções de história e Pendências de arquitetura. Abaixo, uma seção por fila com os itens de todos os projetos (avatar, ação, tipo, projeto, idade, motivo, e Aprovar, Negar e Abrir). Fila vazia tem texto próprio. Fonte: AT-928.
+AT-968 (L03, RN-1463 a RN-1465): a linha de terminal tem título curto (justificativa ou "Terminal · comando", até 80 caracteres), o comando numa linha mono que abre ao clicar e a idade num chip (âmbar acima de 30 dias); as Aprovações agrupam por projeto, mais antigas primeiro, e a sessão encerrada perde o Aprovar; caixa de seleção por linha, "Selecionar as de mais de 30 dias" e "Negar selecionadas…" com motivo único (não há Aprovar em lote).
 
 ### P10 — Visão geral
 Faixa "Precisa de você" (`--accent-panel`) com o item mais urgente e as ações; cartões do time; "O que aconteceu" com o seletor Turnos | Eventos (um turno é uma linha: agente, passos, "Gravado neste turno", custo, hora); coluna lateral com Próximo passo (regra da AT-936) e Ambiente.

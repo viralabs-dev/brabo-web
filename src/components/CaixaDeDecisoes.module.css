@@ -31,3 +31,22 @@
 .nota { margin: 0; font-size: var(--fs-meta); color: var(--text-secondary); }
 .seletor { display: flex; gap: 2px; padding: 3px; border: 1px solid var(--border); border-radius: var(--radius-md); }
 .ponto { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+.lote { display: flex; align-items: center; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.grupo { display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface-1); overflow: hidden; }
+.grupoCabecalho {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 8px 14px;
+  font-family: var(--font-mono); font-size: var(--fs-meta); letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-secondary); background: var(--surface-2); border-bottom: 1px solid var(--border);
+}
+.linhaDeAcao[data-agrupada] { border: 0; border-radius: 0; border-bottom: 1px solid var(--border); }
+.linhaDeAcao[data-agrupada]:last-child { border-bottom: 0; }
+.comando {
+  all: unset; box-sizing: border-box; cursor: pointer; max-width: 100%; font-family: var(--font-mono); font-size: var(--fs-meta);
+  color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.comando[data-aberto] { white-space: pre-wrap; overflow-wrap: anywhere; }
+.comando:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.idade { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 1px 8px; white-space: nowrap; }
+.idade[data-velha] { color: var(--warning); border-color: var(--warning-line); background: var(--warning-soft); }
+.listaDoLote { margin: 0 0 12px; padding-left: 18px; list-style: disc; font-size: var(--fs-body); display: flex; flex-direction: column; gap: 4px; }

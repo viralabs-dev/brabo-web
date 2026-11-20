@@ -690,3 +690,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/lib/activity.ts` (`temSujeitoEResultado`), `src/components/AtividadeRecente.tsx`.
 - **Teste:** `src/routes/Dashboard.test.tsx` (Atividade recente só com sujeito e resultado).
 - **Origem:** AT-967 (EP-035), prancha L02 da v11.
+
+<a id="rn-1463"></a>
+
+### RN-1463 — A linha de aprovação tem título curto, comando recolhido e idade {#rn-1463}
+
+- **Regra:** o título de uma aprovação de terminal é a justificativa do agente quando o payload traz uma (`justificativa`, `justification`, `motivo` ou `rationale`); sem ela, "Terminal · ‹primeiro comando›" (a primeira palavra depois de `cd … &&`, `;` ou variáveis `X=1`). Nenhum título passa de 80 caracteres (corta com reticências, nas outras ações também). O comando inteiro fica numa linha mono cortada com reticências e abre inteiro ao clicar nela (`aria-expanded`). Cada linha mostra a idade num chip; acima de 30 dias o chip é âmbar (`--warning`). A decisão de plano segue só no card (RN-467 e AT-910), sem caixa de seleção.
+- **Onde:** `src/lib/caixa-de-decisoes.ts` (`tituloDoTerminal`, `primeiroComando`), `src/components/CaixaDeDecisoes.tsx` (`LinhaDeAprovacao`).
+- **Teste:** `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1464"></a>
+
+### RN-1464 — As aprovações agrupam por projeto, mais antigas primeiro, e a sessão encerrada não aprova {#rn-1464}
+
+- **Regra:** a fila Aprovações ordena pela idade (a mais antiga primeiro) e agrupa por projeto, com o cabeçalho "‹projeto› · N aprovações". Se a sessão da aprovação está encerrada (`closed` ou `closed_abnormally`, lida de `GET /projects/:id/sessions`), o cabeçalho diz "sessão encerrada há N dias: aprovar não executa mais nada" e a linha perde o "Aprovar"; "Negar" fica. Sem a leitura da sessão a tela não afirma nada: a linha mantém o "Aprovar" (EP-020). O cartão "Aprovações" diz "N esperam há mais de 30 dias" (com "pelo menos" quando a fila vem truncada, porque só as lidas são contadas); as cinco filas continuam sem soma (RN-467).
+- **Onde:** `src/components/CaixaDeDecisoes.tsx`.
+- **Teste:** `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1465"></a>
+
+### RN-1465 — Negar em lote pede um motivo único e chama a negação existente uma vez por item {#rn-1465}
+
+- **Regra:** cada linha decidível das Aprovações tem caixa de seleção. Com uma ou mais marcadas aparecem "N selecionadas" e "Negar selecionadas…", que abre um diálogo com os títulos e um motivo obrigatório e único; confirmar chama `denyAction` uma vez por item (`allSettled`): as negadas saem da seleção e da lista, as que falharem ficam marcadas e o diálogo diz quantas. "Selecionar as de mais de 30 dias" marca as antigas. NÃO existe "Aprovar selecionadas", de propósito. Nenhuma rota nova na api. O kit não tem `AlertDialog`; o diálogo usa o `Modal` (Dialog do shadcn).
+- **Onde:** `src/components/CaixaDeDecisoes.tsx` (`NegarEmLote`).
+- **Teste:** `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-968 (EP-035), prancha L03 da v11.

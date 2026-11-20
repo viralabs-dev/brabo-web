@@ -120,6 +120,14 @@ describe('AvisoDePrPronta', () => {
     expect(document.title).toBe('(1) Brabo');
   });
 
+  it('AT-1009: o título da PR tem a linha do aviso, e a nota do merge sai da vista (só leitor de tela)', async () => {
+    getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('3', 'docs/adr-0300')] });
+    montar();
+    const aviso = await screen.findByTestId('aviso-pr-pronta');
+    expect(aviso.textContent).toContain('"Fundação 3"');
+    expect(screen.getByTestId('mergear-nota')).toHaveClass('sr-only');
+  });
+
   it('AT-902: a PR que fecha a fundação diz quantas tarefas destrava e vem primeiro', async () => {
     getArchitecture.mockResolvedValue({
       moduleMap: { modules: [{ name: 'base', dependsOn: [] }, { name: 'api', dependsOn: ['base'] }] },

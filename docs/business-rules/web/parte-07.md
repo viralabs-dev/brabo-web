@@ -1002,3 +1002,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/lib/mermaid-render.ts` (`TAMANHO_MINIMO_DO_ROTULO_C4`).
 - **Teste:** `src/routes/ProjectArchitectureTab.test.tsx`, `src/lib/mermaid-render.test.ts`.
 - **Origem:** AT-1006 (EP-035), prancha L07 da v11. Completa a [RN-1475](#rn-1475) e a [RN-1476](#rn-1476).
+
+<a id="rn-1496"></a>
+
+### RN-1496 — A Sessão dá 70% ou mais da altura ao fio, e o composer é compacto {#rn-1496}
+
+- **Regra:** na coluna do chat, o fio (a conversa) mede 70% ou mais da altura da janela em 1848 × 925, 1440 × 900 e 1366 × 768. Para isso o composer fica em cerca de 120 px: o campo nasce de uma linha (`rows=1`, `field-sizing: content`, de 44 a 160 px) com a dica numa linha só, e o respiro do composer é de 8 px. Em janela baixa (`max-height: 800px`, a partir de 768 px de largura) a barra da sessão cai para 48 px (sai a linha de metadados), a faixa de estado para 32 px, o respiro do composer para 4 px e o campo para 36 px; o orçamento fixo de 264 px não deixaria o fio passar de 66% a 768 px.
+- **Onde:** `src/routes/SessionComposer.tsx`, `SessionComposer.module.css` (`.campo`), `SessionPage.module.css` (`.composer`, bloco `max-height: 800px`), `FaixaDeEstado.module.css`.
+- **Teste:** `src/routes/SessionComposer.menu.test.tsx` ("AT-1009"); o percentual é medido no DOM com o harness de `v10-final/fonte/`.
+- **Origem:** AT-1009 (EP-035), recaptura da v10 (AT-963). Completa a AT-954 e a AT-960.
+
+<a id="rn-1497"></a>
+
+### RN-1497 — O aviso de PR pronta mostra o título da PR em uma linha {#rn-1497}
+
+- **Regra:** o aviso de PR pronta (RN-1063) é uma linha de 44 px em que o título da PR ("PR #N "título" está pronta…") tem o espaço que sobra, cortado com reticências, e os botões ("Mergear", "Agora não") não quebram o rótulo nem passam de 44 px de altura. Dentro do aviso a nota do merge ("Pede a confirmação aqui mesmo…", `MergearNoChat` com `semNota`) sai da vista e fica só para leitor de tela (`sr-only`); a confirmação segue no `Popover` do Mergear. Sem papel para decidir, a nota continua à vista com o motivo.
+- **Onde:** `src/components/AvisoDePrPronta.tsx`, `AvisoDePrPronta.module.css`, `src/routes/MergearNoChat.tsx` (`semNota`).
+- **Teste:** `src/components/AvisoDePrPronta.test.tsx` ("AT-1009").
+- **Origem:** AT-1009 (EP-035). Completa a RN-1063 e a RN-1434.
+
+<a id="rn-1498"></a>
+
+### RN-1498 — Telefone: o fio com 65% ou mais, nada passa da largura, e a trilha da barra não é cortada {#rn-1498}
+
+- **Regra:** em 390 × 844 o fio mede 65% ou mais da altura e nenhum elemento passa da largura. A barra da sessão tem 48 px; a faixa de estado perde a barra de progresso ("N de M tarefas" diz o mesmo) para o custo e o "Executores" caberem; a barra do composer é uma linha (o aviso "Há mais de um agente…" fica só para leitor de tela, o seletor já diz "Escolha o agente") e o respiro do composer é de 4 px. Em qualquer largura a trilha "Sessões / título" não começa acima do topo (`top` maior ou igual a 0): `.trilha` e `.meta` têm `line-height: 1.2`, e as três linhas do bloco do título cabem nos 55 px da barra.
+- **Onde:** `src/routes/FaixaDeEstado.module.css`, `SessionPage.module.css` (`.topbarMovel`, `.trilha`, `.meta`, `.composer[data-layout='movel']`), `src/components/AvisoDePrPronta.module.css`.
+- **Teste:** medido no DOM com o harness de `v10-final/fonte/` (jsdom não calcula o layout).
+- **Origem:** AT-1009 (EP-035). Completa a RN-1432 a RN-1434.

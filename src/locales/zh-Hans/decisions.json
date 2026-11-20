@@ -44,5 +44,26 @@
   "aprovar": "Approve",
   "negar": "Deny",
   "decidirNoCard": "Plan: decide on the card, with cost and reason.",
-  "projetos_other": "{{count}} projects"
+  "projetos_other": "{{count}} projects",
+  "terminal": "Terminal",
+  "maisAntigasPrimeiro": "oldest first",
+  "sessaoEncerrada": "session closed {{dias}} days ago: approving no longer runs anything",
+  "sessaoEncerradaHoje": "session closed: approving no longer runs anything",
+  "selecionar": "Select {{titulo}}",
+  "negarSelecionadas": "Deny selected…",
+  "selecionarAntigas": "Select those older than 30 days",
+  "verComando": "Show the whole command",
+  "recolherComando": "Collapse the command",
+  "lote": {
+    "motivo": "Reason (applies to all)",
+    "motivoVazio": "Give the reason for denying.",
+    "cancelar": "Cancel",
+    "titulo_other": "Deny {{count}} approvals",
+    "confirmar_other": "Deny {{count}}",
+    "falhou_other": "Could not deny {{count}}; they stay selected."
+  },
+  "esperamHa_other": "{{count}} waiting for over 30 days",
+  "esperamHaMais_other": "at least {{count}} waiting for over 30 days",
+  "grupo_other": "{{projeto}} · {{count}} approvals",
+  "selecionadas_other": "{{count}} selected"
 }

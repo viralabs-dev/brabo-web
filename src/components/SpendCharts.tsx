@@ -115,11 +115,14 @@ export function Ranking({
   linhas,
   vazio,
   icone,
+  rodape,
 }: {
   icone?: ReactNode;
   titulo: string;
   linhas: LinhaDeRanking[];
   vazio: string;
+  /** Ação ao pé da lista (ex.: "Ver os N agentes"). */
+  rodape?: ReactNode;
 }) {
   const alturas = alturasRelativas(linhas.map((l) => l.costMicros));
 
@@ -167,6 +170,7 @@ export function Ranking({
           ))}
         </ul>
       )}
+      {rodape}
     </section>
   );
 }

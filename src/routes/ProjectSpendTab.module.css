@@ -76,5 +76,42 @@
 .grupoTeto {
   display: flex;
   align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Indicadores à esquerda, cartão do teto (320 px) à direita (AT-973). */
+.comTeto {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .comTeto {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+
+.colunaDosIndicadores { min-width: 0; }
+
+.cartaoDoTeto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  min-width: 0;
+  scroll-margin-top: var(--space-4);
+}
+
+.cartaoDoTeto .formulario {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.linhaDoTeto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: var(--space-2);
 }

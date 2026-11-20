@@ -27,6 +27,18 @@ export function formatarUsd(micros: number): string {
   return formatadorUsd().format(usd);
 }
 
+/** Custo médio por chamada: abaixo de 1 centavo mostra 4 casas ("US$ 0,0012"), nunca "< US$ 0,01". */
+export function formatarCustoMedio(micros: number): string {
+  const usd = micros / 1_000_000;
+  if (usd <= 0 || usd >= 0.01) return formatarUsd(micros);
+  return new Intl.NumberFormat(i18n.language, {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 4,
+    maximumFractionDigits: 4,
+  }).format(usd);
+}
+
 export function formatarMes(iso: string): string {
   // `timeZone: 'UTC'` não é detalhe: o bucket vem de `date_trunc('month', …)`
   // em UTC, e renderizar em America/Sao_Paulo (UTC-3) joga 1º de agosto às

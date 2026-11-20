@@ -80,9 +80,33 @@
   flex-shrink: 0;
 }
 
+/* AT-967: os chips (aguardando você, online, aprovações) descem para a linha de
+   baixo, para o nome do projeto ter a primeira linha inteira. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .avatars {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+
+/* AT-967 (item 16): o agente aparece com o nome por extenso, não só no `title`. */
+.agente {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
+  min-width: 0;
+}
+
+.agenteNome {
+  font-size: var(--fs-meta);
+  color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .avatar {

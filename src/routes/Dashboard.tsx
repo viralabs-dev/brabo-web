@@ -13,22 +13,30 @@ import {
 import {
   useProjectsUnread,
   useNotificationGroups,
-  storiesAwaitingPromotion,
 } from '../lib/notifications';
+import { itensQuePrecisamDeVoce, totalQuePrecisaDeVoce } from '../lib/notificacoes';
 import { setLastSeenSeq } from '../lib/read-state';
 import { groupRosterByArea, rosterFromFacts } from '../lib/agent-status';
 import { classifyEvent } from '../lib/activity';
+import {
+  DIAS_PARADO,
+  estaParado,
+  guardarFiltroDoInicio,
+  lerFiltroDoInicio,
+  type FiltroDoInicio,
+} from '../lib/projetos-parados';
 import { formatRelativeTime } from '../lib/time';
 import { microsParaUsd, usdFmt } from '../lib/currency';
 import { nomeDoAgente } from '../lib/agents';
 import { useLayoutMovel } from '../lib/layout-movel';
-import type { Project, ProjectCardSummary } from '../lib/api-types';
+import type { DecisionInbox, Project, ProjectCardSummary } from '../lib/api-types';
 import { ProjectCard, ProjectCardSkeleton } from '../components/ProjectCard';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { AtividadeRecente } from '../components/AtividadeRecente';
 import { NotificationBell } from '../components/NotificationBell';
 import { Input } from '../components/ui/Input';
 import { Button } from '../components/ui/Button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
 import { SectionCards, type MetricaDoCard } from '../components/shadcn/section-cards';
 import { EmptyState } from '../components/ui/EmptyState';
 import { PlusIcon, SearchIcon } from '../components/ui/icons';
@@ -66,7 +74,7 @@ function ProjectCardContainer({
   const budget = summary?.budget ?? null;
   // `budget` vem `null` (não uma linha zerada) quando o projeto nunca teve
   // orçamento definido — distinto de "ainda carregando". Só o primeiro é
-  // "sem orçamento" de verdade, e é o que oferece "Definir orçamento".
+  // "sem orçamento" de verdade, e é o que mostra "sem teto do mês · definir".
   const noBudget = !carregando && !!summary && budget === null;
 
   // Os chips saem dos MESMOS fatos e da MESMA regra de presença que o painel
@@ -107,6 +115,8 @@ function ProjectCardContainer({
           to: '/projects/$projectId',
           params: { projectId: project.id },
           search: { tab: 'spend' },
+          // O teto tem um lugar só: o cartão #teto dos Gastos (RN-1450).
+          hash: 'teto',
         })
       }
       lastActivityText={lastActivityText}
@@ -142,10 +152,38 @@ function ProjectCardContainer({
 const total = (f: { total: number; truncada: boolean }) => `${f.total}${f.truncada ? '+' : ''}`;
 
 /**
+ * Quando o item mais antigo entrou na Caixa (RN-1461). Só afirma com todas as filas
+ * inteiras: fila cortada pelo teto não garante que o mais antigo esteja na lista.
+ */
+function itemMaisAntigo(f: DecisionInbox['filas']): string | undefined {
+  const filas = [f.aprovacoes, f.prs, f.promocoes, f.arquitetura, f.hipoteses];
+  if (filas.some((x) => x.truncada)) return undefined;
+  const datas = [
+    ...f.aprovacoes.itens.map((i) => i.acao.createdAt),
+    ...f.prs.itens.map((i) => i.acao.createdAt),
+    ...f.promocoes.itens.map((i) => i.desde),
+    ...f.arquitetura.itens.map((i) => i.desde),
+    ...f.hipoteses.itens.map((i) => i.desde),
+  ];
+  return datas.length ? datas.reduce((a, b) => (a < b ? a : b)) : undefined;
+}
+
+/**
  * Os quatro cartões do topo (S01). Cada um degrada sozinho: um erro de leitura
  * vira "indisponível" no próprio cartão. A Caixa nunca soma filas (RN-467).
  */
-function CartoesDoInicio({ workspaceId }: { workspaceId: string | undefined }) {
+function CartoesDoInicio({
+  workspaceId,
+  ativos,
+  parados,
+  projetosIndisponiveis,
+}: {
+  workspaceId: string | undefined;
+  /** Contagem lida do resumo da grade; `undefined` até ele chegar (RN-1461). */
+  ativos: number | undefined;
+  parados: number | undefined;
+  projetosIndisponiveis: boolean;
+}) {
   const { t } = useTranslation('dashboard');
   const summary = useWorkspaceSummary(workspaceId);
   const inbox = useDecisionInbox(workspaceId);
@@ -162,11 +200,13 @@ function CartoesDoInicio({ workspaceId }: { workspaceId: string | undefined }) {
     ? inbox.data.projetos.reduce((n, p) => n + p.agentesAguardando.length, 0)
     : undefined;
   const f = inbox.data?.filas;
+  const maisAntiga = f ? itemMaisAntigo(f) : undefined;
 
   const metricas: MetricaDoCard[] = [
     {
       rotulo: t('inicio.projetos.rotulo'),
-      valor: summary.isError ? indisp : summary.data ? summary.data.activeProjects : carregando,
+      valor: ativos !== undefined ? ativos : projetosIndisponiveis ? indisp : carregando,
+      nota: parados === undefined ? undefined : t('inicio.projetos.parados', { count: parados, dias: DIAS_PARADO }),
     },
     {
       rotulo: t('inicio.agentes.rotulo'),
@@ -197,12 +237,21 @@ function CartoesDoInicio({ workspaceId }: { workspaceId: string | undefined }) {
         ? t('inicio.caixa.aprovacoes', { count: f.aprovacoes.total, n: total(f.aprovacoes) })
         : inbox.isError ? indisp : carregando,
       nota: f
-        ? t('inicio.caixa.demais', {
-            prs: total(f.prs),
-            promocoes: total(f.promocoes),
-            arquitetura: total(f.arquitetura),
-            hipoteses: total(f.hipoteses),
-          })
+        ? (
+            <>
+              {t('inicio.caixa.demais', {
+                prs: total(f.prs),
+                promocoes: total(f.promocoes),
+                arquitetura: total(f.arquitetura),
+                hipoteses: total(f.hipoteses),
+              })}
+              {maisAntiga && (
+                <span className={styles.bloco} data-testid="caixa-mais-antiga">
+                  {t('inicio.caixa.maisAntiga', { quando: formatRelativeTime(maisAntiga) })}
+                </span>
+              )}
+            </>
+          )
         : undefined,
     },
   ];
@@ -211,6 +260,7 @@ function CartoesDoInicio({ workspaceId }: { workspaceId: string | undefined }) {
 
 export function Dashboard() {
   const { t } = useTranslation('dashboard');
+  const { t: tDecisoes } = useTranslation('decisions');
   const { data: workspace } = useCurrentWorkspace();
   const projectsQuery = useProjects(workspace?.id);
   const projects = projectsQuery.data;
@@ -224,6 +274,7 @@ export function Dashboard() {
   const cardsQuery = useProjectsSummary(workspace?.id);
   const cards = cardsQuery.data;
   const [search, setSearch] = useState('');
+  const [filtro, setFiltro] = useState<FiltroDoInicio>(lerFiltroDoInicio);
   const [wizardOpen, setWizardOpen] = useState(false);
   // O `open` do sino mora aqui porque decide se a consulta da gaveta sai —
   // ver `useNotificationGroups`.
@@ -237,14 +288,23 @@ export function Dashboard() {
     sinoAberto,
     workspace?.id,
   );
-  // Duas fontes, um número. As promoções pendentes (Fase 12c) NÃO entram em
-  // `unreadCount`: aquele é consumido por `seq`, e o `onMarkRead` abaixo o
-  // zeraria — abrir o sino cancelaria a fila de decisões do usuário.
-  const aguardandoPromocao = storiesAwaitingPromotion(cards);
-  const totalUnread =
-    unread.reduce((sum, u) => sum + u.unreadCount, 0) + aguardandoPromocao;
+  // O selo conta SÓ o que precisa de você (as filas da Caixa, RN-1469); a
+  // atividade por `seq` fica na gaveta e não entra no número (RN-1470).
+  const precisam = inboxQuery.data
+    ? itensQuePrecisamDeVoce(inboxQuery.data, tDecisoes('terminal'))
+    : undefined;
 
-  const filtered = (projects ?? []).filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
+  // RN-1460: parado = sem evento há mais de 30 dias. Sem o resumo ninguém é dado
+  // como parado (a tela não afirma o que não leu).
+  const agora = Date.now();
+  const parado = new Set(
+    (projects ?? []).filter((p) => estaParado(p, cardPorProjeto.get(p.id), agora)).map((p) => p.id),
+  );
+  const resumoLido = !!cards;
+  const nAtivos = (projects?.length ?? 0) - parado.size;
+  const filtered = (projects ?? [])
+    .filter((p) => filtro === 'todos' || (filtro === 'parados') === parado.has(p.id))
+    .filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
   // AT-330 (achado N6): em 390px a busca encolhia para "Bus" e "Novo projeto"
   // quebrava em duas linhas. No móvel a busca desce para uma linha própria,
   // inteira, e a primeira fica com título, sino e o botão.
@@ -263,8 +323,12 @@ export function Dashboard() {
         </div>
         <div className={styles.spacer} />
         <NotificationBell
+          precisam={precisam}
+          precisamTotal={totalQuePrecisaDeVoce(inboxQuery.data)}
+          precisamErro={inboxQuery.isError}
           groups={notificationGroups}
-          unreadCount={totalUnread}
+          onAbrirItem={(i) => navigate({ to: '/projects/$projectId', params: { projectId: i.projectId }, search: { tab: i.tab } })}
+          onAbrirProjeto={(projectId) => navigate({ to: '/projects/$projectId', params: { projectId } })}
           open={sinoAberto}
           onOpenChange={setSinoAberto}
           onMarkRead={() => {
@@ -285,7 +349,12 @@ export function Dashboard() {
       </div>
 
       <div className={styles.content}>
-        <CartoesDoInicio workspaceId={workspace?.id} />
+        <CartoesDoInicio
+          workspaceId={workspace?.id}
+          ativos={resumoLido && projects ? nAtivos : undefined}
+          parados={resumoLido && projects ? parado.size : undefined}
+          projetosIndisponiveis={cardsQuery.isError || projectsQuery.isError}
+        />
 
         {projectsQuery.isError ? (
           // ANTES do teste de lista vazia, e não depois: `!projects` é
@@ -319,29 +388,54 @@ export function Dashboard() {
           >
             {t('empty.noProjectsYet')}
           </EmptyState>
-        ) : filtered.length === 0 ? (
-          <EmptyState>{t('empty.noSearchResults', { search })}</EmptyState>
         ) : (
           <section>
-            <h2 className={styles.secao}>{t('secaoProjetos')}</h2>
-            <div className={styles.grid}>
-              {filtered.map((project) => (
-                <ProjectCardContainer
-                  key={project.id}
-                  project={project}
-                  summary={cardPorProjeto.get(project.id)}
-                  carregando={cardsQuery.isLoading}
-                  agentesAguardando={aguardandoPorProjeto.get(project.id)}
-                />
-              ))}
-              {!search && (
-                <button type="button" className={styles.novoCartao} onClick={() => setWizardOpen(true)}>
-                  <PlusIcon size={16} aria-hidden="true" />
-                  <strong>{t('novoCartao.titulo')}</strong>
-                  <span>{t('novoCartao.descricao')}</span>
-                </button>
-              )}
+            <div className={styles.secaoTopo}>
+              <h2 className={styles.secao}>{t('secaoProjetos')}</h2>
+              <ToggleGroup
+                variant="chip"
+                size="chip"
+                value={[filtro]}
+                aria-label={t('filtro.aria')}
+                data-testid="filtro-de-projetos"
+                onValueChange={(v) => {
+                  if (v.length === 0) return;
+                  const novo = v[0] as FiltroDoInicio;
+                  setFiltro(novo);
+                  guardarFiltroDoInicio(novo);
+                }}
+              >
+                <ToggleGroupItem value="ativos">{t('filtro.ativos', { n: nAtivos })}</ToggleGroupItem>
+                <ToggleGroupItem value="parados">{t('filtro.parados', { n: parado.size })}</ToggleGroupItem>
+                <ToggleGroupItem value="todos">{t('filtro.todos')}</ToggleGroupItem>
+              </ToggleGroup>
             </div>
+            {filtered.length === 0 ? (
+              <EmptyState>
+                {search
+                  ? t('empty.noSearchResults', { search })
+                  : t(filtro === 'parados' ? 'empty.semParados' : 'empty.semAtivos')}
+              </EmptyState>
+            ) : (
+              <div className={styles.grid} data-testid="grade-de-projetos">
+                {filtered.map((project) => (
+                  <ProjectCardContainer
+                    key={project.id}
+                    project={project}
+                    summary={cardPorProjeto.get(project.id)}
+                    carregando={cardsQuery.isLoading}
+                    agentesAguardando={aguardandoPorProjeto.get(project.id)}
+                  />
+                ))}
+                {!search && (
+                  <button type="button" className={styles.novoCartao} onClick={() => setWizardOpen(true)}>
+                    <PlusIcon size={16} aria-hidden="true" />
+                    <strong>{t('novoCartao.titulo')}</strong>
+                    <span>{t('novoCartao.descricao')}</span>
+                  </button>
+                )}
+              </div>
+            )}
           </section>
         )}
 

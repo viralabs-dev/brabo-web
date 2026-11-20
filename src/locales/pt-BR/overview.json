@@ -29,6 +29,8 @@
       "dependsOn": "Depende de",
       "stories": "Histórias"
     },
+    "views": {"label": "Vistas da Arquitetura", "diagrama": "Diagrama", "adrs": "ADRs · {{n}}", "pendencias": "Pendências · {{n}}"},
+    "noPendencies": "Nenhuma pendência de validação cruzada.",
     "proposalTag": "PROPOSTA",
     "adrProposal": "ADR “{{titulo}}” espera sua aprovação para virar PR.",
     "decide": "Decidir",
@@ -44,6 +46,7 @@
     "titleContext": "Contexto",
     "titleContainer": "Container",
     "expandLabel": "Ampliar diagrama {{titulo}}",
+    "fitWidth": "Ajustar à largura",
     "expandTitle": "Ampliar",
     "renderErrorTitle": "Não foi possível desenhar este diagrama.",
     "viewRawSyntax": "Ver sintaxe Mermaid",

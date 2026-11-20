@@ -230,6 +230,7 @@ describe('ProjectArchitectureTab', () => {
 
     montar();
 
+    fireEvent.click(await screen.findByRole('button', { name: /^ADRs/ }));
     const link = await screen.findByRole('link', { name: 'ADR 0099 — grafo de conhecimento' });
     expect(link).toHaveAttribute('href', 'https://github.com/x/y/pull/1');
     expect(screen.getByText('ADR sem PR ainda')).toBeInTheDocument();
@@ -254,7 +255,7 @@ describe('ProjectArchitectureTab', () => {
 
     montar();
 
-    expect(await screen.findByText('2')).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: /^Pendências/ }));
     expect(screen.getByText('História sem módulo')).toBeInTheDocument();
     expect(screen.getByText('sem módulo vinculado')).toBeInTheDocument();
     expect(screen.getByText('História com módulo inexistente')).toBeInTheDocument();
@@ -295,6 +296,46 @@ describe('ProjectArchitectureTab', () => {
     const linha = (await screen.findByRole('rowheader', { name: 'booking' })).closest('tr')!;
     expect(linha).toHaveTextContent('2');
     expect(getBacklog).not.toHaveBeenCalled();
+  });
+});
+
+describe('ProjectArchitectureTab — v11 (AT-972)', () => {
+  const comModulo = {
+    ...ARQUITETURA_VAZIA,
+    adrs: [{ actionId: 'a-1', title: 'ADR um', status: 'approved', pullRequestUrl: null }],
+    pendencies: [{ storyId: 's-1', title: 'Sem módulo', status: 'ready', reason: 'no_module', missing: [] }],
+    moduleMap: {
+      id: 'mm-1',
+      projectId: 'proj-1',
+      sessionId: 's',
+      version: 1,
+      modules: [{ name: 'persistencia', stack: 'Node 22 + TypeScript + better-sqlite3', responsibility: 'Único ponto de acesso ao banco', dependsOn: [] }],
+      createdAt: '2026-08-10T10:00:00.000Z',
+    },
+  };
+
+  it('Diagrama, ADRs e Pendências são um ToggleGroup com contagem; o padrão é Diagrama', async () => {
+    getArchitecture.mockResolvedValue(comModulo);
+    montar();
+
+    const diagrama = await screen.findByRole('button', { name: 'Diagrama' });
+    expect(diagrama).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'ADRs · 1' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Pendências · 1' })).toHaveAttribute('aria-pressed', 'false');
+    // ADRs e pendências só aparecem na própria vista
+    expect(screen.queryByText('ADR um')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sem módulo')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'ADRs · 1' }));
+    expect(screen.getByText('ADR um')).toBeInTheDocument();
+  });
+
+  it('as colunas Stack e Responsabilidade quebram linha (classe que anula o nowrap do kit), para a tabela não passar da largura', async () => {
+    getArchitecture.mockResolvedValue(comModulo);
+    montar();
+
+    const celula = (await screen.findByText('Único ponto de acesso ao banco')).closest('td')!;
+    expect(celula.className).toContain('celulaQuebra');
+    expect(screen.getByRole('cell', { name: /better-sqlite3/ }).className).toContain('celulaQuebra');
   });
 });
 

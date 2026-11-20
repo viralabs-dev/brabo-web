@@ -143,3 +143,14 @@
 .contratoItem .sectionSub {
   margin-bottom: 0;
 }
+
+/* AT-972: o ToggleGroup das vistas fica acima do conteúdo da vista. */
+.vistas {
+  margin-bottom: 12px;
+}
+
+/* AT-972 (RN-1477): Stack e Responsabilidade quebram linha (o `Table` do kit vem com nowrap); fora de camada, vence o utilitário. */
+.celulaQuebra {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

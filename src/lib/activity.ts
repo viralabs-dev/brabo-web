@@ -53,6 +53,16 @@ const EVENTOS_DE_MAQUINA = new Set([
   'context.compacted',
 ]);
 
+/**
+ * AT-967 / RN-1462: o evento tem sujeito e resultado? O fallback de `classifyEvent`
+ * ("atividade em <ator>") não diz o que aconteceu.
+ * shortcut: casa pelo prefixo do texto do fallback; trocar por um campo do
+ * `ActivityDisplay` se o fallback ganhar outro texto.
+ */
+export function temSujeitoEResultado(event: SessionEvent): boolean {
+  return !classifyEvent(event).text.startsWith('atividade em ');
+}
+
 /** Se o feed deve ESCONDER o evento (ruído de máquina, não narrativa). */
 export function isMachineEvent(event: SessionEvent): boolean {
   return EVENTOS_DE_MAQUINA.has(event.type);

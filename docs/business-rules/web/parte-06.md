@@ -1125,6 +1125,8 @@ keywords: [regras de negócio, web]
 
 ### RN-963 — O gasto tem página GLOBAL e aba do PROJETO, e o orçamento tem editor {#rn-963}
 
+> **Revisada pela AT-967 ([RN-1460](parte-07.md#rn-1460)):** o botão "Definir orçamento" do cartão do projeto (item 3) saiu; o cartão diz "sem teto do mês · definir" e o link vai para `?tab=spend#teto`.
+
 Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" e convive com a [RN-060](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-060), a [RN-952](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-952), a [RN-953](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-953) e a [RN-954](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-954).
 
 1. **Página global.** `/spend`, no menu global ao lado de Containers e Providers, serve todo papel: o `owner` vê o workspace inteiro (janela 30/90/180, por modelo, provider, projeto e ator), os orçamentos de todos os projetos e a fatura por chave (`CredentialSpendSection`, que saiu de Providers); quem não é `owner` vê só o PRÓPRIO consumo por projeto (`spend/me` do workspace) e nunca provider nem credencial.
@@ -1132,7 +1134,7 @@ Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" 
 3. **Orçamento.** A aba traz o editor do teto (`PUT projects/:projectId/budget`, `maintainer` pela `roleAtLeast`); abaixo do papel o controle fica inerte e o motivo é dito em texto. O botão "Definir orçamento" do card do projeto abre `?tab=spend` (antes `?tab=settings`, onde nenhuma tela gravava o orçamento).
 4. **Assinatura.** `assinaturaMicros` aparece num destaque separado; linha de modelo marcado `subscription` com custo zero mostra "assinatura — sem preço registrado", nunca "US$ 0".
 
-- **Código:** `apps/web/src/components/SpendPaineis.tsx:207` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:454` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:123` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:104` (`onDefineBudget`)
+- **Código:** `apps/web/src/components/SpendPaineis.tsx:207` (`GastoDoWorkspace`); `apps/web/src/components/SpendPaineis.tsx:454` (`GastoDoTimeNoProjeto`); `apps/web/src/components/TetoDoMes.tsx:123` (`EditorDoTeto`); `apps/web/src/routes/Dashboard.tsx:113` (`onDefineBudget`)
 - **Teste:** `apps/web/src/routes/SpendPage.test.tsx` (owner × não-owner, sem provider para quem não é owner); `apps/web/src/routes/ProjectSpendTab.test.tsx` (owner só do projeto, membro por agente e área, editor grava, teto inválido e papel baixo recusados)
 - **Origem:** AT-632
 

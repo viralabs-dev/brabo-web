@@ -859,8 +859,8 @@ até a abertura do turno e o histórico é UM bloco cronológico, não grupos po
 origem (que punham a resposta acima da pergunta). O painel de log segue como
 descrito aqui.
 
-- **Onde:** `apps/web/src/lib/activity.ts:95` (`OrigemDeEvento`), `:125`
-  (`origemDoEvento`), `:152` (`agruparPorOrigem`);
+- **Onde:** `apps/web/src/lib/activity.ts:105` (`OrigemDeEvento`), `:136`
+  (`origemDoEvento`), `:163` (`agruparPorOrigem`);
   `apps/web/src/components/ActivityFeed.tsx:34` (o corte de 5), `:66` (o
   toggle); `apps/web/src/routes/session-fio.tsx:119` (o corte do fio), `:291`
   (`dividirFio`); `apps/web/src/routes/SessionPage.tsx:516` (`fio`)

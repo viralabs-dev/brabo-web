@@ -91,6 +91,9 @@ export function ProjectCard({
       ? PROVISIONING_BADGE[provisioningStatus]
       : null;
 
+  const temChips =
+    !!provisioningBadge || !!pendingApprovalsCount || !!aguardandoVoce || !!onlineAgentCount;
+
   return (
     <Card
       padding="none"
@@ -114,35 +117,40 @@ export function ProjectCard({
           <div className={styles.name}>{name}</div>
           <div className={styles.providerLabel}>{t(PROVIDER_LABEL_KEY[provider])}</div>
         </div>
-        {provisioningBadge && (
-          <Badge
-            tone={provisioningBadge.tone}
-            dot
-            pulse={provisioningBadge.pulse}
-            emCurso={provisioningBadge.emCurso}
-            className={styles.unreadBadge}
-          >
-            {t(provisioningBadge.labelKey)}
-          </Badge>
-        )}
-        {!!pendingApprovalsCount && (
-          <Badge tone="accent" className={styles.unreadBadge}>
-            {pendingApprovalsCount}
-          </Badge>
-        )}
-        {/* RN-409 — só desenha com pelo menos 1: "0 online" sugeriria uma
-            equipe (vazia), não a AUSÊNCIA de trabalho ao vivo agora. */}
-        {aguardandoVoce && (
-          <Badge tone="accent" className={styles.unreadBadge}>
-            {aguardandoVoce}
-          </Badge>
-        )}
-        {!!onlineAgentCount && (
-          <Badge tone="success" dot className={styles.unreadBadge}>
-            {t('projectCard.online', { count: onlineAgentCount })}
-          </Badge>
-        )}
       </div>
+
+      {temChips && (
+        <div className={styles.chips} data-testid="chips-do-cartao">
+          {provisioningBadge && (
+            <Badge
+              tone={provisioningBadge.tone}
+              dot
+              pulse={provisioningBadge.pulse}
+              emCurso={provisioningBadge.emCurso}
+              className={styles.unreadBadge}
+            >
+              {t(provisioningBadge.labelKey)}
+            </Badge>
+          )}
+          {!!pendingApprovalsCount && (
+            <Badge tone="accent" className={styles.unreadBadge}>
+              {pendingApprovalsCount}
+            </Badge>
+          )}
+          {/* RN-409 — só desenha com pelo menos 1: "0 online" sugeriria uma
+              equipe (vazia), não a AUSÊNCIA de trabalho ao vivo agora. */}
+          {aguardandoVoce && (
+            <Badge tone="accent" className={styles.unreadBadge}>
+              {aguardandoVoce}
+            </Badge>
+          )}
+          {!!onlineAgentCount && (
+            <Badge tone="success" dot className={styles.unreadBadge}>
+              {t('projectCard.online', { count: onlineAgentCount })}
+            </Badge>
+          )}
+        </div>
+      )}
 
       {rosterGroups.length > 0 && (
         <div className={styles.avatars}>
@@ -165,14 +173,17 @@ export function ProjectCard({
             return (
               <span
                 key={key}
-                className={styles.avatar}
-                style={{ ['--agent-color' as string]: def.color } as CSSProperties}
+                className={styles.agente}
                 title={count ? `${def.name} ×${count}` : def.name}
+                style={{ ['--agent-color' as string]: def.color } as CSSProperties}
               >
-                <Icon size={13} />
-                {count !== undefined && (
-                  <span className={styles.avatarCount}>×{count}</span>
-                )}
+                <span className={styles.avatar} aria-hidden="true">
+                  <Icon size={13} />
+                  {count !== undefined && (
+                    <span className={styles.avatarCount}>×{count}</span>
+                  )}
+                </span>
+                <span className={styles.agenteNome}>{def.name}</span>
               </span>
             );
           })}

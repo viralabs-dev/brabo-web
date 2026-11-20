@@ -136,3 +136,39 @@ describe('ProjectCard — foco visível', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
 });
+
+describe('ProjectCard — nome inteiro e agentes por extenso (AT-967)', () => {
+  it('os chips de espera e online ficam numa linha própria, depois do cabeçalho', () => {
+    render(
+      <ProjectCard
+        {...baseProps}
+        name="quase"
+        rosterGroups={[]}
+        aguardandoVoce="Dev Scoring aguardando você"
+        onlineAgentCount={1}
+      />,
+    );
+    const nome = screen.getByText('quase');
+    const chips = screen.getByTestId('chips-do-cartao');
+    expect(chips).toHaveTextContent('Dev Scoring aguardando você');
+    expect(chips).toHaveTextContent('1 online');
+    // Fora do cabeçalho: nada disputa a linha do nome.
+    expect(nome.closest('div[class*="header"]')?.contains(chips)).toBe(false);
+  });
+
+  it('sem chip nenhum a linha dos chips não existe', () => {
+    render(<ProjectCard {...baseProps} rosterGroups={[]} />);
+    expect(screen.queryByTestId('chips-do-cartao')).toBeNull();
+  });
+
+  it('o agente aparece com o nome por extenso e o excedente como +N', () => {
+    const ids = ['criativo', 'po', 'arquiteto', 'infra', 'secops'] as const;
+    render(
+      <ProjectCard {...baseProps} rosterGroups={groupRosterByArea(ids.map((i) => entry(i)))} />,
+    );
+    expect(screen.getByText('Criativo', { selector: 'span' })).toBeInTheDocument();
+    expect(screen.getByText('Infra', { selector: 'span' })).toBeInTheDocument();
+    expect(screen.queryByText('SecOps', { selector: 'span' })).toBeNull();
+    expect(screen.getByText('+1')).toBeInTheDocument();
+  });
+});

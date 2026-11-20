@@ -93,7 +93,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1061 — O aviso de execução parada, no feed, no fio e em Executores, oferece Rearmar e Desbloquear {#rn-1061}
 
 - **Regra:** o `execution.stalled` que o engine grava ([RN-1059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-1059): todos os dev agents parados, tarefa pendente atrás de tarefa bloqueada ou de agente travado) aparece em vermelho no feed de atividade, nomeando as tarefas e os agentes que seguram a execução. Na sessão de execução ele vira uma mensagem do fio (`data-testid="execucao-parada"`) e, acima do time, na aba Executores, o mesmo aviso. Sob ele, `DestravarExecucao` traz um **Rearmar** por agente travado (`rearmDevAgent`, [RN-047](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-047)) e um **Desbloquear** por tarefa bloqueada (`unblockTask`, [RN-826](parte-06.md#rn-826)), com as mesmas rotas dos atalhos do chat. Os botões só existem enquanto a parada é VIGENTE: o último evento entre `execution.stalled`, `dev.working`, `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`; depois do destrave o aviso fica no histórico, sem botões. Papel abaixo de `developer` vê os botões inertes e o motivo em texto; a recusa da api vira toast com a frase dela. A web não decide nada: só lê o payload do engine.
-- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:218` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:215` (`paradaVigente`).
+- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:228` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:215` (`paradaVigente`).
 - **Teste:** `apps/web/src/routes/DestravarExecucao.test.tsx`, `apps/web/src/lib/execution.test.ts`, `apps/web/src/lib/activity.test.ts`.
 - **Origem:** AT-800 (EP-030), parte web; engine#57.
 
@@ -661,6 +661,35 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/settings/ExecutionSection.tsx`.
 - **Teste:** `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx` (ExecutionSection).
 - **Origem:** AT-974 (EP-035), decisão do dono de 17/11.
+
+<a id="rn-1460"></a>
+
+### RN-1460 — O cartão do projeto tem o nome na primeira linha, os agentes por extenso e "sem teto do mês · definir"; a grade filtra Ativos, Parados e Todos {#rn-1460}
+
+> **Revisa** a regra do botão "Definir orçamento" do cartão ([RN-963](parte-06.md#rn-963), item 3, e [RN-212](parte-02.md#rn-212)): o botão sai; o `?tab=spend` virou `?tab=spend#teto` ([RN-1450](#rn-1450)).
+
+- **Regra:** no `ProjectCard` o nome ocupa a linha inteira ao lado do ícone do provider (só se corta com reticências quando passa da largura do cartão), e os chips (aprovações, "<agente> aguardando você", "N online", provisionamento) descem para uma linha própria, que não existe sem chip. Os agentes do roster (até 4, o resto como "+N") mostram o nome por extenso ao lado do avatar, não só no `title`; o web não afirma "trabalhando" por agente porque o resumo da grade só traz a contagem de online. Projeto sem teto do mês (resumo lido e `budget` nulo) mostra o texto "sem teto do mês · definir", com "definir" como link (`role="link"`) para `/projects/:id?tab=spend#teto`; nenhum botão "Definir orçamento" existe na página. Acima da grade um `ToggleGroup` com "Ativos · N", "Parados · N" e "Todos". **Parado** é o projeto cujo último evento tem mais de 30 dias (fixo, `DIAS_PARADO`); sem evento vale a data de criação do projeto; **sem o resumo da grade lido (carregando ou erro) ninguém é dado como parado**, porque a tela não afirma o que não leu (EP-020). O padrão é Ativos e a escolha fica em `localStorage` (`brabo.inicio.filtro`, com `try/catch`). A busca atua dentro do filtro; filtro sem resultado diz "Nenhum projeto ativo" ou "Nenhum projeto parado" e o seletor continua na tela. O cartão "Novo projeto" segue como último item da grade.
+- **Onde:** `src/components/ProjectCard.tsx`, `src/components/TokenMeter.tsx` (`compact` + `noBudget`), `src/lib/projetos-parados.ts`, `src/routes/Dashboard.tsx`.
+- **Teste:** `src/components/ProjectCard.test.tsx`, `src/components/TokenMeter.test.tsx`, `src/lib/projetos-parados.test.ts`, `src/routes/Dashboard.test.tsx`.
+- **Origem:** AT-967 (EP-035), prancha L02 da v11 e itens 16 da AT-1000; decisão do dono de 17/11 (o teto tem um lugar só, Gastos).
+
+<a id="rn-1461"></a>
+
+### RN-1461 — Os indicadores do Início contam só o que foi lido: "Projetos ativos" sem os parados e a Caixa com a idade do item mais antigo {#rn-1461}
+
+- **Regra:** "Projetos ativos" é a contagem de projetos NÃO parados ([RN-1460](#rn-1460)) calculada sobre a lista de projetos e o resumo da grade (não mais o `activeProjects` do resumo do workspace), com a nota "N parados há mais de 30 dias" ("nenhum parado…" com zero). Carregando mostra "…", erro de leitura mostra "indisponível", e sem o resumo da grade a nota some. A "Caixa de decisões" mantém uma contagem por fila, nunca somadas ([RN-467](parte-03.md#rn-467)), e ganha embaixo "a mais antiga espera há X": o menor `createdAt` das ações (aprovações e PRs) ou `desde` (promoções, arquitetura, hipóteses). Só aparece com TODAS as filas inteiras: fila cortada pelo teto (`truncada`) não garante que o mais antigo esteja na lista, e a tela não afirma o que não leu ([RN-180](parte-02.md#rn-180)).
+- **Onde:** `src/routes/Dashboard.tsx` (`CartoesDoInicio`, `itemMaisAntigo`).
+- **Teste:** `src/routes/Dashboard.test.tsx` (Ativos, Parados e Todos).
+- **Origem:** AT-967 (EP-035), prancha L02 da v11.
+
+<a id="rn-1462"></a>
+
+### RN-1462 — "Atividade recente" só lista evento com sujeito e resultado {#rn-1462}
+
+- **Regra:** o evento cujo texto de `classifyEvent` é o fallback "atividade em <ator>" não diz o que aconteceu e não entra na lista (`temSujeitoEResultado`); o projeto cujo último evento é assim sai da lista, sem buscar outro (um evento por projeto, [RN-632](parte-05.md#rn-632)). O rodapé do cartão do projeto segue como estava ([RN-648](parte-05.md#rn-648)).
+- **Onde:** `src/lib/activity.ts` (`temSujeitoEResultado`), `src/components/AtividadeRecente.tsx`.
+- **Teste:** `src/routes/Dashboard.test.tsx` (Atividade recente só com sujeito e resultado).
+- **Origem:** AT-967 (EP-035), prancha L02 da v11.
 
 <a id="rn-1466"></a>
 

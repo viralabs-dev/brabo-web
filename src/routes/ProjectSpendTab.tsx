@@ -22,7 +22,7 @@ import { abreviarTokens } from '../lib/spend';
 import { GastoPorDia } from '../components/GastoPorDia';
 import { Ranking } from '../components/SpendCharts';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
-import { GastoDoTimeNoProjeto, GastoDoWorkspace } from '../components/SpendPaineis';
+import { DetalheDeTokens, GastoDoTimeNoProjeto, GastoDoWorkspace } from '../components/SpendPaineis';
 import { useRotuloDaSessao } from '../lib/use-rotulo-da-sessao';
 import { comoRanking } from '../lib/spend-ranking';
 import styles from './ProjectSpendTab.module.css';
@@ -186,10 +186,7 @@ function MeuConsumo({ projectId }: { projectId: string }) {
                     {abreviarTokens(meu.data.inputTokens + meu.data.outputTokens)}
                   </span>
                 ),
-                nota: t('shared.tokensDetail', {
-                  input: numberFmt.format(meu.data.inputTokens),
-                  output: numberFmt.format(meu.data.outputTokens),
-                }),
+                nota: <DetalheDeTokens entrada={meu.data.inputTokens} saida={meu.data.outputTokens} />,
               },
             ]}
           />

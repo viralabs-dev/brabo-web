@@ -1,0 +1,17 @@
+.link {
+  align-self: flex-start;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: var(--fs-meta);
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-align: left;
+  cursor: pointer;
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}

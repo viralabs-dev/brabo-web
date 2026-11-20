@@ -664,6 +664,18 @@ describe('PromotionSection (Fase 12c — RN-048)', () => {
     );
   });
 
+  it('o controle entra na grade das outras seções: rótulo à esquerda, controle na coluna própria (AT-1005)', async () => {
+    getProject.mockResolvedValue(project({ storyPromotion: 'auto' }));
+    montarPromocao();
+
+    const seletor = await screen.findByDisplayValue('Automática — o PO promove');
+    const linha = seletor.closest('[role="group"]')!;
+    expect(linha).not.toBeNull();
+    expect(linha.textContent).toContain('Quem promove');
+    // Não é mais o `Item` com o controle na borda direita.
+    expect(seletor.closest('[data-slot="item"]')).toBeNull();
+  });
+
   it('projeto em auto (o padrão de projeto novo) mostra o valor e o que ele faz', async () => {
     getProject.mockResolvedValue(project({ storyPromotion: 'auto' }));
     montarPromocao();
@@ -999,7 +1011,7 @@ describe('ModelsSection — colunas do desenho', () => {
 
     // O fallback saiu da coluna (RN-1454): mora no Popover do chip "De onde vem".
     fireEvent.click((await screen.findAllByRole('button', { name: /^De onde vem o modelo de/ }))[0]);
-    expect(await screen.findByText(/vale: Modelo do Projeto/)).toBeTruthy();
+    expect(await screen.findByText('Modelo do Projeto', { selector: 'code' })).toBeTruthy();
   });
 
   /**
@@ -1017,7 +1029,7 @@ describe('ModelsSection — colunas do desenho', () => {
 
     fireEvent.click((await screen.findAllByRole('button', { name: /^De onde vem o modelo de/ }))[0]);
     expect(await screen.findByText('não há nível abaixo')).toBeTruthy();
-    expect(screen.queryByText(/vale: Modelo do Projeto/)).toBeNull();
+    expect(screen.queryByText('Modelo do Projeto', { selector: 'code' })).toBeNull();
   });
 
   it('EST. MÊS mostra o custo do agente e o card soma o time', async () => {
@@ -1134,7 +1146,7 @@ describe('ModelsSection — colunas do desenho', () => {
     fireEvent.click(
       await screen.findByRole('button', { name: `De onde vem o modelo de ${AGENTS['qa-automacao'].name}` }),
     );
-    expect(await screen.findByText(/vale: Modelo da Área/)).toBeTruthy();
+    expect(await screen.findByText('Modelo da Área', { selector: 'code' })).toBeTruthy();
     expect(screen.queryByText(/Modelo do Projeto/)).toBeNull();
   });
 });
@@ -1497,6 +1509,21 @@ describe('PersonalAccessTokensSection (ADR 0105)', () => {
     expect(await screen.findByText('Todos os tokens do projeto')).toBeInTheDocument();
     expect(await screen.findByText('outro@brabo.dev')).toBeInTheDocument();
     expect(listAllPersonalAccessTokens).toHaveBeenCalledWith('proj-1');
+  });
+
+  it('tabelas vazias: uma linha cada, e a frase de "Tokens de acesso" não se repete na de "Todos os tokens" (AT-1005)', async () => {
+    useCurrentWorkspaceWithRole.mockReturnValue({ data: { role: 'maintainer' } });
+    listPersonalAccessTokens.mockResolvedValue([]);
+    listAllPersonalAccessTokens.mockResolvedValue([]);
+    montarTokens();
+
+    const minha = await screen.findByText('Nenhum token de acesso emitido para este projeto.');
+    const admin = await screen.findByText('Ninguém neste projeto emitiu token.');
+    expect(screen.getAllByText('Nenhum token de acesso emitido para este projeto.')).toHaveLength(1);
+    for (const frase of [minha, admin]) {
+      expect(frase).toHaveAttribute('data-slot', 'grade-vazia');
+      expect(frase.className).toMatch(/\bpy-3\b/);
+    }
   });
 
   it('developer NÃO vê a sub-lista de admin nem dispara a listagem de todos', async () => {

@@ -95,30 +95,10 @@
   color: var(--success);
 }
 
-/* Card de custo do time, acima da tabela de modelos. */
-.custoCard {
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.custoIcone {
-  color: var(--success);
-  flex-shrink: 0;
-}
-
-.custoTexto {
+/* Título da tabela de modelos: "N agentes · US$ X estimado por mês" (AT-1005). */
+.custoTitulo {
+  margin: 0 0 8px;
   font-size: var(--fs-sm);
-  color: var(--text-secondary);
-  flex: 1;
-}
-
-.custoDetalhe {
-  color: var(--text-muted);
-}
-
-.custoValor {
-  font-family: var(--font-mono);
-  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -901,6 +881,18 @@
 .cadeiaNoPopover {
   width: auto;
   max-width: min(92vw, 560px);
+  /* A fonte do texto, não a mono: só o identificador do modelo fica em mono (AT-1005, L09). */
+  font-family: var(--font-body);
+}
+
+.cadeiaNoPopover .cadeia,
+.cadeiaNoPopover .nivel,
+.cadeiaNoPopover [data-slot='badge'] {
+  font-family: var(--font-body);
+}
+
+.idDoModelo {
+  font-family: var(--font-mono);
 }
 
 /* AT-974: linha do agente compacta; a caixa da área cabe ao lado do seletor, sem dobrar a altura. */
@@ -926,4 +918,37 @@
   margin: 0;
   font-size: var(--fs-meta);
   color: var(--text-muted);
+}
+
+/* Rodapé da seção: a contagem de alterações e o salvar da escada, à direita (AT-1005). */
+.rodapeDaSecao {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Degrau da escada: rótulo visível sobre cada campo, com respiro entre os degraus (AT-1005). */
+.degrauDaEscada {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.degrauDaEscada > button {
+  justify-self: start;
+}
+
+/* Rótulo ao lado do `Checkbox` do kit (merge automático, AT-1005). */
+.rotuloComCheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+/* "O que isso muda": a ação à direita da faixa de roteamento (AT-1005). */
+.acaoDaFaixa {
+  margin-left: auto;
+  flex-shrink: 0;
 }

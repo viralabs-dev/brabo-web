@@ -365,7 +365,11 @@ describe('membros — a recusa da api tem desfecho na tela', () => {
       await screen.findByText('Nenhum usuário do workspace tem este e-mail'),
     ).toBeInTheDocument();
     // Tom de erro do design system (Alert danger), não texto cinza pequeno.
-    expect(screen.getByRole('alert')).toHaveAttribute('data-tone', 'danger');
+    const alerta = screen.getByRole('alert');
+    expect(alerta).toHaveAttribute('data-tone', 'danger');
+    // AT-1005: ícone de erro e texto na cor de erro, não só a borda e o fundo.
+    expect(alerta.querySelector('svg')).not.toBeNull();
+    expect(screen.getByText('Nenhum usuário do workspace tem este e-mail')).toHaveStyle({ color: 'var(--danger)' });
     expect(addProjectMember).toHaveBeenCalledWith(expect.anything(), {
       email: 'fora@brabo.dev',
       role: 'developer',

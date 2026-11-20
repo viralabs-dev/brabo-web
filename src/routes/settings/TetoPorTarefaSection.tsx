@@ -19,6 +19,7 @@ import { useSecaoSalvavel } from './secao-salvavel.helpers';
 import { usePublicarNoCabecalho } from './salvar-do-cabecalho.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import { Item } from '@/components/shadcn/item';
+import { Field, FieldLabel } from '@/components/shadcn/field';
 
 // Espelham o padrão da api (RN-1142/1143): teto US$ 0,50; escada Haiku 5.5 → Sonnet 5.
 const TETO_PADRAO_MICROS = 500_000;
@@ -95,6 +96,12 @@ export function TetoPorTarefaSection({ projectId }: { projectId: string }) {
   const escadaAtual = project.modelEscalation?.ladder ?? ESCADA_PADRAO;
   const linhas: LinhaDaEscada[] =
     escadaDraft ?? escadaAtual.map((d) => ({ modelId: d.modelId, usd: String(microsParaUsd(d.taskBudgetMicros)) }));
+  // Degraus que diferem do salvo (modelo ou teto), mais os acrescentados ou removidos.
+  const alteracoes = Array.from({ length: Math.max(linhas.length, escadaAtual.length) }).filter((_, i) => {
+    const a = linhas[i];
+    const b = escadaAtual[i];
+    return !a || !b || a.modelId !== b.modelId || usdParaMicros(Number(a.usd)) !== b.taskBudgetMicros;
+  }).length;
   const escadaValida =
     linhas.length > 0 &&
     linhas.every((l) => l.modelId !== '' && Number.isFinite(Number(l.usd)) && usdParaMicros(Number(l.usd)) > 0);
@@ -151,27 +158,31 @@ export function TetoPorTarefaSection({ projectId }: { projectId: string }) {
           </div>
           {!podeEditar && <div className={styles.ajusteHint}>{t('execution.semPapel')}</div>}
           {linhas.map((l, i) => (
-            <div key={i} className={styles.ajusteInfo}>
-              <Select
-                aria-label={t('execution.escada.modelo', { n: i + 1 })}
-                value={l.modelId}
-                disabled={!podeEditar}
-                onChange={(e) => mudarLinha(i, { modelId: e.target.value })}
-              >
-                {!idsDeModelos.includes(l.modelId) && <option value={l.modelId}>{l.modelId}</option>}
-                {idsDeModelos.map((id) => (
-                  <option key={id} value={id}>
-                    {id}
-                  </option>
-                ))}
-              </Select>
+            <div key={i} className={styles.degrauDaEscada}>
+              {/* Rótulo visível ligado pelo `for` (AT-1005): o texto deixou de ir só no `aria-label`. */}
+              <Field>
+                <FieldLabel htmlFor={`degrau-modelo-${i}`}>{t('execution.escada.modelo', { n: i + 1 })}</FieldLabel>
+                <Select
+                  id={`degrau-modelo-${i}`}
+                  value={l.modelId}
+                  disabled={!podeEditar}
+                  onChange={(e) => mudarLinha(i, { modelId: e.target.value })}
+                >
+                  {!idsDeModelos.includes(l.modelId) && <option value={l.modelId}>{l.modelId}</option>}
+                  {idsDeModelos.map((id) => (
+                    <option key={id} value={id}>
+                      {id}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
               <div className={styles.ajusteNumero}>
                 <Input
                   mono
                   type="number"
                   min={0.01}
                   step={0.01}
-                  aria-label={t('execution.escada.teto', { n: i + 1 })}
+                  label={t('execution.escada.teto', { n: i + 1 })}
                   value={l.usd}
                   disabled={!podeEditar}
                   onChange={(e) => mudarLinha(i, { usd: e.target.value })}
@@ -196,23 +207,30 @@ export function TetoPorTarefaSection({ projectId }: { projectId: string }) {
             {t('execution.escada.adicionar')}
           </Button>
         </div>
-        <Button
-          disabled={!podeEditar || !escadaValida || escadaDraft === null || saving}
-          onClick={() =>
-            void gravar(
-              {
-                modelEscalation: {
-                  ladder: linhas.map((l) => ({ modelId: l.modelId, taskBudgetMicros: usdParaMicros(Number(l.usd)) })),
-                },
-              },
-              () => setEscadaDraft(null),
-            )
-          }
-        >
-          <Save aria-hidden="true" />
-          {saving ? t('execution.saving') : t('execution.save')}
-        </Button>
       </Item>
+
+      {/* O salvar da escada desce para o rodapé da seção, com a contagem (AT-1005); o gesto e a confirmação não mudam (RN-1265). */}
+      <div className={styles.rodapeDaSecao}>
+        <span className={styles.ajusteHint} data-testid="alteracoes-da-escada">
+          {t('execution.escada.alteracoes', { count: alteracoes })}
+        </span>
+          <Button
+            disabled={!podeEditar || !escadaValida || escadaDraft === null || saving}
+            onClick={() =>
+              void gravar(
+                {
+                  modelEscalation: {
+                    ladder: linhas.map((l) => ({ modelId: l.modelId, taskBudgetMicros: usdParaMicros(Number(l.usd)) })),
+                  },
+                },
+                () => setEscadaDraft(null),
+              )
+            }
+          >
+            <Save aria-hidden="true" />
+            {saving ? t('execution.saving') : t('execution.save')}
+          </Button>
+      </div>
     </SecaoDeConfiguracoes>
   );
 }

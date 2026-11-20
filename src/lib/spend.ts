@@ -300,6 +300,23 @@ export function custoMedioPorChamada(totalMicros: number, chamadas: number): num
   return chamadas > 0 ? totalMicros / chamadas : null;
 }
 
+/**
+ * "Desde o início" (AT-973): quantos dias o gasto tem, lido da série DENSA da
+ * janela de 30 dias. `null` quando não há gasto ou ele já enche a janela (o
+ * "30 dias" já diz o mesmo).
+ */
+export function janelaDesdeOInicio(serie: SpendPorDia[]): number | null {
+  const primeiro = serie.findIndex((p) => p.costMicros > 0 || p.chamadas > 0);
+  return primeiro > 0 ? serie.length - primeiro : null;
+}
+
+/** Tokens abreviados ("41,1 mi") a partir de mil; abaixo disso o número inteiro. */
+export function abreviarTokens(n: number): string {
+  return n < 1000
+    ? String(n)
+    : new Intl.NumberFormat(i18n.language, { notation: 'compact', maximumFractionDigits: 1 }).format(n);
+}
+
 /** CSV (RFC 4180) das linhas que já estão na tela; nada novo é pedido à api. */
 export function linhasParaCsv(cabecalho: string[], linhas: (string | number)[][]): string {
   const cel = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;

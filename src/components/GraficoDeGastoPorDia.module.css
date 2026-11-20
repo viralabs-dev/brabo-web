@@ -22,3 +22,5 @@
   font-size: var(--fs-meta);
   color: var(--text-muted);
 }
+/* Contêiner de grid/flex não encolhe abaixo do conteúdo sem isto: o gráfico passava da largura do cartão (AT-973). */
+.figura, .figura > div { min-width: 0; max-width: 100%; }

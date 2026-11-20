@@ -31,7 +31,7 @@ export default function GraficoDeGastoPorDia({
     <figure className={styles.figura}>
       <figcaption className={styles.legenda}>{completo}</figcaption>
       {serie.length > 0 && serie.every((p) => p.costMicros === 0) ? (
-        <p className={styles.vazio}>{t('charts.noSpendInWindow')}</p>
+        <p className={styles.vazio}>{t('charts.noSpendInDays', { count: serie.length })}</p>
       ) : (
       <div role="img" aria-label={completo}>
         <ChartContainer config={config} className={styles.grafico}>
@@ -59,7 +59,8 @@ export default function GraficoDeGastoPorDia({
         </ChartContainer>
       </div>
       )}
-      <details>
+      {/* Sem gasto não há tabela a ver: o vazio já disse tudo (AT-973). */}
+      {!(serie.length > 0 && serie.every((p) => p.costMicros === 0)) && <details>
         <summary className={styles.resumo}>
           {t('charts.viewAsTable')}
         </summary>
@@ -81,7 +82,7 @@ export default function GraficoDeGastoPorDia({
             ))}
           </TableBody>
         </Table>
-      </details>
+      </details>}
     </figure>
   );
 }
@@ -171,7 +172,7 @@ export function GraficoEmpilhadoPorAgente({
     <figure className={styles.figura}>
       <figcaption className={styles.legenda}>{completo}</figcaption>
       {agentes.length === 0 ? (
-        <p className={styles.vazio}>{t('charts.noSpendInWindow')}</p>
+        <p className={styles.vazio}>{t('charts.noSpendInDays', { count: dias })}</p>
       ) : (
         <div role="img" aria-label={completo}>
           <ChartContainer config={config} className={styles.grafico}>
@@ -187,7 +188,7 @@ export function GraficoEmpilhadoPorAgente({
           </ChartContainer>
         </div>
       )}
-      <details>
+      {agentes.length > 0 && <details>
         <summary className={styles.resumo}>{t('charts.viewAsTable')}</summary>
         <Table>
           <TableHeader>
@@ -211,7 +212,7 @@ export function GraficoEmpilhadoPorAgente({
             ))}
           </TableBody>
         </Table>
-      </details>
+      </details>}
     </figure>
   );
 }

@@ -149,7 +149,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1200 — O teto do projeto é MENSAL na tela: medidor, dias restantes, previsão e a legenda da virada em UTC {#rn-1200}
 
 - **Regra:** o teto do projeto (`GET/PUT projects/:id/budget`, `maintainer`) passa a ser do mês civil em UTC (api RN-1168..1171): o `spentMicros` é o gasto do mês e a resposta traz `periodo { inicio, fim, diasRestantes, previsaoMicros }`. A aba Gastos chama o bloco de "Teto do mês" e diz "N dias restantes", "Previsão no fim do mês: US$ X" e "O mês vira em <data> (00:00 UTC)". A virada é em UTC; SÓ a legenda é convertida para a hora local do navegador. Os avisos 70/90 e o bloqueio falam "do mês" (a sessão segue acumulada e sem `periodo`). O cartão do plano (RN-1062) compara a estimativa com o que resta do teto do projeto NO MÊS. O motivo `politica` do engine agora também vem do teto do mês; o cartão "Aumentar o teto por tarefa" (AT-917) só vale para o motivo do ToolLoop e deve oferecer "ver o teto do projeto" no motivo `politica`.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/lib/spend.ts:289` (`viradaDoMesLocal`), `src/routes/ProjectSpendTab.tsx:95` (`OrcamentoDoProjeto`).
+- **Onde:** `src/components/TetoDoMes.tsx:41` (`TetoDoMes`), `src/lib/spend.ts:289` (`viradaDoMesLocal`), `src/routes/ProjectSpendTab.tsx:95` (`OrcamentoDoProjeto`).
 - **Teste:** `src/routes/ProjectSpendTab.test.tsx` ("mostra dias restantes, previsão e a virada do mês"), `src/lib/spend.test.ts` (`viradaDoMesLocal`).
 - **Origem:** AT-934 (EP-035). Revisa a RN-213 (o alerta é do mês).
 
@@ -158,7 +158,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
 - **Regra:** a S06 (Gastos) mostra ao `owner` o teto do mês do workspace (`GET/PUT workspaces/:id/budget`, 403 para os demais), com o mesmo medidor, previsão e legenda da RN-1200, e o editor (valor e política `block`/`allow`). Quem não é owner não lê o valor (a api recusa): vê, em texto, que o teto é do owner e que só o conhece quando uma chamada é recusada ("Budget do workspace atingiu o teto do mês"). O controle nunca é oferecido a quem a api não deixa usar (RN-102); erro de leitura de quem não edita é silencioso. O teto do workspace soma todos os projetos e é independente dos de projeto, sessão e área: basta um no limite com `block` para recusar.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1379` (`getWorkspaceBudget`).
+- **Onde:** `src/components/TetoDoMes.tsx:41` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1379` (`getWorkspaceBudget`).
 - **Teste:** `src/components/TetoDoMes.test.tsx` (owner edita; sem papel fica inerte com o motivo; 403 silencioso).
 - **Origem:** AT-935 (EP-035).
 
@@ -229,7 +229,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1265 — Configurações tem linhas de configuração e um Salvar no cabeçalho que cumpre a RN-469 {#rn-1265}
 
-- **Regra:** (revisada na AT-974, [RN-1455](#rn-1455): a linha do teto do mês passou a mostrar só o valor e o link para Gastos, sem formulário; a linha vira grade com o controle ao lado do rótulo.) Desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`).
+- **Regra:** (a linha vira grade com o controle ao lado do rótulo na AT-974, [RN-1455](#rn-1455).) Desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`). **Desde a AT-973 o teto do mês tem um lugar só, o cartão `#teto` dos Gastos (RN-1450):** Configurações mostra só o valor, com "Editar em Gastos".
 - **Onde:** `src/routes/settings/salvar-do-cabecalho.tsx:21` (`ProvedorDoSalvarDoCabecalho`), `src/routes/settings/salvar-do-cabecalho.tsx:100` (`BarraDeSalvar`), `src/routes/settings/secao-salvavel.helpers.ts:118` (`salvarSecao`), `src/routes/settings/LinhaDeConfiguracao.tsx:5` (`LinhaDeConfiguracao`), `src/routes/settings/TetoPorTarefaSection.tsx:39` (`TetoPorTarefaSection`), `src/routes/settings/CabecalhoDaSecao.tsx:5` (`CabecalhoDaSecao`).
 - **Teste:** `src/routes/settings/salvar-do-cabecalho.test.tsx` (tudo em série e desfecho parcial nomeado).
 - **Origem:** AT-896 lane F (EP-035), ADR 0294; revisada na AT-946 (P18).
@@ -608,6 +608,33 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/OfertaDeAutomacao.test.tsx` (montagem do fio).
 - **Origem:** AT-999 (EP-035).
 
+<a id="rn-1450"></a>
+
+### RN-1450 — O teto do mês tem um lugar só: o cartão `#teto` dos Gastos {#rn-1450}
+
+- **Regra:** o teto do mês mora no cartão compacto `id="teto"` da aba Gastos do projeto e da página Gastos do workspace, à direita dos indicadores (320 px; abaixo de 1100 px, abaixo deles). Com teto, mostra o título, o medidor compacto (valor e barra, sem marcadores de 90%/100% nem linha em R$), a previsão e "Editar"; sem teto, mostra "Sem teto do mês" e "Definir". O botão abre o formulário (valor, "Ao atingir o teto", "Salvar teto" com rótulos e texto visíveis) dentro do próprio cartão, sem Popover, para a âncora continuar caindo nele; quem não edita vê o motivo em texto, sem botão. `?tab=spend#teto` (o "Definir teto do mês" do cabeçalho, RN-1210) rola até o cartão quando ele monta. O cartão existe mesmo se o relatório de gasto falhar. As regras do teto (bloquear ou só avisar, RN-1200) não mudam.
+- **Onde:** `src/components/TetoDoMes.tsx` (`CartaoDoTeto`), `src/components/SpendPaineis.tsx` (`GastoDoWorkspace`, prop `teto`), `src/routes/ProjectSpendTab.tsx`, `src/routes/SpendPage.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx` (`#teto` rola até o cartão).
+- **Origem:** AT-973 (EP-035), decisão do dono de 17/11. Muda a RN-1265.
+
+<a id="rn-1451"></a>
+
+### RN-1451 — Os Gastos mostram quatro indicadores e o período real {#rn-1451}
+
+- **Regra:** Total, Chamadas, Tokens e Custo médio por chamada, em grade de quatro. Tokens abreviados a partir de mil ("41,1 mi") com o número inteiro no `title`; custo médio abaixo de 1 centavo mostra 4 casas ("US$ 0,0012"). O seletor de período do owner ganha "Desde o início · N dias" quando o primeiro gasto tem menos de 30 dias (lido da série densa de 30 dias), e ele é o padrão; o eixo do gráfico começa no primeiro dia com gasto. O gráfico nunca passa da largura do cartão. Sem gasto na janela o gráfico diz "Nenhum gasto nos últimos N dias." (N é a janela escolhida) e não oferece "Ver como tabela", e "Onde foi o gasto" vira uma linha no lugar dos rankings. "O meu consumo" do membro usa os mesmos tokens abreviados. Na visão do time, "Por agente" mostra os 3 maiores e "Ver os N agentes".
+- **Onde:** `src/components/SpendPaineis.tsx` (`DestaquesDoTotal`, `SeletorDeJanela`, `GastoDoWorkspace`), `src/lib/spend.ts` (`janelaDesdeOInicio`, `abreviarTokens`), `src/components/CredentialSpendSection.helpers.ts` (`formatarCustoMedio`), `src/components/GraficoDeGastoPorDia.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx`, `src/components/GraficoDeGastoPorDia.test.tsx`.
+- **Origem:** AT-973 (EP-035), prancha L08 da v11.
+
+<a id="rn-1452"></a>
+
+### RN-1452 — "Por sessão" diz o nome (ou o tipo) antes da hashtag {#rn-1452}
+
+- **Regra:** o ranking por sessão dos Gastos mostra "<nome> · #hash"; sessão sem nome mostra o tipo ("Criativa · #hash"). O relatório só traz o id, então o nome vem da lista de sessões do projeto; sem ela (carga ou erro) a linha cai na hashtag sozinha, sem inventar nome (EP-020).
+- **Onde:** `src/components/SpendPaineis.tsx` (`useRotuloDaSessao`), `src/routes/ProjectSpendTab.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx`.
+- **Origem:** AT-973 (EP-035), prancha L08 da v11.
+
 <a id="rn-1453"></a>
 
 ### RN-1453 — O convite de membro do projeto é por e-mail {#rn-1453}
@@ -628,9 +655,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 <a id="rn-1455"></a>
 
-### RN-1455 — O teto do mês tem um lugar só, Gastos; Configurações mostra o valor e o caminho {#rn-1455}
+### RN-1455 — Em Configurações o teto do mês é só o valor e o caminho para Gastos {#rn-1455}
 
-- **Regra:** em Configurações › Projeto e execução a linha "Teto de gasto do mês" só mostra "<gasto> de <teto> · N%" (ou "Sem teto neste mês", ou "Não foi possível ler o teto") e o link "Editar em Gastos" para `?tab=spend#teto`; o formulário saiu (revisa a RN-1265 e a RN-1200 nesta tela). O cartão do teto em Gastos é da AT-973.
+- **Regra:** o teto do mês mora só em Gastos ([RN-1450](#rn-1450)). Em Configurações › Projeto e execução a linha "Teto de gasto do mês" mostra apenas "<gasto> de <teto> · N%" (ou "Sem teto neste mês", ou "Não foi possível ler o teto") e o link "Editar em Gastos", que é o `Link` do roteador para `?tab=spend#teto` (sem roteador no contexto cai no `<a href>`). Não há formulário nesta tela.
 - **Onde:** `src/routes/settings/ExecutionSection.tsx`.
-- **Teste:** `src/routes/ProjectSettingsTab.test.tsx` (ExecutionSection).
+- **Teste:** `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx` (ExecutionSection).
 - **Origem:** AT-974 (EP-035), decisão do dono de 17/11.

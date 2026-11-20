@@ -6,7 +6,8 @@
     "summing": "汇总中…",
     "retry": "重试",
     "tokensDetail": "{{input}} 输入 · {{output}} 输出",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "callsLabel": "调用次数"
   },
   "role": {
     "error": "无法确定你在此工作区中的角色，而显示哪份报告正是由它决定的。"
@@ -30,7 +31,8 @@
     "byProjectTitle": "按项目",
     "byProjectEmpty": "此时间窗口内没有项目产生花费。",
     "byActorTitle": "按智能体和人员",
-    "byActorEmpty": "此时间窗口内没有任何花费。"
+    "byActorEmpty": "此时间窗口内没有任何花费。",
+    "whereEmpty": "花费去向：此时间窗口内没有花费。"
   },
   "member": {
     "title": "我的消耗",
@@ -58,7 +60,8 @@
     "callsTitle": "每日调用",
     "tokensTitle": "输入与输出",
     "tokensIn": "输入",
-    "tokensOut": "输出"
+    "tokensOut": "输出",
+    "noSpendInDays_other": "最近 {{count}} 天没有花费。"
   },
   "libSpend": {
     "callTitle_other": "{{dia}} · {{custo}} · {{count}} 次调用",
@@ -69,7 +72,8 @@
   "window": {
     "month": "本月",
     "label": "时间范围",
-    "option": "{{n}} 天"
+    "option": "{{n}} 天",
+    "sinceStart": "自开始起 · {{n}} 天"
   },
   "subscription": {
     "label": "订阅",
@@ -109,7 +113,9 @@
     "byAgentEmpty": "此时间范围内没有智能体产生支出。",
     "byAreaTitle": "按领域",
     "byAreaEmpty": "此时间范围内没有领域产生支出。",
-    "noArea": "无领域"
+    "noArea": "无领域",
+    "showAll": "查看全部 {{n}} 个智能体",
+    "showTop": "只看前 3 名"
   },
   "budgetEditor": {
     "title": "项目预算",
@@ -117,7 +123,7 @@
     "policyLabel": "达到上限时",
     "block": "阻止新的调用",
     "allow": "仅提醒",
-    "save": "保存预算",
+    "save": "保存上限",
     "saving": "保存中…",
     "saved": "预算已保存。",
     "error": "无法保存预算。未作任何更改。",
@@ -140,6 +146,11 @@
       "editor": "工作区月度上限",
       "semPapel": "只有 owner 可以设置工作区上限。"
     },
-    "membro": "工作区月度上限归 owner 所有；仅当调用被它拒绝时你才会看到。"
+    "membro": "工作区月度上限归 owner 所有；仅当调用被它拒绝时你才会看到。",
+    "cartao": {
+      "semTeto": "没有月度上限",
+      "definir": "设置",
+      "editar": "编辑"
+    }
   }
 }

@@ -6,7 +6,8 @@
     "summing": "Adding up…",
     "retry": "Try again",
     "tokensDetail": "{{input}} in · {{output}} out",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "callsLabel": "Calls"
   },
   "role": {
     "error": "I couldn't find out your role in this workspace, and that's what decides which report to show."
@@ -31,7 +32,8 @@
     "byProjectTitle": "By project",
     "byProjectEmpty": "No project spent in this window.",
     "byActorTitle": "By agent and person",
-    "byActorEmpty": "No one spent in this window."
+    "byActorEmpty": "No one spent in this window.",
+    "whereEmpty": "Where the spend went: no spend in this window."
   },
   "member": {
     "title": "My consumption",
@@ -62,7 +64,9 @@
     "callsTitle": "Calls per day",
     "tokensTitle": "Input and output",
     "tokensIn": "Input",
-    "tokensOut": "Output"
+    "tokensOut": "Output",
+    "noSpendInDays_one": "No spend in the last day.",
+    "noSpendInDays_other": "No spend in the last {{count}} days."
   },
   "libSpend": {
     "callTitle_one": "{{dia}} · {{custo}} · {{count}} call",
@@ -74,7 +78,8 @@
   "window": {
     "month": "Month",
     "label": "Window",
-    "option": "{{n}} days"
+    "option": "{{n}} days",
+    "sinceStart": "Since the start · {{n}} days"
   },
   "subscription": {
     "label": "Subscription",
@@ -114,7 +119,9 @@
     "byAgentEmpty": "No agent spent in this window.",
     "byAreaTitle": "By area",
     "byAreaEmpty": "No area spent in this window.",
-    "noArea": "no area"
+    "noArea": "no area",
+    "showAll": "See all {{n}} agents",
+    "showTop": "Show only the top 3"
   },
   "budgetEditor": {
     "title": "Project budget",
@@ -122,7 +129,7 @@
     "policyLabel": "When the limit is reached",
     "block": "block new calls",
     "allow": "only warn",
-    "save": "Save budget",
+    "save": "Save cap",
     "saving": "Saving…",
     "saved": "Budget saved.",
     "error": "I could not save the budget. Nothing changed.",
@@ -146,6 +153,11 @@
       "editor": "Workspace monthly cap",
       "semPapel": "Only the owner sets the workspace cap."
     },
-    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it."
+    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it.",
+    "cartao": {
+      "semTeto": "No monthly cap",
+      "definir": "Set",
+      "editar": "Edit"
+    }
   }
 }

@@ -1,5 +1,10 @@
 .link {
   align-self: flex-start;
+  /* AT-1010 (RN-1499): alvo de 24 px; a margem negativa devolve o excesso ao fluxo. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  margin-block: -3px;
   background: none;
   border: 0;
   padding: 0;

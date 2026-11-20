@@ -318,6 +318,8 @@
   border-color: var(--accent);
 }
 .turnos{display:flex;flex-direction:column;gap:6px}
+/* AT-1010 (RN-1499): a linha do turno é alvo de 24 px; a margem negativa mantém a altura da lista. */
+.turnos > a{display:grid;align-content:center;min-height:24px;margin-block:-3px}
 
 /* AT-975: turnos seguidos do mesmo agente, numa linha. */
 .turnoAgrupado {

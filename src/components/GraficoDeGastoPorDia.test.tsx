@@ -30,8 +30,14 @@ describe('GraficoDeGastoPorDia', () => {
 
   it('sem gasto na janela mostra o vazio e não oferece a tabela', () => {
     render(<GraficoDeGastoPorDia serie={[{ dia: '2026-10-31', costMicros: 0, chamadas: 0 }]} titulo="Gasto por dia" />);
-    expect(screen.getByText('Nenhum gasto nesta janela.')).toBeTruthy();
+    expect(screen.getByText('Nenhum gasto no último dia.')).toBeTruthy();
     expect(screen.queryByText('Ver como tabela')).toBeNull();
+  });
+
+  it('o vazio diz a janela escolhida ("nos últimos N dias")', () => {
+    const zerada = Array.from({ length: 5 }, (_, i) => ({ dia: `2026-10-0${i + 1}`, costMicros: 0, chamadas: 0 }));
+    render(<GraficoDeGastoPorDia serie={zerada} titulo="Gasto por dia" />);
+    expect(screen.getByText('Nenhum gasto nos últimos 5 dias.')).toBeTruthy();
   });
 
   it('série vazia não quebra: tabela sem linhas', () => {
@@ -50,7 +56,7 @@ describe('GraficoDeGastoPorDia', () => {
     render(<GraficoDeChamadasPorDia serie={zerada} />);
     expect(screen.getByText('Sem chamadas na janela.')).toBeTruthy();
     render(<GraficoDeGastoPorDia serie={zerada} titulo="Seu gasto por dia" />);
-    expect(screen.getByText('Nenhum gasto nesta janela.')).toBeTruthy();
+    expect(screen.getByText('Nenhum gasto no último dia.')).toBeTruthy();
   });
 
   it('chamadas por dia e rosca de tokens nomeiam o que mostram', () => {

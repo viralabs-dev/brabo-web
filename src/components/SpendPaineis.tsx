@@ -299,6 +299,9 @@ export function GastoDoWorkspace({
           <div className={styles.faixa}>
             <GastoPorDiaEAgente linhas={r.porDiaEAgente ?? []} dias={dias} titulo={t('workspace.dailySpendTitle')} />
           </div>
+          {r.totalMicros === 0 && r.chamadas === 0 ? (
+            <p className={styles.nota}>{t('workspace.whereEmpty')}</p>
+          ) : (
           <div className={styles.grade}>
             <Ranking
               icone={<Cpu aria-hidden="true" size={12} />}
@@ -341,6 +344,7 @@ titulo={t('workspace.byActorTitle')}
               vazio={t('workspace.byActorEmpty')}
             />
           </div>
+          )}
         </>
       )}
 

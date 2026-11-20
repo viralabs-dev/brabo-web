@@ -18,6 +18,7 @@ import {
 import { useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
 import { numberFmt } from '../lib/currency';
+import { abreviarTokens } from '../lib/spend';
 import { GastoPorDia } from '../components/GastoPorDia';
 import { Ranking } from '../components/SpendCharts';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
@@ -180,7 +181,11 @@ function MeuConsumo({ projectId }: { projectId: string }) {
               {
                 icone: <Coins aria-hidden="true" size={12} />,
                 rotulo: t('member.tokensLabel'),
-                valor: numberFmt.format(meu.data.inputTokens + meu.data.outputTokens),
+                valor: (
+                  <span title={numberFmt.format(meu.data.inputTokens + meu.data.outputTokens)}>
+                    {abreviarTokens(meu.data.inputTokens + meu.data.outputTokens)}
+                  </span>
+                ),
                 nota: t('shared.tokensDetail', {
                   input: numberFmt.format(meu.data.inputTokens),
                   output: numberFmt.format(meu.data.outputTokens),

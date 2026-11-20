@@ -4,7 +4,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertTexto } from './shadcn/alert';
-import { Badge } from './shadcn/badge';
 import { Card } from './shadcn/card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
@@ -52,6 +51,7 @@ export function TetoDoMes({
   podeEditar: boolean;
 }) {
   const { t, i18n } = useTranslation('spend');
+  const [editando, setEditando] = useState(false);
   const budget = useQuery({ queryKey, queryFn: ler, staleTime: FRESCOR_DA_CONFIGURACAO_MS });
   const editor = (
     <EditorDoTeto
@@ -62,15 +62,26 @@ export function TetoDoMes({
       atual={budget.data ?? null}
     />
   );
+  // "Editar"/"Definir" abre o formulário DENTRO do cartão (sem Popover): a âncora `#teto` segue caindo nele.
+  const abrir = (rotulo: string) =>
+    podeEditar ? (
+      <Button type="button" variant="secondary" size="sm" aria-expanded={editando} onClick={() => setEditando((v) => !v)}>
+        {rotulo}
+      </Button>
+    ) : (
+      <p className={styles.nota}>{t(`teto.${escopo}.semPapel`)}</p>
+    );
 
   if (budget.isLoading) return null;
   if (budget.isError) return podeEditar ? <CartaoDoTeto>{editor}</CartaoDoTeto> : null;
   if (!budget.data) {
     return (
       <CartaoDoTeto>
-        <Badge variant="outline">{t('budget.notConfigured')}</Badge>
-        <p className={styles.nota}>{t(`teto.${escopo}.semTeto`)}</p>
-        {editor}
+        <div className={styles.linhaDoTeto}>
+          <p className={styles.nota}>{t('teto.cartao.semTeto')}</p>
+          {abrir(t('teto.cartao.definir'))}
+        </div>
+        {podeEditar && editando && editor}
       </CartaoDoTeto>
     );
   }
@@ -79,8 +90,12 @@ export function TetoDoMes({
   const alerta = alertaDeOrcamento(b);
   return (
     <CartaoDoTeto>
-      <p className={styles.nota}>{t(`teto.${escopo}.titulo`)}</p>
+      <div className={styles.linhaDoTeto}>
+        <p className={styles.nota}>{t(`teto.${escopo}.titulo`)}</p>
+        {podeEditar && abrir(t('teto.cartao.editar'))}
+      </div>
       <TokenMeter
+        variant="compact"
         unitLabel="USD"
         used={b.spentMicros / 1_000_000}
         limit={b.limitMicros / 1_000_000}
@@ -99,7 +114,8 @@ export function TetoDoMes({
           <AlertTexto>{alerta.mensagem}</AlertTexto>
         </Alert>
       )}
-      {editor}
+      {!podeEditar && <p className={styles.nota}>{t(`teto.${escopo}.semPapel`)}</p>}
+      {podeEditar && editando && editor}
     </CartaoDoTeto>
   );
 }

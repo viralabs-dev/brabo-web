@@ -32,7 +32,8 @@
     "byProjectTitle": "By project",
     "byProjectEmpty": "No project spent in this window.",
     "byActorTitle": "By agent and person",
-    "byActorEmpty": "No one spent in this window."
+    "byActorEmpty": "No one spent in this window.",
+    "whereEmpty": "Where the spend went: no spend in this window."
   },
   "member": {
     "title": "My consumption",
@@ -63,7 +64,9 @@
     "callsTitle": "Calls per day",
     "tokensTitle": "Input and output",
     "tokensIn": "Input",
-    "tokensOut": "Output"
+    "tokensOut": "Output",
+    "noSpendInDays_one": "No spend in the last day.",
+    "noSpendInDays_other": "No spend in the last {{count}} days."
   },
   "libSpend": {
     "callTitle_one": "{{dia}} · {{custo}} · {{count}} call",
@@ -150,6 +153,11 @@
       "editor": "Workspace monthly cap",
       "semPapel": "Only the owner sets the workspace cap."
     },
-    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it."
+    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it.",
+    "cartao": {
+      "semTeto": "No monthly cap",
+      "definir": "Set",
+      "editar": "Edit"
+    }
   }
 }

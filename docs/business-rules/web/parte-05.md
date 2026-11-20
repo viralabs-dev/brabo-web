@@ -314,7 +314,7 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   `:255` (`aoEvento`, os `extras`); `apps/web/src/lib/hooks.ts:163`
   (`useProjectSessions`), `:194` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
-  `apps/web/src/components/AcoesDoContainer.tsx:46` (`useLatestSession`, sem poll);
+  `apps/web/src/components/AcoesDoContainer.tsx:55` (`useLatestSession`, sem poll);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:221` (`invalidador`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:200` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
@@ -825,7 +825,7 @@ só terminariam em falha"), com os dois detalhes atrás do mesmo `<details>`.
 - **Código:** `apps/web/src/components/ContainerImageGate.tsx:33`
   (`ContainerImageGateNotice`), `:42` (`bloco`);
   `apps/web/src/routes/ProjectPrsTab.tsx:157` (`superficie="prs"`);
-  `apps/web/src/components/AcoesDoContainer.tsx:244` (`semContainer`), `:270`
+  `apps/web/src/components/AcoesDoContainer.tsx:253` (`semContainer`), `:270`
   (`semBrokerNaSubida`; o helper da chave curta `chaveCurtaDoBroker` saiu: desde a AT-712 a falta de broker é dita UMA vez na ajuda "?", ADR 0240, e não num `<summary>` na célula); `apps/web/src/components/ui/Button.module.css:101`
   (`.danger:disabled`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("409 do portão vira

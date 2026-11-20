@@ -715,3 +715,31 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/CaixaDeDecisoes.tsx` (`NegarEmLote`).
 - **Teste:** `src/routes/DecisionsPage.test.tsx`.
 - **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1472"></a>
+
+### RN-1472 — O explorador de arquivos tem linhas de 28 px com ícone e nome juntos, e a faixa do Código não deixa coluna vazia {#rn-1472}
+
+- **Regra:** cada linha do explorador (pasta ou arquivo) é uma linha `flex` de 28 px de altura, com o ícone de 14 px e o nome na mesma linha, e o recuo é de 18 px por nível (antes 13 px; o nome do arquivo alinha com o da pasta do mesmo nível). A pasta antes deixava o ícone numa linha acima do nome, porque o título do `Disclosure` é um bloco. Na página do projeto, uma aba que desenha até a borda e tem sub-abas (só o Código: Arquivos, PRs) empilha a faixa de sub-abas EM CIMA do painel; antes elas ficavam lado a lado e sobrava uma coluna vazia de cerca de 134 px entre a sidebar e a trilha do explorador, que agora fica colada na borda da área de conteúdo.
+- **Onde:** `src/routes/code/CodeExplorer.tsx` e `.module.css` (`.linha`, `.tituloPasta`, `RECUO_POR_NIVEL`), `src/routes/ProjectPage.tsx` e `.module.css` (`.colunaComSubAbas`).
+- **Teste:** `src/routes/code/CodeExplorer.test.tsx` ("a linha é uma só").
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. Altura não medida em jsdom: a prévia `13-design/codigo-v11/` traz as medidas no navegador.
+
+<a id="rn-1473"></a>
+
+### RN-1473 — Sem arquivo escolhido, o editor abre o README.md da raiz {#rn-1473}
+
+- **Regra:** ao carregar a raiz da ref, se nenhum arquivo foi aberto ainda e a raiz tem um arquivo `README.md`, ele abre numa aba e fica ativo. Vale uma vez por ref: fechar todas as abas depois NÃO o reabre, e um README em subpasta não conta. Sem README, o editor mostra o estado vazio do kit (`Empty`) com "Escolha um arquivo no explorador." (texto novo nos quatro idiomas; a menção à aba Buscar saiu). A leitura da raiz usa a MESMA `queryKey` do explorador (sem requisição a mais); erro de carga da raiz não abre nada e o explorador segue mostrando o erro.
+- **Onde:** `src/routes/code/CodeShell.tsx` (`raizQuery`, `readmeVistoNaRef`), `src/routes/code/CodeEditor.tsx` (`Empty`).
+- **Teste:** `src/routes/code/CodeShell.test.tsx` ("AT-971 (RN-1473)").
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. A prancha mostra "aberto por padrão" ao lado do nome; o rótulo não foi feito.
+
+<a id="rn-1474"></a>
+
+### RN-1474 — Uma PR é uma linha, com os portões D, Q, S e V; o Merge só aparece com D, Q e S verdes {#rn-1474}
+
+- **Regra:** na lista de PRs, cada PR é uma linha com número (mono, apagado), título em negrito, autor, branch e data, os quatro portões em linha (D Dev, Q QA, S SecOps, V você, cada um com a cor do estado: verde passou, terracota em curso, vermelho bloqueado, apagado pendente), o selo de estado e as ações. Os portões vêm da TAREFA da branch (`feature/task-…`): sem tarefa (PR de infra ou aberta à mão) não há portão a mostrar e o Merge segue (a tela não afirma o que não leu); PR mesclada mostra os quatro verdes. O motivo é uma frase sob o título: tarefa bloqueada em cor de erro (o motivo gravado da tarefa; sem motivo, o gate pendente, como na RN-768), portão pendente em cor neutra, recusa de merge (RN-705) em âmbar, num único parágrafo. **Revisa a RN-663 (api) e a RN-768:** o "Merge" só aparece com D, Q e S verdes e a tarefa sem bloqueio; com portão pendente ou falho a ação é a que destrava, "Pedir o parecer de novo" (o `RetomarGateEstacionado` da Sessão, sem a nota ao lado), quando o ciclo do gate da tarefa está estacionado (`gate.rescue_parked` da sessão mais recente), e nada quando não está. O botão desabilitado que flutuava saiu. Enquanto o backlog carrega, a coluna das ações tem o lugar reservado ([RN-816](parte-06.md#rn-816), agora uma caixa de 160 × 24 px). O campo "Já sabe o nº?" virou a busca da lista (número, título, autor ou branch, ignorando `#` e caixa); Enter sem nenhuma PR que combine abre o diff pelo id digitado, como antes. A legenda dos portões fica numa linha abaixo da lista; o diff continua no painel que já existia.
+- **Onde:** `src/routes/ProjectPrsTab.tsx`, `src/routes/code/PrListAndDiff.tsx` (`renderItemPortoes`, `renderItemMotivo`, busca), `src/components/PortoesDaPr.tsx`, `src/lib/portoes-da-pr.ts`, `src/routes/RetomarGateEstacionado.tsx` (`rotulo`, `compacto`).
+- **Teste:** `src/routes/ProjectPrsTab.test.tsx`, `src/routes/code/CodeDiffPanel.test.tsx`, `src/lib/portoes-da-pr.test.ts`.
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. Declarado: "Pedir o parecer de novo" depende do evento de estacionamento estar entre os 200 últimos da sessão mais recente; o "Ver diff" da prancha não foi feito (a linha inteira abre o diff).
+

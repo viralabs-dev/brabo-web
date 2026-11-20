@@ -128,6 +128,17 @@
   display: flex;
 }
 
+.body.bodyRente .coluna.colunaComSubAbas {
+  flex-direction: column;
+}
+
+/* O painel da aba (o shell do Código) ocupa o que sobra abaixo da faixa de sub-abas. */
+.body.bodyRente .coluna.colunaComSubAbas > :last-child {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
 .body.bodyRente {
   margin: 0;
   padding: 0;

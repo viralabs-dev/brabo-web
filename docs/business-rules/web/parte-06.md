@@ -251,6 +251,8 @@ keywords: [regras de negócio, web]
 
 ### RN-768 — Na aba PRs, o texto ao lado do Merge diz a verdade do botão {#rn-768}
 
+> **Revisada pela [RN-1474](parte-07.md#rn-1474) (AT-971):** tarefa bloqueada ou portão pendente não mostram mais o botão desabilitado; o motivo é uma frase sob o título da PR (erro quando bloqueada) e o Merge só aparece com D, Q e S verdes.
+
 - **Regra:** gate pendente continua AVISO e não trava o merge
   ([RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)). Tarefa BLOQUEADA (`task.blocked`) é outra coisa e
   desabilita o botão; nesse caso a linha da PR NÃO mostra "o merge segue
@@ -462,6 +464,8 @@ keywords: [regras de negócio, web]
 <a id="rn-816"></a>
 
 ### RN-816 — O botão não muda de lugar quando um bloco tardio chega {#rn-816}
+
+> **Revisada pela [RN-1474](parte-07.md#rn-1474) (AT-971):** na aba PRs a reserva deixou de ser a da esteira de 96 px e é a caixa de 160 × 24 px dos portões e do Merge; enquanto o backlog carrega nem portões nem Merge aparecem.
 
 - **Regra:** bloco que chega DEPOIS do primeiro paint não fica acima do botão
   que a pessoa vai clicar, e o que precisa ficar acima tem o espaço reservado

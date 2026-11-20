@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { getCodeBranches, getRepository } from '../../lib/api-client';
+import { getCodeBranches, getCodeTree, getRepository } from '../../lib/api-client';
 import {
   useArchitecture,
   useHandoffs,
@@ -73,6 +73,27 @@ export function CodeShell({ projectId }: { projectId: string }) {
   });
   const branchAtual = branchesQuery.data?.items.find((b) => b.name === refEfetiva);
   const aheadBehind = formatarAheadBehind(branchAtual?.ahead, branchAtual?.behind);
+
+  // AT-971 (RN-1473): sem arquivo escolhido, o editor abre o `README.md` da raiz
+  // quando ele existe. MESMA queryKey do `CodeExplorer` (dedup, zero requisição
+  // a mais). Vale uma vez por ref, e só se a pessoa ainda não abriu nada: fechar
+  // todas as abas depois não reabre o README.
+  const raizQuery = useQuery({
+    queryKey: ['code-tree', projectId, refEfetiva, ''],
+    queryFn: () => getCodeTree(projectId, { ref: refEfetiva, path: '' }),
+    enabled: Boolean(refEfetiva),
+  });
+  const [readmeVistoNaRef, setReadmeVistoNaRef] = useState<string | null>(null);
+  useEffect(() => {
+    if (!raizQuery.data || readmeVistoNaRef === refEfetiva) return;
+    setReadmeVistoNaRef(refEfetiva);
+    if (openTabs.length > 0 || activePath) return;
+    const readme = raizQuery.data.entries.find((e) => e.type === 'file' && e.name === 'README.md');
+    if (readme) {
+      setOpenTabs([readme.path]);
+      setActivePath(readme.path);
+    }
+  }, [raizQuery.data, refEfetiva, readmeVistoNaRef, openTabs.length, activePath]);
 
   function abrirArquivo(path: string) {
     setOpenTabs((abas) => (abas.includes(path) ? abas : [...abas, path]));

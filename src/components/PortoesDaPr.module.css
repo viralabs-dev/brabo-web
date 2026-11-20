@@ -1,0 +1,53 @@
+.linha {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.liga {
+  width: 10px;
+  height: 1px;
+  background: var(--border-strong);
+}
+
+.portao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border-strong);
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.done {
+  color: var(--success);
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+
+.current {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.blocked {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.pending {
+  color: var(--text-muted);
+}

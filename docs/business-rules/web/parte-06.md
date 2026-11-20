@@ -483,7 +483,7 @@ keywords: [regras de negócio, web]
   deslocamento em pixels.
 - **Onde:** `apps/web/src/routes/SessionPage.tsx` (`FaixaDeEstado`
   antes de `styles.messages`), `apps/web/src/routes/ProjectExecutorsTab.tsx`,
-  `apps/web/src/routes/ProjectPrsTab.tsx:83` (`ProjectPrsTab`),
+  `apps/web/src/routes/ProjectPrsTab.tsx:92` (`ProjectPrsTab`),
   `apps/web/src/routes/ProjectPrsTab.module.css` (`.reservaDaEsteira`)
 - **Teste:** `apps/web/src/routes/salto-de-layout.test.ts`,
   `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-816 (AT-480): o Merge não
@@ -524,7 +524,7 @@ keywords: [regras de negócio, web]
   permitir) a esquece. Declarado: a causa foi medida no CÓDIGO (o cartão
   dependia do refetch), não no navegador; que o refetch demore o bastante para
   o clique parecer perdido é inferência do TP-01.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:105` (`acaoDaPr`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:119` (`acaoDaPr`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-822 (AT-493):
   o 1º clique em Merge abre o cartão sem esperar a fila do projeto voltar" e
   "RN-822: a fila lida DEPOIS da proposta, sem ela, vence o cartão local")

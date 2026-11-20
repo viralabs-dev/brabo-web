@@ -124,10 +124,10 @@
     "searching": "Поиск…",
     "errorFallback": "Сейчас не удалось выполнить поиск.",
     "noResults": "Ничего не найдено по запросу «{{query}}».",
-    "filesScanned_one": "{{count}} файл проверен",
-    "filesScanned_few": "{{count}} файла проверено",
-    "filesScanned_many": "{{count}} файлов проверено",
-    "filesScanned_other": "{{count}} файла проверено",
+    "filesScanned_one": "{{count, number}} файл проверен",
+    "filesScanned_few": "{{count, number}} файла проверено",
+    "filesScanned_many": "{{count, number}} файлов проверено",
+    "filesScanned_other": "{{count, number}} файла проверено",
     "truncatedSuffix": " · поиск обрезан по бюджету — уточните запрос или путь"
   },
   "diff": {

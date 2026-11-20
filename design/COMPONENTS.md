@@ -556,3 +556,8 @@ Link de texto sobre `--surface-1` usa `var(--accent-hover)` em repouso —
   descrição e ações; `nivel="h2"` quando a página já tem `h1` (painéis de Gastos).
 - **`SectionCards`** (`components/shadcn/section-cards.tsx`): destaques de total
   em linha, sem cartões aninhados.
+
+## Número, moeda e copiar (AT-1004, RN-1484 a RN-1486)
+- Moeda USD e número seguem `i18n.language` ("US$ 0,9790", "8.404 eventos"); as chaves de contagem usam `{{count, number}}` e o formatador é `formatarUsdCasas` (`lib/currency.ts`).
+- `Snippet` mostra "Copiar"/"Copiado" ao lado do ícone; o copiar só com ícone fica no fio.
+- A borda sem cor (`Table`) vem de `var(--border)` (`@layer base` em `shadcn.css`).

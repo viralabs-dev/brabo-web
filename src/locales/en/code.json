@@ -120,8 +120,8 @@
     "searching": "Searching…",
     "errorFallback": "Could not search right now.",
     "noResults": "No results for “{{query}}”.",
-    "filesScanned_one": "{{count}} file scanned",
-    "filesScanned_other": "{{count}} files scanned",
+    "filesScanned_one": "{{count, number}} file scanned",
+    "filesScanned_other": "{{count, number}} files scanned",
     "truncatedSuffix": " · search cut by the budget — refine the term or the path"
   },
   "diff": {

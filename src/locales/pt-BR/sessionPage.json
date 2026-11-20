@@ -150,8 +150,8 @@
         "nome": "skills",
         "descricao": "Lista as ferramentas e a instrução do agente",
         "titulo_zero": "{{agente}}: nenhuma ferramenta",
-        "titulo_one": "{{agente}}: {{count}} ferramenta",
-        "titulo_other": "{{agente}}: {{count}} ferramentas",
+        "titulo_one": "{{agente}}: {{count, number}} ferramenta",
+        "titulo_other": "{{agente}}: {{count, number}} ferramentas",
         "naoSei": "Não sei as ferramentas de {{agente}} agora: o engine não respondeu.",
         "semAgente": "{{agente}} não está no catálogo.",
         "instrucao": "Instrução vigente (v{{versao}})",
@@ -162,8 +162,8 @@
         "descricao": "Busca na base do projeto o texto do campo",
         "semConsulta": "Escreva o que buscar no campo e use /buscar.",
         "titulo_zero": "Busca \"{{consulta}}\": nada encontrado",
-        "titulo_one": "Busca \"{{consulta}}\": {{count}} trecho",
-        "titulo_other": "Busca \"{{consulta}}\": {{count}} trechos",
+        "titulo_one": "Busca \"{{consulta}}\": {{count, number}} trecho",
+        "titulo_other": "Busca \"{{consulta}}\": {{count, number}} trechos",
         "erro": "A busca falhou: {{motivo}}"
       }
     },
@@ -295,9 +295,9 @@
     "historias": "histórias",
     "tarefas": "tarefas",
     "itens": "itens",
-    "mensagensCount_zero": "{{count}} mensagens",
-    "mensagensCount_one": "{{count}} mensagem",
-    "mensagensCount_other": "{{count}} mensagens"
+    "mensagensCount_zero": "{{count, number}} mensagens",
+    "mensagensCount_one": "{{count, number}} mensagem",
+    "mensagensCount_other": "{{count, number}} mensagens"
   },
   "aside": {
     "titulo": "Contexto da sessão",
@@ -382,9 +382,9 @@
       "registrou": "Registrou",
       "outros": "Outros"
     },
-    "raciocinioTokens_zero": "{{count}} tokens",
-    "raciocinioTokens_one": "{{count}} token",
-    "raciocinioTokens_other": "{{count}} tokens"
+    "raciocinioTokens_zero": "{{count, number}} tokens",
+    "raciocinioTokens_one": "{{count, number}} token",
+    "raciocinioTokens_other": "{{count, number}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" do painel de pendências.",
@@ -514,9 +514,9 @@
   "fio": {
     "carregando": "Carregando sessão…",
     "historico": {
-      "titulo_zero": "Antes das últimas {{count}} mensagens",
+      "titulo_zero": "Antes das últimas {{count, number}} mensagens",
       "titulo_one": "Antes da última mensagem",
-      "titulo_other": "Antes das últimas {{count}} mensagens",
+      "titulo_other": "Antes das últimas {{count, number}} mensagens",
       "outrasCount_zero": "{{count}} outras entradas",
       "outrasCount_one": "{{count}} outra entrada",
       "outrasCount_other": "{{count}} outras entradas",

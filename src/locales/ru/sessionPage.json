@@ -150,10 +150,10 @@
       "skills": {
         "nome": "skills",
         "descricao": "Показывает инструменты и инструкцию агента",
-        "titulo_one": "{{agente}}: {{count}} инструмент",
-        "titulo_few": "{{agente}}: {{count}} инструмента",
-        "titulo_many": "{{agente}}: {{count}} инструментов",
-        "titulo_other": "{{agente}}: {{count}} инструмента",
+        "titulo_one": "{{agente}}: {{count, number}} инструмент",
+        "titulo_few": "{{agente}}: {{count, number}} инструмента",
+        "titulo_many": "{{agente}}: {{count, number}} инструментов",
+        "titulo_other": "{{agente}}: {{count, number}} инструмента",
         "naoSei": "Сейчас не знаю инструменты {{agente}}: engine не ответил.",
         "semAgente": "{{agente}} нет в каталоге.",
         "instrucao": "Текущая инструкция (v{{versao}})",
@@ -163,10 +163,10 @@
         "nome": "poisk",
         "descricao": "Ищет в базе проекта текст из поля",
         "semConsulta": "Введите в поле, что искать, и используйте /poisk.",
-        "titulo_one": "Поиск \"{{consulta}}\": {{count}} фрагмент",
-        "titulo_few": "Поиск \"{{consulta}}\": {{count}} фрагмента",
-        "titulo_many": "Поиск \"{{consulta}}\": {{count}} фрагментов",
-        "titulo_other": "Поиск \"{{consulta}}\": {{count}} фрагмента",
+        "titulo_one": "Поиск \"{{consulta}}\": {{count, number}} фрагмент",
+        "titulo_few": "Поиск \"{{consulta}}\": {{count, number}} фрагмента",
+        "titulo_many": "Поиск \"{{consulta}}\": {{count, number}} фрагментов",
+        "titulo_other": "Поиск \"{{consulta}}\": {{count, number}} фрагмента",
         "erro": "Поиск не удался: {{motivo}}"
       }
     },
@@ -301,10 +301,10 @@
     "historias": "истории",
     "tarefas": "задачи",
     "itens": "элементы",
-    "mensagensCount_one": "{{count}} сообщение",
-    "mensagensCount_few": "{{count}} сообщения",
-    "mensagensCount_many": "{{count}} сообщений",
-    "mensagensCount_other": "{{count}} сообщения"
+    "mensagensCount_one": "{{count, number}} сообщение",
+    "mensagensCount_few": "{{count, number}} сообщения",
+    "mensagensCount_many": "{{count, number}} сообщений",
+    "mensagensCount_other": "{{count, number}} сообщения"
   },
   "aside": {
     "titulo": "Контекст сессии",
@@ -394,10 +394,10 @@
       "registrou": "Записал",
       "outros": "Другое"
     },
-    "raciocinioTokens_one": "{{count}} токен",
-    "raciocinioTokens_few": "{{count}} токена",
-    "raciocinioTokens_many": "{{count}} токенов",
-    "raciocinioTokens_other": "{{count}} токена"
+    "raciocinioTokens_one": "{{count, number}} токен",
+    "raciocinioTokens_few": "{{count, number}} токена",
+    "raciocinioTokens_many": "{{count, number}} токенов",
+    "raciocinioTokens_other": "{{count, number}} токена"
   },
   "pendencias": {
     "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» панели ожидающих пунктов.",
@@ -538,10 +538,10 @@
   "fio": {
     "carregando": "Загрузка сессии…",
     "historico": {
-      "titulo_one": "До последнего {{count}} сообщения",
-      "titulo_few": "До последних {{count}} сообщений",
-      "titulo_many": "До последних {{count}} сообщений",
-      "titulo_other": "До последних {{count}} сообщения",
+      "titulo_one": "До последнего {{count, number}} сообщения",
+      "titulo_few": "До последних {{count, number}} сообщений",
+      "titulo_many": "До последних {{count, number}} сообщений",
+      "titulo_other": "До последних {{count, number}} сообщения",
       "outrasCount_one": "{{count}} другая запись",
       "outrasCount_few": "{{count}} другие записи",
       "outrasCount_many": "{{count}} других записей",

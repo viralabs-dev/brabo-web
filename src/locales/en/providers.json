@@ -8,8 +8,8 @@
     "proven": "proven",
     "notProven": "not proven",
     "loadError": "Could not load the provider capabilities.",
-    "outside_one": "{{count}} left out, no key from the owner of record: {{names}}",
-    "outside_other": "{{count}} left out, no key from the owner of record: {{names}}",
+    "outside_one": "{{count, number}} left out, no key from the owner of record: {{names}}",
+    "outside_other": "{{count, number}} left out, no key from the owner of record: {{names}}",
     "columns": {
       "streaming": "Streaming",
       "toolCalling": "Tools",

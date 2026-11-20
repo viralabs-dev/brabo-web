@@ -58,9 +58,9 @@
     "window_one": "último dia",
     "window_other": "últimos {{count}} dias",
     "spend": "Gasto",
-    "calls_zero": "{{count}} chamadas",
-    "calls_one": "{{count}} chamada",
-    "calls_other": "{{count}} chamadas",
+    "calls_zero": "{{count, number}} chamadas",
+    "calls_one": "{{count, number}} chamada",
+    "calls_other": "{{count, number}} chamadas",
     "viewAsTable": "Ver como tabela",
     "colDay": "Dia",
     "colSpend": "Gasto",
@@ -74,9 +74,9 @@
     "noSpendInDays_zero": "Nenhum gasto na janela."
   },
   "libSpend": {
-    "callTitle_zero": "{{dia}} · {{custo}} · {{count}} chamadas",
-    "callTitle_one": "{{dia}} · {{custo}} · {{count}} chamada",
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} chamadas",
+    "callTitle_zero": "{{dia}} · {{custo}} · {{count, number}} chamadas",
+    "callTitle_one": "{{dia}} · {{custo}} · {{count, number}} chamada",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} chamadas",
     "actorPerson": "{{id}} (pessoa)",
     "budgetBlocked": "Atingiu {{pct}}% do teto do mês — novas chamadas de LLM estão BLOQUEADAS até o teto subir ou o mês virar.",
     "budgetWarning": "Já passou de {{pct}}% do teto do mês."

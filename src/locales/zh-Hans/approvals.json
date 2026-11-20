@@ -10,7 +10,7 @@
     "gitCommit": {
       "verb": "提议更改",
       "base": "记录一次提交",
-      "filesSuffix_other": "，包含 {{count}} 个文件",
+      "filesSuffix_other": "，包含 {{count, number}} 个文件",
       "pathSuffix": "，文件 {{path}}",
       "branchSuffix": "，在分支 {{branch}} 上",
       "repoSuffix": "，在项目仓库中",
@@ -71,7 +71,7 @@
       "verb": "开启了基础设施的 pull request",
       "base": "开启一个基础设施 pull request",
       "titled": " \"{{title}}\"",
-      "filesSuffix_other": "，包含 {{count}} 个文件"
+      "filesSuffix_other": "，包含 {{count, number}} 个文件"
     },
     "gitMerge": {
       "verb": "想要合并",
@@ -155,7 +155,7 @@
     },
     "body": {
       "commit": {
-        "files_other": "{{count}} 个文件"
+        "files_other": "{{count, number}} 个文件"
       },
       "terminal": {
         "invalidCommand": "模型没有为此操作生成有效的命令。",
@@ -168,7 +168,7 @@
         "invalidPath": "模型没有为此操作生成有效的路径。",
         "invalidContent": "模型没有为此操作生成有效的内容。",
         "previewHeader": "内容预览",
-        "linesTruncated_other": "{{count}} 行中的 {{shown}} 行"
+        "linesTruncated_other": "{{count, number}} 行中的 {{shown}} 行"
       },
       "prOpen": {
         "defaultTitle": "Pull request"

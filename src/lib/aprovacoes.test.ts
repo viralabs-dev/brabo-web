@@ -292,7 +292,7 @@ describe('AT-381 — o plano mostra a estimativa de gasto', () => {
       tarefas: Array.from({ length: 18 }, (_, i) => ({ taskId: `t${i}`, modulo: 'api' })),
       orcamentoPorTarefaMicros: 500_000,
     });
-    expect(frase).toContain('até US$ 9,00 (18 tarefas × US$ 0,50)');
+    expect(frase).toContain('até $9.00 (18 tarefas × $0.50)');
     expect(frase).toContain('teto por tarefa, não o preço');
   });
 
@@ -302,7 +302,7 @@ describe('AT-381 — o plano mostra a estimativa de gasto', () => {
       orcamentoPorTarefaMicros: 500_000,
       multiplicadorDaPrimeiraDoModulo: 2,
     });
-    expect(umModulo).toContain('até US$ 4,50 (8 tarefas × US$ 0,50; a primeira de cada módulo vale o dobro)');
+    expect(umModulo).toContain('até $4.50 (8 tarefas × $0.50; a primeira de cada módulo vale o dobro)');
     const doisModulos = fraseDaAcao('propose_execution_plan', {
       tarefas: [
         { taskId: 'a', modulo: 'api' },
@@ -312,7 +312,7 @@ describe('AT-381 — o plano mostra a estimativa de gasto', () => {
       orcamentoPorTarefaMicros: 500_000,
       multiplicadorDaPrimeiraDoModulo: 2,
     });
-    expect(doisModulos).toContain('até US$ 2,50');
+    expect(doisModulos).toContain('até $2.50');
   });
 
   it('sem orçamento no payload, não inventa número', () => {

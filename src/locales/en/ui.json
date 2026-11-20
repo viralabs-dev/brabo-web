@@ -20,8 +20,8 @@
   "markdownMessage": {
     "codeFence": {
       "defaultLanguage": "text",
-      "mostrarLinhas_one": "Show {{count}} line",
-      "mostrarLinhas_other": "Show all {{count}} lines",
+      "mostrarLinhas_one": "Show {{count, number}} line",
+      "mostrarLinhas_other": "Show all {{count, number}} lines",
       "recolher": "Collapse"
     },
     "table": {

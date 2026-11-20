@@ -20,7 +20,7 @@
   "markdownMessage": {
     "codeFence": {
       "defaultLanguage": "文本",
-      "mostrarLinhas_other": "显示全部 {{count}} 行",
+      "mostrarLinhas_other": "显示全部 {{count, number}} 行",
       "recolher": "收起"
     },
     "table": {

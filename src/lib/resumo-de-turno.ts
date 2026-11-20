@@ -1,3 +1,4 @@
+import { formatarUsdCasas } from './currency';
 /*
  * AT-891, RN-1185: a linha de um turno. "Gravado neste turno" é o campo do
  * engine (`gravadoNoTurno`, RN-1158); o web nunca monta o texto sozinho. Os 21
@@ -29,7 +30,7 @@ export function custoDoPayload(payload: unknown): number | null {
 }
 
 export function formatarCusto(usd: number | null): string {
-  return usd === null ? '—' : `US$ ${usd.toFixed(4)}`;
+  return usd === null ? '—' : formatarUsdCasas(usd, 4);
 }
 
 /** `payload.raciocinioTokens` (o provider contou), ou null; `duracaoMs` do TURNO idem. */

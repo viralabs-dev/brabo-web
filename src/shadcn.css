@@ -7,6 +7,14 @@
 @import 'tailwindcss/theme' layer(theme);
 @import 'tailwindcss/preflight' layer(base);
 @import 'tailwindcss/utilities' layer(utilities) source(none);
+/* Padrão do shadcn com Tailwind 4: a borda sem cor segue o tema, não o `currentColor` (AT-1004, RN-1486). */
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--border);
+  }
+}
 /* Só o shadcn gera utilitário; varrer o src inteiro emitiria .absolute, .container... soltos. */
 @source './components/shadcn';
 @source './components/ai-elements';

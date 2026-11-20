@@ -272,7 +272,7 @@
     "ver": "查看",
     "modoAutomatico": {
       "titulo": "自动模式",
-      "emManual_other": "{{count}} 个智能体为手动"
+      "emManual_other": "{{count, number}} 个智能体为手动"
     },
     "acoes": {
       "titulo": "执行待办",

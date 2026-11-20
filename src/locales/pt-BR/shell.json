@@ -71,9 +71,9 @@
     "atividade": {
       "titulo": "Atividade por projeto",
       "vazio": "Nenhuma atividade nova.",
-      "eventos_zero": "{{count}} eventos",
-      "eventos_one": "{{count}} evento",
-      "eventos_other": "{{count}} eventos",
+      "eventos_zero": "{{count, number}} eventos",
+      "eventos_one": "{{count, number}} evento",
+      "eventos_other": "{{count, number}} eventos",
       "parados_zero": "{{count}} projetos parados há mais de 30 dias · {{eventos}}",
       "parados_one": "{{count}} projeto parado há mais de 30 dias · {{eventos}}",
       "parados_other": "{{count}} projetos parados há mais de 30 dias · {{eventos}}"

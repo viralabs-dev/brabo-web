@@ -157,7 +157,7 @@
       "total": "合计"
     },
     "credentialNotRegistered": "未添加密钥",
-    "callsCount_other": "（{{count}} 次调用）",
+    "callsCount_other": "（{{count, number}} 次调用）",
     "currency": {
       "belowCent": "< {{value}}"
     }

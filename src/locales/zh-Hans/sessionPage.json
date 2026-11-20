@@ -147,7 +147,7 @@
       "skills": {
         "nome": "skills",
         "descricao": "列出智能体的工具和指令",
-        "titulo_other": "{{agente}}:{{count}} 个工具",
+        "titulo_other": "{{agente}}:{{count, number}} 个工具",
         "naoSei": "目前不知道 {{agente}} 的工具:engine 没有响应。",
         "semAgente": "{{agente}} 不在目录中。",
         "instrucao": "当前指令 (v{{versao}})",
@@ -157,7 +157,7 @@
         "nome": "search",
         "descricao": "在项目库中搜索输入框的文字",
         "semConsulta": "请在输入框写下要搜索的内容,再使用 /search。",
-        "titulo_other": "搜索“{{consulta}}”:{{count}} 段",
+        "titulo_other": "搜索“{{consulta}}”:{{count, number}} 段",
         "erro": "搜索失败:{{motivo}}"
       }
     },
@@ -283,7 +283,7 @@
     "historias": "用户故事",
     "tarefas": "任务",
     "itens": "条目",
-    "mensagensCount_other": "{{count}} 条消息"
+    "mensagensCount_other": "{{count, number}} 条消息"
   },
   "aside": {
     "titulo": "会话上下文",
@@ -358,7 +358,7 @@
       "registrou": "记录了",
       "outros": "其他"
     },
-    "raciocinioTokens_other": "{{count}} 个 token"
+    "raciocinioTokens_other": "{{count, number}} 个 token"
   },
   "pendencias": {
     "referenciaNoFio": "已提出合并 — 请在待处理面板的“可合并的 PR”队列中决定。",
@@ -466,7 +466,7 @@
   "fio": {
     "carregando": "正在加载会话…",
     "historico": {
-      "titulo_other": "最近 {{count}} 条消息之前",
+      "titulo_other": "最近 {{count, number}} 条消息之前",
       "outrasCount_other": "{{count}} 条其他记录",
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },

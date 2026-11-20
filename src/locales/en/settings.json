@@ -423,7 +423,7 @@
       "noCatalogSource": "This provider does not publish a model list, so there is nothing to sync — its models come from the seed.",
       "openSwapAria": "Enter a new key for {{label}}",
       "calls_one": "1 call",
-      "calls_other": "{{count}} calls"
+      "calls_other": "{{count, number}} calls"
     },
     "toast": {
       "saved": "Credential saved",

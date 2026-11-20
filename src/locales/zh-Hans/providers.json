@@ -8,7 +8,7 @@
     "proven": "已证实",
     "notProven": "未证实",
     "loadError": "无法加载提供商能力。",
-    "outside_other": "{{count}} 个已隐藏，无所有者密钥：{{names}}",
+    "outside_other": "{{count, number}} 个已隐藏，无所有者密钥：{{names}}",
     "columns": {
       "streaming": "流式输出",
       "toolCalling": "工具",

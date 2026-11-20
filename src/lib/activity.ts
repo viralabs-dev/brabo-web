@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { formatarUsdCasas } from './currency';
 import type { DelegationEventPayload, SessionEvent } from './api-types';
 import { AGENTS } from './agents';
 import { linhaDoEventoDePolitica } from './decisao-da-politica';
@@ -501,7 +502,7 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
       text:
         `${agente} subiu de ${payloadField(payload, 'de') ?? 'o modelo base'} para ${payloadField(payload, 'para') ?? 'o próximo modelo'}` +
         ' depois de 2 bloqueios por limite de iterações' +
-        (Number.isFinite(teto) && teto > 0 ? ` (teto por tarefa US$ ${(teto / 1_000_000).toFixed(2)})` : ''),
+        (Number.isFinite(teto) && teto > 0 ? ` (teto por tarefa ${formatarUsdCasas(teto / 1_000_000, 2)})` : ''),
     };
   }
   if (type === 'agent.model_escalation_exhausted') {

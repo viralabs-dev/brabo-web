@@ -95,7 +95,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 > **Revisada pela [RN-1491](#rn-1491) (AT-1007):** na aba Execução a faixa é de aviso (âmbar), não de perigo, e oferece "Pedir o parecer de novo" quando um gate estacionado está por trás da parada.
 
 - **Regra:** o `execution.stalled` que o engine grava ([RN-1059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-1059): todos os dev agents parados, tarefa pendente atrás de tarefa bloqueada ou de agente travado) aparece em vermelho no feed de atividade, nomeando as tarefas e os agentes que seguram a execução. Na sessão de execução ele vira uma mensagem do fio (`data-testid="execucao-parada"`) e, acima do time, na aba Executores, o mesmo aviso. Sob ele, `DestravarExecucao` traz um **Rearmar** por agente travado (`rearmDevAgent`, [RN-047](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-047)) e um **Desbloquear** por tarefa bloqueada (`unblockTask`, [RN-826](parte-06.md#rn-826)), com as mesmas rotas dos atalhos do chat. Os botões só existem enquanto a parada é VIGENTE: o último evento entre `execution.stalled`, `dev.working`, `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`; depois do destrave o aviso fica no histórico, sem botões. Papel abaixo de `developer` vê os botões inertes e o motivo em texto; a recusa da api vira toast com a frase dela. A web não decide nada: só lê o payload do engine.
-- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:228` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:215` (`paradaVigente`).
+- **Onde:** `apps/web/src/lib/execution.ts:173` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:228` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:215` (`paradaVigente`).
 - **Teste:** `apps/web/src/routes/DestravarExecucao.test.tsx`, `apps/web/src/lib/execution.test.ts`, `apps/web/src/lib/activity.test.ts`.
 - **Origem:** AT-800 (EP-030), parte web; engine#57.
 
@@ -858,6 +858,26 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` (classe `celulaQuebra`; a rolagem é medida na prévia).
 - **Origem:** AT-972 (EP-035), prancha L07 da v11.
 
+### RN-1484 — Moeda e número saem no idioma da interface {#rn-1484}
+
+- **Regra:** a moeda é USD (ADR 0040) e o número de casas é o de cada tela (Execução e turno com 4, aprovações e atividade com 2), mas o separador segue `i18n.language`, lido a cada chamada: em pt-BR "US$ 0,9790", em en "$0.9790". Um formatador só, `formatarUsdCasas` em `lib/currency.ts`, atende `formatMicros`, `dolar`, `formatarCusto`, `dolares` (aprovações) e o teto da atividade; os preços de `lib/models.ts` e do catálogo trocam o `'en-US'` fixo pelo idioma vigente. Os `toLocaleString()` sem argumento e os `'pt-BR'` fixos (gráfico de gasto, janela do agente, Hugging Face, sessões, painel do Código) usam `i18n.language`. O custo médio abaixo de 1 centavo segue com 4 casas (RN-1451).
+- **Onde:** `src/lib/currency.ts`, `execution.ts`, `executores-ao-vivo.ts`, `resumo-de-turno.ts`, `activity.ts`, `aprovacoes.ts`, `models.ts` e os componentes citados.
+- **Teste:** `src/lib/formatacao-pt-br.test.ts`.
+- **Origem:** AT-1004 (EP-035).
+
+### RN-1485 — A contagem sai com separador de milhar {#rn-1485}
+
+- **Regra:** as chaves de contagem (eventos, chamadas, tokens, arquivos, linhas, mensagens) usam `{{count, number}}`, a formatação do i18next, que segue o idioma: "8.404 eventos" em pt-BR e "8,404 events" em en. Os plurais continuam decididos pelo `count`. pt-BR, en, ru e zh-Hans mudam juntos, para a paridade. Onde o chamador já passa o valor formatado, a chave fica como está, para não formatar duas vezes.
+- **Onde:** `src/locales/*/*.json` (só chaves de contagem).
+- **Teste:** `src/lib/formatacao-pt-br.test.ts` (8404 em pt-BR e en).
+- **Origem:** AT-1004 (EP-035).
+
+### RN-1486 — O Snippet copia com texto e a borda segue o tema {#rn-1486}
+
+- **Regra:** o `Snippet` mostra o rótulo ("Copiar"/"Copiado") ao lado do ícone (RN-102, `AcaoCopiar` com `comTexto`); o copiar só com ícone do fio não muda. A borda sem cor (a `border-b` da `Table`, por exemplo) usa `var(--border)` por uma regra `@layer base` em `shadcn.css`, e não o `currentColor` do preflight.
+- **Onde:** `src/components/ai-elements/copiar.tsx`, `snippet.tsx` e `src/shadcn.css`.
+- **Teste:** `src/lib/formatacao-pt-br.test.ts`.
+- **Origem:** AT-1004 (EP-035).
 <a id="rn-1481"></a>
 
 ### RN-1481 — Cada linha de Containers tem uma ação com texto, escolhida pelo estado; parar, ver detalhes e remover moram no menu "…" {#rn-1481}
@@ -910,4 +930,4 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Regra:** (1) com o modelo local (provider `ollama`, o mesmo critério da categoria `local` do catálogo), o cartão ganha o ponto de atenção e o chip "local" ao lado do nome do modelo; sem o modelo no catálogo o chip não aparece. (2) A autonomia é um `ToggleGroup` com o texto visível "Manual | Piloto automático"; `aria-pressed` e `onAutonomyChange` não mudam. (3) "Procurar tarefa de novo" sai do corpo do cartão e entra no menu "⋯" ("Mais ações de ‹agente›"). (4) O gasto do cartão usa o formato pt-BR, com vírgula. (5) O texto da arquitetura vazia é "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias."
 - **Onde:** `src/components/AgentCard.tsx`, `src/components/AgentTeamGrid.tsx`, `src/locales/*/overview.json` (`architecture.emptyState`).
 - **Teste:** `src/components/AgentCard.test.tsx`, `src/components/AgentTeamGrid.test.tsx`.
-- **Origem:** AT-1007 (EP-035), prancha L10 da v11; revisa RN-603 e RN-670 só na forma do controle. Declarado: o `formatMicros` do cartão segue local, formatado em pt-BR com `toLocaleString`, até a AT-1004 levar o de `lib/execution.ts` ao mesmo formato.
+- **Origem:** AT-1007 (EP-035), prancha L10 da v11; revisa RN-603 e RN-670 só na forma do controle. O `formatMicros` local do cartão saiu: ele importa o de `lib/execution.ts`, em pt-BR desde a AT-1004 ([RN-1484](#rn-1484)).

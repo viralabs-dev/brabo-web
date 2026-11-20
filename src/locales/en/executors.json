@@ -283,8 +283,8 @@
     "ver": "View",
     "modoAutomatico": {
       "titulo": "Auto mode",
-      "emManual_one": "{{count}} agent on manual",
-      "emManual_other": "{{count}} agents on manual"
+      "emManual_one": "{{count, number}} agent on manual",
+      "emManual_other": "{{count, number}} agents on manual"
     },
     "acoes": {
       "titulo": "Execution pending items",

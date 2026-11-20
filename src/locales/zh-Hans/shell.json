@@ -69,7 +69,7 @@
     "atividade": {
       "titulo": "按项目的活动",
       "vazio": "没有新活动。",
-      "eventos_other": "{{count}} 个事件",
+      "eventos_other": "{{count, number}} 个事件",
       "parados_other": "{{count}} 个项目超过 30 天无活动 · {{eventos}}"
     }
   },

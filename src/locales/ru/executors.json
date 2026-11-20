@@ -305,10 +305,10 @@
     "ver": "Открыть",
     "modoAutomatico": {
       "titulo": "Авторежим",
-      "emManual_one": "{{count}} агент вручную",
-      "emManual_few": "{{count}} агента вручную",
-      "emManual_many": "{{count}} агентов вручную",
-      "emManual_other": "{{count}} агентов вручную"
+      "emManual_one": "{{count, number}} агент вручную",
+      "emManual_few": "{{count, number}} агента вручную",
+      "emManual_many": "{{count, number}} агентов вручную",
+      "emManual_other": "{{count, number}} агентов вручную"
     },
     "acoes": {
       "titulo": "Ожидающее в выполнении",

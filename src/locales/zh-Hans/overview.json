@@ -74,7 +74,7 @@
     "rearmErrorTitle": "无法重新启用智能体",
     "wakeSuccess": "正在查找任务",
     "wakeErrorTitle": "无法唤醒智能体",
-    "maisOciosos_other": "+ {{count}} 个已完成或空闲",
+    "maisOciosos_other": "+ {{count, number}} 个已完成或空闲",
     "recolherOciosos": "收起空闲的"
   },
   "timeline": {
@@ -98,7 +98,7 @@
     "runnerRessalvaNunca": "尚无 runner 连接到此项目。请在“代码”标签页中安装并运行 `brabo-runner`。",
     "espelho": "镜像",
     "espelhoNunca": "从未同步",
-    "espelhoValor_other": "于 {{data}} 复制了 {{count}} 个文件",
+    "espelhoValor_other": "于 {{data}} 复制了 {{count, number}} 个文件",
     "espelhoSemNovidade": "于 {{data}} 同步 —— 无需复制",
     "espelhoFalhou": "上一轮失败",
     "espelhoFalhouComUltima": "上一轮失败 —— 最后一次成功复制于 {{data}}",
@@ -116,11 +116,11 @@
     "verTurnos": "轮次",
     "turnosVazio": "尚无已完成的轮次。",
     "title": "活动",
-    "count_other": "{{count}} 个事件",
+    "count_other": "{{count, number}} 个事件",
     "loadErrorTitle": "无法加载活动。",
     "emptyNoSession": "尚无活动：活动从项目的第一个会话开始。",
-    "turnosAgrupados_other": "{{agente}} · {{count}} 轮，{{passos}} 步",
-    "recorteTurnos_other": "最近 {{count}} 轮",
+    "turnosAgrupados_other": "{{agente}} · {{count, number}} 轮，{{passos}} 步",
+    "recorteTurnos_other": "最近 {{count, number}} 轮",
     "verLinhaDoTempo": "查看完整时间线 →",
     "rotuloModo": "查看方式"
   },

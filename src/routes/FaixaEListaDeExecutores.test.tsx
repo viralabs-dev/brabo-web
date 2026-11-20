@@ -96,7 +96,7 @@ describe('FaixaDeEstado (AT-957)', () => {
     const faixa = screen.getByTestId('faixa-de-estado');
     expect(within(faixa).getByText('1 de 3 tarefas')).toBeInTheDocument();
     expect(within(faixa).getByText('1 esperando')).toBeInTheDocument();
-    expect(within(faixa).getByText('US$ 0.4120')).toBeInTheDocument();
+    expect(within(faixa).getByText('US$ 0,4120')).toBeInTheDocument();
     // Nada de cartão nem de carrossel na faixa: o detalhe mora no painel.
     expect(screen.queryByText('Login')).not.toBeInTheDocument();
     expect(screen.queryByTestId('carrossel-executores')).not.toBeInTheDocument();
@@ -118,7 +118,7 @@ describe('ListaDeExecutores (AT-957)', () => {
     const api = await screen.findByTestId('executor-dev-api');
     expect(within(api).getByText('trabalhando')).toBeInTheDocument();
     expect(within(api).getByText('Login')).toBeInTheDocument();
-    expect(within(api).getByText('US$ 0.4120')).toBeInTheDocument();
+    expect(within(api).getByText('US$ 0,4120')).toBeInTheDocument();
     expect(within(api).getByText('Ver no fio')).toBeInTheDocument();
     const web = screen.getByTestId('executor-dev-web');
     expect(within(web).getByText(/Esperando a fundação de api/)).toBeInTheDocument();

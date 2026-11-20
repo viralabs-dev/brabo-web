@@ -3,6 +3,7 @@ import { agentesTravados, devAgentId, gateParadoPorBloqueio, gateStatus, statusD
 import { classifyEvent } from './activity';
 import { deriveExecutionProgress } from './execution';
 import { tarefaDaBranch } from './prontas-e-bloqueadas';
+import { formatarUsdCasas } from './currency';
 
 /**
  * AT-880 (RN-1303/RN-1073): o estado de cada executor da execução vigente para
@@ -242,5 +243,5 @@ export function contagemPorEstado(cartoes: CartaoDeExecutor[]): Record<EstadoDoC
 }
 
 export function dolar(micros: number | undefined): string {
-  return `US$ ${((micros ?? 0) / 1_000_000).toFixed(4)}`;
+  return formatarUsdCasas((micros ?? 0) / 1_000_000, 4);
 }

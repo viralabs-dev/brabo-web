@@ -148,8 +148,8 @@
       "skills": {
         "nome": "skills",
         "descricao": "Lists the agent's tools and instruction",
-        "titulo_one": "{{agente}}: {{count}} tool",
-        "titulo_other": "{{agente}}: {{count}} tools",
+        "titulo_one": "{{agente}}: {{count, number}} tool",
+        "titulo_other": "{{agente}}: {{count, number}} tools",
         "naoSei": "I don't know {{agente}}'s tools right now: the engine did not answer.",
         "semAgente": "{{agente}} is not in the catalog.",
         "instrucao": "Current instruction (v{{versao}})",
@@ -159,8 +159,8 @@
         "nome": "search",
         "descricao": "Searches the project base for the field text",
         "semConsulta": "Type what to search in the field and use /search.",
-        "titulo_one": "Search \"{{consulta}}\": {{count}} passage",
-        "titulo_other": "Search \"{{consulta}}\": {{count}} passages",
+        "titulo_one": "Search \"{{consulta}}\": {{count, number}} passage",
+        "titulo_other": "Search \"{{consulta}}\": {{count, number}} passages",
         "erro": "The search failed: {{motivo}}"
       }
     },
@@ -289,8 +289,8 @@
     "historias": "stories",
     "tarefas": "tasks",
     "itens": "items",
-    "mensagensCount_one": "{{count}} message",
-    "mensagensCount_other": "{{count}} messages"
+    "mensagensCount_one": "{{count, number}} message",
+    "mensagensCount_other": "{{count, number}} messages"
   },
   "aside": {
     "titulo": "Session context",
@@ -370,8 +370,8 @@
       "registrou": "Recorded",
       "outros": "Other"
     },
-    "raciocinioTokens_one": "{{count}} token",
-    "raciocinioTokens_other": "{{count}} tokens"
+    "raciocinioTokens_one": "{{count, number}} token",
+    "raciocinioTokens_other": "{{count, number}} tokens"
   },
   "pendencias": {
     "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue of the pendencies panel.",
@@ -491,7 +491,7 @@
     "carregando": "Loading session…",
     "historico": {
       "titulo_one": "Before the last message",
-      "titulo_other": "Before the last {{count}} messages",
+      "titulo_other": "Before the last {{count, number}} messages",
       "outrasCount_one": "{{count}} other entry",
       "outrasCount_other": "{{count}} other entries",
       "conteudoComOutras": "{{mensagens}} · {{outras}}"

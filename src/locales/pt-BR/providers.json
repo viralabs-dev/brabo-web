@@ -9,8 +9,8 @@
     "notProven": "não provado",
     "loadError": "Não foi possível carregar as capacidades dos providers.",
     "outside_zero": "Nenhum provider de fora.",
-    "outside_one": "{{count}} de fora, sem chave do titular: {{names}}",
-    "outside_other": "{{count}} de fora, sem chave do titular: {{names}}",
+    "outside_one": "{{count, number}} de fora, sem chave do titular: {{names}}",
+    "outside_other": "{{count, number}} de fora, sem chave do titular: {{names}}",
     "columns": {
       "streaming": "Streaming",
       "toolCalling": "Ferramentas",

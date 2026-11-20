@@ -295,8 +295,8 @@
     "modoAutomatico": {
       "titulo": "Modo automático",
       "emManual_zero": "nenhum agente em manual",
-      "emManual_one": "{{count}} agente em manual",
-      "emManual_other": "{{count}} agentes em manual"
+      "emManual_one": "{{count, number}} agente em manual",
+      "emManual_other": "{{count, number}} agentes em manual"
     },
     "acoes": {
       "titulo": "Pendências da execução",

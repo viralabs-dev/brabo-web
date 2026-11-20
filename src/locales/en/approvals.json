@@ -10,8 +10,8 @@
     "gitCommit": {
       "verb": "proposes a change",
       "base": "Records a commit",
-      "filesSuffix_one": " of {{count}} file",
-      "filesSuffix_other": " of {{count}} files",
+      "filesSuffix_one": " of {{count, number}} file",
+      "filesSuffix_other": " of {{count, number}} files",
       "pathSuffix": " of the file {{path}}",
       "branchSuffix": " on branch {{branch}}",
       "repoSuffix": " in the project's repository",
@@ -72,8 +72,8 @@
       "verb": "opened an infra pull request",
       "base": "Opens an infrastructure pull request",
       "titled": " \"{{title}}\"",
-      "filesSuffix_one": " with {{count}} file",
-      "filesSuffix_other": " with {{count}} files"
+      "filesSuffix_one": " with {{count, number}} file",
+      "filesSuffix_other": " with {{count, number}} files"
     },
     "gitMerge": {
       "verb": "wants to merge",
@@ -161,8 +161,8 @@
     },
     "body": {
       "commit": {
-        "files_one": "{{count}} file",
-        "files_other": "{{count}} files"
+        "files_one": "{{count, number}} file",
+        "files_other": "{{count, number}} files"
       },
       "terminal": {
         "invalidCommand": "The model didn't produce a valid command for this action.",
@@ -175,8 +175,8 @@
         "invalidPath": "The model didn't produce a valid path for this action.",
         "invalidContent": "The model didn't produce valid content for this action.",
         "previewHeader": "content preview",
-        "linesTruncated_one": "{{shown}} of {{count}} line",
-        "linesTruncated_other": "{{shown}} of {{count}} lines"
+        "linesTruncated_one": "{{shown}} of {{count, number}} line",
+        "linesTruncated_other": "{{shown}} of {{count, number}} lines"
       },
       "prOpen": {
         "defaultTitle": "Pull request"

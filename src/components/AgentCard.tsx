@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { Ellipsis, Hand, Plane, RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentDef } from '../lib/agents';
+import { formatMicros } from '../lib/execution';
 import { BranchIcon, ModelIcon } from './ui/icons';
 import { Badge } from './ui/Badge';
 import { Select } from './ui/Select';
@@ -83,11 +84,6 @@ interface AgentCardProps {
   onRearm?: () => void;
   /** AT-906: faz o dev ocioso procurar tarefa de novo; só renderiza com `status === 'ocioso'`. */
   onWake?: () => void;
-}
-
-// pt-BR com vírgula (RN-1492). A AT-1004 leva o `formatMicros` de `lib/execution.ts` ao mesmo formato; aí este some.
-function formatMicros(micros: number): string {
-  return `US$ ${(micros / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 4, maximumFractionDigits: 4 })}`;
 }
 
 export function AgentCard({

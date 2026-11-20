@@ -304,7 +304,7 @@ export function AcoesDoContainer({
           <Link
             to="/containers/$projectId"
             params={{ projectId: item.projectId }}
-            className={buttonVariants({ variant: botaoDaLinha })}
+            className={`${buttonVariants({ variant: botaoDaLinha })} ${styles.acaoLink}`}
           >
             {t('actions.open')}
           </Link>
@@ -313,7 +313,7 @@ export function AcoesDoContainer({
           <Link
             to="/projects/$projectId"
             params={{ projectId: item.projectId }}
-            className={buttonVariants({ variant: botaoDaLinha })}
+            className={`${buttonVariants({ variant: botaoDaLinha })} ${styles.acaoLink}`}
           >
             {t('actions.decideImage')}
           </Link>

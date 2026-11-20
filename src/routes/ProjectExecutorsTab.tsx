@@ -43,6 +43,10 @@ import { rotuloDaSessao } from '../lib/session-label';
 import { roleAtLeast } from '../lib/roles';
 import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSessoes';
 import { ModoAutomaticoDoTime } from '../components/ModoAutomaticoDoTime';
+import { agentesEmModoAutomatico } from '../components/ModoAutomaticoDoTime.helpers';
+import { Disclosure } from '../components/ui/Disclosure';
+import { RetomarGateEstacionado } from './RetomarGateEstacionado';
+import { cicloEstacionado } from './RetomarGateEstacionado.helpers';
 import { agentesDaOfertaEmLote } from '../components/ModoAutomaticoDoTime.helpers';
 import { PararExecucao } from '../components/PararExecucao';
 import type { AutonomyMode } from '../components/AgentCard';
@@ -100,6 +104,8 @@ import styles from './ProjectOverviewTab.module.css';
 export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('executors');
   const { t: tParada } = useTranslation('sessionPage');
+  const { t: tAprovacoes } = useTranslation('approvals');
+  const [modoAutomaticoAberto, setModoAutomaticoAberto] = useState(false);
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   // AT-298: decidir pede `developer` no ENDPOINT (RN-102) — o mesmo papel de
@@ -203,6 +209,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   });
 
   const rosterGroups = groupRosterByArea(roster);
+  const jaAutomaticos = agentesEmModoAutomatico(autonomyRules);
   const executorGroups = rosterGroups.filter(isExecutorGroup);
   const executorRosterIds = new Set(
     executorGroups.flatMap((group) =>
@@ -214,6 +221,11 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     (e) => e.actor.kind === 'agent' && isExecutorAgentId(e.actor.id),
   );
   const paradaVigente = execucaoParadaDe(events);
+  const idsBloqueados = new Set((paradaVigente?.tarefasBloqueadas ?? []).map((x) => x.taskId));
+  const estacionadoNaParada = paradaVigente
+    ? events.map(cicloEstacionado).reverse().find((c) => c && idsBloqueados.has(c.taskId))
+    : undefined;
+  const emManual = agentesDaOfertaEmLote(executorRoster.map((r) => r.id)).filter((id) => !jaAutomaticos.has(id)).length;
   const workingCount = executorRoster.filter((r) => r.status === 'trabalhando').length;
   const waitingCount = executorRoster.filter((r) => r.status === 'aguardando').length;
 
@@ -418,7 +430,7 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           {/* RN-1061 (AT-800): a execução parada atrás de tarefa bloqueada ou de agente travado — o
               mesmo aviso e os mesmos botões do chat, numa faixa só. */}
           {sessaoAtiva && paradaVigente && (
-            <Alert tone="danger" role="status">
+            <Alert tone="warning" role="status">
               <span className={tabela.faixa}>
                 <span data-testid="execucao-parada">{textoDaExecucaoParada(tParada, paradaVigente)}</span>
                 <DestravarExecucao
@@ -427,6 +439,17 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
                   parada={paradaVigente}
                   podeDecidir={podeDecidir}
                 />
+                {/* RN-1061: com um gate estacionado atrás da parada, a faixa oferece o mesmo pedido da linha da PR (RN-1474). */}
+                {estacionadoNaParada && (
+                  <RetomarGateEstacionado
+                    projectId={projectId}
+                    taskId={estacionadoNaParada.taskId}
+                    gate={estacionadoNaParada.gate}
+                    podeDecidir={podeDecidir}
+                    rotulo={tAprovacoes('prsTab.pedirParecer')}
+                    compacto
+                  />
+                )}
               </span>
             </Alert>
           )}
@@ -475,12 +498,25 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           {/* AT-970: da oferta em diante vem DEPOIS da tabela, para ela caber na primeira tela. RN-661 (AT-315): no início da execução, a oferta de ligar o modo automático para o time de
               uma vez. Some quando todos já estão em automático; desligar segue no menu da linha. */}
           {visao === 'executores' && sessaoAtiva && executorRoster.length > 0 && (
-            <ModoAutomaticoDoTime
-              projectId={projectId}
-              agentes={agentesDaOfertaEmLote(executorRoster.map((r) => r.id))}
-              autonomyRules={autonomyRules}
-              podeLigar={podeLigarModoAutomatico}
-            />
+            (emManual > 0 || modoAutomaticoAberto) && (
+              <Disclosure
+                titulo={t('secoes.modoAutomatico.titulo')}
+                aberto={modoAutomaticoAberto}
+                onAlternar={setModoAutomaticoAberto}
+                trailing={
+                  autonomyRules !== undefined && emManual > 0
+                    ? `${t('secoes.modoAutomatico.emManual', { count: emManual })} · ${t('secoes.ver')}`
+                    : undefined
+                }
+              >
+                <ModoAutomaticoDoTime
+                  projectId={projectId}
+                  agentes={agentesDaOfertaEmLote(executorRoster.map((r) => r.id))}
+                  autonomyRules={autonomyRules}
+                  podeLigar={podeLigarModoAutomatico}
+                />
+              </Disclosure>
+            )
           )}
 
           {/* AT-298: o que os agentes propuseram FORA da execução e a destrava (o `container_start` do

@@ -6,6 +6,7 @@ import { mensagemDaApi, requestParallelization, unblockTask } from '../lib/api-c
 import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemTitle } from '../components/shadcn/item';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
+import { Disclosure } from '../components/ui/Disclosure';
 import { Textarea } from '../components/ui/Textarea';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { Epic, ProposedAction, SessionEvent } from '../lib/api-types';
@@ -102,6 +103,20 @@ export function AcoesDaExecucao({
 
   return (
     <div className={styles.arch} data-testid="acoes-da-execucao">
+      {/* AT-1007 (RN-1491): recolhida numa linha com a contagem; a página cabe em 925 px. */}
+      <Disclosure
+        titulo={t('secoes.acoes.titulo')}
+        trailing={
+          <span className={styles.sectionSub}>
+            {[
+              t('secoes.acoes.bloqueadas', { count: bloqueadas.length }),
+              ...(sugestoes.length > 0 ? [t('secoes.acoes.sugestoes', { count: sugestoes.length })] : []),
+              t('secoes.acoes.prs', { count: prs.length }),
+              t('secoes.ver'),
+            ].join(' · ')}
+          </span>
+        }
+      >
       {bloqueadas.length > 0 && (
         <>
           <div className={styles.archLabel}>
@@ -195,6 +210,7 @@ export function AcoesDaExecucao({
           ))}
         </ItemGroup>
       )}
+      </Disclosure>
     </div>
   );
 }

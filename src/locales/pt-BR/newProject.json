@@ -2,6 +2,13 @@
   "modal": {
     "title": "Novo projeto"
   },
+  "stepNames": {
+    "mode": "Origem",
+    "provider": "Hospedagem",
+    "credential": "Credencial",
+    "details": "Onde mora",
+    "confirm": "Revisar"
+  },
   "steps": {
     "mode": "Criar novo ou adotar existente",
     "provider": "Onde hospedar",

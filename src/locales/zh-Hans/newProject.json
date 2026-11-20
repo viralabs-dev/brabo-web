@@ -2,6 +2,13 @@
   "modal": {
     "title": "新建项目"
   },
+  "stepNames": {
+    "mode": "来源",
+    "provider": "托管",
+    "credential": "凭据",
+    "details": "位置",
+    "confirm": "核对"
+  },
   "steps": {
     "mode": "新建或接管现有项目",
     "provider": "托管位置",

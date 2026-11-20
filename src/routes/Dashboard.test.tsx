@@ -469,6 +469,36 @@ describe('Dashboard — Ativos, Parados e Todos (AT-967, RN-1460, RN-1461)', () 
     expect(cartoes.querySelector('[data-slot="section-card"] p:nth-of-type(2)')).toHaveTextContent('1');
   });
 
+  it('RN-1460: o cartão parado tem o chip "parado", e o ativo não tem', () => {
+    localStorage.setItem('brabo.inicio.filtro', 'todos');
+    comUmAtivoEUmParado();
+    renderDashboard();
+    const cartaoParado = grade().getByText('Projeto antigo').closest('[role="button"]') as HTMLElement;
+    const cartaoAtivo = grade().getByText('Core API').closest('[role="button"]') as HTMLElement;
+    expect(within(cartaoParado).getByText('parado')).toBeInTheDocument();
+    expect(within(cartaoAtivo).queryByText('parado')).toBeNull();
+  });
+
+  it('RN-1460: sem o resumo do projeto o chip "parado" não aparece', () => {
+    localStorage.setItem('brabo.inicio.filtro', 'todos');
+    useProjectsMock.mockReturnValue({ data: [projetoParado], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({ data: [], isLoading: false });
+    renderDashboard();
+    expect(grade().queryByText('parado')).toBeNull();
+  });
+
+  it('RN-1462: o rodapé do cartão não diz "atividade em …"; evento genérico fica só com a idade', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({
+      data: [cardDoProjeto({ lastEvent: eventoHa(1, 'tipo.generico') })],
+      isLoading: false,
+    });
+    renderDashboard();
+    const cartao = grade().getByText('Core API').closest('[role="button"]') as HTMLElement;
+    expect(cartao.textContent).not.toMatch(/atividade em /);
+    expect(cartao).toHaveTextContent(/há 1 d$/);
+  });
+
   it('sem filtro que case, a mensagem é do filtro e o seletor continua lá', () => {
     useProjectsMock.mockReturnValue({ data: [projetoParado], isLoading: false });
     useProjectsSummaryMock.mockReturnValue({

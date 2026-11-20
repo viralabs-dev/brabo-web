@@ -8,7 +8,7 @@
   "architectureTab": {
     "title": "Architecture",
     "emptyTitle": "No architecture yet",
-    "emptyState": "No architecture yet — the Architect generates the module_map and ADRs.",
+    "emptyState": "No architecture yet. The Architect designs the modules and decisions after the stories.",
     "modulesLabel": "Modules",
     "modulesLabelVersioned": "Modules · v{{version}}",
     "noModules": "No modules yet.",
@@ -171,7 +171,7 @@
   },
   "architectureSummary": {
     "title": "Architecture",
-    "emptyState": "No architecture yet — the Architect generates the module_map and ADRs.",
+    "emptyState": "No architecture yet. The Architect designs the modules and decisions after the stories.",
     "summary_one": "{{count}} module mapped, C4 diagram {{status}}.",
     "summary_other": "{{count}} modules mapped, C4 diagram {{status}}.",
     "statusGenerated": "generated",

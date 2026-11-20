@@ -67,6 +67,7 @@
       "awaitingPlanDecision": "Awaiting your decision"
     },
     "online": "{{count}} online",
+    "parado": "idle",
     "aguardandoVoce": "{{agente}} waiting for you"
   },
   "projectStatus": {

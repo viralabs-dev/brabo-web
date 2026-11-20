@@ -34,6 +34,7 @@
     }
   },
   "agentCard": {
+    "local": "本地",
     "status": {
       "trabalhando": "工作中",
       "aguardando": "等待中",
@@ -43,6 +44,7 @@
     },
     "autonomy": {
       "manual": "手动",
+      "piloto": "自动驾驶",
       "auto": "自动",
       "autoModeHint": "自动模式：可运行任何命令，包括项目文件夹之外的命令。git push 和 PR 将放行；部署、sudo/doas 以及合并到受保护分支仍需你的批准。"
     },
@@ -264,6 +266,19 @@
       "resumoTarefas_other": "{{count}} 个任务",
       "agente": "执行者：{{agente}}",
       "esperaCom": "等待任务“{{titulo}}”的 {{itens}} 进入 main"
+    }
+  },
+  "secoes": {
+    "ver": "查看",
+    "modoAutomatico": {
+      "titulo": "自动模式",
+      "emManual_other": "{{count, number}} 个智能体为手动"
+    },
+    "acoes": {
+      "titulo": "执行待办",
+      "bloqueadas_other": "{{count}} 个被阻塞的任务",
+      "sugestoes_other": "{{count}} 条建议",
+      "prs_other": "{{count}} 个 PR 等你处理"
     }
   },
   "acoes": {

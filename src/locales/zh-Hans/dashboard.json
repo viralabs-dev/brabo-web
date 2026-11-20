@@ -67,6 +67,7 @@
       "awaitingPlanDecision": "等待您的决定"
     },
     "online": "{{count}} 在线",
+    "parado": "已停滞",
     "aguardandoVoce": "{{agente}} 在等你"
   },
   "projectStatus": {

@@ -294,6 +294,30 @@ describe('NewProjectWizard — o provider é da adoção', () => {
  * a pasta — aparece NA TELA em vez de virar um toast genérico.
  */
 describe('NewProjectWizard — onde o código vai morar', () => {
+  it('RN-1490: o nome de cada passo fica sob o número, e o atual tem aria-current="step"', async () => {
+    montar();
+    const passos = screen.getAllByRole('listitem').filter((li) => li.className.includes('step'));
+    expect(passos.map((li) => li.textContent)).toEqual(['1Origem', '2Onde mora', '3Revisar']);
+    expect(passos[0]).toHaveAttribute('aria-current', 'step');
+    expect(passos[1]).not.toHaveAttribute('aria-current');
+    fireEvent.click(screen.getByText('Criar novo'));
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
+    await screen.findByLabelText('Projeto');
+    const depois = screen.getAllByRole('listitem').filter((li) => li.className.includes('step'));
+    expect(depois[0]).not.toHaveAttribute('aria-current');
+    expect(depois[1]).toHaveAttribute('aria-current', 'step');
+  });
+
+  it('RN-1490: no passo "Onde mora" os modos ficam numa grade de uma linha, e o modo escolhido não muda', async () => {
+    montar();
+    fireEvent.click(screen.getByText('Criar novo'));
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
+    await screen.findByLabelText('Projeto');
+    const container = screen.getByRole('button', { name: /Container/ });
+    expect(container.parentElement?.className).toMatch(/modoGrid/);
+    expect(container).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('Container é o pré-selecionado e vai para a api como tal — nada muda para quem não escolhe', async () => {
     createProject.mockResolvedValue({ id: 'proj-1' });
     await ateWorkspace();

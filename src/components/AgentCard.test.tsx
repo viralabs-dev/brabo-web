@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { AgentCard } from './AgentCard';
 import { AGENTS } from '../lib/agents';
 // Instância REAL do app (mesmo motivo de `agent-status.test.ts`): sem
@@ -42,16 +43,16 @@ describe('AgentCard', () => {
     expect(screen.getByText('feature/task-abc')).toBeInTheDocument();
   });
 
-  it('mostra os tokens da sessão formatados', () => {
+  it('mostra os tokens da sessão formatados, com vírgula (RN-1492)', () => {
     renderCard({ tokensMicros: 1_234_500 });
-    expect(screen.getByText('US$ 1.2345')).toBeInTheDocument();
+    expect(screen.getByText('US$ 1,2345')).toBeInTheDocument();
   });
 
   it('mostra tokens zerados em vez de esconder o campo', () => {
     // `0` é informação: o agente existe e ainda não gastou nada. Esconder
     // faria o card parecer sem suporte a custo.
     renderCard({ tokensMicros: 0 });
-    expect(screen.getByText('US$ 0.0000')).toBeInTheDocument();
+    expect(screen.getByText('US$ 0,0000')).toBeInTheDocument();
   });
 
   it('AT-916: o modelo vira seletor com o handler; inerte com o motivo em texto', () => {
@@ -71,23 +72,33 @@ describe('AgentCard', () => {
 
   it('o toggle de autonomia só aparece com o handler, e chama de volta', () => {
     const semHandler = renderCard({ autonomy: 'manual' });
-    expect(screen.queryByRole('button', { name: 'Modo automático' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Piloto automático' })).not.toBeInTheDocument();
     semHandler.unmount();
 
     const onAutonomyChange = vi.fn();
     renderCard({ autonomy: 'manual', onAutonomyChange });
-    fireEvent.click(screen.getByRole('button', { name: 'Modo automático' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Piloto automático' }));
     expect(onAutonomyChange).toHaveBeenCalledWith('auto');
   });
 
-  it('AT-682: o toggle é só ícone; nome acessível, texto visível vazio e aria-pressed distinguem os estados', () => {
+  it('RN-1492: Manual e Piloto automático com texto visível; aria-pressed distingue os estados', () => {
     renderCard({ autonomy: 'manual', onAutonomyChange: vi.fn() });
     const manual = screen.getByRole('button', { name: 'Manual' });
-    const auto = screen.getByRole('button', { name: 'Modo automático' });
-    expect(manual).toHaveTextContent('');
-    expect(auto).toHaveTextContent('');
+    const auto = screen.getByRole('button', { name: 'Piloto automático' });
+    expect(manual).toHaveTextContent('Manual');
+    expect(auto).toHaveTextContent('Piloto automático');
     expect(manual).toHaveAttribute('aria-pressed', 'true');
     expect(auto).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('RN-1492: o chip "local" só aparece com `local`, e o nome do modelo continua', () => {
+    const modelo = { name: 'qwen2.5-coder:7b', provider: 'ollama' };
+    const r = renderCard({ model: modelo, local: true });
+    expect(screen.getByText('local')).toBeInTheDocument();
+    expect(screen.getByText(/qwen2\.5-coder:7b · ollama/)).toBeInTheDocument();
+    r.unmount();
+    renderCard({ model: modelo });
+    expect(screen.queryByText('local')).not.toBeInTheDocument();
   });
 
   it('mostra a frase de autonomia sob o toggle só quando o chamador a passa (RN-603)', () => {
@@ -123,18 +134,23 @@ describe('AgentCard', () => {
     expect(screen.queryByTestId('piloto-detalhe')).toBeNull();
   });
 
-  describe('procurar tarefa de novo (AT-906)', () => {
-    it('só aparece com status ocioso E o handler, e chama onWake ao clicar', () => {
+  describe('procurar tarefa de novo (AT-906, RN-1492)', () => {
+    const nome = 'Procurar tarefa de novo';
+
+    it('só existe dentro do menu "Mais ações", com status ocioso E o handler, e chama onWake', async () => {
       const onWake = vi.fn();
 
       renderCard({ status: 'travado', onWake }).unmount();
-      expect(screen.queryByRole('button', { name: 'Procurar tarefa de novo' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Mais ações/ })).not.toBeInTheDocument();
 
       renderCard({ status: 'ocioso' }).unmount();
-      expect(screen.queryByRole('button', { name: 'Procurar tarefa de novo' })).not.toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: /Mais ações/ })).not.toBeInTheDocument();
 
       renderCard({ status: 'ocioso', onWake });
-      fireEvent.click(screen.getByRole('button', { name: 'Procurar tarefa de novo' }));
+      // Fora do menu o botão não existe.
+      expect(screen.queryByRole('button', { name: nome })).not.toBeInTheDocument();
+      await userEvent.click(screen.getByRole('button', { name: `Mais ações de ${AGENTS.criativo.name}` }));
+      await userEvent.click(await screen.findByRole('menuitem', { name: nome }));
       expect(onWake).toHaveBeenCalledTimes(1);
     });
   });
@@ -163,7 +179,7 @@ describe('AgentCard', () => {
     });
   });
 
-  it('ícones de Manual/Automático são aria-hidden e o texto fica (AT-682)', () => {
+  it('ícones de Manual/Piloto são aria-hidden e o texto fica (AT-682)', () => {
     renderCard({ autonomy: 'manual', onAutonomyChange: vi.fn() });
     const manual = screen.getByRole('button', { name: /manual/i });
     expect(manual.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');

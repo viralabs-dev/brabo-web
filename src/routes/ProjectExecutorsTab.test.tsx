@@ -822,6 +822,65 @@ describe('ProjectExecutorsTab — tabela de executores (AT-970)', () => {
     expect(screen.getByTestId('indicador-tarefas')).not.toHaveTextContent(/\d de \d/);
   });
 
+  const parada = (seq: number, tarefa = 't1') =>
+    evento({
+      id: `p${seq}`, seq, type: 'execution.stalled', actor: { kind: 'system', id: 'execucao' },
+      payload: { agentesOciosos: [], agentesTravados: [], tarefasBloqueadas: [{ taskId: tarefa, title: 'Tarefa' }], tarefasPendentes: 1 },
+    });
+  const estacionado = (seq: number, tarefa = 't1') =>
+    evento({ id: `g${seq}`, seq, type: 'gate.rescue_parked', actor: { kind: 'system', id: 'x' }, payload: { taskId: tarefa, gate: 'qa', idadeSegundos: 900 } });
+
+  it('RN-1061 (AT-1007): a faixa de parada é de aviso (âmbar), não de perigo', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    listSessionEvents.mockResolvedValue({ items: [...EVENTOS, parada(6)], nextCursor: null });
+    montar();
+    const faixa = (await screen.findByTestId('execucao-parada')).closest('[role="status"]')!;
+    expect(faixa.getAttribute('data-tone')).toBe('warning');
+    expect(faixa.getAttribute('data-tone')).not.toBe('danger');
+    // Sem gate estacionado por trás, a faixa não oferece o parecer.
+    expect(screen.queryByRole('button', { name: 'Pedir o parecer de novo' })).not.toBeInTheDocument();
+  });
+
+  it('RN-1061/RN-1474: com gate estacionado atrás da parada, a faixa oferece "Pedir o parecer de novo"', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    listSessionEvents.mockResolvedValue({ items: [...EVENTOS, estacionado(6), parada(7)], nextCursor: null });
+    montar();
+    await screen.findByTestId('execucao-parada');
+    expect(screen.getByRole('button', { name: 'Pedir o parecer de novo' })).toBeInTheDocument();
+  });
+
+  it('RN-1491: o modo automático fica abaixo da tabela, recolhido numa linha com a contagem, e abre ao clicar', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    montar();
+    const cab = await screen.findByRole('button', { name: /Modo automático.*em manual/ });
+    expect(cab).toHaveAttribute('aria-expanded', 'false');
+    expect(cab).toHaveTextContent(/\d+ agentes? em manual · Ver/);
+    expect(screen.queryByRole('region', { name: 'Modo automático para o time' })).not.toBeInTheDocument();
+    fireEvent.click(cab);
+    expect(await screen.findByRole('region', { name: 'Modo automático para o time' })).toBeInTheDocument();
+    const tabela = screen.getByTestId('tabela-de-executores');
+    expect(tabela.compareDocumentPosition(cab) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it('RN-1491: as tarefas bloqueadas e as PRs ficam recolhidas abaixo da tabela, com a contagem', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    montar();
+    const cab = await screen.findByRole('button', { name: /Pendências da execução/ });
+    expect(cab).toHaveAttribute('aria-expanded', 'false');
+    expect(cab).toHaveTextContent('nenhuma tarefa bloqueada · nenhuma PR aguardando você · Ver');
+  });
+
+  it('RN-1491: "Ver a fila" fica na mesma linha do valor da Fila; sem tarefas rodando a nota diz "nenhuma rodando"', async () => {
+    const tarefa = { id: 'c', storyId: 's1', title: 'tarefa c', description: '', status: 'todo', assignedTo: null, blocked: false, blockedReason: null, gateStatus: null, gateCorrectionCount: 0, module: 'Backend', createdAt: '', updatedAt: '', archivedAt: null };
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    montar((c) => c.setQueryData(['backlog', 'proj-1'], [{ id: 'e', stories: [{ id: 's1', status: 'active', tasks: [tarefa] }] }]));
+    const fila = await screen.findByTestId('indicador-fila');
+    const valor = within(fila).getByText('1 pronta');
+    const ver = within(fila).getByRole('button', { name: 'Ver a fila' });
+    expect(valor.parentElement).toBe(ver.parentElement);
+    expect(fila).toHaveTextContent('nenhuma rodando');
+  });
+
   it('"Parar execução" fica na linha do topo, ao lado da escolha de visão', async () => {
     getActiveExecutionSession.mockResolvedValue(ATIVA);
     montar();

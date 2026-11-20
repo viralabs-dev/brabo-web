@@ -26,6 +26,27 @@
   gap: 8px;
 }
 
+.faixa > div {
+  margin-top: 0;
+  flex-wrap: nowrap;
+}
+
+/* AT-1007 (RN-1491): numa linha em 1848 px — botões compactos e a nota de apoio só para leitor de tela. */
+.faixa button {
+  height: 32px;
+  padding-inline: 10px;
+  font-size: var(--fs-sm);
+}
+
+.faixa [data-testid='destravar-execucao-nota'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 .faixa {
   display: flex;
   align-items: center;

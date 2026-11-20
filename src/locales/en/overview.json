@@ -37,6 +37,8 @@
       "dependsOn": "Depends on",
       "stories": "Stories"
     },
+    "views": {"label": "Architecture views", "diagrama": "Diagram", "adrs": "ADRs · {{n}}", "pendencias": "Pendencies · {{n}}"},
+    "noPendencies": "No cross-validation pendencies.",
     "proposalTag": "PROPOSAL",
     "adrProposal": "ADR “{{titulo}}” is waiting for your approval to become a PR.",
     "decide": "Decide",
@@ -52,6 +54,7 @@
     "titleContext": "Context",
     "titleContainer": "Container",
     "expandLabel": "Expand {{titulo}} diagram",
+    "fitWidth": "Fit to width",
     "expandTitle": "Expand",
     "renderErrorTitle": "Could not render this diagram.",
     "viewRawSyntax": "View Mermaid syntax",

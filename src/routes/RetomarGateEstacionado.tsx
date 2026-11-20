@@ -66,7 +66,8 @@ export function RetomarGateEstacionado({ projectId, taskId, gate, podeDecidir, r
         {rotulo ?? t('gateEstacionado.botao')}
       </Button>
       <span
-        className={compacto ? 'sr-only' : styles.mergearNota}
+        // RN-102: sem papel, o motivo do botão desabilitado fica à vista (RN-1494).
+        className={compacto && podeDecidir ? 'sr-only' : styles.mergearNota}
         data-testid="retomar-gate-nota"
       >
         {!podeDecidir

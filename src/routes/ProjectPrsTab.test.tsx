@@ -397,6 +397,40 @@ describe('ProjectPrsTab — botão Merge', () => {
 
     expect(await screen.findByRole('button', { name: /Pedir o parecer de novo/ })).toBeEnabled();
     expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Ver diff' })).toBeEnabled();
+    // Com papel, a nota continua só para o leitor de tela.
+    expect(screen.getByTestId('retomar-gate-nota').className).toBe('sr-only');
+  });
+
+  it('AT-1006 (RN-1494): sem papel developer, o motivo do botão desabilitado fica visível (RN-102)', async () => {
+    useCurrentWorkspaceWithRole.mockReturnValue({ data: { role: 'viewer' } });
+    getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ blocked: true, blockedReason: 'QA não concluiu', gateStatus: 'awaiting_qa' }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    useSessionEvents.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: 'e1',
+            sessionId: 'sess-recente',
+            seq: 3,
+            type: 'gate.rescue_parked',
+            actor: { kind: 'system', id: 'system' },
+            payload: { taskId: 'aaaaaaaa-1111-1111-1111-111111111111', gate: 'qa-verificada', idadeSegundos: 8000 },
+            createdAt: '2026-08-20T10:00:00.000Z',
+          },
+        ],
+      },
+    });
+
+    montar();
+
+    expect(await screen.findByRole('button', { name: /Pedir o parecer de novo/ })).toBeDisabled();
+    expect(screen.getByTestId('retomar-gate-nota').className).not.toContain('sr-only');
   });
 
   it('AT-971: PR mesclada mostra os quatro portões verdes e nenhuma ação', async () => {

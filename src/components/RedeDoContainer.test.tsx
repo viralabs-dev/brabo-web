@@ -52,6 +52,7 @@ function item(o: Partial<ContainerOverviewItem> = {}): ContainerOverviewItem {
     brokerConfigurado: true,
     decisaoVigente: null,
     imagemDesatualizada: false,
+    motivoDaFalha: null,
     ...o,
   };
 }

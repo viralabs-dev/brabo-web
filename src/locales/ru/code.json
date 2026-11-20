@@ -80,7 +80,6 @@
     "railDisabledAriaLabel": "{{label}} (недоступно)",
     "bottomPanelOpen": "Нижняя панель",
     "bottomPanelClose": "Закрыть нижнюю панель",
-    "refLabel": "ref",
     "encodingLabel": "UTF-8",
     "activeAgents_one": "{{count}} активный агент",
     "activeAgents_few": "{{count}} активных агента",
@@ -88,6 +87,8 @@
     "activeAgents_other": "{{count}} активного агента"
   },
   "editor": {
+    "openedByDefault": "открыт по умолчанию",
+    "searchPlaceholder": "Искать в коде",
     "openTabsAriaLabel": "Открытые файлы",
     "closeFileAriaLabel": "Закрыть {{path}}",
     "blameButton": "Blame",
@@ -164,6 +165,7 @@
     "noPrsMatchSearch": "Ни один PR не подходит к «{{query}}». Enter открывает diff по введённому id.",
     "noPatchText": "Для этого файла нет текста diff.",
     "emptyPatchText": "Diff без текстового содержимого (напр.: изменился только режим).",
+    "viewDiff": "Показать diff",
     "openPrAriaLabel": "Открыть PR #{{number}}: {{title}}",
     "unknownAuthor": "неизвестный автор"
   },

@@ -109,8 +109,8 @@ function ArchitectureContent({
         </EmptyState>
       ) : (
         <>
+          <div className={styles.vistas}>
           <ToggleGroup
-            className={styles.vistas}
             value={[visao]}
             onValueChange={(v) => v[0] && setVisao(v[0] as typeof visao)}
             variant="outline"
@@ -125,11 +125,24 @@ function ArchitectureContent({
               {t('architectureTab.views.pendencias', { n: numberFmt.format(pendencies.length) })}
             </ToggleGroupItem>
           </ToggleGroup>
+          {/* RN-1495: os chips só aparecem com o dado por trás. */}
+          {moduleMap && <Badge tone="muted">{t('architectureTab.chips.modulos', { version: moduleMap.version })}</Badge>}
+          {c4Diagram?.status === 'gerado' && c4Diagram.diagrama?.containerDiagram && (
+            <Badge tone="muted">{t('architectureTab.chips.c4')}</Badge>
+          )}
+          </div>
 
           {visao === 'diagrama' && (
             <>
               {/* Grafo derivado do mesmo module_map (RN-149), da esquerda para a direita (RN-1475). */}
-              {moduleMap && moduleMap.modules.length > 0 && <GrafoDeModulos modulos={moduleMap.modules} />}
+              {moduleMap && moduleMap.modules.length > 0 && (
+                <>
+                  <p className={styles.legendaDoGrafo}>
+                    {t('architectureTab.grafoLegenda', { count: moduleMap.modules.length })}
+                  </p>
+                  <GrafoDeModulos modulos={moduleMap.modules} />
+                </>
+              )}
           <div className={styles.archLabel}>
             {c4Diagram?.status === 'gerado'
               ? t('architectureTab.c4LabelVersioned', { version: c4Diagram.version })

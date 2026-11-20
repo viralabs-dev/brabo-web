@@ -1,7 +1,7 @@
 import { Shimmer } from '../../components/ui/Shimmer';
 import { Button } from '@/components/ui/Button';
 import { RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { getCodeTree, mensagemDaApi } from '../../lib/api-client';
@@ -27,6 +27,8 @@ interface CodeExplorerProps {
   gitRef: string;
   activePath: string | null;
   onOpenFile: (path: string) => void;
+  /** O botão da ref (CodeBranchPicker) no cabeçalho, como na L06 (RN-1494). */
+  seletorDeRef?: ReactNode;
 }
 
 /**
@@ -35,7 +37,7 @@ interface CodeExplorerProps {
  * tráfego). A raiz carrega ao montar; cada subpasta só chama a api quando o
  * usuário a abre.
  */
-export function CodeExplorer({ projectId, gitRef, activePath, onOpenFile }: CodeExplorerProps) {
+export function CodeExplorer({ projectId, gitRef, activePath, onOpenFile, seletorDeRef }: CodeExplorerProps) {
   const { t } = useTranslation('code');
   const raizQuery = useQuery({
     queryKey: ['code-tree', projectId, gitRef, ''],
@@ -45,7 +47,10 @@ export function CodeExplorer({ projectId, gitRef, activePath, onOpenFile }: Code
 
   return (
     <div className={styles.explorador}>
-      <div className={styles.cabecalho}>{t('explorer.title')}</div>
+      <div className={styles.cabecalho}>
+        <span>{t('explorer.title')}</span>
+        {seletorDeRef}
+      </div>
       <div className={styles.arvore}>
         {!gitRef && <div className={styles.estado}>{t('explorer.noRef')}</div>}
 

@@ -492,7 +492,27 @@ describe('ProjectBacklogTab — filtros numa linha e vocabulário de status (AT-
       ]),
     ]);
     montar();
-    expect(await screen.findByText('0 de 2 concluídas')).toBeTruthy();
+    expect(await screen.findByText('2 histórias · 0 de 2 concluídas')).toBeTruthy();
     expect(screen.getAllByText('pronta para executar')).toHaveLength(2);
+  });
+
+  it('a busca tem lupa, "Com pergunta aberta" é caixa e a Rastreabilidade é uma lista só (L04)', async () => {
+    listBacklog.mockResolvedValue([epic([story({ id: 's1', title: 'A', proposedReady: false, status: 'ready' })])]);
+    getCoverage.mockResolvedValue({
+      uncoveredCount: 1,
+      rules: [
+        { ruleId: 'r1', title: 'RN-1', covered: true, coveredByStoryIds: ['s1'] },
+        { ruleId: 'r2', title: 'RN-2', covered: false, coveredByStoryIds: [] },
+      ],
+    });
+    montar();
+    const busca = await screen.findByPlaceholderText('Buscar história, tarefa ou RN');
+    expect(busca.parentElement?.querySelectorAll('svg')).toHaveLength(1);
+    expect(screen.getByRole('checkbox', { name: /Com pergunta aberta/ })).toBeTruthy();
+    await screen.findByText('RN-1');
+    const lista = document.querySelectorAll('aside ul');
+    expect(lista).toHaveLength(1);
+    expect(lista[0].querySelectorAll('li')).toHaveLength(2);
+    expect(screen.getByText('1 história')).toBeTruthy();
   });
 });

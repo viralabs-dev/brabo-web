@@ -37,6 +37,14 @@
       "dependsOn": "Зависит от",
       "stories": "Истории"
     },
+    "chips": {
+      "modulos": "модули · v{{version}}",
+      "c4": "C4 уровень 2"
+    },
+    "grafoLegenda_one": "{{count, number}} модуль · поток слева направо",
+    "grafoLegenda_few": "{{count, number}} модуля · поток слева направо",
+    "grafoLegenda_many": "{{count, number}} модулей · поток слева направо",
+    "grafoLegenda_other": "{{count, number}} модуля · поток слева направо",
     "views": {
       "label": "Виды архитектуры",
       "diagrama": "Диаграмма",

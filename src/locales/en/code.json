@@ -78,12 +78,13 @@
     "railDisabledAriaLabel": "{{label}} (unavailable)",
     "bottomPanelOpen": "Bottom panel",
     "bottomPanelClose": "Close bottom panel",
-    "refLabel": "ref",
     "encodingLabel": "UTF-8",
     "activeAgents_one": "{{count}} active agent",
     "activeAgents_other": "{{count}} active agents"
   },
   "editor": {
+    "openedByDefault": "opened by default",
+    "searchPlaceholder": "Search code",
     "openTabsAriaLabel": "Open files",
     "closeFileAriaLabel": "Close {{path}}",
     "blameButton": "Blame",
@@ -158,6 +159,7 @@
     "noPrsMatchSearch": "No PR matches “{{query}}”. Enter opens the diff by the typed id.",
     "noPatchText": "No diff text available for this file.",
     "emptyPatchText": "Diff with no text content (e.g. mode change only).",
+    "viewDiff": "View diff",
     "openPrAriaLabel": "Open PR #{{number}}: {{title}}",
     "unknownAuthor": "unknown author"
   },

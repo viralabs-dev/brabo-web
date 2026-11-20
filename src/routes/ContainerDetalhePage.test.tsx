@@ -63,6 +63,7 @@ function item(o: Partial<ContainerOverviewItem> = {}): ContainerOverviewItem {
     brokerConfigurado: true,
     decisaoVigente: { version: 2, image: 'node:22', network: 'egress' },
     imagemDesatualizada: false,
+    motivoDaFalha: null,
     ...o,
   };
 }

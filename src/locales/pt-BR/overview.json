@@ -37,6 +37,13 @@
       "dependsOn": "Depende de",
       "stories": "Histórias"
     },
+    "chips": {
+      "modulos": "módulos · v{{version}}",
+      "c4": "C4 nível 2"
+    },
+    "grafoLegenda_zero": "{{count, number}} módulos · fluxo da esquerda para a direita",
+    "grafoLegenda_one": "{{count, number}} módulo · fluxo da esquerda para a direita",
+    "grafoLegenda_other": "{{count, number}} módulos · fluxo da esquerda para a direita",
     "views": {
       "label": "Vistas da Arquitetura",
       "diagrama": "Diagrama",

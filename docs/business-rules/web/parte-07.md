@@ -196,7 +196,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1220 — Trabalho junta Backlog e Execução: ativar, áreas, fila, ações da execução e Quadro por estado da tarefa {#rn-1220}
 
 - **Regra:** em Trabalho › Execução, com a execução parada, o topo de `ResumoDaExecucao` é só o cartão de chamada (AT-943, v9): o que acontece ao ativar, o teto do projeto (SEM estimativa de custo, AT-883 #21) e a ação "Ativar execução" (`AtivarExecucao`, `maintainer` no endpoint, RN-102; trancada sem repositório confirmado, com o motivo dito no próprio cartão, RN-582; a recusa da api, como o 409 sem container da RN-1101, é dita ao lado). Abaixo, um cartão por área executora (Dev, Infra, QA…) com situação, paralelismo `ativos / maxParallel` e lead com o número de membros, e a fila de tarefas em tabela (título, módulo, estado; `N prontas · N rodando · N bloqueadas`, cada contagem do ESTADO da tarefa e nunca somada, RN-467; arquivada fora; pronta = `todo` de história que não está em rascunho, RN-048). `AcoesDaExecucao` traz da Visão geral o desbloqueio com orientação (RN-835), o aceite de paralelização (RN-083) e a lista de PRs de dev; as duas ações pedem `developer` (RN-102) e a lista só tem as PRs PENDENTES do projeto. A lista de áreas vem da leitura de áreas só com a execução parada; com a execução de pé vem do roster, sem leitura nova (RN-632, RN-794). A sub-aba "Histórias" passou a se chamar "Backlog". Em Trabalho › Backlog: ação "Ativar execução" no cabeçalho, busca e filtros (pergunta aberta, módulo) locais sobre a árvore carregada, épico recolhível com progresso, chips de módulo e "N pergunta(s)" por história (a lista de perguntas tem teto de 50, e acima dele a tela diz que é recorte, RN-180), e o seletor Por épico | Quadro, só leitura, com cinco colunas pelo `estadoDaTarefa` (a fazer, em curso, em revisão, concluída, bloqueada).
-- **Onde:** `apps/web/src/routes/ResumoDaExecucao.tsx:34` (`ResumoDaExecucao`), `apps/web/src/components/AtivarExecucao.tsx:17` (`AtivarExecucao`), `apps/web/src/routes/AcoesDaExecucao.tsx:22` (`AcoesDaExecucao`), `apps/web/src/lib/trabalho-v9.ts:5` (`filaDeTarefas`), `apps/web/src/lib/trabalho-v9.ts:22` (`historiaPassaNoFiltro`), `apps/web/src/routes/ProjectBacklogTab.tsx:806` (`QuadroDeTarefas`), `apps/web/src/routes/ProjectExecutorsTab.tsx:130` (`backlogEmCache`).
+- **Onde:** `apps/web/src/routes/ResumoDaExecucao.tsx:34` (`ResumoDaExecucao`), `apps/web/src/components/AtivarExecucao.tsx:17` (`AtivarExecucao`), `apps/web/src/routes/AcoesDaExecucao.tsx:22` (`AcoesDaExecucao`), `apps/web/src/lib/trabalho-v9.ts:5` (`filaDeTarefas`), `apps/web/src/lib/trabalho-v9.ts:22` (`historiaPassaNoFiltro`), `apps/web/src/routes/ProjectBacklogTab.tsx:801` (`QuadroDeTarefas`), `apps/web/src/routes/ProjectExecutorsTab.tsx:130` (`backlogEmCache`).
 - **Teste:** `apps/web/src/routes/AcoesDaExecucao.test.tsx` (desbloqueio e botão inerte sem papel), `apps/web/src/routes/ProjectBacklogTab.quadro.test.tsx` (5 colunas, arquivada fora, fila, busca e filtro), `apps/web/src/routes/duas-abas.orcamento.test.tsx` (teto de requisições intacto).
 - **Origem:** AT-894 (EP-035).
 
@@ -535,7 +535,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1447 — Os filtros do Backlog ficam numa linha que quebra {#rn-1447}
 
-- **Regra:** a barra de filtros é um `flex` com `gap` de 8 px e `flex-wrap`, na ordem busca (`flex: 1 1 260px`, máximo 420 px), "Com pergunta aberta" com contador, seletor de módulo (`NativeSelect` do kit) e, à direita, "Por épico / Quadro". Nenhum item usa posição absoluta nem margem negativa, então nenhum par de controles se sobrepõe em 1848, 1366 ou 589 px. O rótulo da busca é `placeholder` com `aria-label` igual.
+- **Regra:** a barra de filtros é um `flex` com `gap` de 8 px e `flex-wrap`, na ordem busca (`flex: 1 1 260px`, máximo 420 px), "Com pergunta aberta · N" (uma `Checkbox` do kit com rótulo, não mais um `Chip`), seletor de módulo (`NativeSelect` do kit) e, à direita, "Por épico / Quadro". Nenhum item usa posição absoluta nem margem negativa, então nenhum par de controles se sobrepõe em 1848, 1366 ou 589 px. O rótulo da busca é `placeholder` com `aria-label` igual, e o campo leva a lupa do kit à esquerda (AT-1006).
 - **Onde:** `src/routes/ProjectBacklogTab.tsx`, `src/routes/ProjectBacklogTab.module.css` (`.filtros`).
 - **Teste:** `src/routes/ProjectBacklogTab.test.tsx`.
 - **Origem:** AT-969 (EP-035), prancha L04 da v11.
@@ -544,7 +544,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1448 — O Backlog diz o status por extenso e o épico conta só as concluídas {#rn-1448}
 
-- **Regra:** o selo da história mostra "pronta para executar" (`ready`, tom neutro), "em execução" (`in_progress`) ou "concluída" (`done`); `draft` segue "rascunho". O épico diz "N de M concluídas", contando só histórias `done`, com uma barra `Progress` ao lado. O número de tarefas da história não quebra linha.
+- **Regra:** o selo da história mostra "pronta para executar" (`ready`, tom neutro), "em execução" (`in_progress`) ou "concluída" (`done`); `draft` segue "rascunho". O épico diz "N histórias · N de M concluídas" (AT-1006, como a L04), contando só histórias `done`, com uma barra `Progress` ao lado. O número de tarefas da história não quebra linha.
 - **Onde:** `src/routes/ProjectBacklogTab.tsx` (`STATUS_TONE`, `EpicNode`), `src/locales/*/backlog.json` (`statusLabel`, `epico.progresso`).
 - **Teste:** `src/routes/ProjectBacklogTab.test.tsx`.
 - **Origem:** AT-969 (EP-035).
@@ -553,7 +553,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1449 — A Rastreabilidade vai para baixo da lista no estreito {#rn-1449}
 
-- **Regra:** o contêiner da aba é uma grade `minmax(0, 1fr) 320px` a partir de 1000 px de largura do contêiner (container query; o corte é do contêiner, não da janela: cerca de 1304 px de janela, então em 1366 × 768 a Rastreabilidade fica ao lado) e uma coluna abaixo disso, com a Rastreabilidade depois da lista.
+- **Regra:** o contêiner da aba é uma grade `minmax(0, 1fr) 320px` a partir de 1000 px de largura do contêiner (container query; o corte é do contêiner, não da janela: cerca de 1304 px de janela, então em 1366 × 768 a Rastreabilidade fica ao lado) e uma coluna abaixo disso, com a Rastreabilidade depois da lista. As regras da Rastreabilidade são UMA lista (`ul`), uma linha por regra, com "N histórias" à direita (AT-1006).
 - **Onde:** `src/routes/ProjectBacklogTab.module.css` (`.pagina`, `.wrapper`).
 - **Teste:** `src/routes/ProjectBacklogTab.test.tsx` cobre a estrutura; a largura se confere na captura (CSS de contêiner não roda no jsdom).
 - **Origem:** AT-969 (EP-035).
@@ -775,7 +775,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Regra:** ao carregar a raiz da ref, se nenhum arquivo foi aberto ainda e a raiz tem um arquivo `README.md`, ele abre numa aba e fica ativo. Vale uma vez por ref: fechar todas as abas depois NÃO o reabre, e um README em subpasta não conta. Sem README, o editor mostra o estado vazio do kit (`Empty`) com "Escolha um arquivo no explorador." (texto novo nos quatro idiomas; a menção à aba Buscar saiu). A leitura da raiz usa a MESMA `queryKey` do explorador (sem requisição a mais); erro de carga da raiz não abre nada e o explorador segue mostrando o erro.
 - **Onde:** `src/routes/code/CodeShell.tsx` (`raizQuery`, `readmeVistoNaRef`), `src/routes/code/CodeEditor.tsx` (`Empty`).
 - **Teste:** `src/routes/code/CodeShell.test.tsx` ("AT-971 (RN-1473)").
-- **Origem:** AT-971 (EP-035), prancha L06 da v11. A prancha mostra "aberto por padrão" ao lado do nome; o rótulo não foi feito.
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. O rótulo "aberto por padrão" veio na [RN-1494](#rn-1494).
 
 <a id="rn-1474"></a>
 
@@ -975,3 +975,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/AgentCard.tsx`, `src/components/AgentTeamGrid.tsx`, `src/locales/*/overview.json` (`architecture.emptyState`).
 - **Teste:** `src/components/AgentCard.test.tsx`, `src/components/AgentTeamGrid.test.tsx`.
 - **Origem:** AT-1007 (EP-035), prancha L10 da v11; revisa RN-603 e RN-670 só na forma do controle. O `formatMicros` local do cartão saiu: ele importa o de `lib/execution.ts`, em pt-BR desde a AT-1004 ([RN-1484](#rn-1484)).
+
+<a id="rn-1493"></a>
+
+### RN-1493 — Container que falhou mostra a primeira linha do motivo na lista; o nome do projeto abre o detalhe {#rn-1493}
+
+- **Regra:** em `/containers`, a coluna "Detalhe" sai (a lista tem 7 colunas) e o nome do projeto abre `/containers/$projectId`. Com o registrado `failed` e `motivoDaFalha` (a primeira linha do `failureReason` gravado, vinda da api, [RN-1493 da api](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api/parte-12.md#rn-1493)), o status mostra o motivo numa linha cortada embaixo do selo, com "Ver detalhe"; sem motivo, só "falhou". O nome de imagem longo quebra a linha na coluna Imagem, sem reticências.
+- **Onde:** `src/routes/ContainersPage.tsx` (`columns`), `src/routes/ContainersPage.module.css` (`.imagemTexto`, `.motivoDaFalha`), `src/lib/api-types.ts`.
+- **Teste:** `src/routes/ContainersPage.test.tsx` ("AT-1006").
+- **Origem:** AT-1006 (EP-035), prancha L11 da v11. Revisa a coluna "Detalhe" da AT-976.
+
+<a id="rn-1494"></a>
+
+### RN-1494 — Código: "aberto por padrão", busca e ref no cabeçalho, "Ver diff" por PR e o motivo à vista {#rn-1494}
+
+- **Regra:** (1) quando o README abre sem escolha ([RN-1473](#rn-1473)), a linha do caminho mostra o rótulo apagado "aberto por padrão", que some ao escolher outro arquivo ou fechar uma aba. (2) O cabeçalho do editor tem o campo "Buscar no código", que abre a busca do painel lateral com o termo (mínimo de 2 caracteres); o botão da ref (`CodeBranchPicker`) mora no cabeçalho do explorador e da busca, e a barra "ref" acima do shell saiu. A trilha de ícones fica. (3) Cada PR tem o botão "Ver diff", que abre o mesmo diff; a linha inteira continua clicável. (4) O título "Pull requests do projeto" e a frase ficam na mesma linha. (5) Sem papel `developer`, o motivo do botão "Pedir o parecer de novo" desabilitado fica em texto à vista (RN-102), e não só para o leitor de tela.
+- **Onde:** `src/routes/code/CodeShell.tsx`, `CodeEditor.tsx`, `CodeExplorer.tsx`, `CodeSearchPanel.tsx`, `PrListAndDiff.tsx`, `src/routes/ProjectPrsTab.tsx`, `src/routes/RetomarGateEstacionado.tsx`.
+- **Teste:** `src/routes/code/CodeEditor.test.tsx`, `CodeShell.test.tsx`, `src/routes/ProjectPrsTab.test.tsx` ("AT-1006").
+- **Origem:** AT-1006 (EP-035), prancha L06 da v11. Revisa a RN-768 e a RN-816.
+
+<a id="rn-1495"></a>
+
+### RN-1495 — Arquitetura: chips ao lado do toggle, legenda do grafo e rótulo de relação do C4 de 12 px ou mais {#rn-1495}
+
+- **Regra:** ao lado do `ToggleGroup` entram os chips "módulos · v‹N›" (só com `moduleMap`, com a sua `version`) e "C4 nível 2" (só com o diagrama de contêineres gerado). Acima do grafo, a legenda "‹N› módulos · fluxo da esquerda para a direita" (N = `moduleMap.modules.length`); o fluxo vale só para o grafo, porque o Mermaid C4 não tem direção. O `mermaid.initialize` fixa `c4.messageFontSize` em 12, o piso dos rótulos de relação ("usa"). O título do Mermaid continua fora do quadro C4 (decisão do dono, 20/11).
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/lib/mermaid-render.ts` (`TAMANHO_MINIMO_DO_ROTULO_C4`).
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx`, `src/lib/mermaid-render.test.ts`.
+- **Origem:** AT-1006 (EP-035), prancha L07 da v11. Completa a [RN-1475](#rn-1475) e a [RN-1476](#rn-1476).

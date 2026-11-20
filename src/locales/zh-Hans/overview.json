@@ -37,6 +37,11 @@
       "dependsOn": "依赖",
       "stories": "故事"
     },
+    "chips": {
+      "modulos": "模块 · v{{version}}",
+      "c4": "C4 第 2 级"
+    },
+    "grafoLegenda_other": "{{count, number}} 个模块 · 从左到右的流向",
     "views": {
       "label": "架构视图",
       "diagrama": "图",

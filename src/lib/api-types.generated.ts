@@ -5261,6 +5261,24 @@ export interface components {
              */
             role: "viewer" | "developer" | "maintainer" | "owner";
         };
+        AddProjectMemberDto: {
+            /**
+             * Format: uuid
+             * @description Id of the user. Required when `email` is absent.
+             */
+            userId?: string;
+            /**
+             * Format: email
+             * @description E-mail of a workspace user. Answers 404 when nobody in the workspace has it.
+             */
+            email?: string;
+            /**
+             * @description Role in this association; it OVERRIDES the workspace role (see the operation description for the two refused movements).
+             * @example developer
+             * @enum {string}
+             */
+            role: "viewer" | "developer" | "maintainer" | "owner";
+        };
         AdoptRepositoryDto: {
             /**
              * @description The repository's identifier ON THE PROVIDER: `owner/repo` on github, `namespace/path` on gitlab, the bare repo's absolute path locally. Nothing is created — the repository must already exist and the registered credential must be able to reach it.
@@ -6216,6 +6234,116 @@ export interface components {
              */
             detalheDaObservacao: Record<string, never> | null;
         };
+        ClaimedTaskResponseDto: {
+            /** @example 01JC4Z0000TAREFA00000000001 */
+            id: string;
+            /** @example 01JC4Z0000HISTORIA000000001 */
+            storyId: string;
+            /** @example POST /cart/items endpoint */
+            title: string;
+            /** @example Accepts SKU and quantity; validates stock. */
+            description: string;
+            /**
+             * @example in_progress
+             * @enum {string}
+             */
+            status: "todo" | "in_progress" | "in_review" | "done";
+            /**
+             * @description Slug of the dev agent that claimed the task.
+             * @example dev-api
+             */
+            assignedTo: Record<string, never> | null;
+            /**
+             * @description Task blocked waiting on a decision or a dependency.
+             * @example false
+             */
+            blocked: boolean;
+            /** @example null */
+            blockedReason: Record<string, never> | null;
+            /**
+             * @description The ORIGIN of the block (ADR 0020/0038), when known. `null` for every Phase 4a block — only the QA Lead (Phase 8b) fills it in.
+             * @example null
+             * @enum {string|null}
+             */
+            blockedOrigin: "infra" | "modelo" | "codigo" | "politica" | null;
+            /**
+             * @description Where the task's PR is in the gate pipeline: QA, then SecOps, then the user. `null` while no PR is open.
+             * @example null
+             * @enum {string|null}
+             */
+            gateStatus: "awaiting_qa" | "awaiting_secops" | "awaiting_user" | null;
+            /**
+             * @description How many correction rounds the gates have already requested.
+             * @example 0
+             */
+            gateCorrectionCount: number;
+            /**
+             * @description The module the task belongs to, assigned by the Dev Lead in the approved execution plan (RN-678). Only the dev agent of that module claims it. `null` while no plan assigned one — such a task is claimable only when its story has exactly one module.
+             * @example api
+             */
+            module: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description When the task was archived (AT-912). An archived task leaves the claim, the parallelization count and the dependencies, and stays in the history.
+             * @example null
+             */
+            archivedAt: Record<string, never> | null;
+            /**
+             * @description Why the task was archived (required when archiving).
+             * @example null
+             */
+            archivedReason: Record<string, never> | null;
+            /**
+             * @description The module FOUNDATION task (AT-901, RN-1138): created by the Dev Lead; the claim hands it out before the other tasks of the module.
+             * @example false
+             */
+            fundacao: boolean;
+            /**
+             * @description The Dev Lead survey of the task (AT-990, RN-1370): `{ arquivos, expoe, consome, dependenciasNpm, aceite }`. `null` until written.
+             * @example {
+             *       "arquivos": [
+             *         "src/agenda/agenda.service.ts"
+             *       ],
+             *       "expoe": [
+             *         "AgendaService.listar"
+             *       ],
+             *       "consome": [
+             *         "CadastroService.buscar"
+             *       ],
+             *       "dependenciasNpm": [],
+             *       "aceite": "GET /agenda lista os horários"
+             *     }
+             */
+            levantamento: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * @description Tasks that must be `done` before this one is claimable (AT-990, RN-1372). Empty = the module rule (RN-1005).
+             * @example []
+             */
+            dependeDe: string[];
+            /**
+             * Format: date-time
+             * @example 2026-07-25T10:00:00.000Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @example 2026-07-25T12:30:00.000Z
+             */
+            updatedAt: string;
+            /**
+             * @description `merge_conflict` when the task was reopened by a merge conflict and was not re-delivered or blocked since; `null` otherwise.
+             * @example null
+             * @enum {string|null}
+             */
+            retomada: "merge_conflict" | null;
+            /**
+             * @description Files in conflict, from the latest `backlog.task_merge_conflict` of the task. Empty when `retomada` is `null`.
+             * @example []
+             */
+            conflictingFiles: string[];
+        };
         ClaimTaskInternalDto: {
             /**
              * Format: uuid
@@ -6708,6 +6836,11 @@ export interface components {
              * @example false
              */
             imagemDesatualizada: boolean;
+            /**
+             * @description RN-1493: the first non-empty line of the STORED `failureReason` of the registered container, or `null` when it has none. Never derived from the broker.
+             * @example port is already allocated
+             */
+            motivoDaFalha: string | null;
             /**
              * @description Whether THIS INSTALLATION has a container broker configured (`BROKER_URL` set, ADR 0130) — the same value on every row, because it is installation configuration and not a property of the project. `container` and `mounted` projects only start a container through the broker (ADR 0144), so with `false` the page refuses the start button for them BEFORE the click and says why (ADR 0161, RN-574); `runner` projects are unaffected. It says the variable exists, never that the broker answers — that is what `naoObservado` reports.
              * @example false
@@ -16229,7 +16362,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TaskResponseDto"];
+                    "application/json": components["schemas"]["ClaimedTaskResponseDto"];
                 };
             };
             /** @description Invalid body. */
@@ -19799,7 +19932,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AddMemberDto"];
+                "application/json": components["schemas"]["AddProjectMemberDto"];
             };
         };
         responses: {

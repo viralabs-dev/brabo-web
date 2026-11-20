@@ -294,9 +294,12 @@ export function PrListAndDiff({
                 <SeloDoKit variant="outline" className={[styles.itemPrEstado, styles[`estadoSelo_${pr.state}`]].join(' ')}>
                   {t(CHAVE_ESTADO_PR[pr.state])}
                 </SeloDoKit>
-                {renderItemExtra && (
-                  <div className={styles.itemPrExtra}>{renderItemExtra(pr)}</div>
-                )}
+                <div className={styles.itemPrExtra}>
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setSelecionada(pr)}>
+                    {t('diff.viewDiff')}
+                  </Button>
+                  {renderItemExtra?.(pr)}
+                </div>
               </div>
               {renderItemMotivo?.(pr)}
             </li>

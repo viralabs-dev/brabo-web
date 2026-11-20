@@ -103,25 +103,11 @@ export function ContainersPage() {
       width: '1.4fr',
       render: (item) => (
         <Link
-          to="/projects/$projectId"
-          params={{ projectId: item.projectId }}
-          className={styles.projectLink}
-        >
-          {item.projectName}
-        </Link>
-      ),
-    },
-    {
-      key: 'detail',
-      label: t('table.detail'),
-      width: '0.8fr',
-      render: (item) => (
-        <Link
           to="/containers/$projectId"
           params={{ projectId: item.projectId }}
           className={styles.projectLink}
         >
-          {t('table.openDetail')}
+          {item.projectName}
         </Link>
       ),
     },
@@ -150,15 +136,32 @@ export function ContainersPage() {
       key: 'status',
       ...ordenavel('status'),
       label: t('table.registered'),
-      width: '0.9fr',
+      width: '1.3fr',
       render: (item) =>
         item.registrado ? (
-          <Badge
-                tone={TOM_DO_STATUS[item.registrado.status]}
-                emCurso={item.registrado.status === 'provisioning'}
-              >
-            {t(`status.${item.registrado.status}`)}
-          </Badge>
+          <span className={styles.statusCelula}>
+            <Badge
+              tone={TOM_DO_STATUS[item.registrado.status]}
+              emCurso={item.registrado.status === 'provisioning'}
+            >
+              {t(`status.${item.registrado.status}`)}
+            </Badge>
+            {/* RN-1493: só com motivo gravado; sem ele, só "falhou". */}
+            {item.registrado.status === 'failed' && item.motivoDaFalha && (
+              <>
+                <span className={styles.motivoDaFalha} title={item.motivoDaFalha}>
+                  {item.motivoDaFalha}
+                </span>
+                <Link
+                  to="/containers/$projectId"
+                  params={{ projectId: item.projectId }}
+                  className={styles.projectLink}
+                >
+                  {t('table.verDetalhe')}
+                </Link>
+              </>
+            )}
+          </span>
         ) : (
           <span className={styles.semRegistro}>{t('status.nuncaProvisionado')}</span>
         ),

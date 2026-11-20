@@ -20,7 +20,7 @@ Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`
 |---|---|---|
 | Visão geral | — | P10 |
 | Sessões | Todas, Ideação, Conversa | P13, P23, C30, C31 |
-| Trabalho | Backlog, Execução | P12, P11 |
+| Trabalho (Execução: linha do topo com a visão Executores/Linha do tempo na URL, três indicadores e a tabela de executores — RN-1466 a RN-1468) | Backlog, Execução | P12, P11, L05 |
 | Código | Arquivos, PRs | P22, P15 |
 | Decisões | Aprovações, Hipóteses, Permissões | P14, P17 |
 | Arquitetura (módulos, C4, ADRs, contratos — RN-1387) | — | P16 |

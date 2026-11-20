@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "执行者",
+    "title": "执行",
     "summary_other": "{{count}} 个智能体 · {{working}} 个工作中 · {{waiting}} 个等待中",
     "subtitle": "dev agent 和 QA —— 负责实现与负责验证的成员。团队其他成员见“概览”。",
     "sessionError": {
@@ -25,7 +25,13 @@
     },
     "noExecutorsTitle": "目前无人执行",
     "idleWarning": "目前没有智能体在工作。执行处于活动状态:智能体正在等待其依赖的任务,依赖合并后会自动唤醒。",
-    "modelSemPapel": "更换模型需要项目中的 developer 角色。"
+    "modelSemPapel": "更换模型需要项目中的 developer 角色。",
+    "sessao": "会话",
+    "visao": {
+      "rotulo": "执行视图",
+      "executores": "执行者",
+      "linhaDoTempo": "时间线"
+    }
   },
   "agentCard": {
     "status": {
@@ -317,5 +323,25 @@
       "in_review": "评审中",
       "done": "已完成"
     }
+  },
+  "tabela": {
+    "agente": "智能体",
+    "estado": "状态",
+    "tarefa": "当前或最近的任务",
+    "modelo": "模型",
+    "gasto": "花费",
+    "acoes": "操作",
+    "semTarefa": "—",
+    "retomar": "恢复",
+    "verNoFio": "在对话中查看",
+    "maisAcoes": "{{agente}} 的更多操作",
+    "autonomia": "自主模式"
+  },
+  "indicadores": {
+    "tarefas": "任务",
+    "fila": "队列",
+    "gasto": "本次执行花费",
+    "nDeM": "{{n}} / {{m}}",
+    "verFila": "查看队列"
   }
 }

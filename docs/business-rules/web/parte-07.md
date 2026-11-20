@@ -194,7 +194,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1220 — Trabalho junta Backlog e Execução: ativar, áreas, fila, ações da execução e Quadro por estado da tarefa {#rn-1220}
 
 - **Regra:** em Trabalho › Execução, com a execução parada, o topo de `ResumoDaExecucao` é só o cartão de chamada (AT-943, v9): o que acontece ao ativar, o teto do projeto (SEM estimativa de custo, AT-883 #21) e a ação "Ativar execução" (`AtivarExecucao`, `maintainer` no endpoint, RN-102; trancada sem repositório confirmado, com o motivo dito no próprio cartão, RN-582; a recusa da api, como o 409 sem container da RN-1101, é dita ao lado). Abaixo, um cartão por área executora (Dev, Infra, QA…) com situação, paralelismo `ativos / maxParallel` e lead com o número de membros, e a fila de tarefas em tabela (título, módulo, estado; `N prontas · N rodando · N bloqueadas`, cada contagem do ESTADO da tarefa e nunca somada, RN-467; arquivada fora; pronta = `todo` de história que não está em rascunho, RN-048). `AcoesDaExecucao` traz da Visão geral o desbloqueio com orientação (RN-835), o aceite de paralelização (RN-083) e a lista de PRs de dev; as duas ações pedem `developer` (RN-102) e a lista só tem as PRs PENDENTES do projeto. A lista de áreas vem da leitura de áreas só com a execução parada; com a execução de pé vem do roster, sem leitura nova (RN-632, RN-794). A sub-aba "Histórias" passou a se chamar "Backlog". Em Trabalho › Backlog: ação "Ativar execução" no cabeçalho, busca e filtros (pergunta aberta, módulo) locais sobre a árvore carregada, épico recolhível com progresso, chips de módulo e "N pergunta(s)" por história (a lista de perguntas tem teto de 50, e acima dele a tela diz que é recorte, RN-180), e o seletor Por épico | Quadro, só leitura, com cinco colunas pelo `estadoDaTarefa` (a fazer, em curso, em revisão, concluída, bloqueada).
-- **Onde:** `apps/web/src/routes/ResumoDaExecucao.tsx:34` (`ResumoDaExecucao`), `apps/web/src/components/AtivarExecucao.tsx:17` (`AtivarExecucao`), `apps/web/src/routes/AcoesDaExecucao.tsx:22` (`AcoesDaExecucao`), `apps/web/src/lib/trabalho-v9.ts:5` (`filaDeTarefas`), `apps/web/src/lib/trabalho-v9.ts:22` (`historiaPassaNoFiltro`), `apps/web/src/routes/ProjectBacklogTab.tsx:806` (`QuadroDeTarefas`), `apps/web/src/routes/ProjectExecutorsTab.tsx:112` (`backlogEmCache`).
+- **Onde:** `apps/web/src/routes/ResumoDaExecucao.tsx:34` (`ResumoDaExecucao`), `apps/web/src/components/AtivarExecucao.tsx:17` (`AtivarExecucao`), `apps/web/src/routes/AcoesDaExecucao.tsx:22` (`AcoesDaExecucao`), `apps/web/src/lib/trabalho-v9.ts:5` (`filaDeTarefas`), `apps/web/src/lib/trabalho-v9.ts:22` (`historiaPassaNoFiltro`), `apps/web/src/routes/ProjectBacklogTab.tsx:806` (`QuadroDeTarefas`), `apps/web/src/routes/ProjectExecutorsTab.tsx:124` (`backlogEmCache`).
 - **Teste:** `apps/web/src/routes/AcoesDaExecucao.test.tsx` (desbloqueio e botão inerte sem papel), `apps/web/src/routes/ProjectBacklogTab.quadro.test.tsx` (5 colunas, arquivada fora, fila, busca e filtro), `apps/web/src/routes/duas-abas.orcamento.test.tsx` (teto de requisições intacto).
 - **Origem:** AT-894 (EP-035).
 
@@ -661,6 +661,33 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/settings/ExecutionSection.tsx`.
 - **Teste:** `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx` (ExecutionSection).
 - **Origem:** AT-974 (EP-035), decisão do dono de 17/11.
+
+<a id="rn-1466"></a>
+
+### RN-1466 — A Execução tem uma linha de topo e duas visões, Executores e Linha do tempo, guardadas na URL {#rn-1466}
+
+- **Regra:** com a execução vigente, o topo da aba é uma linha: "Execução", o estado da sessão, a sessão ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)), a contagem de agentes e, à direita, um `ToggleGroup` "Executores | Linha do tempo" e "Parar execução" (RN-763). A escolha vai para `?visao=linha-do-tempo` (a visão Executores é a ausência do parâmetro; o `validateSearch` do router a mantém e trocar de sub-aba a apaga). A visão "Linha do tempo" mostra o `AgentTimelineTree` sozinho; a página deixou de empilhar a árvore embaixo dos executores. A faixa de execução parada ([RN-1061](#rn-1061)) segue numa linha, com as ações de `DestravarExecucao`. Com a execução parada o topo continua sendo só o cartão de chamada ([RN-794](parte-06.md#rn-794)).
+- **Onde:** `src/routes/ProjectExecutorsTab.tsx`, `src/lib/execucao-tabela.ts` (`resolverVisao`), `src/router.tsx`, `src/routes/ProjectPage.tsx` (`trocarSub`), `src/components/PararExecucao.tsx` (`compacto`).
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx` (tabela de executores, AT-970), `src/lib/execucao-tabela.test.ts`.
+- **Origem:** AT-970 (EP-035), prancha L05 da v11. Revisa a [RN-121](parte-01.md#rn-121): a aba continua isolando dev agent e QA, mas a renderização deixa de ser o `AgentTeamGrid` (que segue na Visão geral).
+
+<a id="rn-1467"></a>
+
+### RN-1467 — Os executores são uma tabela, uma linha por agente, na ordem de atenção {#rn-1467}
+
+- **Regra:** colunas Agente, Estado, Tarefa atual ou última, Modelo (o mesmo seletor do cartão, compacto), Gasto e ações; linha de 44 px. Ordem: lead de área primeiro, depois parados e esperando você, depois trabalhando, por fim ociosos (estável dentro de cada faixa). A coluna de tarefa mostra o motivo quando travado, a tarefa do progresso, ou o desfecho da delegação do subagente. Toda ação do antigo cartão continua: Retomar (rearmar, travado) e "Procurar tarefa de novo" (ocioso) com texto na linha; "Ver no fio" com texto quando trabalhando; autonomia (manual ou automático, só lead e agente solo) e "Ver no fio" no menu "…". A tela só diz o que leu: gasto sem leitura é "—".
+- **Onde:** `src/routes/TabelaDeExecutores.tsx`, `src/routes/TabelaDeExecutores.module.css`, `src/lib/execucao-tabela.ts` (`ordenarExecutores`), `src/routes/ProjectExecutorsTab.tsx`.
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx`, `src/lib/execucao-tabela.test.ts`.
+- **Origem:** AT-970 (EP-035), prancha L05 da v11.
+
+<a id="rn-1468"></a>
+
+### RN-1468 — A Execução mostra três indicadores no lugar de "Áreas" e "Fila de tarefas" {#rn-1468}
+
+- **Regra:** com a execução de pé, Tarefas ("N de M" e uma barra), Fila (prontas, bloqueadas e rodando; "Ver a fila" abre num `Popover` a lista das tarefas) e Gasto da execução (soma do gasto por agente da sessão). Tudo vem do backlog em cache e do resumo de gasto, sem leitura nova ([RN-632](parte-05.md#rn-632), [RN-794](parte-06.md#rn-794)); sem leitura o indicador diz "—", nunca zero. Com a execução parada o cartão de chamada, as áreas com o paralelismo e a fila seguem como eram ([RN-1220](#rn-1220)). O indicador só aparece na visão Executores.
+- **Onde:** `src/routes/IndicadoresDaExecucao.tsx`, `src/lib/execucao-tabela.ts` (`contarTarefas`), `src/routes/ResumoDaExecucao.tsx` (agora só parada).
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx`, `src/lib/execucao-tabela.test.ts`.
+- **Origem:** AT-970 (EP-035), prancha L05 da v11.
 
 <a id="rn-1463"></a>
 

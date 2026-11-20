@@ -1,6 +1,6 @@
-import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterAll, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { ProjectExecutorsTab } from './ProjectExecutorsTab';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import { ApiError } from '../lib/api-client';
@@ -44,6 +44,9 @@ const listBacklog = vi.fn();
 const activateExecution = vi.fn();
 const listAgentAreas = vi.fn();
 const getRepository = vi.fn();
+const rearmDevAgent = vi.fn();
+const wakeDevAgent = vi.fn();
+const setAgentAutonomy = vi.fn();
 
 vi.mock('../lib/api-client', async () => {
   const real = await vi.importActual<typeof import('../lib/api-client')>('../lib/api-client');
@@ -72,8 +75,9 @@ vi.mock('../lib/api-client', async () => {
     approveAction: vi.fn(),
     denyAction: vi.fn(),
     approveAlwaysAction: vi.fn(),
-    rearmDevAgent: vi.fn(),
-    setAgentAutonomy: vi.fn(),
+    rearmDevAgent: (...args: unknown[]) => rearmDevAgent(...args),
+    wakeDevAgent: (...args: unknown[]) => wakeDevAgent(...args),
+    setAgentAutonomy: (...args: unknown[]) => setAgentAutonomy(...args),
   };
 });
 
@@ -199,8 +203,9 @@ function resumo(over: Partial<ProjectCardSummary['roster']> = {}): ProjectCardSu
   };
 }
 
-function montar() {
+function montar(semear?: (client: QueryClient) => void) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  semear?.(client);
   return render(
     <QueryClientProvider client={client}>
       <ToastProvider>
@@ -581,7 +586,7 @@ describe('ProjectExecutorsTab — bindings em lote (AT-339)', () => {
     }));
     montar();
 
-    expect(await screen.findByText(/Modelo Dois ·/)).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByLabelText('Modelo de dev-pagamentos')).toHaveDisplayValue('Modelo Dois'));
     // Duas leituras: o catálogo (com as áreas) e os extras — só `dev-pagamentos`.
     expect(getResolvedModelBindings).toHaveBeenCalledTimes(2);
     expect(getResolvedModelBindings).toHaveBeenCalledWith('proj-1', ['dev-pagamentos'], []);
@@ -600,7 +605,7 @@ describe('ProjectExecutorsTab — bindings em lote (AT-339)', () => {
 
     expect((await screen.findAllByText('dev-pagamentos')).length).toBeGreaterThan(0);
     await waitFor(() => expect(getResolvedModelBindings).toHaveBeenCalledTimes(2));
-    expect(screen.queryByText(/Modelo Dois ·/)).not.toBeInTheDocument();
+    expect(screen.getByLabelText('Modelo de dev-pagamentos')).not.toHaveDisplayValue('Modelo Dois');
     expect(getAgentModelBinding).not.toHaveBeenCalled();
   });
 });
@@ -684,5 +689,142 @@ describe('ProjectExecutorsTab — religar a execução (RN-794)', () => {
     await screen.findByText(/Mostrando a sessão|sess-1/);
     expect(listBacklog).not.toHaveBeenCalled();
     expect(screen.queryByTestId('religar-execucao')).not.toBeInTheDocument();
+  });
+});
+
+// AT-970 (RN-1466 a RN-1468): os executores numa tabela, a linha do tempo numa visão própria.
+describe('ProjectExecutorsTab — tabela de executores (AT-970)', () => {
+  const ATIVA: Session = { ...SESSAO, status: 'active' };
+  const linhasDaTabela = () => screen.getAllByTestId(/^executor-/).map((l) => l.getAttribute('data-testid'));
+  const evt = (seq: number, type: string, id: string) => evento({ id: `x${seq}`, seq, type, actor: { kind: 'agent', id }, payload: { agentId: id } });
+  afterEach(() => window.history.replaceState(null, '', '/'));
+
+  it('lista cada executor numa linha da tabela, e o cartão em grade não existe mais aqui', async () => {
+    montar();
+    const tabela = await screen.findByTestId('tabela-de-executores');
+    expect(within(tabela).getByText('dev-backend')).toBeInTheDocument();
+    expect(within(tabela).getAllByText('QA de Automação').length).toBe(1);
+    expect(screen.queryByTestId('agent-team-grid')).not.toBeInTheDocument();
+    for (const coluna of ['Agente', 'Estado', 'Tarefa atual ou última', 'Modelo', 'Gasto']) {
+      expect(within(tabela).getByRole('columnheader', { name: coluna })).toBeInTheDocument();
+    }
+  });
+
+  it('a linha do tempo não vem na página: só na visão "Linha do tempo", que a URL guarda', async () => {
+    montar();
+    await screen.findByTestId('tabela-de-executores');
+    expect(screen.queryByText(/Os ramos de dev agent e QA/)).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Linha do tempo' }));
+
+    expect(await screen.findByText(/Os ramos de dev agent e QA/)).toBeInTheDocument();
+    expect(screen.queryByTestId('tabela-de-executores')).not.toBeInTheDocument();
+    expect(new URLSearchParams(window.location.search).get('visao')).toBe('linha-do-tempo');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Executores' }));
+    expect(await screen.findByTestId('tabela-de-executores')).toBeInTheDocument();
+    expect(window.location.search).not.toContain('visao');
+  });
+
+  it('abre direto na linha do tempo quando a URL traz ?visao=linha-do-tempo', async () => {
+    window.history.replaceState(null, '', '/?tab=executores&visao=linha-do-tempo');
+    montar();
+    expect(await screen.findByText(/Os ramos de dev agent e QA/)).toBeInTheDocument();
+    expect(screen.queryByTestId('tabela-de-executores')).not.toBeInTheDocument();
+  });
+
+  it('ordem: lead, depois parado, depois trabalhando, depois ocioso', async () => {
+    listSessionEvents.mockResolvedValue({
+      items: [
+        ...EVENTOS,
+        evt(6, 'dev.started', 'dev-api'),
+        evt(7, 'dev.idle_tripped', 'dev-api'),
+        evt(8, 'dev.started', 'dev-web'),
+        evt(9, 'dev.idle', 'dev-web'),
+      ],
+      nextCursor: null,
+    });
+    const modulo = (name: string) => ({ name, stack: 'NestJS', responsibility: 'API', dependsOn: [] });
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA,
+      moduleMap: { ...ARQUITETURA.moduleMap!, modules: [modulo('Backend'), modulo('Api'), modulo('Web')] },
+    });
+    getProjectsSummary.mockResolvedValue([resumo({ moduleNames: ['Backend', 'Api', 'Web'] })]);
+    montar();
+    await waitFor(() => expect(screen.getByTestId('executor-dev-web')).toBeInTheDocument());
+    const ids = linhasDaTabela().map((x) => x!.replace('executor-', ''));
+    expect(ids[0]).toBe('qa');
+    expect(ids.indexOf('dev-api')).toBeLessThan(ids.indexOf('dev-web'));
+    expect(ids.indexOf('dev-web')).toBeGreaterThan(ids.indexOf('dev-backend'));
+  });
+
+  it('o travado ganha "Retomar" na linha; o ocioso, "Procurar tarefa de novo"; ambos chamam as rotas de antes', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    listSessionEvents.mockResolvedValue({
+      items: [...EVENTOS, evt(6, 'dev.idle_tripped', 'dev-backend')],
+      nextCursor: null,
+    });
+    rearmDevAgent.mockResolvedValue(undefined);
+    montar();
+    const linha = await screen.findByTestId('executor-dev-backend');
+    fireEvent.click(within(linha).getByRole('button', { name: 'Retomar' }));
+    await waitFor(() => expect(rearmDevAgent).toHaveBeenCalledWith('proj-1', 'sess-1', 'dev-backend'));
+  });
+
+  it('procurar tarefa de novo (ocioso) chama o wake', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    listSessionEvents.mockResolvedValue({
+      items: [...EVENTOS, evt(6, 'dev.idle', 'dev-backend')],
+      nextCursor: null,
+    });
+    wakeDevAgent.mockResolvedValue(undefined);
+    montar();
+    const linha = await screen.findByTestId('executor-dev-backend');
+    fireEvent.click(within(linha).getByRole('button', { name: 'Procurar tarefa de novo' }));
+    await waitFor(() => expect(wakeDevAgent).toHaveBeenCalledWith('proj-1', 'sess-1', 'dev-backend'));
+  });
+
+  it('a autonomia continua no menu "…" da linha do lead e do solo, e não na do subagente', async () => {
+    setAgentAutonomy.mockResolvedValue(undefined);
+    montar();
+    const linha = await screen.findByTestId('executor-dev-backend');
+    fireEvent.click(within(linha).getByRole('button', { name: 'Mais ações de dev-backend' }));
+    fireEvent.click(await screen.findByRole('menuitemradio', { name: 'Modo automático' }));
+    await waitFor(() =>
+      expect(setAgentAutonomy).toHaveBeenCalledWith('proj-1', expect.objectContaining({ agentId: 'dev-backend', mode: 'auto_approve' })),
+    );
+    fireEvent.keyDown(document.body, { key: 'Escape' });
+    const membro = screen.getByTestId('executor-qa-automacao');
+    fireEvent.click(within(membro).getByRole('button', { name: /Mais ações de/ }));
+    const menu = await screen.findByRole('menu');
+    expect(within(menu).getByText('Ver no fio')).toBeInTheDocument();
+    expect(within(menu).queryByRole('menuitemradio')).not.toBeInTheDocument();
+  });
+
+  it('indicadores: Tarefas "N de M" e a fila vêm do backlog em cache; sem backlog lido, "—"', async () => {
+    const tarefa = (id: string, status: string, blocked = false) => ({
+      id, storyId: 's1', title: `tarefa ${id}`, description: '', status, assignedTo: null, blocked, blockedReason: null,
+      gateStatus: null, gateCorrectionCount: 0, module: 'Backend', createdAt: '', updatedAt: '', archivedAt: null,
+    });
+    const epics = [{ id: 'e', stories: [{ id: 's1', status: 'active', tasks: [tarefa('a', 'done'), tarefa('b', 'done'), tarefa('c', 'todo'), tarefa('d', 'todo', true)] }] }];
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    montar((c) => c.setQueryData(['backlog', 'proj-1'], epics));
+    expect(await screen.findByTestId('indicador-tarefas')).toHaveTextContent('2 de 4');
+    expect(screen.getByTestId('indicador-fila')).toHaveTextContent('1 pronta · 1 bloqueada');
+    fireEvent.click(screen.getByRole('button', { name: 'Ver a fila' }));
+    expect(await screen.findByTestId('fila-detalhada')).toHaveTextContent('tarefa c');
+  });
+
+  it('sem backlog lido os indicadores não afirmam número (EP-020)', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    montar();
+    expect(await screen.findByTestId('indicador-tarefas')).toHaveTextContent('—');
+    expect(screen.getByTestId('indicador-tarefas')).not.toHaveTextContent(/\d de \d/);
+  });
+
+  it('"Parar execução" fica na linha do topo, ao lado da escolha de visão', async () => {
+    getActiveExecutionSession.mockResolvedValue(ATIVA);
+    montar();
+    expect(await screen.findByRole('button', { name: 'Parar execução' })).toBeInTheDocument();
   });
 });

@@ -29,6 +29,8 @@
       "dependsOn": "Зависит от",
       "stories": "Истории"
     },
+    "views": {"label": "Виды архитектуры", "diagrama": "Диаграмма", "adrs": "ADR · {{n}}", "pendencias": "Вопросы · {{n}}"},
+    "noPendencies": "Нет незакрытых вопросов перекрёстной проверки.",
     "proposalTag": "ПРЕДЛОЖЕНИЕ",
     "adrProposal": "ADR «{{titulo}}» ожидает вашего одобрения, чтобы стать PR.",
     "decide": "Решить",
@@ -44,6 +46,7 @@
     "titleContext": "Контекст",
     "titleContainer": "Контейнер",
     "expandLabel": "Увеличить диаграмму {{titulo}}",
+    "fitWidth": "По ширине",
     "expandTitle": "Увеличить",
     "renderErrorTitle": "Не удалось отрисовать эту диаграмму.",
     "viewRawSyntax": "Показать синтаксис Mermaid",

@@ -29,6 +29,8 @@
       "dependsOn": "依赖",
       "stories": "故事"
     },
+    "views": {"label": "架构视图", "diagrama": "图", "adrs": "ADR · {{n}}", "pendencias": "待办 · {{n}}"},
+    "noPendencies": "没有交叉验证待办。",
     "proposalTag": "提案",
     "adrProposal": "ADR“{{titulo}}”等待您批准后转为 PR。",
     "decide": "决定",
@@ -44,6 +46,7 @@
     "titleContext": "上下文",
     "titleContainer": "容器",
     "expandLabel": "放大图 {{titulo}}",
+    "fitWidth": "适应宽度",
     "expandTitle": "放大",
     "renderErrorTitle": "无法绘制此图。",
     "viewRawSyntax": "查看 Mermaid 语法",

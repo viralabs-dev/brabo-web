@@ -345,10 +345,13 @@ App)
 Botão 38x38px, radius 8px, `var(--surface-1)`/`var(--border)`, badge de
 contagem (pílula `var(--accent)`, mono 9px, `border: 2px solid
 var(--surface-0)` pra "recortar" do fundo) no canto superior direito.
-Dropdown (380px, `max-height:70vh` com scroll): header sticky "Notificações"
-+ link "marcar lidas" (accent). Agrupado por projeto: cabeçalho de grupo
-(`var(--surface-2)`, dot do projeto + nome + contagem de eventos), lista de
-eventos (mesmo visual do EventItem, ícone+texto+tempo).
+Dropdown (420px fixo, `max-height:70vh`, sem rolagem horizontal; texto longo
+quebra em 2 linhas, AT-966): header sticky "Notificações" e duas seções.
+"Precisam de você" (selo do sino): uma linha por item da Caixa de decisões,
+com sujeito, motivo, projeto, idade e "Abrir". "Atividade por projeto": uma
+linha por projeto (contagem e idade do evento mais recente; clicar abre a
+Visão geral), os parados há mais de 30 dias somam numa linha, e o botão
+"Marcar atividade como lida" fica no cabeçalho da seção.
 
 ## Cards genéricos (Design System base — Cards / Tabela densa / Inputs /
 Tabs / Toasts / Modal)

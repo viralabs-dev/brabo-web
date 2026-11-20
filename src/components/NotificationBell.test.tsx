@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import { NotificationBell, type NotificationGroup } from './NotificationBell';
-import type { SessionEvent } from '../lib/api-types';
+import type { ItemQuePrecisaDeVoce } from '../lib/notificacoes';
 import shellEn from '../locales/en/shell.json';
 import shellPtBR from '../locales/pt-BR/shell.json';
 
@@ -36,125 +36,92 @@ function comProvider(children: React.ReactNode) {
 }
 
 /**
- * O sino mostra a JANELA que a api escolheu, na ORDEM em que ela chegou
- * (RN-100), e diz o que ficou de fora.
- *
- * O teste que fecha a regra de verdade mora no repositório
- * (`projects-summary.repository.spec.ts`): é lá que se prova que os 50 que
- * sobrevivem ao teto são os mais NOVOS. Aqui se prova a outra metade — que
- * esta camada não reordena nem esconde, porque foi exatamente essa a
- * tentação: um `.sort()` de uma linha aqui pareceria resolver e mentiria
- * sobre qual evento é o mais recente do projeto.
+ * AT-966 (RN-1469, RN-1470, RN-1471): o selo conta só o que precisa de você;
+ * a atividade vira uma linha por projeto e os parados somam numa linha só.
  */
+const DIA = 86_400_000;
+const atras = (dias: number) => new Date(Date.now() - dias * DIA).toISOString();
 
-function evento(seq: number): SessionEvent {
-  return {
-    id: `evt-${seq}`,
-    sessionId: 'sess-1',
-    seq,
-    type: 'chat.message',
-    actor: { kind: 'user', id: 'user-1' },
-    payload: { content: `mensagem ${seq}` },
-    createdAt: new Date(seq * 1000).toISOString(),
+function item(id: string, over: Partial<ItemQuePrecisaDeVoce> = {}): ItemQuePrecisaDeVoce {
+  return { id, fila: 'aprovacoes', sujeito: 'dev-api', motivo: 'Terminal · pnpm', projectId: 'p-1', projectName: 'Acme', desde: atras(2), tab: 'approvals', ...over };
+}
+
+function grupo(over: Partial<NotificationGroup> = {}): NotificationGroup {
+  return { projectId: 'p-1', projectName: 'Acme', events: [{ createdAt: atras(1) } as never], unreadCount: 8404, olderCount: 0, ...over };
+}
+
+function montar(p: Partial<React.ComponentProps<typeof NotificationBell>> = {}) {
+  const props = {
+    precisam: [item('a'), item('b', { sujeito: 'qa-lead' })],
+    precisamTotal: 2,
+    groups: [grupo()],
+    open: true,
+    onOpenChange: () => {},
+    onMarkRead: vi.fn(),
+    onAbrirItem: vi.fn(),
+    onAbrirProjeto: vi.fn(),
+    ...p,
   };
+  render(comProvider(<NotificationBell {...props} />));
+  return props;
 }
 
-function grupo(overrides: Partial<NotificationGroup> = {}): NotificationGroup {
-  return {
-    projectId: 'p-1',
-    projectName: 'Acme',
-    events: [evento(3), evento(2), evento(1)],
-    unreadCount: 3,
-    olderCount: 0,
-    ...overrides,
-  };
-}
-
-function renderAberto(groups: NotificationGroup[], onMarkRead = vi.fn()) {
-  const total = groups.reduce((s, g) => s + g.unreadCount, 0);
-  render(
-    comProvider(
-      <NotificationBell
-        groups={groups}
-        unreadCount={total}
-        open
-        onOpenChange={() => {}}
-        onMarkRead={onMarkRead}
-      />,
-    ),
-  );
-  return onMarkRead;
-}
-
-describe('NotificationBell', () => {
-  it('renderiza os eventos NA ORDEM recebida, sem reordenar', () => {
-    render(
-      comProvider(
-        <NotificationBell
-          groups={[grupo()]}
-          unreadCount={3}
-          open
-          onOpenChange={() => {}}
-          onMarkRead={() => {}}
-        />,
-      ),
-    );
-
-    const ids = [...document.querySelectorAll('[id^="event-evt-"]')].map(
-      (el) => el.id,
-    );
-    expect(ids).toEqual(['event-evt-3', 'event-evt-2', 'event-evt-1']);
+describe('NotificationBell (AT-966)', () => {
+  it('com 8.404 eventos de atividade e 2 itens de decisão, o selo mostra 2', () => {
+    montar({ open: false });
+    expect(screen.getByLabelText('Notificações').textContent).toBe('2');
   });
 
-  it('o contador do projeto é o TOTAL de não lidos, não o tamanho da janela', () => {
-    // 300 não lidos, 50 na janela: mostrar "50" faria a gaveta contradizer o
-    // badge do sino, que conta por `seq` e diria 300.
-    renderAberto([
-      grupo({
-        events: Array.from({ length: 50 }, (_, i) => evento(300 - i)),
-        unreadCount: 300,
-        olderCount: 250,
-      }),
-    ]);
-
-    expect(screen.getByText('300')).toBeTruthy();
-    expect(screen.getByText('+ 250 mais antigos')).toBeTruthy();
+  it('sem itens que precisam de você, o sino fica sem selo mesmo com atividade', () => {
+    montar({ open: false, precisam: [], precisamTotal: 0 });
+    expect(screen.getByLabelText('Notificações').textContent).toBe('');
   });
 
-  it('quando algo ficou fora da janela, o botão DIZ quantas vai marcar', () => {
-    // O corte de leitura é um `seq` só: ele marca um PREFIXO, e a gaveta
-    // mostra um SUFIXO. Marcar "as exibidas" é inexprimível — então a saída é
-    // a ação declarar o que faz, em vez de engolir 250 eventos em silêncio.
-    const marcar = renderAberto([
-      grupo({ unreadCount: 300, olderCount: 250 }),
-    ]);
-
-    fireEvent.click(screen.getByRole('button', { name: 'marcar as 300 como lidas' }));
-    expect(marcar).toHaveBeenCalledTimes(1);
-    expect(screen.getByText(/250 mais antigos não cabem aqui/)).toBeTruthy();
+  it('"Precisam de você" tem uma linha por item com sujeito, motivo, projeto, idade e Abrir', () => {
+    const p = montar();
+    expect(screen.getByText('Precisam de você')).toBeTruthy();
+    expect(screen.getByText('qa-lead')).toBeTruthy();
+    expect(screen.getAllByText('Terminal · pnpm')).toHaveLength(2);
+    expect(screen.getAllByText(/Acme · há 2 d/)).toHaveLength(2);
+    fireEvent.click(screen.getAllByRole('button', { name: 'Abrir' })[0]);
+    expect(p.onAbrirItem).toHaveBeenCalledWith(expect.objectContaining({ id: 'a' }));
   });
 
-  it('sem nada fora da janela, o rótulo continua o de sempre', () => {
-    renderAberto([grupo()]);
+  it('a atividade é UMA linha por projeto (contagem e idade) e abre a Visão geral', () => {
+    const p = montar();
+    expect(screen.getByText('Atividade por projeto')).toBeTruthy();
+    expect(screen.getByText(/8404 eventos · há 1 d/)).toBeTruthy();
+    expect(screen.queryByText(/atividade em/)).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Acme/ }));
+    expect(p.onAbrirProjeto).toHaveBeenCalledWith('p-1');
+  });
 
-    expect(screen.getByRole('button', { name: 'marcar lidas' })).toBeTruthy();
-    expect(screen.queryByText(/mais antigos/)).toBeNull();
+  it('projetos sem evento há mais de 30 dias somam numa linha só', () => {
+    montar({
+      groups: [
+        grupo(),
+        grupo({ projectId: 'p-2', projectName: 'Velho 1', unreadCount: 10, events: [{ createdAt: atras(46) } as never] }),
+        grupo({ projectId: 'p-3', projectName: 'Velho 2', unreadCount: 5, events: [{ createdAt: atras(40) } as never] }),
+      ],
+    });
+    expect(screen.getByText('2 projetos parados há mais de 30 dias · 15 eventos')).toBeTruthy();
+    expect(screen.queryByText('Velho 1')).toBeNull();
+  });
+
+  it('o rodapé "Marcar atividade como lida" chama o mesmo corte de leitura', () => {
+    const p = montar();
+    fireEvent.click(screen.getByRole('button', { name: 'Marcar atividade como lida' }));
+    expect(p.onMarkRead).toHaveBeenCalledTimes(1);
+  });
+
+  it('erro de leitura não vira "nada espera por você"', () => {
+    montar({ precisam: undefined, precisamErro: true });
+    expect(screen.getByText('Não foi possível ler o que espera por você.')).toBeTruthy();
+    expect(screen.queryByText('Nada espera por você agora.')).toBeNull();
   });
 
   it('gaveta fechada não renderiza conteúdo nenhum', () => {
-    render(
-      comProvider(
-        <NotificationBell
-          groups={[grupo()]}
-          unreadCount={3}
-          open={false}
-          onOpenChange={() => {}}
-          onMarkRead={() => {}}
-        />,
-      ),
-    );
-
-    expect(screen.queryByText('Notificações')).toBeNull();
-    expect(screen.getByLabelText('Notificações')).toBeTruthy();
+    montar({ open: false });
+    expect(screen.queryByText('Precisam de você')).toBeNull();
   });
 });

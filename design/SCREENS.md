@@ -185,8 +185,12 @@ projeto" (abre o wizard, ver `COMPONENTS.md`).
 este mês"`, mono) + grid responsivo (`repeat(auto-fill, minmax(340px,1fr))`)
 de `ProjectCard`.
 
-**Notif dropdown**: ver `COMPONENTS.md` (`NotificationBell`) — abre
-ancorado no topo direito, overlay invisível clicável fecha.
+**Notif dropdown** (AT-966, v11 L01): ver `COMPONENTS.md` (`NotificationBell`) —
+abre ancorado no topo direito, 420 px, sem rolagem horizontal. O selo do sino
+conta só o que precisa de você (as filas da Caixa de decisões); o painel tem
+"Precisam de você" (uma linha por item, com "Abrir") e "Atividade por projeto"
+(uma linha por projeto; parados há mais de 30 dias numa linha só; "Marcar
+atividade como lida"). "atividade em ‹ator›" não é mais linha individual.
 
 ## Projeto — Visão geral (`Brabo Project.dc.html`)
 

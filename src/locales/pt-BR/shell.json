@@ -55,17 +55,29 @@
   },
   "notificationBell": {
     "label": "Notificações",
-    "markRead": {
-      "default": "marcar lidas",
-      "withCount": "marcar as {{total}} como lidas"
+    "markRead": "Marcar atividade como lida",
+    "abrir": "Abrir",
+    "precisam": {
+      "titulo": "Precisam de você",
+      "vazio": "Nada espera por você agora.",
+      "carregando": "Lendo o que espera por você…",
+      "erro": "Não foi possível ler o que espera por você."
     },
-    "windowNote_zero": "Mostrando os mais recentes de cada projeto. {{count}} mais antigos não cabem aqui — abrir o projeto é o caminho para eles.",
-    "windowNote_one": "Mostrando os mais recentes de cada projeto. {{count}} mais antigo não cabe aqui — abrir o projeto é o caminho para eles.",
-    "windowNote_other": "Mostrando os mais recentes de cada projeto. {{count}} mais antigos não cabem aqui — abrir o projeto é o caminho para eles.",
-    "empty": "Nenhuma notificação por aqui ainda.",
-    "older_zero": "+ {{count}} mais antigos",
-    "older_one": "+ {{count}} mais antigo",
-    "older_other": "+ {{count}} mais antigos"
+    "tipo": {
+      "promocoes": "História esperando promoção",
+      "arquitetura": "Pendência de arquitetura",
+      "hipoteses": "Hipótese do Psicólogo esperando resposta"
+    },
+    "atividade": {
+      "titulo": "Atividade por projeto",
+      "vazio": "Nenhuma atividade nova.",
+      "eventos_zero": "{{count}} eventos",
+      "eventos_one": "{{count}} evento",
+      "eventos_other": "{{count}} eventos",
+      "parados_zero": "{{count}} projetos parados há mais de 30 dias · {{eventos}}",
+      "parados_one": "{{count}} projeto parado há mais de 30 dias · {{eventos}}",
+      "parados_other": "{{count}} projetos parados há mais de 30 dias · {{eventos}}"
+    }
   },
   "contexto": {
     "rotulo": "{{usados}} de {{janela}} tokens na última chamada · {{modelo}}",

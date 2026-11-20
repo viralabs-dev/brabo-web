@@ -279,6 +279,7 @@ beforeEach(() => {
 describe('ProjectOverviewTab — dev/QA saíram para Executores (FASE 27)', () => {
   it('mostra Criativo, SecOps e Infra, mas não dev-backend nem QA', async () => {
     montar();
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
 
     // Criativo/PO/Arquiteto são a roster BASE — aparecem mesmo antes de
     // eventos/handoffs resolverem, então esperar por eles não prova que os
@@ -312,11 +313,39 @@ describe('ProjectOverviewTab — dev/QA saíram para Executores (FASE 27)', () =
   it('a contagem do cabeçalho conta só quem ainda aparece na Visão geral', async () => {
     montar();
 
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
     await screen.findAllByText('Infra');
     // Roster completa tem 8 (criativo/po/arquiteto/dev-backend/qa/
     // qa-automacao/secops/infra); sem dev-backend/qa/qa-automacao sobram 5:
     // criativo, po, arquiteto, secops, infra.
     expect(screen.getByText(/5 agentes/)).toBeInTheDocument();
+  });
+});
+
+describe('AT-975 (RN-1480): ociosos somam num cartão e os primeiros passos se fundem no Próximo passo', () => {
+  it('quem trabalha fica à vista; os ociosos viram "+ N concluídos ou ociosos", que os abre', async () => {
+    montar();
+    const grid = within(await screen.findByTestId('agent-team-grid'));
+    expect(await grid.findByText('Criativo')).toBeInTheDocument();
+    expect(grid.queryByText('PO')).not.toBeInTheDocument();
+    const cartao = await screen.findByTestId('cartao-ociosos');
+    expect(cartao.textContent).toMatch(/^\+ \d+ concluídos ou ociosos$/);
+    fireEvent.click(cartao);
+    expect(await grid.findByText('PO')).toBeInTheDocument();
+    expect(screen.getByTestId('cartao-ociosos').textContent).toBe('Recolher os ociosos');
+  });
+
+  it('projeto novo: UM cartão (Próximo passo) traz os três passos, com o atual em destaque', async () => {
+    listSessions.mockResolvedValue([]);
+    listCredentials.mockResolvedValue([]);
+    getResolvedModelBindings.mockResolvedValue({ agents: [{ key: 'criativo', binding: null }], areas: [] });
+    montar();
+    const proximo = await screen.findByTestId('proximo-passo');
+    const passos = within(proximo).getByTestId('primeiros-passos');
+    expect(passos.querySelector('[data-atual="sim"]')?.getAttribute('data-passo')).toBe('credencial');
+    expect(screen.getAllByTestId('primeiros-passos')).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Começar a ideação' })).toHaveLength(1);
+    expect(proximo.closest('[data-testid="primeiros-passos"]')).toBeNull();
   });
 });
 
@@ -330,6 +359,7 @@ describe('ProjectOverviewTab — presença de SecOps vem do resumo, não da jane
 
     montar();
 
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
     const grid = within(await screen.findByTestId('agent-team-grid'));
     expect(await grid.findByText('SecOps')).toBeInTheDocument();
   });
@@ -340,7 +370,7 @@ describe('ProjectOverviewTab — presença de SecOps vem do resumo, não da jane
 
     montar();
 
-    await screen.findAllByText('Infra');
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
     const grid = within(await screen.findByTestId('agent-team-grid'));
     expect(grid.queryByText('SecOps')).not.toBeInTheDocument();
   });
@@ -571,7 +601,7 @@ describe('AT-890: faixa e turnos', () => {
     listSessionEvents.mockResolvedValue({
       items: [
         evento({ id: 'r1', seq: 1, type: 'agent.response', payload: { gravadoNoTurno: { itens: [{ tipo: 'regra', total: 2 }] }, custoMicros: 1000 } }),
-        evento({ id: 'r2', seq: 2, type: 'agent.response', payload: {} }),
+        evento({ id: 'r2', seq: 2, type: 'agent.response', actor: { kind: 'agent', id: 'po' }, payload: {} }),
       ],
       nextCursor: null,
     });
@@ -579,5 +609,32 @@ describe('AT-890: faixa e turnos', () => {
     const linhas = await screen.findAllByTestId('resumo-de-turno');
     expect(linhas).toHaveLength(2);
     expect(linhas[0].textContent).toContain('—');
+  });
+
+  it('AT-975: turnos seguidos do mesmo agente viram uma linha, com a idade do mais recente', async () => {
+    listSessionEvents.mockResolvedValue({
+      items: [1, 2, 3].map((n) => evento({ id: `r${n}`, seq: n, type: 'agent.response', payload: {} })),
+      nextCursor: null,
+    });
+    montar();
+    const linha = await screen.findByTestId('turnos-agrupados');
+    expect(linha.textContent).toMatch(/3 turnos, 0 passos/);
+    expect(screen.queryAllByTestId('resumo-de-turno')).toHaveLength(0);
+    expect(screen.getByText(/linha do tempo inteira/)).toBeInTheDocument();
+  });
+
+  it('AT-975: com as cinco filas em zero a faixa é uma linha, sem chips, com o link das Decisões', async () => {
+    montar();
+    const faixa = await screen.findByTestId('faixa-precisa-de-voce');
+    expect(faixa.getAttribute('data-vazia')).toBe('true');
+    expect(faixa.textContent).toContain('Nada espera por você agora.');
+    expect(faixa.querySelectorAll('[data-slot="badge"], .chips')).toHaveLength(0);
+    expect(within(faixa).getByText(/Abrir Decisões/)).toBeInTheDocument();
+  });
+
+  it('AT-975: Turnos | Eventos é um ToggleGroup', async () => {
+    montar();
+    const grupo = await screen.findByRole('group', { name: 'Ver como' });
+    expect(within(grupo).getByRole('button', { name: 'Turnos' }).getAttribute('aria-pressed')).toBe('true');
   });
 });

@@ -2,7 +2,8 @@
   "faixa": {
     "titulo": "Needs you",
     "verTodas": "View all →",
-    "vazio": "Nothing is waiting for you right now."
+    "vazio": "Nothing is waiting for you right now.",
+    "abrirDecisoes": "Open Decisions →"
   },
   "architectureTab": {
     "title": "Architecture",
@@ -21,7 +22,14 @@
     "reasonMissingModule": "missing module: {{missing}}",
     "contractsLabel": "Module contracts",
     "noContracts": "No contract declared yet — the Architect declares what each module exposes.",
-    "contractTypes": {"funcao": "function", "rota": "route", "evento": "event", "dado": "data", "tabela": "table", "identidade": "identity"},
+    "contractTypes": {
+      "funcao": "function",
+      "rota": "route",
+      "evento": "event",
+      "dado": "data",
+      "tabela": "table",
+      "identidade": "identity"
+    },
     "cols": {
       "module": "Module",
       "stack": "Stack",
@@ -29,7 +37,12 @@
       "dependsOn": "Depends on",
       "stories": "Stories"
     },
-    "views": {"label": "Architecture views", "diagrama": "Diagram", "adrs": "ADRs · {{n}}", "pendencias": "Pendencies · {{n}}"},
+    "views": {
+      "label": "Architecture views",
+      "diagrama": "Diagram",
+      "adrs": "ADRs · {{n}}",
+      "pendencias": "Pendencies · {{n}}"
+    },
     "noPendencies": "No cross-validation pendencies.",
     "proposalTag": "PROPOSAL",
     "adrProposal": "ADR “{{titulo}}” is waiting for your approval to become a PR.",
@@ -61,7 +74,10 @@
     "rearmSuccess": "Agent rearmed",
     "rearmErrorTitle": "Could not rearm the agent",
     "wakeSuccess": "Looking for a task",
-    "wakeErrorTitle": "Could not wake the agent"
+    "wakeErrorTitle": "Could not wake the agent",
+    "maisOciosos_one": "+ {{count, number}} done or idle",
+    "maisOciosos_other": "+ {{count, number}} done or idle",
+    "recolherOciosos": "Collapse the idle ones"
   },
   "timeline": {
     "title": "Team timeline",
@@ -108,7 +124,13 @@
     "count_one": "{{count, number}} event",
     "count_other": "{{count, number}} events",
     "loadErrorTitle": "Could not load the activity.",
-    "emptyNoSession": "No activity yet: it starts with the project's first session."
+    "emptyNoSession": "No activity yet: it starts with the project's first session.",
+    "turnosAgrupados_one": "{{agente}} · {{count, number}} turn, {{passos}} steps",
+    "turnosAgrupados_other": "{{agente}} · {{count, number}} turns, {{passos}} steps",
+    "recorteTurnos_one": "last turn",
+    "recorteTurnos_other": "last {{count, number}} turns",
+    "verLinhaDoTempo": "See the whole timeline →",
+    "rotuloModo": "View as"
   },
   "executionSection": {
     "title": "Execution",
@@ -248,6 +270,9 @@
     "endereco": "Address",
     "abrir": "Open in new tab",
     "titulo": "Deliverable",
-    "vazio": "There is no published deliverable to preview."
+    "vazio": "There is no published deliverable to preview.",
+    "checando": "Checking whether the app answered…",
+    "naoRespondeu": "{{url}} did not answer. Start the app with the command above.",
+    "tentarDeNovo": "Try again"
   }
 }

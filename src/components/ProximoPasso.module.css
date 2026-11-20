@@ -4,9 +4,10 @@
   border-radius: var(--r-lg);
   padding: 14px 18px;
   margin-bottom: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+  gap: 2px 16px;
 }
 
 .rotulo {
@@ -32,6 +33,17 @@
 .link {
   font-size: var(--fs-sm);
   color: var(--accent);
-  margin-top: 6px;
-  align-self: flex-start;
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+}
+
+.cartao > :not(.link) {
+  grid-column: 1;
+}
+
+/* Fundido com os primeiros passos: volta a coluna única, os passos levam a ação à direita. */
+.cartao.fundido {
+  display: flex;
+  flex-direction: column;
 }

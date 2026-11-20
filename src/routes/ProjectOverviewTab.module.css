@@ -318,3 +318,13 @@
   border-color: var(--accent);
 }
 .turnos{display:flex;flex-direction:column;gap:6px}
+
+/* AT-975: turnos seguidos do mesmo agente, numa linha. */
+.turnoAgrupado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.5rem;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+  cursor: pointer;
+}

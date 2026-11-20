@@ -800,6 +800,33 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/components/NotificationBell.test.tsx` (a rolagem horizontal é medida na prévia, `13-design/notificacoes-v11`).
 - **Origem:** AT-966 (EP-035), prancha L01 da v11.
 
+<a id="rn-1478"></a>
+
+### RN-1478 — Com as cinco filas em zero, "Precisa de você" é uma linha de até 48 px {#rn-1478}
+
+- **Regra:** na Visão geral, com as cinco filas (RN-467) em zero a faixa vira uma linha ("Nada espera por você agora." e o link "Abrir Decisões"), sem os cinco contadores. Com qualquer fila acima de zero volta a faixa de hoje, mas só com os chips das filas que têm item. Fila ainda não lida continua sendo "não sei" (EP-020), como na RN-890. Revisa a RN-890 só na forma; as filas seguem separadas e lidas pelo projeto (RN-638).
+- **Onde:** `src/components/FaixaPrecisaDeVoce.tsx`.
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx` (a altura de 48 px é medida na prévia, `13-design/visao-geral-v11`).
+- **Origem:** AT-975 (EP-035), prancha L10 da v11.
+
+<a id="rn-1479"></a>
+
+### RN-1479 — A prévia do entregável só existe depois que a porta responde {#rn-1479}
+
+- **Regra:** "Rodar na sua máquina" só monta o `iframe` depois de um `fetch` com `mode: 'no-cors'` à primeira URL local declarada responder em até 3 s. Sem resposta a prévia dá lugar a uma linha: "‹endereço› não respondeu. Suba a aplicação com o comando acima.", com "Tentar de novo" e "Abrir em nova aba". A checagem roda ao abrir a aba e ao clicar em "Tentar de novo"; não há polling. Revisa a RN-855 só na prévia; a nota "declarado pela Infra na PR, não verificado na sua máquina" continua. A resposta opaca do `no-cors` só prova que a porta atende, não que a página está certa.
+- **Onde:** `src/components/EntregavelPreview.tsx`.
+- **Teste:** `src/components/RodarNaSuaMaquina.test.tsx`.
+- **Origem:** AT-975 (EP-035), prancha L10 da v11.
+
+<a id="rn-1480"></a>
+
+### RN-1480 — A atividade da Visão geral agrupa turnos seguidos do mesmo agente e o próximo passo abre a página {#rn-1480}
+
+- **Regra:** em "Atividade", turnos seguidos do mesmo agente viram uma linha ("dev-http-api · 7 turnos, N passos") com a idade do mais recente; no máximo 5 linhas e o link "Ver a linha do tempo inteira". O seletor é um `ToggleGroup` "Turnos | Eventos" e, em Turnos, o contador diz o recorte ("últimos N turnos", a janela da RN-180), não o total de eventos. O "Próximo passo" (RN-1162) sai da coluna lateral e abre a coluna principal, com a ação à direita, e ABSORVE os Primeiros passos (RN-708, revisada): enquanto houver passo pendente é UM cartão com os passos (o atual em destaque, mesmas ações e textos, "Começar a ideação" uma vez só, sem esperar o backlog); com os três feitos volta a ser o Próximo passo de hoje. No "Time de agentes" quem trabalha, parou ou espera você fica à vista e os ociosos somam no cartão "+ N concluídos ou ociosos", que os abre (é nele que mora "Procurar tarefa de novo") e vira "Recolher os ociosos"; sem ninguém ativo todos ficam à vista. Não precisa de dado novo da api. Os passos somam só os `tool.result` que a janela de 200 eventos já tem.
+- **Onde:** `src/lib/turnos-agrupados.ts`, `src/routes/ProjectOverviewTab.tsx`, `src/components/ProximoPasso.tsx`, `src/components/PrimeirosPassos.tsx` (variante `integrado`).
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx`.
+- **Origem:** AT-975 (EP-035), prancha L10 da v11.
+
 <a id="rn-1475"></a>
 
 ### RN-1475 — O diagrama da Arquitetura abre legível: da esquerda para a direita, 300 px, texto de 12,5 px ou mais {#rn-1475}

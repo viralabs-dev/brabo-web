@@ -165,7 +165,7 @@ export function TabelaDeExecutores({
                     >
                       <Ellipsis aria-hidden="true" />
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
+                    <DropdownMenuContent align="end" className={styles.menu}>
                       <DropdownMenuItem render={<Link to="/projects/$projectId/sessions/$sessionId" params={{ projectId, sessionId }} />}>
                         {t('tabela.verNoFio')}
                       </DropdownMenuItem>

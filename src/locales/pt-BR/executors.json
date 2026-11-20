@@ -36,6 +36,7 @@
     }
   },
   "agentCard": {
+    "local": "local",
     "status": {
       "trabalhando": "trabalhando",
       "aguardando": "aguardando",
@@ -45,6 +46,7 @@
     },
     "autonomy": {
       "manual": "Manual",
+      "piloto": "Piloto automático",
       "auto": "Modo automático",
       "autoModeHint": "Modo automático: roda qualquer comando, inclusive fora da pasta do projeto. git push e PR ficam liberados; deploy, sudo/doas e merge em branch protegida continuam pedindo sua aprovação."
     },
@@ -286,6 +288,27 @@
       "esperaCom": "Espera {{itens}} da tarefa «{{titulo}}» entrar na main",
       "resumoMergeadas_zero": "{{count}} mergeadas",
       "resumoTarefas_zero": "{{count}} tarefas"
+    }
+  },
+  "secoes": {
+    "ver": "Ver",
+    "modoAutomatico": {
+      "titulo": "Modo automático",
+      "emManual_zero": "nenhum agente em manual",
+      "emManual_one": "{{count}} agente em manual",
+      "emManual_other": "{{count}} agentes em manual"
+    },
+    "acoes": {
+      "titulo": "Pendências da execução",
+      "bloqueadas_zero": "nenhuma tarefa bloqueada",
+      "bloqueadas_one": "{{count}} tarefa bloqueada",
+      "bloqueadas_other": "{{count}} tarefas bloqueadas",
+      "sugestoes_zero": "nenhuma sugestão",
+      "sugestoes_one": "{{count}} sugestão",
+      "sugestoes_other": "{{count}} sugestões",
+      "prs_zero": "nenhuma PR aguardando você",
+      "prs_one": "{{count}} PR aguardando você",
+      "prs_other": "{{count}} PRs aguardando você"
     }
   },
   "acoes": {

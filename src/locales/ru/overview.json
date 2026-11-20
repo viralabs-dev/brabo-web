@@ -8,7 +8,7 @@
   "architectureTab": {
     "title": "Архитектура",
     "emptyTitle": "Архитектуры пока нет",
-    "emptyState": "Архитектуры пока нет — Arquiteto создаёт module_map и ADR.",
+    "emptyState": "Архитектуры пока нет. Архитектор проектирует модули и решения после историй.",
     "modulesLabel": "Модули",
     "modulesLabelVersioned": "Модули · v{{version}}",
     "noModules": "Модулей пока нет.",
@@ -189,7 +189,7 @@
   },
   "architectureSummary": {
     "title": "Архитектура",
-    "emptyState": "Архитектуры пока нет — Arquiteto создаёт module_map и ADR.",
+    "emptyState": "Архитектуры пока нет. Архитектор проектирует модули и решения после историй.",
     "summary_one": "{{count}} модуль описан, диаграмма C4 {{status}}.",
     "summary_few": "{{count}} модуля описаны, диаграмма C4 {{status}}.",
     "summary_many": "{{count}} модулей описано, диаграмма C4 {{status}}.",

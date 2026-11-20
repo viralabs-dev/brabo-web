@@ -26,6 +26,8 @@
   "truncada": "Showing {{mostrados}} of {{total}}; the rest is in the project tab.",
   "gateParado": "The {{gate}} gate is stopped until you decide this action.",
   "abrir": "Open",
+  "abrirPlano": "Open plan",
+  "abrirTitulo": "Open {{titulo}}",
   "dataEmprestada": "story updated {{tempo}}",
   "motivo": {
     "no_module": "The story has no module.",

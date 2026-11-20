@@ -54,6 +54,8 @@ interface ProjectCardProps {
   noBudget?: boolean;
   onDefineBudget?: () => void;
   lastActivityText: string;
+  /** RN-1460: sem evento há mais de 30 dias; sem o resumo não chega `true`. */
+  parado?: boolean;
   /** Aprovações pendentes do projeto (RN-151) — mesmo número do badge da sidebar. */
   pendingApprovalsCount?: number;
   /**
@@ -79,6 +81,7 @@ export function ProjectCard({
   noBudget,
   onDefineBudget,
   lastActivityText,
+  parado,
   pendingApprovalsCount,
   onlineAgentCount,
   aguardandoVoce,
@@ -92,7 +95,7 @@ export function ProjectCard({
       : null;
 
   const temChips =
-    !!provisioningBadge || !!pendingApprovalsCount || !!aguardandoVoce || !!onlineAgentCount;
+    !!provisioningBadge || !!pendingApprovalsCount || !!aguardandoVoce || !!onlineAgentCount || !!parado;
 
   return (
     <Card
@@ -142,6 +145,11 @@ export function ProjectCard({
           {aguardandoVoce && (
             <Badge tone="accent" className={styles.unreadBadge}>
               {aguardandoVoce}
+            </Badge>
+          )}
+          {parado && (
+            <Badge tone="neutral" className={styles.unreadBadge}>
+              {t('projectCard.parado')}
             </Badge>
           )}
           {!!onlineAgentCount && (

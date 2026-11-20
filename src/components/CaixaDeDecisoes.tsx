@@ -7,11 +7,14 @@ import { approveAction, denyAction, listSessions } from '../lib/api-client';
 import type { DecisionInbox, ProposedAction } from '../lib/api-types';
 import { fraseDaAcao } from '../lib/aprovacoes';
 import { useProjects, usePsychologistStatus } from '../lib/hooks';
-import { FILAS_DA_CAIXA, totalDaFila, cortar, diasDesde, tituloDoTerminal, DIAS_DE_APROVACAO_VELHA, type ChaveDaCaixa } from '../lib/caixa-de-decisoes';
+import { FILAS_DA_CAIXA, totalDaFila, cortar, diasDesde, tituloDoTerminal, tituloDoPlano, detalheDoPlano, DIAS_DE_APROVACAO_VELHA, type ChaveDaCaixa } from '../lib/caixa-de-decisoes';
 import { gateEsperandoClique } from '../lib/precisa-de-voce';
 import { formatRelativeTime } from '../lib/time';
 import { AvatarDoAgente } from './ui/AvatarDoAgente';
 import { Button } from './ui/Button';
+import { buttonVariants } from './shadcn/button-variants';
+import { ChevronRightIcon } from './ui/icons';
+import { AGENTS } from '../lib/agents';
 import { Modal } from './ui/Modal';
 import { Textarea } from './ui/Textarea';
 import { Checkbox } from './shadcn/checkbox';
@@ -220,8 +223,17 @@ function LinhaDeAprovacao({ item, modo, encerrada, aviso, marcada, onMarcar, onD
   const acao = item.acao as unknown as ProposedAction; // o DTO gerado afrouxa `decidedBy`
   const gate = gateEsperandoClique(acao);
   const frase = fraseDaAcao(acao.actionType, acao.payload) ?? acao.actionType;
-  const titulo = tituloDoTerminal(acao.actionType, acao.payload, t('terminal')) ?? cortar(frase);
-  const comando = acao.actionType === 'terminal' && typeof acao.payload.command === 'string' ? acao.payload.command : frase;
+  const plano = acao.actionType === 'propose_execution_plan';
+  const lead = AGENTS[acao.actor.id as keyof typeof AGENTS]?.name ?? 'Dev Lead';
+  const tituloDoPlanoPronto = tituloDoPlano(acao.actionType, acao.payload, lead);
+  const titulo = tituloDoTerminal(acao.actionType, acao.payload, t('terminal')) ?? tituloDoPlanoPronto ?? cortar(frase);
+  const comando =
+    acao.actionType === 'terminal' && typeof acao.payload.command === 'string'
+      ? acao.payload.command
+      : tituloDoPlanoPronto
+        ? detalheDoPlano(frase)
+        : frase;
+  const destino = { to: '/projects/$projectId', params: { projectId: item.projectId }, search: { tab: acao.actionType === 'git_merge' ? 'prs' : 'approvals' } } as const;
   const podeDecidir = modo === 'pending' && acao.actionType !== 'propose_execution_plan';
   const ator = acao.actor.id;
   const quando = acao.decidedAt ?? acao.createdAt;
@@ -264,8 +276,11 @@ function LinhaDeAprovacao({ item, modo, encerrada, aviso, marcada, onMarcar, onD
           </>
         )}
         {modo === 'decided' && <span className={styles.nota}>{acao.status}</span>}
-        <Link to="/projects/$projectId" params={{ projectId: item.projectId }} search={{ tab: acao.actionType === 'git_merge' ? 'prs' : 'approvals' }} className={styles.nota}>
-          {t('abrir')}
+        {plano && modo === 'pending' && (
+          <Link {...destino} className={buttonVariants({ variant: 'secondary', size: 'sm' })}>{t('abrirPlano')}</Link>
+        )}
+        <Link {...destino} aria-label={t('abrirTitulo', { titulo })} className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}>
+          <ChevronRightIcon size={14} />
         </Link>
       </span>
     </div>
@@ -317,8 +332,8 @@ function Linha({ projeto, projectId, titulo, detalhe, tempo, tab }: { projeto: s
         {detalhe && <span className={styles.nota}>{detalhe}</span>}
       </span>
       <span className={styles.nota}>{tempo}</span>
-      <Link to="/projects/$projectId" params={{ projectId }} search={{ tab }} className={styles.nota}>
-        {t('abrir')}
+      <Link to="/projects/$projectId" params={{ projectId }} search={{ tab }} aria-label={t('abrirTitulo', { titulo })} className={buttonVariants({ variant: 'ghost', size: 'icon-sm' })}>
+        <ChevronRightIcon size={14} />
       </Link>
     </div>
   );

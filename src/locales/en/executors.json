@@ -35,6 +35,7 @@
     }
   },
   "agentCard": {
+    "local": "local",
     "status": {
       "trabalhando": "working",
       "aguardando": "waiting",
@@ -44,6 +45,7 @@
     },
     "autonomy": {
       "manual": "Manual",
+      "piloto": "Autopilot",
       "auto": "Automatic mode",
       "autoModeHint": "Auto mode: runs any command, even outside the project folder. git push and PR are released; deploy, sudo/doas and merges into a protected branch still ask for your approval."
     },
@@ -275,6 +277,23 @@
       "resumoTarefas_other": "{{count}} tasks",
       "agente": "Runs: {{agente}}",
       "esperaCom": "Waiting for {{itens}} from task \"{{titulo}}\" to reach main"
+    }
+  },
+  "secoes": {
+    "ver": "View",
+    "modoAutomatico": {
+      "titulo": "Auto mode",
+      "emManual_one": "{{count}} agent on manual",
+      "emManual_other": "{{count}} agents on manual"
+    },
+    "acoes": {
+      "titulo": "Execution pending items",
+      "bloqueadas_one": "{{count}} blocked task",
+      "bloqueadas_other": "{{count}} blocked tasks",
+      "sugestoes_one": "{{count}} suggestion",
+      "sugestoes_other": "{{count}} suggestions",
+      "prs_one": "{{count}} PR waiting for you",
+      "prs_other": "{{count}} PRs waiting for you"
     }
   },
   "acoes": {

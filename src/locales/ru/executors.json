@@ -37,6 +37,7 @@
     }
   },
   "agentCard": {
+    "local": "локальная",
     "status": {
       "trabalhando": "работает",
       "aguardando": "ждёт",
@@ -46,6 +47,7 @@
     },
     "autonomy": {
       "manual": "вручную",
+      "piloto": "Автопилот",
       "auto": "авто",
       "autoModeHint": "Автоматический режим: выполняет любую команду, в том числе вне папки проекта. git push и PR разрешены; deploy, sudo/doas и merge в защищённую ветку по-прежнему требуют вашего одобрения."
     },
@@ -297,6 +299,31 @@
       "resumoTarefas_other": "{{count}} задач",
       "agente": "Выполняет: {{agente}}",
       "esperaCom": "Ждёт попадания {{itens}} из задачи «{{titulo}}» в main"
+    }
+  },
+  "secoes": {
+    "ver": "Открыть",
+    "modoAutomatico": {
+      "titulo": "Авторежим",
+      "emManual_one": "{{count}} агент вручную",
+      "emManual_few": "{{count}} агента вручную",
+      "emManual_many": "{{count}} агентов вручную",
+      "emManual_other": "{{count}} агентов вручную"
+    },
+    "acoes": {
+      "titulo": "Ожидающее в выполнении",
+      "bloqueadas_one": "{{count}} заблокированная задача",
+      "bloqueadas_few": "{{count}} заблокированные задачи",
+      "bloqueadas_many": "{{count}} заблокированных задач",
+      "bloqueadas_other": "{{count}} заблокированных задач",
+      "sugestoes_one": "{{count}} предложение",
+      "sugestoes_few": "{{count}} предложения",
+      "sugestoes_many": "{{count}} предложений",
+      "sugestoes_other": "{{count}} предложений",
+      "prs_one": "{{count}} PR ждёт вас",
+      "prs_few": "{{count}} PR ждут вас",
+      "prs_many": "{{count}} PR ждут вас",
+      "prs_other": "{{count}} PR ждут вас"
     }
   },
   "acoes": {

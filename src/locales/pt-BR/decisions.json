@@ -26,6 +26,8 @@
   "truncada": "Mostrando {{mostrados}} de {{total}}; o resto está na aba do projeto.",
   "gateParado": "O gate de {{gate}} está parado até você decidir esta ação.",
   "abrir": "Abrir",
+  "abrirPlano": "Abrir plano",
+  "abrirTitulo": "Abrir {{titulo}}",
   "dataEmprestada": "história atualizada {{tempo}}",
   "motivo": {
     "no_module": "A história não tem módulo.",

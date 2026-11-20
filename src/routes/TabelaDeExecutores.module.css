@@ -68,8 +68,16 @@
   text-decoration: underline;
 }
 
+/* AT-1007 (RN-1491): o menu da linha tem 280 px no mínimo, e a dica do modo automático cabe em 3 linhas. */
+.menu.menu {
+  min-width: 280px;
+}
+
 .dica {
-  display: block;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   max-width: 280px;
   padding: 6px 8px;
   font-size: var(--fs-meta);

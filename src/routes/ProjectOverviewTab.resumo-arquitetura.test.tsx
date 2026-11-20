@@ -202,7 +202,7 @@ describe('ProjectOverviewTab — resumo condensado de Arquitetura (Onda 3)', () 
     montar();
 
     expect(
-      await screen.findByText('Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.'),
+      await screen.findByText('Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.'),
     ).toBeInTheDocument();
 
     const link = screen.getByRole('link', { name: 'Ver arquitetura completa →' });

@@ -8,7 +8,7 @@
   "architectureTab": {
     "title": "Arquitetura",
     "emptyTitle": "Sem arquitetura ainda",
-    "emptyState": "Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.",
+    "emptyState": "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.",
     "modulesLabel": "Módulos",
     "modulesLabelVersioned": "Módulos · v{{version}}",
     "noModules": "Nenhum módulo ainda.",
@@ -180,7 +180,7 @@
   },
   "architectureSummary": {
     "title": "Arquitetura",
-    "emptyState": "Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.",
+    "emptyState": "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.",
     "summary_zero": "{{count}} módulos mapeados, diagrama C4 {{status}}.",
     "summary_one": "{{count}} módulo mapeado, diagrama C4 {{status}}.",
     "summary_other": "{{count}} módulos mapeados, diagrama C4 {{status}}.",

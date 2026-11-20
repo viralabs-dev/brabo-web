@@ -56,32 +56,34 @@ export function IndicadoresDaExecucao({
 
       <Card radius="md" padding="sm" data-testid="indicador-fila">
         <span className={styles.rotulo}>{t('indicadores.fila')}</span>
-        <strong className={styles.valor}>{epics ? partes.join(' · ') : '—'}</strong>
-        <span className={styles.nota}>
-          {epics ? t('fila.running', { count: fila.rodando.length }) : ''}
-        {lista.length > 0 && (
-          <Popover>
-            <PopoverTrigger className={styles.abrir}>{t('indicadores.verFila')}</PopoverTrigger>
-            <PopoverContent align="start" className={styles.popover}>
-              <table className={styles.tabela} data-testid="fila-detalhada">
-                <tbody>
-                  {lista.map(({ task, estado }) => (
-                    <tr key={task.id}>
-                      <td>{task.title}</td>
-                      <td>{task.module && <Badge tone="neutral">{task.module}</Badge>}</td>
-                      <td>
-                        <Badge dot tone={ESTADO_TOM[estado]}>
-                          {t(`fila.estado.${estado}`)}
-                        </Badge>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </PopoverContent>
-          </Popover>
-        )}
+        {/* AT-1007 (RN-1491): "Ver a fila" na mesma linha do valor da Fila. */}
+        <span className={styles.linhaDoValor}>
+          <strong className={styles.valor}>{epics ? partes.join(' · ') : '—'}</strong>
+          {lista.length > 0 && (
+            <Popover>
+              <PopoverTrigger className={styles.abrir}>{t('indicadores.verFila')}</PopoverTrigger>
+              <PopoverContent align="start" className={styles.popover}>
+                <table className={styles.tabela} data-testid="fila-detalhada">
+                  <tbody>
+                    {lista.map(({ task, estado }) => (
+                      <tr key={task.id}>
+                        <td>{task.title}</td>
+                        <td>{task.module && <Badge tone="neutral">{task.module}</Badge>}</td>
+                        <td>
+                          <Badge dot tone={ESTADO_TOM[estado]}>
+                            {t(`fila.estado.${estado}`)}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </PopoverContent>
+            </Popover>
+          )}
         </span>
+        {/* Zero tarefas rodando: "nenhuma rodando" (a chave `fila.running_zero`). */}
+        <span className={styles.nota}>{epics ? t('fila.running', { count: fila.rodando.length }) : ''}</span>
       </Card>
 
       <Card radius="md" padding="sm" data-testid="indicador-gasto">

@@ -7,6 +7,8 @@
     "retry": "Повторить",
     "tokensDetail": "{{input}} вход · {{output}} выход",
     "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "с {{dia}}",
+    "topModelCalls": "{{modelo}}: {{pct}}%",
     "callsLabel": "Вызовы"
   },
   "role": {
@@ -155,6 +157,7 @@
     "restantes_other": "Осталось {{count}} дня.",
     "previsao": "Прогноз на конец месяца: {{valor}}.",
     "virada": "Месяц сменится {{quando}} (00:00 UTC).",
+    "resumo": "Прогноз {{valor}} · месяц сменится {{quando}}",
     "projeto": {
       "titulo": "Лимит месяца",
       "semTeto": "Для этого проекта лимит месяца ещё не задан.",

@@ -98,10 +98,6 @@
       "needsDeveloper": " Exige papel developer para trocar o modelo, aplicar um a todos os agentes ou voltar a herdar.",
       "needsMaintainerArea": " Exige papel maintainer para marcar a caixa da área ou trocar o modelo dela."
     },
-    "costCard": {
-      "label": "Custo estimado mensal do time",
-      "detail": "· com base no histórico de 30 dias"
-    },
     "columns": {
       "agent": "Agente",
       "model": "Modelo vigente",
@@ -172,7 +168,12 @@
       "mostrarOutros_zero": "Mostrar os outros {{count}} agentes",
       "mostrarOutros_other": "Mostrar os outros {{count}} agentes"
     },
-    "fallbackPopover": "Se perder o modelo próprio, vale: {{modelo}}",
+    "tituloDaTabela_zero": "Nenhum agente · {{valor}} estimado por mês",
+    "tituloDaTabela_one": "{{count}} agente · {{valor}} estimado por mês",
+    "tituloDaTabela_other": "{{count}} agentes · {{valor}} estimado por mês",
+    "tituloDaTabelaBase": "com base no histórico de 30 dias",
+    "oQueIssoMuda": "O que isso muda",
+    "fallbackPopover": "Se perder o modelo próprio, vale: <m>{{modelo}}</m>",
     "faixaRoteamentoMuda": "Neste provider a preferência de roteamento não foi provada contra a API real, então não é aplicada: o provider decide. Vale para os {{total}} agentes. A linha que fugir do padrão mostra a diferença nela."
   },
   "members": {
@@ -246,7 +247,10 @@
       "modelo": "Modelo do degrau {{n}}",
       "teto": "Teto do degrau {{n}} (US$)",
       "remover": "Remover degrau {{n}}",
-      "adicionar": "Adicionar degrau"
+      "adicionar": "Adicionar degrau",
+      "alteracoes_zero": "Nenhuma alteração",
+      "alteracoes_one": "{{count}} alteração não salva",
+      "alteracoes_other": "{{count}} alterações não salvas"
     }
   },
   "executionMode": {
@@ -336,9 +340,8 @@
       "title": "Área {{area}}",
       "spent": "Gasto: {{amount}}",
       "capAria": "Teto de gasto da área {{area}}, em dólares",
-      "noCap": "sem teto"
+      "semTetoProprio": "sem teto próprio"
     },
-    "placeholder": "Sem teto",
     "save": "Salvar",
     "saving": "Salvando…",
     "toast": {
@@ -523,7 +526,7 @@
       "title": "Todos os tokens do projeto",
       "eyebrow": "maintainer",
       "subtitle": "Resposta a incidente — revogue o token de qualquer usuário do projeto, não só o seu.",
-      "emptyMessage": "Nenhum token de acesso emitido para este projeto.",
+      "emptyMessage": "Ninguém neste projeto emitiu token.",
       "table": {
         "name": "Nome",
         "owner": "Dono",
@@ -669,7 +672,6 @@
       "hintOff": "Desligado: toda PR espera o seu clique em Merge.",
       "hintOn": "Ligado: a PR com todos os gates verdes e sem conflito entra sozinha, sem você ver o código antes."
     },
-    "switchAria": "Merge automático das PRs do projeto",
     "reason": {
       "ligar": "Só o owner do workspace liga o merge automático. Peça a um owner.",
       "desligar": "Só um maintainer ou o owner do workspace desliga o merge automático."

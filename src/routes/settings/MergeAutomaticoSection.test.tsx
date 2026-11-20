@@ -34,7 +34,7 @@ function montar() {
   );
 }
 
-const chave = () => screen.findByRole('switch');
+const chave = () => screen.findByRole('checkbox');
 
 describe('MergeAutomaticoSection', () => {
   beforeEach(() => {
@@ -47,7 +47,9 @@ describe('MergeAutomaticoSection', () => {
   it('nasce desligada e só grava depois de confirmar', async () => {
     montar();
     const c = await chave();
-    expect((c as HTMLInputElement).checked).toBe(false);
+    expect(c).toHaveAttribute('aria-checked', 'false');
+    // O `Checkbox` do kit no lugar do `<input role="switch">` nativo (AT-1005).
+    expect(document.querySelector('input[role="switch"]')).toBeNull();
     fireEvent.click(c);
     expect(setMergeAutomatico).not.toHaveBeenCalled();
     expect(screen.getByText(/única barreira/)).toBeTruthy();
@@ -66,7 +68,7 @@ describe('MergeAutomaticoSection', () => {
   it('maintainer não liga: chave inerte com o motivo em texto', async () => {
     role = 'maintainer';
     montar();
-    expect(((await chave()) as HTMLInputElement).disabled).toBe(true);
+    expect(await chave()).toHaveAttribute('aria-disabled', 'true');
     expect((await screen.findByTestId('merge-automatico-motivo')).textContent).toMatch(/owner/);
   });
 
@@ -82,7 +84,7 @@ describe('MergeAutomaticoSection', () => {
     role = 'developer';
     getProject.mockResolvedValue({ id: 'p1', mergeAutomatico: true });
     montar();
-    expect(((await chave()) as HTMLInputElement).disabled).toBe(true);
+    expect(await chave()).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByTestId('merge-automatico-motivo')).toBeTruthy();
   });
 });

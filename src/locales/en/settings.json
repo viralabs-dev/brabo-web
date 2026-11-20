@@ -94,10 +94,6 @@
       "needsDeveloper": " Requires the developer role to change the model, apply one to every agent, or go back to inheriting.",
       "needsMaintainerArea": " Requires the maintainer role to tick the area box or change its model."
     },
-    "costCard": {
-      "label": "Team's estimated monthly cost",
-      "detail": "· based on the last 30 days"
-    },
     "columns": {
       "agent": "Agent",
       "model": "Current model",
@@ -164,7 +160,11 @@
       "mostrarOutros_one": "Show the other agent",
       "mostrarOutros_other": "Show the other {{count}} agents"
     },
-    "fallbackPopover": "If the own model is lost, this applies: {{modelo}}",
+    "tituloDaTabela_one": "{{count}} agent · {{valor}} estimated per month",
+    "tituloDaTabela_other": "{{count}} agents · {{valor}} estimated per month",
+    "tituloDaTabelaBase": "based on the last 30 days of history",
+    "oQueIssoMuda": "What this changes",
+    "fallbackPopover": "If the own model is lost, this applies: <m>{{modelo}}</m>",
     "faixaRoteamentoMuda": "On this provider the routing preference was not proven against the real API, so it is not applied: the provider decides. It holds for all {{total}} agents. A row that differs shows the difference on itself."
   },
   "members": {
@@ -238,7 +238,9 @@
       "modelo": "Model of step {{n}}",
       "teto": "Cap of step {{n}} (US$)",
       "remover": "Remove step {{n}}",
-      "adicionar": "Add step"
+      "adicionar": "Add step",
+      "alteracoes_one": "{{count}} unsaved change",
+      "alteracoes_other": "{{count}} unsaved changes"
     }
   },
   "executionMode": {
@@ -327,9 +329,8 @@
       "title": "{{area}} area",
       "spent": "Spent: {{amount}}",
       "capAria": "Spend cap for the {{area}} area, in dollars",
-      "noCap": "no cap"
+      "semTetoProprio": "no cap of its own"
     },
-    "placeholder": "No cap",
     "save": "Save",
     "saving": "Saving…",
     "toast": {
@@ -512,7 +513,7 @@
       "title": "All project tokens",
       "eyebrow": "maintainer",
       "subtitle": "Incident response — revoke any user's token in this project, not just your own.",
-      "emptyMessage": "No access token issued for this project.",
+      "emptyMessage": "Nobody in this project has issued a token.",
       "table": {
         "name": "Name",
         "owner": "Owner",
@@ -655,7 +656,6 @@
       "hintOff": "Off: every PR waits for your Merge click.",
       "hintOn": "On: a PR with every gate green and no conflict merges by itself, without you seeing the code first."
     },
-    "switchAria": "Automatic merge of the project's PRs",
     "reason": {
       "ligar": "Only the workspace owner turns automatic merge on. Ask an owner.",
       "desligar": "Only a maintainer or the workspace owner turns automatic merge off."

@@ -7,6 +7,8 @@
     "retry": "Try again",
     "tokensDetail": "{{input}} in · {{output}} out",
     "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "since {{dia}}",
+    "topModelCalls": "{{modelo}} at {{pct}}%",
     "callsLabel": "Calls"
   },
   "role": {
@@ -141,6 +143,7 @@
     "restantes_other": "{{count}} days left.",
     "previsao": "End-of-month forecast: {{valor}}.",
     "virada": "The month rolls over at {{quando}} (00:00 UTC).",
+    "resumo": "Forecast {{valor}} · month rolls over {{quando}}",
     "projeto": {
       "titulo": "Monthly cap",
       "semTeto": "No monthly cap set for this project yet.",

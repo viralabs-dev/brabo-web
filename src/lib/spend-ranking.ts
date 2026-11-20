@@ -1,7 +1,7 @@
 import { numberFmt } from './currency';
 import { ROTULO_DO_PROVIDER } from './models';
 import type { LLMProviderName } from './api-types';
-import { tokensDe, type SpendLinha } from './spend';
+import { abreviarTokens, tokensDe, type SpendLinha } from './spend';
 import type { LinhaDeRanking } from '../components/SpendCharts';
 import { formatarUsd } from '../components/CredentialSpendSection.helpers';
 
@@ -29,12 +29,14 @@ export function comoRanking(
   return linhas.map((linha) => {
     const assin = linha.assinaturaMicros ?? 0;
     const detalhe = t('shared.rankingDetail', {
-      tokens: numberFmt.format(tokensDe(linha)),
+      tokens: abreviarTokens(tokensDe(linha)),
       calls: linha.chamadas,
     });
     return {
       chave: linha.chave,
       rotulo: rotulo(linha),
+      // Os tokens saem abreviados como nos indicadores (RN-1451); o inteiro vai no `title`.
+      detalheTitulo: numberFmt.format(tokensDe(linha)),
       costMicros: linha.costMicros,
       detalhe:
         assin > 0

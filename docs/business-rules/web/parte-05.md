@@ -894,7 +894,7 @@ muda.
 - **Código:** `apps/web/src/routes/Shell.tsx:540` (`execucao`), `:554`
   (`estadoDaAtividade`);
   `apps/web/src/lib/hooks.ts:163` (`useProjectSessions`, `frescorMs`);
-  `apps/web/src/routes/Dashboard.tsx:83` (`lastActivityText`);
+  `apps/web/src/routes/Dashboard.tsx:92` (`lastActivityText`);
   `apps/web/src/routes/ContextAside.tsx:55` (`quantos`), `:362`
   (`totalDeArtefatos`)
 - **Teste:** `apps/web/src/routes/Shell.test.tsx` ("Shell — Atividades": sem

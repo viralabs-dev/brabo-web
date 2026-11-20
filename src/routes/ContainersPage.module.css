@@ -89,10 +89,19 @@
 
 .acoes {
   display: flex;
-  flex-wrap: wrap;
   gap: 8px;
-  align-items: flex-start;
+  align-items: center;
   max-width: 420px;
+}
+
+/* A ação da linha que é link (Abrir, Decidir imagem): parece o botão
+   secundário, sem herdar a cor e o sublinhado de `a` (AT-976, RN-1481). */
+.acoes > button { white-space: nowrap; }
+
+.acaoLink {
+  color: var(--text-primary);
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 /* Bloco de ações + o motivo em TEXTO. `title` em elemento `disabled` não abre

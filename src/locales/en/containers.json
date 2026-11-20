@@ -96,7 +96,11 @@
       "registrado_rodando_observado_parado": "Recorded as running, observed stopped."
     },
     "ajuda": "Container actions",
-    "ajudaIndisponiveis": "Why the actions are unavailable"
+    "ajudaIndisponiveis": "Why the actions are unavailable",
+    "open": "Open",
+    "decideImage": "Decide image",
+    "menu": "More actions for {{projeto}}",
+    "detalhes": "View details"
   },
   "detail": {
     "title": "Container",

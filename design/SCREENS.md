@@ -55,6 +55,8 @@ P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), 
 
 **Containers (`/containers`, AT-980).** Entre as métricas e a tabela aparece a seção "Remoção pendente" quando há projeto apagado com container ainda por remover: uma linha por projeto (nome, ou o id encurtado, recursos, tentativas, quando) e o motivo embaixo. Sem pendência, a seção não existe. O cartão de aprovação de uma ação de container que falhou mostra o motivo num alerta sob "Falhou" (RN-1445, RN-1446).
 
+**Containers, Providers e Status (L11, AT-976, RN-1481 a RN-1483).** Containers: cada linha tem uma ação com texto em variante secundária ("Abrir" com o container de pé, "Decidir imagem" sem imagem, "Subir de novo"/"Subir container" nos demais), e Parar, Ver detalhes e Remover (separado, destrutivo) ficam no menu "…"; nenhum botão primário na tabela; cabeçalhos ordenáveis com 32 px. Providers: a matriz usa os dez rótulos em pt-BR com o identificador no `title`, "não provado" é texto simples, a matriz rola dentro do contêiner e as abas do catálogo mostram só providers com chave. Status: "Voltar" com ícone e texto no topo, à esquerda do título.
+
 ### Fora da v9
 Superfície quente (decisão do dono, 11/11/2026). Vistas "ADRs" e "Contratos" da Arquitetura e sub-aba "Commits" dependem de fonte (AT-883). O que a tela mostra precisa de fonte: o que ainda não tem (teto mensal, teto do workspace, "Próximo passo") entra pelas AT-934 a AT-936 e fica fora da tela até lá.
 

@@ -92,6 +92,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1061 — O aviso de execução parada, no feed, no fio e em Executores, oferece Rearmar e Desbloquear {#rn-1061}
 
+> **Revisada pela [RN-1491](#rn-1491) (AT-1007):** na aba Execução a faixa é de aviso (âmbar), não de perigo, e oferece "Pedir o parecer de novo" quando um gate estacionado está por trás da parada.
+
 - **Regra:** o `execution.stalled` que o engine grava ([RN-1059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-1059): todos os dev agents parados, tarefa pendente atrás de tarefa bloqueada ou de agente travado) aparece em vermelho no feed de atividade, nomeando as tarefas e os agentes que seguram a execução. Na sessão de execução ele vira uma mensagem do fio (`data-testid="execucao-parada"`) e, acima do time, na aba Executores, o mesmo aviso. Sob ele, `DestravarExecucao` traz um **Rearmar** por agente travado (`rearmDevAgent`, [RN-047](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-047)) e um **Desbloquear** por tarefa bloqueada (`unblockTask`, [RN-826](parte-06.md#rn-826)), com as mesmas rotas dos atalhos do chat. Os botões só existem enquanto a parada é VIGENTE: o último evento entre `execution.stalled`, `dev.working`, `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`; depois do destrave o aviso fica no histórico, sem botões. Papel abaixo de `developer` vê os botões inertes e o motivo em texto; a recusa da api vira toast com a frase dela. A web não decide nada: só lê o payload do engine.
 - **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:228` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:215` (`paradaVigente`).
 - **Teste:** `apps/web/src/routes/DestravarExecucao.test.tsx`, `apps/web/src/lib/execution.test.ts`, `apps/web/src/lib/activity.test.ts`.
@@ -666,6 +668,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1460 — O cartão do projeto tem o nome na primeira linha, os agentes por extenso e "sem teto do mês · definir"; a grade filtra Ativos, Parados e Todos {#rn-1460}
 
+> **Revisada pela [RN-1490](#rn-1490) (AT-1007):** o cartão parado ganha o chip "parado" e o rodapé não repete "atividade em ‹ator›".
+
 > **Revisa** a regra do botão "Definir orçamento" do cartão ([RN-963](parte-06.md#rn-963), item 3, e [RN-212](parte-02.md#rn-212)): o botão sai; o `?tab=spend` virou `?tab=spend#teto` ([RN-1450](#rn-1450)).
 
 - **Regra:** no `ProjectCard` o nome ocupa a linha inteira ao lado do ícone do provider (só se corta com reticências quando passa da largura do cartão), e os chips (aprovações, "<agente> aguardando você", "N online", provisionamento) descem para uma linha própria, que não existe sem chip. Os agentes do roster (até 4, o resto como "+N") mostram o nome por extenso ao lado do avatar, não só no `title`; o web não afirma "trabalhando" por agente porque o resumo da grade só traz a contagem de online. Projeto sem teto do mês (resumo lido e `budget` nulo) mostra o texto "sem teto do mês · definir", com "definir" como link (`role="link"`) para `/projects/:id?tab=spend#teto`; nenhum botão "Definir orçamento" existe na página. Acima da grade um `ToggleGroup` com "Ativos · N", "Parados · N" e "Todos". **Parado** é o projeto cujo último evento tem mais de 30 dias (fixo, `DIAS_PARADO`); sem evento vale a data de criação do projeto; **sem o resumo da grade lido (carregando ou erro) ninguém é dado como parado**, porque a tela não afirma o que não leu (EP-020). O padrão é Ativos e a escolha fica em `localStorage` (`brabo.inicio.filtro`, com `try/catch`). A busca atua dentro do filtro; filtro sem resultado diz "Nenhum projeto ativo" ou "Nenhum projeto parado" e o seletor continua na tela. O cartão "Novo projeto" segue como último item da grade.
@@ -880,3 +884,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/StatusPage.tsx`.
 - **Teste:** `src/routes/StatusPage.test.tsx`.
 - **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa o botão só de ícone da AT-327.
+
+<a id="rn-1490"></a>
+
+### RN-1490 — O Início, o Novo projeto e a Caixa fecham as sobras da v11: chip "parado", passos com nome, título do plano e seta nas linhas {#rn-1490}
+
+- **Regra:** (1) o cartão do projeto parado ganha o chip "parado" (tom neutro), pelo mesmo critério do filtro ([RN-1460](#rn-1460): `estaParado`, último evento há mais de 30 dias); sem o resumo do projeto o chip não aparece. (2) O rodapé do cartão usa a regra da "Atividade recente" ([RN-1462](#rn-1462)): evento genérico ("atividade em ‹ator›") não vira frase e o rodapé fica só com a idade. (3) No Novo projeto o nome de cada passo fica sob o número ("Origem · Onde mora · Revisar") e o passo atual leva `aria-current="step"`; no passo "Onde mora" os modos ficam numa grade de uma linha (2 linhas de texto cada) e o caminho da pasta ocupa a largura toda, sem rolagem interna em 1366 × 768. (4) Na Caixa o plano de execução tem título próprio, "Plano de execução do ‹lead›: N dev agents, um por módulo" (no máximo 80 caracteres, montado dos `modulos` do payload), e a linha de baixo deixa de repetir a frase. (5) A linha do plano troca o link "Abrir" pelo botão "Abrir plano", que leva ao card ([RN-467](parte-03.md#rn-467)); o plano continua fora da seleção em lote. (6) Toda linha da Caixa tem à direita o botão de seta (›) com o nome "Abrir ‹título›", para o mesmo destino do link de antes.
+- **Onde:** `src/components/ProjectCard.tsx` (`parado`), `src/routes/Dashboard.tsx` (`lastActivityText`), `src/routes/NewProjectWizard.tsx` e `.module.css` (`stepper`, `modoGrid`), `src/lib/caixa-de-decisoes.ts` (`tituloDoPlano`, `detalheDoPlano`), `src/components/CaixaDeDecisoes.tsx`.
+- **Teste:** `src/routes/Dashboard.test.tsx`, `src/routes/NewProjectWizard.test.tsx`, `src/lib/caixa-de-decisoes.test.ts`, `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-1007 (EP-035), pranchas L02 e L03 da v11. Revisa [RN-1460](#rn-1460). Declarado: a nota "‹agente› · ‹projeto›" em "Agentes agora" fica fora, porque o Início mostra a seção como contagem e a resposta não traz o projeto de cada agente (sobra de api).
+
+<a id="rn-1491"></a>
+
+### RN-1491 — Na Execução, a faixa de parada é de aviso e as seções abaixo da tabela ficam recolhidas numa linha com a contagem {#rn-1491}
+
+- **Regra:** (1) a faixa de execução parada ([RN-1061](#rn-1061)) usa o tom de aviso (âmbar), não o de perigo, e cabe numa linha em 1848 px; quando um gate estacionado está por trás da parada (`gate.rescue_parked` de uma tarefa bloqueada da parada), a faixa oferece "Pedir o parecer de novo", a mesma ação da linha da PR ([RN-1474](#rn-1474)); os botões de `DestravarExecucao` não mudam. (2) O modo automático do time, as tarefas bloqueadas com as PRs e as pendências de outras sessões ficam abaixo da tabela, cada seção recolhida numa linha com a contagem ("3 agentes em manual · Ver", "2 tarefas bloqueadas · 0 PRs · Ver") e abrem ao clicar; a página cabe em 925 px de altura. (3) Em Indicadores, "Ver a fila" fica na mesma linha do valor da Fila, e com zero tarefas rodando a nota diz "nenhuma rodando". (4) O menu "…" da linha da tabela tem 280 px no mínimo, e a dica do modo automático cabe em 3 linhas.
+- **Onde:** `src/routes/ProjectExecutorsTab.tsx`, `src/routes/AcoesDaExecucao.tsx`, `src/components/PendenciasDeOutrasSessoes.tsx` (`padraoAberto={filasDoChat}`), `src/routes/IndicadoresDaExecucao.tsx`, `src/routes/TabelaDeExecutores.tsx` e `.module.css`.
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx`, `src/routes/AcoesDaExecucao.test.tsx`.
+- **Origem:** AT-1007 (EP-035), prancha L05 da v11; decisão do dono de 20/11 (P2). Revisa [RN-1061](#rn-1061), [RN-1466](#rn-1466) e [RN-1468](#rn-1468). Declarado: sem chamadas no resumo, o "Gasto da execução" fica sem nota (sobra de api).
+
+<a id="rn-1492"></a>
+
+### RN-1492 — O cartão do agente da Visão geral mostra o chip "local", a autonomia com texto e as ações num menu {#rn-1492}
+
+- **Regra:** (1) com o modelo local (provider `ollama`, o mesmo critério da categoria `local` do catálogo), o cartão ganha o ponto de atenção e o chip "local" ao lado do nome do modelo; sem o modelo no catálogo o chip não aparece. (2) A autonomia é um `ToggleGroup` com o texto visível "Manual | Piloto automático"; `aria-pressed` e `onAutonomyChange` não mudam. (3) "Procurar tarefa de novo" sai do corpo do cartão e entra no menu "⋯" ("Mais ações de ‹agente›"). (4) O gasto do cartão usa o formato pt-BR, com vírgula. (5) O texto da arquitetura vazia é "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias."
+- **Onde:** `src/components/AgentCard.tsx`, `src/components/AgentTeamGrid.tsx`, `src/locales/*/overview.json` (`architecture.emptyState`).
+- **Teste:** `src/components/AgentCard.test.tsx`, `src/components/AgentTeamGrid.test.tsx`.
+- **Origem:** AT-1007 (EP-035), prancha L10 da v11; revisa RN-603 e RN-670 só na forma do controle. Declarado: o `formatMicros` do cartão segue local, formatado em pt-BR com `toLocaleString`, até a AT-1004 levar o de `lib/execution.ts` ao mesmo formato.

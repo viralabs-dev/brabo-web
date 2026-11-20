@@ -1,17 +1,27 @@
+/* RN-1449: uma coluna no estreito; lista + Rastreabilidade (320px) a partir de 1000px do contêiner. */
+.pagina {
+  container-type: inline-size;
+}
+
 .wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
-  align-items: flex-start;
+  align-items: start;
+}
+
+@container (min-width: 1000px) {
+  .wrapper {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
 }
 
 .tree {
-  flex: 1;
   min-width: 0;
 }
 
 .traceability {
-  width: 300px;
-  flex-shrink: 0;
+  min-width: 0;
 }
 
 .sectionLabel {
@@ -169,6 +179,7 @@
 
 .count {
   margin-left: auto;
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-size: var(--fs-label);
   color: var(--text-muted);
@@ -299,6 +310,35 @@
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+/* RN-1447: uma linha com quebra; nada com posição absoluta nem margem negativa. */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.busca {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+.modulo {
+  width: auto;
+}
+
+.visoesDoFiltro {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.progresso {
+  width: 72px;
+  flex: none;
 }
 
 .quadro {

@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "draft",
-    "ready": "ready",
-    "inProgress": "in progress",
+    "ready": "ready to run",
+    "inProgress": "running",
     "done": "done"
   },
   "sectionLabel": {
@@ -130,8 +130,8 @@
     "recorte": "The question count is a slice: only the first 50 of {{total}} are included."
   },
   "epico": {
-    "progresso_one": "{{count}} story · {{prontas}} of {{count}} done",
-    "progresso_other": "{{count}} stories · {{prontas}} of {{count}} done"
+    "progresso_one": "{{prontas}} of {{count}} done",
+    "progresso_other": "{{prontas}} of {{count}} done"
   },
   "historia": {
     "perguntas_one": "{{count}} question",

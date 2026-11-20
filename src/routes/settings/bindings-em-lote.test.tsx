@@ -131,7 +131,7 @@ function lote(): BindingsResolvidosEmLote {
   };
 }
 
-const SEM_MODELO_AGENTE = settingsPtBR.modelsSection.originChainNoModel;
+const SEM_MODELO_AGENTE = settingsPtBR.modelsSection.deOndeVem.semModelo;
 const NAO_LIDO = settingsPtBR.resolvedBindings.cellUnread;
 const LENDO = settingsPtBR.resolvedBindings.cellLoading;
 

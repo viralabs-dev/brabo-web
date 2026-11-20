@@ -37,6 +37,7 @@ export function PreferenciaDeRoteamento({
   proprio,
   podeEditar,
   alvo,
+  semAvisoDeCapability,
   onChange,
 }: {
   resolvido: ResolvedBinding | null | undefined;
@@ -46,6 +47,8 @@ export function PreferenciaDeRoteamento({
   podeEditar: boolean;
   /** Nome legível da linha, para o rótulo acessível. */
   alvo: string;
+  /** O aviso "não provado" vem numa faixa da tabela, uma vez só (RN-1454). */
+  semAvisoDeCapability?: boolean;
   onChange: (preferencia: RoutingPreference | null) => void;
 }) {
   const { t } = useTranslation('settings');
@@ -57,6 +60,7 @@ export function PreferenciaDeRoteamento({
   if (!doProvider) return null;
 
   if (!doProvider.capabilities.routingPreference) {
+    if (semAvisoDeCapability) return null;
     return (
       <span className={styles.vazioComTexto} data-roteamento="sem-capability">
         {t('roteamento.notSupportedCurto', { provider: modelo.provider })}

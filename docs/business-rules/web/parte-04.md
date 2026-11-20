@@ -1222,7 +1222,7 @@ botão seria um controle que não controla nada; a seção diz isso em texto
   (`RunnerOnboardingPanel`, o mesmo da aba Código);
   `apps/web/src/locales/pt-BR/settings.json:249` e
   `apps/web/src/locales/en/settings.json:249` (`executionMode.nextStep.*`) e
-  `:251` (`executionMode.path.runnerTyped`, reescrito); a cadência medida em
+  `:270` (`executionMode.path.runnerTyped`, reescrito); a cadência medida em
   `apps/runner/src/espera-de-projetos.ts:60` (`CADENCIA_DA_ESPERA_MS`) e a
   lista lida uma vez em `apps/runner/src/index.ts` (`rodarComoAgenteDeMaquina`)
 - **Teste:** o describe `RN-612` em

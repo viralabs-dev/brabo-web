@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react';
-import { Cpu } from 'lucide-react';
+import { Cpu, TriangleAlert } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -16,7 +16,7 @@ import {
   syncModelCatalog,
   setAreaModelBinding,
 } from '../../lib/api-client';
-import { AGENT_LIST, areaFor, nomeDoAgente } from '../../lib/agents';
+import { AGENT_LIST, AGENTS, areaFor, nomeDoAgente } from '../../lib/agents';
 import { useCurrentWorkspaceWithRole } from '../../lib/hooks';
 import { roleAtLeast } from '../../lib/roles';
 import type {
@@ -39,6 +39,7 @@ import { AGENTE_DE_START, herdouDoCriativo, montarCadeia } from './cascata.helpe
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { useAplicacaoEmLote } from './aplicar-a-todos';
 import { PreferenciaDeRoteamento } from './PreferenciaDeRoteamento';
+import { useCapacidadesDosProviders } from './PreferenciaDeRoteamento.helpers';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
 import {
   invalidarBindingsResolvidos,
@@ -47,6 +48,8 @@ import {
 import { AvisoDeBindingsNaoLidos, MarcaDeBindingNaoLido } from './LeituraDosBindings';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Item } from '@/components/shadcn/item';
+import { Alert, AlertIcone, AlertTexto } from '@/components/shadcn/alert';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 
 /**
  * Modelos por agente — a primeira seção do mockup (`design/SCREENS.md`).
@@ -254,6 +257,31 @@ async function sincronizarCatalogo() {
   const custoPorAgente = new Map(
     (custos ?? []).map((c) => [c.actorId, c.costMicros]),
   );
+  // Agentes com gasto primeiro (v11, L09); os outros ficam atrás de um botão.
+  const [mostrarOutros, setMostrarOutros] = useState(false);
+  const comGasto = AGENT_LIST.filter((a) => custoPorAgente.has(a.key)).sort(
+    (a, b) => (custoPorAgente.get(b.key) ?? 0) - (custoPorAgente.get(a.key) ?? 0),
+  );
+  const semGasto = AGENT_LIST.filter((a) => !custoPorAgente.has(a.key));
+  // Sem gasto lido (ou nenhum agente com gasto) a tabela não esconde nada: mostrar
+  // "0 agentes" seria afirmar o que a tela não leu (EP-020).
+  const podeResumir = custos !== undefined && comGasto.length > 0 && semGasto.length > 0;
+  const linhas = podeResumir && !mostrarOutros ? comGasto : [...comGasto, ...semGasto];
+
+  // O aviso de roteamento vale para a tabela inteira: sai da linha e vem UMA vez
+  // acima da tabela (RN-1454), por provider que não declara a capability.
+  const { data: capacidades } = useCapacidadesDosProviders(allModels.length > 0);
+  const providersSemRoteamento = [
+    ...new Set(
+      AGENT_LIST.flatMap((a) => {
+        const modelo = allModels.find((m) => m.id === bindings.doAgente(a.key)?.modelId);
+        const doProvider = modelo && capacidades?.find((c) => c.provider === modelo.provider);
+        return modelo && doProvider && !doProvider.capabilities.routingPreference
+          ? [modelo.provider]
+          : [];
+      }),
+    ),
+  ];
   const custoTotalMicros = (custos ?? []).reduce(
     (soma, c) => soma + c.costMicros,
     0,
@@ -560,7 +588,7 @@ async function sincronizarCatalogo() {
       key: 'model',
       largaNoMovel: true,
       label: t('modelsSection.columns.model'),
-      width: '1.7fr',
+      width: '2.4fr',
       render: (agent) => {
         const resolved = bindings.doAgente(agent.key);
         const modeloVigente = allModels.find((m) => m.id === resolved?.modelId);
@@ -617,15 +645,15 @@ async function sincronizarCatalogo() {
               }
               podeEditar={editavel}
               alvo={agent.name}
+              semAvisoDeCapability
               onChange={(preferencia) =>
                 resolved &&
                 handleRoutingChange(agent.key, resolved.modelId, preferencia)
               }
             />
-          </span>
           {areaLead && (
-            <div className={styles.ajusteHint}>
-              <label>
+            <div className={styles.ajusteCompacto}>
+              <label className={styles.ajusteInline}>
                 <Checkbox
                   checked={segueArea}
                   disabled={!podeEditarArea || !resolved}
@@ -654,6 +682,7 @@ async function sincronizarCatalogo() {
               )}
             </div>
           )}
+          </span>
           </>
         ) : null;
       },
@@ -665,7 +694,7 @@ async function sincronizarCatalogo() {
       // proporções do handoff descreviam aquela célula, não esta.
       largaNoMovel: true,
       label: t('modelsSection.columns.origin'),
-      width: '1.75fr',
+      width: '1.2fr',
       render: (agent) => {
         const resolved = bindings.doAgente(agent.key);
         const areaDoAgente = areaFor(agent.key);
@@ -688,19 +717,45 @@ async function sincronizarCatalogo() {
             </span>
           );
         }
+        const herdadoDoCriativo = herdadoDoStartDe(agent.key, resolved);
+        const textoDoChip = !resolved
+          ? t('modelsSection.deOndeVem.semModelo')
+          : herdadoDoCriativo
+            ? t('modelsSection.deOndeVem.herdaDoCriativo', { nome: AGENTS[AGENTE_DE_START].name })
+            : divergiu
+              ? t('modelsSection.deOndeVem.proprio')
+              : t(`modelsSection.deOndeVem.herda.${resolved.origin}`);
         return (
           <span className={styles.origem}>
-            <CadeiaDeCascata
-              niveis={cadeiaDoAgente(agent.key, resolved)}
-              rotulos={
-                areaDoAgente
-                  ? { area: t('cascata.niveisComNome.area', { area: areaDoAgente.label }) }
-                  : undefined
-              }
-              nomeDoModelo={nomeDoModelo}
-              rotuloSemModelo={t('modelsSection.originChainNoModel')}
-              tituloSemModelo={t('modelsSection.originChainNoModelTitle')}
-            />
+            {/* A cadeia da cascata mora no Popover do chip, e não na linha (RN-470). */}
+            <Popover>
+              <PopoverTrigger
+                className={styles.chipDeOndeVem}
+                aria-label={t('modelsSection.deOndeVem.abrir', { agente: agent.name })}
+              >
+                {textoDoChip}
+              </PopoverTrigger>
+              <PopoverContent className={styles.cadeiaNoPopover} align="start">
+                <CadeiaDeCascata
+                  niveis={cadeiaDoAgente(agent.key, resolved)}
+                  rotulos={
+                    areaDoAgente
+                      ? { area: t('cascata.niveisComNome.area', { area: areaDoAgente.label }) }
+                      : undefined
+                  }
+                  nomeDoModelo={nomeDoModelo}
+                  rotuloSemModelo={t('modelsSection.originChainNoModel')}
+                  tituloSemModelo={t('modelsSection.originChainNoModelTitle')}
+                />
+                <p className={styles.fallbackNoPopover}>
+                  {fallbackDe(agent.key, resolved?.origin)
+                    ? t('modelsSection.fallbackPopover', {
+                        modelo: fallbackDe(agent.key, resolved?.origin),
+                      })
+                    : t('modelsSection.fallbackNone')}
+                </p>
+              </PopoverContent>
+            </Popover>
             {divergiu && (
               <Button
                 variant="ghost"
@@ -734,27 +789,6 @@ async function sincronizarCatalogo() {
       },
     },
     {
-      key: 'fallback',
-      label: t('modelsSection.columns.fallback'),
-      width: '1.15fr',
-      render: (agent) => {
-        const resolved = bindings.doAgente(agent.key);
-        const nome = fallbackDe(agent.key, resolved?.origin);
-        if (nome) return <span className={styles.fallback}>{nome}</span>;
-        // Sem binding nenhum a coluna Origem já disse tudo — repetir a ausência
-        // aqui seria um segundo enunciado do mesmo vazio.
-        if (!resolved) return null;
-        return (
-          <span
-            className={styles.vazioComTexto}
-            title={t('modelsSection.fallbackNoneTitle')}
-          >
-            {t('modelsSection.fallbackNone')}
-          </span>
-        );
-      },
-    },
-    {
       key: 'estimate',
       label: t('modelsSection.columns.estimate'),
       width: '0.85fr',
@@ -781,8 +815,8 @@ async function sincronizarCatalogo() {
     <SecaoDeConfiguracoes chave="models">
       <div className={styles.sectionHead}>
         <h2 className={styles.title}><Cpu aria-hidden="true" className={styles.tituloIcone} />{t('modelsSection.title')}</h2>
-        <Ajuda assunto={t('modelsSection.title')}>
-        <span>
+      </div>
+      <p className={styles.subtitle} data-testid="explicacao-da-cascata">
         {/* A legenda é a MESMA fonte de rótulos da cadeia da coluna Origem
             (`cascata.niveis.*`): a frase que explica a descida e os nós que a
             mostram linha a linha não podem chamar os níveis de nomes
@@ -806,13 +840,11 @@ async function sincronizarCatalogo() {
         </span>.{' '}
         {t('modelsSection.subtitle.mostSpecificWins')}{' '}
         <strong>{t('modelsSection.subtitle.areaWord')}</strong>{' '}
-        {t('modelsSection.subtitle.areaExplain')}
-        <br />
-        {t('modelsSection.ajudaRoteamento')} {t('roteamento.inheritedHint')} {t('roteamento.teto')}
-        </span>
+        {t('modelsSection.subtitle.areaExplain')}{' '}
+        <Ajuda assunto={t('modelsSection.title')}>
+          {t('modelsSection.ajudaRoteamento')} {t('roteamento.inheritedHint')} {t('roteamento.teto')}
         </Ajuda>
-        <span className={styles.eyebrow}>{t('modelsSection.eyebrow')}</span>
-      </div>
+      </p>
       {(!podeEditar || !podeEditarArea) && (
       <p className={styles.subtitle}>
         {/* O motivo dos controles apagados, dito uma vez e em TEXTO — mesma
@@ -888,17 +920,38 @@ async function sincronizarCatalogo() {
         />
       )}
 
+      {providersSemRoteamento.length > 0 && (
+        <Alert variant="warning" data-roteamento="faixa">
+          <AlertIcone>
+            <TriangleAlert size={16} />
+          </AlertIcone>
+          <AlertTexto>
+            {providersSemRoteamento
+              .map((provider) => t('roteamento.notSupportedCurto', { provider }))
+              .join(' · ')}
+            . {t('modelsSection.faixaRoteamentoMuda', { total: AGENT_LIST.length })}
+          </AlertTexto>
+        </Alert>
+      )}
+
       {/* Rolagem horizontal DENTRO da tabela: com a navegação lateral a coluna do modelo ficava estreita. */}
       <div className={styles.rolagemHorizontal}>
         <div className={styles.larguraMinima}>
           <Table
             columns={columns}
-            rows={AGENT_LIST}
+            rows={linhas}
             rowKey={(a) => a.key}
             emptyMessage={t('modelsSection.emptyMessage')}
           />
         </div>
       </div>
+      {podeResumir && (
+        <Button variant="ghost" size="sm" onClick={() => setMostrarOutros((v) => !v)}>
+          {mostrarOutros
+            ? t('modelsSection.deOndeVem.esconderOutros')
+            : t('modelsSection.deOndeVem.mostrarOutros', { count: semGasto.length })}
+        </Button>
+      )}
       {allModels.length === 0 && (
         <div className={styles.subtitle}>
           {t('modelsSection.noModelsAvailable')}{' '}

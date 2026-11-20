@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import settingsPtBR from '../../locales/pt-BR/settings.json';
@@ -9,7 +9,7 @@ import settingsEn from '../../locales/en/settings.json';
 import modelsPtBR from '../../locales/pt-BR/models.json';
 import modelsEn from '../../locales/en/models.json';
 import { ToastProvider } from '../../components/ui/ToastProvider';
-import { AGENT_LIST } from '../../lib/agents';
+import { AGENT_LIST, AGENTS } from '../../lib/agents';
 import type { Project } from '../../lib/api-types';
 import { ModelsSection } from './ModelsSection';
 import { herdouDoCriativo, montarCadeia } from './cascata.helpers';
@@ -128,6 +128,15 @@ beforeEach(() => {
   });
 });
 
+/** A cadeia mora no Popover do chip "De onde vem" (AT-974, RN-470): abre o do agente. */
+async function abrirDeOndeVem(chave: keyof typeof AGENTS) {
+  fireEvent.click(
+    await screen.findByRole('button', {
+      name: `De onde vem o modelo de ${AGENTS[chave].name}`,
+    }),
+  );
+}
+
 describe('cadeia da cascata — os DOIS sentidos de `agent`', () => {
   /**
    * Caso 1: existe uma linha de escopo `agent` em `model_bindings`. O nó
@@ -146,12 +155,15 @@ describe('cadeia da cascata — os DOIS sentidos de `agent`', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montar(<ModelsSection projectId="proj-1" />);
 
+    await abrirDeOndeVem('qa-automacao');
     const vigente = await screen.findAllByTitle(
       'É deste nível que sai o modelo vigente (m-agente).',
     );
     expect(vigente).toHaveLength(1);
     expect(vigente[0]).toHaveTextContent('agente');
     expect(screen.queryAllByTitle(/herda o do Criativo/)).toHaveLength(0);
+    // A linha diz só a origem, em texto (RN-470).
+    expect(screen.getAllByText('definido neste agente')).toHaveLength(1);
   });
 
   /**
@@ -170,32 +182,27 @@ describe('cadeia da cascata — os DOIS sentidos de `agent`', () => {
     getWorkspaceModelBinding.mockResolvedValue({ modelId: 'm-workspace' });
     montar(<ModelsSection projectId="proj-1" />);
 
-    // Um nó por agente, MENOS o próprio Criativo: quem já é o agente de start
+    // Um chip por agente, MENOS o próprio Criativo: quem já é o agente de start
     // não herda de si mesmo, e a linha dele continua sendo binding próprio.
-    const doCriativo = await screen.findAllByTitle(/herda o do Criativo/);
-    expect(doCriativo).toHaveLength(AGENT_LIST.length - 1);
-    expect(doCriativo[0]).toHaveTextContent('Criativo');
+    expect(await screen.findAllByText('herda do Criativo')).toHaveLength(
+      AGENT_LIST.length - 1,
+    );
+    await abrirDeOndeVem('qa-automacao');
+    expect((await screen.findAllByTitle(/herda o do Criativo/))[0]).toHaveTextContent('Criativo');
 
     // O nível que a cascata ALCANÇOU aparece como definido-e-não-vigente: o
-    // modelo do workspace NÃO é o que vale em linha nenhuma, e marcá-lo vigente
-    // seria afirmar o modelo errado.
+    // modelo do workspace NÃO é o que vale, e marcá-lo vigente seria afirmar o
+    // modelo errado.
     expect(
       await screen.findAllByTitle(
         'Valor próprio neste nível (m-workspace), mas um nível mais específico venceu.',
       ),
-    ).toHaveLength(AGENT_LIST.length);
+    ).toHaveLength(1);
     expect(
       screen.queryAllByTitle(
         'É deste nível que sai o modelo vigente (m-workspace).',
       ),
     ).toHaveLength(0);
-
-    // A linha do próprio Criativo: um vigente só, e é o nó `agente`.
-    const vigente = screen.getAllByTitle(
-      'É deste nível que sai o modelo vigente (m-criativo).',
-    );
-    expect(vigente).toHaveLength(1);
-    expect(vigente[0]).toHaveTextContent('agente');
   });
 
   /**
@@ -211,6 +218,8 @@ describe('cadeia da cascata — os DOIS sentidos de `agent`', () => {
     getWorkspaceModelBinding.mockResolvedValue({ modelId: 'm-workspace' });
     montar(<ModelsSection projectId="proj-1" />);
 
+    expect((await screen.findAllByText('herda do Criativo')).length).toBeGreaterThan(0);
+    await abrirDeOndeVem('dev-lead');
     expect((await screen.findAllByTitle(/herda o do Criativo/)).length).toBeGreaterThan(0);
     expect(screen.getByRole('checkbox', { name: /área Dev inteira/ })).not.toBeChecked();
     expect(screen.queryAllByText('agent')).toHaveLength(0);
@@ -224,9 +233,15 @@ describe('cadeia da cascata — os DOIS sentidos de `agent`', () => {
     });
     montar(<ModelsSection projectId="proj-1" />, 'en');
 
-    expect(
-      await screen.findAllByTitle(/inherits the Creative's/),
-    ).toHaveLength(AGENT_LIST.length - 1);
+    expect(await screen.findAllByText('inherits from Criativo')).toHaveLength(
+      AGENT_LIST.length - 1,
+    );
+    fireEvent.click(
+      await screen.findByRole('button', {
+        name: `Where ${AGENTS['qa-automacao'].name}'s model comes from`,
+      }),
+    );
+    expect(await screen.findAllByTitle(/inherits the Creative's/)).toHaveLength(1);
   });
 });
 
@@ -253,6 +268,7 @@ describe('cadeia da cascata — o nível PULADO entra na própria cadeia', () =>
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montar(<ModelsSection projectId="proj-1" />);
 
+    await abrirDeOndeVem('qa-automacao');
     const pulado = await screen.findAllByTitle(
       'A cascata DESCARTOU este nível: m-sumiu sumiu do provider.',
     );
@@ -267,9 +283,9 @@ describe('cadeia da cascata — os três vazios que eram o mesmo traço', () => 
   it('sem binding em nível nenhum: texto do vazio do AGENTE', async () => {
     montar(<ModelsSection projectId="proj-1" />);
 
-    expect(
-      await screen.findAllByText('sem modelo em nenhum nível'),
-    ).toHaveLength(AGENT_LIST.length);
+    expect(await screen.findAllByText('sem modelo')).toHaveLength(AGENT_LIST.length);
+    await abrirDeOndeVem('qa-automacao');
+    expect(await screen.findAllByText('sem modelo em nenhum nível')).toHaveLength(1);
   });
 
   it('agente sem consumo: texto do vazio do CUSTO, diferente do da origem', async () => {
@@ -455,5 +471,47 @@ describe('herdouDoCriativo — o que a tela consegue provar', () => {
         doCriativo,
       }),
     ).toBe(false);
+  });
+});
+
+describe('Modelos por agente — agentes com gasto primeiro e aviso de roteamento (AT-974)', () => {
+  it('só os agentes com gasto na tabela, os outros atrás de "Mostrar os outros N agentes"', async () => {
+    getProjectAgentCosts.mockResolvedValue([{ actorId: 'qa-automacao', costMicros: 1_000_000 }]);
+    montar(<ModelsSection projectId="proj-1" />);
+
+    const botao = await screen.findByRole('button', {
+      name: `Mostrar os outros ${AGENT_LIST.length - 1} agentes`,
+    });
+    expect(screen.queryByText('sem gasto ainda')).toBeNull();
+    fireEvent.click(botao);
+    expect(await screen.findAllByText('sem gasto ainda')).toHaveLength(AGENT_LIST.length - 1);
+  });
+});
+
+describe('Modelos por agente — quatro colunas e gasto decrescente (AT-974)', () => {
+  it('o cabeçalho é Agente, Modelo vigente, De onde vem e Est. mês; sem Origem nem Fallback', async () => {
+    montar(<ModelsSection projectId="proj-1" />);
+
+    await screen.findByText('Modelos por agente');
+    expect(await screen.findByText('De onde vem')).toBeInTheDocument();
+    expect(screen.queryByText('Origem')).toBeNull();
+    expect(screen.queryByText('Fallback')).toBeNull();
+    expect(screen.queryByText('binding vigente por cascata')).toBeNull();
+  });
+
+  it('os agentes com gasto vêm do maior para o menor gasto, não na ordem do catálogo', async () => {
+    const [a, b, c] = AGENT_LIST.slice(0, 3);
+    getProjectAgentCosts.mockResolvedValue([
+      { actorId: a.key, costMicros: 1_000_000 },
+      { actorId: b.key, costMicros: 9_000_000 },
+      { actorId: c.key, costMicros: 5_000_000 },
+    ]);
+    montar(<ModelsSection projectId="proj-1" />);
+
+    await screen.findByText(/Mostrar os outros/);
+    const nomes = screen
+      .getAllByRole('button', { name: /^De onde vem o modelo de/ })
+      .map((x) => x.getAttribute('aria-label'));
+    expect(nomes).toEqual([b, c, a].map((x) => `De onde vem o modelo de ${x.name}`));
   });
 });

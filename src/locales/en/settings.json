@@ -86,7 +86,6 @@
   },
   "modelsSection": {
     "title": "Models by agent",
-    "eyebrow": "current binding by cascade",
     "subtitle": {
       "intro": "Origin shows where the value is resolved:",
       "mostSpecificWins": "The most specific wins.",
@@ -102,8 +101,7 @@
     "columns": {
       "agent": "Agent",
       "model": "Current model",
-      "origin": "Origin",
-      "fallback": "Fallback",
+      "origin": "Where it comes from",
       "estimate": "Est. month"
     },
     "backToInheritTitleWithArea": "Deletes this agent's own model — it goes back to using the default of the {{area}} area.",
@@ -149,7 +147,25 @@
         "partial": "The area default was saved, but {{agent}}'s own model was not removed ({{reason}})"
       }
     },
-    "ajudaRoteamento": "Routing: the preference (lowest price, highest throughput, lowest latency) is only declared for a provider after it is proven against the real API. Without proof, the row says it is not proven."
+    "ajudaRoteamento": "Routing: the preference (lowest price, highest throughput, lowest latency) is only declared for a provider after it is proven against the real API. Without proof, the row says it is not proven.",
+    "deOndeVem": {
+      "semModelo": "no model",
+      "herdaDoCriativo": "inherits from {{nome}}",
+      "herda": {
+        "agent": "inherits from another agent",
+        "session": "inherits from the session",
+        "area": "inherits from the area",
+        "project": "inherits from the project",
+        "workspace": "inherits from the workspace"
+      },
+      "proprio": "set on this agent",
+      "abrir": "Where {{agente}}'s model comes from",
+      "esconderOutros": "Hide agents with no spend",
+      "mostrarOutros_one": "Show the other agent",
+      "mostrarOutros_other": "Show the other {{count}} agents"
+    },
+    "fallbackPopover": "If the own model is lost, this applies: {{modelo}}",
+    "faixaRoteamentoMuda": "On this provider the routing preference was not proven against the real API, so it is not applied: the provider decides. It holds for all {{total}} agents. A row that differs shows the difference on itself."
   },
   "members": {
     "title": "Members and roles",
@@ -158,7 +174,8 @@
     "subtitleCascata": " The role in this table replaces the workspace one for this project, in both directions — setting viewer here demotes even a workspace owner. Whoever reaches the project through the workspace alone doesn't show up in the list.",
     "subtitleNeedsMaintainer": " Requires the maintainer role to invite someone, change a role, or remove someone.",
     "invite": {
-      "placeholder": "User ID (UUID)",
+      "placeholder": "E-mail",
+      "label": "E-mail of someone already in the workspace",
       "button": "Invite"
     },
     "table": {
@@ -321,7 +338,11 @@
     },
     "mes": {
       "rotulo": "Monthly spend cap",
-      "descricao": "How much the project may spend per month (UTC); the reset time is shown with the cap."
+      "descricao": "How much the project may spend per month (UTC); the reset time is shown with the cap.",
+      "semTeto": "No cap this month",
+      "valor": "{{gasto}} of {{teto}} · {{pct}}%",
+      "editarEmGastos": "Edit in Spend",
+      "naoLido": "Could not read the cap"
     }
   },
   "promotion": {

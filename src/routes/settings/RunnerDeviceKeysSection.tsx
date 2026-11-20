@@ -316,6 +316,7 @@ export function RunnerDeviceKeysSection({ projectId }: { projectId: string }) {
           rows={chaves ?? []}
           rowKey={(chave) => chave.id}
           emptyMessage={t('runnerDeviceKeys.emptyMessage')}
+          semCabecalhoSeVazia
         />
       )}
       {temOrfa && <p className={styles.subtitle}>{t('runnerDeviceKeys.orfa')}</p>}

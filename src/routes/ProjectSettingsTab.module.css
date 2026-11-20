@@ -836,8 +836,10 @@
   /* Âncora dos inputs ocultos do Base UI (absolutos): sem ela escapam da célula. */
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
   min-width: 0;
 }
 
@@ -874,5 +876,54 @@
   flex-wrap: wrap;
   padding: 8px 0;
   font-size: var(--fs-body);
+  color: var(--text-muted);
+}
+
+/* AT-974: "De onde vem" é um chip que abre a cadeia da cascata num Popover. */
+.chipDeOndeVem {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-meta);
+  cursor: pointer;
+}
+
+.chipDeOndeVem:hover,
+.chipDeOndeVem[data-popup-open] {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.cadeiaNoPopover {
+  width: auto;
+  max-width: min(92vw, 560px);
+}
+
+/* AT-974: linha do agente compacta; a caixa da área cabe ao lado do seletor, sem dobrar a altura. */
+.ajusteInline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.ajusteCompacto {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.fallbackNoPopover {
+  margin: 0;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }

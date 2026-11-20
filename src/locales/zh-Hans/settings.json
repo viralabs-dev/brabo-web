@@ -82,7 +82,6 @@
   },
   "modelsSection": {
     "title": "按智能体的模型",
-    "eyebrow": "按级联生效的 binding",
     "subtitle": {
       "intro": "来源表示值在哪里解析：",
       "mostSpecificWins": "最具体的优先。",
@@ -99,7 +98,6 @@
       "agent": "智能体",
       "model": "当前模型",
       "origin": "来源",
-      "fallback": "回退",
       "estimate": "月预估"
     },
     "backToInheritTitleWithArea": "删除此智能体的自有模型——它将恢复使用领域 {{area}} 的默认值。",
@@ -142,7 +140,24 @@
         "partial": "领域默认值已保存，但 {{agent}} 自己的模型未被移除（{{reason}}）"
       }
     },
-    "ajudaRoteamento": "路由：该偏好（最低价格、最高吞吐、最低延迟）只有在针对真实 API 证实之后，才会为提供方声明。未经证实时，该行会说明尚未证实。"
+    "ajudaRoteamento": "路由：该偏好（最低价格、最高吞吐、最低延迟）只有在针对真实 API 证实之后，才会为提供方声明。未经证实时，该行会说明尚未证实。",
+    "deOndeVem": {
+      "semModelo": "无模型",
+      "herdaDoCriativo": "继承自 {{nome}}",
+      "herda": {
+        "agent": "继承自其他智能体",
+        "session": "继承自会话",
+        "area": "继承自领域",
+        "project": "继承自项目",
+        "workspace": "继承自工作区"
+      },
+      "proprio": "在此智能体上设置",
+      "abrir": "{{agente}} 的模型来自哪里",
+      "esconderOutros": "隐藏无支出的智能体",
+      "mostrarOutros_other": "显示其余 {{count}} 个智能体"
+    },
+    "fallbackPopover": "如果丢失自有模型，则使用：{{modelo}}",
+    "faixaRoteamentoMuda": "该提供方的路由偏好尚未在真实 API 上验证，因此不会应用：由提供方决定。适用于全部 {{total}} 个智能体。与此不同的行会在该行显示差异。"
   },
   "members": {
     "title": "成员与角色",
@@ -151,7 +166,8 @@
     "subtitleCascata": " 此表中的角色在本项目中取代工作区角色，双向生效——在这里设为 viewer 甚至会降级工作区的 owner。仅通过工作区访问项目的人不会出现在列表中。",
     "subtitleNeedsMaintainer": " 邀请、更改角色或移除成员需要 maintainer 角色。",
     "invite": {
-      "placeholder": "用户 ID（UUID）",
+      "placeholder": "邮箱",
+      "label": "工作区成员的邮箱",
       "button": "邀请"
     },
     "table": {
@@ -313,7 +329,11 @@
     },
     "mes": {
       "rotulo": "月度支出上限",
-      "descricao": "项目每月（UTC）可支出的额度；重置时间显示在上限旁。"
+      "descricao": "项目每月（UTC）可支出的额度；重置时间显示在上限旁。",
+      "semTeto": "本月无上限",
+      "valor": "{{gasto}} / {{teto}} · {{pct}}%",
+      "editarEmGastos": "在“支出”中修改",
+      "naoLido": "无法读取上限"
     }
   },
   "promotion": {

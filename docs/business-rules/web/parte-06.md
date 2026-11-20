@@ -1085,7 +1085,7 @@ keywords: [regras de negócio, web]
 ### RN-925 — Cada container tem página de detalhe com o estado registrado e o observado separados e as URLs declaradas {#rn-925}
 
 - **Regra:** `/containers/$projectId` (carregada sob demanda) abre a partir de cada linha de `/containers`. Só lê o que já existe: a linha da visão geral (a [RN-486](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-486): registrado e observado nunca se fundem; projeto "nunca provisionado" tem texto próprio, a imagem/versão, os recursos, a postura de rede da decisão vigente e o modo de execução) e as URLs de `GET projects/:projectId/run-instructions`, que a tela diz serem declaradas pela Infra e não verificadas, nunca verdes ([RN-855](#rn-855)); sem declaração, texto próprio. A leitura da página polla no ritmo de projeto (15 s, [RN-632](parte-05.md#rn-632)), nunca nos 5 s da lista. Subir, parar e remover são o MESMO componente da lista (`AcoesDoContainer`), com as mesmas recusas locais em texto ([RN-521](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-521), [RN-574](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-574), [RN-610](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-610)) e o papel do endpoint por `roleAtLeast`.
-- **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:24` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:34` (`AcoesDoContainer`)
+- **Onde:** `apps/web/src/routes/ContainerDetalhePage.tsx:24` (`ContainerDetalhePage`), `apps/web/src/components/AcoesDoContainer.tsx:43` (`AcoesDoContainer`)
 - **Teste:** `apps/web/src/routes/ContainerDetalhePage.test.tsx:92` (caminho feliz com ritmo de 15 s, nunca provisionado com URLs vazias, projeto fora da lista); `apps/web/src/routes/ContainersPage.test.tsx` cobre as ações extraídas
 - **Origem:** AT-609 (EP-030), fatia da AT-608.
 
@@ -1097,6 +1097,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/models.ts:363` (`providerAtivo`), `apps/web/src/lib/models.ts:371` (`catalogoDoProvider`), `apps/web/src/components/ModelCatalogSection.tsx:136` (`useMemo`), `apps/web/src/routes/ProvidersPage.tsx:33` (`deFora`)
 - **Teste:** `apps/web/src/routes/ProvidersPage.test.tsx:102` (só os com chave do titular, e a falha que mostra todos), `apps/web/src/components/ModelCatalogSection.test.tsx:399` (aba "sem chave" com modelo ativo; seleção entre abas; busca nomeia a aba que casa), `apps/web/src/lib/models.test.ts:126` (`providerAtivo`)
 - **Origem:** AT-607 (EP-026), tela; a rota é a RN-926.
+- **Revisão (AT-976, [RN-1482](parte-07.md#rn-1482)):** a aba "sem chave" com modelo ativo deixou de existir; todo provider sem chave sai das abas e entra na linha "de fora".
 
 <a id="rn-939"></a>
 

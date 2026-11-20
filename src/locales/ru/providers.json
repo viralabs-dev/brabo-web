@@ -8,10 +8,22 @@
     "proven": "доказано",
     "notProven": "не доказано",
     "loadError": "Не удалось загрузить возможности провайдеров.",
-    "outside_one": "{{count}} скрыт, нет ключа владельца: {{names}}",
-    "outside_few": "{{count}} скрыты, нет ключа владельца: {{names}}",
-    "outside_many": "{{count}} скрыто, нет ключа владельца: {{names}}",
-    "outside_other": "{{count}} скрыто, нет ключа владельца: {{names}}"
+    "outside_one": "{{count, number}} скрыт, нет ключа владельца: {{names}}",
+    "outside_few": "{{count, number}} скрыты, нет ключа владельца: {{names}}",
+    "outside_many": "{{count, number}} скрыто, нет ключа владельца: {{names}}",
+    "outside_other": "{{count, number}} скрыто, нет ключа владельца: {{names}}",
+    "columns": {
+      "streaming": "Стриминг",
+      "toolCalling": "Инструменты",
+      "listModels": "Список моделей",
+      "embeddings": "Эмбеддинги",
+      "reasoningText": "Рассуждение",
+      "routingPreference": "Маршрутизация",
+      "stickySession": "Закреплённая сессия",
+      "priceCeiling": "Кэш цены",
+      "promptCaching": "Кэш промпта",
+      "vision": "Зрение"
+    }
   },
   "routing": "Критерий маршрутизации OpenRouter выбирается в модели агента или области, в настройках проекта; здесь элементов управления нет."
 }

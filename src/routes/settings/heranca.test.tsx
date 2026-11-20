@@ -174,12 +174,14 @@ describe('padrão único de valor herdado — Execução (circuit breaker)', () 
 });
 
 describe('padrão único de valor herdado — Teto de gasto por área', () => {
-  it('área sem teto: a MESMA marca da Execução, com o detalhe desta seção', async () => {
+  it('área sem teto: um estado só, "sem teto próprio" (AT-1005), sem o trio de antes', async () => {
     listAgentAreas.mockResolvedValue([area({ budgetMicros: null })]);
     montar(<BudgetSection projectId="proj-1" />);
 
-    expect(await screen.findByText('Sem valor próprio')).toBeInTheDocument();
-    expect(screen.getByText('sem teto')).toBeInTheDocument();
+    expect(await screen.findByText('sem teto próprio')).toBeInTheDocument();
+    expect(screen.queryByText('Sem valor próprio')).toBeNull();
+    expect(screen.queryByText('sem teto')).toBeNull();
+    expect(screen.queryByPlaceholderText('Sem teto')).toBeNull();
   });
 
   it('área com teto: polo positivo, e o valor NÃO é repetido no detalhe', async () => {
@@ -192,17 +194,6 @@ describe('padrão único de valor herdado — Teto de gasto por área', () => {
     expect(
       screen.getByLabelText('Teto de gasto da área dev, em dólares'),
     ).toHaveValue(20);
-  });
-
-  /**
-   * O placeholder continua existindo — a DECISÃO desta PR é que ele deixou de
-   * ser o único enunciado do estado, não que ele saiu.
-   */
-  it('o placeholder do campo sobrevive, agora só como texto-fantasma', async () => {
-    listAgentAreas.mockResolvedValue([area({ budgetMicros: null })]);
-    montar(<BudgetSection projectId="proj-1" />);
-
-    expect(await screen.findByPlaceholderText('Sem teto')).toBeInTheDocument();
   });
 });
 

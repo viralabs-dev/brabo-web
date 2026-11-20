@@ -17,9 +17,9 @@ import { Table, type TableColumn } from '../../components/ui/Table';
 import { Select } from '../../components/ui/Select';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
-import { Alert, AlertTexto } from '@/components/shadcn/alert';
+import { Alert, AlertIcone, AlertTexto } from '@/components/shadcn/alert';
 import { Button as BotaoShadcn } from '@/components/shadcn/button';
-import { TrashIcon } from '../../components/ui/icons';
+import { AlertIcon, TrashIcon } from '../../components/ui/icons';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
@@ -311,7 +311,9 @@ export function MembersSection({ projectId }: { projectId: string }) {
 
       {erroDoConvite && (
         <Alert variant="danger" role="alert">
-          <AlertTexto>{erroDoConvite}</AlertTexto>
+          <AlertIcone><AlertIcon size={16} /></AlertIcone>
+          {/* O texto na cor de erro, não só a borda e o fundo (AT-1005, L09); estilo em linha vence o `text-primary` do tom. */}
+          <AlertTexto style={{ color: 'var(--danger)' }}>{erroDoConvite}</AlertTexto>
         </Alert>
       )}
 

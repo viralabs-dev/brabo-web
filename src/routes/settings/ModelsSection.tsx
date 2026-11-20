@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from 'react';
 import { Cpu, TriangleAlert } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import {
   ApiError,
   getProject,
@@ -29,7 +29,6 @@ import { Table, type TableColumn } from '../../components/ui/Table';
 import { ModelPicker } from '../../components/ModelPicker';
 import { Button } from '../../components/ui/Button';
 import { Ajuda } from '../../components/ui/Ajuda';
-import { ClockIcon } from '../../components/ui/icons';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
 import { formatarCustoMicros } from './shared';
 import styles from '../ProjectSettingsTab.module.css';
@@ -47,8 +46,8 @@ import {
 } from '../../lib/bindings-resolvidos';
 import { AvisoDeBindingsNaoLidos, MarcaDeBindingNaoLido } from './LeituraDosBindings';
 import { Checkbox } from '@/components/shadcn/checkbox';
-import { Item } from '@/components/shadcn/item';
 import { Alert, AlertIcone, AlertTexto } from '@/components/shadcn/alert';
+import { BotaoLink } from '../../components/ui/BotaoLink';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 
 /**
@@ -748,11 +747,16 @@ async function sincronizarCatalogo() {
                   tituloSemModelo={t('modelsSection.originChainNoModelTitle')}
                 />
                 <p className={styles.fallbackNoPopover}>
-                  {fallbackDe(agent.key, resolved?.origin)
-                    ? t('modelsSection.fallbackPopover', {
-                        modelo: fallbackDe(agent.key, resolved?.origin),
-                      })
-                    : t('modelsSection.fallbackNone')}
+                  {fallbackDe(agent.key, resolved?.origin) ? (
+                    <Trans
+                      i18nKey="modelsSection.fallbackPopover"
+                      ns="settings"
+                      values={{ modelo: fallbackDe(agent.key, resolved?.origin) }}
+                      components={{ m: <code className={styles.idDoModelo} /> }}
+                    />
+                  ) : (
+                    t('modelsSection.fallbackNone')
+                  )}
                 </p>
               </PopoverContent>
             </Popover>
@@ -857,16 +861,13 @@ async function sincronizarCatalogo() {
       </p>
       )}
 
-      <Item variant="outline" className={styles.custoCard}>
-        <ClockIcon size={15} className={styles.custoIcone} />
-        <span className={styles.custoTexto}>
-          {t('modelsSection.costCard.label')}{' '}
-          <span className={styles.custoDetalhe}>{t('modelsSection.costCard.detail')}</span>
-        </span>
-        <span className={styles.custoValor}>
-          {custos === undefined ? '—' : formatarCustoMicros(custoTotalMicros)}
-        </span>
-      </Item>
+      {/* O custo estimado deixou de ser uma faixa à parte: entra no título da tabela (AT-1005, L09). */}
+      <p className={styles.custoTitulo} title={t('modelsSection.tituloDaTabelaBase')}>
+        {t('modelsSection.tituloDaTabela', {
+          count: AGENT_LIST.length,
+          valor: custos === undefined ? '—' : formatarCustoMicros(custoTotalMicros),
+        })}
+      </p>
 
       {/* Aplicar um modelo aos 19 agentes de uma vez. Fica ACIMA da tabela, e
           não numa coluna: a ação é sobre a tabela inteira, e uma célula a
@@ -929,8 +930,18 @@ async function sincronizarCatalogo() {
             {providersSemRoteamento
               .map((provider) => t('roteamento.notSupportedCurto', { provider }))
               .join(' · ')}
-            . {t('modelsSection.faixaRoteamentoMuda', { total: AGENT_LIST.length })}
+            .
           </AlertTexto>
+          <Popover>
+            <PopoverTrigger render={<BotaoLink className="ml-auto shrink-0" />}>
+              {t('modelsSection.oQueIssoMuda')}
+            </PopoverTrigger>
+            <PopoverContent className={styles.cadeiaNoPopover} align="end">
+              <p className={styles.fallbackNoPopover}>
+                {t('modelsSection.faixaRoteamentoMuda', { total: AGENT_LIST.length })}
+              </p>
+            </PopoverContent>
+          </Popover>
         </Alert>
       )}
 
@@ -946,11 +957,11 @@ async function sincronizarCatalogo() {
         </div>
       </div>
       {podeResumir && (
-        <Button variant="ghost" size="sm" onClick={() => setMostrarOutros((v) => !v)}>
+        <BotaoLink onClick={() => setMostrarOutros((v) => !v)}>
           {mostrarOutros
             ? t('modelsSection.deOndeVem.esconderOutros')
             : t('modelsSection.deOndeVem.mostrarOutros', { count: semGasto.length })}
-        </Button>
+        </BotaoLink>
       )}
       {allModels.length === 0 && (
         <div className={styles.subtitle}>

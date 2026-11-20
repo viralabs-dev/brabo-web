@@ -311,8 +311,8 @@ describe('cadeia da cascata — os três vazios que eram o mesmo traço', () => 
     montar(<ModelsSection projectId="proj-1" />);
 
     await screen.findByText('Modelos por agente');
-    // O `—` do card de custo do time é OUTRA coisa (carregando), e fica.
-    expect(screen.queryAllByText('—')).toHaveLength(1);
+    // O custo do time entrou no título da tabela (AT-1005): não sobra `—` solto.
+    expect(screen.queryAllByText('—')).toHaveLength(0);
   });
 });
 

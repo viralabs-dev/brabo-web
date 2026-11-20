@@ -41,3 +41,9 @@
 .cartao > :not(.link) {
   grid-column: 1;
 }
+
+/* Fundido com os primeiros passos: volta a coluna única, os passos levam a ação à direita. */
+.cartao.fundido {
+  display: flex;
+  flex-direction: column;
+}

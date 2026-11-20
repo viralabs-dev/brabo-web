@@ -37,7 +37,12 @@
       "dependsOn": "Зависит от",
       "stories": "Истории"
     },
-    "views": {"label": "Виды архитектуры", "diagrama": "Диаграмма", "adrs": "ADR · {{n}}", "pendencias": "Вопросы · {{n}}"},
+    "views": {
+      "label": "Виды архитектуры",
+      "diagrama": "Диаграмма",
+      "adrs": "ADR · {{n}}",
+      "pendencias": "Вопросы · {{n}}"
+    },
     "noPendencies": "Нет незакрытых вопросов перекрёстной проверки.",
     "proposalTag": "ПРЕДЛОЖЕНИЕ",
     "adrProposal": "ADR «{{titulo}}» ожидает вашего одобрения, чтобы стать PR.",
@@ -71,7 +76,12 @@
     "rearmSuccess": "Агент перезапущен",
     "rearmErrorTitle": "Не удалось перезапустить агента",
     "wakeSuccess": "Ищу задачу",
-    "wakeErrorTitle": "Не удалось разбудить агента"
+    "wakeErrorTitle": "Не удалось разбудить агента",
+    "maisOciosos_one": "+ {{count}} завершён или простаивает",
+    "maisOciosos_other": "+ {{count}} завершены или простаивают",
+    "maisOciosos_few": "+ {{count}} завершены или простаивают",
+    "maisOciosos_many": "+ {{count}} завершены или простаивают",
+    "recolherOciosos": "Свернуть простаивающих"
   },
   "timeline": {
     "title": "Хронология команды",

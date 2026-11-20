@@ -37,7 +37,12 @@
       "dependsOn": "依赖",
       "stories": "故事"
     },
-    "views": {"label": "架构视图", "diagrama": "图", "adrs": "ADR · {{n}}", "pendencias": "待办 · {{n}}"},
+    "views": {
+      "label": "架构视图",
+      "diagrama": "图",
+      "adrs": "ADR · {{n}}",
+      "pendencias": "待办 · {{n}}"
+    },
     "noPendencies": "没有交叉验证待办。",
     "proposalTag": "提案",
     "adrProposal": "ADR“{{titulo}}”等待您批准后转为 PR。",
@@ -68,7 +73,9 @@
     "rearmSuccess": "智能体已重新启用",
     "rearmErrorTitle": "无法重新启用智能体",
     "wakeSuccess": "正在查找任务",
-    "wakeErrorTitle": "无法唤醒智能体"
+    "wakeErrorTitle": "无法唤醒智能体",
+    "maisOciosos_other": "+ {{count}} 个已完成或空闲",
+    "recolherOciosos": "收起空闲的"
   },
   "timeline": {
     "title": "团队时间线",

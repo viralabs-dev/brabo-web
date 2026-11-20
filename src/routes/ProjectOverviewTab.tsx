@@ -37,7 +37,6 @@ import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { ActivityFeed } from '../components/ActivityFeed';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { AmbienteDoProjeto } from '../components/AmbienteDoProjeto';
-import { PrimeirosPassos } from '../components/PrimeirosPassos';
 import { RodarNaSuaMaquina } from '../components/RodarNaSuaMaquina';
 import { releSeInfraAbriuPr } from '../components/RodarNaSuaMaquina.helpers';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -49,6 +48,7 @@ import {
   ItemDescription,
 ItemMedia,
 } from '../components/shadcn/item';
+import { Button } from '../components/ui/Button';
 import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
 import { agruparTurnos } from '../lib/turnos-agrupados';
 import { useToast } from '../components/ui/ToastProvider.helpers';
@@ -264,6 +264,17 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
       group.kind === 'solo' ? [group.entry.id] : [group.lead.id, ...group.members.map((m) => m.id)],
     ),
   );
+  // AT-975 (RN-1480): quem trabalha, parou ou espera você fica à vista; os ociosos
+  // somam num cartão (que os abre, porque "Procurar tarefa de novo" mora no cartão deles).
+  // Sem ninguém ativo não há contra o que somar: todos ficam à vista.
+  const [mostrarOciosos, setMostrarOciosos] = useState(false);
+  const membrosDoGrupo = (g: (typeof overviewGroups)[number]) =>
+    g.kind === 'solo' ? [g.entry] : [g.lead, ...g.members];
+  const gruposAtivos = overviewGroups.filter((g) => membrosDoGrupo(g).some((m) => m.status !== 'ocioso'));
+  const recolher = gruposAtivos.length > 0 && gruposAtivos.length < overviewGroups.length && !mostrarOciosos;
+  const ociosos = overviewGroups
+    .filter((g) => !gruposAtivos.includes(g))
+    .reduce((n, g) => n + membrosDoGrupo(g).length, 0);
   const overviewRoster = roster.filter((r) => overviewRosterIds.has(r.id));
   const [modo, setModo] = useState<'turnos' | 'eventos'>('turnos');
   const turnos = events.filter((e) => e.type === 'agent.response').slice(-10).reverse();
@@ -287,11 +298,6 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           architecture={architecture}
         />
         <FaixaPrecisaDeVoce projectId={projectId} />
-        {/* RN-708: o próximo passo de um projeto novo, enquanto faltar. */}
-        <PrimeirosPassos
-          projectId={projectId}
-          temSessao={sessoesQuery.data ? !!latestSession : undefined}
-        />
         {/* RN-855: como rodar o entregável, declarado pela Infra. */}
         <RodarNaSuaMaquina projectId={projectId} />
         <div className={styles.sectionRow}>
@@ -306,7 +312,7 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
         </div>
         <AgentTeamGrid
           roster={roster}
-          groups={overviewGroups}
+          groups={recolher ? gruposAtivos : overviewGroups}
           events={events}
           bindingDoAgente={bindingDoAgente}
           allModels={allModels}
@@ -319,6 +325,11 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           onRearm={handleRearm}
           onWake={handleWake}
         />
+        {gruposAtivos.length > 0 && gruposAtivos.length < overviewGroups.length && (
+          <Button size="sm" variant="secondary" data-testid="cartao-ociosos" onClick={() => setMostrarOciosos(!mostrarOciosos)}>
+            {mostrarOciosos ? t('team.recolherOciosos') : t('team.maisOciosos', { count: ociosos })}
+          </Button>
+        )}
 
       </div>
 

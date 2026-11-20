@@ -1253,6 +1253,8 @@ momento em que ele aparecer, antes de qualquer correção.
 
 ### RN-708 — O projeto novo diz o próximo passo, derivado do que já se lê {#rn-708}
 
+> **Revisada pela [RN-1480](parte-07.md#rn-1480) (AT-975):** os três passos continuam com os mesmos estados, ações e textos, mas deixam de ser um cartão à parte: enquanto houver passo pendente eles são o conteúdo do cartão "Próximo passo", no topo da Visão geral, com o passo atual em destaque. Com os três feitos o cartão volta a ser o Próximo passo da RN-1162.
+
 A Visão geral de um projeto recém-criado não dizia o que fazer: sem chave de
 provedor, sem modelo e sem sessão, nada na tela apontava o caminho, e a
 credencial e o catálogo moravam no fim de Configurações (medido no teste real

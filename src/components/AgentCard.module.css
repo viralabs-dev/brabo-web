@@ -119,6 +119,10 @@
   display: flex;
 }
 
+.chipLocal {
+  flex-shrink: 0;
+}
+
 .model {
   display: inline-flex;
   align-items: center;

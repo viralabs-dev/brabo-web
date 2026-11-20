@@ -132,7 +132,7 @@ describe('ProjectArchitectureTab', () => {
     montar();
 
     expect(
-      await screen.findByText('Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.'),
+      await screen.findByText('Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.'),
     ).toBeInTheDocument();
   });
 
@@ -340,7 +340,7 @@ describe('ProjectArchitectureTab — v11 (AT-972)', () => {
 });
 
 describe('ProjectArchitectureTab — erro de carga não é vazio (AT-965)', () => {
-  it('429 simulado: mostra o erro com Tentar de novo e NUNCA "Sem arquitetura ainda"', async () => {
+  it('429 simulado: mostra o erro com Tentar de novo e NUNCA "Ainda sem arquitetura"', async () => {
     getArchitecture.mockRejectedValue(new ApiError(429, { message: 'Limite de requisições excedido' }));
 
     montar();
@@ -348,13 +348,13 @@ describe('ProjectArchitectureTab — erro de carga não é vazio (AT-965)', () =
     expect(await screen.findByText('Não deu para carregar a Arquitetura')).toBeInTheDocument();
     expect(screen.getByText(/O servidor recusou a leitura \(429\)\. Isto não quer dizer que o projeto não tem módulos nem ADRs\./)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeInTheDocument();
-    expect(screen.queryByText(/Sem arquitetura ainda/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Ainda sem arquitetura/)).not.toBeInTheDocument();
   });
 
-  it('enquanto carrega também não diz "Sem arquitetura ainda"', () => {
+  it('enquanto carrega também não diz "Ainda sem arquitetura"', () => {
     getArchitecture.mockReturnValue(new Promise(() => {}));
     montar();
-    expect(screen.queryByText(/Sem arquitetura ainda/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Ainda sem arquitetura/)).not.toBeInTheDocument();
   });
 
   it('AT-1006 (RN-1495): chips "módulos · v‹N›" e "C4 nível 2" e a legenda do grafo só com dado', async () => {

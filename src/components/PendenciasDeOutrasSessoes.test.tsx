@@ -128,12 +128,15 @@ describe('PendenciasDeOutrasSessoes (AT-265)', () => {
   it('AT-713: a nota do atalho mora no "?" da seção', async () => {
     getProjectPendingActions.mockResolvedValue([acao('a1')]);
     montar(true, undefined, false);
+    // AT-1007 (RN-1491): na Execução a seção nasce recolhida e abre ao clicar.
+    fireEvent.click(await screen.findByRole('button', { name: /Pendências de outras sessões deste projeto/ }));
     expect(await screen.findByRole('button', { name: 'Ajuda: Filas de pendências' })).toBeInTheDocument();
   });
 
   it('AT-721: o "?" fica na linha das abas, não numa linha sozinha', async () => {
     getProjectPendingActions.mockResolvedValue([acao('a1')]);
     montar(true, undefined, false);
+    fireEvent.click(await screen.findByRole('button', { name: /Pendências de outras sessões deste projeto/ }));
     const ajuda = await screen.findByRole('button', { name: 'Ajuda: Filas de pendências' });
     expect(ajuda.closest('[role="group"]')).not.toBeNull();
   });

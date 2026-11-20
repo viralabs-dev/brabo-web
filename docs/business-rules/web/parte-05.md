@@ -315,7 +315,7 @@ numa delas é inferência pelos 106 ≈ 9 × 12.
   (`useProjectSessions`), `:194` (`useLatestSession`);
   `apps/web/src/routes/ProjectPage.tsx:77` (os contadores do trilho);
   `apps/web/src/components/AcoesDoContainer.tsx:55` (`useLatestSession`, sem poll);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:221` (`invalidador`),
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:234` (`invalidador`),
   `apps/web/src/routes/ProjectOverviewTab.tsx:200` (`invalidador`);
   `apps/web/src/components/EsperaDoRunner.tsx:73` (`confirmadoPor`)
 - **Teste:** `apps/web/src/routes/duas-abas.orcamento.test.tsx` (as duas abas
@@ -460,8 +460,8 @@ o do chat.
   `apps/web/src/routes/ProjectApprovalsTab.tsx:106` (`pendentesQuery`), `:112`
   (`sessaoDeTrabalho`), `:312` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:111` (`pendentesDoProjeto`);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:135` (`pendentesQuery`), `:290`
-  (o bloco); `apps/web/src/routes/code/CodeShell.tsx:142` (`pendentesQuery`);
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:141` (`pendentesQuery`), `:290`
+  (o bloco); `apps/web/src/routes/code/CodeShell.tsx:124` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
   (a chave por prefixo); `apps/web/src/components/PendenciasDeOutrasSessoes.tsx`
@@ -978,7 +978,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
   (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
   (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:141`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
-  `:47` (`movel`); `apps/web/src/routes/Dashboard.tsx:311` (`movel`);
+  `:47` (`movel`); `apps/web/src/routes/Dashboard.tsx:315` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)
 - **Teste:** `apps/web/src/routes/SessionPage.layout-movel.test.tsx` (a gaveta
   nasce fechada, abre com o foco no X e o Esc fecha devolvendo o foco; X e
@@ -1083,7 +1083,7 @@ automático (RN-471).
 
 - **Código:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:60`
   (`ModoAutomaticoDoTime`), `:97` (`ligar`), `:70`
-  (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:112`
+  (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:118`
   (`podeLigarModoAutomatico`), `:308` (onde a oferta monta)
 - **Teste:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx:54` (nada
   gravado ao montar; o clique grava a curinga para cada escolhido — caminho

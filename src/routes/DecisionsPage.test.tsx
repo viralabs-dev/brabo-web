@@ -28,7 +28,7 @@ vi.mock('../lib/hooks', async (importOriginal) => ({
   useCurrentWorkspace: () => ({ data: { id: 'ws-1' } }),
 }));
 vi.mock('@tanstack/react-router', () => ({
-  Link: ({ children }: { children: ReactNode }) => <a href="#x">{children}</a>,
+  Link: ({ children, 'aria-label': rotulo }: { children: ReactNode; 'aria-label'?: string }) => <a href="#x" aria-label={rotulo}>{children}</a>,
 }));
 
 const fila = (itens: unknown[] = [], over = {}) => ({ total: itens.length, truncada: false, itens, ...over });
@@ -84,8 +84,20 @@ describe('DecisionsPage (AT-889, S07)', () => {
     await screen.findAllByText(/Alfa/);
     expect(screen.getAllByRole('button', { name: 'Aprovar' })).toHaveLength(1);
     expect(screen.getAllByRole('button', { name: 'Negar' })).toHaveLength(1);
-    expect(screen.getAllByText('Abrir')).toHaveLength(2);
+    // RN-1490: cada linha tem o botão de seta com nome; só o plano tem "Abrir plano".
+    expect(screen.getAllByRole('link', { name: /^Abrir / })).toHaveLength(3);
+    expect(screen.getAllByRole('link', { name: 'Abrir plano' })).toHaveLength(1);
     expect(screen.getByText('1 projeto')).toBeTruthy();
+  });
+
+  it('RN-1490: o plano tem título próprio, de até 80 caracteres, e o botão "Abrir plano"', async () => {
+    const plano = { ...acao('a2'), actionType: 'propose_execution_plan', payload: { modulos: ['a', 'b'], totalAgentes: 2 } };
+    getDecisionInbox.mockResolvedValue(inbox({ aprovacoes: fila([{ projectId: 'p1', projectName: 'Alfa', acao: plano }]) }));
+    montar();
+    const titulo = await screen.findByText(/Plano de execução do .+: 2 dev agents, um por módulo/);
+    expect(titulo.textContent!.length).toBeLessThanOrEqual(80 + 'propose_execution_plan'.length + 1);
+    expect(screen.getByRole('link', { name: 'Abrir plano' })).toBeTruthy();
+    expect(screen.queryByRole('checkbox')).toBeNull(); // o plano fica fora da seleção em lote (RN-467)
   });
 
   it('Hipóteses vazia diz que o Psicólogo está pausado', async () => {

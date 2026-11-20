@@ -41,3 +41,24 @@ export function tituloDoTerminal(actionType: string, payload: Record<string, unk
   const cmd = typeof payload.command === 'string' ? primeiroComando(payload.command) : '';
   return cortar(cmd ? `${rotuloTerminal} · ${cmd}` : rotuloTerminal);
 }
+
+/**
+ * O título do plano de execução (AT-1007, RN-1490): "Plano de execução do ‹lead›: N dev agents,
+ * um por módulo", montado dos módulos do payload (o que `fraseDaAcao` já lê). Nunca passa de 80
+ * caracteres; `null` quando não é plano ou o payload não traz a lista de módulos.
+ */
+export function tituloDoPlano(actionType: string, payload: Record<string, unknown>, lead: string): string | null {
+  if (actionType !== 'propose_execution_plan' || !Array.isArray(payload.modulos)) return null;
+  const n = payload.modulos.length;
+  return cortar(`Plano de execução do ${lead}: ${n} ${n === 1 ? 'dev agent' : 'dev agents'}, um por módulo`);
+}
+
+/** A frase da ação sem a abertura que o título do plano já diz (a linha de baixo não repete); o aviso de paralelização fica. */
+export function detalheDoPlano(frase: string): string {
+  const maiuscula = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
+  const resto = frase.replace(/^Aprova o plano de execução do .+? — sobe \d+ dev agents?, um por módulo/, '');
+  if (resto === frase) return frase;
+  const aviso = resto.match(/^\s*\(([^)]*)\)/s);
+  const cauda = (aviso ? resto.slice(aviso[0].length) : resto).replace(/^\s*:?\s*/, '').replace(/^["“”']([^"“”']*)["“”']/, '$1');
+  return [aviso ? `${maiuscula(aviso[1]!)}.` : '', cauda ? maiuscula(cauda) : ''].filter(Boolean).join(' ') || frase;
+}

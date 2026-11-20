@@ -767,7 +767,8 @@ export function PendenciasDeOutrasSessoes({
       <Disclosure
         titulo={t(filasDoChat ? 'pendencias.tituloDoProjeto' : 'pendencias.titulo')}
         trailing={<span className={styles.presenca}>{presenca}</span>}
-        padraoAberto
+        // AT-1007 (RN-1491): na aba Execução (sem as filas do chat) a seção nasce recolhida.
+        padraoAberto={filasDoChat}
         className={styles.disclosure}
         classNameCabecalho={styles.cabecalho}
       >

@@ -17,7 +17,7 @@ import {
 import { itensQuePrecisamDeVoce, totalQuePrecisaDeVoce } from '../lib/notificacoes';
 import { setLastSeenSeq } from '../lib/read-state';
 import { groupRosterByArea, rosterFromFacts } from '../lib/agent-status';
-import { classifyEvent } from '../lib/activity';
+import { classifyEvent, temSujeitoEResultado } from '../lib/activity';
 import {
   DIAS_PARADO,
   estaParado,
@@ -91,7 +91,10 @@ function ProjectCardContainer({
   // e um projeto sem sessão nenhuma diz isso em vez.
   const lastActivityText = summary
     ? summary.lastEvent
-      ? `${classifyEvent(summary.lastEvent).text} · ${formatRelativeTime(summary.lastEvent.createdAt)}`
+      ? // RN-1462: evento genérico ("atividade em ‹ator›") não vira frase; fica só a idade.
+        temSujeitoEResultado(summary.lastEvent)
+        ? `${classifyEvent(summary.lastEvent).text} · ${formatRelativeTime(summary.lastEvent.createdAt)}`
+        : formatRelativeTime(summary.lastEvent.createdAt)
       : summary.latestSessionId
         ? t('activity.latestSessionEmpty')
         : t('activity.noSession')
@@ -120,6 +123,7 @@ function ProjectCardContainer({
         })
       }
       lastActivityText={lastActivityText}
+      parado={estaParado(project, summary)}
       // Mesma contagem da sidebar (RN-151) — aprovações pendentes do projeto
       // inteiro, não atividade não lida. O prop era um fio nunca ligado
       // (nenhum chamador o passava); agora carrega o número certo em vez de

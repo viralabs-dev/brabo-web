@@ -8,7 +8,7 @@
   "architectureTab": {
     "title": "架构",
     "emptyTitle": "尚无架构",
-    "emptyState": "尚无架构 —— Arquiteto 会生成 module_map 和 ADR。",
+    "emptyState": "尚无架构。架构师会在用户故事之后设计模块和决策。",
     "modulesLabel": "模块",
     "modulesLabelVersioned": "模块 · v{{version}}",
     "noModules": "尚无模块。",
@@ -167,7 +167,7 @@
   },
   "architectureSummary": {
     "title": "架构",
-    "emptyState": "尚无架构 —— Arquiteto 会生成 module_map 和 ADR。",
+    "emptyState": "尚无架构。架构师会在用户故事之后设计模块和决策。",
     "summary_other": "已映射 {{count}} 个模块，C4 图{{status}}。",
     "statusGenerated": "已生成",
     "statusPending": "待生成",

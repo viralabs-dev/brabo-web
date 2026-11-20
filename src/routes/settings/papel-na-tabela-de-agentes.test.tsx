@@ -399,12 +399,12 @@ describe('a régua é do ENDPOINT, não da linha', () => {
   });
 });
 
-it('a legenda da cascata mora no "?"; o motivo do controle inerte segue visível', async () => {
+it('a explicação da cascata fica visível em linha, sem o sobretítulo; o motivo do controle inerte segue visível', async () => {
   comPapel('viewer');
   await tabelaDeAgentes();
-  const ajuda = screen.getByRole('button', { name: /Ajuda: Modelos por agente/ });
-  expect(screen.queryByText(settingsPtBR.modelsSection.subtitle.areaExplain.slice(0, 20), { exact: false })).toBeNull();
-  fireEvent.click(ajuda);
-  expect(await screen.findByText(settingsPtBR.modelsSection.subtitle.areaExplain.slice(0, 20), { exact: false })).toBeTruthy();
+  expect(screen.getByTestId('explicacao-da-cascata')).toHaveTextContent(
+    settingsPtBR.modelsSection.subtitle.areaExplain.slice(0, 20),
+  );
+  expect(screen.queryByText('binding vigente por cascata')).toBeNull();
   expect(screen.getByText(/developer/)).toBeTruthy();
 });

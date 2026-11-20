@@ -364,6 +364,8 @@ describe('membros — a recusa da api tem desfecho na tela', () => {
     expect(
       await screen.findByText('Nenhum usuário do workspace tem este e-mail'),
     ).toBeInTheDocument();
+    // Tom de erro do design system (Alert danger), não texto cinza pequeno.
+    expect(screen.getByRole('alert')).toHaveAttribute('data-tone', 'danger');
     expect(addProjectMember).toHaveBeenCalledWith(expect.anything(), {
       email: 'fora@brabo.dev',
       role: 'developer',

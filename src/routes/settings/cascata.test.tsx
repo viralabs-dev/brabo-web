@@ -487,3 +487,31 @@ describe('Modelos por agente — agentes com gasto primeiro e aviso de roteament
     expect(await screen.findAllByText('sem gasto ainda')).toHaveLength(AGENT_LIST.length - 1);
   });
 });
+
+describe('Modelos por agente — quatro colunas e gasto decrescente (AT-974)', () => {
+  it('o cabeçalho é Agente, Modelo vigente, De onde vem e Est. mês; sem Origem nem Fallback', async () => {
+    montar(<ModelsSection projectId="proj-1" />);
+
+    await screen.findByText('Modelos por agente');
+    expect(await screen.findByText('De onde vem')).toBeInTheDocument();
+    expect(screen.queryByText('Origem')).toBeNull();
+    expect(screen.queryByText('Fallback')).toBeNull();
+    expect(screen.queryByText('binding vigente por cascata')).toBeNull();
+  });
+
+  it('os agentes com gasto vêm do maior para o menor gasto, não na ordem do catálogo', async () => {
+    const [a, b, c] = AGENT_LIST.slice(0, 3);
+    getProjectAgentCosts.mockResolvedValue([
+      { actorId: a.key, costMicros: 1_000_000 },
+      { actorId: b.key, costMicros: 9_000_000 },
+      { actorId: c.key, costMicros: 5_000_000 },
+    ]);
+    montar(<ModelsSection projectId="proj-1" />);
+
+    await screen.findByText(/Mostrar os outros/);
+    const nomes = screen
+      .getAllByRole('button', { name: /^De onde vem o modelo de/ })
+      .map((x) => x.getAttribute('aria-label'));
+    expect(nomes).toEqual([b, c, a].map((x) => `De onde vem o modelo de ${x.name}`));
+  });
+});

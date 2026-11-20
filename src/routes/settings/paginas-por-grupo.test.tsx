@@ -32,6 +32,7 @@ const papel = vi.fn(() => ({ data: { role: 'owner' } }));
 
 vi.mock('@tanstack/react-router', () => ({
   useNavigate: () => vi.fn(),
+  useRouter: () => null,
 }));
 
 vi.mock('../../lib/hooks', () => ({

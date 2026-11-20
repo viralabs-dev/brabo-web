@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { AGENTS } from '../lib/agents';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import settingsPtBR from '../locales/pt-BR/settings.json';
@@ -996,7 +997,9 @@ describe('ModelsSection — colunas do desenho', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montarSecao(<ModelsSection projectId="proj-1" />);
 
-    expect(await screen.findAllByText('Modelo do Projeto')).not.toHaveLength(0);
+    // O fallback saiu da coluna (RN-1454): mora no Popover do chip "De onde vem".
+    fireEvent.click((await screen.findAllByRole('button', { name: /^De onde vem o modelo de/ }))[0]);
+    expect(await screen.findByText(/vale: Modelo do Projeto/)).toBeTruthy();
   });
 
   /**
@@ -1012,8 +1015,9 @@ describe('ModelsSection — colunas do desenho', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montarSecao(<ModelsSection projectId="proj-1" />);
 
-    await screen.findByText('Modelos por agente');
-    expect(screen.queryByText('Modelo do Projeto')).toBeNull();
+    fireEvent.click((await screen.findAllByRole('button', { name: /^De onde vem o modelo de/ }))[0]);
+    expect(await screen.findByText('não há nível abaixo')).toBeTruthy();
+    expect(screen.queryByText(/vale: Modelo do Projeto/)).toBeNull();
   });
 
   it('EST. MÊS mostra o custo do agente e o card soma o time', async () => {
@@ -1127,8 +1131,11 @@ describe('ModelsSection — colunas do desenho', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montarSecao(<ModelsSection projectId="proj-1" />);
 
-    expect(await screen.findAllByText('Modelo da Área')).not.toHaveLength(0);
-    expect(screen.queryByText('Modelo do Projeto')).toBeNull();
+    fireEvent.click(
+      await screen.findByRole('button', { name: `De onde vem o modelo de ${AGENTS['qa-automacao'].name}` }),
+    );
+    expect(await screen.findByText(/vale: Modelo da Área/)).toBeTruthy();
+    expect(screen.queryByText(/Modelo do Projeto/)).toBeNull();
   });
 });
 

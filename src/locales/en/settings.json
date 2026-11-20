@@ -86,7 +86,6 @@
   },
   "modelsSection": {
     "title": "Models by agent",
-    "eyebrow": "current binding by cascade",
     "subtitle": {
       "intro": "Origin shows where the value is resolved:",
       "mostSpecificWins": "The most specific wins.",
@@ -102,8 +101,7 @@
     "columns": {
       "agent": "Agent",
       "model": "Current model",
-      "origin": "Origin",
-      "fallback": "Fallback",
+      "origin": "Where it comes from",
       "estimate": "Est. month"
     },
     "backToInheritTitleWithArea": "Deletes this agent's own model — it goes back to using the default of the {{area}} area.",
@@ -165,7 +163,9 @@
       "esconderOutros": "Hide agents with no spend",
       "mostrarOutros_one": "Show the other agent",
       "mostrarOutros_other": "Show the other {{count}} agents"
-    }
+    },
+    "fallbackPopover": "If the own model is lost, this applies: {{modelo}}",
+    "faixaRoteamentoMuda": "On this provider the routing preference was not proven against the real API, so it is not applied: the provider decides. It holds for all {{total}} agents. A row that differs shows the difference on itself."
   },
   "members": {
     "title": "Members and roles",

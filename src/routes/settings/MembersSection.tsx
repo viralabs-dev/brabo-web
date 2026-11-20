@@ -17,6 +17,7 @@ import { Table, type TableColumn } from '../../components/ui/Table';
 import { Select } from '../../components/ui/Select';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
+import { Alert, AlertTexto } from '@/components/shadcn/alert';
 import { Button as BotaoShadcn } from '@/components/shadcn/button';
 import { TrashIcon } from '../../components/ui/icons';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
@@ -309,9 +310,9 @@ export function MembersSection({ projectId }: { projectId: string }) {
       </div>
 
       {erroDoConvite && (
-        <p role="alert" className={styles.subtitle}>
-          {erroDoConvite}
-        </p>
+        <Alert variant="danger" role="alert">
+          <AlertTexto>{erroDoConvite}</AlertTexto>
+        </Alert>
       )}
 
       <Table

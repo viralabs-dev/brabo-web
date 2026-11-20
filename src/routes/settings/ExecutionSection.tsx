@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link, useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { getProject, getProjectBudget, updateProject } from '../../lib/api-client';
 import { Input } from '../../components/ui/Input';
@@ -26,6 +27,8 @@ const DEFAULT_MAX_CONSECUTIVE_BLOCKED = 3;
 export function ExecutionSection({ projectId }: { projectId: string }) {
   const { t } = useTranslation('settings');
   const queryClient = useQueryClient();
+  // Sem roteador (as seções montam soltas em alguns testes) cai no <a>; no app é sempre o Link.
+  const comRoteador = !!useRouter({ warn: false });
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
     queryFn: () => getProject(projectId),
@@ -97,8 +100,13 @@ export function ExecutionSection({ projectId }: { projectId: string }) {
                   teto: formatarUsd(teto.limitMicros),
                   pct: Math.round((teto.spentMicros / teto.limitMicros) * 100),
                 })}{' '}
-          {/* shortcut: <a> recarrega a SPA; as seções são montadas sem Router nos testes, trocar por Link se virar gargalo */}
-          <a href={`/projects/${projectId}?tab=spend#teto`}>{t('budget.mes.editarEmGastos')}</a>
+          {comRoteador ? (
+            <Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'spend' }} hash="teto">
+              {t('budget.mes.editarEmGastos')}
+            </Link>
+          ) : (
+            <a href={`/projects/${projectId}?tab=spend#teto`}>{t('budget.mes.editarEmGastos')}</a>
+          )}
         </span>
       </LinhaDeConfiguracao>
     </SecaoDeConfiguracoes>

@@ -1,5 +1,5 @@
 import { useState, type CSSProperties } from 'react';
-import { Cpu } from 'lucide-react';
+import { Cpu, TriangleAlert } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -48,6 +48,7 @@ import {
 import { AvisoDeBindingsNaoLidos, MarcaDeBindingNaoLido } from './LeituraDosBindings';
 import { Checkbox } from '@/components/shadcn/checkbox';
 import { Item } from '@/components/shadcn/item';
+import { Alert, AlertIcone, AlertTexto } from '@/components/shadcn/alert';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 
 /**
@@ -258,7 +259,9 @@ async function sincronizarCatalogo() {
   );
   // Agentes com gasto primeiro (v11, L09); os outros ficam atrás de um botão.
   const [mostrarOutros, setMostrarOutros] = useState(false);
-  const comGasto = AGENT_LIST.filter((a) => custoPorAgente.has(a.key));
+  const comGasto = AGENT_LIST.filter((a) => custoPorAgente.has(a.key)).sort(
+    (a, b) => (custoPorAgente.get(b.key) ?? 0) - (custoPorAgente.get(a.key) ?? 0),
+  );
   const semGasto = AGENT_LIST.filter((a) => !custoPorAgente.has(a.key));
   // Sem gasto lido (ou nenhum agente com gasto) a tabela não esconde nada: mostrar
   // "0 agentes" seria afirmar o que a tela não leu (EP-020).
@@ -585,7 +588,7 @@ async function sincronizarCatalogo() {
       key: 'model',
       largaNoMovel: true,
       label: t('modelsSection.columns.model'),
-      width: '1.7fr',
+      width: '2.4fr',
       render: (agent) => {
         const resolved = bindings.doAgente(agent.key);
         const modeloVigente = allModels.find((m) => m.id === resolved?.modelId);
@@ -648,10 +651,9 @@ async function sincronizarCatalogo() {
                 handleRoutingChange(agent.key, resolved.modelId, preferencia)
               }
             />
-          </span>
           {areaLead && (
-            <div className={styles.ajusteHint}>
-              <label>
+            <div className={styles.ajusteCompacto}>
+              <label className={styles.ajusteInline}>
                 <Checkbox
                   checked={segueArea}
                   disabled={!podeEditarArea || !resolved}
@@ -680,6 +682,7 @@ async function sincronizarCatalogo() {
               )}
             </div>
           )}
+          </span>
           </>
         ) : null;
       },
@@ -691,7 +694,7 @@ async function sincronizarCatalogo() {
       // proporções do handoff descreviam aquela célula, não esta.
       largaNoMovel: true,
       label: t('modelsSection.columns.origin'),
-      width: '1.75fr',
+      width: '1.2fr',
       render: (agent) => {
         const resolved = bindings.doAgente(agent.key);
         const areaDoAgente = areaFor(agent.key);
@@ -744,6 +747,13 @@ async function sincronizarCatalogo() {
                   rotuloSemModelo={t('modelsSection.originChainNoModel')}
                   tituloSemModelo={t('modelsSection.originChainNoModelTitle')}
                 />
+                <p className={styles.fallbackNoPopover}>
+                  {fallbackDe(agent.key, resolved?.origin)
+                    ? t('modelsSection.fallbackPopover', {
+                        modelo: fallbackDe(agent.key, resolved?.origin),
+                      })
+                    : t('modelsSection.fallbackNone')}
+                </p>
               </PopoverContent>
             </Popover>
             {divergiu && (
@@ -779,27 +789,6 @@ async function sincronizarCatalogo() {
       },
     },
     {
-      key: 'fallback',
-      label: t('modelsSection.columns.fallback'),
-      width: '1.15fr',
-      render: (agent) => {
-        const resolved = bindings.doAgente(agent.key);
-        const nome = fallbackDe(agent.key, resolved?.origin);
-        if (nome) return <span className={styles.fallback}>{nome}</span>;
-        // Sem binding nenhum a coluna Origem já disse tudo — repetir a ausência
-        // aqui seria um segundo enunciado do mesmo vazio.
-        if (!resolved) return null;
-        return (
-          <span
-            className={styles.vazioComTexto}
-            title={t('modelsSection.fallbackNoneTitle')}
-          >
-            {t('modelsSection.fallbackNone')}
-          </span>
-        );
-      },
-    },
-    {
       key: 'estimate',
       label: t('modelsSection.columns.estimate'),
       width: '0.85fr',
@@ -826,8 +815,8 @@ async function sincronizarCatalogo() {
     <SecaoDeConfiguracoes chave="models">
       <div className={styles.sectionHead}>
         <h2 className={styles.title}><Cpu aria-hidden="true" className={styles.tituloIcone} />{t('modelsSection.title')}</h2>
-        <Ajuda assunto={t('modelsSection.title')}>
-        <span>
+      </div>
+      <p className={styles.subtitle} data-testid="explicacao-da-cascata">
         {/* A legenda é a MESMA fonte de rótulos da cadeia da coluna Origem
             (`cascata.niveis.*`): a frase que explica a descida e os nós que a
             mostram linha a linha não podem chamar os níveis de nomes
@@ -851,13 +840,11 @@ async function sincronizarCatalogo() {
         </span>.{' '}
         {t('modelsSection.subtitle.mostSpecificWins')}{' '}
         <strong>{t('modelsSection.subtitle.areaWord')}</strong>{' '}
-        {t('modelsSection.subtitle.areaExplain')}
-        <br />
-        {t('modelsSection.ajudaRoteamento')} {t('roteamento.inheritedHint')} {t('roteamento.teto')}
-        </span>
+        {t('modelsSection.subtitle.areaExplain')}{' '}
+        <Ajuda assunto={t('modelsSection.title')}>
+          {t('modelsSection.ajudaRoteamento')} {t('roteamento.inheritedHint')} {t('roteamento.teto')}
         </Ajuda>
-        <span className={styles.eyebrow}>{t('modelsSection.eyebrow')}</span>
-      </div>
+      </p>
       {(!podeEditar || !podeEditarArea) && (
       <p className={styles.subtitle}>
         {/* O motivo dos controles apagados, dito uma vez e em TEXTO — mesma
@@ -934,11 +921,17 @@ async function sincronizarCatalogo() {
       )}
 
       {providersSemRoteamento.length > 0 && (
-        <p className={styles.subtitle} data-roteamento="faixa">
-          {providersSemRoteamento
-            .map((provider) => t('roteamento.notSupportedCurto', { provider }))
-            .join(' · ')}
-        </p>
+        <Alert variant="warning" data-roteamento="faixa">
+          <AlertIcone>
+            <TriangleAlert size={16} />
+          </AlertIcone>
+          <AlertTexto>
+            {providersSemRoteamento
+              .map((provider) => t('roteamento.notSupportedCurto', { provider }))
+              .join(' · ')}
+            . {t('modelsSection.faixaRoteamentoMuda', { total: AGENT_LIST.length })}
+          </AlertTexto>
+        </Alert>
       )}
 
       {/* Rolagem horizontal DENTRO da tabela: com a navegação lateral a coluna do modelo ficava estreita. */}

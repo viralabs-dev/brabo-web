@@ -70,8 +70,8 @@
     "atividade": {
       "titulo": "Activity by project",
       "vazio": "No new activity.",
-      "eventos_one": "{{count}} event",
-      "eventos_other": "{{count}} events",
+      "eventos_one": "{{count, number}} event",
+      "eventos_other": "{{count, number}} events",
       "parados_one": "{{count}} project idle for over 30 days · {{eventos}}",
       "parados_other": "{{count}} projects idle for over 30 days · {{eventos}}"
     }

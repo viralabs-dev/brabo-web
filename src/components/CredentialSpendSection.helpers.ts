@@ -1,4 +1,5 @@
 import i18n from '../lib/i18n';
+import { formatarUsdCasas } from '../lib/currency';
 
 export function formatadorUsd(): Intl.NumberFormat {
   return new Intl.NumberFormat(i18n.language, {
@@ -31,12 +32,7 @@ export function formatarUsd(micros: number): string {
 export function formatarCustoMedio(micros: number): string {
   const usd = micros / 1_000_000;
   if (usd <= 0 || usd >= 0.01) return formatarUsd(micros);
-  return new Intl.NumberFormat(i18n.language, {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 4,
-    maximumFractionDigits: 4,
-  }).format(usd);
+  return formatarUsdCasas(usd, 4);
 }
 
 export function formatarMes(iso: string): string {

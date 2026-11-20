@@ -10,9 +10,9 @@
     "gitCommit": {
       "verb": "propõe alteração",
       "base": "Registra um commit",
-      "filesSuffix_zero": " de {{count}} arquivos",
-      "filesSuffix_one": " de {{count}} arquivo",
-      "filesSuffix_other": " de {{count}} arquivos",
+      "filesSuffix_zero": " de {{count, number}} arquivos",
+      "filesSuffix_one": " de {{count, number}} arquivo",
+      "filesSuffix_other": " de {{count, number}} arquivos",
       "pathSuffix": " do arquivo {{path}}",
       "branchSuffix": " na branch {{branch}}",
       "repoSuffix": " no repositório do projeto",
@@ -73,9 +73,9 @@
       "verb": "abriu pull request de infra",
       "base": "Abre uma pull request de infraestrutura",
       "titled": " \"{{title}}\"",
-      "filesSuffix_zero": " com {{count}} arquivos",
-      "filesSuffix_one": " com {{count}} arquivo",
-      "filesSuffix_other": " com {{count}} arquivos"
+      "filesSuffix_zero": " com {{count, number}} arquivos",
+      "filesSuffix_one": " com {{count, number}} arquivo",
+      "filesSuffix_other": " com {{count, number}} arquivos"
     },
     "gitMerge": {
       "verb": "quer fazer merge",
@@ -167,9 +167,9 @@
     },
     "body": {
       "commit": {
-        "files_zero": "{{count}} arquivos",
-        "files_one": "{{count}} arquivo",
-        "files_other": "{{count}} arquivos"
+        "files_zero": "{{count, number}} arquivos",
+        "files_one": "{{count, number}} arquivo",
+        "files_other": "{{count, number}} arquivos"
       },
       "terminal": {
         "invalidCommand": "O modelo não produziu um comando válido para esta ação.",
@@ -182,9 +182,9 @@
         "invalidPath": "O modelo não produziu um caminho válido para esta ação.",
         "invalidContent": "O modelo não produziu um conteúdo válido para esta ação.",
         "previewHeader": "preview do conteúdo",
-        "linesTruncated_zero": "{{shown}} de {{count}} linhas",
-        "linesTruncated_one": "{{shown}} de {{count}} linha",
-        "linesTruncated_other": "{{shown}} de {{count}} linhas"
+        "linesTruncated_zero": "{{shown}} de {{count, number}} linhas",
+        "linesTruncated_one": "{{shown}} de {{count, number}} linha",
+        "linesTruncated_other": "{{shown}} de {{count, number}} linhas"
       },
       "prOpen": {
         "defaultTitle": "Pull request"

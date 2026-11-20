@@ -57,8 +57,8 @@
     "window_one": "last day",
     "window_other": "last {{count}} days",
     "spend": "Spend",
-    "calls_one": "{{count}} call",
-    "calls_other": "{{count}} calls",
+    "calls_one": "{{count, number}} call",
+    "calls_other": "{{count, number}} calls",
     "viewAsTable": "View as table",
     "colDay": "Day",
     "colSpend": "Spend",
@@ -71,8 +71,8 @@
     "noSpendInDays_other": "No spend in the last {{count}} days."
   },
   "libSpend": {
-    "callTitle_one": "{{dia}} · {{custo}} · {{count}} call",
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} calls",
+    "callTitle_one": "{{dia}} · {{custo}} · {{count, number}} call",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} calls",
     "actorPerson": "{{id}} (person)",
     "budgetBlocked": "Reached {{pct}}% of the monthly cap — new LLM calls are BLOCKED until the cap is raised or the month rolls over.",
     "budgetWarning": "Already past {{pct}}% of the monthly cap."

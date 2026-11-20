@@ -446,9 +446,9 @@
       "noCatalogSource": "Этот провайдер не публикует список моделей, синхронизировать нечего — его модели добавляются через seed.",
       "openSwapAria": "Ввести новый ключ {{label}}",
       "calls_one": "1 вызов",
-      "calls_few": "{{count}} вызова",
-      "calls_many": "{{count}} вызовов",
-      "calls_other": "{{count}} вызова"
+      "calls_few": "{{count, number}} вызова",
+      "calls_many": "{{count, number}} вызовов",
+      "calls_other": "{{count, number}} вызова"
     },
     "toast": {
       "saved": "Учётные данные сохранены",

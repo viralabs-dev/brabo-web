@@ -64,7 +64,7 @@ describe("ContextAside — gasto real (AT-978)", () => {
       },
     ]);
     const secao = montar();
-    expect(await within(secao).findByText("US$ 1.0868")).toBeTruthy();
+    expect(await within(secao).findByText("US$ 1,0868")).toBeTruthy();
     expect(document.body).not.toHaveTextContent("Sem gasto ainda");
   });
 

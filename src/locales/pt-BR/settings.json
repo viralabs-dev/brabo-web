@@ -436,7 +436,7 @@
       "openSwapAria": "Informar nova chave de {{label}}",
       "calls_zero": "nenhuma chamada",
       "calls_one": "1 chamada",
-      "calls_other": "{{count}} chamadas"
+      "calls_other": "{{count, number}} chamadas"
     },
     "toast": {
       "saved": "Credencial salva",

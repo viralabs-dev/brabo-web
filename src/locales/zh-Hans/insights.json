@@ -7,7 +7,7 @@
     "analysisStrip": {
       "tier": "分诊 {{tier}}",
       "sessionLabel": "会话 {{id}}",
-      "metaEvents_other": "{{count}} 个事件",
+      "metaEvents_other": "{{count, number}} 个事件",
       "metaHypotheses_other": "{{count}} 个假设",
       "reanalyzeTitleEnabled": "重新运行分析并消耗预算；之前的分析保留在历史中"
     },

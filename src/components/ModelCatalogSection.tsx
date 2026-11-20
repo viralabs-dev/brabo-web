@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import i18n from '@/lib/i18n';
 import { Save } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -804,7 +805,7 @@ function EditorDePreco({
     if (i === null || o === null) return setErro(t('priceEditor.invalid'));
     salvarPreco.mutate({ i, o });
   }
-  const micros = (m: number) => usd1m.format(m / 1_000_000);
+  const micros = (m: number) => usd1m(m / 1_000_000);
 
   return (
     <Disclosure
@@ -896,8 +897,5 @@ function EditorDePreco({
   );
 }
 
-const usd1m = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 6,
-});
+const usd1m = (v: number) =>
+  new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', maximumFractionDigits: 6 }).format(v);

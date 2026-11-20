@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import i18n from '@/lib/i18n';
 import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, XAxis, YAxis } from 'recharts';
 import { AGENTS, type AgentKey } from '../lib/agents';
 import { densificarPorAgente, diaCurto, type SpendDiaDoAgente, type SpendPorDia } from '../lib/spend';
@@ -143,7 +144,7 @@ export function GraficoDeTokens({ entrada, saida }: { entrada: number; saida: nu
       <ul className={styles.legendaDaRosca}>
         {dados.map((d) => (
           <li key={d.nome}>
-            {d.nome}: {d.valor.toLocaleString()}
+            {d.nome}: {d.valor.toLocaleString(i18n.language)}
           </li>
         ))}
       </ul>

@@ -585,7 +585,7 @@ describe('AT-916: escada de modelos', () => {
       ev('agent.model_escalated', 'system', { agentId: 'dev-api', de: 'haiku', para: 'sonnet', tetoMicros: 2_000_000 }),
     );
     expect(c.text).toContain('dev-api subiu de haiku para sonnet');
-    expect(c.text).toContain('US$ 2.00');
+    expect(c.text).toContain('$2.00');
     expect(c.bad).toBe(false);
   });
 

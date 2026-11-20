@@ -8,8 +8,8 @@
     "analysisStrip": {
       "tier": "screening {{tier}}",
       "sessionLabel": "session {{id}}",
-      "metaEvents_one": "{{count}} event",
-      "metaEvents_other": "{{count}} events",
+      "metaEvents_one": "{{count, number}} event",
+      "metaEvents_other": "{{count, number}} events",
       "metaHypotheses_one": "{{count}} hypothesis",
       "metaHypotheses_other": "{{count}} hypotheses",
       "reanalyzeTitleEnabled": "Runs the analysis again and spends budget; the previous one stays in history"

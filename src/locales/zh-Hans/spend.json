@@ -54,7 +54,7 @@
     "noCallsInWindow": "此时间窗口内没有调用。",
     "window_other": "最近 {{count}} 天",
     "spend": "花费",
-    "calls_other": "{{count}} 次调用",
+    "calls_other": "{{count, number}} 次调用",
     "viewAsTable": "以表格查看",
     "colDay": "日期",
     "colSpend": "花费",
@@ -66,7 +66,7 @@
     "noSpendInDays_other": "最近 {{count}} 天没有花费。"
   },
   "libSpend": {
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} 次调用",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} 次调用",
     "actorPerson": "{{id}}（人员）",
     "budgetBlocked": "已达到月度上限的 {{pct}}%——新的 LLM 调用已被阻止，直到上限提高或月份切换。",
     "budgetWarning": "已超过月度上限的 {{pct}}%。"

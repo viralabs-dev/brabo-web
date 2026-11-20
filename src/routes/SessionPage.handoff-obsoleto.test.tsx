@@ -20,6 +20,7 @@ import i18n from '../lib/i18n';
  *   corria numa sessão NOVA.
  */
 
+import { itemDoMenu } from '../test/mais-acoes';
 const acceptHandoff = vi.fn();
 const activateExecution = vi.fn();
 const getSession = vi.fn();
@@ -197,7 +198,7 @@ afterAll(() => {
 });
 
 describe('AT-293 — o handoff MANUAL não declara prontidão (RN-633)', () => {
-  it('caminho feliz: manual pedido com o Criativo ativo não esconde "Estou pronto — a necessidade está validada"', async () => {
+  it('caminho feliz: manual pedido com o Criativo ativo não esconde "Estou pronto — validar necessidade"', async () => {
     eventos.mockReturnValue({
       items: [ativou('criativo', 1), regra(2), oferecido(3, 'h-man', 'staff', { kind: 'user', id: USUARIO })],
     });
@@ -205,7 +206,7 @@ describe('AT-293 — o handoff MANUAL não declara prontidão (RN-633)', () => {
 
     montar();
     expect(
-      await screen.findByRole('button', { name: 'Estou pronto — a necessidade está validada' }),
+      await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' }),
     ).toBeInTheDocument();
   });
 
@@ -232,7 +233,7 @@ describe('AT-293 — o handoff MANUAL não declara prontidão (RN-633)', () => {
     montar();
     await screen.findByRole('button', { name: 'Aceitar e passar a PO' });
     expect(
-      screen.queryByRole('button', { name: 'Estou pronto — a necessidade está validada' }),
+      screen.queryByRole('button', { name: 'Estou pronto — validar necessidade' }),
     ).not.toBeInTheDocument();
   });
 
@@ -245,7 +246,7 @@ describe('AT-293 — o handoff MANUAL não declara prontidão (RN-633)', () => {
     montar();
     await screen.findByLabelText('Para');
     expect(
-      screen.queryByRole('button', { name: 'Estou pronto — a necessidade está validada' }),
+      screen.queryByRole('button', { name: 'Estou pronto — validar necessidade' }),
     ).not.toBeInTheDocument();
   });
 });
@@ -296,7 +297,7 @@ describe('AT-295 — depois de "Ativar execução", a tela vai à sessão de exe
     activateExecution.mockResolvedValue({ sessionId: 'sessao-exec', modules: ['core'] });
 
     montar();
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     await waitFor(() => expect(irParaSessao).toHaveBeenCalledWith('sessao-exec'));
     expect(activateExecution).toHaveBeenCalledWith('proj-1', ID);
@@ -308,7 +309,7 @@ describe('AT-295 — depois de "Ativar execução", a tela vai à sessão de exe
     activateExecution.mockRejectedValue(new Error('Papel insuficiente para esta ação'));
 
     montar();
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     await waitFor(() => expect(activateExecution).toHaveBeenCalled());
     await screen.findByText(/Papel insuficiente|Não foi possível ativar/);
@@ -320,7 +321,7 @@ describe('AT-295 — depois de "Ativar execução", a tela vai à sessão de exe
     activateExecution.mockResolvedValue({ sessionId: 'sessao-exec', modules: [] });
 
     montar(false);
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     expect(await screen.findByText('Execução ativada')).toBeInTheDocument();
     expect(screen.queryByText('Levando você à sessão de execução.')).not.toBeInTheDocument();

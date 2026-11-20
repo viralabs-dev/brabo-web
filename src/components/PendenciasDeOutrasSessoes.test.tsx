@@ -128,12 +128,15 @@ describe('PendenciasDeOutrasSessoes (AT-265)', () => {
   it('AT-713: a nota do atalho mora no "?" da seção', async () => {
     getProjectPendingActions.mockResolvedValue([acao('a1')]);
     montar(true, undefined, false);
+    // AT-1007 (RN-1491): na Execução a seção nasce recolhida e abre ao clicar.
+    fireEvent.click(await screen.findByRole('button', { name: /Pendências de outras sessões deste projeto/ }));
     expect(await screen.findByRole('button', { name: 'Ajuda: Filas de pendências' })).toBeInTheDocument();
   });
 
   it('AT-721: o "?" fica na linha das abas, não numa linha sozinha', async () => {
     getProjectPendingActions.mockResolvedValue([acao('a1')]);
     montar(true, undefined, false);
+    fireEvent.click(await screen.findByRole('button', { name: /Pendências de outras sessões deste projeto/ }));
     const ajuda = await screen.findByRole('button', { name: 'Ajuda: Filas de pendências' });
     expect(ajuda.closest('[role="group"]')).not.toBeNull();
   });
@@ -488,7 +491,7 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(getCodePullRequests).not.toHaveBeenCalled();
   });
 
-  it('AT-753 (UX-2): Mergear confirma na própria linha; Confirmar propõe e aprova, Cancelar não chama nada', async () => {
+  it('AT-753 (UX-2): Mergear confirma num Popover (AT-960); Confirmar propõe e aprova, Cancelar não chama nada', async () => {
     getProjectPendingActions.mockResolvedValue([]);
     getOpenPullRequestsDoChat.mockResolvedValue({ items: [pr('1', 'feature/task-aaaaaaaa')] });
     listBacklog.mockResolvedValue(backlog([{ id: 'aaaaaaaa-1', title: 'Pronta', gateStatus: 'awaiting_user' }]));
@@ -502,11 +505,12 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     );
     const fila = await screen.findByTestId('fila-prs-prontas');
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
-    expect(within(fila).getByText('Mergear #1 em dev?')).toBeInTheDocument();
-    await user.click(within(fila).getByRole('button', { name: 'Cancelar' }));
+    // O Popover vive em portal, fora da fila.
+    expect(screen.getByText('Mergear #1 em dev?')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
     expect(proposeAction).not.toHaveBeenCalled();
     await user.click(within(fila).getByRole('button', { name: 'Mergear' }));
-    await user.click(within(fila).getByRole('button', { name: 'Confirmar' }));
+    await user.click(screen.getByRole('button', { name: 'Confirmar' }));
     await waitFor(() => expect(approveAction).toHaveBeenCalledWith('proj-1', AQUI, 'm-vis'));
     expect(proposeAction).toHaveBeenCalledTimes(1);
     expect(await within(fila).findByText('Mergeada')).toBeInTheDocument();
@@ -526,14 +530,25 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(within(fila).getByText('o diagnóstico longo')).toBeInTheDocument();
   });
 
-  it('AT-912: a tarefa sem módulo em história de vários módulos aparece, e a de um módulo só não', async () => {
+  it('AT-912/RN-1397: com a execução ativa, a tarefa sem módulo em história de vários módulos aparece', async () => {
     getProjectPendingActions.mockResolvedValue([]);
+    getActiveExecutionSession.mockResolvedValue({ id: 'exec-1', status: 'active' });
     listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a', 'b']));
     montar();
     await abrir('Tarefas sem módulo');
     const fila = await screen.findByTestId('fila-tarefas-sem-modulo');
     expect(within(fila).getByText('Tarefa 7')).toBeInTheDocument();
     expect(within(fila).getByText(/Sem módulo: ninguém vai pegar/)).toBeInTheDocument();
+  });
+
+  it('RN-1397 (falha): antes do plano (sem execução ativa) a fila "Tarefas sem módulo" não aparece', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    getActiveExecutionSession.mockResolvedValue(null);
+    listBacklog.mockResolvedValue(backlog([{ id: 't7', title: 'Tarefa 7', status: 'todo' }], ['a', 'b']));
+    montar();
+    await waitFor(() => expect(listBacklog).toHaveBeenCalled());
+    await waitFor(() => expect(getActiveExecutionSession).toHaveBeenCalled());
+    expect(screen.queryByTestId('fila-tarefas-sem-modulo')).toBeNull();
   });
 
   it('AT-912 (falha): história de um módulo só não gera a fila', async () => {
@@ -734,5 +749,41 @@ describe('AT-799: fila Agentes travados', () => {
     montar();
     await screen.findByRole('button', { name: /^Aprovações \d/ });
     expect(screen.queryByTestId('fila-agentes-travados')).toBeNull();
+  });
+
+  it('AT-950 (RN-626): no Sheet, Tabs só das filas com itens, UMA pergunta por vez e o campo só quando pedido', async () => {
+    const pergunta = (id: string, texto: string) => ({
+      questionId: id, eventId: `ev-${id}`, sessionId: AQUI, pergunta: texto, sugestao: 'Postgres',
+      afeta: { regras: [], historias: [], tarefas: [] }, autor: 'criativo',
+      criadaEm: new Date().toISOString(), status: 'open', autorDaSessao: 'u', resposta: null,
+    });
+    getOpenQuestions.mockResolvedValue({ itens: [pergunta('q1', 'Qual banco?'), pergunta('q2', 'Qual fila?')], total: 2 });
+    getProjectPendingActions.mockResolvedValue([]);
+    const contar = vi.fn();
+    render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <ToastProvider>
+          <PendenciasDeOutrasSessoes
+            modo="sheet"
+            aberto
+            aoContar={contar}
+            projectId="proj-1"
+            sessionId={AQUI}
+            podeDecidir
+          />
+        </ToastProvider>
+      </QueryClientProvider>,
+    );
+    // Só a fila com itens vira aba.
+    const abas = await screen.findAllByRole('tab');
+    expect(abas).toHaveLength(1);
+    expect(abas[0]).toHaveTextContent('Perguntas em aberto');
+    await waitFor(() => expect(contar).toHaveBeenLastCalledWith(2));
+    // Uma pergunta por vez; "Aceitar sugestão" com texto; o campo só abre em "Responder com texto".
+    expect(await screen.findAllByTestId('pergunta-em-aberto')).toHaveLength(1);
+    expect(screen.getByRole('button', { name: 'Aceitar sugestão' })).toHaveTextContent('Aceitar sugestão');
+    expect(screen.queryByRole('textbox', { name: /Sua resposta/ })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: 'Responder com texto' }));
+    expect(screen.getByRole('textbox', { name: /Sua resposta/ })).toBeInTheDocument();
   });
 });

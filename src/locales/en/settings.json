@@ -86,7 +86,6 @@
   },
   "modelsSection": {
     "title": "Models by agent",
-    "eyebrow": "current binding by cascade",
     "subtitle": {
       "intro": "Origin shows where the value is resolved:",
       "mostSpecificWins": "The most specific wins.",
@@ -95,15 +94,10 @@
       "needsDeveloper": " Requires the developer role to change the model, apply one to every agent, or go back to inheriting.",
       "needsMaintainerArea": " Requires the maintainer role to tick the area box or change its model."
     },
-    "costCard": {
-      "label": "Team's estimated monthly cost",
-      "detail": "· based on the last 30 days"
-    },
     "columns": {
       "agent": "Agent",
       "model": "Current model",
-      "origin": "Origin",
-      "fallback": "Fallback",
+      "origin": "Where it comes from",
       "estimate": "Est. month"
     },
     "backToInheritTitleWithArea": "Deletes this agent's own model — it goes back to using the default of the {{area}} area.",
@@ -149,7 +143,29 @@
         "partial": "The area default was saved, but {{agent}}'s own model was not removed ({{reason}})"
       }
     },
-    "ajudaRoteamento": "Routing: the preference (lowest price, highest throughput, lowest latency) is only declared for a provider after it is proven against the real API. Without proof, the row says it is not proven."
+    "ajudaRoteamento": "Routing: the preference (lowest price, highest throughput, lowest latency) is only declared for a provider after it is proven against the real API. Without proof, the row says it is not proven.",
+    "deOndeVem": {
+      "semModelo": "no model",
+      "herdaDoCriativo": "inherits from {{nome}}",
+      "herda": {
+        "agent": "inherits from another agent",
+        "session": "inherits from the session",
+        "area": "inherits from the area",
+        "project": "inherits from the project",
+        "workspace": "inherits from the workspace"
+      },
+      "proprio": "set on this agent",
+      "abrir": "Where {{agente}}'s model comes from",
+      "esconderOutros": "Hide agents with no spend",
+      "mostrarOutros_one": "Show the other agent",
+      "mostrarOutros_other": "Show the other {{count}} agents"
+    },
+    "tituloDaTabela_one": "{{count}} agent · {{valor}} estimated per month",
+    "tituloDaTabela_other": "{{count}} agents · {{valor}} estimated per month",
+    "tituloDaTabelaBase": "based on the last 30 days of history",
+    "oQueIssoMuda": "What this changes",
+    "fallbackPopover": "If the own model is lost, this applies: <m>{{modelo}}</m>",
+    "faixaRoteamentoMuda": "On this provider the routing preference was not proven against the real API, so it is not applied: the provider decides. It holds for all {{total}} agents. A row that differs shows the difference on itself."
   },
   "members": {
     "title": "Members and roles",
@@ -158,7 +174,8 @@
     "subtitleCascata": " The role in this table replaces the workspace one for this project, in both directions — setting viewer here demotes even a workspace owner. Whoever reaches the project through the workspace alone doesn't show up in the list.",
     "subtitleNeedsMaintainer": " Requires the maintainer role to invite someone, change a role, or remove someone.",
     "invite": {
-      "placeholder": "User ID (UUID)",
+      "placeholder": "E-mail",
+      "label": "E-mail of someone already in the workspace",
       "button": "Invite"
     },
     "table": {
@@ -221,7 +238,9 @@
       "modelo": "Model of step {{n}}",
       "teto": "Cap of step {{n}} (US$)",
       "remover": "Remove step {{n}}",
-      "adicionar": "Add step"
+      "adicionar": "Add step",
+      "alteracoes_one": "{{count}} unsaved change",
+      "alteracoes_other": "{{count}} unsaved changes"
     }
   },
   "executionMode": {
@@ -310,9 +329,8 @@
       "title": "{{area}} area",
       "spent": "Spent: {{amount}}",
       "capAria": "Spend cap for the {{area}} area, in dollars",
-      "noCap": "no cap"
+      "semTetoProprio": "no cap of its own"
     },
-    "placeholder": "No cap",
     "save": "Save",
     "saving": "Saving…",
     "toast": {
@@ -321,7 +339,11 @@
     },
     "mes": {
       "rotulo": "Monthly spend cap",
-      "descricao": "How much the project may spend per month (UTC); the reset time is shown with the cap."
+      "descricao": "How much the project may spend per month (UTC); the reset time is shown with the cap.",
+      "semTeto": "No cap this month",
+      "valor": "{{gasto}} of {{teto}} · {{pct}}%",
+      "editarEmGastos": "Edit in Spend",
+      "naoLido": "Could not read the cap"
     }
   },
   "promotion": {
@@ -402,7 +424,7 @@
       "noCatalogSource": "This provider does not publish a model list, so there is nothing to sync — its models come from the seed.",
       "openSwapAria": "Enter a new key for {{label}}",
       "calls_one": "1 call",
-      "calls_other": "{{count}} calls"
+      "calls_other": "{{count, number}} calls"
     },
     "toast": {
       "saved": "Credential saved",
@@ -491,7 +513,7 @@
       "title": "All project tokens",
       "eyebrow": "maintainer",
       "subtitle": "Incident response — revoke any user's token in this project, not just your own.",
-      "emptyMessage": "No access token issued for this project.",
+      "emptyMessage": "Nobody in this project has issued a token.",
       "table": {
         "name": "Name",
         "owner": "Owner",
@@ -634,7 +656,6 @@
       "hintOff": "Off: every PR waits for your Merge click.",
       "hintOn": "On: a PR with every gate green and no conflict merges by itself, without you seeing the code first."
     },
-    "switchAria": "Automatic merge of the project's PRs",
     "reason": {
       "ligar": "Only the workspace owner turns automatic merge on. Ask an owner.",
       "desligar": "Only a maintainer or the workspace owner turns automatic merge off."
@@ -649,6 +670,26 @@
     "toast": {
       "on": "Automatic merge on",
       "off": "Automatic merge off",
+      "error": "Could not save"
+    }
+  },
+  "passagensSemClique": {
+    "title": "Handoffs without a click",
+    "eyebrow": "when the criteria are met",
+    "subtitle": "On by default. With the switch on, Brabo hands the work to the next agent by itself once the criteria are met; off, the handoff waits for your click on Accept again.",
+    "arquitetoInfra": {
+      "title": "Architect to Infra",
+      "hint": "Accepted automatically once there is a module map, a proposed ADR and no open Architect question."
+    },
+    "infraDevLead": {
+      "title": "Infra to Dev Lead",
+      "hint": "Accepted automatically once the infra PR is merged and the project container is up with a proven network."
+    },
+    "reason": "Only a maintainer or the workspace owner can change these switches.",
+    "switchAria": "Handoff {{passagem}} without a click",
+    "toast": {
+      "on": "Handoff without a click turned on",
+      "off": "Handoff without a click turned off",
       "error": "Could not save"
     }
   },
@@ -711,6 +752,22 @@
     "toast": {
       "saved": "Tool router saved",
       "error": "Could not save"
+    }
+  },
+  "regrasDeOferta": {
+    "title": "Do-it-yourself rules",
+    "eyebrow": "accepted in chat",
+    "subtitle": "The rules you accepted in chat with \"Do it on my own from now on\". Undoing returns the question to your click.",
+    "categoria": {
+      "aprovacao": "Approval",
+      "handoff": "Handoff between agents",
+      "desbloqueio": "Unblock"
+    },
+    "desfazer": "Undo",
+    "reason": "Only a maintainer or the workspace owner can undo these rules.",
+    "toast": {
+      "ok": "Rule undone",
+      "error": "Could not undo"
     }
   }
 }

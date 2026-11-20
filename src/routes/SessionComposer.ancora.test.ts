@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 // Bug medido em 04/11: a âncora do menu de @/ ficava sem classe e o campo
 // (textarea) saía com 179px dentro de um InputGroup de 1224px.
 describe('âncora do campo do composer', () => {
-  const css = readFileSync(resolve(__dirname, 'SessionPage.module.css'), 'utf8');
+  const css = readFileSync(resolve(__dirname, 'SessionComposer.module.css'), 'utf8');
   const tsx = readFileSync(resolve(__dirname, 'SessionComposer.tsx'), 'utf8');
 
   it('a classe da âncora estica no flex e tem min-width 0', () => {
@@ -18,6 +18,6 @@ describe('âncora do campo do composer', () => {
   });
 
   it('o SessionComposer aplica a classe ao div da âncora', () => {
-    expect(tsx).toMatch(/ref=\{setAncora\}\s*\n\s*className=\{styles\.ancoraDoCampo\}/);
+    expect(tsx).toMatch(/ref=\{setAncora\}\s*\n\s*className=\{estilos\.ancoraDoCampo\}/);
   });
 });

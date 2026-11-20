@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeAll } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import type { ResumoDoContextoDaSessao, SessionEvent } from '../lib/api-types';
@@ -49,14 +50,14 @@ const { ContextAside } = await import('./ContextAside');
 
 function renderizar() {
   return render(
-    <ContextAside
+    <QueryClientProvider client={new QueryClient()}><ContextAside
       projectId="p1"
       sessionId="s1"
       actions={[]}
       pausarPoll={false}
       logOpen={true}
       onToggleLog={() => {}}
-    />,
+    /></QueryClientProvider>,
   );
 }
 

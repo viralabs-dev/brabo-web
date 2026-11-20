@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi, beforeEach } from 'vitest';
-import { act, render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent, within } from '@testing-library/react';
 import { simularLayoutMovel } from '../test/match-media';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Dashboard } from './Dashboard';
@@ -398,5 +398,180 @@ describe('Dashboard — Novo projeto e Atividade recente (AT-941)', () => {
     useProjectsSummaryMock.mockReturnValue({ data: undefined, isLoading: false, isError: true });
     renderDashboard();
     expect(screen.getByTestId('atividade-recente')).toHaveTextContent('Não foi possível ler a atividade recente.');
+  });
+});
+
+const diasAtras = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString();
+const projetoParado = { ...PROJECT, id: 'p-parado', name: 'Projeto antigo' };
+const eventoHa = (dias: number, type = 'git.push') =>
+  ({
+    id: `e-${dias}`,
+    sessionId: 'sess-1',
+    seq: 1,
+    type,
+    actor: { kind: 'agent', id: 'arquiteto' },
+    payload: { branch: 'b' },
+    createdAt: diasAtras(dias),
+  }) as ProjectCardSummary['lastEvent'];
+
+function comUmAtivoEUmParado() {
+  useProjectsMock.mockReturnValue({ data: [PROJECT, projetoParado], isLoading: false });
+  useProjectsSummaryMock.mockReturnValue({
+    data: [
+      cardDoProjeto({ lastEvent: eventoHa(1) }),
+      cardDoProjeto({ projectId: projetoParado.id, lastEvent: eventoHa(46) }),
+    ],
+    isLoading: false,
+  });
+}
+
+const grade = () => within(screen.getByTestId('grade-de-projetos'));
+
+describe('Dashboard — Ativos, Parados e Todos (AT-967, RN-1460, RN-1461)', () => {
+  afterEach(() => localStorage.clear());
+
+  it('o padrão é Ativos: o parado sai da grade e as contagens aparecem no seletor', () => {
+    comUmAtivoEUmParado();
+    renderDashboard();
+    expect(grade().getByText('Core API')).toBeInTheDocument();
+    expect(grade().queryByText('Projeto antigo')).toBeNull();
+    const filtro = screen.getByTestId('filtro-de-projetos');
+    expect(filtro).toHaveTextContent('Ativos · 1');
+    expect(filtro).toHaveTextContent('Parados · 1');
+  });
+
+  it('Parados e Todos trocam a grade, e a escolha fica no localStorage', () => {
+    comUmAtivoEUmParado();
+    renderDashboard();
+    fireEvent.click(screen.getByRole('button', { name: /Parados · 1/ }));
+    expect(grade().queryByText('Core API')).toBeNull();
+    expect(grade().getByText('Projeto antigo')).toBeInTheDocument();
+    expect(localStorage.getItem('brabo.inicio.filtro')).toBe('parados');
+    fireEvent.click(screen.getByRole('button', { name: 'Todos' }));
+    expect(grade().getByText('Core API')).toBeInTheDocument();
+    expect(grade().getByText('Projeto antigo')).toBeInTheDocument();
+  });
+
+  it('a escolha guardada vale na próxima visita', () => {
+    localStorage.setItem('brabo.inicio.filtro', 'todos');
+    comUmAtivoEUmParado();
+    renderDashboard();
+    expect(grade().getByText('Projeto antigo')).toBeInTheDocument();
+  });
+
+  it('o indicador "Projetos ativos" conta só os ativos e diz quantos estão parados', () => {
+    comUmAtivoEUmParado();
+    renderDashboard();
+    const cartoes = screen.getByTestId('cartoes-do-inicio');
+    expect(cartoes).toHaveTextContent(/PROJETOS ATIVOS/i);
+    expect(cartoes).toHaveTextContent('1 parado há mais de 30 dias');
+    // O WorkspaceSummary diz 1 ativo, mas o número vem da grade lida.
+    expect(cartoes.querySelector('[data-slot="section-card"] p:nth-of-type(2)')).toHaveTextContent('1');
+  });
+
+  it('RN-1460: o cartão parado tem o chip "parado", e o ativo não tem', () => {
+    localStorage.setItem('brabo.inicio.filtro', 'todos');
+    comUmAtivoEUmParado();
+    renderDashboard();
+    const cartaoParado = grade().getByText('Projeto antigo').closest('[role="button"]') as HTMLElement;
+    const cartaoAtivo = grade().getByText('Core API').closest('[role="button"]') as HTMLElement;
+    expect(within(cartaoParado).getByText('parado')).toBeInTheDocument();
+    expect(within(cartaoAtivo).queryByText('parado')).toBeNull();
+  });
+
+  it('RN-1460: sem o resumo do projeto o chip "parado" não aparece', () => {
+    localStorage.setItem('brabo.inicio.filtro', 'todos');
+    useProjectsMock.mockReturnValue({ data: [projetoParado], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({ data: [], isLoading: false });
+    renderDashboard();
+    expect(grade().queryByText('parado')).toBeNull();
+  });
+
+  it('RN-1462: o rodapé do cartão não diz "atividade em …"; evento genérico fica só com a idade', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({
+      data: [cardDoProjeto({ lastEvent: eventoHa(1, 'tipo.generico') })],
+      isLoading: false,
+    });
+    renderDashboard();
+    const cartao = grade().getByText('Core API').closest('[role="button"]') as HTMLElement;
+    expect(cartao.textContent).not.toMatch(/atividade em /);
+    expect(cartao).toHaveTextContent(/há 1 d$/);
+  });
+
+  it('sem filtro que case, a mensagem é do filtro e o seletor continua lá', () => {
+    useProjectsMock.mockReturnValue({ data: [projetoParado], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({
+      data: [cardDoProjeto({ projectId: projetoParado.id, lastEvent: eventoHa(46) })],
+      isLoading: false,
+    });
+    renderDashboard();
+    expect(screen.getByText(/Nenhum projeto ativo/)).toBeInTheDocument();
+    expect(screen.getByTestId('filtro-de-projetos')).toBeInTheDocument();
+  });
+
+  it('sem o resumo lido ninguém é dado como parado nem contado', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT, projetoParado], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({ data: undefined, isLoading: false, isError: true });
+    renderDashboard();
+    expect(grade().getByText('Projeto antigo')).toBeInTheDocument();
+    expect(screen.getByTestId('cartoes-do-inicio')).not.toHaveTextContent('parado há');
+  });
+
+  it('nenhum botão "Definir orçamento": o cartão sem teto diz "sem teto do mês · definir"', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    useProjectsSummaryMock.mockReturnValue({
+      data: [cardDoProjeto({ lastEvent: eventoHa(1) })],
+      isLoading: false,
+    });
+    renderDashboard();
+    expect(screen.queryByText('Definir orçamento')).toBeNull();
+    expect(screen.getByTestId('token-meter')).toHaveTextContent('sem teto do mês · definir');
+    expect(screen.getByRole('link', { name: 'definir' })).toBeInTheDocument();
+  });
+
+  it('a Caixa diz há quanto tempo espera o item mais antigo, só com as filas inteiras', () => {
+    useProjectsMock.mockReturnValue({ data: [PROJECT], isLoading: false });
+    const item = (desde: string) => ({ projectId: 'project-1', projectName: 'Core API', storyId: 's', titulo: 't', desde, decididaEm: null });
+    const filas = {
+      ...CAIXA.filas,
+      aprovacoes: fila(0),
+      hipoteses: fila(0),
+      promocoes: { total: 2, truncada: false, itens: [item(diasAtras(3)), item(diasAtras(46))] },
+    };
+    useDecisionInboxMock.mockReturnValue({ data: { ...CAIXA, filas }, isError: false });
+    const { unmount } = renderDashboard();
+    expect(screen.getByTestId('caixa-mais-antiga')).toHaveTextContent('a mais antiga espera há 46 d');
+    unmount();
+
+    useDecisionInboxMock.mockReturnValue({
+      data: { ...CAIXA, filas: { ...filas, promocoes: { ...filas.promocoes, truncada: true } } },
+      isError: false,
+    });
+    renderDashboard();
+    expect(screen.queryByTestId('caixa-mais-antiga')).toBeNull();
+  });
+});
+
+describe('Dashboard — Atividade recente só com sujeito e resultado (AT-967, RN-1462)', () => {
+  it('"atividade em anamnese" não aparece; o evento com resultado sim', () => {
+    const outro = { ...PROJECT, id: 'p2', name: 'Outro' };
+    useProjectsMock.mockReturnValue({ data: [PROJECT, outro], isLoading: false });
+    const generico = {
+      ...eventoHa(1, 'tipo.desconhecido'),
+      actor: { kind: 'agent', id: 'anamnese' },
+    } as ProjectCardSummary['lastEvent'];
+    useProjectsSummaryMock.mockReturnValue({
+      data: [
+        cardDoProjeto({ lastEvent: generico }),
+        cardDoProjeto({ projectId: 'p2', lastEvent: eventoHa(2) }),
+      ],
+      isLoading: false,
+    });
+    renderDashboard();
+    const secao = screen.getByTestId('atividade-recente');
+    expect(secao).not.toHaveTextContent('atividade em');
+    expect(secao.querySelectorAll('li')).toHaveLength(1);
+    expect(secao).toHaveTextContent('Outro');
   });
 });

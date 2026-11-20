@@ -37,6 +37,7 @@ import type {
   BudgetPolicy,
   CicloDeVidaDoContainer,
   ContainerOverviewItem,
+  RemocaoPendente,
   CodeBlame,
   CodeBranchDetailList,
   CodeDiff,
@@ -392,6 +393,21 @@ export const updateProject = (
 export const setMergeAutomatico = (projectId: string, habilitado: boolean) =>
   put<Project>(`/projects/${projectId}/auto-merge`, { habilitado });
 
+/** As passagens entre agentes sem clique (RN-1421, AT-994): `maintainer` liga e desliga. */
+export interface AutomacaoDoProjeto {
+  categoria: string;
+  chave: 'arquiteto->infra' | 'infra->dev-lead' | (string & {});
+  ligada: boolean;
+  origem: 'padrao' | 'oferta' | 'manual';
+}
+export const listAutomacoes = (projectId: string) =>
+  get<AutomacaoDoProjeto[]>(`/projects/${projectId}/automacoes`);
+export const setAutomacao = (projectId: string, categoria: string, chave: string, ligada: boolean) =>
+  put<AutomacaoDoProjeto[]>(
+    `/projects/${projectId}/automacoes/${encodeURIComponent(categoria)}/${encodeURIComponent(chave)}`,
+    { ligada },
+  );
+
 /** O roteador de ferramentas do workspace e a situação do Laya (AT-626): `owner` troca. */
 export const getWorkspaceToolRouter = (workspaceId: string) =>
   get<ToolRouter>(`/workspaces/${workspaceId}/tool-router`);
@@ -420,7 +436,7 @@ export const listWorkspaceMembers = (workspaceId: string) =>
   get<WorkspaceMemberWithUser[]>(`/workspaces/${workspaceId}/members`);
 export const addProjectMember = (
   projectId: string,
-  input: { userId: string; role: Role },
+  input: { userId: string; role: Role } | { email: string; role: Role },
 ) => post<void>(`/projects/${projectId}/members`, input);
 export const removeProjectMember = (projectId: string, userId: string) =>
   del<void>(`/projects/${projectId}/members/${userId}`);
@@ -573,6 +589,9 @@ export const getContainerLifecycle = (projectId: string) =>
 
 export const getContainersOverview = (workspaceId: string) =>
   get<ContainerOverviewItem[]>(`/workspaces/${workspaceId}/containers`);
+
+export const getRemocoesPendentes = (workspaceId: string) =>
+  get<RemocaoPendente[]>(`/workspaces/${workspaceId}/containers/remocoes-pendentes`);
 
 // --- Aba Code, só leitura (FASE 26) ---
 //
@@ -1582,6 +1601,22 @@ export const answerOpenQuestion = (
     corpo,
   );
 
+/** AT-997 (RN-858): aceita a sugestão de várias perguntas num gesto humano. */
+export const acceptOpenQuestionSuggestions = (projectId: string, questionIds: string[]) =>
+  post<{ resultados: { questionId: string; status: string }[] }>(
+    `/projects/${projectId}/open-questions/accept-suggestions`,
+    { questionIds },
+  );
+
 // AT-843: a fila e o aviso de PR pronta do chat escapam do portão da imagem (RN-825).
 export const getOpenPullRequestsDoChat = (projectId: string) =>
   get<CodePullRequestList>(`/projects/${projectId}/git/open-pull-requests`);
+
+/** AT-999 (RN-1442): responde à oferta de "fazer sozinho" (`maintainer`); 404 sem oferta, 409 já respondida. */
+export const responderAutomacao = (
+  projectId: string,
+  body: { categoria: string; chave: string; escopo?: string; decisao: 'aceitar' | 'recusar' },
+) => post<AutomacaoDoProjeto[]>(`/projects/${projectId}/automacoes`, body);
+/** AT-999 (RN-1443): desfaz a regra (na aprovação a `chave` é `<tipo>@<agente>`). */
+export const desfazerAutomacao = (projectId: string, categoria: string, chave: string) =>
+  del<void>(`/projects/${projectId}/automacoes/${encodeURIComponent(categoria)}/${encodeURIComponent(chave)}`);

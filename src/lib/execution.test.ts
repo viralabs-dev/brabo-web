@@ -211,9 +211,9 @@ describe('deriveExecutionProgress', () => {
 
 describe('formatMicros', () => {
   it('formata micro-USD em US$ com 4 casas', () => {
-    expect(formatMicros(0)).toBe('US$ 0.0000');
-    expect(formatMicros(1_000_000)).toBe('US$ 1.0000');
-    expect(formatMicros(12_345)).toBe('US$ 0.0123');
+    expect(formatMicros(0)).toBe('$0.0000');
+    expect(formatMicros(1_000_000)).toBe('$1.0000');
+    expect(formatMicros(12_345)).toBe('$0.0123');
   });
 });
 

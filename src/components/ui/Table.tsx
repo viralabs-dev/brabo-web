@@ -34,9 +34,13 @@ interface TableProps<T> {
   rows: T[];
   rowKey: (row: T) => string;
   emptyMessage?: string;
+  /** Sem linhas: só a frase, sem o cabeçalho de colunas (AT-974). */
+  semCabecalhoSeVazia?: boolean;
+  /** A mensagem de vazio vira uma linha só, de até 48 px (AT-1005, L09). */
+  vaziaEmUmaLinha?: boolean;
 }
 
-export function Table<T>({ columns, rows, rowKey, emptyMessage }: TableProps<T>) {
+export function Table<T>({ columns, rows, rowKey, emptyMessage, semCabecalhoSeVazia, vaziaEmUmaLinha }: TableProps<T>) {
   const { t } = useTranslation('ui');
   const mensagemVazia = emptyMessage ?? t('table.emptyMessage');
   const gridTemplateColumns = columns.map((c) => c.width ?? '1fr').join(' ');
@@ -50,10 +54,18 @@ export function Table<T>({ columns, rows, rowKey, emptyMessage }: TableProps<T>)
   // cabeçalho some porque não há mais coluna para ele encabeçar. Coluna sem
   // rótulo (a das ações, em várias telas) ou marcada `largaNoMovel` ocupa a
   // largura inteira do cartão, com o rótulo em cima.
+  if (semCabecalhoSeVazia && rows.length === 0) {
+    return (
+      <Grade>
+        <GradeVazia className={vaziaEmUmaLinha ? 'py-3' : undefined}>{mensagemVazia}</GradeVazia>
+      </Grade>
+    );
+  }
+
   if (movel) {
     return (
       <Grade data-layout="pilha">
-        {rows.length === 0 && <GradeVazia>{mensagemVazia}</GradeVazia>}
+        {rows.length === 0 && <GradeVazia className={vaziaEmUmaLinha ? 'py-3' : undefined}>{mensagemVazia}</GradeVazia>}
         {rows.map((row) => (
           <GradeCartao key={rowKey(row)} data-testid="linha-da-tabela">
             {columns.map((column) => (
@@ -109,7 +121,7 @@ export function Table<T>({ columns, rows, rowKey, emptyMessage }: TableProps<T>)
         </GradeLinha>
       </GradeCabecalho>
       <GradeCorpo>
-        {rows.length === 0 && <GradeVazia>{mensagemVazia}</GradeVazia>}
+        {rows.length === 0 && <GradeVazia className={vaziaEmUmaLinha ? 'py-3' : undefined}>{mensagemVazia}</GradeVazia>}
         {rows.map((row) => (
           <GradeLinha key={rowKey(row)} corpo style={{ gridTemplateColumns }}>
             {columns.map((column) => (

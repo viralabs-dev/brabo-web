@@ -8,7 +8,7 @@
 .chip {
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
 }
 
 /* PONTO, nunca número: presença, não quantidade — os totais por fila ficam
@@ -46,13 +46,13 @@
   margin: 0;
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
 }
 
 .subtitulo {
   margin: 4px 0 0;
-  font-size: 11px;
+  font-size: var(--fs-label);
   line-height: 1.5;
   color: var(--text-muted);
 }
@@ -72,7 +72,7 @@
   padding: 7px 16px;
   font-family: var(--font-heading);
   font-weight: 500;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
@@ -135,7 +135,7 @@
 }
 
 .linhaTitulo {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -144,7 +144,7 @@
 
 .linhaDetalhe {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -154,7 +154,7 @@
 .tempo {
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -164,7 +164,7 @@
 .tempoEmprestado {
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   font-style: italic;
 }
@@ -172,13 +172,13 @@
 .tempoAusente {
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 /* AT-449 (RN-766): o gate parado esperando o clique, dito ao lado do card. */
 .gateParado {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }

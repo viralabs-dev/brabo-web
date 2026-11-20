@@ -17,13 +17,15 @@
       "loadError": "无法加载项目。",
       "retry": "重试",
       "tabsAriaLabel": "{{name}} 的标签页",
-      "switch": "切换项目：{{name}}"
+      "switch": "切换项目：{{name}}",
+      "unknownProject": "项目"
     },
     "agentsNow": {
       "label": "当前智能体",
       "openProjectHint": "打开项目以查看其智能体。",
       "empty": "还没有智能体行动。",
       "noSession": "该项目还没有会话。",
+      "idleMore_other": "+ {{count}} 个空闲 · 查看全部",
       "loadError": "无法加载智能体。",
       "status": {
         "trabalhando": "工作中",
@@ -51,13 +53,25 @@
   },
   "notificationBell": {
     "label": "通知",
-    "markRead": {
-      "default": "标为已读",
-      "withCount": "将 {{total}} 条标为已读"
+    "markRead": "将活动标为已读",
+    "abrir": "打开",
+    "precisam": {
+      "titulo": "需要你处理",
+      "vazio": "目前没有等你处理的事项。",
+      "carregando": "正在读取等你处理的事项…",
+      "erro": "无法读取等你处理的事项。"
     },
-    "windowNote_other": "显示每个项目的最新通知。另有 {{count}} 条较早的通知放不下——打开项目即可查看。",
-    "empty": "这里还没有通知。",
-    "older_other": "+ {{count}} 条较早的"
+    "tipo": {
+      "promocoes": "等待晋升的故事",
+      "arquitetura": "架构待办",
+      "hipoteses": "等待回答的心理学家假设"
+    },
+    "atividade": {
+      "titulo": "按项目的活动",
+      "vazio": "没有新活动。",
+      "eventos_other": "{{count, number}} 个事件",
+      "parados_other": "{{count}} 个项目超过 30 天无活动 · {{eventos}}"
+    }
   },
   "contexto": {
     "rotulo": "上次调用 {{usados}} / {{janela}} 个令牌 · {{modelo}}",
@@ -71,7 +85,8 @@
     },
     "overLimit": "月度上限的 {{pct}}%",
     "savingsPct": "本周期节省了 {{pct}}% 的 tokens",
-    "noBudgetCta": "设置预算",
+    "semTeto": "本月无上限",
+    "definir": "设置",
     "compactFooter": {
       "spent": "已花费 {{value}}",
       "balance": "余额 {{value}}"

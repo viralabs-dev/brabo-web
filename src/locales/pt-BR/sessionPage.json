@@ -23,6 +23,7 @@
     "semNomeFicaHashtag": "Sem nome — a sessão fica {{hashtag}}",
     "tituloRenomear": "Sessão {{rotulo}} — clique para renomear",
     "tituloSessao": "Sessão {{rotulo}}",
+    "tituloExecucao": "Execução · {{rotulo}}",
     "trazCriativo": "traz o Criativo pra conversa",
     "iniciarIdeacao": "Iniciar ideação",
     "iniciarIdeacaoTitulo": "Traz o Criativo para conduzir a ideação desta sessão — ele ainda não entrou",
@@ -36,7 +37,8 @@
     "encerrarSessao": "Encerrar a sessão",
     "pararTurno": "Parar turno",
     "trilha": "Trilha da sessão",
-    "sessoes": "Sessões"
+    "sessoes": "Sessões",
+    "pendencias": "Pendências"
   },
   "convite": {
     "criativa": {
@@ -72,7 +74,7 @@
     "placeholder": "Escreva uma mensagem… (Enter envia, Shift+Enter quebra linha)",
     "enviar": "Enviar",
     "parar": "Parar",
-    "prontoParaProduzir": "Estou pronto — a necessidade está validada",
+    "prontoParaProduzir": "Estou pronto — validar necessidade",
     "prontoParaProduzirExplica": "Fecha a prontidão e a validação da necessidade, e chama o PO: ele entra sozinho quando o Criativo terminar o resumo do produto",
     "prontoParaProduzirDesabilitado": "Registre pelo menos uma regra de negócio com o Criativo antes de confirmar prontidão",
     "confirmarArquitetura": "Confirmar arquitetura pronta",
@@ -148,8 +150,8 @@
         "nome": "skills",
         "descricao": "Lista as ferramentas e a instrução do agente",
         "titulo_zero": "{{agente}}: nenhuma ferramenta",
-        "titulo_one": "{{agente}}: {{count}} ferramenta",
-        "titulo_other": "{{agente}}: {{count}} ferramentas",
+        "titulo_one": "{{agente}}: {{count, number}} ferramenta",
+        "titulo_other": "{{agente}}: {{count, number}} ferramentas",
         "naoSei": "Não sei as ferramentas de {{agente}} agora: o engine não respondeu.",
         "semAgente": "{{agente}} não está no catálogo.",
         "instrucao": "Instrução vigente (v{{versao}})",
@@ -160,11 +162,12 @@
         "descricao": "Busca na base do projeto o texto do campo",
         "semConsulta": "Escreva o que buscar no campo e use /buscar.",
         "titulo_zero": "Busca \"{{consulta}}\": nada encontrado",
-        "titulo_one": "Busca \"{{consulta}}\": {{count}} trecho",
-        "titulo_other": "Busca \"{{consulta}}\": {{count}} trechos",
+        "titulo_one": "Busca \"{{consulta}}\": {{count, number}} trecho",
+        "titulo_other": "Busca \"{{consulta}}\": {{count, number}} trechos",
         "erro": "A busca falhou: {{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "Mais ações"
   },
   "ativacao": {
     "encerradaTitulo": "Sessão encerrada",
@@ -292,9 +295,9 @@
     "historias": "histórias",
     "tarefas": "tarefas",
     "itens": "itens",
-    "mensagensCount_zero": "{{count}} mensagens",
-    "mensagensCount_one": "{{count}} mensagem",
-    "mensagensCount_other": "{{count}} mensagens"
+    "mensagensCount_zero": "{{count, number}} mensagens",
+    "mensagensCount_one": "{{count, number}} mensagem",
+    "mensagensCount_other": "{{count, number}} mensagens"
   },
   "aside": {
     "titulo": "Contexto da sessão",
@@ -334,6 +337,7 @@
     "perguntasAbertas": "Perguntas abertas",
     "gastoPorAgente": "Gasto por agente",
     "gastoVazio": "Sem gasto ainda.",
+    "gastoErro": "Não foi possível ler o gasto da sessão.",
     "detalhes": "Detalhes da sessão"
   },
   "turno": {
@@ -361,6 +365,8 @@
     "raciocinioChars_one": "{{count}} caractere",
     "raciocinioChars_other": "{{count}} caracteres",
     "passosDoTurno": "Passos do turno",
+    "trabalhou": "Trabalhou",
+    "trabalhando": "Trabalhando",
     "consultado": "Consultado neste turno",
     "fonteN": "Fonte {{n}}: {{rotulo}}",
     "consultadoCorte": "mostrando {{shown}} de {{total}}",
@@ -376,12 +382,12 @@
       "registrou": "Registrou",
       "outros": "Outros"
     },
-    "raciocinioTokens_zero": "{{count}} tokens",
-    "raciocinioTokens_one": "{{count}} token",
-    "raciocinioTokens_other": "{{count}} tokens"
+    "raciocinioTokens_zero": "{{count, number}} tokens",
+    "raciocinioTokens_one": "{{count, number}} token",
+    "raciocinioTokens_other": "{{count, number}} tokens"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" acima.",
+    "referenciaNoFio": "Merge proposto — decida na fila \"PRs prontas para merge\" do painel de pendências.",
     "titulo": "Pendências de outras sessões deste projeto",
     "tituloDoProjeto": "Pendências deste projeto",
     "nota": "Atalho para a decisão: os mesmos cards e os mesmos endpoints da aba Aprovações. Nenhum teto muda — o merge em branch protegida segue sendo gesto seu (Mergear pede a sua confirmação).",
@@ -444,6 +450,13 @@
       "esperando": "A tarefa \"{{tarefa}}\" está esperando sua resposta.",
       "sugestao": "Sugestão:",
       "aceitar": "Aceitar sugestão",
+      "loteAceitar": "Aceitar as {{n}} sugestões de {{agente}}",
+      "loteTitulo": "Você vai aceitar {{n}} sugestões de {{agente}}:",
+      "loteRegra": "toca regra de negócio",
+      "loteConfirmar": "Confirmar as {{n}} sugestões",
+      "loteCancelar": "Cancelar",
+      "loteErro": "Não foi possível aceitar as sugestões.",
+      "loteParcial": "{{n}} não puderam ser aceitas; a fila foi atualizada.",
       "campo": "Sua resposta",
       "responder": "Responder",
       "soOAutor": "Só quem criou a sessão em que a pergunta nasceu pode respondê-la.",
@@ -452,7 +465,8 @@
       "respondida": "Respondida. A resposta foi gravada como decisão.",
       "corrigir": "Corrigir a história",
       "corrigirHistoria": "História afetada: {{titulo}}",
-      "dispensar": "Dispensar"
+      "dispensar": "Dispensar",
+      "responderComTexto": "Responder com texto"
     },
     "verOCartao": "Ver o cartão",
     "saidas": {
@@ -500,16 +514,27 @@
   "fio": {
     "carregando": "Carregando sessão…",
     "historico": {
-      "titulo_zero": "Antes das últimas {{count}} mensagens",
+      "titulo_zero": "Antes das últimas {{count, number}} mensagens",
       "titulo_one": "Antes da última mensagem",
-      "titulo_other": "Antes das últimas {{count}} mensagens",
+      "titulo_other": "Antes das últimas {{count, number}} mensagens",
       "outrasCount_zero": "{{count}} outras entradas",
       "outrasCount_one": "{{count}} outra entrada",
       "outrasCount_other": "{{count}} outras entradas",
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "Conversa da sessão",
-    "irAoFim": "Ir ao fim"
+    "irAoFim": "Ir ao fim",
+    "irAoFimComNovas_zero": "Ir ao fim",
+    "irAoFimComNovas_one": "Ir ao fim · {{count}} nova",
+    "irAoFimComNovas_other": "Ir ao fim · {{count}} novas",
+    "verRespostaInteira": "Ver resposta inteira",
+    "recolherResposta": "Recolher resposta"
+  },
+  "trilho": {
+    "rotulo": "Turnos da conversa",
+    "voce": "Você",
+    "turnoN": "Turno {{n}}: {{nome}}",
+    "recorte": "Só os turnos carregados; há mais antes"
   },
   "fila": {
     "painel": "Mensagens na fila",
@@ -611,5 +636,55 @@
       "rfc": "RFC proposta",
       "prototipo": "protótipo proposto"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "Você",
+    "resumo_one": "Respondi {{count}} pergunta",
+    "resumo_other": "Respondi {{count}} perguntas",
+    "resumo_zero": "Respondi {{count}} perguntas"
+  },
+  "cartao": {
+    "maisAcoes": "Mais ações"
+  },
+  "faixa": {
+    "abrir": "Executores",
+    "esperam_zero": "{{count}} esperando",
+    "esperam_one": "{{count}} esperando",
+    "esperam_other": "{{count}} esperando"
+  },
+  "painel": {
+    "titulo": "Painel da sessão",
+    "abas": "Painel da sessão",
+    "contexto": "Contexto",
+    "executores": "Executores",
+    "pendencias": "Pendências",
+    "pendenciasVazio": "Nenhuma pendência neste projeto.",
+    "executoresVazio": "Nenhuma execução em andamento."
+  },
+  "ofertaDeAutomacao": {
+    "texto": {
+      "aprovacao": "Você aprovou {{acao}} de {{agente}} {{n}} vezes seguidas, sem mudar nada. Quer que eu faça isso sozinho neste projeto? Continua pedindo você: o que muda de risco, de custo ou de destino.",
+      "handoff": "Você aceitou a passagem {{chave}} {{n}} vezes seguidas. Quer que eu faça essa passagem sozinho neste projeto? Continua pedindo você: o que sai do critério.",
+      "desbloqueio": "Você desbloqueou tarefas do mesmo tipo ({{chave}}) {{n}} vezes seguidas. Quer que eu desbloqueie sozinho neste projeto? Continua pedindo você: o que o critério não cobre.",
+      "generico": "Você repetiu a decisão {{chave}}. Quer que eu a tome sozinho neste projeto?"
+    },
+    "ondePadrao": "Configurações › Projeto",
+    "aceitar": "Fazer sozinho daqui em diante",
+    "recusar": "Não, continue perguntando",
+    "aceita": "Combinado: daqui em diante eu faço sozinho.",
+    "recusada": "Tudo bem: continuo perguntando.",
+    "semPapel": "Responder exige o papel maintainer no projeto.",
+    "erroTitulo": "Não foi possível responder à oferta",
+    "aplicada": "Feito sozinho pela regra de {{regra}}, desde {{desde}}",
+    "outroCaminho": "Isto já repetiu sem resolver, então não vou fazer sozinho. Saídas: {{opcoes}}.",
+    "opcao": {
+      "trocar_modelo": "trocar o modelo desta tarefa",
+      "pedir_ao_dev_lead": "pedir ao Dev Lead",
+      "arquivar": "arquivar"
+    },
+    "aplicadaSemData": "Feito sozinho pela regra de {{regra}}",
+    "desfazerAntes": "Dá para desfazer em",
+    "desfazerDepois": ".",
+    "desfazerLink": "desfazer"
   }
 }

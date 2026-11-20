@@ -4,6 +4,7 @@ import { camposDoArtefato } from './artefato-do-fio';
 describe('camposDoArtefato (RN-977)', () => {
   it.each([
     ['artifact.decision_record', { choice: 'Postgres', context: 'Qual banco?' }, { titulo: 'Postgres', descricao: 'Qual banco?' }],
+    ['artifact.module_contracts', { contratos: [{ modulo: 'agenda' }, { modulo: 'auth' }] }, { descricao: 'agenda, auth' }],
     ['artifact.module_map', { modules: [{ name: 'api' }, { name: 'web' }] }, { descricao: 'api, web' }],
     ['artifact.c4_diagram', { systemName: 'Brabo', systemDescription: 'Plataforma' }, { titulo: 'Brabo', descricao: 'Plataforma' }],
     ['artifact.project_image', { image: 'node:22-slim', rationale: 'leve' }, { titulo: 'node:22-slim', descricao: 'leve' }],

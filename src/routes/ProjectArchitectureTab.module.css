@@ -8,13 +8,13 @@
   border: 1px solid var(--warning-panel-border, var(--border-strong));
   background: var(--warning-panel, var(--surface-2));
   border-radius: var(--radius-md);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
 .faixaTag {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.06em;
   color: var(--warning, var(--accent));
 }
@@ -36,7 +36,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
@@ -44,7 +44,7 @@
 }
 
 .sectionSub {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   margin-bottom: 16px;
 }
@@ -69,7 +69,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .adrLink {
@@ -95,7 +95,7 @@
 }
 
 .pendTitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -111,6 +111,56 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
+}
+
+/* AT-981: contratos por módulo; tabela e identidade levam o Badge de destaque. */
+.contrato {
+  margin-bottom: 14px;
+}
+
+.contratoModulo {
+  font-family: var(--font-mono);
+  font-size: var(--fs-sm);
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.contratoItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  font-size: var(--fs-sm);
+}
+
+.assinatura {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.contratoItem .sectionSub {
+  margin-bottom: 0;
+}
+
+/* AT-972: o ToggleGroup das vistas fica acima do conteúdo da vista. */
+.vistas {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.legendaDoGrafo {
+  margin: 0 0 8px;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+/* AT-972 (RN-1477): Stack e Responsabilidade quebram linha (o `Table` do kit vem com nowrap); fora de camada, vence o utilitário. */
+.celulaQuebra {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }

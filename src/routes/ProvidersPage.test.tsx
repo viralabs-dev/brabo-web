@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { ProvidersPage } from './ProvidersPage';
-import '../lib/i18n';
+import i18n from '../lib/i18n';
 
 const listProviderCapabilities = vi.fn();
 const listCredentialedProviders = vi.fn();
@@ -49,6 +49,12 @@ function montar() {
 }
 
 describe('ProvidersPage', () => {
+  beforeAll(async () => {
+    await i18n.changeLanguage('pt-BR');
+  });
+  afterAll(() => {
+    void i18n.changeLanguage('en');
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     listCredentialedProviders.mockRejectedValue(new Error('indisponível'));
@@ -64,7 +70,9 @@ describe('ProvidersPage', () => {
     ]);
     montar();
     expect(await screen.findByText('ficticio')).toBeInTheDocument();
-    expect(screen.getByText('stickySession')).toBeInTheDocument();
+    expect(screen.getByText('Sessão fixa')).toBeInTheDocument();
+    expect(screen.getByText('Sessão fixa')).toHaveAttribute('title', 'stickySession');
+    expect(screen.queryByText('stickySession')).toBeNull();
     expect(screen.getByText('credenciais')).toBeInTheDocument();
     expect(screen.getByText('catalogo-sem-projeto')).toBeInTheDocument();
     // O gasto das chaves mudou para a página global Gastos (AT-632).
@@ -76,10 +84,28 @@ describe('ProvidersPage', () => {
       { provider: 'openrouter', capabilities: caps({ priceCeiling: true }) },
     ]);
     montar();
-    expect(await screen.findByText('priceCeiling')).toBeInTheDocument();
+    expect(await screen.findByText('Cache de preço')).toBeInTheDocument();
     expect(screen.queryByText(/teto de preço|price ceiling/)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /^Ajuda: |^Help: / }));
     expect(await screen.findByText(/teto de preço|price ceiling/)).toBeInTheDocument();
+  });
+
+  it('AT-976 (RN-1482): nenhum identificador em camelCase na matriz; "não provado" é texto sem selo', async () => {
+    listProviderCapabilities.mockResolvedValue([
+      { provider: 'openrouter', capabilities: caps({ stickySession: true, reasoningText: false, novaCapacidade: true }) },
+    ]);
+    montar();
+    const tabela = await screen.findByRole('table');
+    const cabecalhos = within(tabela).getAllByRole('columnheader').map((c) => c.textContent);
+    expect(cabecalhos).toEqual(expect.arrayContaining([
+      'Streaming', 'Ferramentas', 'Lista de modelos', 'Embeddings', 'Raciocínio',
+      'Roteamento', 'Sessão fixa', 'Cache de preço', 'Cache de prompt', 'Visão',
+    ]));
+    // Só a chave futura, ainda sem rótulo, cai no identificador.
+    expect(cabecalhos.filter((c) => /[a-z][A-Z]/.test(c ?? ''))).toEqual(['novaCapacidade']);
+    const naoProvado = within(tabela).getAllByText('não provado')[0];
+    expect(naoProvado.getAttribute('data-slot')).not.toBe('badge');
+    expect(within(tabela).getAllByText('provado').length).toBeGreaterThan(0);
   });
 
   it('capabilities falhando mostram erro nomeado', async () => {

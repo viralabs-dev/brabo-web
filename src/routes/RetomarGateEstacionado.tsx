@@ -21,6 +21,10 @@ interface Props {
   gate: string;
   /** Papel alcança o mínimo do endpoint (`developer`, `roleAtLeast`)? */
   podeDecidir: boolean;
+  /** Texto do botão no lugar de "Retomar gate" (aba PRs: "Pedir o parecer de novo", AT-971). */
+  rotulo?: string;
+  /** Sem a nota ao lado: a linha da PR cabe em uma linha (AT-971). */
+  compacto?: boolean;
 }
 
 /**
@@ -28,7 +32,7 @@ interface Props {
  * poll novo: o despacho do gate grava eventos no log da sessão, e o canal os
  * traz. A recusa (409 `gate_nao_estacionado`) vira toast com a frase da api.
  */
-export function RetomarGateEstacionado({ projectId, taskId, gate, podeDecidir }: Props) {
+export function RetomarGateEstacionado({ projectId, taskId, gate, podeDecidir, rotulo, compacto }: Props) {
   const { t } = useTranslation('sessionPage');
   const { showToast } = useToast();
   const [retomando, setRetomando] = useState(false);
@@ -59,9 +63,13 @@ export function RetomarGateEstacionado({ projectId, taskId, gate, podeDecidir }:
         onClick={() => void retomar()}
       >
         <RotateCcw aria-hidden="true" />
-        {t('gateEstacionado.botao')}
+        {rotulo ?? t('gateEstacionado.botao')}
       </Button>
-      <span className={styles.mergearNota} data-testid="retomar-gate-nota">
+      <span
+        // RN-102: sem papel, o motivo do botão desabilitado fica à vista (RN-1494).
+        className={compacto && podeDecidir ? 'sr-only' : styles.mergearNota}
+        data-testid="retomar-gate-nota"
+      >
         {!podeDecidir
           ? t('gateEstacionado.semPapel')
           : retomado

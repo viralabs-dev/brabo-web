@@ -1,4 +1,5 @@
 import { Shimmer } from './ui/Shimmer';
+import i18n from '@/lib/i18n';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -238,7 +239,7 @@ export function HuggingFaceModelBrowser({ workspaceId }: { workspaceId: string }
               </div>
               <div className={styles.selos}>
                 <span className={styles.downloads}>
-                  {t('huggingface.downloads', { value: model.downloads.toLocaleString() })}
+                  {t('huggingface.downloads', { value: model.downloads.toLocaleString(i18n.language) })}
                 </span>
                 <Badge tone={model.official ? 'muted' : 'warning'}>
                   {model.official ? t('huggingface.badgeOfficial') : t('huggingface.badgeCommunity')}

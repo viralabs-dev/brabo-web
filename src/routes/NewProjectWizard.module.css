@@ -1,7 +1,31 @@
 .stepper {
   display: flex;
+  align-items: flex-start;
+  margin: 0 0 16px;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.stepHead {
+  display: flex;
   align-items: center;
-  margin-bottom: 20px;
+}
+
+.stepName {
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+}
+
+.stepNameCurrent {
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 .stepCircle {
@@ -12,7 +36,7 @@
   align-items: center;
   justify-content: center;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   background: var(--surface-2);
   color: var(--text-muted);
   flex-shrink: 0;
@@ -38,6 +62,21 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.modoGrid {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 10px;
+}
+
+/* AT-1007: 2 linhas de descrição, para o passo caber em 1366 x 768 sem rolar. */
+.modoGrid .providerDesc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .providerOption {
@@ -73,7 +112,7 @@
 
 .providerLabel {
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -90,13 +129,13 @@
 }
 
 .fieldLabel {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .slugPreview {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
   background: var(--code-bg);
   border-radius: var(--radius-md);
@@ -108,14 +147,14 @@
    `Alert tone="warning"`, que é reservado ao caminho que a api recusa. */
 .baseNote {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
   color: var(--text-muted);
 }
 
 .baseNote code {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
 }
 
@@ -143,7 +182,7 @@
   border: 1px solid var(--border);
   background: var(--surface-1);
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   cursor: pointer;
 }
 
@@ -169,13 +208,13 @@
 }
 
 .summaryLabel {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   flex-shrink: 0;
 }
 
 .summaryValue {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
   text-align: right;
   min-width: 0;
@@ -183,7 +222,7 @@
 
 .summaryValueMono {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   text-align: right;
   min-width: 0;
@@ -206,13 +245,13 @@
 
 .motivoBloqueio {
   margin: 12px 0 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .stepLabel {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 

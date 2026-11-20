@@ -2,12 +2,13 @@
   "faixa": {
     "titulo": "需要你处理",
     "verTodas": "查看全部 →",
-    "vazio": "目前没有等待你处理的事项。"
+    "vazio": "目前没有等待你处理的事项。",
+    "abrirDecisoes": "打开决策 →"
   },
   "architectureTab": {
     "title": "架构",
     "emptyTitle": "尚无架构",
-    "emptyState": "尚无架构 —— Arquiteto 会生成 module_map 和 ADR。",
+    "emptyState": "尚无架构。架构师会在用户故事之后设计模块和决策。",
     "modulesLabel": "模块",
     "modulesLabelVersioned": "模块 · v{{version}}",
     "noModules": "尚无模块。",
@@ -19,6 +20,16 @@
     "pendenciesLabel": "交叉验证待办",
     "reasonNoModule": "未关联模块",
     "reasonMissingModule": "模块不存在：{{missing}}",
+    "contractsLabel": "模块契约",
+    "noContracts": "尚未声明契约——架构师会声明每个模块对外提供的内容。",
+    "contractTypes": {
+      "funcao": "函数",
+      "rota": "路由",
+      "evento": "事件",
+      "dado": "数据",
+      "tabela": "表",
+      "identidade": "身份"
+    },
     "cols": {
       "module": "模块",
       "stack": "技术栈",
@@ -26,6 +37,18 @@
       "dependsOn": "依赖",
       "stories": "故事"
     },
+    "chips": {
+      "modulos": "模块 · v{{version}}",
+      "c4": "C4 第 2 级"
+    },
+    "grafoLegenda_other": "{{count, number}} 个模块 · 从左到右的流向",
+    "views": {
+      "label": "架构视图",
+      "diagrama": "图",
+      "adrs": "ADR · {{n}}",
+      "pendencias": "待办 · {{n}}"
+    },
+    "noPendencies": "没有交叉验证待办。",
     "proposalTag": "提案",
     "adrProposal": "ADR“{{titulo}}”等待您批准后转为 PR。",
     "decide": "决定",
@@ -33,12 +56,15 @@
       "modules": "模块 · v{{version}}",
       "c4": "C4 第 2 级",
       "byArchitect": "由 Arquiteto 生成 · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "无法加载架构",
+    "loadErrorThing": "模块或 ADR"
   },
   "c4": {
     "titleContext": "上下文",
     "titleContainer": "容器",
     "expandLabel": "放大图 {{titulo}}",
+    "fitWidth": "适应宽度",
     "expandTitle": "放大",
     "renderErrorTitle": "无法绘制此图。",
     "viewRawSyntax": "查看 Mermaid 语法",
@@ -52,7 +78,9 @@
     "rearmSuccess": "智能体已重新启用",
     "rearmErrorTitle": "无法重新启用智能体",
     "wakeSuccess": "正在查找任务",
-    "wakeErrorTitle": "无法唤醒智能体"
+    "wakeErrorTitle": "无法唤醒智能体",
+    "maisOciosos_other": "+ {{count, number}} 个已完成或空闲",
+    "recolherOciosos": "收起空闲的"
   },
   "timeline": {
     "title": "团队时间线",
@@ -75,7 +103,7 @@
     "runnerRessalvaNunca": "尚无 runner 连接到此项目。请在“代码”标签页中安装并运行 `brabo-runner`。",
     "espelho": "镜像",
     "espelhoNunca": "从未同步",
-    "espelhoValor_other": "于 {{data}} 复制了 {{count}} 个文件",
+    "espelhoValor_other": "于 {{data}} 复制了 {{count, number}} 个文件",
     "espelhoSemNovidade": "于 {{data}} 同步 —— 无需复制",
     "espelhoFalhou": "上一轮失败",
     "espelhoFalhouComUltima": "上一轮失败 —— 最后一次成功复制于 {{data}}",
@@ -93,9 +121,13 @@
     "verTurnos": "轮次",
     "turnosVazio": "尚无已完成的轮次。",
     "title": "活动",
-    "count_other": "{{count}} 个事件",
+    "count_other": "{{count, number}} 个事件",
     "loadErrorTitle": "无法加载活动。",
-    "emptyNoSession": "尚无活动：活动从项目的第一个会话开始。"
+    "emptyNoSession": "尚无活动：活动从项目的第一个会话开始。",
+    "turnosAgrupados_other": "{{agente}} · {{count, number}} 轮，{{passos}} 步",
+    "recorteTurnos_other": "最近 {{count, number}} 轮",
+    "verLinhaDoTempo": "查看完整时间线 →",
+    "rotuloModo": "查看方式"
   },
   "executionSection": {
     "title": "执行",
@@ -135,7 +167,7 @@
   },
   "architectureSummary": {
     "title": "架构",
-    "emptyState": "尚无架构 —— Arquiteto 会生成 module_map 和 ADR。",
+    "emptyState": "尚无架构。架构师会在用户故事之后设计模块和决策。",
     "summary_other": "已映射 {{count}} 个模块，C4 图{{status}}。",
     "statusGenerated": "已生成",
     "statusPending": "待生成",
@@ -153,12 +185,18 @@
     "modelo": {
       "titulo": "启用一个模型并应用到团队",
       "pendente": "还没有智能体配置模型：请在 Providers 中启用一个，再在此处选择。",
-      "link": "选择模型 →"
+      "link": "选择模型 →",
+      "pendenteLocal": "团队正在使用本地模型 {{modelo}}。请选择您的提供商的模型。",
+      "aplicar": "将 {{modelo}} 应用到团队",
+      "aplicarSemPapel": "只有项目 maintainer 才能把模型应用到团队。",
+      "aplicarSemHaiku": "Claude Haiku 5.5 在目录中未启用：请在 Providers 中启用。",
+      "aplicarFalhou": "无法将模型应用到团队，请重试。"
     },
     "ideacao": {
       "titulo": "开始第一次构思",
       "pendente": "把想法告诉 Criativo —— 用户故事就从这里产生。",
-      "link": "打开 Criativo →"
+      "link": "开始构思",
+      "semPapel": "创建会话需要 developer 角色。"
     }
   },
   "proximoPasso": {
@@ -223,6 +261,9 @@
     "endereco": "地址",
     "abrir": "在新标签页打开",
     "titulo": "交付物",
-    "vazio": "没有可预览的已发布交付物。"
+    "vazio": "没有可预览的已发布交付物。",
+    "checando": "正在检查应用是否响应…",
+    "naoRespondeu": "{{url}} 没有响应。请用上面的命令启动应用。",
+    "tentarDeNovo": "重试"
   }
 }

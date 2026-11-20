@@ -16,8 +16,9 @@
 }
 
 .dropdown {
-  width: 380px;
+  width: 420px;
   max-width: calc(100vw - 16px);
+  overflow-x: hidden;
   max-height: 70vh;
   overflow-y: auto;
   gap: 0;
@@ -38,7 +39,7 @@
 .headerTitle {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -46,49 +47,75 @@
   color: var(--accent);
 }
 
-.group {
-  border-top: 1px solid var(--border);
-}
-
-.groupHeader {
+.secao {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  min-height: 32px;
   background: var(--surface-2);
-  padding: 7px 14px;
-  font-size: 12px;
+  border-bottom: 1px solid var(--border);
+  padding: 0 14px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
-.groupDot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  flex-shrink: 0;
-}
-
-.groupCount {
-  margin-left: auto;
-}
-
-.windowNote {
+.linha,
+.linhaProjeto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
   padding: 8px 14px;
   border-bottom: 1px solid var(--border);
+  text-align: left;
+  background: transparent;
+  color: inherit;
+}
+
+.linhaProjeto {
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.linhaProjeto:hover {
   background: var(--surface-2);
+}
+
+.texto {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sujeito {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow-wrap: anywhere;
+}
+
+.motivo {
+  font-size: var(--fs-label);
   color: var(--text-secondary);
-  font-size: 11px;
-  line-height: 1.5;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.list {
-  padding: 0 14px;
-}
-
-.older {
-  padding: 6px 14px 10px;
-  font-family: var(--font-mono);
-  font-size: 10px;
+.meta {
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
+.aviso {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: var(--fs-label);
+  line-height: 1.5;
+  color: var(--text-secondary);
+}

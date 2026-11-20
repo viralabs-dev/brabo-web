@@ -17,13 +17,16 @@
       "loadError": "Could not load the projects.",
       "retry": "try again",
       "tabsAriaLabel": "Tabs of {{name}}",
-      "switch": "Switch project: {{name}}"
+      "switch": "Switch project: {{name}}",
+      "unknownProject": "Project"
     },
     "agentsNow": {
       "label": "Agents now",
       "openProjectHint": "Open a project to see its agents.",
       "empty": "No agent has acted yet.",
       "noSession": "This project has no session yet.",
+      "idleMore_one": "+ {{count}} idle · see all",
+      "idleMore_other": "+ {{count}} idle · see all",
       "loadError": "Could not load the agents.",
       "status": {
         "trabalhando": "working",
@@ -51,15 +54,27 @@
   },
   "notificationBell": {
     "label": "Notifications",
-    "markRead": {
-      "default": "mark as read",
-      "withCount": "mark {{total}} as read"
+    "markRead": "Mark activity as read",
+    "abrir": "Open",
+    "precisam": {
+      "titulo": "Need you",
+      "vazio": "Nothing is waiting for you right now.",
+      "carregando": "Reading what is waiting for you…",
+      "erro": "Couldn't read what is waiting for you."
     },
-    "windowNote_one": "Showing the most recent per project. {{count}} older one doesn't fit here — open the project to reach it.",
-    "windowNote_other": "Showing the most recent per project. {{count}} older ones don't fit here — open the project to reach them.",
-    "empty": "No notifications here yet.",
-    "older_one": "+ {{count}} older",
-    "older_other": "+ {{count}} older"
+    "tipo": {
+      "promocoes": "Story waiting for promotion",
+      "arquitetura": "Architecture pending",
+      "hipoteses": "Psychologist hypothesis waiting for an answer"
+    },
+    "atividade": {
+      "titulo": "Activity by project",
+      "vazio": "No new activity.",
+      "eventos_one": "{{count, number}} event",
+      "eventos_other": "{{count, number}} events",
+      "parados_one": "{{count}} project idle for over 30 days · {{eventos}}",
+      "parados_other": "{{count}} projects idle for over 30 days · {{eventos}}"
+    }
   },
   "contexto": {
     "rotulo": "{{usados}} of {{janela}} tokens in the last call · {{modelo}}",
@@ -73,7 +88,8 @@
     },
     "overLimit": "{{pct}}% of the monthly limit",
     "savingsPct": "{{pct}}% of tokens saved this cycle",
-    "noBudgetCta": "Set budget",
+    "semTeto": "no monthly cap",
+    "definir": "set",
     "compactFooter": {
       "spent": "spent {{value}}",
       "balance": "balance {{value}}"

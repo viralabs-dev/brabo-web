@@ -29,6 +29,8 @@ import { ExecutionModeSection } from './settings/ExecutionModeSection';
 import { ParallelismSection } from './settings/ParallelismSection';
 import { TetoPorTarefaSection } from './settings/TetoPorTarefaSection';
 import { MergeAutomaticoSection } from './settings/MergeAutomaticoSection';
+import { PassagensSemCliqueSection } from './settings/PassagensSemCliqueSection';
+import { RegrasDeOfertaSection } from './settings/RegrasDeOfertaSection';
 import { BudgetSection } from './settings/BudgetSection';
 import { PromotionSection } from './settings/PromotionSection';
 import { ProjectLanguageSection } from './settings/ProjectLanguageSection';
@@ -90,6 +92,8 @@ export function ProjectSettingsTab({ projectId }: ProjectSettingsTabProps) {
         <ParallelismSection {...p} />
         <TetoPorTarefaSection {...p} />
         <MergeAutomaticoSection {...p} />
+        <PassagensSemCliqueSection {...p} />
+        <RegrasDeOfertaSection {...p} />
         <BudgetSection {...p} />
         <PromotionSection {...p} />
         <ProjectLanguageSection {...p} />

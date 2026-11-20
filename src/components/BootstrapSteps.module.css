@@ -51,14 +51,14 @@
 }
 
 .label {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
 .state {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 

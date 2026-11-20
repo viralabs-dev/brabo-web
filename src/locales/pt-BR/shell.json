@@ -17,13 +17,17 @@
       "loadError": "Não foi possível carregar os projetos.",
       "retry": "tentar de novo",
       "tabsAriaLabel": "Abas de {{name}}",
-      "switch": "Trocar de projeto: {{name}}"
+      "switch": "Trocar de projeto: {{name}}",
+      "unknownProject": "Projeto"
     },
     "agentsNow": {
       "label": "Agentes agora",
       "openProjectHint": "Abra um projeto para ver os agentes.",
       "empty": "Nenhum agente entrou em ação ainda.",
       "noSession": "Este projeto ainda não tem sessão.",
+      "idleMore_zero": "+ {{count}} parados · ver todos",
+      "idleMore_one": "+ {{count}} parado · ver todos",
+      "idleMore_other": "+ {{count}} parados · ver todos",
       "loadError": "Não foi possível carregar os agentes.",
       "status": {
         "trabalhando": "trabalhando",
@@ -51,17 +55,29 @@
   },
   "notificationBell": {
     "label": "Notificações",
-    "markRead": {
-      "default": "marcar lidas",
-      "withCount": "marcar as {{total}} como lidas"
+    "markRead": "Marcar atividade como lida",
+    "abrir": "Abrir",
+    "precisam": {
+      "titulo": "Precisam de você",
+      "vazio": "Nada espera por você agora.",
+      "carregando": "Lendo o que espera por você…",
+      "erro": "Não foi possível ler o que espera por você."
     },
-    "windowNote_zero": "Mostrando os mais recentes de cada projeto. {{count}} mais antigos não cabem aqui — abrir o projeto é o caminho para eles.",
-    "windowNote_one": "Mostrando os mais recentes de cada projeto. {{count}} mais antigo não cabe aqui — abrir o projeto é o caminho para eles.",
-    "windowNote_other": "Mostrando os mais recentes de cada projeto. {{count}} mais antigos não cabem aqui — abrir o projeto é o caminho para eles.",
-    "empty": "Nenhuma notificação por aqui ainda.",
-    "older_zero": "+ {{count}} mais antigos",
-    "older_one": "+ {{count}} mais antigo",
-    "older_other": "+ {{count}} mais antigos"
+    "tipo": {
+      "promocoes": "História esperando promoção",
+      "arquitetura": "Pendência de arquitetura",
+      "hipoteses": "Hipótese do Psicólogo esperando resposta"
+    },
+    "atividade": {
+      "titulo": "Atividade por projeto",
+      "vazio": "Nenhuma atividade nova.",
+      "eventos_zero": "{{count, number}} eventos",
+      "eventos_one": "{{count, number}} evento",
+      "eventos_other": "{{count, number}} eventos",
+      "parados_zero": "{{count}} projetos parados há mais de 30 dias · {{eventos}}",
+      "parados_one": "{{count}} projeto parado há mais de 30 dias · {{eventos}}",
+      "parados_other": "{{count}} projetos parados há mais de 30 dias · {{eventos}}"
+    }
   },
   "contexto": {
     "rotulo": "{{usados}} de {{janela}} tokens na última chamada · {{modelo}}",
@@ -75,7 +91,8 @@
     },
     "overLimit": "{{pct}}% do limite mensal",
     "savingsPct": "{{pct}}% de tokens poupados este ciclo",
-    "noBudgetCta": "Definir orçamento",
+    "semTeto": "sem teto do mês",
+    "definir": "definir",
     "compactFooter": {
       "spent": "gasto {{value}}",
       "balance": "saldo {{value}}"

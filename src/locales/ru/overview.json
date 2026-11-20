@@ -2,12 +2,13 @@
   "faixa": {
     "titulo": "Ждёт вашего решения",
     "verTodas": "Все →",
-    "vazio": "Сейчас ничего не ждёт вас."
+    "vazio": "Сейчас ничего не ждёт вас.",
+    "abrirDecisoes": "Открыть решения →"
   },
   "architectureTab": {
     "title": "Архитектура",
     "emptyTitle": "Архитектуры пока нет",
-    "emptyState": "Архитектуры пока нет — Arquiteto создаёт module_map и ADR.",
+    "emptyState": "Архитектуры пока нет. Архитектор проектирует модули и решения после историй.",
     "modulesLabel": "Модули",
     "modulesLabelVersioned": "Модули · v{{version}}",
     "noModules": "Модулей пока нет.",
@@ -19,6 +20,16 @@
     "pendenciesLabel": "Незакрытые вопросы перекрёстной проверки",
     "reasonNoModule": "нет связанного модуля",
     "reasonMissingModule": "несуществующий модуль: {{missing}}",
+    "contractsLabel": "Контракты модулей",
+    "noContracts": "Контракт ещё не объявлен — Архитектор объявляет, что открывает каждый модуль.",
+    "contractTypes": {
+      "funcao": "функция",
+      "rota": "маршрут",
+      "evento": "событие",
+      "dado": "данные",
+      "tabela": "таблица",
+      "identidade": "идентичность"
+    },
     "cols": {
       "module": "Модуль",
       "stack": "Стек",
@@ -26,6 +37,21 @@
       "dependsOn": "Зависит от",
       "stories": "Истории"
     },
+    "chips": {
+      "modulos": "модули · v{{version}}",
+      "c4": "C4 уровень 2"
+    },
+    "grafoLegenda_one": "{{count, number}} модуль · поток слева направо",
+    "grafoLegenda_few": "{{count, number}} модуля · поток слева направо",
+    "grafoLegenda_many": "{{count, number}} модулей · поток слева направо",
+    "grafoLegenda_other": "{{count, number}} модуля · поток слева направо",
+    "views": {
+      "label": "Виды архитектуры",
+      "diagrama": "Диаграмма",
+      "adrs": "ADR · {{n}}",
+      "pendencias": "Вопросы · {{n}}"
+    },
+    "noPendencies": "Нет незакрытых вопросов перекрёстной проверки.",
     "proposalTag": "ПРЕДЛОЖЕНИЕ",
     "adrProposal": "ADR «{{titulo}}» ожидает вашего одобрения, чтобы стать PR.",
     "decide": "Решить",
@@ -33,12 +59,15 @@
       "modules": "модули · v{{version}}",
       "c4": "C4 уровень 2",
       "byArchitect": "от Arquiteto · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "Не удалось загрузить архитектуру",
+    "loadErrorThing": "модулей и ADR"
   },
   "c4": {
     "titleContext": "Контекст",
     "titleContainer": "Контейнер",
     "expandLabel": "Увеличить диаграмму {{titulo}}",
+    "fitWidth": "По ширине",
     "expandTitle": "Увеличить",
     "renderErrorTitle": "Не удалось отрисовать эту диаграмму.",
     "viewRawSyntax": "Показать синтаксис Mermaid",
@@ -55,7 +84,12 @@
     "rearmSuccess": "Агент перезапущен",
     "rearmErrorTitle": "Не удалось перезапустить агента",
     "wakeSuccess": "Ищу задачу",
-    "wakeErrorTitle": "Не удалось разбудить агента"
+    "wakeErrorTitle": "Не удалось разбудить агента",
+    "maisOciosos_one": "+ {{count, number}} завершён или простаивает",
+    "maisOciosos_other": "+ {{count, number}} завершены или простаивают",
+    "maisOciosos_few": "+ {{count, number}} завершены или простаивают",
+    "maisOciosos_many": "+ {{count, number}} завершены или простаивают",
+    "recolherOciosos": "Свернуть простаивающих"
   },
   "timeline": {
     "title": "Хронология команды",
@@ -78,10 +112,10 @@
     "runnerRessalvaNunca": "К этому проекту ещё не подключался ни один runner. Установите и запустите `brabo-runner` на вкладке Код.",
     "espelho": "зеркало",
     "espelhoNunca": "ни разу не синхронизировалось",
-    "espelhoValor_one": "{{count}} файл скопирован {{data}}",
-    "espelhoValor_few": "{{count}} файла скопированы {{data}}",
-    "espelhoValor_many": "{{count}} файлов скопировано {{data}}",
-    "espelhoValor_other": "{{count}} файла скопировано {{data}}",
+    "espelhoValor_one": "{{count, number}} файл скопирован {{data}}",
+    "espelhoValor_few": "{{count, number}} файла скопированы {{data}}",
+    "espelhoValor_many": "{{count, number}} файлов скопировано {{data}}",
+    "espelhoValor_other": "{{count, number}} файла скопировано {{data}}",
     "espelhoSemNovidade": "синхронизировано {{data}} — копировать нечего",
     "espelhoFalhou": "последний прогон завершился ошибкой",
     "espelhoFalhouComUltima": "последний прогон завершился ошибкой — последняя удачная копия {{data}}",
@@ -105,12 +139,22 @@
     "verTurnos": "Ходы",
     "turnosVazio": "Ни один ход ещё не завершён.",
     "title": "Активность",
-    "count_one": "{{count}} событие",
-    "count_few": "{{count}} события",
-    "count_many": "{{count}} событий",
-    "count_other": "{{count}} события",
+    "count_one": "{{count, number}} событие",
+    "count_few": "{{count, number}} события",
+    "count_many": "{{count, number}} событий",
+    "count_other": "{{count, number}} события",
     "loadErrorTitle": "Не удалось загрузить активность.",
-    "emptyNoSession": "Активности пока нет: она начнётся с первой сессии проекта."
+    "emptyNoSession": "Активности пока нет: она начнётся с первой сессии проекта.",
+    "turnosAgrupados_one": "{{agente}} · {{count, number}} ход, шагов: {{passos}}",
+    "turnosAgrupados_few": "{{agente}} · ходов: {{count, number}}, шагов: {{passos}}",
+    "turnosAgrupados_many": "{{agente}} · ходов: {{count, number}}, шагов: {{passos}}",
+    "turnosAgrupados_other": "{{agente}} · ходов: {{count, number}}, шагов: {{passos}}",
+    "recorteTurnos_one": "последний ход",
+    "recorteTurnos_few": "последние ходы: {{count, number}}",
+    "recorteTurnos_many": "последние ходы: {{count, number}}",
+    "recorteTurnos_other": "последние ходы: {{count, number}}",
+    "verLinhaDoTempo": "Вся лента →",
+    "rotuloModo": "Показать как"
   },
   "executionSection": {
     "title": "Выполнение",
@@ -153,7 +197,7 @@
   },
   "architectureSummary": {
     "title": "Архитектура",
-    "emptyState": "Архитектуры пока нет — Arquiteto создаёт module_map и ADR.",
+    "emptyState": "Архитектуры пока нет. Архитектор проектирует модули и решения после историй.",
     "summary_one": "{{count}} модуль описан, диаграмма C4 {{status}}.",
     "summary_few": "{{count}} модуля описаны, диаграмма C4 {{status}}.",
     "summary_many": "{{count}} модулей описано, диаграмма C4 {{status}}.",
@@ -174,12 +218,18 @@
     "modelo": {
       "titulo": "Активировать модель и применить её к команде",
       "pendente": "Ни у одного агента пока нет модели: активируйте её в Providers и выберите здесь.",
-      "link": "Выбрать модель →"
+      "link": "Выбрать модель →",
+      "pendenteLocal": "Команда работает на локальной модели {{modelo}}. Выберите модель вашего провайдера.",
+      "aplicar": "Применить {{modelo}} к команде",
+      "aplicarSemPapel": "Применить модель к команде могут только maintainer проекта.",
+      "aplicarSemHaiku": "Claude Haiku 5.5 не активна в каталоге: активируйте её в Providers.",
+      "aplicarFalhou": "Не удалось применить модель к команде. Попробуйте ещё раз."
     },
     "ideacao": {
       "titulo": "Начать первую идеацию",
       "pendente": "Расскажите идею Criativo — из неё появляются истории.",
-      "link": "Открыть Criativo →"
+      "link": "Начать идеацию",
+      "semPapel": "Для создания сессии нужна роль developer."
     }
   },
   "proximoPasso": {
@@ -256,6 +306,9 @@
     "endereco": "Адрес",
     "abrir": "Открыть в новой вкладке",
     "titulo": "Результат",
-    "vazio": "Нет опубликованного результата для просмотра."
+    "vazio": "Нет опубликованного результата для просмотра.",
+    "checando": "Проверяем, ответило ли приложение…",
+    "naoRespondeu": "{{url}} не отвечает. Запустите приложение командой выше.",
+    "tentarDeNovo": "Повторить"
   }
 }

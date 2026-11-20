@@ -202,11 +202,13 @@ describe('ProjectOverviewTab — resumo condensado de Arquitetura (Onda 3)', () 
     montar();
 
     expect(
-      await screen.findByText('Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.'),
+      await screen.findByText('Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.'),
     ).toBeInTheDocument();
 
     const link = screen.getByRole('link', { name: 'Ver arquitetura completa →' });
     expect(link).toHaveAttribute('href', '/projects/proj-1?tab=arquitetura');
+    // AT-1007: o link não mora na descrição, que corta em 2 linhas e o esconderia com o texto novo.
+    expect(link.closest('[data-slot="item-description"]')).toBeNull();
 
     // O resumo condensado nunca duplica o corpo inteiro: nenhum card de
     // módulo, lista de ADR ou pendência aparece na Visão geral.

@@ -316,13 +316,15 @@ interface ProjectSearch {
   group?: GrupoDoSumario;
   /** RN-884: a história que a aba Histórias abre (o "Corrigir a história"). */
   historia?: string;
+  /** AT-970 (RN-1466): a visão da aba Execução; o `validateSearch` a mantém, senão o router a apaga da URL. */
+  visao?: 'linha-do-tempo';
 }
 
 const projectRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/projects/$projectId',
-  // `tab` só existe pra deep-link (ex.: CTA "Definir orçamento" do card do
-  // dashboard indo direto pra Configurações) — a navegação normal entre
+  // `tab` só existe pra deep-link (ex.: o link "definir" do card do dashboard
+  // indo direto pro cartão #teto dos Gastos) — a navegação normal entre
   // abas continua em estado local, sem escrever na URL a cada clique.
   //
   // `resolverChaveDeAba` (não `ehChaveDeAba` sozinho) porque também aceita
@@ -334,6 +336,7 @@ const projectRoute = createRoute({
     section: resolverChaveDeSecao(search.section),
     group: ehGrupoDoSumario(search.group) ? search.group : undefined,
     historia: typeof search.historia === 'string' ? search.historia : undefined,
+    visao: search.visao === 'linha-do-tempo' ? 'linha-do-tempo' : undefined,
   }),
   component: comCarga(ProjectPageLazy, () => {
     const { projectId } = projectRoute.useParams();

@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "Executores",
+    "title": "Execução",
     "summary_zero": "{{count}} agentes · {{working}} trabalhando · {{waiting}} aguardando",
     "summary_one": "{{count}} agente · {{working}} trabalhando · {{waiting}} aguardando",
     "summary_other": "{{count}} agentes · {{working}} trabalhando · {{waiting}} aguardando",
@@ -27,9 +27,16 @@
     },
     "noExecutorsTitle": "Ninguém em ação agora",
     "idleWarning": "Nenhum agente está trabalhando agora. A execução está ativa: os agentes aguardam a tarefa de que dependem e acordam quando a dependência for mergeada.",
-    "modelSemPapel": "Trocar o modelo exige o papel developer no projeto."
+    "modelSemPapel": "Trocar o modelo exige o papel developer no projeto.",
+    "sessao": "sessão",
+    "visao": {
+      "rotulo": "Visão da execução",
+      "executores": "Executores",
+      "linhaDoTempo": "Linha do tempo"
+    }
   },
   "agentCard": {
+    "local": "local",
     "status": {
       "trabalhando": "trabalhando",
       "aguardando": "aguardando",
@@ -39,6 +46,7 @@
     },
     "autonomy": {
       "manual": "Manual",
+      "piloto": "Piloto automático",
       "auto": "Modo automático",
       "autoModeHint": "Modo automático: roda qualquer comando, inclusive fora da pasta do projeto. git push e PR ficam liberados; deploy, sudo/doas e merge em branch protegida continuam pedindo sua aprovação."
     },
@@ -94,6 +102,7 @@
       "artifactBusinessRuleRetired": "retirou regra de negócio",
       "artifactModuleMap": "emitiu o module_map",
       "artifactModuleRouting": "roteou módulos para infra",
+      "artifactModuleContracts": "declarou o contrato entre módulos",
       "artifactInsight": "emitiu hipótese",
       "delegationCompleted": "subagente concluiu",
       "delegationFailed": "subagente falhou",
@@ -193,14 +202,10 @@
     "regiao": "Execução em andamento",
     "titulo": "Execução",
     "progresso": "{{done}} de {{total}} tarefas",
-    "minimizar": "Minimizar o carrossel de executores",
-    "restaurar": "Mostrar os detalhes dos executores",
-    "minimizadoLista": "Executores (resumo)",
     "verExecutores": "Executores",
     "verNoFio": "Ver no fio",
     "dispensar": "Dispensar o resumo da execução",
     "ultimaAcao": "Última ação: {{acao}}",
-    "cartaoRotulo": "{{posicao}} de {{total}}: {{nome}}, {{estado}}",
     "haSeg": "há {{n}} s",
     "haMin": "há {{n}} min",
     "haH": "há {{n}} h",
@@ -242,7 +247,7 @@
       "esperaModulos": "Esperando {{n}} módulos; o primeiro a destravar é {{primeiro}}.",
       "tarefaBloqueada": "Tarefa bloqueada: {{motivo}}",
       "bloqueado": "O container do projeto não está rodando. A Infra propõe subir; o agente tenta de novo sozinho.",
-      "travado": "{{motivo}} Rearme em Executores.",
+      "travado": "{{motivo}} Use Rearmar aqui nas pendências ou em Executores.",
       "falhou": "Falhou: {{motivo}}",
       "falhouSemMotivo": "Falhou.",
       "concluido": "{{done}} de {{total}} tarefas do módulo concluídas.",
@@ -251,10 +256,59 @@
       "gateJulgaSemTarefa": "Julgando uma PR.",
       "gateFalhou": "O ciclo do gate falhou.",
       "gateOcioso": "Sem PR para julgar agora.",
+      "gateEsperaVolta": "A tarefa está na fila do dev: a PR espera voltar ao QA.",
+      "gateEsperaVoltaPr": "A PR #{{pr}} espera voltar ao QA: a tarefa está na fila do dev.",
+      "gateEsperaDesbloqueio": "A tarefa está bloqueada: a PR espera o desbloqueio para voltar ao gate.",
+      "gateEsperaDesbloqueioPr": "A PR #{{pr}} espera voltar ao QA: a tarefa está bloqueada.",
+      "gateTarefaBloqueada": "A tarefa bloqueou: o gate espera a correção.",
       "gateUltimoAprovado": "Último veredito: aprovado.",
       "gateUltimoAprovadoPr": "Último veredito: aprovado (PR #{{pr}}).",
       "gateUltimoMudancas": "Último veredito: mudanças solicitadas.",
       "gateUltimoMudancasPr": "Último veredito: mudanças solicitadas (PR #{{pr}})."
+    },
+    "plano": {
+      "titulo": "Plano por rodada",
+      "rodada": "Rodada {{n}} de {{total}}",
+      "etapa": {
+        "aFazer": "na fila",
+        "espera": "esperando",
+        "implementando": "implementando",
+        "noGate": "no gate",
+        "pronta": "pronta",
+        "mergeada": "mergeada"
+      },
+      "espera": "Espera «{{titulo}}» entrar na main",
+      "esperaVarias": "Espera {{n}} tarefas entrarem na main: «{{titulo}}» e outras",
+      "rodadaFechada": "Rodada {{n}} · {{resumo}}",
+      "resumoMergeadas_one": "{{count}} mergeada",
+      "resumoMergeadas_other": "{{count}} mergeadas",
+      "resumoTarefas_one": "{{count}} tarefa",
+      "resumoTarefas_other": "{{count}} tarefas",
+      "agente": "Executa: {{agente}}",
+      "esperaCom": "Espera {{itens}} da tarefa «{{titulo}}» entrar na main",
+      "resumoMergeadas_zero": "{{count}} mergeadas",
+      "resumoTarefas_zero": "{{count}} tarefas"
+    }
+  },
+  "secoes": {
+    "ver": "Ver",
+    "modoAutomatico": {
+      "titulo": "Modo automático",
+      "emManual_zero": "nenhum agente em manual",
+      "emManual_one": "{{count, number}} agente em manual",
+      "emManual_other": "{{count, number}} agentes em manual"
+    },
+    "acoes": {
+      "titulo": "Pendências da execução",
+      "bloqueadas_zero": "nenhuma tarefa bloqueada",
+      "bloqueadas_one": "{{count}} tarefa bloqueada",
+      "bloqueadas_other": "{{count}} tarefas bloqueadas",
+      "sugestoes_zero": "nenhuma sugestão",
+      "sugestoes_one": "{{count}} sugestão",
+      "sugestoes_other": "{{count}} sugestões",
+      "prs_zero": "nenhuma PR aguardando você",
+      "prs_one": "{{count}} PR aguardando você",
+      "prs_other": "{{count}} PRs aguardando você"
     }
   },
   "acoes": {
@@ -332,5 +386,25 @@
       "in_review": "em revisão",
       "done": "concluída"
     }
+  },
+  "tabela": {
+    "agente": "Agente",
+    "estado": "Estado",
+    "tarefa": "Tarefa atual ou última",
+    "modelo": "Modelo",
+    "gasto": "Gasto",
+    "acoes": "Ações",
+    "semTarefa": "—",
+    "retomar": "Retomar",
+    "verNoFio": "Ver no fio",
+    "maisAcoes": "Mais ações de {{agente}}",
+    "autonomia": "Autonomia"
+  },
+  "indicadores": {
+    "tarefas": "Tarefas",
+    "fila": "Fila",
+    "gasto": "Gasto da execução",
+    "nDeM": "{{n}} de {{m}}",
+    "verFila": "Ver a fila"
   }
 }

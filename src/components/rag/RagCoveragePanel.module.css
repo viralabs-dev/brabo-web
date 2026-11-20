@@ -18,7 +18,7 @@
 
 .cartaoRotulo {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -32,13 +32,13 @@
 }
 
 .cartaoTotal {
-  font-size: 14px;
+  font-size: var(--fs-body);
   font-weight: 400;
   color: var(--text-muted);
 }
 
 .cartaoNota {
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 

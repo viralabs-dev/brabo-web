@@ -9,8 +9,20 @@
     "notProven": "não provado",
     "loadError": "Não foi possível carregar as capacidades dos providers.",
     "outside_zero": "Nenhum provider de fora.",
-    "outside_one": "{{count}} de fora, sem chave do titular: {{names}}",
-    "outside_other": "{{count}} de fora, sem chave do titular: {{names}}"
+    "outside_one": "{{count, number}} de fora, sem chave do titular: {{names}}",
+    "outside_other": "{{count, number}} de fora, sem chave do titular: {{names}}",
+    "columns": {
+      "streaming": "Streaming",
+      "toolCalling": "Ferramentas",
+      "listModels": "Lista de modelos",
+      "embeddings": "Embeddings",
+      "reasoningText": "Raciocínio",
+      "routingPreference": "Roteamento",
+      "stickySession": "Sessão fixa",
+      "priceCeiling": "Cache de preço",
+      "promptCaching": "Cache de prompt",
+      "vision": "Visão"
+    }
   },
   "routing": "O critério de roteamento do OpenRouter é escolhido no modelo do agente ou da área, em Configurações do projeto; não há controle aqui. No OpenRouter, cada chamada também leva um teto de preço (1,5 × o preço do catálogo): só um upstream dentro dele atende; se nenhum atende, a chamada repete uma vez sem teto."
 }

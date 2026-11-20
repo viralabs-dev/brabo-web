@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import i18n from '@/lib/i18n';
 import { Save } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -147,10 +148,9 @@ export function ModelCatalogSection({ workspaceId }: { workspaceId: string }) {
   const comChave = useProvidersComChave(workspaceId);
 
   /**
-   * Uma aba por provider ATIVO (local ou com chave do titular, RN-058). Sem
-   * chave mas com modelo ATIVO continua como aba marcada, para dar para
-   * desativá-lo (RN-043); os demais sem chave não aparecem e entram na linha
-   * "de fora" (RN-180). Chave desconhecida mostra todos.
+   * Uma aba por provider ATIVO (local ou com chave do titular, RN-058). Os
+   * sem chave NÃO viram aba (AT-976, RN-1482): entram na linha "de fora"
+   * (RN-180) e se adicionam em "Adicionar provider". Chave desconhecida mostra todos.
    */
   const { abas, deFora } = useMemo(() => {
     if (!catalogo) return { abas: [], deFora: [] as LLMProviderName[] };
@@ -159,13 +159,13 @@ export function ModelCatalogSection({ workspaceId }: { workspaceId: string }) {
     const nomes = [...new Set(todos.map((m) => m.provider))].sort(
       (a, b) => ordem.indexOf(a) - ordem.indexOf(b),
     );
-    const abas: { provider: LLMProviderName; semChave: boolean; total: number }[] = [];
+    const abas: { provider: LLMProviderName; total: number }[] = [];
     const deFora: LLMProviderName[] = [];
     for (const provider of nomes) {
       const meus = todos.filter((m) => m.provider === provider);
       const semChave = !providerAtivo(provider, comChave);
-      if (!semChave || meus.some((m) => m.isActive)) {
-        abas.push({ provider, semChave, total: meus.length });
+      if (!semChave) {
+        abas.push({ provider, total: meus.length });
       } else {
         deFora.push(provider);
       }
@@ -476,9 +476,7 @@ export function ModelCatalogSection({ workspaceId }: { workspaceId: string }) {
           <Tabs
             items={abas.map((a) => ({
               key: a.provider,
-              label: a.semChave
-                ? `${ROTULO_DO_PROVIDER[a.provider] ?? a.provider} · ${t('catalog.tabs.noKey')}`
-                : (ROTULO_DO_PROVIDER[a.provider] ?? a.provider),
+              label: ROTULO_DO_PROVIDER[a.provider] ?? a.provider,
               count: naAba(a.provider).modelos.length,
               cor: COR_DO_PROVIDER[a.provider],
             }))}
@@ -486,7 +484,6 @@ export function ModelCatalogSection({ workspaceId }: { workspaceId: string }) {
             onChange={setAbaEscolhida}
           />
           <div role="tabpanel" aria-label={t('catalog.tabs.aria')}>
-            {abaAtiva.semChave && <Alert tone="warning">{t('catalog.tabs.noKeyNote')}</Alert>}
             {filtrando && atual.modelos.length === 0 && comMatch.length > 0 && (
               <Alert tone="accent">
                 {t('catalog.tabs.noMatchHere', {
@@ -808,7 +805,7 @@ function EditorDePreco({
     if (i === null || o === null) return setErro(t('priceEditor.invalid'));
     salvarPreco.mutate({ i, o });
   }
-  const micros = (m: number) => usd1m.format(m / 1_000_000);
+  const micros = (m: number) => usd1m(m / 1_000_000);
 
   return (
     <Disclosure
@@ -900,8 +897,5 @@ function EditorDePreco({
   );
 }
 
-const usd1m = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 6,
-});
+const usd1m = (v: number) =>
+  new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', maximumFractionDigits: 6 }).format(v);

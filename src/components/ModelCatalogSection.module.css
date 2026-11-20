@@ -36,12 +36,12 @@
 
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin-top: 4px;
   max-width: 60ch;
@@ -64,7 +64,7 @@
 
 .relatorioProvider {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   min-width: 96px;
 }
@@ -105,7 +105,7 @@
 .contagem {
   flex: 1;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
 }
 
@@ -145,18 +145,18 @@
   gap: 2px;
   flex: 1;
   min-width: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
 .motivoDoAlias {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .slug {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   /* O slug é um token só ("moonshotai/Kimi-K2.5"): em 390px ele estourava a
      coluna do nome (AT-330). Quebra em qualquer ponto em vez de vazar. */
@@ -179,7 +179,7 @@
 
 .grupoContagem {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   margin-left: 8px;
 }
@@ -198,7 +198,7 @@
   gap: 6px;
   width: 100%;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -221,7 +221,7 @@
    conta o total, e sem este selo você ativaria em lote sem ver o que. */
 .marcadosOcultos {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: 0;
   text-transform: none;
@@ -243,7 +243,7 @@
   margin-left: 4px;
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
 }
 
 /* O divisor entre os dois eixos de filtro — capability provada e uso decidido. */
@@ -267,7 +267,7 @@
 .rotuloDoLote {
   color: var(--text-muted);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
 }
 
 /* Busca por nome/id (RN-694). */

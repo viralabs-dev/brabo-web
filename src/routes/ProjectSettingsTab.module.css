@@ -62,14 +62,14 @@
 /* A legenda mono ao lado do título ("binding vigente por cascata"). */
 .eyebrow {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin: 0 0 14px;
 }
@@ -95,30 +95,10 @@
   color: var(--success);
 }
 
-/* Card de custo do time, acima da tabela de modelos. */
-.custoCard {
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.custoIcone {
-  color: var(--success);
-  flex-shrink: 0;
-}
-
-.custoTexto {
-  font-size: 13px;
-  color: var(--text-secondary);
-  flex: 1;
-}
-
-.custoDetalhe {
-  color: var(--text-muted);
-}
-
-.custoValor {
-  font-family: var(--font-mono);
-  font-size: 15px;
+/* Título da tabela de modelos: "N agentes · US$ X estimado por mês" (AT-1005). */
+.custoTitulo {
+  margin: 0 0 8px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -142,7 +122,7 @@
   display: grid;
   place-items: center;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   font-weight: 600;
   background: color-mix(in srgb, var(--agent-color) var(--tint-avatar), var(--surface-2));
   border: 1px solid color-mix(in srgb, var(--agent-color) var(--tint-line), transparent);
@@ -153,7 +133,7 @@
 .agentNome {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -172,7 +152,7 @@
      (local)" transbordava a célula e escrevia POR CIMA da coluna vizinha. */
   display: block;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
@@ -182,7 +162,7 @@
 .estimativa {
   display: block;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   text-align: right;
 }
 
@@ -201,7 +181,7 @@
 .rankNome {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -209,7 +189,7 @@
 
 .rankDetalhe {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -256,7 +236,7 @@
   place-items: center;
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--on-accent);
   background: linear-gradient(
     135deg,
@@ -273,7 +253,7 @@
 }
 
 .memberName {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -283,7 +263,7 @@
 
 .memberEmail {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -296,7 +276,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--success);
 }
 
@@ -367,7 +347,7 @@
   gap: 16px;
   margin-top: 12px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -404,7 +384,7 @@
   align-items: center;
   gap: 3px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   line-height: 1.5;
   min-width: 0;
 }
@@ -434,7 +414,7 @@
 .vazioComTexto {
   display: block;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -451,7 +431,7 @@
    visualmente com o ModelPicker da linha. */
 .voltarHerdar {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   background: none;
   border: none;
@@ -506,7 +486,7 @@
   gap: 6px;
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
 }
 
@@ -601,7 +581,7 @@
 }
 
 .profileUser {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
   margin-bottom: 8px;
 }
@@ -615,7 +595,7 @@
 
 .profileCompetency {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   min-width: 140px;
 }
@@ -653,7 +633,7 @@
 
 .versionNo {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-primary);
   min-width: 44px;
 }
@@ -727,7 +707,7 @@
 
 .repoPath {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
   min-width: 0;
   word-break: break-all;
@@ -735,7 +715,7 @@
 
 .repoMeta {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -758,7 +738,7 @@
   display: grid;
   place-items: center;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   font-weight: 600;
   color: var(--conector-cor);
   background: color-mix(in srgb, var(--conector-cor) var(--tint-soft), transparent);
@@ -769,7 +749,7 @@
 .conectorTipo {
   font-weight: 400;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -820,7 +800,7 @@
 }
 
 .loteTexto {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   flex: 1;
   min-width: 220px;
@@ -836,8 +816,10 @@
   /* Âncora dos inputs ocultos do Base UI (absolutos): sem ela escapam da célula. */
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
   min-width: 0;
 }
 
@@ -855,7 +837,7 @@
 
 .conectorSubtitulo {
   margin: 16px 0 4px;
-  font-size: var(--fs-sm, 13px);
+  font-size: var(--fs-sm);
   color: var(--text-muted);
 }
 
@@ -875,4 +857,98 @@
   padding: 8px 0;
   font-size: var(--fs-body);
   color: var(--text-muted);
+}
+
+/* AT-974: "De onde vem" é um chip que abre a cadeia da cascata num Popover. */
+.chipDeOndeVem {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--fs-meta);
+  cursor: pointer;
+}
+
+.chipDeOndeVem:hover,
+.chipDeOndeVem[data-popup-open] {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.cadeiaNoPopover {
+  width: auto;
+  max-width: min(92vw, 560px);
+  /* A fonte do texto, não a mono: só o identificador do modelo fica em mono (AT-1005, L09). */
+  font-family: var(--font-body);
+}
+
+.cadeiaNoPopover .cadeia,
+.cadeiaNoPopover .nivel,
+.cadeiaNoPopover [data-slot='badge'] {
+  font-family: var(--font-body);
+}
+
+.idDoModelo {
+  font-family: var(--font-mono);
+}
+
+/* AT-974: linha do agente compacta; a caixa da área cabe ao lado do seletor, sem dobrar a altura. */
+.ajusteInline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.ajusteCompacto {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.fallbackNoPopover {
+  margin: 0;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+/* Rodapé da seção: a contagem de alterações e o salvar da escada, à direita (AT-1005). */
+.rodapeDaSecao {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Degrau da escada: rótulo visível sobre cada campo, com respiro entre os degraus (AT-1005). */
+.degrauDaEscada {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.degrauDaEscada > button {
+  justify-self: start;
+}
+
+/* Rótulo ao lado do `Checkbox` do kit (merge automático, AT-1005). */
+.rotuloComCheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}
+
+/* "O que isso muda": a ação à direita da faixa de roteamento (AT-1005). */
+.acaoDaFaixa {
+  margin-left: auto;
+  flex-shrink: 0;
 }

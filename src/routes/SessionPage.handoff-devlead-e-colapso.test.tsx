@@ -27,6 +27,7 @@ import i18n from '../lib/i18n';
  *    CONSECUTIVAS colapsam num cabeçalho com nome + contagem.
  */
 
+import { itemDoMenu, abrirMaisAcoes } from '../test/mais-acoes';
 const getSession = vi.fn();
 const acceptHandoff = vi.fn();
 const activateExecution = vi.fn();
@@ -305,10 +306,11 @@ describe('SessionPage — problema 2: "Ativar execução" inline no card do Dev 
   it('RN-728 (AT-410): o aceite é o primário; "Ativar execução" é secundário e diz o que pula', async () => {
     montarComCardDevLead();
 
-    const ativar = await screen.findByRole('button', { name: 'Ativar execução' });
-    const aceitar = screen.getByRole('button', { name: /Aceitar e passar a/ });
-    expect(ativar).toHaveAttribute('data-variant', 'secondary');
+    // AT-950: o aceite é o único botão à vista; "Ativar execução" mora no menu "⋯".
+    const aceitar = await screen.findByRole('button', { name: /Aceitar e passar a/ });
+    expect(screen.queryByRole('button', { name: 'Ativar execução' })).not.toBeInTheDocument();
     expect(aceitar).not.toHaveAttribute('data-variant', 'secondary');
+    await itemDoMenu(/^Ativar execução/);
     expect(screen.getByTestId('aviso-ativar-sem-plano')).toHaveTextContent(
       'Sem plano: os devs pegam as tarefas como estão.',
     );
@@ -318,8 +320,7 @@ describe('SessionPage — problema 2: "Ativar execução" inline no card do Dev 
     activateExecution.mockResolvedValue({ sessionId: 'sessao-exec-1', modules: ['api'] });
     montarComCardDevLead();
 
-    const botao = await screen.findByRole('button', { name: 'Ativar execução' });
-    fireEvent.click(botao);
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     await waitFor(() => {
       expect(activateExecution).toHaveBeenCalledWith('proj-1', ID);
@@ -334,8 +335,7 @@ describe('SessionPage — problema 2: "Ativar execução" inline no card do Dev 
     );
     montarComCardDevLead();
 
-    const botao = await screen.findByRole('button', { name: 'Ativar execução' });
-    fireEvent.click(botao);
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     expect(
       await screen.findByText('Papel insuficiente para esta ação'),
@@ -345,13 +345,9 @@ describe('SessionPage — problema 2: "Ativar execução" inline no card do Dev 
   it('o botão de "Ativar execução" convive com o de aceitar o handoff e o link de Executores', async () => {
     montarComCardDevLead();
 
-    expect(await screen.findByRole('button', { name: 'Ativar execução' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: /Acompanhe a execução em Executores/ }),
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' })).toBeInTheDocument();
+    expect(await itemDoMenu(/^Ativar execução/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Acompanhe a execução em Executores/ })).toBeInTheDocument();
   });
 });
 
@@ -431,7 +427,7 @@ describe('SessionPage — problema 4: aceitar o Dev Lead não ativa a execução
     activateExecution.mockResolvedValue({ sessionId: ID, modules: ['api'] });
     montarComCardDevLead();
 
-    fireEvent.click(await screen.findByRole('button', { name: 'Ativar execução' }));
+    fireEvent.click(await itemDoMenu(/^Ativar execução/));
 
     await waitFor(() => {
       expect(activateExecution).toHaveBeenCalledWith('proj-1', ID);
@@ -653,10 +649,12 @@ describe('SessionPage — card do Dev Lead sem repositório (RN-582)', () => {
     getRepository.mockResolvedValue(null);
     montarCardDevLeadSemRepositorio();
 
+    await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' });
+    await abrirMaisAcoes();
     expect(
       await screen.findByText(/Sem repositório ainda: aceitar este handoff o provisiona/),
     ).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: 'Ativar execução' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: /^Ativar execução/ })).not.toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Aceitar e passar a Dev Lead' }),
     ).toBeInTheDocument();
@@ -666,7 +664,7 @@ describe('SessionPage — card do Dev Lead sem repositório (RN-582)', () => {
     getRepository.mockReturnValue(new Promise(() => {}));
     montarCardDevLeadSemRepositorio();
 
-    expect(await screen.findByRole('button', { name: 'Ativar execução' })).toBeInTheDocument();
+    expect(await itemDoMenu(/^Ativar execução/)).toBeInTheDocument();
     expect(screen.queryByText(/Sem repositório ainda/)).not.toBeInTheDocument();
   });
 
@@ -674,6 +672,8 @@ describe('SessionPage — card do Dev Lead sem repositório (RN-582)', () => {
     getRepository.mockResolvedValue(null);
     acceptHandoff.mockResolvedValue({});
     montarCardDevLeadSemRepositorio();
+    await screen.findByRole('button', { name: 'Aceitar e passar a Dev Lead' });
+    await abrirMaisAcoes();
     await screen.findByText(/Sem repositório ainda/);
     const consultasAntes = getRepository.mock.calls.length;
 

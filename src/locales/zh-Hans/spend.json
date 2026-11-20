@@ -6,7 +6,10 @@
     "summing": "汇总中…",
     "retry": "重试",
     "tokensDetail": "{{input}} 输入 · {{output}} 输出",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "自 {{dia}}",
+    "topModelCalls": "{{modelo}} 占 {{pct}}%",
+    "callsLabel": "调用次数"
   },
   "role": {
     "error": "无法确定你在此工作区中的角色，而显示哪份报告正是由它决定的。"
@@ -30,7 +33,8 @@
     "byProjectTitle": "按项目",
     "byProjectEmpty": "此时间窗口内没有项目产生花费。",
     "byActorTitle": "按智能体和人员",
-    "byActorEmpty": "此时间窗口内没有任何花费。"
+    "byActorEmpty": "此时间窗口内没有任何花费。",
+    "whereEmpty": "花费去向：此时间窗口内没有花费。"
   },
   "member": {
     "title": "我的消耗",
@@ -50,7 +54,7 @@
     "noCallsInWindow": "此时间窗口内没有调用。",
     "window_other": "最近 {{count}} 天",
     "spend": "花费",
-    "calls_other": "{{count}} 次调用",
+    "calls_other": "{{count, number}} 次调用",
     "viewAsTable": "以表格查看",
     "colDay": "日期",
     "colSpend": "花费",
@@ -58,10 +62,11 @@
     "callsTitle": "每日调用",
     "tokensTitle": "输入与输出",
     "tokensIn": "输入",
-    "tokensOut": "输出"
+    "tokensOut": "输出",
+    "noSpendInDays_other": "最近 {{count}} 天没有花费。"
   },
   "libSpend": {
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} 次调用",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} 次调用",
     "actorPerson": "{{id}}（人员）",
     "budgetBlocked": "已达到月度上限的 {{pct}}%——新的 LLM 调用已被阻止，直到上限提高或月份切换。",
     "budgetWarning": "已超过月度上限的 {{pct}}%。"
@@ -69,7 +74,8 @@
   "window": {
     "month": "本月",
     "label": "时间范围",
-    "option": "{{n}} 天"
+    "option": "{{n}} 天",
+    "sinceStart": "自开始起 · {{n}} 天"
   },
   "subscription": {
     "label": "订阅",
@@ -109,7 +115,9 @@
     "byAgentEmpty": "此时间范围内没有智能体产生支出。",
     "byAreaTitle": "按领域",
     "byAreaEmpty": "此时间范围内没有领域产生支出。",
-    "noArea": "无领域"
+    "noArea": "无领域",
+    "showAll": "查看全部 {{n}} 个智能体",
+    "showTop": "只看前 3 名"
   },
   "budgetEditor": {
     "title": "项目预算",
@@ -117,7 +125,7 @@
     "policyLabel": "达到上限时",
     "block": "阻止新的调用",
     "allow": "仅提醒",
-    "save": "保存预算",
+    "save": "保存上限",
     "saving": "保存中…",
     "saved": "预算已保存。",
     "error": "无法保存预算。未作任何更改。",
@@ -128,6 +136,7 @@
     "restantes_other": "剩余 {{count}} 天。",
     "previsao": "月末预测：{{valor}}。",
     "virada": "月份将在 {{quando}} 切换（00:00 UTC）。",
+    "resumo": "预测 {{valor}} · {{quando}} 换月",
     "projeto": {
       "titulo": "月度上限",
       "semTeto": "此项目尚未设置月度上限。",
@@ -140,6 +149,11 @@
       "editor": "工作区月度上限",
       "semPapel": "只有 owner 可以设置工作区上限。"
     },
-    "membro": "工作区月度上限归 owner 所有；仅当调用被它拒绝时你才会看到。"
+    "membro": "工作区月度上限归 owner 所有；仅当调用被它拒绝时你才会看到。",
+    "cartao": {
+      "semTeto": "没有月度上限",
+      "definir": "设置",
+      "editar": "编辑"
+    }
   }
 }

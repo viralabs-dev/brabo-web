@@ -23,6 +23,7 @@
     "semNomeFicaHashtag": "Без названия — сессия останется {{hashtag}}",
     "tituloRenomear": "Сессия {{rotulo}} — нажмите, чтобы переименовать",
     "tituloSessao": "Сессия {{rotulo}}",
+    "tituloExecucao": "Выполнение · {{rotulo}}",
     "trazCriativo": "приглашает Criativo в разговор",
     "iniciarIdeacao": "Начать генерацию идей",
     "iniciarIdeacaoTitulo": "Приглашает Criativo провести генерацию идей в этой сессии — он ещё не подключился",
@@ -36,7 +37,8 @@
     "encerrarSessao": "Завершить сессию",
     "pararTurno": "Остановить ход",
     "trilha": "Путь сессии",
-    "sessoes": "Сессии"
+    "sessoes": "Сессии",
+    "pendencias": "Ожидает"
   },
   "convite": {
     "criativa": {
@@ -148,10 +150,10 @@
       "skills": {
         "nome": "skills",
         "descricao": "Показывает инструменты и инструкцию агента",
-        "titulo_one": "{{agente}}: {{count}} инструмент",
-        "titulo_few": "{{agente}}: {{count}} инструмента",
-        "titulo_many": "{{agente}}: {{count}} инструментов",
-        "titulo_other": "{{agente}}: {{count}} инструмента",
+        "titulo_one": "{{agente}}: {{count, number}} инструмент",
+        "titulo_few": "{{agente}}: {{count, number}} инструмента",
+        "titulo_many": "{{agente}}: {{count, number}} инструментов",
+        "titulo_other": "{{agente}}: {{count, number}} инструмента",
         "naoSei": "Сейчас не знаю инструменты {{agente}}: engine не ответил.",
         "semAgente": "{{agente}} нет в каталоге.",
         "instrucao": "Текущая инструкция (v{{versao}})",
@@ -161,13 +163,14 @@
         "nome": "poisk",
         "descricao": "Ищет в базе проекта текст из поля",
         "semConsulta": "Введите в поле, что искать, и используйте /poisk.",
-        "titulo_one": "Поиск \"{{consulta}}\": {{count}} фрагмент",
-        "titulo_few": "Поиск \"{{consulta}}\": {{count}} фрагмента",
-        "titulo_many": "Поиск \"{{consulta}}\": {{count}} фрагментов",
-        "titulo_other": "Поиск \"{{consulta}}\": {{count}} фрагмента",
+        "titulo_one": "Поиск \"{{consulta}}\": {{count, number}} фрагмент",
+        "titulo_few": "Поиск \"{{consulta}}\": {{count, number}} фрагмента",
+        "titulo_many": "Поиск \"{{consulta}}\": {{count, number}} фрагментов",
+        "titulo_other": "Поиск \"{{consulta}}\": {{count, number}} фрагмента",
         "erro": "Поиск не удался: {{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "Ещё действия"
   },
   "ativacao": {
     "encerradaTitulo": "Сессия завершена",
@@ -298,10 +301,10 @@
     "historias": "истории",
     "tarefas": "задачи",
     "itens": "элементы",
-    "mensagensCount_one": "{{count}} сообщение",
-    "mensagensCount_few": "{{count}} сообщения",
-    "mensagensCount_many": "{{count}} сообщений",
-    "mensagensCount_other": "{{count}} сообщения"
+    "mensagensCount_one": "{{count, number}} сообщение",
+    "mensagensCount_few": "{{count, number}} сообщения",
+    "mensagensCount_many": "{{count, number}} сообщений",
+    "mensagensCount_other": "{{count, number}} сообщения"
   },
   "aside": {
     "titulo": "Контекст сессии",
@@ -344,6 +347,7 @@
     "perguntasAbertas": "Открытые вопросы",
     "gastoPorAgente": "Расходы по агентам",
     "gastoVazio": "Расходов пока нет.",
+    "gastoErro": "Не удалось получить расходы сессии.",
     "detalhes": "Детали сессии"
   },
   "turno": {
@@ -372,6 +376,8 @@
     "raciocinioChars_many": "{{count}} символов",
     "raciocinioChars_other": "{{count}} символа",
     "passosDoTurno": "Шаги хода",
+    "trabalhou": "Работал",
+    "trabalhando": "Работает",
     "consultado": "Использовано в этом ходе",
     "fonteN": "Источник {{n}}: {{rotulo}}",
     "consultadoCorte": "показано {{shown}} из {{total}}",
@@ -388,13 +394,13 @@
       "registrou": "Записал",
       "outros": "Другое"
     },
-    "raciocinioTokens_one": "{{count}} токен",
-    "raciocinioTokens_few": "{{count}} токена",
-    "raciocinioTokens_many": "{{count}} токенов",
-    "raciocinioTokens_other": "{{count}} токена"
+    "raciocinioTokens_one": "{{count, number}} токен",
+    "raciocinioTokens_few": "{{count, number}} токена",
+    "raciocinioTokens_many": "{{count, number}} токенов",
+    "raciocinioTokens_other": "{{count, number}} токена"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» выше.",
+    "referenciaNoFio": "Merge предложен — решите в очереди «PR, готовые к merge» панели ожидающих пунктов.",
     "titulo": "Ожидающие решения из других сессий этого проекта",
     "tituloDoProjeto": "Ожидающие решения в этом проекте",
     "nota": "Быстрый путь к решению: те же карточки и те же эндпоинты, что на вкладке «Утверждения». Ни один потолок не меняется — merge в защищённую ветку остаётся вашим жестом («Merge» просит вашего подтверждения).",
@@ -463,6 +469,13 @@
       "esperando": "Задача «{{tarefa}}» ждёт вашего ответа.",
       "sugestao": "Предложение:",
       "aceitar": "Принять предложение",
+      "loteAceitar": "Принять {{n}} предложений от {{agente}}",
+      "loteTitulo": "Вы принимаете {{n}} предложений от {{agente}}:",
+      "loteRegra": "затрагивает бизнес-правило",
+      "loteConfirmar": "Подтвердить {{n}} предложений",
+      "loteCancelar": "Отмена",
+      "loteErro": "Не удалось принять предложения.",
+      "loteParcial": "Не удалось принять: {{n}}; очередь обновлена.",
       "campo": "Ваш ответ",
       "responder": "Ответить",
       "soOAutor": "Ответить может только тот, кто создал сессию, в которой возник вопрос.",
@@ -471,7 +484,8 @@
       "respondida": "Отвечено. Ответ записан как решение.",
       "corrigir": "Исправить историю",
       "corrigirHistoria": "Затронутая история: {{titulo}}",
-      "dispensar": "Отклонить"
+      "dispensar": "Отклонить",
+      "responderComTexto": "Ответить текстом"
     },
     "verOCartao": "Показать карточку",
     "saidas": {
@@ -524,10 +538,10 @@
   "fio": {
     "carregando": "Загрузка сессии…",
     "historico": {
-      "titulo_one": "До последнего {{count}} сообщения",
-      "titulo_few": "До последних {{count}} сообщений",
-      "titulo_many": "До последних {{count}} сообщений",
-      "titulo_other": "До последних {{count}} сообщения",
+      "titulo_one": "До последнего {{count, number}} сообщения",
+      "titulo_few": "До последних {{count, number}} сообщений",
+      "titulo_many": "До последних {{count, number}} сообщений",
+      "titulo_other": "До последних {{count, number}} сообщения",
       "outrasCount_one": "{{count}} другая запись",
       "outrasCount_few": "{{count}} другие записи",
       "outrasCount_many": "{{count}} других записей",
@@ -535,7 +549,19 @@
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "Разговор сессии",
-    "irAoFim": "К концу"
+    "irAoFim": "К концу",
+    "irAoFimComNovas_one": "К концу · новых: {{count}}",
+    "irAoFimComNovas_few": "К концу · новых: {{count}}",
+    "irAoFimComNovas_many": "К концу · новых: {{count}}",
+    "irAoFimComNovas_other": "К концу · новых: {{count}}",
+    "verRespostaInteira": "Показать весь ответ",
+    "recolherResposta": "Свернуть ответ"
+  },
+  "trilho": {
+    "rotulo": "Ходы беседы",
+    "voce": "Вы",
+    "turnoN": "Ход {{n}}: {{nome}}",
+    "recorte": "Только загруженные ходы; раньше есть ещё"
   },
   "fila": {
     "painel": "Сообщения в очереди",
@@ -642,5 +668,57 @@
       "rfc": "предложенный RFC",
       "prototipo": "предложенный прототип"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "Вы",
+    "resumo_one": "Я ответил на {{count}} вопрос",
+    "resumo_few": "Я ответил на {{count}} вопроса",
+    "resumo_many": "Я ответил на {{count}} вопросов",
+    "resumo_other": "Я ответил на {{count}} вопроса"
+  },
+  "cartao": {
+    "maisAcoes": "Ещё действия"
+  },
+  "faixa": {
+    "abrir": "Исполнители",
+    "esperam_one": "{{count}} ожидает",
+    "esperam_few": "{{count}} ожидают",
+    "esperam_many": "{{count}} ожидают",
+    "esperam_other": "{{count}} ожидают"
+  },
+  "painel": {
+    "titulo": "Панель сессии",
+    "abas": "Панель сессии",
+    "contexto": "Контекст",
+    "executores": "Исполнители",
+    "pendencias": "Ожидают",
+    "pendenciasVazio": "В этом проекте нет ожидающих пунктов.",
+    "executoresVazio": "Выполнение не идёт."
+  },
+  "ofertaDeAutomacao": {
+    "texto": {
+      "aprovacao": "Вы подряд {{n}} раз одобрили {{acao}} от {{agente}} без изменений. Делать это самому в этом проекте? Вас по-прежнему спрашивают, если меняется риск, стоимость или назначение.",
+      "handoff": "Вы подряд {{n}} раз приняли передачу {{chave}}. Делать эту передачу самому в этом проекте? Вас спросят, если критерий не выполнен.",
+      "desbloqueio": "Вы подряд {{n}} раз разблокировали задачи одного типа ({{chave}}). Разблокировать самому в этом проекте? Вас спросят о том, что критерий не покрывает.",
+      "generico": "Вы повторили решение {{chave}}. Принимать его самому в этом проекте?"
+    },
+    "ondePadrao": "Настройки › Проект",
+    "aceitar": "Делать самому впредь",
+    "recusar": "Нет, продолжай спрашивать",
+    "aceita": "Готово: впредь я делаю это сам.",
+    "recusada": "Хорошо: продолжаю спрашивать.",
+    "semPapel": "Для ответа нужна роль maintainer в проекте.",
+    "erroTitulo": "Не удалось ответить на предложение",
+    "aplicada": "Сделано само по правилу {{regra}}, с {{desde}}",
+    "outroCaminho": "Это повторилось без решения, поэтому сам я не буду. Варианты: {{opcoes}}.",
+    "opcao": {
+      "trocar_modelo": "сменить модель этой задачи",
+      "pedir_ao_dev_lead": "спросить Dev Lead",
+      "arquivar": "архивировать"
+    },
+    "aplicadaSemData": "Сделано само по правилу {{regra}}",
+    "desfazerAntes": "Отменить можно в разделе",
+    "desfazerDepois": ".",
+    "desfazerLink": "отменить"
   }
 }

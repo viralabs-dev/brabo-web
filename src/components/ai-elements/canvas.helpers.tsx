@@ -1,7 +1,7 @@
 import '@xyflow/react/dist/style.css';
 import type { CSSProperties } from 'react';
 
-import { MarkerType, type Edge, type Node } from '@xyflow/react';
+import { MarkerType, Position, type Edge, type Node } from '@xyflow/react';
 
 import type { ModuloDoGrafo } from './canvas';
 
@@ -23,6 +23,9 @@ export function camadas(modulos: ModuloDoGrafo[]): Map<string, number> {
   return memo;
 }
 
+/* AT-972 (RN-1475): o texto dos nós nunca fica abaixo disto no zoom inicial (que é 1). */
+export const FONTE_MIN_DO_NO = 12.5;
+
 export const CONTROLES = {
   '--xy-controls-button-background-color': 'var(--surface-2)',
   '--xy-controls-button-background-color-hover': 'var(--surface-2)',
@@ -42,13 +45,15 @@ export function grafoDe(modulos: ModuloDoGrafo[]): { nos: Node[]; arestas: Edge[
     contagem.set(c, i + 1);
     return {
       id: m.name,
-      // v9 (AT-946): quem não depende de ninguém fica embaixo; cada camada centrada em x=0.
-      position: { x: (i - ((porCamada.get(c) ?? 1) - 1) / 2) * 240, y: (topo - c) * 120 },
+      // v11 (AT-972): fluxo da esquerda para a direita; quem não depende de ninguém fica à direita, cada camada centrada em y=0.
+      position: { x: (topo - c) * 260, y: (i - ((porCamada.get(c) ?? 1) - 1) / 2) * 84 },
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
       data: {
         label: (
           <div style={{ textAlign: 'left' }}>
-            <div style={{ fontWeight: 600 }}>{m.name}</div>
-            <div title={m.stack} style={{ fontSize: 10, opacity: 0.75, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <div style={{ fontWeight: 600, fontSize: 13 }}>{m.name}</div>
+            <div title={m.stack} style={{ fontSize: FONTE_MIN_DO_NO, opacity: 0.75, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {m.stack}
             </div>
           </div>
@@ -59,7 +64,7 @@ export function grafoDe(modulos: ModuloDoGrafo[]): { nos: Node[]; arestas: Edge[
         color: 'var(--text-primary)',
         border: '1px solid var(--border-strong)',
         borderRadius: 8,
-        fontSize: 12,
+        fontSize: FONTE_MIN_DO_NO,
         width: 200,
       },
     };

@@ -146,6 +146,26 @@ describe('cartões de QA e SecOps', () => {
     expect(cartoesDaExecucao({ ...base, eventos: [] }).filter((x) => x.tipo !== 'dev')).toEqual([]);
   });
 
+  it('QA com a tarefa bloqueada depois do parecer não diz Julgando (AT-982)', () => {
+    const c = cartoesDaExecucao({
+      ...base,
+      eventos: [
+        ev('pr.gate_changed', 'api', { taskId: T1, gate: 'qa', gateStatus: 'awaiting_qa' }),
+        ev('backlog.task_blocked', 'dev-api', { taskId: T1 }),
+      ],
+    });
+    expect(c.find((x) => x.agentId === 'qa')?.texto.key).toBe('gateTarefaBloqueada');
+  });
+
+  it('QA: tarefa todo com awaiting_qa e PR diz que espera voltar (AT-985)', () => {
+    const c = cartoesDaExecucao({
+      ...base,
+      eventos: [ev('pr.gate_changed', 'api', { taskId: T1, gate: 'qa', gateStatus: 'awaiting_qa' })],
+      epics: epics([task(T1, 'api', { status: 'todo', gateStatus: 'awaiting_qa' })]),
+    });
+    expect(c.find((x) => x.agentId === 'qa')?.texto.key).toBe('gateEsperaVoltaPr');
+  });
+
   it('QA julgando: gate, tarefa e PR vêm de pr.gate_changed', () => {
     const c = cartoesDaExecucao({
       ...base,

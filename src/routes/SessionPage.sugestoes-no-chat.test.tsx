@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import type { Session } from '../lib/api-types';
 import { historicoFalso } from '../test/historico-de-eventos';
@@ -13,7 +14,7 @@ import i18n from '../lib/i18n';
  * `confirm_readiness` (e narra a recusa como `agent.error` no fio, com
  * origem "politica") quando a sessão não tem nenhuma
  * `artifact.business_rule` — ver criativo_server.ex. Este arquivo cobre só a
- * UX complementar: o botão "Estou pronto — a necessidade está validada" nasce `disabled`
+ * UX complementar: o botão "Estou pronto — validar necessidade" nasce `disabled`
  * (com a dica em `title`) sem regra nenhuma, e libera assim que a MESMA
  * fonte que já alimenta o painel "Regras de negócio" (session-events) tem
  * pelo menos uma.
@@ -147,22 +148,30 @@ afterAll(() => {
 });
 
 describe('SessionPage — ações de passo são sugestões acima do destinatário (RN-976, AT-681)', () => {
-  it('a sugestão vem antes do "Para", e o Enviar é o primeiro botão do composer (contrato do E2E)', async () => {
+  it('a sugestão vem antes do "Para", que fica na barra do composer; o Enviar tem data-testid (contrato do E2E)', async () => {
     eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
     montar();
     const pronto = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
     const para = screen.getByTestId('destinatario-do-chat');
     expect(
       pronto.compareDocumentPosition(para) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
-    const composer = para.nextElementSibling as HTMLElement;
-    const enviar = within(composer).getAllByRole('button')[0];
+    // AT-960: o "Para" mora na barra do composer; o Enviar se acha pelo data-testid.
+    const enviar = screen.getByTestId('enviar-mensagem');
+    expect(para.tagName).toBe('SELECT');
+    // Tab: campo, "+", destinatário, enviar (ordem do DOM).
+    const campo = screen.getByRole('textbox');
+    const ordem = [campo, para, enviar];
+    ordem.slice(1).forEach((el, i) =>
+      expect(ordem[i]!.compareDocumentPosition(el) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(),
+    );
+    expect(enviar.closest('[data-slot=input-group]')).toBe(para.closest('[data-slot=input-group]'));
     // AT-713: Enviar é só ícone; o nome vem da legenda e o ícone é aria-hidden.
     expect(enviar).toHaveAccessibleName('Enviar');
     expect(enviar.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
-    expect(composer).not.toContainElement(pronto);
+    expect(enviar.closest('[data-slot=input-group]')).not.toContainElement(pronto);
   });
 
   it('viewer: a sugestão fica inerte e o motivo de papel aparece em texto', async () => {
@@ -170,9 +179,25 @@ describe('SessionPage — ações de passo são sugestões acima do destinatári
     eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
     montar();
     const pronto = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
     expect(pronto).toBeDisabled();
     expect(screen.getByText('Esta ação exige o papel developer neste workspace.')).toBeVisible();
+  });
+
+  it('AT-950: a barra tem no máximo 3 ações, todas com texto, e "Endereçar handoff…" mora no menu "+"', async () => {
+    eventos.mockReturnValue({ items: [EVENTO_CRIATIVO_ATIVO, EVENTO_REGRA_DE_NEGOCIO] });
+    montar();
+    await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' });
+    const barra = document.querySelector('[data-slot="suggestions"]') as HTMLElement;
+    // O "?" de ajuda é a única coisa sem texto; as AÇÕES são todas com texto.
+    const botoes = within(barra).getAllByRole('button').filter((b) => b.textContent?.trim());
+    expect(botoes.length).toBeGreaterThan(0);
+    expect(botoes.length).toBeLessThanOrEqual(3);
+    expect(within(barra).queryByText(/Endereçar handoff/)).toBeNull();
+    expect(screen.queryByTestId('aviso-perguntas-em-aberto')).toBeNull();
+    const mais = await screen.findByTestId('menu-mais-acoes');
+    await userEvent.click(mais);
+    expect(await screen.findByRole('menuitem', { name: /Endereçar handoff a outro agente/ })).toBeVisible();
   });
 });

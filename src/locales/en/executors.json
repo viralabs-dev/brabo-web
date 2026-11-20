@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "Executors",
+    "title": "Execution",
     "summary_one": "{{count}} agent · {{working}} working · {{waiting}} waiting",
     "summary_other": "{{count}} agents · {{working}} working · {{waiting}} waiting",
     "subtitle": "Dev agent and QA — who implements and who verifies. The rest of the team is in the Overview.",
@@ -26,9 +26,16 @@
     },
     "noExecutorsTitle": "Nobody acting right now",
     "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged.",
-    "modelSemPapel": "Changing the model requires the developer role on the project."
+    "modelSemPapel": "Changing the model requires the developer role on the project.",
+    "sessao": "session",
+    "visao": {
+      "rotulo": "Execution view",
+      "executores": "Executors",
+      "linhaDoTempo": "Timeline"
+    }
   },
   "agentCard": {
+    "local": "local",
     "status": {
       "trabalhando": "working",
       "aguardando": "waiting",
@@ -38,6 +45,7 @@
     },
     "autonomy": {
       "manual": "Manual",
+      "piloto": "Autopilot",
       "auto": "Automatic mode",
       "autoModeHint": "Auto mode: runs any command, even outside the project folder. git push and PR are released; deploy, sudo/doas and merges into a protected branch still ask for your approval."
     },
@@ -90,6 +98,7 @@
       "artifactBusinessRuleRetired": "retired a business rule",
       "artifactModuleMap": "issued the module_map",
       "artifactModuleRouting": "routed modules to infra",
+      "artifactModuleContracts": "declared the module contracts",
       "artifactInsight": "issued a hypothesis",
       "delegationCompleted": "subagent finished",
       "delegationFailed": "subagent failed",
@@ -184,14 +193,10 @@
     "regiao": "Execution in progress",
     "titulo": "Execution",
     "progresso": "{{done}} of {{total}} tasks",
-    "minimizar": "Minimize the executors carousel",
-    "restaurar": "Show the executors details",
-    "minimizadoLista": "Executors (summary)",
     "verExecutores": "Executors",
     "verNoFio": "View in thread",
     "dispensar": "Dismiss the execution summary",
     "ultimaAcao": "Last action: {{acao}}",
-    "cartaoRotulo": "{{posicao}} of {{total}}: {{nome}}, {{estado}}",
     "haSeg": "{{n}} s ago",
     "haMin": "{{n}} min ago",
     "haH": "{{n}} h ago",
@@ -233,7 +238,7 @@
       "esperaModulos": "Waiting for {{n}} modules; the first to unblock is {{primeiro}}.",
       "tarefaBloqueada": "Task blocked: {{motivo}}",
       "bloqueado": "The project container is not running. Infra proposes to start it; the agent retries on its own.",
-      "travado": "{{motivo}} Rearm in Executors.",
+      "travado": "{{motivo}} Use Rearm here in the pending items or in Executors.",
       "falhou": "Failed: {{motivo}}",
       "falhouSemMotivo": "Failed.",
       "concluido": "{{done}} of {{total}} module tasks done.",
@@ -242,10 +247,53 @@
       "gateJulgaSemTarefa": "Judging a PR.",
       "gateFalhou": "The gate cycle failed.",
       "gateOcioso": "No PR to judge right now.",
+      "gateEsperaVolta": "The task is in the dev queue: the PR waits to return to QA.",
+      "gateEsperaVoltaPr": "PR #{{pr}} waits to return to QA: the task is in the dev queue.",
+      "gateEsperaDesbloqueio": "The task is blocked: the PR waits for unblocking to return to the gate.",
+      "gateEsperaDesbloqueioPr": "PR #{{pr}} waits to return to QA: the task is blocked.",
+      "gateTarefaBloqueada": "The task blocked: the gate waits for the fix.",
       "gateUltimoAprovado": "Last verdict: approved.",
       "gateUltimoAprovadoPr": "Last verdict: approved (PR #{{pr}}).",
       "gateUltimoMudancas": "Last verdict: changes requested.",
       "gateUltimoMudancasPr": "Last verdict: changes requested (PR #{{pr}})."
+    },
+    "plano": {
+      "titulo": "Plan by round",
+      "rodada": "Round {{n}} of {{total}}",
+      "etapa": {
+        "aFazer": "queued",
+        "espera": "waiting",
+        "implementando": "implementing",
+        "noGate": "in the gate",
+        "pronta": "ready",
+        "mergeada": "merged"
+      },
+      "espera": "Waiting for \"{{titulo}}\" to reach main",
+      "esperaVarias": "Waiting for {{n}} tasks to reach main: \"{{titulo}}\" and others",
+      "rodadaFechada": "Round {{n}} · {{resumo}}",
+      "resumoMergeadas_one": "{{count}} merged",
+      "resumoMergeadas_other": "{{count}} merged",
+      "resumoTarefas_one": "{{count}} task",
+      "resumoTarefas_other": "{{count}} tasks",
+      "agente": "Runs: {{agente}}",
+      "esperaCom": "Waiting for {{itens}} from task \"{{titulo}}\" to reach main"
+    }
+  },
+  "secoes": {
+    "ver": "View",
+    "modoAutomatico": {
+      "titulo": "Auto mode",
+      "emManual_one": "{{count, number}} agent on manual",
+      "emManual_other": "{{count, number}} agents on manual"
+    },
+    "acoes": {
+      "titulo": "Execution pending items",
+      "bloqueadas_one": "{{count}} blocked task",
+      "bloqueadas_other": "{{count}} blocked tasks",
+      "sugestoes_one": "{{count}} suggestion",
+      "sugestoes_other": "{{count}} suggestions",
+      "prs_one": "{{count}} PR waiting for you",
+      "prs_other": "{{count}} PRs waiting for you"
     }
   },
   "acoes": {
@@ -314,5 +362,25 @@
       "in_review": "in review",
       "done": "done"
     }
+  },
+  "tabela": {
+    "agente": "Agent",
+    "estado": "State",
+    "tarefa": "Current or last task",
+    "modelo": "Model",
+    "gasto": "Spend",
+    "acoes": "Actions",
+    "semTarefa": "—",
+    "retomar": "Resume",
+    "verNoFio": "See in thread",
+    "maisAcoes": "More actions for {{agente}}",
+    "autonomia": "Autonomy"
+  },
+  "indicadores": {
+    "tarefas": "Tasks",
+    "fila": "Queue",
+    "gasto": "Execution spend",
+    "nDeM": "{{n}} of {{m}}",
+    "verFila": "See the queue"
   }
 }

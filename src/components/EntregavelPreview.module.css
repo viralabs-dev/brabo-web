@@ -1,0 +1,15 @@
+.fora {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px; /* AT-1010 (RN-1499) */
+  color: var(--accent);
+  text-decoration: underline;
+}

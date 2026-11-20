@@ -59,16 +59,6 @@ export function objetivoDaSessao(events: SessionEvent[]): string | null {
   return typeof resumo === 'string' && resumo.trim() ? resumo : null;
 }
 
-/** Custo por agente somado do `custoMicros` dos eventos já baixados: nenhuma leitura nova (RN-632). */
-export function gastoPorAgente(events: SessionEvent[]): { actorId: string; usd: number }[] {
-  const por = new Map<string, number>();
-  for (const e of events) {
-    const c = (e.payload as { custoMicros?: unknown } | null)?.custoMicros;
-    if (typeof c === 'number') por.set(e.actor.id, (por.get(e.actor.id) ?? 0) + c / 1_000_000);
-  }
-  return [...por].map(([actorId, usd]) => ({ actorId, usd }));
-}
-
 /** A cadeia de agentes da sessão, na ordem em que cada um apareceu nos eventos já baixados (AT-892, sem leitura nova). */
 export function cadeiaDeAgentes(events: readonly SessionEvent[], rotulo: (id: string) => string | null): string[] {
   const vistos = new Set<string>();

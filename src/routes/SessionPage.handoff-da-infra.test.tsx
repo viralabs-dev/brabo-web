@@ -27,6 +27,7 @@ import i18n from '../lib/i18n';
  * das ações de handoff que não são conversa.
  */
 
+import { abrirMaisAcoes } from '../test/mais-acoes';
 const getSession = vi.fn();
 const acceptHandoff = vi.fn();
 
@@ -344,9 +345,12 @@ describe('SessionPage — não-regressão: o card do Dev Lead segue como era (RN
       name: 'Aceitar e passar a Dev Lead',
     });
     // ...com o link de Executores que a RN-125 embutiu nele.
-    expect(
-      screen.getByRole('link', { name: /Acompanhe a execução em Executores/ }),
-    ).toHaveAttribute('href', '/projects/proj-1?tab=executores');
+    await abrirMaisAcoes();
+    // (o mock de `Link` deste teste descarta o `role` de menuitem)
+    expect(await screen.findByRole('link', { name: /Acompanhe a execução em Executores/ })).toHaveAttribute(
+      'href',
+      '/projects/proj-1?tab=executores',
+    );
 
     // E o card NOVO da Infra convive com ele, sem substituí-lo.
     const botaoInfra = screen.getByRole('button', {

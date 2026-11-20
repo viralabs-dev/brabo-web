@@ -52,7 +52,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -126,6 +126,17 @@
   min-width: 0;
   min-height: 0;
   display: flex;
+}
+
+.body.bodyRente .coluna.colunaComSubAbas {
+  flex-direction: column;
+}
+
+/* O painel da aba (o shell do Código) ocupa o que sobra abaixo da faixa de sub-abas. */
+.body.bodyRente .coluna.colunaComSubAbas > :last-child {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
 }
 
 .body.bodyRente {

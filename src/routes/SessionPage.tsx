@@ -12,8 +12,6 @@ import {
   sendAgentMessage,
   startAgent,
 } from '../lib/api-client';
-import { CarrosselDeExecutores } from '../components/CarrosselDeExecutores';
-import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSessoes';
 import { roleAtLeast } from '../lib/roles';
 import { useRetomarTurnoDoLog, useTurnoDoAgente } from '../lib/session-turno';
 import { subirAnexosPendentes } from '../lib/anexos';
@@ -54,10 +52,11 @@ import { useSessionReadiness } from '../lib/session-readiness';
 import { agruparTimelinePorAgente, dividirFio } from './session-fio';
 import { AvisoDePrPronta } from '../components/AvisoDePrPronta';
 import { montarTimeline } from './session-timeline-montagem';
-import { SessionTopbar } from './SessionTopbar';
+import { ControlesDaSessao, SessionTopbar } from './SessionTopbar';
 import { chaveDoIdiomaDaSessao } from '../lib/idioma-da-resposta';
 import { SessionFio } from './SessionFio';
-import { ConversationScrollButton } from '../components/ai-elements/conversation';
+import { TrilhoDeTurnos } from './TrilhoDeTurnos';
+import { MessageScroller, MessageScrollerButton, MessageScrollerContent } from '../components/shadcn/message-scroller';
 import { PainelDaFila } from './PainelDaFila';
 import { SessionComposer } from './SessionComposer';
 import {
@@ -73,9 +72,10 @@ import { usePromocaoDeHistorias } from '../lib/session-promocao';
 import { useAcoesDeHandoff } from '../lib/session-acoes-de-handoff';
 import { useAcoesDaSessao } from '../lib/session-acoes-da-sessao';
 import { DevolverHistoriaModal } from './DevolverHistoriaModal';
-import { GavetaDoContexto } from './GavetaDoContexto';
+import { FaixaDeEstado } from './FaixaDeEstado';
+import { PainelDaSessao, type AbaDoPainel } from './PainelDaSessao';
 import { usePainelDeContexto } from '../lib/painel-de-contexto';
-import { useLayoutMovel } from '../lib/layout-movel';
+import { useLayoutMovel, usePainelEmSheet } from '../lib/layout-movel';
 
 /**
  * O vazio ESTÁVEL (AT-301): `?? []` cria um array novo a cada render, e todo
@@ -148,8 +148,16 @@ export function SessionPage({
   // Mesmo papel de WORKSPACE (a lacuna da RN-471 já declarada acima).
   const podeReabrir = roleAtLeast(workspaceComPapel?.role, 'developer');
   // AT-328: no móvel o painel nasce fechado e abre como gaveta sobre o fio.
+  const emSheet = usePainelEmSheet();
   const movel = useLayoutMovel();
-  const [asideOpen, setAsideOpen] = usePainelDeContexto(movel, !!highlightEvent);
+  const [asideOpen, setAsideOpen] = usePainelDeContexto(emSheet, !!highlightEvent);
+  // AT-950: o Sheet de pendências e o total que o contador do cabeçalho mostra.
+  const [abaDoPainel, setAbaDoPainel] = useState<AbaDoPainel>('contexto');
+  const [totalDePendencias, setTotalDePendencias] = useState(0);
+  const abrirAba = (aba: AbaDoPainel) => {
+    setAbaDoPainel(aba);
+    setAsideOpen(true);
+  };
   // Log completo de eventos — fechado por padrão, mas abre sozinho quando
   // a navegação traz um `highlightEvent` (chip de evidência do Psicólogo).
   const [logOpen, setLogOpen] = useState(!!highlightEvent);
@@ -285,7 +293,7 @@ export function SessionPage({
   // A rolagem do fio (achado 10, Fase 4b, RN-173) mora em
   // `../lib/session-rolagem` desde o PR 7 do ADR 0176 — os mesmos refs e
   // efeitos, chamados neste mesmo ponto.
-  const { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, irAoFim } = useRolagemDoFio({
+  const { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, irAoFim, ancorarNoEnvio } = useRolagemDoFio({
     highlightEvent,
     logOpen,
     events,
@@ -569,6 +577,7 @@ export function SessionPage({
     if (!destino) return;
 
     if (!agenteForcado) setDraft('');
+    ancorarNoEnvio(); // RN-977: o turno novo sobe ao topo da janela
     setIdDaOtimista(null);
     setOptimisticUser(text);
     setStreaming(true);
@@ -729,53 +738,48 @@ export function SessionPage({
     .filter(Boolean)
     .join(' · ');
 
+  const propsDaBarra = {
+    events,
+    streaming,
+    handleCancel,
+    projectId,
+    sessionId,
+    session,
+    rascunhoDoNome,
+    setRascunhoDoNome,
+    handleRename,
+    hashtag,
+    rotulo,
+    metaDaSessao,
+    tipo,
+    modelsByCategory,
+    resolvedBinding,
+    budget,
+    queryClient,
+    destinatario,
+    isActive,
+    sessaoCriativa,
+    criativoActive,
+    conviteVisivel,
+    ideacaoComecou: handoffs.length > 0 || events.some((e) => e.actor.kind === 'agent'),
+    handleStartIdeation,
+    handleClose: pedirEncerramento,
+    asideOpen,
+    setAsideOpen,
+    pendencias: totalDePendencias,
+    abrirPendencias: () => abrirAba('pendencias'),
+  };
+
   return (
     <div className={styles.wrapper}>
-      <SessionTopbar
-        events={events}
-        streaming={streaming}
-        handleCancel={handleCancel}
-        projectId={projectId}
-        sessionId={sessionId}
-        session={session}
-        rascunhoDoNome={rascunhoDoNome}
-        setRascunhoDoNome={setRascunhoDoNome}
-        handleRename={handleRename}
-        hashtag={hashtag}
-        rotulo={rotulo}
-        metaDaSessao={metaDaSessao}
-        tipo={tipo}
-        modelsByCategory={modelsByCategory}
-        resolvedBinding={resolvedBinding}
-        budget={budget}
-        queryClient={queryClient}
-        destinatario={destinatario}
-        isActive={isActive}
-        sessaoCriativa={sessaoCriativa}
-        criativoActive={criativoActive}
-        conviteVisivel={conviteVisivel}
-        ideacaoComecou={handoffs.length > 0 || events.some((e) => e.actor.kind === 'agent')}
-        handleStartIdeation={handleStartIdeation}
-        handleClose={pedirEncerramento}
-        asideOpen={asideOpen}
-        setAsideOpen={setAsideOpen}
-      />
+      <SessionTopbar {...propsDaBarra} />
 
       <div className={styles.body}>
         <div className={styles.chatColumn}>
-          {/* AT-265: as pendências que os agentes propuseram em OUTRAS sessões do
-              projeto (a de execução), decididas aqui — atalho, RN-467. AT-298:
-              em QUALQUER estado da sessão — encerrada e técnica inclusive. A
-              decisão é sobre a ação da OUTRA sessão, não conversa nesta, e
-              quem abre uma sessão encerrada para ver o histórico era
-              justamente quem não via que havia algo esperando por ele. RN-816: acima do fio. */}
-          <PendenciasDeOutrasSessoes
-            projectId={projectId}
-            sessionId={sessionId}
-            podeDecidir={podeDecidir}
-          />
-          {/* AT-880 (RN-1303): os executores da execução vigente, acima do fio (RN-816). */}
-          {sessaoCriativa && <CarrosselDeExecutores projectId={projectId} sessionId={sessionId} />}
+          {/* AT-957 (RN-1303): a execução vigente é UMA faixa de 40px acima do fio; o detalhe mora na aba Executores. */}
+          {sessaoCriativa && (
+            <FaixaDeEstado projectId={projectId} sessionId={sessionId} aoAbrirExecutores={() => abrirAba('executores')} />
+          )}
           <ModoAutomaticoNoChat
             projectId={projectId}
             comExecucao={isActive && sessaoTemExecucao(events, ativadosNaSessaoInteira)}
@@ -784,8 +788,9 @@ export function SessionPage({
             sessaoAtiva={isActive}
             podeLigar={roleAtLeast(workspaceComPapel?.role, 'maintainer')}
           />
-          <div className={styles.messages} ref={scrollContainerRef} role="log" aria-label={t('fio.rotuloDoFio')}>
-            <div className={styles.messagesInner} ref={messagesInnerRef}>
+          <MessageScroller className={styles.messages} ref={scrollContainerRef} aria-label={t('fio.rotuloDoFio')}>
+            <MessageScrollerContent className={styles.messagesInner} ref={messagesInnerRef}>
+              <TrilhoDeTurnos events={events} actions={actions} noInicioDaSessao={!(events.length > 0 && events[0].seq > 1)} />
               <SessionFio
                 conviteVisivel={conviteVisivel}
                 carregando={!!session && eventsQuery.isPending}
@@ -807,9 +812,13 @@ export function SessionPage({
               {/* Sentinela do achado 10 — alvo do scroll de abertura e do
                   "acompanha o fim" enquanto o usuário está perto dele. */}
               <div ref={messagesEndRef} />
-              <ConversationScrollButton visivel={afastado} rotulo={t('fio.irAoFim')} onClick={irAoFim} />
-            </div>
-          </div>
+              <MessageScrollerButton
+                visivel={afastado}
+                rotulo={novas > 0 ? t('fio.irAoFimComNovas', { count: novas }) : t('fio.irAoFim')}
+                onClick={irAoFim}
+              />
+            </MessageScrollerContent>
+          </MessageScroller>
 
           {/* A faixa de atividade do turno — narra em tempo real o que um
               agente conversacional está fazendo, FORA da área que rola (o
@@ -871,8 +880,26 @@ export function SessionPage({
           />
         </div>
 
-        {asideOpen && (
-          <GavetaDoContexto movel={movel} aoFechar={() => setAsideOpen(false)}>
+        {/* AT-957: o painel fica montado recolhido (as pendências escutam `brabo:abrir-fila`, RN-843). */}
+        <PainelDaSessao
+          projectId={projectId}
+          sessionId={sessionId}
+          aberto={asideOpen}
+          emSheet={emSheet}
+          aoFechar={() => setAsideOpen(false)}
+          aba={abaDoPainel}
+          aoMudarAba={abrirAba}
+          comExecutores={sessaoCriativa}
+          podeDecidir={podeDecidir}
+          totalDePendencias={totalDePendencias}
+          aoContarPendencias={setTotalDePendencias}
+          contexto={
+            <>
+            {movel && (
+              <div className={styles.controlesNoPainel} data-testid="controles-no-painel">
+                <ControlesDaSessao {...propsDaBarra} modo="completa" />
+              </div>
+            )}
             <ContextAside
               projectId={projectId}
               sessionId={sessionId}
@@ -887,8 +914,9 @@ export function SessionPage({
               citedEvent={citedEvent}
               citedEventMissing={citedEventQuery.isError}
             />
-          </GavetaDoContexto>
-        )}
+            </>
+          }
+        />
       </div>
 
       <DevolverHistoriaModal

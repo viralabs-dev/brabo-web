@@ -218,7 +218,11 @@ describe('chaves de dispositivo — a listagem', () => {
   it('lista VAZIA e consulta FALHADA têm textos diferentes: "não sei" nunca vira "não tem"', async () => {
     listRunnerDeviceKeys.mockResolvedValue([]);
     const vazio = cenario();
-    await screen.findByText('Nenhuma chave de dispositivo sua serve este projeto.');
+    const frase = await screen.findByText('Nenhuma chave de dispositivo sua serve este projeto.');
+    // AT-1005: a tabela vazia é uma linha só (py-3, até 48 px), não o bloco alto de antes.
+    expect(frase).toHaveAttribute('data-slot', 'grade-vazia');
+    expect(frase.className).toMatch(/\bpy-3\b/);
+    expect(frase.className).not.toMatch(/\bpy-8\b/);
     expect(screen.queryByText(/quer dizer que não sei/)).not.toBeInTheDocument();
     vazio.unmount();
 

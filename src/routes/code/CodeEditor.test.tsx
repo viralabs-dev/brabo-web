@@ -29,7 +29,7 @@ const arquivo: CodeFile = {
   bytes: 26,
 };
 
-function montar() {
+function montar(extra: Partial<React.ComponentProps<typeof CodeEditor>> = {}) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
@@ -40,6 +40,7 @@ function montar() {
         activePath="apps/api/src/user.ts"
         onSelectTab={vi.fn()}
         onCloseTab={vi.fn()}
+        {...extra}
       />
     </QueryClientProvider>,
   );
@@ -341,5 +342,23 @@ describe('CodeEditor — minimapa', () => {
     expect(minimapa).toBeInTheDocument();
     expect(minimapa.querySelector('canvas')).toBeInTheDocument();
     erro.mockRestore();
+  });
+
+  it('AT-1006 (RN-1494): "aberto por padrão" só aparece quando pedido', async () => {
+    const { unmount } = montar({ abertoPorPadrao: true });
+    expect(await screen.findByText('aberto por padrão')).toBeInTheDocument();
+    unmount();
+    montar();
+    await screen.findByLabelText('Fechar apps/api/src/user.ts');
+    expect(screen.queryByText('aberto por padrão')).toBeNull();
+  });
+
+  it('AT-1006 (RN-1494): o campo "Buscar no código" entrega o termo ao submeter', async () => {
+    const onBuscar = vi.fn();
+    montar({ onBuscar });
+    const campo = await screen.findByRole('searchbox', { name: 'Buscar no código' });
+    fireEvent.change(campo, { target: { value: 'ProjectsService' } });
+    fireEvent.submit(campo.closest('form')!);
+    expect(onBuscar).toHaveBeenCalledWith('ProjectsService');
   });
 });

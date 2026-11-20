@@ -1,1 +1,1 @@
-.ordenar { display: inline-flex; align-items: center; gap: 0.25rem; text-transform: uppercase; }
+.ordenar { display: inline-flex; align-items: center; gap: 0.25rem; text-transform: uppercase; min-height: 32px; min-width: 32px; }

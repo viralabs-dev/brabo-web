@@ -9,9 +9,9 @@
     "analysisStrip": {
       "tier": "triagem {{tier}}",
       "sessionLabel": "sessão {{id}}",
-      "metaEvents_zero": "{{count}} eventos",
-      "metaEvents_one": "{{count}} evento",
-      "metaEvents_other": "{{count}} eventos",
+      "metaEvents_zero": "{{count, number}} eventos",
+      "metaEvents_one": "{{count, number}} evento",
+      "metaEvents_other": "{{count, number}} eventos",
       "metaHypotheses_zero": "{{count}} hipóteses",
       "metaHypotheses_one": "{{count}} hipótese",
       "metaHypotheses_other": "{{count}} hipóteses",

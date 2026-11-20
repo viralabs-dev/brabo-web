@@ -22,7 +22,7 @@
 
 .cardTitulo {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-muted);
@@ -68,17 +68,19 @@
 
 .svgWrap {
   width: 100%;
-  overflow: auto;
+  overflow-x: auto;
   background: var(--surface-0);
   border-radius: var(--radius-sm);
   padding: 8px;
 }
 
+/* AT-972 (RN-1475): tamanho natural (texto legível), rolando na horizontal; "Ajustar à largura" volta a 100%. */
 .svgWrap :global(svg) {
-  max-width: 100%;
+  width: var(--c4-largura, 100%);
+  max-width: none;
   height: auto;
   display: block;
-  margin: 0 auto;
+  margin: 0;
 }
 
 /* O mesmo wrap, mas dentro do lightbox: sem teto de largura próprio — o
@@ -101,7 +103,7 @@
 
 .sintaxeCrua {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
 }
 
 .sintaxeCrua summary {
@@ -116,7 +118,15 @@
   border-radius: var(--radius-sm);
   overflow-x: auto;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   white-space: pre-wrap;
   word-break: break-word;
+}
+
+/* AT-972: "Ajustar à largura" e ampliar juntos, no canto direito do cabeçalho. */
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
 }

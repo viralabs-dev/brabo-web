@@ -859,8 +859,8 @@ até a abertura do turno e o histórico é UM bloco cronológico, não grupos po
 origem (que punham a resposta acima da pergunta). O painel de log segue como
 descrito aqui.
 
-- **Onde:** `apps/web/src/lib/activity.ts:95` (`OrigemDeEvento`), `:125`
-  (`origemDoEvento`), `:152` (`agruparPorOrigem`);
+- **Onde:** `apps/web/src/lib/activity.ts:105` (`OrigemDeEvento`), `:136`
+  (`origemDoEvento`), `:163` (`agruparPorOrigem`);
   `apps/web/src/components/ActivityFeed.tsx:34` (o corte de 5), `:66` (o
   toggle); `apps/web/src/routes/session-fio.tsx:119` (o corte do fio), `:291`
   (`dividirFio`); `apps/web/src/routes/SessionPage.tsx:516` (`fio`)
@@ -900,7 +900,7 @@ lista, e um `useEffect` renderizaria uma vez com a página inválida antes de
 corrigir. Com 5 ou menos, o paginador **não existe** — controle que não pagina
 nada é ruído ocupando altura.
 
-- **Onde:** `apps/web/src/routes/ContextAside.tsx:114` (`REGRAS_POR_PAGINA`) e
+- **Onde:** `apps/web/src/routes/ContextAside.tsx:118` (`REGRAS_POR_PAGINA`) e
   a ordenação das quatro seções no mesmo arquivo;
   `apps/web/src/components/ActivityFeed.tsx:98` (o `sort` decrescente)
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -979,7 +979,7 @@ tela pausa durante o turno — e com ele a duplicata visual da bolha em
 streaming.
 
 - **Onde:** `apps/web/src/lib/hooks.ts:262` (o `pausarPoll` do histórico),
-  `:417` (`baixados`); `apps/web/src/routes/ContextAside.tsx:164`
+  `:427` (`baixados`); `apps/web/src/routes/ContextAside.tsx:176`
   (`eventosAnteriores`) e o `ActivityFeed` com o pager, no fim do mesmo
   arquivo
 - **Teste:** `apps/web/src/routes/SessionPage.painel-e-agrupamento.test.tsx`
@@ -1213,9 +1213,9 @@ montada, os cinco números saem do MESMO hook que ela usa
 (`useContagensDoProjeto`), sem requisição nova. Recolhida, o quadrado do
 projeto aberto abre um flyout com as mesmas abas.
 
-- **Onde:** `apps/web/src/routes/Shell.tsx:300` (`Shell`; `projetosAbertosEfetivo` saiu na AT-939),
-  `:394` (`useContagensDoProjeto`), `:593` (`irParaAba`), `:574`
-  (`flyoutAberto`), `:290` (`contagensDoResumo`);
+- **Onde:** `apps/web/src/routes/Shell.tsx:377` (`Shell`; `projetosAbertosEfetivo` saiu na AT-939),
+  `:479` (`useContagensDoProjeto`), `:687` (`irParaAba`), `:514`
+  (`flyoutAberto`), `:367` (`contagensDoResumo`);
   `apps/web/src/routes/AbasDoProjeto.tsx:63` (`AbasDoProjeto`), `apps/web/src/routes/AbasDoProjeto.helpers.ts:11`
   (`itensDasAbas`), `apps/web/src/routes/AbasDoProjeto.tsx:80` (`aoTeclar`);
   `apps/web/src/lib/contagens-do-projeto.ts:22` (`useContagensDoProjeto`),

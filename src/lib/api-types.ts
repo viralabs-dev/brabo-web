@@ -532,6 +532,11 @@ export interface GitActionFailureResult {
   conflictingFiles?: string[];
 }
 
+/** O que a ação de container grava ao falhar (AT-980): o motivo, em texto. */
+export interface ContainerActionResult {
+  motivo?: string;
+}
+
 export interface ProposedAction {
   id: string;
   projectId: string;
@@ -545,7 +550,12 @@ export interface ProposedAction {
   decidedBy: string | null;
   decidedAt: string | null;
   rejectionReason: string | null;
-  executionResult: TerminalExecutionResult | GitActionFailureResult | GitMergeExecutionResult | null;
+  executionResult:
+    | TerminalExecutionResult
+    | GitActionFailureResult
+    | GitMergeExecutionResult
+    | ContainerActionResult
+    | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1111,6 +1121,10 @@ export interface Task {
   /** AT-912: quando e por quê a tarefa `todo` foi arquivada; a arquivada fica no histórico. */
   archivedAt?: string | null;
   archivedReason?: string | null;
+  /** AT-990 (RN-1372): tarefas que precisam estar `done` antes desta ser pegável. */
+  dependeDe?: string[];
+  /** AT-990: o levantamento da tarefa (`expoe`/`consome` em nomes de símbolo); `null` sem levantamento. */
+  levantamento?: { expoe?: string[]; consome?: string[] } | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -1439,6 +1453,8 @@ export interface Architecture {
   adrs: AdrRef[];
   pendencies: ArchitecturePendency[];
   c4Diagram: EstadoDoC4Diagrama;
+  /** Contratos vigentes por módulo (AT-981, RN-684); vazio até o Arquiteto declarar. */
+  contratos?: components['schemas']['ContratoDeModuloResponseDto'][];
 }
 
 // --- Execução (Fase 4a — dev agents) ---
@@ -1627,6 +1643,16 @@ export interface RegistroDeContainer {
  * container quanto quando não deu para perguntar —
  * `naoObservado`/`naoVerificado` distinguem os dois motivos de ausência.
  */
+/** Projeto apagado cujos containers ainda serão removidos (AT-980, RN-1446). */
+export interface RemocaoPendente {
+  projectId: string;
+  projetoNome: string | null;
+  recursos: number;
+  motivo: string | null;
+  tentativas: number;
+  atualizadoEm: string;
+}
+
 export interface ContainerOverviewItem {
   projectId: string;
   projectName: string;
@@ -1663,6 +1689,8 @@ export interface ContainerOverviewItem {
   decisaoVigente: { version: number; image: string; network: "none" | "egress" } | null;
   /** Conteúdo do container registrado difere da decisão vigente (RN-902). */
   imagemDesatualizada: boolean;
+  /** Primeira linha do `failureReason` gravado, ou `null` (RN-1493). */
+  motivoDaFalha: string | null;
 }
 
 // --- Aba Code, só leitura (FASE 26) — espelha

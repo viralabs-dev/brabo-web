@@ -1,17 +1,27 @@
+/* RN-1449: uma coluna no estreito; lista + Rastreabilidade (320px) a partir de 1000px do contêiner. */
+.pagina {
+  container-type: inline-size;
+}
+
 .wrapper {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-4);
-  align-items: flex-start;
+  align-items: start;
+}
+
+@container (min-width: 1000px) {
+  .wrapper {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
 }
 
 .tree {
-  flex: 1;
   min-width: 0;
 }
 
 .traceability {
-  width: 300px;
-  flex-shrink: 0;
+  min-width: 0;
 }
 
 .sectionLabel {
@@ -19,7 +29,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
@@ -52,7 +62,7 @@
   border-radius: var(--radius-md);
   padding: 10px 14px;
   margin-bottom: 12px;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -90,7 +100,7 @@
 
 .proposalTitle {
   font-weight: 500;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -159,18 +169,19 @@
 .epicTitle {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14px;
+  font-size: var(--fs-body);
 }
 
 .storyTitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   flex: 1;
 }
 
 .count {
   margin-left: auto;
+  white-space: nowrap;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -204,7 +215,7 @@
 
 .fieldLabel {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   color: var(--text-muted);
   min-width: 34px;
@@ -246,34 +257,53 @@
 
 /* --- Rastreabilidade --- */
 
-.ruleCard {
+.ruleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 10px 12px;
-  margin-bottom: 8px;
+}
+
+.ruleRow {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+}
+
+.ruleRow + .ruleRow {
+  border-top: 1px solid var(--border);
+}
+
+.soComPergunta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
 }
 
 .uncovered {
-  border-color: var(--danger-panel-border);
   background: var(--danger-panel);
 }
 
 .ruleTitle {
   font-family: var(--font-heading);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .ruleMeta {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--success);
 }
 
@@ -286,7 +316,7 @@
 
 .inertReason {
   margin: 6px 0 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -299,6 +329,35 @@
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
+}
+
+/* RN-1447: uma linha com quebra; nada com posição absoluta nem margem negativa. */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.busca {
+  flex: 1 1 260px;
+  max-width: 420px;
+}
+
+.modulo {
+  width: auto;
+}
+
+.visoesDoFiltro {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.progresso {
+  width: 72px;
+  flex: none;
 }
 
 .quadro {

@@ -10,8 +10,8 @@
     "gitCommit": {
       "verb": "proposes a change",
       "base": "Records a commit",
-      "filesSuffix_one": " of {{count}} file",
-      "filesSuffix_other": " of {{count}} files",
+      "filesSuffix_one": " of {{count, number}} file",
+      "filesSuffix_other": " of {{count, number}} files",
       "pathSuffix": " of the file {{path}}",
       "branchSuffix": " on branch {{branch}}",
       "repoSuffix": " in the project's repository",
@@ -72,8 +72,8 @@
       "verb": "opened an infra pull request",
       "base": "Opens an infrastructure pull request",
       "titled": " \"{{title}}\"",
-      "filesSuffix_one": " with {{count}} file",
-      "filesSuffix_other": " with {{count}} files"
+      "filesSuffix_one": " with {{count, number}} file",
+      "filesSuffix_other": " with {{count, number}} files"
     },
     "gitMerge": {
       "verb": "wants to merge",
@@ -152,6 +152,8 @@
     "decided": {
       "denied": "Denied",
       "alwaysAllowed": "Always allowed · recorded in permissions.json",
+      "autoMerged": "Merged by automatic merge",
+      "autoMergedDesligar": "turn off",
       "failed": "Failed",
       "approvedTerminal": "Approved · command running",
       "approved": "Approved",
@@ -159,8 +161,8 @@
     },
     "body": {
       "commit": {
-        "files_one": "{{count}} file",
-        "files_other": "{{count}} files"
+        "files_one": "{{count, number}} file",
+        "files_other": "{{count, number}} files"
       },
       "terminal": {
         "invalidCommand": "The model didn't produce a valid command for this action.",
@@ -173,8 +175,8 @@
         "invalidPath": "The model didn't produce a valid path for this action.",
         "invalidContent": "The model didn't produce valid content for this action.",
         "previewHeader": "content preview",
-        "linesTruncated_one": "{{shown}} of {{count}} line",
-        "linesTruncated_other": "{{shown}} of {{count}} lines"
+        "linesTruncated_one": "{{shown}} of {{count, number}} line",
+        "linesTruncated_other": "{{shown}} of {{count, number}} lines"
       },
       "prOpen": {
         "defaultTitle": "Pull request"
@@ -366,7 +368,7 @@
     "gatePendenteBloqueada": "The {{gate}} gate is still pending for this PR, and its task is blocked: merging is unavailable until it is unblocked.",
     "mergeIndisponivelBloqueada": "Merging is unavailable: the task behind this PR is blocked — {{reason}}",
     "mergeIndisponivelSemSessao": "Merging is unavailable: no session in the project to propose the action.",
-    "gatePendente": "The {{gate}} gate is still pending for this PR. Merging stays available — the decision is yours.",
+    "gatePendente": "The {{gate}} gate is still pending: Merge shows up when D, Q and S are green.",
     "mergeRecusado": "The last merge attempt was refused: {{reason}}",
     "mergeRecusadoArquivos_one": "Conflicting file: {{files}}",
     "mergeRecusadoArquivos_other": "Conflicting files: {{files}}",
@@ -375,10 +377,16 @@
       "verAprovacao": "See the approval",
       "ativarExecucao": "Activate execution"
     },
+    "pedirParecer": "Ask for the review again",
+    "portoes": {
+      "rotulo": "PR gates",
+      "nome": { "dev": "Dev", "qa": "QA", "secops": "SecOps", "user": "You" },
+      "estado": { "done": "passed", "current": "in progress", "blocked": "blocked", "pending": "pending" }
+    },
     "fluxo": {
-      "titulo": "How a PR moves here:",
-      "passos": "opened by the agent, QA, SecOps, waits for you, merged.",
-      "mergeManual": "Merge into a protected branch is always manual."
+      "titulo": "Gates:",
+      "passos": "D Dev · Q QA · S SecOps · V you.",
+      "mergeManual": "Merge into a protected branch is always manual; the button only shows up when the three gates are green."
     }
   },
   "politica": {

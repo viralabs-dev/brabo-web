@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "draft",
-    "ready": "ready",
-    "inProgress": "in progress",
+    "ready": "ready to run",
+    "inProgress": "running",
     "done": "done"
   },
   "sectionLabel": {
@@ -20,8 +20,8 @@
   "coverage": {
     "uncoveredBadge_one": "{{count}} uncovered",
     "uncoveredBadge_other": "{{count}} uncovered",
-    "coveredBy_one": "covered by {{count}} story",
-    "coveredBy_other": "covered by {{count}} stories",
+    "coveredBy_one": "{{count}} story",
+    "coveredBy_other": "{{count}} stories",
     "uncovered": "uncovered — no story"
   },
   "ruleRefs_one": "{{count}} linked business rule",
@@ -136,5 +136,11 @@
   "historia": {
     "perguntas_one": "{{count}} question",
     "perguntas_other": "{{count}} questions"
+  },
+  "loadError": {
+    "epics": "Could not load the Backlog",
+    "epicsThing": "epics or stories",
+    "rules": "Could not load rule coverage",
+    "rulesThing": "rules"
   }
 }

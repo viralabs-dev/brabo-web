@@ -20,10 +20,10 @@
   "markdownMessage": {
     "codeFence": {
       "defaultLanguage": "текст",
-      "mostrarLinhas_one": "Показать {{count}} строку",
-      "mostrarLinhas_few": "Показать {{count}} строки",
-      "mostrarLinhas_many": "Показать все {{count}} строк",
-      "mostrarLinhas_other": "Показать все {{count}} строки",
+      "mostrarLinhas_one": "Показать {{count, number}} строку",
+      "mostrarLinhas_few": "Показать {{count, number}} строки",
+      "mostrarLinhas_many": "Показать все {{count, number}} строк",
+      "mostrarLinhas_other": "Показать все {{count, number}} строки",
       "recolher": "Свернуть"
     },
     "table": {
@@ -39,7 +39,11 @@
   "erroDeCarregamento": {
     "defaultMessage": "Не удалось связаться с api.",
     "trace": "trace {{traceId}}",
-    "retry": "Попробовать снова"
+    "retry": "Попробовать снова",
+    "rateLimited": "Сервер отклонил чтение (429). Это не значит, что в проекте нет {{coisa}}.",
+    "faixa429": "Сейчас слишком много запросов. Данные на экране могут устареть.",
+    "faixaGenerica": "Сейчас не удалось обновить. Данные на экране могут устареть.",
+    "tentarAgora": "Повторить сейчас"
   },
   "codeBlock": {
     "copiar": "Копировать",

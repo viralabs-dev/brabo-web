@@ -2,6 +2,13 @@
   "modal": {
     "title": "New project"
   },
+  "stepNames": {
+    "mode": "Source",
+    "provider": "Hosting",
+    "credential": "Credential",
+    "details": "Location",
+    "confirm": "Review"
+  },
   "steps": {
     "mode": "Create new or adopt existing",
     "provider": "Where to host",

@@ -1,10 +1,9 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Link, useRouter } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { getProject, getProjectBudget, setProjectBudget, updateProject } from '../../lib/api-client';
-import { useCurrentWorkspaceWithRole } from '../../lib/hooks';
-import { roleAtLeast } from '../../lib/roles';
+import { getProject, getProjectBudget, updateProject } from '../../lib/api-client';
 import { Input } from '../../components/ui/Input';
-import { TetoDoMes } from '../../components/TetoDoMes';
+import { formatarUsd } from '../../components/CredentialSpendSection.helpers';
 import { MarcaDeHeranca } from './heranca';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { CabecalhoDaSecao } from './CabecalhoDaSecao';
@@ -28,12 +27,18 @@ const DEFAULT_MAX_CONSECUTIVE_BLOCKED = 3;
 export function ExecutionSection({ projectId }: { projectId: string }) {
   const { t } = useTranslation('settings');
   const queryClient = useQueryClient();
+  // Sem roteador (as seções montam soltas em alguns testes) cai no <a>; no app é sempre o Link.
+  const comRoteador = !!useRouter({ warn: false });
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
     queryFn: () => getProject(projectId),
     staleTime: FRESCOR_DA_CONFIGURACAO_MS,
   });
-  const { data: comPapel } = useCurrentWorkspaceWithRole();
+  const { data: teto, isError: tetoFalhou } = useQuery({
+    queryKey: ['budget', projectId],
+    queryFn: () => getProjectBudget(projectId),
+    staleTime: FRESCOR_DA_CONFIGURACAO_MS,
+  });
 
   const secao = useSecaoSalvavel<{ id: string }, number>({
     itens: project ? [{ id: 'maxConsecutiveBlocked' }] : undefined,
@@ -81,14 +86,28 @@ export function ExecutionSection({ projectId }: { projectId: string }) {
         />
       </LinhaDeConfiguracao>
 
+      {/* O teto do mês tem um lugar só, Gastos (RN-1455): aqui é o valor e o caminho. */}
       <LinhaDeConfiguracao rotulo={t('budget.mes.rotulo')} descricao={t('budget.mes.descricao')}>
-        <TetoDoMes
-          escopo="projeto"
-          queryKey={['budget', projectId]}
-          ler={() => getProjectBudget(projectId)}
-          gravar={(input) => setProjectBudget(projectId, input)}
-          podeEditar={!!comPapel && roleAtLeast(comPapel.role, 'maintainer')}
-        />
+        <span data-testid="teto-do-mes">
+          {teto === undefined
+            ? tetoFalhou
+              ? t('budget.mes.naoLido')
+              : '…'
+            : teto === null
+              ? t('budget.mes.semTeto')
+              : t('budget.mes.valor', {
+                  gasto: formatarUsd(teto.spentMicros),
+                  teto: formatarUsd(teto.limitMicros),
+                  pct: Math.round((teto.spentMicros / teto.limitMicros) * 100),
+                })}{' '}
+          {comRoteador ? (
+            <Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'spend' }} hash="teto">
+              {t('budget.mes.editarEmGastos')}
+            </Link>
+          ) : (
+            <a href={`/projects/${projectId}?tab=spend#teto`}>{t('budget.mes.editarEmGastos')}</a>
+          )}
+        </span>
       </LinhaDeConfiguracao>
     </SecaoDeConfiguracoes>
   );

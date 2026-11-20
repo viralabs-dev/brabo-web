@@ -26,7 +26,7 @@ export function SeloDeCitacao({
         render={<button type="button" />}
         aria-label={t('turno.fonteN', { n, rotulo: fonte.rotulo })}
         data-testid="selo-de-citacao"
-        className="mx-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-muted px-1 align-super text-[10px] leading-4 text-muted-foreground"
+        className="mx-0.5 inline-flex min-w-4 items-center justify-center rounded-full bg-muted px-1 align-super text-[11px] leading-4 text-muted-foreground"
       >
         {n}
       </HoverCardTrigger>

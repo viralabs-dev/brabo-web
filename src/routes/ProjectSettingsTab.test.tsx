@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { AGENTS } from '../lib/agents';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import settingsPtBR from '../locales/pt-BR/settings.json';
@@ -480,6 +481,16 @@ describe('BudgetSection (ADR 0110, RN-443)', () => {
 });
 
 describe('ExecutionSection', () => {
+  it('o teto do mês tem um lugar só (RN-1455): aqui é o valor e o caminho para Gastos, sem formulário', async () => {
+    getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
+    montar();
+
+    expect(await screen.findByText('Sem teto neste mês', { exact: false })).toBeTruthy();
+    const link = screen.getByRole('link', { name: 'Editar em Gastos' });
+    expect(link.getAttribute('href')).toBe('/projects/proj-1?tab=spend#teto');
+    expect(screen.queryByRole('button', { name: /salvar/i })).toBeNull();
+  });
+
   it('sem valor próprio: mostra o default (3), pré-preenchido no campo', async () => {
     getProject.mockResolvedValue(project({ maxConsecutiveBlocked: null }));
     montar();
@@ -651,6 +662,18 @@ describe('PromotionSection (Fase 12c — RN-048)', () => {
     expect(screen.getByTestId('promocao-default')).toHaveTextContent(
       'Projeto novo nasce em Automática',
     );
+  });
+
+  it('o controle entra na grade das outras seções: rótulo à esquerda, controle na coluna própria (AT-1005)', async () => {
+    getProject.mockResolvedValue(project({ storyPromotion: 'auto' }));
+    montarPromocao();
+
+    const seletor = await screen.findByDisplayValue('Automática — o PO promove');
+    const linha = seletor.closest('[role="group"]')!;
+    expect(linha).not.toBeNull();
+    expect(linha.textContent).toContain('Quem promove');
+    // Não é mais o `Item` com o controle na borda direita.
+    expect(seletor.closest('[data-slot="item"]')).toBeNull();
   });
 
   it('projeto em auto (o padrão de projeto novo) mostra o valor e o que ele faz', async () => {
@@ -986,7 +1009,9 @@ describe('ModelsSection — colunas do desenho', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montarSecao(<ModelsSection projectId="proj-1" />);
 
-    expect(await screen.findAllByText('Modelo do Projeto')).not.toHaveLength(0);
+    // O fallback saiu da coluna (RN-1454): mora no Popover do chip "De onde vem".
+    fireEvent.click((await screen.findAllByRole('button', { name: /^De onde vem o modelo de/ }))[0]);
+    expect(await screen.findByText('Modelo do Projeto', { selector: 'code' })).toBeTruthy();
   });
 
   /**
@@ -1002,8 +1027,9 @@ describe('ModelsSection — colunas do desenho', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montarSecao(<ModelsSection projectId="proj-1" />);
 
-    await screen.findByText('Modelos por agente');
-    expect(screen.queryByText('Modelo do Projeto')).toBeNull();
+    fireEvent.click((await screen.findAllByRole('button', { name: /^De onde vem o modelo de/ }))[0]);
+    expect(await screen.findByText('não há nível abaixo')).toBeTruthy();
+    expect(screen.queryByText('Modelo do Projeto', { selector: 'code' })).toBeNull();
   });
 
   it('EST. MÊS mostra o custo do agente e o card soma o time', async () => {
@@ -1117,8 +1143,11 @@ describe('ModelsSection — colunas do desenho', () => {
     getProjectModelBinding.mockResolvedValue({ modelId: 'm-proj' });
     montarSecao(<ModelsSection projectId="proj-1" />);
 
-    expect(await screen.findAllByText('Modelo da Área')).not.toHaveLength(0);
-    expect(screen.queryByText('Modelo do Projeto')).toBeNull();
+    fireEvent.click(
+      await screen.findByRole('button', { name: `De onde vem o modelo de ${AGENTS['qa-automacao'].name}` }),
+    );
+    expect(await screen.findByText('Modelo da Área', { selector: 'code' })).toBeTruthy();
+    expect(screen.queryByText(/Modelo do Projeto/)).toBeNull();
   });
 });
 
@@ -1480,6 +1509,21 @@ describe('PersonalAccessTokensSection (ADR 0105)', () => {
     expect(await screen.findByText('Todos os tokens do projeto')).toBeInTheDocument();
     expect(await screen.findByText('outro@brabo.dev')).toBeInTheDocument();
     expect(listAllPersonalAccessTokens).toHaveBeenCalledWith('proj-1');
+  });
+
+  it('tabelas vazias: uma linha cada, e a frase de "Tokens de acesso" não se repete na de "Todos os tokens" (AT-1005)', async () => {
+    useCurrentWorkspaceWithRole.mockReturnValue({ data: { role: 'maintainer' } });
+    listPersonalAccessTokens.mockResolvedValue([]);
+    listAllPersonalAccessTokens.mockResolvedValue([]);
+    montarTokens();
+
+    const minha = await screen.findByText('Nenhum token de acesso emitido para este projeto.');
+    const admin = await screen.findByText('Ninguém neste projeto emitiu token.');
+    expect(screen.getAllByText('Nenhum token de acesso emitido para este projeto.')).toHaveLength(1);
+    for (const frase of [minha, admin]) {
+      expect(frase).toHaveAttribute('data-slot', 'grade-vazia');
+      expect(frase.className).toMatch(/\bpy-3\b/);
+    }
   });
 
   it('developer NÃO vê a sub-lista de admin nem dispara a listagem de todos', async () => {

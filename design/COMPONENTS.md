@@ -35,7 +35,8 @@ Cada peça é conferida contra a prévia `13-design/v9-estrutura/`. Decisão: [A
 |---|---|---|---|
 | `CaixaDeDecisoes` | S07 | filas de vários projetos, um cartão por fila (5) | não soma filas |
 | `FaixaPrecisaDeVoce` | P10 | o item mais urgente e a contagem por fila | não decide sozinha; usa o `ApprovalCard` |
-| `ResumoDeTurno` | P10, C30 | uma linha por turno: agente, passos, "Gravado neste turno", custo | não usa texto do modelo |
+| `ResumoDeTurno` | P10 | uma linha por turno: agente, passos, "Gravado neste turno", custo | não usa texto do modelo |
+| `LinhaDeTrabalho` | C30, C31 | UM `Trace` por turno: "Trabalhou 14,0 s · 5 passos", abre com raciocínio, consultas e passos; em curso nasce aberta | não tem segundos em curso; não mostra raciocínio que a api não enviou |
 | `PassosDoTurno` | C30, C31 | linha recolhida e lista agrupada ou em ordem | o grupo vem do mapa tipado |
 | `MedidorDeGasto` | cabeçalho, P21 | gasto contra o teto, barra, teto | não estima sem fonte |
 | `AgentesAgora` | sidebar | até 5 agentes com status | não mostra contagem de eventos |
@@ -43,6 +44,21 @@ Cada peça é conferida contra a prévia `13-design/v9-estrutura/`. Decisão: [A
 | `AvatarDeAgente` | todo lugar | quadrado com a cor `--ag-<papel>` | não pinta chip de status |
 
 **Tokens novos:** escala de tipo 14/11/12 e títulos 24/20, `--surface-3` (degrau de hover e item ativo) e `--ag-*` (oito papéis, nos dois temas). Aplicação em `tokens.css`: AT-884.
+
+## Marker e Scroll Fade (AT-955)
+
+| peça | onde | o que é | não faz |
+|---|---|---|---|
+| `Marker` (`components/shadcn/marker.tsx`) | divisores de handoff do fio | texto centrado com uma linha de cada lado, cor e espaço de `tokens.css` | não leva `data-slot="alert"` |
+| `ScrollFade` (`components/shadcn/scroll-fade.tsx`) | fileira de `SugestoesDeAcao` | rolagem horizontal que esmaece só a borda com conteúdo escondido (`data-fade`) | não limita o número de ações (RN-976) |
+
+## Message Scroller (AT-959)
+
+| peça | onde | o que é | não faz |
+|---|---|---|---|
+| `MessageScroller`, `MessageScrollerContent`, `MessageScrollerButton` (`components/shadcn/message-scroller.tsx`) | o fio da Sessão | Viewport (`role="log"`), conteúdo e o botão "Ir ao fim · N novas" | não decide seguir ou pausar: é o `useRolagemDoFio` (RN-977, RN-1405); sem `use-stick-to-bottom` |
+
+O trilho de turnos (`TrilhoDeTurnos`, 28 px, RN-1407) e o turno antigo em 3 linhas (`TextoDoAgente`, RN-1406) completam a v10 do fio.
 
 ## Tipografia — a escala do handoff
 
@@ -125,6 +141,10 @@ ou aplicar gradiente. Respiro mínimo = a largura da haste (3.4 unidades da
 grade de 24).
 
 Wordmark: Space Grotesk 700, `letter-spacing:-.045em`.
+
+## Alvo de clique de 24 px (AT-1010, RN-1499 a RN-1501)
+
+Todo controle clicável que não seja link dentro de frase mede 24 px ou mais de altura (WCAG 2.2, 2.5.8); o texto não cresce, cresce a área de toque. `Button` `xs`, `sm` e `icon` já cumprem (24, 28, 28). `BotaoLink` tem `min-height: 24px`. O `Checkbox` tem alvo de 24 px (`size-6`) e caixa visível de 16 px (`::before`), com `-m-1` para não crescer a linha. Onde a linha era menor, use `min-height: 24px` com `margin-block` negativo para manter a altura do layout.
 
 ## Botões (base)
 
@@ -329,10 +349,13 @@ App)
 Botão 38x38px, radius 8px, `var(--surface-1)`/`var(--border)`, badge de
 contagem (pílula `var(--accent)`, mono 9px, `border: 2px solid
 var(--surface-0)` pra "recortar" do fundo) no canto superior direito.
-Dropdown (380px, `max-height:70vh` com scroll): header sticky "Notificações"
-+ link "marcar lidas" (accent). Agrupado por projeto: cabeçalho de grupo
-(`var(--surface-2)`, dot do projeto + nome + contagem de eventos), lista de
-eventos (mesmo visual do EventItem, ícone+texto+tempo).
+Dropdown (420px fixo, `max-height:70vh`, sem rolagem horizontal; texto longo
+quebra em 2 linhas, AT-966): header sticky "Notificações" e duas seções.
+"Precisam de você" (selo do sino): uma linha por item da Caixa de decisões,
+com sujeito, motivo, projeto, idade e "Abrir". "Atividade por projeto": uma
+linha por projeto (contagem e idade do evento mais recente; clicar abre a
+Visão geral), os parados há mais de 30 dias somam numa linha, e o botão
+"Marcar atividade como lida" fica no cabeçalho da seção.
 
 ## Cards genéricos (Design System base — Cards / Tabela densa / Inputs /
 Tabs / Toasts / Modal)
@@ -537,3 +560,8 @@ Link de texto sobre `--surface-1` usa `var(--accent-hover)` em repouso —
   descrição e ações; `nivel="h2"` quando a página já tem `h1` (painéis de Gastos).
 - **`SectionCards`** (`components/shadcn/section-cards.tsx`): destaques de total
   em linha, sem cartões aninhados.
+
+## Número, moeda e copiar (AT-1004, RN-1484 a RN-1486)
+- Moeda USD e número seguem `i18n.language` ("US$ 0,9790", "8.404 eventos"); as chaves de contagem usam `{{count, number}}` e o formatador é `formatarUsdCasas` (`lib/currency.ts`).
+- `Snippet` mostra "Copiar"/"Copiado" ao lado do ícone; o copiar só com ícone fica no fio.
+- A borda sem cor (`Table`) vem de `var(--border)` (`@layer base` em `shadcn.css`).

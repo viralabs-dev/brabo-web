@@ -1,5 +1,5 @@
 import type { CSSProperties, Dispatch, ReactNode, SetStateAction } from 'react';
-import { CheckCheck, Play, ThumbsUp } from 'lucide-react';
+import { CheckCheck, Play, ThumbsUp, Workflow } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import type { QueryClient } from '@tanstack/react-query';
 import type { TFunction } from 'i18next';
@@ -24,12 +24,15 @@ import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
 import { Alert as AlertShadcn } from '../components/shadcn/alert';
+import { Marker } from '../components/shadcn/marker';
+import { TextoDoAgente } from './TextoDoAgente';
+import { ehLongo } from '../lib/trilho-de-turnos';
 import { MensagemDeConversa } from '../components/ai-elements/message';
 import { Reasoning } from '../components/ai-elements/reasoning';
 import { ArtifactCard } from '../components/ai-elements/artifact';
 import { PassosDoTurno } from '../components/ai-elements/passos-do-turno';
-import { ResumoDeTurno } from '../components/ResumoDeTurno';
-import { custoDoPayload, gravadoDoPayload, numeroDoPayload } from '../lib/resumo-de-turno';
+import { LinhaDeTrabalho } from '../components/ai-elements/linha-de-trabalho';
+import { custoDoPayload, numeroDoPayload } from '../lib/resumo-de-turno';
 import { passosDoTurno } from '../lib/passos-do-turno';
 import { citacoesDoTurno, fontesDoTurno } from '../lib/fontes-do-turno';
 import { ConsultadoNesteTurno } from '../components/ai-elements/sources';
@@ -66,11 +69,15 @@ import { MergearNoChat } from './MergearNoChat';
 import { jaHaMergeDaPr, prAbertaDaAcao } from './MergearNoChat.helpers';
 import { gatePendenteNoMerge } from '../lib/gate-do-merge';
 import { StructuredQuestionCard } from './StructuredQuestionCard';
+import { MaisAcoes } from '../components/ai-elements/mais-acoes';
+import { DropdownMenuItem } from '../components/shadcn/dropdown-menu';
 import { ecosDeRespostaEstruturada } from '../lib/eco-de-formulario';
 import { agruparNarracoesDoTurno } from './session-fio';
 import { camposDoArtefato } from '../lib/artefato-do-fio';
 import { autorDaMensagem, type ContextoDeAutoria } from '../lib/autor-da-mensagem';
 import { DestravarExecucao } from './DestravarExecucao';
+import { OfertaDeAutomacao } from './OfertaDeAutomacao';
+import { destinoDasRegras, respostaDaOferta } from '../lib/automacao-oferta';
 import { textoDaExecucaoParada } from './DestravarExecucao.helpers';
 import { execucaoParadaDe, type ExecucaoParada } from '../lib/execution';
 import { RetomarGateEstacionado } from './RetomarGateEstacionado';
@@ -439,8 +446,8 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
   // como `chat.message` do usuário (a api reenvia as respostas como texto).
   // O card respondido já as mostra — a bolha repetida sai do fio.
   const ecosDeFormulario = ecosDeRespostaEstruturada(events);
-  // AT-891: o turno ABERTO é o último `agent.response`; os anteriores viram uma linha.
-  const ultimaRespostaId = events.reduce<string | null>((id, e) => (e.type === 'agent.response' ? e.id : id), null);
+  // AT-959: só a ÚLTIMA resposta de agente fica aberta; as anteriores recolhem em 3 linhas.
+  const ultimaRespostaId = events.findLast((e) => e.type === 'agent.response')?.id;
 
   for (const event of events) {
     // RN-695 (AT-355): a Anamnese NÃO fala no fio. A análise dela é sobre a
@@ -485,7 +492,10 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
         node: (
           <MensagemDeConversa
             key={event.id}
+            id={`turno-${event.id}`}
             align={autor.tipo === 'voce' ? 'end' : 'start'}
+            // AT-950: o usuário à direita com bolha tingida; o agente à esquerda, neutra.
+            variant={autor.tipo === 'voce' ? 'tinted' : 'muted'}
             data-autor={autor.tipo}
             style={
               deAgente
@@ -573,6 +583,39 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
           />
         ),
       });
+      // AT-950 (RN-712): a resposta vira uma bolha-resumo do USUÁRIO, à direita.
+      if (respostaEvento) {
+        const respostas = (respostaEvento.payload as StructuredQuestionAnsweredPayload).answers ?? {};
+        const baseSeq = fechamento ? fechamento.seq + 0.5 : event.seq;
+        items.push({
+          chave: `${event.id}:resumo`,
+          seq: baseSeq + 0.1,
+          autor: `${respostaEvento.actor.kind}:${respostaEvento.actor.id}`,
+          turno: turnoDoSeq(aberturas, event.seq),
+          origem: origemDoEvento(respostaEvento),
+          mensagem: true, // RN-644: conta no corte do fio
+          node: (
+            <MensagemDeConversa
+              key={`${event.id}:resumo`}
+              align="end"
+              variant="tinted"
+              data-testid="resumo-das-respostas"
+              autor={t('perguntasEstruturadas.resumoAutor')}
+            >
+              <details>
+                <summary>{t('perguntasEstruturadas.resumo', { count: questions.length })}</summary>
+                <ul>
+                  {questions.map((q) => (
+                    <li key={q.id}>
+                      <strong>{q.label}</strong>: {respostas[q.id] ?? '—'}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </MensagemDeConversa>
+          ),
+        });
+      }
     } else if (event.type === 'handoff.offered') {
       // Quem PASSOU é o ator do evento (`create-handoff.use-case.ts` grava o
       // `fromAgent` como actor); o payload traz só o destino. Os dois já
@@ -625,54 +668,42 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
               <ThumbsUp aria-hidden="true" />
               {t('handoff.aceitarEPassar', { agente: nomeDoAgente(oferta!.toAgent) })}
             </Button>
-            {/* Handoff pro Dev Lead é o início da EXECUÇÃO — quem aceita
-                precisa saber onde acompanhar depois (RN-125). As outras
-                ofertas (PO, Arquiteto…) continuam na própria sessão, então
-                não ganham o link: não há "onde mais olhar" pra elas. */}
+            {/* Handoff pro Dev Lead é o início da EXECUÇÃO — quem aceita precisa saber onde
+                acompanhar depois (RN-125). AT-950 (RN-728): o aceite é o ÚNICO botão à vista;
+                "Ativar execução" (atalho de RN-137 que pula o plano, ou o aviso de que falta
+                repositório, RN-582) e "Acompanhar a execução" moram no menu "⋯". */}
             {toAgent === 'dev-lead' && (
-              <>
-                {/* Atalho pra quem já sabe o que quer (RN-137): ativa a
-                    execução direto daqui, sem passar pela conversa com o
-                    Dev Lead — mesma `activateExecution` da Visão Geral.
-                    Sem repositório ele SAI (RN-582) e o card diz por quê:
-                    o aceite ao lado é a segunda porta que o provisiona, e
-                    é o gesto que resolve — ativar daria 409. */}
+              <MaisAcoes>
                 {semRepositorio ? (
                   <span className={styles.timelineLink} data-testid="sem-repositorio-no-handoff">
                     {t('handoff.semRepositorio')}
                   </span>
                 ) : (
-                  // RN-728 (AT-410): o aceite é o primário; ativar daqui é
-                  // SECUNDÁRIO e diz o que pula — o plano do Dev Lead.
-                  <>
-                    <Button
-                      variant="secondary"
-                      loading={ativandoExecucao}
-                      onClick={handleActivateExecution}
-                      data-testid="ativar-execucao-no-handoff"
-                    >
-                      <Play aria-hidden="true" />
+                  <DropdownMenuItem
+                    disabled={ativandoExecucao}
+                    onClick={handleActivateExecution}
+                    data-testid="ativar-execucao-no-handoff"
+                  >
+                    <Play aria-hidden="true" />
+                    <span>
                       {t('handoff.ativarExecucao')}
-                    </Button>
-                    <span className={styles.timelineLink} data-testid="aviso-ativar-sem-plano">
-                      {t('handoff.ativarSemPlanoAviso')}
+                      <span className={styles.motivoNoMenu} data-testid="aviso-ativar-sem-plano">
+                        {t('handoff.ativarSemPlanoAviso')}
+                      </span>
                     </span>
-                  </>
+                  </DropdownMenuItem>
                 )}
-                <Link
-                  to="/projects/$projectId"
-                  params={{ projectId }}
-                  search={{ tab: 'executores' }}
-                  className={styles.timelineLink}
+                <DropdownMenuItem
+                  render={<Link to="/projects/$projectId" params={{ projectId }} search={{ tab: 'executores' }} />}
                 >
                   {t('handoff.acompanheExecucao')}
                   <ChevronRightIcon size={11} />
-                </Link>
-              </>
+                </DropdownMenuItem>
+              </MaisAcoes>
             )}
           </AlertShadcn>
         ) : (
-          <div className={styles.handoffDivider} key={event.id}>
+          <Marker key={event.id}>
             <Badge tone="muted" size="md">
               {origem}
               <ChevronRightIcon size={13} />
@@ -681,7 +712,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 {nomeDoAgente(toAgent)}
               </span>
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (
@@ -699,8 +730,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       empurrar({
         desfecho: true,
         node: (
-          <div
-            className={styles.handoffDivider}
+          <Marker
             key={event.id}
             data-testid="handoff-aceite-automatico"
           >
@@ -710,7 +740,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 regras: payload.criterio?.regras ?? 0,
               })}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (event.type === 'handoff.auto_accept_failed') {
@@ -718,8 +748,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       empurrar({
         desfecho: true,
         node: (
-          <div
-            className={styles.handoffDivider}
+          <Marker
             key={event.id}
             data-testid="handoff-aceite-automatico-falhou"
           >
@@ -729,7 +758,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 erro: payload.error ?? '',
               })}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (
@@ -767,7 +796,8 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 <span className={styles.handoffAgent} style={corDoAgente(event.actor.id)}>
                   {nomeDoAgente(event.actor.id)}
                 </span>
-                {t(verboKey)} &quot;{titulo}&quot;
+                {/* AT-950: o título já é a linha do cartão — não se repete no selo. */}
+                {t(verboKey)}
               </Badge>
             }
             acao={
@@ -842,12 +872,12 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
 
       empurrar({
         node: (
-          <div className={styles.handoffDivider} key={event.id}>
+          <Marker key={event.id}>
             <Badge tone="muted" size="md">
               <StackIcon size={13} />
               {t('historia.estevePendente', { titulo })}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     } else if (event.type === 'backlog.story_promotion_returned') {
@@ -913,6 +943,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       const bolha = (text: string, key: string) => (
           <MensagemDeConversa
             key={key}
+            id={key === event.id ? `turno-${event.id}` : undefined}
             style={corDoAgente(event.actor.id)}
             /* RN-829: quem fala é o AGENTE — o modelo fica só no chip. */
             avatar={<AvatarDoAgente id={event.actor.id} />}
@@ -971,62 +1002,44 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 RN-158: Markdown leve só em `agent.response`; `chat.message` é
                 texto DIGITADO. */}
             {text === '' ? t('mensagens.respostaVazia') : (
-              <div className={styles.textoDoAgente}>
+              <TextoDoAgente recolhivel={event.id !== ultimaRespostaId && ehLongo(text)}>
                 <MarkdownMessage text={text} selo={seloDoTurno(event, projectId, sessionId)} />
-              </div>
+              </TextoDoAgente>
             )}
           </MensagemDeConversa>
       );
       // RN-974: sem `mensagem: true`, o bloco não conta no corte (RN-644).
       const ferramentas = passosDoTurno(events, event);
-      if (ferramentas.length > 0) {
-        const custo = custoDoPayload(payload);
-        const duracaoMs = numeroDoPayload(payload, 'duracaoMs');
-        const bloco = <PassosDoTurno passos={ferramentas} custo={custo} duracaoMs={duracaoMs} />;
-        empurrar({
-          node:
-            event.id === ultimaRespostaId ? (
-              <div key={`${event.id}-cadeia`}>{bloco}</div>
-            ) : (
-              <ResumoDeTurno
-                key={`${event.id}-cadeia`}
-                agente={event.actor.id}
-                passos={ferramentas.length}
-                gravado={gravadoDoPayload(payload)}
-                custo={custo}
-              >
-                {bloco}
-              </ResumoDeTurno>
-            ),
-        });
-      }
+      const custo = custoDoPayload(payload);
+      const duracaoMs = numeroDoPayload(payload, 'duracaoMs');
       const rac = payload as { raciocinio?: unknown; raciocinioTotal?: unknown };
-      if (typeof rac.raciocinio === 'string' && rac.raciocinio !== '') {
-        const tokens = numeroDoPayload(payload, 'raciocinioTokens');
-        const total = typeof rac.raciocinioTotal === 'number' ? rac.raciocinioTotal : rac.raciocinio.length;
-        empurrar({
-          node: (
-            <Reasoning
-              key={`${event.id}-raciocinio`}
-              titulo={t('turno.raciocinio')}
-              contagem={tokens !== null ? t('turno.raciocinioTokens', { count: tokens }) : t('turno.raciocinioChars', { count: total })}
-              texto={rac.raciocinio}
-            />
-          ),
-        });
-      }
       const consultado = fontesDoTurno(event.payload);
-      if (consultado.fontes.length > 0) {
+      const temRaciocinio = typeof rac.raciocinio === 'string' && rac.raciocinio !== '';
+      if (ferramentas.length > 0 || temRaciocinio || consultado.fontes.length > 0) {
+        // RN-1392: raciocínio, consultas e passos viram UMA linha de trabalho por turno.
+        const tokens = numeroDoPayload(payload, 'raciocinioTokens');
+        const total = typeof rac.raciocinioTotal === 'number' ? rac.raciocinioTotal : String(rac.raciocinio ?? '').length;
         empurrar({
           node: (
-            <ConsultadoNesteTurno
-              key={`${event.id}-fontes`}
-              fontes={consultado.fontes}
-              total={consultado.total}
-              projectId={projectId}
-              sessionId={sessionId}
-              eventId={event.id}
-            />
+            <LinhaDeTrabalho key={`${event.id}-trabalho`} passos={ferramentas.length} duracaoMs={duracaoMs}>
+              {temRaciocinio && (
+                <Reasoning
+                  titulo={t('turno.raciocinio')}
+                  contagem={tokens !== null ? t('turno.raciocinioTokens', { count: tokens }) : t('turno.raciocinioChars', { count: total })}
+                  texto={rac.raciocinio as string}
+                />
+              )}
+              {consultado.fontes.length > 0 && (
+                <ConsultadoNesteTurno
+                  fontes={consultado.fontes}
+                  total={consultado.total}
+                  projectId={projectId}
+                  sessionId={sessionId}
+                  eventId={event.id}
+                />
+              )}
+              {ferramentas.length > 0 && <PassosDoTurno passos={ferramentas} custo={custo} duracaoMs={duracaoMs} />}
+            </LinhaDeTrabalho>
           ),
         });
       }
@@ -1200,6 +1213,67 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
           </MensagemDeConversa>
         ),
       });
+    } else if (event.type === 'automacao.oferecida') {
+      // RN-1442 (AT-999): a oferta de "fazer sozinho daqui em diante"; o desfecho
+      // vem dos eventos `automacao.aceita`/`recusada` que a seguem no fio.
+      empurrar({
+        node: (
+          <MensagemDeConversa
+            key={event.id}
+            data-testid="automacao-oferecida"
+            avatar={
+              <span className={styles.avatar}>
+                <Workflow size={15} aria-hidden="true" />
+              </span>
+            }
+          >
+            <OfertaDeAutomacao
+              projectId={projectId}
+              payload={event.payload as never}
+              resposta={respostaDaOferta(events, event)}
+              podeResponder={podeAtivarAutoMode}
+            />
+          </MensagemDeConversa>
+        ),
+      });
+    } else if (event.type === 'automacao.aplicada') {
+      // RN-1444 (AT-999): o que a regra fez sozinha, com a data em que nasceu.
+      const p = event.payload as Record<string, string | undefined>;
+      // O payload da aprovação não traz `categoria` (só `actionType`/`agente`); handoff traz `chave`, desbloqueio `regra`.
+      const regra = p.actionType ? `${p.actionType} · ${p.agente ?? ''}` : (p.chave ?? p.regra ?? '');
+      const desde = p.regraDesde ? new Date(p.regraDesde).toLocaleDateString() : '';
+      empurrar({
+        node: (
+          <MensagemDeConversa key={event.id} data-testid="automacao-aplicada">
+            {t(desde ? 'ofertaDeAutomacao.aplicada' : 'ofertaDeAutomacao.aplicadaSemData', { regra, desde })}
+            {' · '}
+            <a href={destinoDasRegras(projectId)} data-testid="automacao-aplicada-desfazer">
+              {t('ofertaDeAutomacao.desfazerLink')}
+            </a>
+          </MensagemDeConversa>
+        ),
+      });
+    } else if (event.type === 'automacao.outro_caminho') {
+      // RN-1444 (AT-999): o anti-laço — sem botão de automatizar, só as saídas.
+      const p = event.payload as { opcoes?: string[] };
+      const opcoes = (p.opcoes ?? [])
+        .map((o) => t(`ofertaDeAutomacao.opcao.${o}`, { defaultValue: o }))
+        .join(' · ');
+      empurrar({
+        node: (
+          <MensagemDeConversa
+            key={event.id}
+            data-testid="automacao-outro-caminho"
+            avatar={
+              <span className={styles.avatar}>
+                <AlertCircleIcon size={15} />
+              </span>
+            }
+          >
+            {t('ofertaDeAutomacao.outroCaminho', { opcoes })}
+          </MensagemDeConversa>
+        ),
+      });
     } else if (event.type === 'execution.stalled') {
       // RN-1061 (AT-800): a execução inteira parou atrás de tarefa bloqueada ou
       // agente travado. O aviso fica no histórico; Rearmar/Desbloquear só
@@ -1286,7 +1360,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       empurrar({
         agentId: event.actor.kind === 'agent' ? event.actor.id : undefined,
         node: (
-          <div className={styles.handoffDivider} key={event.id}>
+          <Marker key={event.id}>
             {/* A frase de `classifyEvent` JÁ nomeia o subagente e a área —
                 prefixar o lead produziria "QA Lead QA Automação concluiu a
                 delegação (qa)". */}
@@ -1294,7 +1368,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
               <display.icon size={13} />
               {display.text}
             </Badge>
-          </div>
+          </Marker>
         ),
       });
     }
@@ -1354,6 +1428,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
         <CartaoOuReferenciaNoFio action={action}>
         <ApprovalCard
           action={action}
+          compacto
           decisaoDaPolitica={decisaoDaPoliticaDaAcao(action.id, events)}
           // AT-256: devolve a promessa (o card segura os botões e diz a frase
           // da api) e refaz a lista MESMO na recusa — um 409 quer dizer que a

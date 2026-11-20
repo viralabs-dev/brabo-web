@@ -10,7 +10,7 @@ de cada uma.
 Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`, markup em `fonte/<id>.dc.html`). Cada tela abaixo cita o id da prévia; a tela de código é conferida contra a imagem de mesmo id (AT-897). Onde a v9 e as seções mais antigas deste arquivo divergem, vale a v9. Decisão: [ADR 0294](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0294-a-estrutura-v9-oito-secoes-com-sub-abas-caixa-de-decisoes-e-agentes-agora.md).
 
 ### Shell
-- **Sidebar** (`sidebar-07`, 256/48 px): marca, Buscar (⌘K), Início, Caixa de decisões (ponto de presença, nunca número), rótulo PROJETO, seletor do projeto, as 8 seções, rótulo AGENTES AGORA (até 5, avatar, nome e ponto de status, mais "ver todos"), rótulo WORKSPACE (Containers, Providers, Gastos, Status) e o menu do usuário. Fora de um projeto, o bloco PROJETO vira a lista de projetos.
+- **Sidebar** (`sidebar-07`, 256/48 px): marca, Buscar (⌘K), Início, Caixa de decisões (ponto de presença, nunca número), rótulo PROJETO, seletor do projeto, as 8 seções, rótulo AGENTES AGORA (até 5, avatar, nome e ponto de status, mais "ver todos"), rótulo WORKSPACE (Containers, Providers, Gastos, Status) e o menu do usuário. Fora de um projeto, o bloco PROJETO vira a lista de projetos. Com altura útil abaixo de 800 px (AT-964), WORKSPACE vira uma linha que abre um menu (os quatro links e Recolher menu), o rótulo PROJETO some e AGENTES AGORA mostra só quem trabalha, espera ou falhou, com "+ N parados · ver todos"; o corpo rola com esmaecido embaixo. Com a lista de projetos em erro, a sidebar mantém o projeto da rota e as 8 seções, e o aviso fica numa linha acima (AT-965). Erro de carga numa aba nunca vira estado vazio; com dado em cache e revalidação falha, uma faixa de uma linha no topo da página oferece "Tentar agora".
 - **Cabeçalho do projeto** (56 px): trilha `Projeto / Seção`, chips `local · privado` e `⎇ branch`, medidor do mês (só com fonte; o teto mensal é a AT-934) e uma ação primária. O chip "Precisa de você" saiu: virou a faixa da Visão geral e a Caixa.
 - **Faixa de sub-abas** no topo do conteúdo, a mesma de Configurações (ADR 0241); contador por sub-aba, nunca somado.
 
@@ -20,26 +20,42 @@ Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`
 |---|---|---|
 | Visão geral | — | P10 |
 | Sessões | Todas, Ideação, Conversa | P13, P23, C30, C31 |
-| Trabalho | Backlog, Execução | P12, P11 |
-| Código | Arquivos, PRs | P22, P15 |
+| Trabalho (Execução: linha do topo com a visão Executores/Linha do tempo na URL, três indicadores e a tabela de executores — RN-1466 a RN-1468; AT-1007, RN-1491: faixa de parada âmbar com "Pedir o parecer de novo", "Ver a fila" na linha do valor, menu "…" de 280 px e, abaixo da tabela, o modo automático e as pendências recolhidos numa linha com a contagem) | Backlog, Execução | P12, P11, L05 |
+| Código (explorador de linhas de 28 px, README aberto por padrão, PRs em uma linha com os portões D Q S V — RN-1472 a RN-1474) | Arquivos, PRs | P22, P15, L06 |
 | Decisões | Aprovações, Hipóteses, Permissões | P14, P17 |
-| Arquitetura | — | P16 |
-| Gastos | — | P21 |
+| Arquitetura (chips "módulos · v‹N›" e "C4 nível 2" ao lado do toggle, legenda do grafo, RN-1495; vistas Diagrama / ADRs / Pendências em `ToggleGroup` com contagem, grafo da esquerda para a direita com 300 px e texto de 12,5 px, tabela de módulos sem corte, contratos — RN-1387, RN-1475 a RN-1477) | — | P16, L07 |
+| Gastos (quatro indicadores, período "Desde o início", gráfico por dia com o cartão compacto `#teto` ao lado, "desde" no Total e o modelo nas Chamadas, "Por sessão" pelo nome — RN-1450 a RN-1452, RN-1487) | — | P21, L08 |
 | Configurações | Modelos, Projeto e execução, Pessoas e acesso, Avançado | P18, P19, P20 |
 
 As chaves de URL de hoje viram as chaves das sub-abas; todo link antigo abre a mesma tela.
 
+### L02 — Início (`/`, v11, AT-967)
+Quatro cartões de indicador no topo: Projetos ativos (só os não parados, com "N parados há mais de 30 dias"), Agentes agora, Gasto do mês e Caixa de decisões (uma contagem por fila, nunca somadas, e "a mais antiga espera há X" quando as filas vêm inteiras; RN-1461). Abaixo, "Projetos" com o seletor Ativos · N | Parados · N | Todos à direita (padrão Ativos, escolha em `localStorage`; parado = último evento há mais de 30 dias, RN-1460). O cartão do projeto tem o nome na primeira linha inteira, os chips (aguardando você, online, aprovações) na linha de baixo, os agentes (até 4 e "+N") com o nome por extenso, o medidor do mês ou o texto "sem teto do mês · definir" (link para `?tab=spend#teto`; nenhum botão "Definir orçamento") e o rodapé de atividade; o cartão tracejado "Novo projeto" fecha a grade. "Atividade recente" lista só evento com sujeito e resultado (RN-1462). O cartão do projeto parado ganha o chip "parado" (neutro, só com o resumo lido) e o rodapé de evento genérico fica só com a idade (AT-1007, RN-1490). Novo projeto: o nome de cada passo ("Origem · Onde mora · Revisar") fica sob o número, com `aria-current="step"` no atual, e os três modos de "Onde mora" ficam em 3 colunas com 2 linhas de texto, sem rolagem interna em 1366 × 768. Fonte: prancha L02 da `13-design/v11-todas-as-telas/`; prévia em `13-design/inicio-v11/`.
+
 ### S07 — Caixa de decisões (`/decisions`)
 Cinco cartões de fila, cada um com o próprio número e nunca somados (RN-467): Aprovações, PRs para mergear, Hipóteses, Promoções de história e Pendências de arquitetura. Abaixo, uma seção por fila com os itens de todos os projetos (avatar, ação, tipo, projeto, idade, motivo, e Aprovar, Negar e Abrir). Fila vazia tem texto próprio. Fonte: AT-928.
+AT-968 (L03, RN-1463 a RN-1465): a linha de terminal tem título curto (justificativa ou "Terminal · comando", até 80 caracteres), o comando numa linha mono que abre ao clicar e a idade num chip (âmbar acima de 30 dias); as Aprovações agrupam por projeto, mais antigas primeiro, e a sessão encerrada perde o Aprovar; caixa de seleção por linha, "Selecionar as de mais de 30 dias" e "Negar selecionadas…" com motivo único (não há Aprovar em lote). AT-1007 (RN-1490): o plano de execução tem o título "Plano de execução do ‹lead›: N dev agents, um por módulo" (até 80 caracteres, a linha de baixo não o repete) e o botão "Abrir plano"; toda linha tem à direita o botão de seta "Abrir ‹título›".
 
 ### P10 — Visão geral
 Faixa "Precisa de você" (`--accent-panel`) com o item mais urgente e as ações; cartões do time; "O que aconteceu" com o seletor Turnos | Eventos (um turno é uma linha: agente, passos, "Gravado neste turno", custo, hora); coluna lateral com Próximo passo (regra da AT-936) e Ambiente.
+AT-975 (L10, RN-1478 a RN-1480): o Próximo passo é a primeira linha da coluna principal, com a ação à direita; a faixa "Precisa de você" com as cinco filas em zero é uma linha de até 48 px ("Nada espera por você agora." e "Abrir Decisões"); a prévia do entregável só aparece depois que a porta responde (3 s, `no-cors`), senão uma linha com "Tentar de novo" e "Abrir em nova aba"; Atividade agrupa turnos seguidos do mesmo agente (até 5 linhas, "Ver a linha do tempo inteira") com o `ToggleGroup` Turnos | Eventos. Os Primeiros passos (RN-708) são o conteúdo do Próximo passo enquanto houver passo pendente (um cartão, o atual em destaque), e o Time de agentes soma os ociosos em "+ N concluídos ou ociosos". AT-1007 (RN-1492): o cartão do agente mostra o chip "local" com o modelo local, a autonomia como "Manual | Piloto automático" com texto e "Procurar tarefa de novo" no menu "⋯"; a arquitetura vazia diz "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias."
 
 ### C30 / C31 — Sessão
-Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor da sessão. Fio com a linha de passos recolhida (N passos, até 3 chips de ferramenta, custo do turno), texto do agente em 62ch e aprovação em linha (variante única). Passos abertos agrupados por intenção, a partir de um mapa tipado ferramenta para grupo; o bloco Raciocínio só para `developer` ou mais (ADR 0249). Painel de contexto de 340 px.
+Cabeçalho com trilha `Sessões / título`, estado, cadeia de agentes e medidor da sessão. Fio com UMA linha de trabalho por turno, recolhida ("Trabalhou 14,0 s · 5 passos", AT-958, RN-1392) que abre no lugar com raciocínio, consultas e passos (até 3 chips de ferramenta e custo no bloco de passos); em curso nasce aberta, sem segundos (RN-1393). Texto do agente em 62ch e aprovação em linha (variante única). Passos abertos agrupados por intenção, a partir de um mapa tipado ferramenta para grupo; o bloco Raciocínio só para `developer` ou mais (ADR 0249). Painel único de 360 px com as abas Contexto, Executores e Pendências; abaixo de 1024 px é o Sheet (AT-957, RN-1353). A execução vigente é uma faixa de 40 px acima do fio (RN-1354). No telefone (< 768 px, K05, AT-961) a barra tem 52 px e uma linha: voltar, título e o botão do painel com o contador de pendências; tipo, modelo, idioma, medidor, ideação e Encerrar ficam no topo da aba Contexto (RN-1432, RN-1433); alvos de toque de 40 px e aviso de PR em uma linha (RN-1434).
+
+### Oferta de "fazer sozinho" (AT-999)
+- No fio, `OfertaDeAutomacao`: frase da categoria, onde desfazer e duas ações em texto ("Fazer sozinho daqui em diante" primária, "Não, continue perguntando" secundária), na faixa `.mergearNoChat` dos cartões do fio; respondida, só a frase do desfecho. Configurações › Projeto: "Regras de fazer sozinho", uma linha (`Item` outline) por regra com "Desfazer" à direita, abaixo de "Passagens entre agentes sem clique".
 
 ### Demais telas
+Backlog (L04, AT-969, RN-1447 a RN-1449): filtros numa linha que quebra (busca, "Com pergunta aberta", módulo, Por épico/Quadro); lista + Rastreabilidade de 320 px a partir de 1000 px do contêiner, uma coluna abaixo; selo "pronta para executar" / "em execução" / "concluída" e épico "N histórias · N de M concluídas" com barra; busca com lupa, "Com pergunta aberta · N" como caixa e Rastreabilidade numa lista só (AT-1006, RN-1447 a RN-1449).
+
+Código (L06, AT-971, RN-1472 a RN-1474): o explorador tem linhas de 28 px com ícone e nome juntos e recuo de 18 px; a faixa Arquivos | PRs fica em cima do painel (sem coluna vazia) e a trilha de ícones cola na borda; sem arquivo escolhido o editor abre o `README.md` da raiz (sem README, "Escolha um arquivo no explorador"); em PRs cada PR é uma linha com número, título, autor, branch, os portões D, Q, S, V com a cor do estado, o selo e as ações, o motivo do bloqueio numa frase em cor de erro abaixo do título, "Merge" só com D, Q e S verdes (senão "Pedir o parecer de novo", quando o ciclo está estacionado), o campo "Buscar por nº, título ou branch" na linha dos filtros e a legenda dos portões abaixo da lista. AT-1006 (RN-1494): o README aberto sem escolha diz "aberto por padrão"; o editor tem o campo "Buscar no código"; o botão da ref mora no cabeçalho do explorador; cada PR tem "Ver diff"; sem papel, o motivo do "Pedir o parecer de novo" fica à vista.
+
 P11/P12 (Trabalho), P13/P23 (Sessões), P14/P17 (Decisões), P15/P22 (Código), P16, P21, P18 a P20 e S00 a S06, H01 seguem a imagem de mesmo id.
+
+**Containers (`/containers`, AT-980).** Entre as métricas e a tabela aparece a seção "Remoção pendente" quando há projeto apagado com container ainda por remover: uma linha por projeto (nome, ou o id encurtado, recursos, tentativas, quando) e o motivo embaixo. Sem pendência, a seção não existe. O cartão de aprovação de uma ação de container que falhou mostra o motivo num alerta sob "Falhou" (RN-1445, RN-1446). AT-1006 (RN-1493): a coluna "Detalhe" saiu (7 colunas), o nome do projeto abre o detalhe, "falhou" mostra a primeira linha do motivo com "Ver detalhe" e a imagem longa quebra a linha.
+
+**Containers, Providers e Status (L11, AT-976, RN-1481 a RN-1483).** Containers: cada linha tem uma ação com texto em variante secundária ("Abrir" com o container de pé, "Decidir imagem" sem imagem, "Subir de novo"/"Subir container" nos demais), e Parar, Ver detalhes e Remover (separado, destrutivo) ficam no menu "…"; nenhum botão primário na tabela; cabeçalhos ordenáveis com 32 px. Providers: a matriz usa os dez rótulos em pt-BR com o identificador no `title`, "não provado" é texto simples, a matriz rola dentro do contêiner e as abas do catálogo mostram só providers com chave. Status: "Voltar" com ícone e texto no topo, à esquerda do título.
 
 ### Fora da v9
 Superfície quente (decisão do dono, 11/11/2026). Vistas "ADRs" e "Contratos" da Arquitetura e sub-aba "Commits" dependem de fonte (AT-883). O que a tela mostra precisa de fonte: o que ainda não tem (teto mensal, teto do workspace, "Próximo passo") entra pelas AT-934 a AT-936 e fica fora da tela até lá.
@@ -177,8 +193,12 @@ projeto" (abre o wizard, ver `COMPONENTS.md`).
 este mês"`, mono) + grid responsivo (`repeat(auto-fill, minmax(340px,1fr))`)
 de `ProjectCard`.
 
-**Notif dropdown**: ver `COMPONENTS.md` (`NotificationBell`) — abre
-ancorado no topo direito, overlay invisível clicável fecha.
+**Notif dropdown** (AT-966, v11 L01): ver `COMPONENTS.md` (`NotificationBell`) —
+abre ancorado no topo direito, 420 px, sem rolagem horizontal. O selo do sino
+conta só o que precisa de você (as filas da Caixa de decisões); o painel tem
+"Precisam de você" (uma linha por item, com "Abrir") e "Atividade por projeto"
+(uma linha por projeto; parados há mais de 30 dias numa linha só; "Marcar
+atividade como lida"). "atividade em ‹ator›" não é mais linha individual.
 
 ## Projeto — Visão geral (`Brabo Project.dc.html`)
 
@@ -212,8 +232,13 @@ scrollável de `EventItem`; estado vazio com mensagem contextual.
 
 ## Sessão / Chat (`Brabo Session.dc.html`)
 
-Layout: `flex-direction:column`, topbar (60px) + corpo (`flex:1` chat +
-aside opcional 320px).
+Layout: `flex-direction:column`, topbar (56px) + corpo (`flex:1` chat +
+painel único opcional de 360px, AT-957). Altura fixa (AT-956, RN-1389): a página
+não rola, faixa e doca não encolhem e só o fio rola. A sessão de execução usa esta
+mesma página (sem layout próprio) e, sem nome, o título é "Execução · #hash"
+(AT-978, RN-1428). Na aba Contexto, "Gasto por agente" lê o resumo de gasto da
+sessão, o mesmo número da faixa (RN-1426); sem leitura, esqueleto ou erro, nunca
+"Sem gasto ainda" (RN-1427).
 
 **Topbar**: dot pulsante verde + título da sessão + metadata mono
 (`"{projeto} · #{id-curto} · {duração}"`); `ModelPicker` (dropdown,
@@ -248,6 +273,8 @@ interação de digitar é implícita) — implementar como um input de texto
 multi-linha fixo no rodapé do chat, estilo consistente com os outros
 inputs (`COMPONENTS.md`), com botão de enviar; desabilitado durante
 streaming.
+AT-960 (v10): é uma caixa só (`InputGroup`) com o campo em cima e, na barra de baixo, "+", anexo, "Para: <agente>" e Parar/Enviar; o aviso de PR pronta é um `Item` de 44 px acima dela (doca ≤ 168 px) e o "Mergear" confirma num `Popover`.
+AT-1009 (RN-1496 a RN-1498): o fio mede 70% ou mais da altura (composer de ~120 px com o campo de uma linha; em janela baixa a barra vai a 48 px, a faixa a 32 px), o aviso de PR mostra o título em uma linha (a nota do merge só para leitor de tela) e, no telefone, o fio tem 65% ou mais, a faixa de estado sem a barra de progresso e nada passa da largura.
 
 ## Aprovações (`Brabo Approvals.dc.html`)
 
@@ -303,6 +330,10 @@ aplicável); resumo de custo estimado do time (card com ícone de
 relógio); tabela densa (AGENTE com avatar+nome, MODELO VIGENTE =
 `ModelPicker` inline dropdown, ORIGEM = badge colorido pelo nível da
 cascata, FALLBACK mono, EST. MÊS).
+
+**AT-974 (v11, L09):** a linha de configuração é grade (rótulo até 340px, controle até 520px, `gap: 32px`). Em Modelos são quatro colunas (Agente, Modelo vigente, De onde vem, Est. mês): "De onde vem" é um chip (a cadeia e o fallback abrem num Popover), os agentes com gasto vêm primeiro, do maior para o menor ("Mostrar os outros N agentes"), a caixa da área do lead cabe na linha (~55 px, a medida da L09) e o aviso de roteamento aparece uma vez, numa faixa de aviso acima da tabela. Em Projeto e execução o teto do mês é só o valor com "Editar em Gastos" (`?tab=spend#teto`). O convite de membro é por e-mail e as tabelas vazias mostram uma frase sem cabeçalho.
+
+**AT-1005 (v11, L08 e L09, RN-1487 a RN-1489):** o Popover da cascata usa a fonte do texto (só o id do modelo é mono), a faixa de roteamento diz a frase curta e "O que isso muda" abre a inteira, o custo estimado entra no título da tabela de Modelos ("N agentes · US$ X estimado por mês"), o erro do convite tem ícone e texto em cor de erro e as tabelas vazias de tokens e de chaves são uma linha de até 48 px. Em Projeto e execução a escada tem rótulos visíveis e o Salvar no rodapé com a contagem, o merge automático usa o `Checkbox` do kit, o teto por área diz "sem teto próprio" e a promoção de histórias entra na grade de 520 px.
 
 **Seção "Membros e papéis"**: subtítulo; barra de convite (input de
 e-mail + select de papel + botão "Convidar"); tabela de membros
@@ -466,3 +497,5 @@ Erro de campo (senha curta, confirmação diferente) vai **sob o campo** com
 `aria-invalid`; erro de formulário (credencial recusada, link inválido, falha
 de rede) vai no **`Alert` do topo do card**. Quem lê a mensagem não deveria
 precisar dela para saber onde mexer.
+
+> **AT-977 (v11):** piso tipográfico de 11 px (`--fs-label`) em todas as telas; `font-size` dos módulos só por tokens `--fs-*` (RN-1333).

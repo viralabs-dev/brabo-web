@@ -266,7 +266,7 @@
 
 .tagline {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -308,7 +308,7 @@
   list-style: none;
   display: grid;
   gap: var(--space-2);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-primary);
 }
 
@@ -345,14 +345,14 @@
   place-items: center;
   border-radius: 6px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   background: color-mix(in srgb, currentColor 14%, transparent);
   border: 1px solid color-mix(in srgb, currentColor 35%, transparent);
 }
 
 .papeis {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
@@ -380,7 +380,7 @@
 
 .subtitulo {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-secondary);
   margin: 0;
 }
@@ -430,7 +430,7 @@
 
 .textoDivisor {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -456,7 +456,7 @@
   color: var(--text-primary);
   font-family: var(--font-body);
   font-weight: 500;
-  font-size: 13.5px;
+  font-size: var(--fs-sm);
   cursor: pointer;
   display: flex;
   align-items: center;

@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import {
   useContainersOverview,
+  useRemocoesPendentes,
   useCurrentWorkspaceWithRole,
 } from '../lib/hooks';
 import type { ContainerOverviewItem } from '../lib/api-types';
@@ -46,7 +47,11 @@ export function ContainersPage() {
   // REBAIXADO num projeto específico ainda vê o botão aqui, e a api recusa com
   // 403. É o defeito reparável (termina em toast), não o invisível.
   const papel = atual?.role;
+  // O mesmo formato da coluna "Desde" e das linhas de remoção pendente.
+  const desde = (iso: string) => new Date(iso).toLocaleString(i18n.language);
   const query = useContainersOverview(workspace?.id);
+  // AT-980 (RN-1446): projeto apagado cujo container o broker ainda vai remover.
+  const remocoes = useRemocoesPendentes(workspace?.id).data ?? [];
 
   // Ordenar e paginar no CLIENTE (nenhuma query nova): o react-table só decide
   // a ORDEM e a PÁGINA; o desenho segue sendo a Grade da casa.
@@ -98,25 +103,11 @@ export function ContainersPage() {
       width: '1.4fr',
       render: (item) => (
         <Link
-          to="/projects/$projectId"
-          params={{ projectId: item.projectId }}
-          className={styles.projectLink}
-        >
-          {item.projectName}
-        </Link>
-      ),
-    },
-    {
-      key: 'detail',
-      label: t('table.detail'),
-      width: '0.8fr',
-      render: (item) => (
-        <Link
           to="/containers/$projectId"
           params={{ projectId: item.projectId }}
           className={styles.projectLink}
         >
-          {t('table.openDetail')}
+          {item.projectName}
         </Link>
       ),
     },
@@ -145,15 +136,32 @@ export function ContainersPage() {
       key: 'status',
       ...ordenavel('status'),
       label: t('table.registered'),
-      width: '0.9fr',
+      width: '1.3fr',
       render: (item) =>
         item.registrado ? (
-          <Badge
-                tone={TOM_DO_STATUS[item.registrado.status]}
-                emCurso={item.registrado.status === 'provisioning'}
-              >
-            {t(`status.${item.registrado.status}`)}
-          </Badge>
+          <span className={styles.statusCelula}>
+            <Badge
+              tone={TOM_DO_STATUS[item.registrado.status]}
+              emCurso={item.registrado.status === 'provisioning'}
+            >
+              {t(`status.${item.registrado.status}`)}
+            </Badge>
+            {/* RN-1493: só com motivo gravado; sem ele, só "falhou". */}
+            {item.registrado.status === 'failed' && item.motivoDaFalha && (
+              <>
+                <span className={styles.motivoDaFalha} title={item.motivoDaFalha}>
+                  {item.motivoDaFalha}
+                </span>
+                <Link
+                  to="/containers/$projectId"
+                  params={{ projectId: item.projectId }}
+                  className={styles.projectLink}
+                >
+                  {t('table.verDetalhe')}
+                </Link>
+              </>
+            )}
+          </span>
         ) : (
           <span className={styles.semRegistro}>{t('status.nuncaProvisionado')}</span>
         ),
@@ -189,7 +197,7 @@ export function ContainersPage() {
       render: (item) =>
         item.registrado ? (
           <span className={styles.desde}>
-            {new Date(item.registrado.statusChangedAt).toLocaleString(i18n.language)}
+            {desde(item.registrado.statusChangedAt)}
           </span>
         ) : (
           <span className={styles.semRegistro}>{t('table.sinceNone')}</span>
@@ -234,6 +242,24 @@ export function ContainersPage() {
       {!query.isError && !query.isPending && (
         <>
           <SectionCards metricas={metricas} />
+          {remocoes.length > 0 && (
+            <section className={styles.remocoes} aria-labelledby="remocoes-titulo" data-testid="remocoes-pendentes">
+              <h2 id="remocoes-titulo" className={styles.remocoesTitulo}>
+                {t('remocoes.title')} <Ajuda assunto={t('remocoes.title')}>{t('remocoes.help')}</Ajuda>
+              </h2>
+              <ul className={styles.remocoesLista}>
+                {remocoes.map((r) => (
+                  <li key={r.projectId} className={styles.remocoesItem}>
+                    <strong>{r.projetoNome ?? t('remocoes.apagado', { id: r.projectId.slice(0, 8) })}</strong>
+                    <span>{t('remocoes.recursos', { count: r.recursos })}</span>
+                    <span>{t('remocoes.tentativas', { count: r.tentativas })}</span>
+                    <span>{desde(r.atualizadoEm)}</span>
+                    <span className={styles.remocoesMotivo}>{r.motivo ?? t('remocoes.semMotivo')}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           <Table
             columns={columns}
             rows={tabela.getRowModel().rows.map((r) => r.original)}

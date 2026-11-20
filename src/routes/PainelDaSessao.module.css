@@ -1,0 +1,43 @@
+/* AT-957: o painel único da sessão (360px) com as abas Contexto · Executores · Pendências. */
+.painel {
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  flex-shrink: 0;
+  min-height: 0;
+  border-left: 1px solid var(--border);
+  background: var(--surface-1);
+}
+
+.painel[hidden] {
+  display: none;
+}
+
+.tabs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* No Sheet o X de fechar fica sobre a régua de abas: dá espaço a ele. */
+.abasNoSheet {
+  padding-right: 48px;
+}
+
+.aba {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.aba[hidden] {
+  display: none;
+}
+
+.vazio {
+  margin: 0;
+  padding: 16px;
+  color: var(--text-secondary);
+  font-size: var(--fs-meta);
+}

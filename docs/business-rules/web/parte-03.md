@@ -603,7 +603,7 @@ si não muda.
   `apps/web/src/components/TurnActivityStrip.tsx` (componente);
   `apps/web/src/lib/session-channel.ts:54` (`onToolCall`);
   `apps/web/src/routes/session-fio.tsx:48` (`agruparNarracoesDoTurno`),
-  `apps/web/src/routes/SessionPage.tsx:191` (`turnoViaCanal`)
+  `apps/web/src/routes/SessionPage.tsx:201` (`turnoViaCanal`)
 - **Teste:** `apps/web/src/lib/atividade-do-turno.test.ts`,
   `apps/web/src/components/TurnActivityStrip.test.tsx`,
   `apps/web/src/lib/session-channel.test.ts`,
@@ -827,6 +827,8 @@ da linha.
 
 ### RN-470 — A origem do modelo distingue binding próprio de herança do Criativo, e nenhum vazio da cascata usa o mesmo símbolo de outro {#rn-470}
 
+> **Revisada na AT-974 ([RN-1454](parte-07.md#rn-1454)):** a cadeia deixou a linha da tabela. A coluna mostra um chip ("herda do Criativo", "herda do projeto", "definido neste agente") e a cadeia, com os mesmos quatro estados, abre num Popover do chip. O que segue descreve a cadeia.
+
 `origin: 'agent'` na resposta da api significa **duas coisas diferentes**, e a
 api está certa em não separá-las: o agente tem uma linha de escopo `agent` em
 `model_bindings`, **ou** a cascata pousou em `workspace` e
@@ -911,8 +913,8 @@ consegue nomear.
   quatro estados e o nó do Criativo), `:73` (`herdouDoCriativo` — a dedução e
   seu limite), `apps/web/src/routes/settings/cascata.tsx:196` (`CadeiaDeCascata`),
   `apps/web/src/routes/settings/ModelsSection.tsx:178` (`cadeiaDoAgente`),
-  `:345` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
-  por que a linha só relê no sucesso), `:427` (`handleClearAgentBinding` — os
+  `:370` (`handleModelChange` — por que aqui o 404 NÃO tem desfecho próprio, e
+  por que a linha só relê no sucesso), `:452` (`handleClearAgentBinding` — os
   três desfechos, e por que o 404 tem o dele), `:359` (coluna Origem), `:429`
   (`não há nível abaixo`), `:448` (`sem gasto ainda`),
   `apps/web/src/components/ModelPicker.tsx:102` (`selected` sai do prop — o

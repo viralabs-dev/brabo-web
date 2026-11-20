@@ -26,7 +26,16 @@ import {
   setAgentModelBinding,
   wakeDevAgent,
 } from '../lib/api-client';
-import { deriveAgentRoster, groupRosterByArea, isExecutorAgentId, isExecutorGroup } from '../lib/agent-status';
+import {
+  autonomyActionTypeFor,
+  breakerReasonFor,
+  deriveAgentRoster,
+  groupRosterByArea,
+  isExecutorAgentId,
+  isExecutorGroup,
+  subagentOutcomeLabel,
+} from '../lib/agent-status';
+import { ordenarExecutores, resolverVisao, type VisaoDaExecucao } from '../lib/execucao-tabela';
 import { deriveExecutionProgress, execucaoParadaDe } from '../lib/execution';
 import { connectSessionHeartbeat } from '../lib/session-channel';
 import { INTERVALO_DO_PROJETO_MS, criarInvalidadorDoCanal } from '../lib/canal-vivo';
@@ -34,10 +43,13 @@ import { rotuloDaSessao } from '../lib/session-label';
 import { roleAtLeast } from '../lib/roles';
 import { PendenciasDeOutrasSessoes } from '../components/PendenciasDeOutrasSessoes';
 import { ModoAutomaticoDoTime } from '../components/ModoAutomaticoDoTime';
+import { agentesEmModoAutomatico } from '../components/ModoAutomaticoDoTime.helpers';
+import { Disclosure } from '../components/ui/Disclosure';
+import { RetomarGateEstacionado } from './RetomarGateEstacionado';
+import { cicloEstacionado } from './RetomarGateEstacionado.helpers';
 import { agentesDaOfertaEmLote } from '../components/ModoAutomaticoDoTime.helpers';
 import { PararExecucao } from '../components/PararExecucao';
 import type { AutonomyMode } from '../components/AgentCard';
-import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { AgentTimelineTree } from '../components/AgentTimelineTree';
 import { Alert } from '../components/ui/Alert';
 import { AcoesDaExecucao } from './AcoesDaExecucao';
@@ -50,8 +62,12 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { Skeleton } from '../components/ui/Skeleton';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { useToast } from '../components/ui/ToastProvider.helpers';
-import type { AgentAutonomyActionType } from '../lib/api-types';
+import { AGENT_AUTONOMY_ALL_ACTIONS, type AgentAutonomyActionType } from '../lib/api-types';
 import { nomeDoAgente } from '../lib/agents';
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
+import { IndicadoresDaExecucao } from './IndicadoresDaExecucao';
+import { TabelaDeExecutores, type LinhaDeExecutor } from './TabelaDeExecutores';
+import tabela from './ProjectExecutorsTab.module.css';
 import styles from './ProjectOverviewTab.module.css';
 
 /**
@@ -88,6 +104,8 @@ import styles from './ProjectOverviewTab.module.css';
 export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('executors');
   const { t: tParada } = useTranslation('sessionPage');
+  const { t: tAprovacoes } = useTranslation('approvals');
+  const [modoAutomaticoAberto, setModoAutomaticoAberto] = useState(false);
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   // AT-298: decidir pede `developer` no ENDPOINT (RN-102) — o mesmo papel de
@@ -190,17 +208,8 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     queryFn: () => listAgentAutonomy(projectId),
   });
 
-  const [collapsedAreas, setCollapsedAreas] = useState<Set<string>>(new Set());
-  function toggleArea(areaKey: string) {
-    setCollapsedAreas((current) => {
-      const next = new Set(current);
-      if (next.has(areaKey)) next.delete(areaKey);
-      else next.add(areaKey);
-      return next;
-    });
-  }
-
   const rosterGroups = groupRosterByArea(roster);
+  const jaAutomaticos = agentesEmModoAutomatico(autonomyRules);
   const executorGroups = rosterGroups.filter(isExecutorGroup);
   const executorRosterIds = new Set(
     executorGroups.flatMap((group) =>
@@ -212,6 +221,11 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     (e) => e.actor.kind === 'agent' && isExecutorAgentId(e.actor.id),
   );
   const paradaVigente = execucaoParadaDe(events);
+  const idsBloqueados = new Set((paradaVigente?.tarefasBloqueadas ?? []).map((x) => x.taskId));
+  const estacionadoNaParada = paradaVigente
+    ? events.map(cicloEstacionado).reverse().find((c) => c && idsBloqueados.has(c.taskId))
+    : undefined;
+  const emManual = agentesDaOfertaEmLote(executorRoster.map((r) => r.id)).filter((id) => !jaAutomaticos.has(id)).length;
   const workingCount = executorRoster.filter((r) => r.status === 'trabalhando').length;
   const waitingCount = executorRoster.filter((r) => r.status === 'aguardando').length;
 
@@ -287,34 +301,62 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
     }
   }
 
-  // Sem `semRespiro` no registro: a moldura do `ProjectPage` já dá os 24px de
-  // respiro e a rolagem própria (`.body`, `ProjectPage.module.css`) — reusar
-  // `styles.main` aqui (que tem os MESMOS dois ajustes, pensados para dentro
-  // do `.layout` de duas colunas da Visão geral) duplicaria padding e criaria
-  // uma segunda área de scroll aninhada.
+  // AT-970 (RN-1467): a tabela lê a regra de autonomia como o cartão lia — a curinga `*` ligada é o
+  // modo automático (RN-153) e manda sobre a do tipo representativo.
+  function regraDeAutonomia(agentId: string) {
+    const tipo = autonomyActionTypeFor(agentId);
+    const curinga = autonomyRules?.find((a) => a.agentId === agentId && a.actionType === AGENT_AUTONOMY_ALL_ACTIONS);
+    const regra = curinga ?? autonomyRules?.find((a) => a.agentId === agentId && a.actionType === tipo);
+    return { curinga, regra, tipo: curinga ? AGENT_AUTONOMY_ALL_ACTIONS : tipo };
+  }
+  const idsDeLead = new Set(executorGroups.flatMap((g) => (g.kind === 'area' ? [g.lead.id] : [])));
+  const idsDeMembro = new Set(executorGroups.flatMap((g) => (g.kind === 'area' ? g.members.map((m) => m.id) : [])));
+  const linhasDaTabela: LinhaDeExecutor[] = ordenarExecutores(executorRoster, idsDeLead).map((entry) => {
+    const { id, status } = entry;
+    const progresso = progressByAgent.get(id);
+    const desfecho = idsDeMembro.has(id) ? subagentOutcomeLabel(events, id) : undefined;
+    const { curinga, regra } = regraDeAutonomia(id);
+    return {
+      entry,
+      lead: idsDeLead.has(id),
+      tarefa:
+        status === 'travado'
+          ? { label: breakerReasonFor(events, id) ?? t('agentStatus.circuitBreaker.default') }
+          : progresso?.taskTitle
+            ? { label: progresso.taskTitle, branch: progresso.branch }
+            : desfecho
+              ? { label: desfecho }
+              : undefined,
+      modelId: bindingDoAgente(id)?.modelId,
+      custoMicros: tokenUsage?.find((u) => u.actorId === id)?.costMicros,
+      autonomia: idsDeMembro.has(id) ? undefined : regra?.mode === 'auto_approve' ? 'auto' : 'manual',
+      autonomiaHint: curinga?.mode === 'auto_approve' ? t('agentCard.autonomy.autoModeHint') : undefined,
+    };
+  });
+  const modelosDaTabela = allModels.map((m) => ({ id: m.id, name: m.displayName }));
+  const sessaoAtiva = executionSession?.status === 'active';
+
+  // RN-1466: a escolha entre Executores e Linha do tempo mora na URL (`?visao=`); trocar não recarrega.
+  const [visao, setVisao] = useState<VisaoDaExecucao>(() =>
+    resolverVisao(typeof window === 'undefined' ? undefined : new URLSearchParams(window.location.search).get('visao')),
+  );
+  function trocarVisao(nova: VisaoDaExecucao) {
+    setVisao(nova);
+    try {
+      const url = new URL(window.location.href);
+      if (nova === 'executores') url.searchParams.delete('visao');
+      else url.searchParams.set('visao', nova);
+      window.history.replaceState(window.history.state, '', url);
+    } catch {
+      // sem `window` (teste/SSR): só a troca local
+    }
+  }
+
+  // Sem `semRespiro` no registro: a moldura do `ProjectPage` já dá os 24px de respiro e a rolagem
+  // própria (`.body`, `ProjectPage.module.css`).
   return (
     <div>
       {/* v9 (AT-943): com a execução parada o topo é só o cartão de chamada. */}
-      {!semExecucaoVigente && (
-      <div className={styles.sectionRow}>
-        <h2 className={styles.sectionHeader}>{t('tab.title')}</h2>
-        <Ajuda assunto={t('tab.title')}>{t('tab.subtitle')}</Ajuda>
-        {sessionId && (
-          <span className={styles.sectionCount}>
-            {t('tab.summary', {
-              count: executorRoster.length,
-              working: workingCount,
-              waiting: waitingCount,
-            })}
-          </span>
-        )}
-      </div>
-      )}
-
-      {/* Indicador de QUAL sessão a aba está olhando (RN-139) — os três
-          estados da RN-088, erro antes de vazio: sem isto a troca silenciosa
-          de sessão (achado desta investigação) volta a acontecer, só que
-          desta vez escondida atrás de um indicador que mentiria "tudo bem". */}
       {executionSessionQuery.isError ? (
         <ErroDeCarregamento
           titulo={t('tab.sessionError.title')}
@@ -326,24 +368,54 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           <Skeleton width={220} height={18} />
         </div>
       ) : !executionSession ? null : (
-        <div className={styles.sectionSub}>
-          {t('tab.showingSession')}{' '}
-          <Link
-            to="/projects/$projectId/sessions/$sessionId"
-            params={{ projectId, sessionId: executionSession.id }}
-          >
-            {rotuloDaSessao(executionSession.id, executionSession.name)}
-          </Link>{' '}
-          <Badge tone="success" dot>
-            {t(`sessionsTab.status.${executionSession.status}`, {
-              ns: 'sessions',
-              defaultValue: executionSession.status,
-            })}
-          </Badge>
+        // v11 (AT-970): uma linha — título, estado, sessão e contagem; à direita a visão e "Parar execução".
+        // Indicador de QUAL sessão a aba olha (RN-139, os três estados da RN-088, erro antes de vazio).
+        <div className={tabela.topo}>
+          <div className={tabela.titulo}>
+            <h2 className={styles.sectionHeader}>{t('tab.title')}</h2>
+            <Ajuda assunto={t('tab.title')}>{t('tab.subtitle')}</Ajuda>
+            <Badge tone="success" dot>
+              {t(`sessionsTab.status.${executionSession.status}`, {
+                ns: 'sessions',
+                defaultValue: executionSession.status,
+              })}
+            </Badge>
+            <span className={styles.sectionCount}>
+              {t('tab.sessao')}{' '}
+              <Link
+                to="/projects/$projectId/sessions/$sessionId"
+                params={{ projectId, sessionId: executionSession.id }}
+              >
+                {rotuloDaSessao(executionSession.id, executionSession.name)}
+              </Link>{' '}
+              ·{' '}
+              {t('tab.summary', {
+                count: executorRoster.length,
+                working: workingCount,
+                waiting: waitingCount,
+              })}
+            </span>
+          </div>
+          <div className={tabela.controles}>
+            <ToggleGroup
+              value={[visao]}
+              onValueChange={(v) => v[0] && trocarVisao(resolverVisao(v[0]))}
+              variant="outline"
+              size="sm"
+              aria-label={t('tab.visao.rotulo')}
+            >
+              <ToggleGroupItem value="executores">{t('tab.visao.executores')}</ToggleGroupItem>
+              <ToggleGroupItem value="linha-do-tempo">{t('tab.visao.linhaDoTempo')}</ToggleGroupItem>
+            </ToggleGroup>
+            {sessaoAtiva && sessionId && (
+              <PararExecucao projectId={projectId} sessionId={sessionId} podeParar={podeDecidir} compacto />
+            )}
+          </div>
         </div>
       )}
 
-      {executionSessionQuery.isSuccess && (
+      {/* Parada: o cartão de chamada, as áreas e a fila (a execução não está de pé para mostrar a tabela). */}
+      {executionSessionQuery.isSuccess && semExecucaoVigente && (
         <ResumoDaExecucao
           projectId={projectId}
           epics={epicsDaTela}
@@ -355,75 +427,49 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
 
       {sessionId && (
         <>
-
-          {/* RN-1061 (AT-800): a execução parada atrás de tarefa bloqueada ou de
-              agente travado — o mesmo aviso e os mesmos botões do chat. */}
-          {executionSession?.status === 'active' && paradaVigente && (
-            <Alert tone="danger" role="status">
-              <span data-testid="execucao-parada">{textoDaExecucaoParada(tParada, paradaVigente)}</span>
-              <DestravarExecucao
-                projectId={projectId}
-                sessionId={sessionId}
-                parada={paradaVigente}
-                podeDecidir={podeDecidir}
-              />
+          {/* RN-1061 (AT-800): a execução parada atrás de tarefa bloqueada ou de agente travado — o
+              mesmo aviso e os mesmos botões do chat, numa faixa só. */}
+          {sessaoAtiva && paradaVigente && (
+            <Alert tone="warning" role="status">
+              <span className={tabela.faixa}>
+                <span data-testid="execucao-parada">{textoDaExecucaoParada(tParada, paradaVigente)}</span>
+                <DestravarExecucao
+                  projectId={projectId}
+                  sessionId={sessionId}
+                  parada={paradaVigente}
+                  podeDecidir={podeDecidir}
+                />
+                {/* RN-1061: com um gate estacionado atrás da parada, a faixa oferece o mesmo pedido da linha da PR (RN-1474). */}
+                {estacionadoNaParada && (
+                  <RetomarGateEstacionado
+                    projectId={projectId}
+                    taskId={estacionadoNaParada.taskId}
+                    gate={estacionadoNaParada.gate}
+                    podeDecidir={podeDecidir}
+                    rotulo={tAprovacoes('prsTab.pedirParecer')}
+                    compacto
+                  />
+                )}
+              </span>
             </Alert>
           )}
 
-          {/* RN-763 (AT-456): parar a execução é FECHAR a sessão dela; o
-              engine para os dev agents e os gates. */}
-          {executionSession?.status === 'active' && (
-            <PararExecucao
-              projectId={projectId}
-              sessionId={sessionId}
-              podeParar={podeDecidir}
-            />
+          {sessaoAtiva && summaryQuery.isSuccess && workingCount === 0 && (
+            <Alert tone="warning" role="status">
+              {t('tab.idleWarning')}
+            </Alert>
           )}
 
-          {/* RN-661 (AT-315): no início da execução, a oferta de ligar o
-              modo automático para o time de uma vez. Some quando todos já
-              estão em automático; desligar segue no card de cada um. */}
-          {executionSession?.status === 'active' &&
-            summaryQuery.isSuccess &&
-            workingCount === 0 && (
-              <Alert tone="warning" role="status">
-                {t('tab.idleWarning')}
-              </Alert>
-            )}
+          {visao === 'executores' && <IndicadoresDaExecucao epics={epicsDaTela} tokenUsage={tokenUsage} />}
 
-          {executorRoster.length > 0 && (
-            <ModoAutomaticoDoTime
-              projectId={projectId}
-              agentes={agentesDaOfertaEmLote(executorRoster.map((r) => r.id))}
-              autonomyRules={autonomyRules}
-              podeLigar={podeLigarModoAutomatico}
-            />
-          )}
-
-          {/* AT-298: o que os agentes propuseram FORA da execução e a destrava
-              — o `container_start` do Infra Lead nasce na sessão de chat,
-              enquanto o `dev.blocked_by_container` aparece aqui. Mesmo atalho
-              do chat (RN-626/RN-467): mesmo card, mesmos endpoints, filas
-              separadas. As da PRÓPRIA execução não entram: o roster já as
-              marca como `aguardando`, e a aba Aprovações as decide. RN-816
-              (AT-480): vem DEPOIS de "Parar execução" e da oferta em lote —
-              chega depois do primeiro paint, e acima deles empurrava o botão
-              para baixo do cursor. */}
-          <PendenciasDeOutrasSessoes
-            projectId={projectId}
-            sessionId={sessionId}
-            podeDecidir={podeDecidir}
-            // RN-825/826: as filas de PR pronta e tarefa bloqueada são do chat;
-            // aqui o backlog só é lido sem execução vigente (RN-794).
-            filasDoChat={false}
-          />
-
-          <AcoesDaExecucao projectId={projectId} sessionId={sessionId} epics={epicsDaTela} acoes={pendentes} events={events} podeDecidir={podeDecidir} />
-
-          {/* `executionActivated` vem do resumo agregado — os três estados
-              da RN-088 aqui: sem eles, um "nenhum dev agent" de CARREGANDO
-              (o resumo ainda não chegou) fica indistinguível do vazio real. */}
-          {summaryQuery.isError ? (
+          {visao === 'linha-do-tempo' ? (
+            <>
+              <div className={styles.sectionSub}>{t('tab.timeline.subtitle')}</div>
+              <AgentTimelineTree events={executorEvents} projectId={projectId} />
+            </>
+          ) : summaryQuery.isError ? (
+            /* `executionActivated` vem do resumo agregado — os três estados da RN-088: sem eles, um
+               "nenhum dev agent" de CARREGANDO fica indistinguível do vazio real. */
             <ErroDeCarregamento
               titulo={t('tab.rosterError.title')}
               erro={summaryQuery.error}
@@ -436,30 +482,55 @@ export function ProjectExecutorsTab({ projectId }: { projectId: string }) {
           ) : executorGroups.length === 0 ? (
             <EmptyState titulo={t('tab.noExecutorsTitle')} icone={<Users size={18} />}>{t('tab.noExecutors')}</EmptyState>
           ) : (
-            <AgentTeamGrid
-              roster={roster}
-              groups={executorGroups}
-              events={events}
-              bindingDoAgente={bindingDoAgente}
-              allModels={allModels}
-              tokenUsage={tokenUsage}
-              autonomyRules={autonomyRules}
-              progressByAgent={progressByAgent}
-              collapsedAreas={collapsedAreas}
-              onToggleArea={toggleArea}
-              onAutonomyChange={handleAutonomyChange}
+            <TabelaDeExecutores
+              projectId={projectId}
+              sessionId={sessionId}
+              linhas={linhasDaTabela}
+              modelos={modelosDaTabela}
+              modelDisabledReason={podeDecidir ? undefined : t('tab.modelSemPapel')}
+              onModelChange={handleModelChange}
+              onAutonomyChange={(id, modo) => void handleAutonomyChange(id, regraDeAutonomia(id).tipo, modo)}
               onRearm={handleRearm}
               onWake={handleWake}
-              onModelChange={handleModelChange}
-              modelDisabledReason={podeDecidir ? undefined : t('tab.modelSemPapel')}
             />
           )}
 
-          <div className={styles.arch}>
-            <h2 className={styles.sectionHeader}>{t('tab.timeline.title')}</h2>
-          </div>
-          <div className={styles.sectionSub}>{t('tab.timeline.subtitle')}</div>
-          <AgentTimelineTree events={executorEvents} projectId={projectId} />
+          {/* AT-970: da oferta em diante vem DEPOIS da tabela, para ela caber na primeira tela. RN-661 (AT-315): no início da execução, a oferta de ligar o modo automático para o time de
+              uma vez. Some quando todos já estão em automático; desligar segue no menu da linha. */}
+          {visao === 'executores' && sessaoAtiva && executorRoster.length > 0 && (
+            (emManual > 0 || modoAutomaticoAberto) && (
+              <Disclosure
+                titulo={t('secoes.modoAutomatico.titulo')}
+                aberto={modoAutomaticoAberto}
+                onAlternar={setModoAutomaticoAberto}
+                trailing={
+                  autonomyRules !== undefined && emManual > 0
+                    ? `${t('secoes.modoAutomatico.emManual', { count: emManual })} · ${t('secoes.ver')}`
+                    : undefined
+                }
+              >
+                <ModoAutomaticoDoTime
+                  projectId={projectId}
+                  agentes={agentesDaOfertaEmLote(executorRoster.map((r) => r.id))}
+                  autonomyRules={autonomyRules}
+                  podeLigar={podeLigarModoAutomatico}
+                />
+              </Disclosure>
+            )
+          )}
+
+          {/* AT-298: o que os agentes propuseram FORA da execução e a destrava (o `container_start` do
+              Infra Lead nasce na sessão de chat; o `dev.blocked_by_container` aparece aqui). As da
+              PRÓPRIA execução não entram: o roster as marca como `aguardando`. */}
+          <PendenciasDeOutrasSessoes
+            projectId={projectId}
+            sessionId={sessionId}
+            podeDecidir={podeDecidir}
+            // RN-825/826: as filas de PR pronta e tarefa bloqueada são do chat; aqui o backlog só é lido sem execução vigente (RN-794).
+            filasDoChat={false}
+          />
+
+          <AcoesDaExecucao projectId={projectId} sessionId={sessionId} epics={epicsDaTela} acoes={pendentes} events={events} podeDecidir={podeDecidir} />
         </>
       )}
     </div>

@@ -16,7 +16,7 @@
 
 /* Os três estados da RN-088. O erro vem ANTES do vazio, e diz o que fazer. */
 .estado {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   padding: var(--space-4);
   text-align: center;
@@ -36,7 +36,7 @@
 
 .nota {
   margin: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   line-height: 1.5;
   color: var(--text-muted);
   max-width: 68ch;
@@ -76,5 +76,70 @@
 .grupoTeto {
   display: flex;
   align-items: flex-end;
+  flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+/* Gráfico à esquerda, cartão do teto (320 px) à direita (AT-973, AT-1005). */
+.comTeto {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .comTeto {
+    grid-template-columns: minmax(0, 1fr) 320px;
+  }
+}
+
+/* A coluna do gráfico: o `<figure>` enche a faixa ao lado do cartão (AT-1005). */
+.colunaDosIndicadores { min-width: 0; }
+
+/* O resumo do cartão fechado cabe numa linha; o texto inteiro vai no `title`. */
+.resumoDoTeto {
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Fechado, até 160 px de altura (AT-1005, L08): padding e gaps enxutos, medidor sem folga extra. */
+.cartaoDoTeto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  min-width: 0;
+  scroll-margin-top: var(--space-4);
+}
+
+.cartaoDoTeto [data-testid='token-meter'][data-threshold] {
+  padding: 8px 12px;
+  gap: 5px;
+}
+
+.cartaoDoTeto .formulario {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.linhaDoTeto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+/* Só para leitor de tela: os dias restantes do cartão do teto, que o resumo de uma linha não mostra. */
+.somenteLeitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

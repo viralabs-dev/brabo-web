@@ -65,8 +65,8 @@ export function ProvidersPage() {
               <TableRow>
                 <TableHead scope="col">{t('capabilities.provider')}</TableHead>
                 {colunas.map((c) => (
-                  <TableHead key={c} scope="col">
-                    {c}
+                  <TableHead key={c} scope="col" title={c}>
+                    {t(`capabilities.columns.${c}`, { defaultValue: c })}
                   </TableHead>
                 ))}
               </TableRow>
@@ -87,7 +87,7 @@ export function ProvidersPage() {
                       {(p.capabilities as unknown as Record<string, unknown>)[c] === true ? (
                         <Badge tone="success">{t('capabilities.proven')}</Badge>
                       ) : (
-                        <Badge tone="muted">{t('capabilities.notProven')}</Badge>
+                        <span className={styles.naoProvado}>{t('capabilities.notProven')}</span>
                       )}
                     </TableCell>
                   ))}

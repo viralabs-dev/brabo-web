@@ -23,6 +23,7 @@
     "semNomeFicaHashtag": "No name — the session stays {{hashtag}}",
     "tituloRenomear": "Session {{rotulo}} — click to rename",
     "tituloSessao": "Session {{rotulo}}",
+    "tituloExecucao": "Execution · {{rotulo}}",
     "trazCriativo": "brings the Creative into the conversation",
     "iniciarIdeacao": "Start ideation",
     "iniciarIdeacaoTitulo": "Brings the Creative in to lead this session's ideation — it hasn't joined yet",
@@ -36,7 +37,8 @@
     "encerrarSessao": "Close the session",
     "pararTurno": "Stop turn",
     "trilha": "Session breadcrumb",
-    "sessoes": "Sessions"
+    "sessoes": "Sessions",
+    "pendencias": "Pending"
   },
   "convite": {
     "criativa": {
@@ -72,7 +74,7 @@
     "placeholder": "Write a message… (Enter sends, Shift+Enter for a new line)",
     "enviar": "Send",
     "parar": "Stop",
-    "prontoParaProduzir": "I'm ready — the need is validated",
+    "prontoParaProduzir": "I'm ready — validate the need",
     "prontoParaProduzirExplica": "Closes readiness and the need validation, and calls the PO: it joins on its own once the Creative finishes the product brief",
     "prontoParaProduzirDesabilitado": "Capture at least one business rule with the Creative before confirming readiness",
     "confirmarArquitetura": "Confirm architecture ready",
@@ -146,8 +148,8 @@
       "skills": {
         "nome": "skills",
         "descricao": "Lists the agent's tools and instruction",
-        "titulo_one": "{{agente}}: {{count}} tool",
-        "titulo_other": "{{agente}}: {{count}} tools",
+        "titulo_one": "{{agente}}: {{count, number}} tool",
+        "titulo_other": "{{agente}}: {{count, number}} tools",
         "naoSei": "I don't know {{agente}}'s tools right now: the engine did not answer.",
         "semAgente": "{{agente}} is not in the catalog.",
         "instrucao": "Current instruction (v{{versao}})",
@@ -157,11 +159,12 @@
         "nome": "search",
         "descricao": "Searches the project base for the field text",
         "semConsulta": "Type what to search in the field and use /search.",
-        "titulo_one": "Search \"{{consulta}}\": {{count}} passage",
-        "titulo_other": "Search \"{{consulta}}\": {{count}} passages",
+        "titulo_one": "Search \"{{consulta}}\": {{count, number}} passage",
+        "titulo_other": "Search \"{{consulta}}\": {{count, number}} passages",
         "erro": "The search failed: {{motivo}}"
       }
-    }
+    },
+    "maisAcoes": "More actions"
   },
   "ativacao": {
     "encerradaTitulo": "Session closed",
@@ -286,8 +289,8 @@
     "historias": "stories",
     "tarefas": "tasks",
     "itens": "items",
-    "mensagensCount_one": "{{count}} message",
-    "mensagensCount_other": "{{count}} messages"
+    "mensagensCount_one": "{{count, number}} message",
+    "mensagensCount_other": "{{count, number}} messages"
   },
   "aside": {
     "titulo": "Session context",
@@ -324,6 +327,7 @@
     "perguntasAbertas": "Open questions",
     "gastoPorAgente": "Spend by agent",
     "gastoVazio": "No spend yet.",
+    "gastoErro": "Could not read the session spend.",
     "detalhes": "Session details"
   },
   "turno": {
@@ -350,6 +354,8 @@
     "raciocinioChars_one": "{{count}} character",
     "raciocinioChars_other": "{{count}} characters",
     "passosDoTurno": "Turn steps",
+    "trabalhou": "Worked",
+    "trabalhando": "Working",
     "consultado": "Consulted this turn",
     "fonteN": "Source {{n}}: {{rotulo}}",
     "consultadoCorte": "showing {{shown}} of {{total}}",
@@ -364,11 +370,11 @@
       "registrou": "Recorded",
       "outros": "Other"
     },
-    "raciocinioTokens_one": "{{count}} token",
-    "raciocinioTokens_other": "{{count}} tokens"
+    "raciocinioTokens_one": "{{count, number}} token",
+    "raciocinioTokens_other": "{{count, number}} tokens"
   },
   "pendencias": {
-    "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue above.",
+    "referenciaNoFio": "Merge proposed — decide it in the \"PRs ready to merge\" queue of the pendencies panel.",
     "titulo": "Pending decisions from other sessions in this project",
     "tituloDoProjeto": "Pending decisions in this project",
     "nota": "A shortcut to the decision: the same cards and endpoints as the Approvals tab. No ceiling changes — merging into a protected branch stays your own gesture (Merge asks for your confirmation).",
@@ -425,6 +431,13 @@
       "esperando": "The task \"{{tarefa}}\" is waiting for your answer.",
       "sugestao": "Suggestion:",
       "aceitar": "Accept suggestion",
+      "loteAceitar": "Accept the {{n}} suggestions from {{agente}}",
+      "loteTitulo": "You are about to accept {{n}} suggestions from {{agente}}:",
+      "loteRegra": "touches a business rule",
+      "loteConfirmar": "Confirm the {{n}} suggestions",
+      "loteCancelar": "Cancel",
+      "loteErro": "Could not accept the suggestions.",
+      "loteParcial": "{{n}} could not be accepted; the queue was refreshed.",
       "campo": "Your answer",
       "responder": "Answer",
       "soOAutor": "Only the person who created the session where the question was asked can answer it.",
@@ -433,7 +446,8 @@
       "respondida": "Answered. The answer was saved as a decision.",
       "corrigir": "Fix the story",
       "corrigirHistoria": "Affected story: {{titulo}}",
-      "dispensar": "Dismiss"
+      "dispensar": "Dismiss",
+      "responderComTexto": "Answer with text"
     },
     "verOCartao": "See the card",
     "saidas": {
@@ -477,13 +491,23 @@
     "carregando": "Loading session…",
     "historico": {
       "titulo_one": "Before the last message",
-      "titulo_other": "Before the last {{count}} messages",
+      "titulo_other": "Before the last {{count, number}} messages",
       "outrasCount_one": "{{count}} other entry",
       "outrasCount_other": "{{count}} other entries",
       "conteudoComOutras": "{{mensagens}} · {{outras}}"
     },
     "rotuloDoFio": "Session conversation",
-    "irAoFim": "Go to end"
+    "irAoFim": "Go to end",
+    "irAoFimComNovas_one": "Go to end · {{count}} new",
+    "irAoFimComNovas_other": "Go to end · {{count}} new",
+    "verRespostaInteira": "View full response",
+    "recolherResposta": "Collapse response"
+  },
+  "trilho": {
+    "rotulo": "Conversation turns",
+    "voce": "You",
+    "turnoN": "Turn {{n}}: {{nome}}",
+    "recorte": "Only the loaded turns; there are more before"
   },
   "fila": {
     "painel": "Queued messages",
@@ -580,5 +604,53 @@
       "rfc": "RFC proposed",
       "prototipo": "prototype proposed"
     }
+  },
+  "perguntasEstruturadas": {
+    "resumoAutor": "You",
+    "resumo_one": "I answered {{count}} question",
+    "resumo_other": "I answered {{count}} questions"
+  },
+  "cartao": {
+    "maisAcoes": "More actions"
+  },
+  "faixa": {
+    "abrir": "Executors",
+    "esperam_one": "{{count}} waiting",
+    "esperam_other": "{{count}} waiting"
+  },
+  "painel": {
+    "titulo": "Session panel",
+    "abas": "Session panel",
+    "contexto": "Context",
+    "executores": "Executors",
+    "pendencias": "Pending",
+    "pendenciasVazio": "No pending items in this project.",
+    "executoresVazio": "No execution in progress."
+  },
+  "ofertaDeAutomacao": {
+    "texto": {
+      "aprovacao": "You approved {{acao}} from {{agente}} {{n}} times in a row, with no changes. Want me to do this on my own in this project? You are still asked about anything that changes risk, cost or destination.",
+      "handoff": "You accepted the {{chave}} handoff {{n}} times in a row. Want me to do this handoff on my own in this project? You are still asked when the criteria are not met.",
+      "desbloqueio": "You unblocked tasks of the same kind ({{chave}}) {{n}} times in a row. Want me to unblock them on my own in this project? You are still asked about what the criteria do not cover.",
+      "generico": "You repeated the {{chave}} decision. Want me to make it on my own in this project?"
+    },
+    "ondePadrao": "Settings › Project",
+    "aceitar": "Do it on my own from now on",
+    "recusar": "No, keep asking",
+    "aceita": "Done: from now on I do it on my own.",
+    "recusada": "Fine: I keep asking.",
+    "semPapel": "Replying requires the maintainer role in the project.",
+    "erroTitulo": "Could not reply to the offer",
+    "aplicada": "Done on its own by the rule of {{regra}}, since {{desde}}",
+    "outroCaminho": "This has repeated without being resolved, so I will not do it on my own. Ways out: {{opcoes}}.",
+    "opcao": {
+      "trocar_modelo": "switch this task's model",
+      "pedir_ao_dev_lead": "ask the Dev Lead",
+      "arquivar": "archive"
+    },
+    "aplicadaSemData": "Done on its own by the rule of {{regra}}",
+    "desfazerAntes": "You can undo it in",
+    "desfazerDepois": ".",
+    "desfazerLink": "undo"
   }
 }

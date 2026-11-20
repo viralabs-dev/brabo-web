@@ -12,7 +12,9 @@
     "loadError": "无法加载您的项目。",
     "noProjectsYet": "这里还没有项目。",
     "createProject": "创建项目",
-    "noSearchResults": "未找到与“{{search}}”匹配的项目。"
+    "noSearchResults": "未找到与“{{search}}”匹配的项目。",
+    "semAtivos": "没有活跃项目。闲置的在“闲置”中。",
+    "semParados": "没有闲置项目。"
   },
   "activity": {
     "noSession": "还没有会话",
@@ -65,6 +67,7 @@
       "awaitingPlanDecision": "等待您的决定"
     },
     "online": "{{count}} 在线",
+    "parado": "已停滞",
     "aguardandoVoce": "{{agente}} 在等你"
   },
   "projectStatus": {
@@ -76,7 +79,8 @@
   "inicio": {
     "indisponivel": "不可用",
     "projetos": {
-      "rotulo": "活跃项目"
+      "rotulo": "活跃项目",
+      "parados_other": "{{count}} 个闲置超过 {{dias}} 天"
     },
     "agentes": {
       "rotulo": "当前智能体",
@@ -92,7 +96,8 @@
     "caixa": {
       "rotulo": "决策收件箱",
       "aprovacoes_other": "{{n}} 项审批",
-      "demais": "PR {{prs}} · 晋升 {{promocoes}} · 架构 {{arquitetura}} · 假设 {{hipoteses}}"
+      "demais": "PR {{prs}} · 晋升 {{promocoes}} · 架构 {{arquitetura}} · 假设 {{hipoteses}}",
+      "maisAntiga": "最早的已等待 {{quando}}"
     }
   },
   "secaoProjetos": "项目",
@@ -103,5 +108,11 @@
   "atividadeRecente": {
     "titulo": "最近活动",
     "indisponivel": "无法读取最近活动。"
+  },
+  "filtro": {
+    "aria": "筛选项目",
+    "ativos": "活跃 · {{n}}",
+    "parados": "闲置 · {{n}}",
+    "todos": "全部"
   }
 }

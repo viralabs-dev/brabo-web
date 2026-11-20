@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react';
+import { ScrollFade } from '@/components/shadcn/scroll-fade';
 import { Button } from '@/components/shadcn/button';
-import { Button as BotaoDeIcone } from '@/components/ui/Button';
 import { Ajuda } from '@/components/ui/Ajuda';
 
 type Props = {
@@ -40,8 +39,6 @@ export type AcaoSugerida = {
   /** Explicação: vai para um "?" ao lado das sugestões (AT-713). */
   explica?: string;
   testId?: string;
-  /** Com ícone o botão fica só no ícone e o `rotulo` vira a legenda (nome acessível). */
-  icone?: ReactNode;
 };
 
 /**
@@ -55,35 +52,21 @@ export function SugestoesDeAcao({ acoes }: { acoes: AcaoSugerida[] }) {
   const explicas = acoes.filter((a) => a.explica);
   return (
     <div data-slot="suggestions" className="flex flex-col gap-1">
-      <div className="flex flex-wrap gap-2">
-        {acoes.map((a) =>
-          a.icone ? (
-            <BotaoDeIcone
-              key={a.chave}
-              type="button"
-              variant="secondary"
-              size="sm"
-              legenda={a.rotulo}
-              data-testid={a.testId}
-              disabled={a.desabilitada}
-              onClick={a.aoClicar}
-            >
-              {a.icone}
-            </BotaoDeIcone>
-          ) : (
+      <ScrollFade className="flex gap-2">
+        {acoes.map((a) => (
           <Button
             key={a.chave}
             type="button"
             variant="outline"
             size="sm"
+            className="shrink-0"
             data-testid={a.testId}
             disabled={a.desabilitada}
             onClick={a.aoClicar}
           >
             {a.rotulo}
           </Button>
-          ),
-        )}
+        ))}
         {explicas.length > 0 && (
           <Ajuda assunto={explicas[0].rotulo}>
             {explicas.map((a) => (
@@ -93,7 +76,7 @@ export function SugestoesDeAcao({ acoes }: { acoes: AcaoSugerida[] }) {
             ))}
           </Ajuda>
         )}
-      </div>
+      </ScrollFade>
       {motivos.map((m) => (
         <span key={m} className="text-xs text-muted-foreground">
           {m}

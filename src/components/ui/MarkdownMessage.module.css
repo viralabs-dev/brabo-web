@@ -34,7 +34,7 @@
 }
 
 .titulo3 {
-  font-size: 14px;
+  font-size: var(--fs-body);
 }
 
 .lista {
@@ -76,7 +76,7 @@ ol.lista {
 .fenceCabecalho {
   padding: 5px 10px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--text-muted);
@@ -187,7 +187,7 @@ ol.lista {
   font-family: var(--font-heading);
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 13px;
+  font-size: var(--fs-sm);
   margin: 10px 0 4px;
 }
 

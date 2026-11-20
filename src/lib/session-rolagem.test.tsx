@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { ProposedAction, SessionEvent } from './api-types';
-import { identidadeDoFio, useRolagemDoFio } from './session-rolagem';
+import { identidadeDoFio, novasDepoisDe, useRolagemDoFio } from './session-rolagem';
 import { criarStoreDoStreaming } from './streaming-do-turno';
 
 const ev = (seq: number) => ({ id: `e${seq}`, seq, type: 'chat.message' }) as unknown as SessionEvent;
@@ -151,5 +151,60 @@ describe('useRolagemDoFio (RN-951, revisada na RN-977)', () => {
     expect(rolagem().afastado).toBe(true);
     rolarContainer(rolagem().scrollContainerRef.current!, 0);
     expect(rolagem().afastado).toBe(false);
+  });
+});
+
+describe('"Ir ao fim · N novas" e âncora ao enviar (RN-977, AT-959)', () => {
+  const msg = (seq: number, type = 'agent.response') => ({ id: `e${seq}`, seq, type }) as unknown as SessionEvent;
+
+  it('novasDepoisDe conta só mensagem com seq maior que o visto', () => {
+    const evs = [msg(1), msg(2), msg(3, 'agent.tool_call'), msg(4, 'chat.message')];
+    expect(novasDepoisDe(evs, null)).toBe(0);
+    expect(novasDepoisDe(evs, 1)).toBe(2);
+    expect(novasDepoisDe(evs, 4)).toBe(0);
+  });
+
+  it('com o fio pausado conta as chegadas; o clique em "Ir ao fim" zera', () => {
+    const { hook, rolagem } = montar({ events: [msg(1)], actions: [] });
+    const el = rolagem().scrollContainerRef.current!;
+    Object.defineProperty(el, 'scrollHeight', { value: 1000, configurable: true });
+    Object.defineProperty(el, 'clientHeight', { value: 400, configurable: true });
+    el.scrollTop = 100;
+    act(() => {
+      el.dispatchEvent(new Event('scroll'));
+    });
+    expect(rolagem().novas).toBe(0);
+    hook.rerender({ events: [msg(1), msg(2), msg(3)], actions: [] });
+    expect(rolagem().novas).toBe(2);
+    act(() => rolagem().irAoFim());
+    expect(rolagem().novas).toBe(0);
+  });
+
+  it('ancorarNoEnvio retoma a pausa e sobe o turno do usuário ao topo', () => {
+    const { hook, rolar, rolagem } = montar({ events: [msg(1)], actions: [] });
+    const dono = document.createElement('div');
+    const meu = document.createElement('div');
+    meu.setAttribute('data-autor', 'voce');
+    const subir = vi.fn();
+    meu.scrollIntoView = subir;
+    dono.append(meu);
+    rolagem().messagesInnerRef.current = dono;
+    const el = rolagem().scrollContainerRef.current!;
+    Object.defineProperty(el, 'scrollHeight', { value: 1000, configurable: true });
+    Object.defineProperty(el, 'clientHeight', { value: 400, configurable: true });
+    el.scrollTop = 100;
+    act(() => {
+      el.dispatchEvent(new Event('scroll'));
+    });
+    expect(rolagem().afastado).toBe(true);
+    rolar.mockClear();
+    act(() => {
+      rolagem().ancorarNoEnvio();
+      vi.runAllTimers();
+    });
+    expect(rolagem().afastado).toBe(false);
+    expect(subir).toHaveBeenCalledWith({ block: 'start' });
+    hook.rerender({ events: [msg(1), msg(2)], actions: [] });
+    expect(rolar).toHaveBeenCalledTimes(1);
   });
 });

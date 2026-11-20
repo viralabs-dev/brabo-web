@@ -104,7 +104,7 @@ function TableCaption({
 // Grade de divs da casa (antigo Table.module.css, RN-651): colunas em fração não existem em <table>.
 const BORDA = "border-[color:var(--border)]"
 const CELULA_MONO =
-  "font-mono text-[10px] font-semibold tracking-[0.05em] text-[color:var(--text-secondary)] uppercase"
+  "font-mono text-[11px] font-semibold tracking-[0.05em] text-[color:var(--text-secondary)] uppercase"
 
 function Grade({ className, ...props }: React.ComponentProps<"div">) {
   return (

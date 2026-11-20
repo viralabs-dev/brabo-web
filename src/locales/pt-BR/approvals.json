@@ -10,9 +10,9 @@
     "gitCommit": {
       "verb": "propõe alteração",
       "base": "Registra um commit",
-      "filesSuffix_zero": " de {{count}} arquivos",
-      "filesSuffix_one": " de {{count}} arquivo",
-      "filesSuffix_other": " de {{count}} arquivos",
+      "filesSuffix_zero": " de {{count, number}} arquivos",
+      "filesSuffix_one": " de {{count, number}} arquivo",
+      "filesSuffix_other": " de {{count, number}} arquivos",
       "pathSuffix": " do arquivo {{path}}",
       "branchSuffix": " na branch {{branch}}",
       "repoSuffix": " no repositório do projeto",
@@ -73,9 +73,9 @@
       "verb": "abriu pull request de infra",
       "base": "Abre uma pull request de infraestrutura",
       "titled": " \"{{title}}\"",
-      "filesSuffix_zero": " com {{count}} arquivos",
-      "filesSuffix_one": " com {{count}} arquivo",
-      "filesSuffix_other": " com {{count}} arquivos"
+      "filesSuffix_zero": " com {{count, number}} arquivos",
+      "filesSuffix_one": " com {{count, number}} arquivo",
+      "filesSuffix_other": " com {{count, number}} arquivos"
     },
     "gitMerge": {
       "verb": "quer fazer merge",
@@ -158,6 +158,8 @@
     "decided": {
       "denied": "Negado",
       "alwaysAllowed": "Sempre permitido · gravado em permissions.json",
+      "autoMerged": "Mergeado pelo merge automático",
+      "autoMergedDesligar": "desligar",
       "failed": "Falhou",
       "approvedTerminal": "Aprovado · comando em execução",
       "approved": "Aprovado",
@@ -165,9 +167,9 @@
     },
     "body": {
       "commit": {
-        "files_zero": "{{count}} arquivos",
-        "files_one": "{{count}} arquivo",
-        "files_other": "{{count}} arquivos"
+        "files_zero": "{{count, number}} arquivos",
+        "files_one": "{{count, number}} arquivo",
+        "files_other": "{{count, number}} arquivos"
       },
       "terminal": {
         "invalidCommand": "O modelo não produziu um comando válido para esta ação.",
@@ -180,9 +182,9 @@
         "invalidPath": "O modelo não produziu um caminho válido para esta ação.",
         "invalidContent": "O modelo não produziu um conteúdo válido para esta ação.",
         "previewHeader": "preview do conteúdo",
-        "linesTruncated_zero": "{{shown}} de {{count}} linhas",
-        "linesTruncated_one": "{{shown}} de {{count}} linha",
-        "linesTruncated_other": "{{shown}} de {{count}} linhas"
+        "linesTruncated_zero": "{{shown}} de {{count, number}} linhas",
+        "linesTruncated_one": "{{shown}} de {{count, number}} linha",
+        "linesTruncated_other": "{{shown}} de {{count, number}} linhas"
       },
       "prOpen": {
         "defaultTitle": "Pull request"
@@ -385,7 +387,7 @@
     "gatePendenteBloqueada": "O gate {{gate}} ainda está pendente para esta PR, e a tarefa dela está bloqueada: o merge fica indisponível até ela ser desbloqueada.",
     "mergeIndisponivelBloqueada": "Merge indisponível: a tarefa desta PR está bloqueada — {{reason}}",
     "mergeIndisponivelSemSessao": "Merge indisponível: sem sessão no projeto para propor a ação.",
-    "gatePendente": "O gate {{gate}} ainda está pendente para esta PR. O merge segue disponível — a decisão é sua.",
+    "gatePendente": "O gate {{gate}} ainda está pendente: o Merge aparece quando D, Q e S estiverem verdes.",
     "mergeRecusado": "A última tentativa de merge foi recusada: {{reason}}",
     "mergeRecusadoArquivos_one": "Arquivo em conflito: {{files}}",
     "mergeRecusadoArquivos_other": "Arquivos em conflito: {{files}}",
@@ -395,10 +397,16 @@
       "verAprovacao": "Ver a aprovação",
       "ativarExecucao": "Ativar execução"
     },
+    "pedirParecer": "Pedir o parecer de novo",
+    "portoes": {
+      "rotulo": "Portões da PR",
+      "nome": { "dev": "Dev", "qa": "QA", "secops": "SecOps", "user": "Você" },
+      "estado": { "done": "passou", "current": "em curso", "blocked": "bloqueado", "pending": "pendente" }
+    },
     "fluxo": {
-      "titulo": "Como uma PR anda aqui:",
-      "passos": "aberta pelo agente, QA, SecOps, espera você, mesclada.",
-      "mergeManual": "Merge em branch protegida é sempre manual."
+      "titulo": "Portões:",
+      "passos": "D Dev · Q QA · S SecOps · V você.",
+      "mergeManual": "Merge em branch protegida é sempre manual; o botão só aparece quando os três portões estão verdes."
     }
   },
   "politica": {

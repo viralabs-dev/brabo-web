@@ -90,7 +90,6 @@
   },
   "modelsSection": {
     "title": "Modelos por agente",
-    "eyebrow": "binding vigente por cascata",
     "subtitle": {
       "intro": "A origem indica onde o valor é resolvido:",
       "mostSpecificWins": "O mais específico vence.",
@@ -99,15 +98,10 @@
       "needsDeveloper": " Exige papel developer para trocar o modelo, aplicar um a todos os agentes ou voltar a herdar.",
       "needsMaintainerArea": " Exige papel maintainer para marcar a caixa da área ou trocar o modelo dela."
     },
-    "costCard": {
-      "label": "Custo estimado mensal do time",
-      "detail": "· com base no histórico de 30 dias"
-    },
     "columns": {
       "agent": "Agente",
       "model": "Modelo vigente",
-      "origin": "Origem",
-      "fallback": "Fallback",
+      "origin": "De onde vem",
       "estimate": "Est. mês"
     },
     "backToInheritTitleWithArea": "Apaga o modelo próprio deste agente — ele volta a usar o padrão da área {{area}}.",
@@ -156,7 +150,31 @@
         "partial": "O padrão da área foi gravado, mas o modelo próprio de {{agent}} não foi removido ({{reason}})"
       }
     },
-    "ajudaRoteamento": "Roteamento: a preferência (menor preço, maior vazão, menor latência) só é declarada para um provider depois de provada contra a API real. Sem prova, a linha diz que não está provado."
+    "ajudaRoteamento": "Roteamento: a preferência (menor preço, maior vazão, menor latência) só é declarada para um provider depois de provada contra a API real. Sem prova, a linha diz que não está provado.",
+    "deOndeVem": {
+      "semModelo": "sem modelo",
+      "herdaDoCriativo": "herda do {{nome}}",
+      "herda": {
+        "agent": "herda de outro agente",
+        "session": "herda da sessão",
+        "area": "herda da área",
+        "project": "herda do projeto",
+        "workspace": "herda do workspace"
+      },
+      "proprio": "definido neste agente",
+      "abrir": "De onde vem o modelo de {{agente}}",
+      "esconderOutros": "Esconder os agentes sem gasto",
+      "mostrarOutros_one": "Mostrar o outro agente",
+      "mostrarOutros_zero": "Mostrar os outros {{count}} agentes",
+      "mostrarOutros_other": "Mostrar os outros {{count}} agentes"
+    },
+    "tituloDaTabela_zero": "Nenhum agente · {{valor}} estimado por mês",
+    "tituloDaTabela_one": "{{count}} agente · {{valor}} estimado por mês",
+    "tituloDaTabela_other": "{{count}} agentes · {{valor}} estimado por mês",
+    "tituloDaTabelaBase": "com base no histórico de 30 dias",
+    "oQueIssoMuda": "O que isso muda",
+    "fallbackPopover": "Se perder o modelo próprio, vale: <m>{{modelo}}</m>",
+    "faixaRoteamentoMuda": "Neste provider a preferência de roteamento não foi provada contra a API real, então não é aplicada: o provider decide. Vale para os {{total}} agentes. A linha que fugir do padrão mostra a diferença nela."
   },
   "members": {
     "title": "Membros e papéis",
@@ -165,7 +183,8 @@
     "subtitleCascata": " O papel desta tabela substitui o do workspace neste projeto, nos dois sentidos — definir viewer aqui rebaixa até quem é owner do workspace. Quem alcança o projeto só pelo workspace não aparece na lista.",
     "subtitleNeedsMaintainer": " Exige papel maintainer para convidar, trocar o papel ou remover alguém.",
     "invite": {
-      "placeholder": "ID do usuário (UUID)",
+      "placeholder": "E-mail",
+      "label": "E-mail de quem já é do workspace",
       "button": "Convidar"
     },
     "table": {
@@ -228,7 +247,10 @@
       "modelo": "Modelo do degrau {{n}}",
       "teto": "Teto do degrau {{n}} (US$)",
       "remover": "Remover degrau {{n}}",
-      "adicionar": "Adicionar degrau"
+      "adicionar": "Adicionar degrau",
+      "alteracoes_zero": "Nenhuma alteração",
+      "alteracoes_one": "{{count}} alteração não salva",
+      "alteracoes_other": "{{count}} alterações não salvas"
     }
   },
   "executionMode": {
@@ -318,9 +340,8 @@
       "title": "Área {{area}}",
       "spent": "Gasto: {{amount}}",
       "capAria": "Teto de gasto da área {{area}}, em dólares",
-      "noCap": "sem teto"
+      "semTetoProprio": "sem teto próprio"
     },
-    "placeholder": "Sem teto",
     "save": "Salvar",
     "saving": "Salvando…",
     "toast": {
@@ -329,7 +350,11 @@
     },
     "mes": {
       "rotulo": "Teto de gasto do mês",
-      "descricao": "Quanto o projeto pode gastar por mês (UTC); a virada vem dita no teto."
+      "descricao": "Quanto o projeto pode gastar por mês (UTC); a virada vem dita no teto.",
+      "semTeto": "Sem teto neste mês",
+      "valor": "{{gasto}} de {{teto}} · {{pct}}%",
+      "editarEmGastos": "Editar em Gastos",
+      "naoLido": "Não foi possível ler o teto"
     }
   },
   "promotion": {
@@ -411,7 +436,7 @@
       "openSwapAria": "Informar nova chave de {{label}}",
       "calls_zero": "nenhuma chamada",
       "calls_one": "1 chamada",
-      "calls_other": "{{count}} chamadas"
+      "calls_other": "{{count, number}} chamadas"
     },
     "toast": {
       "saved": "Credencial salva",
@@ -501,7 +526,7 @@
       "title": "Todos os tokens do projeto",
       "eyebrow": "maintainer",
       "subtitle": "Resposta a incidente — revogue o token de qualquer usuário do projeto, não só o seu.",
-      "emptyMessage": "Nenhum token de acesso emitido para este projeto.",
+      "emptyMessage": "Ninguém neste projeto emitiu token.",
       "table": {
         "name": "Nome",
         "owner": "Dono",
@@ -647,7 +672,6 @@
       "hintOff": "Desligado: toda PR espera o seu clique em Merge.",
       "hintOn": "Ligado: a PR com todos os gates verdes e sem conflito entra sozinha, sem você ver o código antes."
     },
-    "switchAria": "Merge automático das PRs do projeto",
     "reason": {
       "ligar": "Só o owner do workspace liga o merge automático. Peça a um owner.",
       "desligar": "Só um maintainer ou o owner do workspace desliga o merge automático."
@@ -662,6 +686,26 @@
     "toast": {
       "on": "Merge automático ligado",
       "off": "Merge automático desligado",
+      "error": "Não foi possível salvar"
+    }
+  },
+  "passagensSemClique": {
+    "title": "Passagens entre agentes sem clique",
+    "eyebrow": "quando o critério fecha",
+    "subtitle": "Ligadas por padrão. Com a chave ligada, o Brabo passa o trabalho ao agente seguinte sozinho quando o critério fecha; desligada, a passagem volta a esperar o seu clique em Aceitar.",
+    "arquitetoInfra": {
+      "title": "Arquiteto para Infra",
+      "hint": "Aceita sozinho quando há mapa de módulos, ADR proposta e nenhuma pergunta do Arquiteto em aberto."
+    },
+    "infraDevLead": {
+      "title": "Infra para Dev Lead",
+      "hint": "Aceita sozinho quando a PR de infra foi mergeada e o container do projeto está de pé com rede provada."
+    },
+    "reason": "Só um maintainer ou o owner do workspace muda estas chaves.",
+    "switchAria": "Passagem {{passagem}} sem clique",
+    "toast": {
+      "on": "Passagem sem clique ligada",
+      "off": "Passagem sem clique desligada",
       "error": "Não foi possível salvar"
     }
   },
@@ -724,6 +768,22 @@
     "toast": {
       "saved": "Roteador de ferramentas salvo",
       "error": "Não foi possível salvar"
+    }
+  },
+  "regrasDeOferta": {
+    "title": "Regras de fazer sozinho",
+    "eyebrow": "aceitas no chat",
+    "subtitle": "As regras que você aceitou no chat com \"Fazer sozinho daqui em diante\". Desfazer devolve a pergunta ao seu clique.",
+    "categoria": {
+      "aprovacao": "Aprovação",
+      "handoff": "Passagem entre agentes",
+      "desbloqueio": "Desbloqueio"
+    },
+    "desfazer": "Desfazer",
+    "reason": "Só um maintainer ou o owner do workspace desfaz estas regras.",
+    "toast": {
+      "ok": "Regra desfeita",
+      "error": "Não foi possível desfazer"
     }
   }
 }

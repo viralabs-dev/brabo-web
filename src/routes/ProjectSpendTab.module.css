@@ -99,18 +99,25 @@
 
 /* O resumo do cartão fechado cabe numa linha; o texto inteiro vai no `title`. */
 .resumoDoTeto {
+  line-height: 1.3;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+/* Fechado, até 160 px de altura (AT-1005, L08): padding e gaps enxutos, medidor sem folga extra. */
 .cartaoDoTeto {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4);
+  gap: var(--space-1);
+  padding: var(--space-3);
   min-width: 0;
   scroll-margin-top: var(--space-4);
+}
+
+.cartaoDoTeto [data-testid='token-meter'][data-threshold] {
+  padding: 8px 12px;
+  gap: 5px;
 }
 
 .cartaoDoTeto .formulario {

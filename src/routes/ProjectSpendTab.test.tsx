@@ -695,8 +695,10 @@ describe('ProjectSpendTab — as sobras da v11 (AT-1005)', () => {
     montar();
     await screen.findByText('O meu consumo');
     await screen.findAllByText(/mi$/);
-    const cartoes = [...document.querySelectorAll('[data-slot="section-card"]')].map((c) => c.textContent).join(' ');
-    expect(cartoes).not.toMatch(/\d{1,3}(\.\d{3}){2,}/);
+    // O gráfico (`figure`, AT-1004) fica de fora; indicadores e rankings não mostram o inteiro.
+    const corpo = document.body.cloneNode(true) as HTMLElement;
+    corpo.querySelectorAll('figure').forEach((f) => f.remove());
+    expect(corpo.textContent).not.toMatch(/\d{1,3}(\.\d{3}){2,}/);
     expect(document.querySelector('[title="50.000.000 entrada · 400.000 saída"]')).not.toBeNull();
   });
 

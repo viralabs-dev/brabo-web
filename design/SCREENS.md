@@ -274,6 +274,7 @@ multi-linha fixo no rodapé do chat, estilo consistente com os outros
 inputs (`COMPONENTS.md`), com botão de enviar; desabilitado durante
 streaming.
 AT-960 (v10): é uma caixa só (`InputGroup`) com o campo em cima e, na barra de baixo, "+", anexo, "Para: <agente>" e Parar/Enviar; o aviso de PR pronta é um `Item` de 44 px acima dela (doca ≤ 168 px) e o "Mergear" confirma num `Popover`.
+AT-1009 (RN-1496 a RN-1498): o fio mede 70% ou mais da altura (composer de ~120 px com o campo de uma linha; em janela baixa a barra vai a 48 px, a faixa a 32 px), o aviso de PR mostra o título em uma linha (a nota do merge só para leitor de tela) e, no telefone, o fio tem 65% ou mais, a faixa de estado sem a barra de progresso e nada passa da largura.
 
 ## Aprovações (`Brabo Approvals.dc.html`)
 

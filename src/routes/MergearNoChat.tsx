@@ -32,6 +32,11 @@ interface MergearNoChatProps {
    * `null`. AVISO, nunca trava (AT-249, RN-663): o botão segue ativo.
    */
   gatePendente?: string | null;
+  /**
+   * AT-1009 (RN-1497): dentro do aviso de PR pronta o título da PR tem a linha toda; a nota
+   * ("Pede a confirmação aqui mesmo…") continua no DOM para leitor de tela, mas sai da vista.
+   */
+  semNota?: boolean;
 }
 
 /** A causa curta de uma ação git que falhou: os arquivos em conflito ou a 1ª frase do erro. */
@@ -61,6 +66,7 @@ export function MergearNoChat({
   numero,
   podeDecidir,
   gatePendente = null,
+  semNota = false,
 }: MergearNoChatProps) {
   const { t } = useTranslation('sessionPage');
   const queryClient = useQueryClient();
@@ -129,7 +135,7 @@ export function MergearNoChat({
         </PopoverContent>
       </Popover>
       {!confirmando && (
-        <span className={styles.mergearNota} data-testid="mergear-nota">
+        <span className={semNota && podeDecidir ? 'sr-only' : styles.mergearNota} data-testid="mergear-nota">
           {podeDecidir ? t('mergearNoChat.nota') : t('mergearNoChat.semPapel')}
         </span>
       )}

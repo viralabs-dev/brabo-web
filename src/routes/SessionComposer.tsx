@@ -425,6 +425,8 @@ export function SessionComposer({
             onKeyUp={(e) => e.target instanceof HTMLTextAreaElement && menu.ler(e.target)}
           >
           <CampoDoComposer
+            rows={1}
+            className={estilos.campo}
             aria-controls={menu.aberto ? menu.idDaLista : undefined}
             aria-activedescendant={menu.aberto && menu.itens.length ? idDoItemDoMenu(menu.idDaLista, menu.ativo) : undefined}
             onPaste={(e) => {

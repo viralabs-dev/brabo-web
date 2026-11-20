@@ -43,3 +43,21 @@
   min-height: 40px;
   min-width: 40px;
 }
+
+/* AT-1009 (RN-1498): no telefone a barra de progresso sai (o "10 de 14 tarefas" diz o mesmo)
+   e nada passa da largura: o custo e o link "Executores" ficam à vista. */
+.faixa[data-layout='movel'] {
+  gap: 8px;
+  padding: 0 8px 0 12px;
+}
+
+.faixa[data-layout='movel'] .barra {
+  display: none;
+}
+
+/* Janela baixa (1366 × 768): a faixa cede 8 px ao fio (AT-1009, RN-1496). */
+@media (max-height: 800px) and (min-width: 768px) {
+  .faixa {
+    height: 32px;
+  }
+}

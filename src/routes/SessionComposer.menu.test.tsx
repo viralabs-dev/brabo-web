@@ -102,6 +102,10 @@ const screen = {
 };
 
 describe('menus @ e / do composer (AT-717)', () => {
+  it('AT-1009: o campo nasce de UMA linha (composer compacto, o fio fica com 70% da altura)', () => {
+    expect(montar().rows).toBe(1);
+  });
+
   it('digitar / abre o menu com os comandos disponíveis, e o filtro funciona', async () => {
     const campo = montar();
     digitar(campo, '/');

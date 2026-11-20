@@ -88,6 +88,7 @@ export function AvisoDePrPronta({ projectId, sessionId, podeDecidir }: Props) {
                   title: unica.pr.title,
                 }}
                 podeDecidir={podeDecidir}
+                semNota
               />
             ) : (
               <Button variant="secondary" onClick={() => abrirFilaDePendencias('prontas')}>

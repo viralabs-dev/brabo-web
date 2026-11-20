@@ -1093,6 +1093,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/models.ts:363` (`providerAtivo`), `apps/web/src/lib/models.ts:371` (`catalogoDoProvider`), `apps/web/src/components/ModelCatalogSection.tsx:132` (`useMemo`), `apps/web/src/routes/ProvidersPage.tsx:33` (`deFora`)
 - **Teste:** `apps/web/src/routes/ProvidersPage.test.tsx:102` (só os com chave do titular, e a falha que mostra todos), `apps/web/src/components/ModelCatalogSection.test.tsx:399` (aba "sem chave" com modelo ativo; seleção entre abas; busca nomeia a aba que casa), `apps/web/src/lib/models.test.ts:126` (`providerAtivo`)
 - **Origem:** AT-607 (EP-026), tela; a rota é a RN-926.
+- **Revisão (AT-976, [RN-1482](parte-07.md#rn-1482)):** a aba "sem chave" com modelo ativo deixou de existir; todo provider sem chave sai das abas e entra na linha "de fora".
 
 <a id="rn-939"></a>
 

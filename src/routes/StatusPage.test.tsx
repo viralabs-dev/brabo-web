@@ -79,8 +79,11 @@ describe('StatusPage — data e rótulos na língua de quem lê (AT-327)', () =>
     expect(screen.getByText('Última verificação')).toBeInTheDocument();
     expect(screen.getByText('no ar')).toBeInTheDocument();
     const voltar = screen.getByRole('button', { name: 'Voltar' });
-    expect(voltar.textContent).toBe('');
+    // AT-976 (RN-1483): ícone E texto, no topo, antes do título.
+    expect(voltar.textContent).toBe('Voltar');
     expect(voltar.querySelector('svg')?.getAttribute('aria-hidden')).toBe('true');
+    const titulo = screen.getByRole('heading', { level: 1 });
+    expect(voltar.compareDocumentPosition(titulo) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it('caso de falha: instante inválido ou ausente diz "não informado", nunca "Invalid Date"', async () => {

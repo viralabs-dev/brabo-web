@@ -786,6 +786,8 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
 
 ### RN-646 — Bloqueio e controle inerte dizem o motivo de QUEM está na tela: a aba PRs fala da lista de PRs, e Parar/Remover sem container dizem que não há container {#rn-646}
 
+> Revisão (AT-976, [RN-1481](parte-07.md#rn-1481)): em Containers, Parar e Remover moram no menu "…" da linha; o motivo continua no "?".
+
 Duas telas mostravam um estado certo com o texto de outro lugar (AT-323,
 AT-324 — achados P1 e K1/K2 do levantamento visual da Rodada 29).
 

@@ -97,7 +97,11 @@
       "registrado_rodando_observado_parado": "Registrado rodando, observado parado."
     },
     "ajuda": "Ações do container",
-    "ajudaIndisponiveis": "Por que as ações estão indisponíveis"
+    "ajudaIndisponiveis": "Por que as ações estão indisponíveis",
+    "open": "Abrir",
+    "decideImage": "Decidir imagem",
+    "menu": "Mais ações de {{projeto}}",
+    "detalhes": "Ver detalhes"
   },
   "detail": {
     "title": "Container",

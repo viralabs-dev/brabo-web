@@ -25,7 +25,16 @@ import { Ajuda } from './ui/Ajuda';
 import { Button } from './ui/Button';
 import { useToast } from './ui/ToastProvider.helpers';
 import styles from '../routes/ContainersPage.module.css';
-import { Square, Trash2, Play } from 'lucide-react';
+import { Link } from '@tanstack/react-router';
+import { Ellipsis, Info, Square, Trash2 } from 'lucide-react';
+import { buttonVariants } from './shadcn/button-variants';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from './shadcn/dropdown-menu';
 
 /** Roda dentro de CADA linha (não da página): a sessão mais recente é POR
  *  PROJETO, e um hook num `.map()` da página violaria a ordem de hooks —
@@ -276,38 +285,86 @@ export function AcoesDoContainer({
     motivo,
   ].filter((texto): texto is string => texto !== null);
 
+  // AT-976 (RN-1481): UMA ação por linha, com texto e secundária, escolhida
+  // pelo estado: de pé = Abrir, sem imagem = Decidir imagem, o resto = Subir.
+  // Parar, logs e remover moram no menu "…".
+  const principal: 'abrir' | 'decidir' | 'subir' = subida.pode
+    ? 'subir'
+    : subida.motivo === 'ja_esta_de_pe'
+      ? 'abrir'
+      : subida.motivo === 'sem_imagem_decidida'
+        ? 'decidir'
+        : 'subir';
+  const botaoDaLinha = 'secondary' as const;
+
   return (
     <div className={styles.blocoDeAcoes}>
       <div className={styles.acoes}>
-        <Button
-          variant="secondary"
-          legenda={t('actions.stop')}
-          disabled={!podeParar}
-          loading={emAndamento === 'parar'}
-          onClick={() => void parar()}
-        >
-          <Square aria-hidden="true" />
-        </Button>
-        <Button
-          variant="danger"
-          legenda={t('actions.remove')}
-          disabled={!podeRemover}
-          loading={emAndamento === 'remover'}
-          onClick={() => void remover()}
-        >
-          <Trash2 aria-hidden="true" />
-        </Button>
-        <Button
-          variant="primary"
-          legenda={item.registrado ? t('actions.startAgain') : t('actions.start')}
-          disabled={!subida.pode}
-          loading={emAndamento === 'subir'}
-          onClick={() => {
-            if (subida.pode) void subir(subida.acao);
-          }}
-        >
-          <Play aria-hidden="true" />
-        </Button>
+        {principal === 'abrir' && (
+          <Link
+            to="/containers/$projectId"
+            params={{ projectId: item.projectId }}
+            className={buttonVariants({ variant: botaoDaLinha })}
+          >
+            {t('actions.open')}
+          </Link>
+        )}
+        {principal === 'decidir' && (
+          <Link
+            to="/projects/$projectId"
+            params={{ projectId: item.projectId }}
+            className={buttonVariants({ variant: botaoDaLinha })}
+          >
+            {t('actions.decideImage')}
+          </Link>
+        )}
+        {principal === 'subir' && (
+          <Button
+            variant={botaoDaLinha}
+            disabled={!subida.pode}
+            loading={emAndamento === 'subir'}
+            onClick={() => {
+              if (subida.pode) void subir(subida.acao);
+            }}
+          >
+            {item.registrado ? t('actions.startAgain') : t('actions.start')}
+          </Button>
+        )}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="sm"
+                legenda={t('actions.menu', { projeto: item.projectName })}
+                disabled={emAndamento !== null}
+              />
+            }
+          >
+            <Ellipsis aria-hidden="true" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem disabled={!podeParar} onClick={() => void parar()}>
+              <Square aria-hidden="true" />
+              {t('actions.stop')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              render={<Link to="/containers/$projectId" params={{ projectId: item.projectId }} />}
+            >
+              <Info aria-hidden="true" />
+              {t('actions.detalhes')}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={!podeRemover}
+              onClick={() => void remover()}
+            >
+              <Trash2 aria-hidden="true" />
+              {t('actions.remove')}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
         {motivosDeInercia.length > 0 && (
           <Ajuda assunto={t('actions.ajudaIndisponiveis')}>
             {motivosDeInercia.map((texto) => (

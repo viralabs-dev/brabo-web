@@ -98,7 +98,11 @@
       "registrado_rodando_observado_parado": "По записи работает, фактически остановлен."
     },
     "ajuda": "Действия с контейнером",
-    "ajudaIndisponiveis": "Почему действия недоступны"
+    "ajudaIndisponiveis": "Почему действия недоступны",
+    "open": "Открыть",
+    "decideImage": "Выбрать образ",
+    "menu": "Ещё действия: {{projeto}}",
+    "detalhes": "Подробнее"
   },
   "detail": {
     "title": "Контейнер",

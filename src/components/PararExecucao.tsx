@@ -15,6 +15,8 @@ export interface PararExecucaoProps {
   sessionId: string;
   /** Encerrar sessão pede `developer` no endpoint (RN-650). */
   podeParar: boolean;
+  /** AT-970: só o botão (e a confirmação), para a linha do topo da aba; o texto explicativo sai. */
+  compacto?: boolean;
 }
 
 /**
@@ -24,7 +26,7 @@ export interface PararExecucaoProps {
  * gates, bloqueia a task em curso com o trabalho preservado e não grava o
  * turno. Nenhum estado novo. A confirmação diz o que FICA antes do clique.
  */
-export function PararExecucao({ projectId, sessionId, podeParar }: PararExecucaoProps) {
+export function PararExecucao({ projectId, sessionId, podeParar, compacto }: PararExecucaoProps) {
   const { t } = useTranslation('executors');
   const queryClient = useQueryClient();
   const [confirmando, setConfirmando] = useState(false);
@@ -54,6 +56,55 @@ export function PararExecucao({ projectId, sessionId, podeParar }: PararExecucao
     }
   }
 
+  const confirmacao = confirmando ? (
+    <Modal title={t('parar.confirmarTitulo')} onClose={() => setConfirmando(false)}>
+      <ItemGroup data-testid="parar-execucao-o-que-fica">
+        {afetadas === null ? (
+          <Item size="xs" role="listitem" aria-busy="true">
+            {backlog.isError ? t('parar.tarefasNaoLidas') : t('parar.lendoTarefas')}
+          </Item>
+        ) : afetadas.emCurso + afetadas.emRevisao === 0 ? (
+          <Item size="xs" role="listitem">{t('parar.nenhumaTarefa')}</Item>
+        ) : (
+          <>
+            {afetadas.emCurso > 0 && (
+              <Item size="xs" role="listitem">{t('parar.ficaTarefas', { count: afetadas.emCurso })}</Item>
+            )}
+            {afetadas.emRevisao > 0 && (
+              <Item size="xs" role="listitem">{t('parar.ficaRevisao', { count: afetadas.emRevisao })}</Item>
+            )}
+          </>
+        )}
+        <Item size="xs" role="listitem">{t('parar.ficaPrs')}</Item>
+        <Item size="xs" role="listitem">{t('parar.ficaAprovacoes')}</Item>
+        <Item size="xs" role="listitem">{t('parar.retomar')}</Item>
+      </ItemGroup>
+      {erro && <p role="alert">{erro}</p>}
+      <Button variant="danger" onClick={() => void parar()} disabled={enviando}>
+        <Square aria-hidden="true" />
+        {t('parar.confirmar')}
+      </Button>
+    </Modal>
+  ) : null;
+
+  if (compacto) {
+    return (
+      <>
+        <Button
+          variant="danger"
+          size="sm"
+          onClick={() => setConfirmando(true)}
+          disabled={!podeParar}
+          title={podeParar ? t('parar.descricao') : t('parar.semPapel')}
+          data-testid="parar-execucao"
+        >
+          <Square size={14} aria-hidden="true" />
+          {t('parar.botao')}
+        </Button>
+        {confirmacao}
+      </>
+    );
+  }
   return (
     <Item variant="outline" style={{ margin: "12px 0" }} data-testid="parar-execucao">
       <ItemContent>
@@ -66,36 +117,7 @@ export function PararExecucao({ projectId, sessionId, podeParar }: PararExecucao
           {t('parar.botao')}
         </Button>
       </ItemActions>
-      {confirmando && (
-        <Modal title={t('parar.confirmarTitulo')} onClose={() => setConfirmando(false)}>
-          <ItemGroup data-testid="parar-execucao-o-que-fica">
-            {afetadas === null ? (
-              <Item size="xs" role="listitem" aria-busy="true">
-                {backlog.isError ? t('parar.tarefasNaoLidas') : t('parar.lendoTarefas')}
-              </Item>
-            ) : afetadas.emCurso + afetadas.emRevisao === 0 ? (
-              <Item size="xs" role="listitem">{t('parar.nenhumaTarefa')}</Item>
-            ) : (
-              <>
-                {afetadas.emCurso > 0 && (
-                  <Item size="xs" role="listitem">{t('parar.ficaTarefas', { count: afetadas.emCurso })}</Item>
-                )}
-                {afetadas.emRevisao > 0 && (
-                  <Item size="xs" role="listitem">{t('parar.ficaRevisao', { count: afetadas.emRevisao })}</Item>
-                )}
-              </>
-            )}
-            <Item size="xs" role="listitem">{t('parar.ficaPrs')}</Item>
-            <Item size="xs" role="listitem">{t('parar.ficaAprovacoes')}</Item>
-            <Item size="xs" role="listitem">{t('parar.retomar')}</Item>
-          </ItemGroup>
-          {erro && <p role="alert">{erro}</p>}
-          <Button variant="danger" onClick={() => void parar()} disabled={enviando}>
-            <Square aria-hidden="true" />
-            {t('parar.confirmar')}
-          </Button>
-        </Modal>
-      )}
+      {confirmacao}
     </Item>
   );
 }

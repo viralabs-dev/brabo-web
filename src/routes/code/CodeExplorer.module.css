@@ -38,7 +38,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px 4px var(--indent, 8px);
+  /* AT-971 (RN-1472): linha de 28 px, ícone e nome na mesma linha; o Disclosure
+     põe `py-2` no cabeçalho, então a altura é fixa aqui e não pelo padding. */
+  height: 28px;
+  min-height: 0;
+  padding: 0 10px 0 var(--indent, 8px);
   background: transparent;
   border: none;
   border-left: 2px solid transparent;
@@ -47,6 +51,18 @@
   font-size: var(--fs-body);
   text-align: left;
   cursor: pointer;
+}
+
+.tituloPasta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tituloPasta svg,
+.linha svg {
+  flex-shrink: 0;
 }
 
 .linha:hover {

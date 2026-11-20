@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
 import userEvent from '@testing-library/user-event';
 import { CodeExplorer } from './CodeExplorer';
 // Instância REAL do app — `CodeExplorer` não tem `I18nextProvider` próprio
@@ -143,5 +144,42 @@ describe('CodeExplorer — os três estados (RN-088)', () => {
     getCodeTree.mockResolvedValue({ ref: 'dev', path: '', entries: [], truncated: false });
     montar();
     expect(await screen.findByText('Repositório vazio nesta ref.')).toBeInTheDocument();
+  });
+});
+
+describe('CodeExplorer — a linha é uma só: ícone e nome juntos, 28 px (AT-971, RN-1472)', () => {
+  it('na pasta, ícone e nome moram no mesmo contêiner de linha; no arquivo também', async () => {
+    getCodeTree.mockResolvedValue(RAIZ);
+    montar();
+    await screen.findByText('apps');
+    for (const nome of ['apps', 'README.md']) {
+      const rotulo = screen.getByText(nome);
+      const linha = rotulo.parentElement!;
+      expect(linha.querySelector('svg')).not.toBeNull();
+      // O ícone é irmão do nome: o título da pasta não deixa o ícone num bloco acima.
+      expect(rotulo.previousElementSibling?.tagName.toLowerCase()).toBe('svg');
+    }
+    // A pasta não deixa o ícone num bloco acima do nome (o `span` do Disclosure é bloco).
+    expect(screen.getByText('apps').parentElement!.className).toMatch(/tituloPasta/);
+  });
+
+  it('o CSS fixa a linha em 28 px e o recuo por nível em 18 px', () => {
+    const css = readFileSync(`${process.cwd()}/src/routes/code/CodeExplorer.module.css`, 'utf8');
+    expect(css).toMatch(/\.linha \{[^}]*height: 28px/);
+  });
+
+  it('o recuo de um filho é 18 px a mais que o do pai', async () => {
+    getCodeTree.mockImplementation((_p: string, opts: { path?: string }) =>
+      Promise.resolve(opts.path === 'apps' ? FILHOS_APPS : RAIZ),
+    );
+    const user = userEvent.setup();
+    montar();
+    await user.click(await screen.findByText('apps'));
+    await screen.findByText('web');
+    const recuo = (nome: string) =>
+      Number(
+        screen.getByText(nome).closest('li')!.style.getPropertyValue('--indent').replace('px', ''),
+      );
+    expect(recuo('web') - recuo('apps')).toBe(18);
   });
 });

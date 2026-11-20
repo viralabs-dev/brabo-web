@@ -8,6 +8,7 @@ import type { TFunction } from 'i18next';
 import { getCodeBlame, getCodeFile, mensagemDaApi } from '../../lib/api-client';
 import type { CodeBlameLine } from '../../lib/api-types';
 import { Skeleton } from '../../components/ui/Skeleton';
+import { Empty, EmptyTitle } from '@/components/shadcn/empty';
 import { FileIcon, UserIcon, XIcon } from '../../components/ui/icons';
 import { carregarRealce } from '../../lib/realce-shiki';
 import { highlightFile, linguagemPorCaminho, type TokenKind } from './highlight';
@@ -262,7 +263,9 @@ export function CodeEditor({
           data-testid="editor-scroll"
         >
           {!activePath && (
-            <div className={styles.vazio}>{t('editor.emptyState')}</div>
+            <Empty className={styles.vazio}>
+              <EmptyTitle>{t('editor.emptyState')}</EmptyTitle>
+            </Empty>
           )}
 
           {activePath && fileQuery.isLoading && (

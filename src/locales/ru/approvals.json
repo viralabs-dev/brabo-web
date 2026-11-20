@@ -406,7 +406,7 @@
     "gatePendenteBloqueada": "Gate {{gate}} для этого PR ещё не пройден, а его задача заблокирована: merge недоступен, пока её не разблокируют.",
     "mergeIndisponivelBloqueada": "Merge недоступен: задача этого PR заблокирована — {{reason}}",
     "mergeIndisponivelSemSessao": "Merge недоступен: в проекте нет сессии, чтобы предложить действие.",
-    "gatePendente": "Gate {{gate}} для этого PR ещё не пройден. Merge по-прежнему доступен — решать вам.",
+    "gatePendente": "Gate {{gate}} ещё не пройден: Merge появится, когда D, Q и S станут зелёными.",
     "mergeRecusado": "Последняя попытка merge была отклонена: {{reason}}",
     "mergeRecusadoArquivos_one": "Файлы в конфликте: {{files}}",
     "mergeRecusadoArquivos_few": "Файлы в конфликте: {{files}}",
@@ -417,10 +417,16 @@
       "verAprovacao": "Открыть согласование",
       "ativarExecucao": "Включить выполнение"
     },
+    "pedirParecer": "Запросить заключение снова",
+    "portoes": {
+      "rotulo": "Гейты PR",
+      "nome": { "dev": "Dev", "qa": "QA", "secops": "SecOps", "user": "Вы" },
+      "estado": { "done": "пройден", "current": "в процессе", "blocked": "заблокирован", "pending": "ожидает" }
+    },
     "fluxo": {
-      "titulo": "Как PR проходит здесь:",
-      "passos": "открыт агентом, QA, SecOps, ждёт вас, слит.",
-      "mergeManual": "Слияние в защищённую ветку всегда ручное."
+      "titulo": "Гейты:",
+      "passos": "D Dev · Q QA · S SecOps · V вы.",
+      "mergeManual": "Слияние в защищённую ветку всегда ручное; кнопка появляется, только когда три гейта зелёные."
     }
   },
   "politica": {

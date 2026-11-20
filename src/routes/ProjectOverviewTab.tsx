@@ -450,7 +450,7 @@ function ArchitectureSummary({
       <Item variant="outline" size="sm">
        <ItemMedia variant="icon"><Info aria-hidden="true" /></ItemMedia>
        <ItemContent>
-        <ItemDescription>
+        <ItemDescription className="line-clamp-none">
         {moduleCount > 0
           ? t('architectureSummary.summary', {
               count: moduleCount,
@@ -458,7 +458,9 @@ function ArchitectureSummary({
                 ? t('architectureSummary.statusGenerated')
                 : t('architectureSummary.statusPending'),
             })
-          : t('architectureSummary.emptyState')}{' '}
+          : t('architectureSummary.emptyState')}
+        </ItemDescription>
+        {/* AT-1007: o link fica fora da descrição (que corta em 2 linhas) e sempre à vista. */}
         <Link
           to="/projects/$projectId"
           params={{ projectId }}
@@ -467,7 +469,6 @@ function ArchitectureSummary({
         >
           {t('architectureSummary.link')}
         </Link>
-        </ItemDescription>
        </ItemContent>
       </Item>
     </div>

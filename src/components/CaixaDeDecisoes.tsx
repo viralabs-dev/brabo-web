@@ -1,16 +1,20 @@
 import { useState } from 'react';
+import { useQueries } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Link } from '@tanstack/react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { approveAction, denyAction } from '../lib/api-client';
+import { approveAction, denyAction, listSessions } from '../lib/api-client';
 import type { DecisionInbox, ProposedAction } from '../lib/api-types';
 import { fraseDaAcao } from '../lib/aprovacoes';
 import { useProjects, usePsychologistStatus } from '../lib/hooks';
-import { FILAS_DA_CAIXA, totalDaFila, type ChaveDaCaixa } from '../lib/caixa-de-decisoes';
+import { FILAS_DA_CAIXA, totalDaFila, cortar, diasDesde, tituloDoTerminal, DIAS_DE_APROVACAO_VELHA, type ChaveDaCaixa } from '../lib/caixa-de-decisoes';
 import { gateEsperandoClique } from '../lib/precisa-de-voce';
 import { formatRelativeTime } from '../lib/time';
 import { AvatarDoAgente } from './ui/AvatarDoAgente';
 import { Button } from './ui/Button';
+import { Modal } from './ui/Modal';
+import { Textarea } from './ui/Textarea';
+import { Checkbox } from './shadcn/checkbox';
 import { EmptyState } from './ui/EmptyState';
 import styles from './CaixaDeDecisoes.module.css';
 
@@ -45,6 +49,29 @@ export function CaixaDeDecisoes({ workspaceId, inbox, modo }: { workspaceId: str
 
   const visiveis = aberto ? [aberto] : FILAS_DA_CAIXA;
 
+  // As aprovações, as mais antigas primeiro (AT-968, RN-1464).
+  const aprovacoes = [...inbox.filas.aprovacoes.itens].sort((a, b) => a.acao.createdAt.localeCompare(b.acao.createdAt));
+  const projetosDasAprovacoes = [...new Set(aprovacoes.map((i) => i.projectId))];
+  // Sessão encerrada vem da API; sem a leitura, a tela não afirma nada (EP-020).
+  const sessoes = useQueries({
+    queries: projetosDasAprovacoes.map((id) => ({ queryKey: ['sessions', id], queryFn: () => listSessions(id), enabled: modo === 'pending' })),
+  });
+  const encerramento = (item: ItemDeAcao): number | null => {
+    const lista = sessoes[projetosDasAprovacoes.indexOf(item.projectId)]?.data;
+    const sessao = lista?.find((s) => s.id === item.acao.sessionId);
+    return sessao && (sessao.status === 'closed' || sessao.status === 'closed_abnormally') ? diasDesde(sessao.closedAt ?? sessao.updatedAt) : null;
+  };
+  const aviso = (dias: number) => (dias === 0 ? t('sessaoEncerradaHoje') : t('sessaoEncerrada', { dias }));
+  const decidivel = (item: ItemDeAcao) => modo === 'pending' && item.acao.actionType !== 'propose_execution_plan';
+  const velha = (item: ItemDeAcao) => diasDesde(item.acao.createdAt) > DIAS_DE_APROVACAO_VELHA;
+  const [marcadas, setMarcadas] = useState<Set<string>>(new Set());
+  const [lote, setLote] = useState(false);
+  const marcaveis = aprovacoes.filter(decidivel);
+  const antigas = marcaveis.filter(velha);
+  const esperamHa = modo === 'pending' ? aprovacoes.filter(velha).length : 0;
+  const alternar = (id: string) => setMarcadas((m) => { const n = new Set(m); if (n.has(id)) n.delete(id); else n.add(id); return n; });
+  const selecionadas = marcaveis.filter((i) => marcadas.has(i.acao.id));
+
   return (
     <div className={styles.caixa}>
       <div className={styles.cartoes}>
@@ -61,7 +88,11 @@ export function CaixaDeDecisoes({ workspaceId, inbox, modo }: { workspaceId: str
             >
               <span className={styles.cartaoRotulo}>{t(`filas.${k}`)}</span>
               <span className={styles.cartaoNumero}>{totalDaFila(inbox.filas[k])}</span>
-              <span className={styles.cartaoLegenda}>{t(`legenda.${k}`)}</span>
+              <span className={styles.cartaoLegenda}>
+                {k === 'aprovacoes' && esperamHa > 0
+                  ? inbox.filas.aprovacoes.truncada ? t('esperamHaMais', { count: esperamHa }) : t('esperamHa', { count: esperamHa })
+                  : t(`legenda.${k}`)}
+              </span>
             </button>
           );
         })}
@@ -73,8 +104,26 @@ export function CaixaDeDecisoes({ workspaceId, inbox, modo }: { workspaceId: str
           <section key={k} className={styles.secao} aria-label={t(`filas.${k}`)}>
             <h2 className={styles.secaoTitulo}>
               {t(`filas.${k}`)}
-              <span className={styles.secaoTotal}>{t('projetos', { count: new Set(fila.itens.map((i) => i.projectId)).size })}</span>
+              <span className={styles.secaoTotal}>
+                {k === 'aprovacoes' && <><span>{t('maisAntigasPrimeiro')}</span> · </>}
+                <span>{t('projetos', { count: new Set(fila.itens.map((i) => i.projectId)).size })}</span>
+              </span>
             </h2>
+            {k === 'aprovacoes' && modo === 'pending' && marcaveis.length > 0 && (
+              <div className={styles.lote}>
+                {selecionadas.length > 0 && (
+                  <>
+                    <span className={styles.nota} role="status">{t('selecionadas', { count: selecionadas.length })}</span>
+                    <Button size="sm" variant="danger" onClick={() => setLote(true)}>{t('negarSelecionadas')}</Button>
+                  </>
+                )}
+                {antigas.length > 0 && (
+                  <Button size="sm" variant="secondary" onClick={() => setMarcadas(new Set(antigas.map((i) => i.acao.id)))}>
+                    {t('selecionarAntigas')}
+                  </Button>
+                )}
+              </div>
+            )}
             {fila.truncada && (
               <p className={styles.nota}>{t('truncada', { mostrados: fila.itens.length, total: fila.total })}</p>
             )}
@@ -83,49 +132,39 @@ export function CaixaDeDecisoes({ workspaceId, inbox, modo }: { workspaceId: str
                 {textoDoVazio(k, modo, psicologoPausado, t)}
               </EmptyState>
             )}
-            {(k === 'aprovacoes' || k === 'prs') &&
-              (inbox.filas[k].itens as ItemDeAcao[]).map((item) => {
-                const acao = item.acao as unknown as ProposedAction; // o DTO gerado afrouxa `decidedBy`
-                const gate = gateEsperandoClique(acao);
-                const frase = fraseDaAcao(acao.actionType, acao.payload) ?? acao.actionType;
-                const podeDecidir = modo === 'pending' && acao.actionType !== 'propose_execution_plan';
-                const ator = acao.actor.id;
+            {k === 'aprovacoes' &&
+              projetosDasAprovacoes.map((pid) => {
+                const itens = aprovacoes.filter((i) => i.projectId === pid);
+                const dias = itens.map(encerramento);
+                // O aviso sobe ao cabeçalho só quando TODAS as sessões do grupo estão encerradas; senão cada linha diz a sua.
+                const todasEncerradas = modo === 'pending' && dias.every((d) => d !== null);
+                const recente = todasEncerradas ? Math.min(...(dias as number[])) : null;
                 return (
-                  <div key={item.acao.id} className={styles.linhaDeAcao}>
-                    <AvatarDoAgente id={ator} />
-                    <span className={styles.linhaTexto}>
-                      <span className={styles.frase}>
-                        {frase} <span className={styles.chip}>{acao.actionType}</span>
-                      </span>
-                      <span className={styles.nota}>
-                        <span className={styles.projeto}>{item.projectName}</span> · {ator} · {formatRelativeTime(acao.decidedAt ?? acao.createdAt)}
-                      </span>
-                      {modo === 'pending' && gate && (
-                        <span className={styles.nota} role="status">
-                          {t('gateParado', { gate: gate === 'qa' ? 'QA' : 'SecOps' })}
-                        </span>
-                      )}
-                      {modo === 'pending' && !podeDecidir && <span className={styles.nota}>{t('decidirNoCard')}</span>}
-                    </span>
-                    <span className={styles.acoes}>
-                      {podeDecidir && (
-                        <>
-                          <Button size="sm" variant="success" onClick={() => decidir(item, () => approveAction(item.projectId, item.acao.sessionId, item.acao.id))}>
-                            {t('aprovar')}
-                          </Button>
-                          <Button size="sm" variant="danger" onClick={() => decidir(item, () => denyAction(item.projectId, item.acao.sessionId, item.acao.id))}>
-                            {t('negar')}
-                          </Button>
-                        </>
-                      )}
-                      {modo === 'decided' && <span className={styles.nota}>{acao.status}</span>}
-                      <Link to="/projects/$projectId" params={{ projectId: item.projectId }} search={{ tab: k === 'prs' ? 'prs' : 'approvals' }} className={styles.nota}>
-                        {t('abrir')}
-                      </Link>
-                    </span>
+                  <div key={pid} className={styles.grupo} role="group" aria-label={itens[0].projectName}>
+                    <div className={styles.grupoCabecalho}>
+                      <span>{t('grupo', { projeto: itens[0].projectName, count: itens.length })}</span>
+                      {recente !== null && <span>{aviso(recente)}</span>}
+                    </div>
+                    {itens.map((item) => (
+                      <LinhaDeAprovacao
+                        key={item.acao.id}
+                        item={item}
+                        modo={modo}
+                        encerrada={encerramento(item) !== null}
+                        aviso={encerramento(item) !== null && !todasEncerradas ? aviso(encerramento(item)!) : undefined}
+                        marcada={marcadas.has(item.acao.id)}
+                        onMarcar={decidivel(item) ? () => alternar(item.acao.id) : undefined}
+                        onDecidir={decidir}
+                        agrupada
+                      />
+                    ))}
                   </div>
                 );
               })}
+            {k === 'prs' &&
+              (inbox.filas.prs.itens as ItemDeAcao[]).map((item) => (
+                <LinhaDeAprovacao key={item.acao.id} item={item} modo={modo} encerrada={false} marcada={false} onDecidir={decidir} />
+              ))}
             {k === 'promocoes' &&
               inbox.filas.promocoes.itens.map((i) => (
                 <Linha key={i.storyId} projeto={i.projectName} projectId={i.projectId} titulo={i.titulo} tempo={formatRelativeTime(i.decididaEm ?? i.desde)} tab="backlog" />
@@ -157,7 +196,114 @@ export function CaixaDeDecisoes({ workspaceId, inbox, modo }: { workspaceId: str
           </section>
         );
       })}
+      {lote && (
+        <NegarEmLote
+          itens={selecionadas}
+          onClose={() => setLote(false)}
+          onFeito={(ids) => {
+            setMarcadas((m) => { const n = new Set(m); ids.forEach((id) => n.delete(id)); return n; });
+            void queryClient.invalidateQueries({ queryKey: ['decision-inbox', workspaceId] });
+            selecionadas.forEach((i) => void queryClient.invalidateQueries({ queryKey: ['project-pending-actions', i.projectId] }));
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+function LinhaDeAprovacao({ item, modo, encerrada, aviso, marcada, onMarcar, onDecidir, agrupada }: {
+  item: ItemDeAcao; modo: Modo; encerrada: boolean; aviso?: string; marcada: boolean; onMarcar?: () => void;
+  onDecidir: (item: ItemDeAcao, fazer: () => Promise<unknown>) => Promise<void>; agrupada?: boolean;
+}) {
+  const { t } = useTranslation('decisions');
+  const [aberta, setAberta] = useState(false);
+  const acao = item.acao as unknown as ProposedAction; // o DTO gerado afrouxa `decidedBy`
+  const gate = gateEsperandoClique(acao);
+  const frase = fraseDaAcao(acao.actionType, acao.payload) ?? acao.actionType;
+  const titulo = tituloDoTerminal(acao.actionType, acao.payload, t('terminal')) ?? cortar(frase);
+  const comando = acao.actionType === 'terminal' && typeof acao.payload.command === 'string' ? acao.payload.command : frase;
+  const podeDecidir = modo === 'pending' && acao.actionType !== 'propose_execution_plan';
+  const ator = acao.actor.id;
+  const quando = acao.decidedAt ?? acao.createdAt;
+  return (
+    <div className={styles.linhaDeAcao} data-agrupada={agrupada || undefined}>
+      {onMarcar && <Checkbox checked={marcada} onCheckedChange={onMarcar} aria-label={t('selecionar', { titulo })} />}
+      <AvatarDoAgente id={ator} />
+      <span className={styles.linhaTexto}>
+        <span className={styles.frase}>
+          {titulo} <span className={styles.chip}>{acao.actionType}</span>
+        </span>
+        {comando !== titulo && (
+          <button type="button" className={styles.comando} data-aberto={aberta || undefined} aria-expanded={aberta} title={t(aberta ? 'recolherComando' : 'verComando')} onClick={() => setAberta(!aberta)}>
+            {comando}
+          </button>
+        )}
+        <span className={styles.nota}>
+          {!agrupada && <><span className={styles.projeto}>{item.projectName}</span> · </>}{ator}
+        </span>
+        {modo === 'pending' && gate && (
+          <span className={styles.nota} role="status">
+            {t('gateParado', { gate: gate === 'qa' ? 'QA' : 'SecOps' })}
+          </span>
+        )}
+        {aviso && <span className={styles.nota}>{aviso}</span>}
+        {modo === 'pending' && !podeDecidir && <span className={styles.nota}>{t('decidirNoCard')}</span>}
+      </span>
+      <span className={styles.acoes}>
+        <span className={styles.idade} data-velha={(diasDesde(acao.createdAt) > DIAS_DE_APROVACAO_VELHA) || undefined}>{formatRelativeTime(quando)}</span>
+        {podeDecidir && (
+          <>
+            {!encerrada && (
+              <Button size="sm" variant="success" onClick={() => onDecidir(item, () => approveAction(item.projectId, item.acao.sessionId, item.acao.id))}>
+                {t('aprovar')}
+              </Button>
+            )}
+            <Button size="sm" variant="danger" onClick={() => onDecidir(item, () => denyAction(item.projectId, item.acao.sessionId, item.acao.id))}>
+              {t('negar')}
+            </Button>
+          </>
+        )}
+        {modo === 'decided' && <span className={styles.nota}>{acao.status}</span>}
+        <Link to="/projects/$projectId" params={{ projectId: item.projectId }} search={{ tab: acao.actionType === 'git_merge' ? 'prs' : 'approvals' }} className={styles.nota}>
+          {t('abrir')}
+        </Link>
+      </span>
+    </div>
+  );
+}
+
+/** Negar em lote: um motivo único, e a negação existente chamada uma vez por item (AT-968, RN-1465). */
+function NegarEmLote({ itens, onClose, onFeito }: { itens: ItemDeAcao[]; onClose: () => void; onFeito: (ids: string[]) => void }) {
+  const { t } = useTranslation('decisions');
+  const [motivo, setMotivo] = useState('');
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+  const titulos = itens.map((i) => {
+    const a = i.acao as unknown as ProposedAction;
+    return tituloDoTerminal(a.actionType, a.payload, t('terminal')) ?? cortar(fraseDaAcao(a.actionType, a.payload) ?? a.actionType);
+  });
+  async function confirmar() {
+    if (!motivo.trim()) return setErro(t('lote.motivoVazio'));
+    setEnviando(true);
+    setErro(null);
+    const r = await Promise.allSettled(itens.map((i) => denyAction(i.projectId, i.acao.sessionId, i.acao.id, motivo.trim())));
+    onFeito(itens.filter((_, n) => r[n].status === 'fulfilled').map((i) => i.acao.id));
+    const falhas = r.filter((x) => x.status === 'rejected').length;
+    setEnviando(false);
+    if (falhas === 0) onClose();
+    else setErro(t('lote.falhou', { count: falhas }));
+  }
+  return (
+    <Modal title={t('lote.titulo', { count: itens.length })} onClose={onClose}>
+      <ul className={styles.listaDoLote}>
+        {titulos.map((x, n) => <li key={itens[n].acao.id}>{x}</li>)}
+      </ul>
+      <Textarea label={t('lote.motivo')} value={motivo} onChange={(e) => setMotivo(e.target.value)} error={erro} />
+      <div className={styles.acoes}>
+        <Button size="sm" variant="ghost" onClick={onClose}>{t('lote.cancelar')}</Button>
+        <Button size="sm" variant="danger" disabled={enviando} onClick={confirmar}>{t('lote.confirmar', { count: itens.length })}</Button>
+      </div>
+    </Modal>
   );
 }
 

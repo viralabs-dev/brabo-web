@@ -257,7 +257,6 @@
       "teto": "Лимит ступени {{n}} (US$)",
       "remover": "Удалить ступень {{n}}",
       "adicionar": "Добавить ступень",
-      "alteracoes_zero": "Нет изменений",
       "alteracoes_one": "{{count}} несохранённое изменение",
       "alteracoes_few": "{{count}} несохранённых изменения",
       "alteracoes_many": "{{count}} несохранённых изменений",

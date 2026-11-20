@@ -168,6 +168,7 @@
       "mostrarOutros_zero": "Mostrar os outros {{count}} agentes",
       "mostrarOutros_other": "Mostrar os outros {{count}} agentes"
     },
+    "tituloDaTabela_zero": "Nenhum agente · {{valor}} estimado por mês",
     "tituloDaTabela_one": "{{count}} agente · {{valor}} estimado por mês",
     "tituloDaTabela_other": "{{count}} agentes · {{valor}} estimado por mês",
     "tituloDaTabelaBase": "com base no histórico de 30 dias",

@@ -933,7 +933,7 @@ async function sincronizarCatalogo() {
             .
           </AlertTexto>
           <Popover>
-            <PopoverTrigger render={<BotaoLink className="ml-auto shrink-0" />}>
+            <PopoverTrigger render={<BotaoLink className={styles.acaoDaFaixa} />}>
               {t('modelsSection.oQueIssoMuda')}
             </PopoverTrigger>
             <PopoverContent className={styles.cadeiaNoPopover} align="end">

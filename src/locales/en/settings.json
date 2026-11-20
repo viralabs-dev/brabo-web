@@ -239,7 +239,6 @@
       "teto": "Cap of step {{n}} (US$)",
       "remover": "Remove step {{n}}",
       "adicionar": "Add step",
-      "alteracoes_zero": "No changes",
       "alteracoes_one": "{{count}} unsaved change",
       "alteracoes_other": "{{count}} unsaved changes"
     }

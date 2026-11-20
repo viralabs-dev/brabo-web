@@ -88,7 +88,8 @@
     },
     "overLimit": "{{pct}}% of the monthly limit",
     "savingsPct": "{{pct}}% of tokens saved this cycle",
-    "noBudgetCta": "Set budget",
+    "semTeto": "no monthly cap",
+    "definir": "set",
     "compactFooter": {
       "spent": "spent {{value}}",
       "balance": "balance {{value}}"

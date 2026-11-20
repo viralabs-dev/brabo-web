@@ -106,8 +106,9 @@ describe.each([
     expect(contraste(tema.textSecondary, tema.surface0)).toBeGreaterThanOrEqual(AA_TEXTO);
   });
 
-  it('TokenMeter: CTA "Definir orçamento" (--text-secondary) sobre --surface-0', () => {
+  it('TokenMeter: "sem teto do mês · definir" (--text-secondary e o link em --text-primary) sobre --surface-0', () => {
     expect(contraste(tema.textSecondary, tema.surface0)).toBeGreaterThanOrEqual(AA_TEXTO);
+    expect(contraste(tema.textPrimary, tema.surface0)).toBeGreaterThanOrEqual(AA_TEXTO);
   });
 
   it('login: campo preenchido (--text-primary) sobre --code-bg', () => {

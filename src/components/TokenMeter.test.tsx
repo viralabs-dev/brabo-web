@@ -94,13 +94,14 @@ describe('TokenMeter', () => {
 });
 
 describe('TokenMeter — sem orçamento (noBudget)', () => {
-  it('compact + noBudget: CTA no lugar da barra, nunca "0/0 · 0%"', () => {
+  it('compact + noBudget: "sem teto do mês · definir" no lugar da barra, nunca "0/0 · 0%"', () => {
     render(
       <TokenMeter used={0} limit={0} costBRL={0} costUSD={0} variant="compact" noBudget />,
     );
 
     expect(screen.getByTestId('token-meter-no-budget-cta')).toBeInTheDocument();
-    expect(screen.getByText('Definir orçamento')).toBeInTheDocument();
+    expect(screen.getByTestId('token-meter').textContent).toBe('sem teto do mês · definir');
+    expect(screen.queryByText('Definir orçamento')).toBeNull();
     expect(screen.queryByText(/0\s*\/\s*0/)).not.toBeInTheDocument();
     expect(screen.queryByText('0%')).not.toBeInTheDocument();
   });

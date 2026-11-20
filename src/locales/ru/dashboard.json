@@ -12,7 +12,9 @@
     "loadError": "Не удалось загрузить ваши проекты.",
     "noProjectsYet": "Здесь пока нет проектов.",
     "createProject": "Создать проект",
-    "noSearchResults": "По запросу \"{{search}}\" проекты не найдены."
+    "noSearchResults": "По запросу \"{{search}}\" проекты не найдены.",
+    "semAtivos": "Нет активных проектов. Простаивающие — во вкладке «Простаивают».",
+    "semParados": "Нет простаивающих проектов."
   },
   "activity": {
     "noSession": "Сессий пока нет",
@@ -76,7 +78,11 @@
   "inicio": {
     "indisponivel": "недоступно",
     "projetos": {
-      "rotulo": "Активные проекты"
+      "rotulo": "Активные проекты",
+      "parados_one": "{{count}} простаивает дольше {{dias}} дней",
+      "parados_few": "{{count}} простаивают дольше {{dias}} дней",
+      "parados_many": "{{count}} простаивают дольше {{dias}} дней",
+      "parados_other": "{{count}} простаивают дольше {{dias}} дней"
     },
     "agentes": {
       "rotulo": "Агенты сейчас",
@@ -101,7 +107,8 @@
       "aprovacoes_few": "{{n}} подтверждения",
       "aprovacoes_many": "{{n}} подтверждений",
       "aprovacoes_other": "{{n}} подтверждения",
-      "demais": "PR {{prs}} · повышения {{promocoes}} · архитектура {{arquitetura}} · гипотезы {{hipoteses}}"
+      "demais": "PR {{prs}} · повышения {{promocoes}} · архитектура {{arquitetura}} · гипотезы {{hipoteses}}",
+      "maisAntiga": "самое старое ждёт {{quando}}"
     }
   },
   "secaoProjetos": "Проекты",
@@ -112,5 +119,11 @@
   "atividadeRecente": {
     "titulo": "Недавняя активность",
     "indisponivel": "Не удалось прочитать недавнюю активность."
+  },
+  "filtro": {
+    "aria": "Фильтр проектов",
+    "ativos": "Активные · {{n}}",
+    "parados": "Простаивают · {{n}}",
+    "todos": "Все"
   }
 }

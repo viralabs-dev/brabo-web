@@ -328,3 +328,10 @@
   color: var(--text-muted);
   cursor: pointer;
 }
+
+/* AT-1007: a descrição da arquitetura vazia aparece inteira, sem o corte de 2 linhas do kit. */
+.descricaoInteira.descricaoInteira {
+  display: block;
+  -webkit-line-clamp: unset;
+  overflow: visible;
+}

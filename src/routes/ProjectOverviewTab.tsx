@@ -450,7 +450,7 @@ function ArchitectureSummary({
       <Item variant="outline" size="sm">
        <ItemMedia variant="icon"><Info aria-hidden="true" /></ItemMedia>
        <ItemContent>
-        <ItemDescription className="line-clamp-none">
+        <ItemDescription className={styles.descricaoInteira}>
         {moduleCount > 0
           ? t('architectureSummary.summary', {
               count: moduleCount,

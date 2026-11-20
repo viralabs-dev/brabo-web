@@ -16,8 +16,6 @@
   margin: 0;
 }
 
-/* O extra por linha (Merge + gate) empilha em COLUNA, à direita — a linha da
-   lista já é apertada o bastante em largura sem forçar tudo numa fileira. */
 .extraLinha {
   display: flex;
   flex-direction: column;
@@ -30,20 +28,33 @@
   max-width: 420px;
 }
 
-/* AT-249 (RN-663): o gate que ainda falta, em TEXTO — aviso, nunca trava. */
-.avisoDeGate {
-  margin: 0;
+/* AT-971 (RN-1474): o motivo é UMA frase sob o título da PR, alinhada ao título
+   (recuo = padding do botão + ícone + respiro). Cor de erro quando a tarefa
+   está bloqueada; neutra quando só falta um portão. */
+.motivo,
+.motivoErro,
+.motivoAviso {
+  margin: -4px 0 0;
+  padding: 0 12px 6px 37px;
   font-size: var(--fs-meta);
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.motivoErro {
+  color: var(--danger);
+}
+
+.motivoAviso {
   color: var(--warning);
 }
 
-/* RN-816 (AT-480): o lugar da esteira do gate enquanto o backlog carrega —
-   a altura de um PrGateTimeline de uma linha de etapas, para o Merge desta
-   linha e o das de baixo não mudarem de lugar quando ela chega. */
-.reservaDaEsteira {
-  width: 100%;
-  min-height: 96px;
-  height: 96px;
+/* RN-816 (AT-480): o lugar dos portões e do Merge enquanto o backlog carrega
+   (os quatro portões e o botão, em uma linha), para a linha não mudar de
+   altura nem o botão de lugar quando ele chega. */
+.reservaDosPortoes {
+  width: 160px;
+  height: 24px;
 }
 
 .fluxoDaPr {

@@ -368,7 +368,7 @@
     "gatePendenteBloqueada": "The {{gate}} gate is still pending for this PR, and its task is blocked: merging is unavailable until it is unblocked.",
     "mergeIndisponivelBloqueada": "Merging is unavailable: the task behind this PR is blocked — {{reason}}",
     "mergeIndisponivelSemSessao": "Merging is unavailable: no session in the project to propose the action.",
-    "gatePendente": "The {{gate}} gate is still pending for this PR. Merging stays available — the decision is yours.",
+    "gatePendente": "The {{gate}} gate is still pending: Merge shows up when D, Q and S are green.",
     "mergeRecusado": "The last merge attempt was refused: {{reason}}",
     "mergeRecusadoArquivos_one": "Conflicting file: {{files}}",
     "mergeRecusadoArquivos_other": "Conflicting files: {{files}}",
@@ -377,10 +377,16 @@
       "verAprovacao": "See the approval",
       "ativarExecucao": "Activate execution"
     },
+    "pedirParecer": "Ask for the review again",
+    "portoes": {
+      "rotulo": "PR gates",
+      "nome": { "dev": "Dev", "qa": "QA", "secops": "SecOps", "user": "You" },
+      "estado": { "done": "passed", "current": "in progress", "blocked": "blocked", "pending": "pending" }
+    },
     "fluxo": {
-      "titulo": "How a PR moves here:",
-      "passos": "opened by the agent, QA, SecOps, waits for you, merged.",
-      "mergeManual": "Merge into a protected branch is always manual."
+      "titulo": "Gates:",
+      "passos": "D Dev · Q QA · S SecOps · V you.",
+      "mergeManual": "Merge into a protected branch is always manual; the button only shows up when the three gates are green."
     }
   },
   "politica": {

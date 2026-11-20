@@ -461,7 +461,7 @@ o do chat.
   (`sessaoDeTrabalho`), `:312` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:111` (`pendentesDoProjeto`);
   `apps/web/src/routes/ProjectExecutorsTab.tsx:135` (`pendentesQuery`), `:290`
-  (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
+  (o bloco); `apps/web/src/routes/code/CodeShell.tsx:124` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
   (a chave por prefixo); `apps/web/src/components/PendenciasDeOutrasSessoes.tsx`

@@ -251,6 +251,8 @@ keywords: [regras de negócio, web]
 
 ### RN-768 — Na aba PRs, o texto ao lado do Merge diz a verdade do botão {#rn-768}
 
+> **Revisada pela [RN-1474](parte-07.md#rn-1474) (AT-971):** tarefa bloqueada ou portão pendente não mostram mais o botão desabilitado; o motivo é uma frase sob o título da PR (erro quando bloqueada) e o Merge só aparece com D, Q e S verdes.
+
 - **Regra:** gate pendente continua AVISO e não trava o merge
   ([RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)). Tarefa BLOQUEADA (`task.blocked`) é outra coisa e
   desabilita o botão; nesse caso a linha da PR NÃO mostra "o merge segue
@@ -259,7 +261,7 @@ keywords: [regras de negócio, web]
   bloqueio). Sem sessão no projeto, o mesmo: o motivo vai em texto, nunca só
   no `title` do botão `disabled`, que não abre no Chromium. Se tarefa
   bloqueada deve ou não travar o merge é pergunta do dono, não decidida aqui.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:304` (`avisoDaLinha`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:237` (`renderItemMotivo`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("AT-451: tarefa
   bloqueada com gate pendente NÃO diz que o merge segue disponível")
 - **Origem:** AT-451 (TP-01 de 09/10: "O merge segue disponível — a decisão é
@@ -463,6 +465,8 @@ keywords: [regras de negócio, web]
 
 ### RN-816 — O botão não muda de lugar quando um bloco tardio chega {#rn-816}
 
+> **Revisada pela [RN-1474](parte-07.md#rn-1474) (AT-971):** na aba PRs a reserva deixou de ser a da esteira de 96 px e é a caixa de 160 × 24 px dos portões e do Merge; enquanto o backlog carrega nem portões nem Merge aparecem.
+
 - **Regra:** bloco que chega DEPOIS do primeiro paint não fica acima do botão
   que a pessoa vai clicar, e o que precisa ficar acima tem o espaço reservado
   enquanto carrega. Na Sessão as pendências de outras sessões
@@ -479,7 +483,7 @@ keywords: [regras de negócio, web]
   deslocamento em pixels.
 - **Onde:** `apps/web/src/routes/SessionPage.tsx` (`FaixaDeEstado`
   antes de `styles.messages`), `apps/web/src/routes/ProjectExecutorsTab.tsx`,
-  `apps/web/src/routes/ProjectPrsTab.tsx:83` (`ProjectPrsTab`),
+  `apps/web/src/routes/ProjectPrsTab.tsx:92` (`ProjectPrsTab`),
   `apps/web/src/routes/ProjectPrsTab.module.css` (`.reservaDaEsteira`)
 - **Teste:** `apps/web/src/routes/salto-de-layout.test.ts`,
   `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-816 (AT-480): o Merge não
@@ -520,7 +524,7 @@ keywords: [regras de negócio, web]
   permitir) a esquece. Declarado: a causa foi medida no CÓDIGO (o cartão
   dependia do refetch), não no navegador; que o refetch demore o bastante para
   o clique parecer perdido é inferência do TP-01.
-- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:105` (`acaoDaPr`)
+- **Onde:** `apps/web/src/routes/ProjectPrsTab.tsx:119` (`acaoDaPr`)
 - **Teste:** `apps/web/src/routes/ProjectPrsTab.test.tsx` ("RN-822 (AT-493):
   o 1º clique em Merge abre o cartão sem esperar a fila do projeto voltar" e
   "RN-822: a fila lida DEPOIS da proposta, sem ela, vence o cartão local")

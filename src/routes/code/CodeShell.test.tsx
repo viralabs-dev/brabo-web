@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { CodeShell } from './CodeShell';
 // Instância REAL do app — `CodeShell` não tem `I18nextProvider` próprio
@@ -9,6 +9,7 @@ import i18n from '../../lib/i18n';
 
 const getRepository = vi.fn();
 const getCodeBranches = vi.fn();
+const getCodeTree = vi.fn();
 
 vi.mock('../../lib/api-client', async () => {
   const real = await vi.importActual<typeof import('../../lib/api-client')>('../../lib/api-client');
@@ -17,6 +18,7 @@ vi.mock('../../lib/api-client', async () => {
     mensagemDaApi: real.mensagemDaApi,
     getRepository: (...args: unknown[]) => getRepository(...args),
     getCodeBranches: (...args: unknown[]) => getCodeBranches(...args),
+    getCodeTree: (...args: unknown[]) => getCodeTree(...args),
   };
 });
 
@@ -35,7 +37,11 @@ vi.mock('./CodeSearchPanel', () => ({
   CodeSearchPanel: () => <div>painel busca</div>,
 }));
 vi.mock('./CodeEditor', () => ({
-  CodeEditor: () => <div>painel editor</div>,
+  CodeEditor: ({ activePath, openTabs }: { activePath: string | null; openTabs: string[] }) => (
+    <div>
+      painel editor · ativo: {activePath ?? 'nenhum'} · abas: {openTabs.length}
+    </div>
+  ),
 }));
 vi.mock('./CodeBottomPanel', () => ({
   CodeBottomPanel: () => <div>painel inferior</div>,
@@ -61,6 +67,7 @@ beforeEach(async () => {
     url: 'https://github.com/x/y', defaultBranch: 'dev', visibility: 'private',
     origin: 'created', provisionedBy: 'u-1', createdAt: '', updatedAt: '',
   });
+  getCodeTree.mockResolvedValue({ ref: 'dev', path: '', entries: [], truncated: false });
   getCodeBranches.mockResolvedValue({
     items: [
       { name: 'dev', commitSha: 'a1', protected: true, ahead: 3, behind: 1, pullRequest: null, producedBy: null },
@@ -146,5 +153,44 @@ describe('CodeShell', () => {
     montar();
     await screen.findByText('painel explorador');
     expect(screen.queryByText(/↑|↓/)).not.toBeInTheDocument();
+  });
+
+  it('AT-971 (RN-1473): sem arquivo escolhido, o editor abre o README.md da raiz', async () => {
+    getCodeTree.mockResolvedValue({
+      ref: 'dev',
+      path: '',
+      entries: [
+        { path: 'docs', name: 'docs', type: 'dir', size: null },
+        { path: 'README.md', name: 'README.md', type: 'file', size: 10 },
+      ],
+      truncated: false,
+    });
+    montar();
+    expect(await screen.findByText(/ativo: README\.md · abas: 1/)).toBeInTheDocument();
+    expect(getCodeTree).toHaveBeenCalledWith('p-1', { ref: 'dev', path: '' });
+  });
+
+  it('AT-971: sem README na raiz, nada é aberto (o editor mostra o vazio)', async () => {
+    getCodeTree.mockResolvedValue({
+      ref: 'dev',
+      path: '',
+      entries: [{ path: 'package.json', name: 'package.json', type: 'file', size: 10 }],
+      truncated: false,
+    });
+    montar();
+    await waitFor(() => expect(getCodeTree).toHaveBeenCalled());
+    expect(await screen.findByText(/ativo: nenhum · abas: 0/)).toBeInTheDocument();
+  });
+
+  it('AT-971: um README em subpasta não conta — só o da raiz', async () => {
+    getCodeTree.mockResolvedValue({
+      ref: 'dev',
+      path: '',
+      entries: [{ path: 'docs', name: 'docs', type: 'dir', size: null }],
+      truncated: false,
+    });
+    montar();
+    await waitFor(() => expect(getCodeTree).toHaveBeenCalled());
+    expect(screen.getByText(/ativo: nenhum/)).toBeInTheDocument();
   });
 });

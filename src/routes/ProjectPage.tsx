@@ -274,7 +274,16 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
             escrito aqui: a Visão geral desenha as próprias regiões até a borda
             (o feed é um trilho com divisória à esquerda, não um card solto). */}
         <div className={[styles.body, aba.semRespiro && styles.bodyRente].filter(Boolean).join(' ')}>
-          <div className={styles.coluna}>
+          <div
+            className={[
+              styles.coluna,
+              // AT-971 (RN-1472): aba que desenha até a borda E tem sub-abas (Código):
+              // a faixa fica em cima e o painel embaixo, não lado a lado.
+              aba.semRespiro && secaoDaChave(tab).subs.length > 1 && styles.colunaComSubAbas,
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
           <ContextoDeSecaoInicial.Provider value={initialSection}>
           <ContextoDeGrupoInicial.Provider value={grupo}>
           <ContextoDeTrocaDeGrupo.Provider value={trocarGrupo}>

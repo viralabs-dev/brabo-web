@@ -1,4 +1,3 @@
-import { Item } from '../components/shadcn/item';
 import { useState } from 'react';
 import { GitPullRequest } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -11,19 +10,28 @@ import {
   mensagemDaApi,
   proposeAction,
 } from '../lib/api-client';
-import { useBacklog, useLatestSession, useProjectPendingActions } from '../lib/hooks';
+import {
+  useBacklog,
+  useCurrentWorkspaceWithRole,
+  useLatestSession,
+  useProjectPendingActions,
+  useSessionEvents,
+} from '../lib/hooks';
+import { roleAtLeast } from '../lib/roles';
+import { portoesDaPr } from '../lib/portoes-da-pr';
 import { userIdDaSessao } from '../lib/auth';
 import { gatePendenteNoMerge } from '../lib/gate-do-merge';
 import type { CodePullRequestSummary, Epic, ProposedAction, Task } from '../lib/api-types';
 import { ApprovalCard } from '../components/ApprovalCard';
-import { PrGateTimeline } from '../components/PrGateTimeline';
+import { PortoesDaPr } from '../components/PortoesDaPr';
 import { Skeleton } from '../components/ui/Skeleton';
 import { Button } from '../components/ui/Button';
-import { Alert } from '../components/ui/Alert';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import { pedirAba } from '../lib/contagens-do-projeto';
 import { PrListAndDiff } from './code/PrListAndDiff';
+import { RetomarGateEstacionado } from './RetomarGateEstacionado';
+import { cicloEstacionado } from './RetomarGateEstacionado.helpers';
 import styles from './ProjectPrsTab.module.css';
 
 import { ultimaRecusaDeMerge } from './ProjectPrsTab.helpers';
@@ -86,6 +94,11 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
   const { latest: latestSession } = useLatestSession(projectId);
   const backlogQuery = useBacklog(projectId);
   const mergeActionsQuery = useProjectPendingActions(projectId, 'git_merge');
+  // AT-971: "Pedir o parecer de novo" só quando o ciclo do gate da tarefa está
+  // estacionado (`gate.rescue_parked`, RN-724) — o mesmo gesto da Sessão.
+  const eventosQuery = useSessionEvents(projectId, latestSession?.id);
+  const { data: workspaceComPapel } = useCurrentWorkspaceWithRole();
+  const podeDecidir = roleAtLeast(workspaceComPapel?.role, 'developer');
   // RN-705: as recusas de merge (sob o MESMO prefixo da fila do projeto, então
   // o aviso do canal que invalida a fila alcança esta leitura também).
   const mergesFalhosQuery = useQuery({
@@ -216,43 +229,84 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
             </Button>
           </div>
         }
+        renderItemPortoes={(pr) => {
+          if (pr.state === 'closed' || backlogQuery.isPending) return null;
+          const p = portoesDaPr(taskDaBranch(backlogQuery.data, pr.sourceBranch), pr.state === 'merged');
+          return p ? <PortoesDaPr portoes={p.portoes} /> : null;
+        }}
+        renderItemMotivo={(pr) => {
+          if (pr.state !== 'open' || backlogQuery.isPending) return null;
+          const task = taskDaBranch(backlogQuery.data, pr.sourceBranch);
+          const gatePendente = gatePendenteNoMerge(task);
+          // RN-1474 (revisa RN-663/RN-768): o motivo é UMA frase sob o título.
+          // Tarefa bloqueada, em cor de erro; gate pendente, em cor neutra.
+          // RN-705: a recusa é AVISO em texto — a decisão continua humana. Vem ANTES do
+          // bloqueio e do gate pendente: depois de um conflito a tarefa volta a
+          // `in_progress` (gate pendente), e o que o conflito diz é o que destrava.
+          const recusa = acaoDaPr(pr) ? undefined : ultimaRecusaDeMerge(mergesFalhosQuery.data, pr);
+          if (recusa) {
+            return (
+              <p className={styles.motivoAviso} data-testid="aviso-merge-recusado">
+                {[
+                  t('prsTab.mergeRecusado', { reason: recusa.motivo }),
+                  recusa.arquivos.length > 0
+                    ? t('prsTab.mergeRecusadoArquivos', {
+                        count: recusa.arquivos.length,
+                        files: recusa.arquivos.join(', '),
+                      })
+                    : null,
+                  t('prsTab.mergeResolverAntes'),
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              </p>
+            );
+          }
+          if (task?.blocked) {
+            return (
+              <p className={styles.motivoErro} data-testid="aviso-merge-indisponivel">
+                {task.blockedReason || !gatePendente
+                  ? t('prsTab.mergeIndisponivelBloqueada', {
+                      reason: task.blockedReason ?? t('prsTab.mergeBlockedFallback'),
+                    })
+                  : t('prsTab.gatePendenteBloqueada', { gate: gatePendente })}
+              </p>
+            );
+          }
+          if (gatePendente) {
+            return (
+              <p className={styles.motivo} data-testid="aviso-gate-pendente">
+                {t('prsTab.gatePendente', { gate: gatePendente })}
+              </p>
+            );
+          }
+          if (!latestSession) {
+            return (
+              <p className={styles.motivo} data-testid="aviso-merge-indisponivel">
+                {t('prsTab.mergeIndisponivelSemSessao')}
+              </p>
+            );
+          }
+          return null;
+        }}
         renderItemExtra={(pr) => {
           if (pr.state !== 'open') return null;
 
-          const task = taskDaBranch(backlogQuery.data, pr.sourceBranch);
-          // AT-249 (RN-663): gate pendente é AVISO, nunca trava — o botão e o
-          // card seguem ativos, e o texto diz qual gate falta.
-          const gatePendente = gatePendenteNoMerge(task);
-          const aviso = gatePendente ? (
-            <Item variant="outline" size="sm" className={styles.avisoDeGate} data-testid="aviso-gate-pendente">
-              {t('prsTab.gatePendente', { gate: gatePendente })}
-            </Item>
-          ) : null;
+          // RN-816: enquanto o backlog carrega, a coluna das ações tem o lugar
+          // reservado (esqueleto) — nem Merge nem portões aparecem antes de a
+          // tela saber o estado dos gates, e o que chega depois não empurra a linha.
+          if (backlogQuery.isPending) {
+            return (
+              <div className={styles.reservaDosPortoes} data-testid="reserva-da-esteira" aria-busy="true">
+                <Skeleton height="100%" />
+              </div>
+            );
+          }
 
           const acaoPendente = acaoDaPr(pr);
-          // RN-705: a recusa é AVISO em texto (como o gate pendente, RN-663) —
-          // o botão segue ativo, a decisão continua humana.
-          const recusa = acaoPendente ? undefined : ultimaRecusaDeMerge(mergesFalhosQuery.data, pr);
-          const avisoDeRecusa = recusa ? (
-            <Alert tone="warning">
-              <div data-testid="aviso-merge-recusado">
-              <p>{t('prsTab.mergeRecusado', { reason: recusa.motivo })}</p>
-              {recusa.arquivos.length > 0 && (
-                <p>
-                  {t('prsTab.mergeRecusadoArquivos', {
-                    count: recusa.arquivos.length,
-                    files: recusa.arquivos.join(', '),
-                  })}
-                </p>
-              )}
-              <p>{t('prsTab.mergeResolverAntes')}</p>
-              </div>
-            </Alert>
-          ) : null;
           if (acaoPendente) {
             return (
               <div className={styles.decisaoInline}>
-                {aviso}
                 <ApprovalCard
                   action={acaoPendente}
                   detalheRecolhido
@@ -264,58 +318,37 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
             );
           }
 
-          const bloqueado = task?.blocked === true;
-          // AT-451: o texto diz a verdade do BOTÃO. Gate pendente é aviso
-          // (RN-663), mas tarefa BLOQUEADA desabilita o merge — e o motivo
-          // vai em texto, porque `title` em botão `disabled` não abre.
-          const avisoDaLinha = bloqueado ? (
-            <Item variant="outline" size="sm" className={styles.avisoDeGate} data-testid="aviso-merge-indisponivel">
-              {gatePendente
-                ? t('prsTab.gatePendenteBloqueada', { gate: gatePendente })
-                : t('prsTab.mergeIndisponivelBloqueada', {
-                    reason: task?.blockedReason ?? t('prsTab.mergeBlockedFallback'),
-                  })}
-            </Item>
-          ) : !latestSession ? (
-            <Item variant="outline" size="sm" className={styles.avisoDeGate} data-testid="aviso-merge-indisponivel">
-              {t('prsTab.mergeIndisponivelSemSessao')}
-            </Item>
-          ) : (
-            aviso
-          );
-
-          return (
-            <div className={styles.extraLinha}>
+          const task = taskDaBranch(backlogQuery.data, pr.sourceBranch);
+          const portoes = portoesDaPr(task, false);
+          // RN-1474 (revisa RN-663): sem tarefa não há portão a conferir (a tela
+          // não afirma o que não leu), então o Merge segue; com tarefa, só com
+          // D, Q e S verdes. Portão pendente ou falho: a ação é a que destrava.
+          if (!portoes || portoes.verdes) {
+            return (
               <Button
                 variant="primary"
-                disabled={!latestSession || bloqueado}
+                disabled={!latestSession}
                 loading={propondo === pr.id}
-                title={
-                  bloqueado
-                    ? (task?.blockedReason ?? t('prsTab.mergeBlockedFallback'))
-                    : !latestSession
-                      ? t('prsTab.mergeNoSession')
-                      : undefined
-                }
+                title={!latestSession ? t('prsTab.mergeNoSession') : undefined}
                 onClick={() => void proporMerge(pr)}
               >
                 {t('prsTab.mergeButton')}
               </Button>
-              {avisoDaLinha}
-              {avisoDeRecusa}
-              {/* RN-816 (AT-480): o botão vem PRIMEIRO, e a esteira do gate —
-                  que depende do backlog, lido depois — tem o espaço reservado
-                  enquanto ele carrega: chegando depois, ela empurrava o Merge
-                  desta linha e o das linhas de baixo. */}
-              {backlogQuery.isPending ? (
-                <div className={styles.reservaDaEsteira} data-testid="reserva-da-esteira" aria-busy="true">
-                  <Skeleton height="100%" />
-                </div>
-              ) : (
-                task && <PrGateTimeline task={task} verdicts={[]} />
-              )}
-            </div>
-          );
+            );
+          }
+          const estacionado = (eventosQuery.data?.items ?? [])
+            .map(cicloEstacionado)
+            .find((c) => c && c.taskId === task?.id);
+          return estacionado ? (
+            <RetomarGateEstacionado
+              projectId={projectId}
+              taskId={estacionado.taskId}
+              gate={estacionado.gate}
+              podeDecidir={podeDecidir}
+              rotulo={t('prsTab.pedirParecer')}
+              compacto
+            />
+          ) : null;
         }}
       />
       <p className={styles.fluxoDaPr} data-testid="fluxo-da-pr">

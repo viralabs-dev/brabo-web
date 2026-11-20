@@ -1,4 +1,5 @@
 import type { ActionType, PsychologistHypothesis } from './api-types';
+import { formatarUsdCasas } from './currency';
 import { AGENTS } from './agents';
 import i18n from './i18n';
 
@@ -171,7 +172,7 @@ function nomeDoAgente(id: string | undefined): string {
 }
 
 function dolares(micros: number): string {
-  return `US$ ${(micros / 1_000_000).toFixed(2).replace('.', ',')}`;
+  return formatarUsdCasas(micros / 1_000_000, 2);
 }
 
 /**

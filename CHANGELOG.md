@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix (AT-1004, EP-035, RN-1484, RN-1485, RN-1486): moeda e número saem no idioma da interface ("US$ 0,9790", "8.404 eventos") por um formatador só (`formatarUsdCasas`) e `{{count, number}}` nas chaves de contagem; o `Snippet` copia com o texto "Copiar" visível; a borda sem cor segue `var(--border)` no escuro e no claro.
+
 - Feat (AT-971, EP-035, RN-1472, RN-1473, RN-1474, RN-768, RN-816): o Código na v11 (L06). O explorador tem linhas de 28 px com o ícone e o nome na mesma linha e recuo de 18 px por nível; a faixa Arquivos | PRs fica em cima do painel, sem a coluna vazia de ~134 px, e a trilha de ícones cola na borda. Sem arquivo escolhido o editor abre o `README.md` da raiz (sem README, "Escolha um arquivo no explorador."). Cada PR é uma linha com número, título, autor, branch, os portões D Q S V com a cor do estado, o selo e as ações; o motivo do bloqueio vem numa frase em cor de erro abaixo do título; o "Merge" só aparece com D, Q e S verdes (portão pendente: o texto diz qual falta; ciclo estacionado: "Pedir o parecer de novo"), o que revisa o aviso da RN-663; o campo "Já sabe o nº?" virou a busca da lista (Enter sem resultado abre o diff pelo id). Textos novos nos quatro idiomas. Regressivo `brabo-qa`: nenhum spec lê Arquivos nem PRs (`funcionalidades.yml` não cita `ProjectPrsTab` nem `routes/code`); nenhum ajuste previsto.
 
 

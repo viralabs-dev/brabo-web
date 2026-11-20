@@ -180,10 +180,10 @@
       "total": "ИТОГО"
     },
     "credentialNotRegistered": "ключ не добавлен",
-    "callsCount_one": "({{count}} вызов)",
-    "callsCount_few": "({{count}} вызова)",
-    "callsCount_many": "({{count}} вызовов)",
-    "callsCount_other": "({{count}} вызова)",
+    "callsCount_one": "({{count, number}} вызов)",
+    "callsCount_few": "({{count, number}} вызова)",
+    "callsCount_many": "({{count, number}} вызовов)",
+    "callsCount_other": "({{count, number}} вызова)",
     "currency": {
       "belowCent": "< {{value}}"
     }

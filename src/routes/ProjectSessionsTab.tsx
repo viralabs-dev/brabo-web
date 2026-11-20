@@ -1,4 +1,5 @@
 import { Ajuda } from '../components/ui/Ajuda';
+import i18n from '@/lib/i18n';
 import { Item } from '../components/shadcn/item';
 import { Input as CampoDeRenomear } from '../components/shadcn/input';
 import { useState, type FormEvent, type KeyboardEvent, type MouseEvent } from 'react';
@@ -503,7 +504,7 @@ export function ProjectSessionsTab({ projectId, kind }: ProjectSessionsTabProps)
                   {' · '}
                   {session.costMicros === undefined ? '—' : formatarUsd(session.costMicros)}
                 </span>
-                <span className={styles.rowDate}>{new Date(session.createdAt).toLocaleString('pt-BR')}</span>
+                <span className={styles.rowDate}>{new Date(session.createdAt).toLocaleString(i18n.language)}</span>
               </Item>
             );
           })}

@@ -166,8 +166,8 @@
       "total": "TOTAL"
     },
     "credentialNotRegistered": "credential not registered",
-    "callsCount_one": "({{count}} call)",
-    "callsCount_other": "({{count}} calls)",
+    "callsCount_one": "({{count, number}} call)",
+    "callsCount_other": "({{count, number}} calls)",
     "currency": {
       "belowCent": "< {{value}}"
     }

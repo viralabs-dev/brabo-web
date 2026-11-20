@@ -122,9 +122,9 @@
     "searching": "Buscando…",
     "errorFallback": "Não consegui buscar agora.",
     "noResults": "Nenhum resultado para “{{query}}”.",
-    "filesScanned_zero": "{{count}} arquivos verificados",
-    "filesScanned_one": "{{count}} arquivo verificado",
-    "filesScanned_other": "{{count}} arquivos verificados",
+    "filesScanned_zero": "{{count, number}} arquivos verificados",
+    "filesScanned_one": "{{count, number}} arquivo verificado",
+    "filesScanned_other": "{{count, number}} arquivos verificados",
     "truncatedSuffix": " · busca cortada pelo orçamento — refine o termo ou o caminho"
   },
   "diff": {

@@ -118,7 +118,7 @@
     "searching": "搜索中…",
     "errorFallback": "暂时无法搜索。",
     "noResults": "没有“{{query}}”的结果。",
-    "filesScanned_other": "已检查 {{count}} 个文件",
+    "filesScanned_other": "已检查 {{count, number}} 个文件",
     "truncatedSuffix": " · 搜索因预算被截断——请细化关键词或路径"
   },
   "diff": {

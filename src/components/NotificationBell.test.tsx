@@ -90,7 +90,7 @@ describe('NotificationBell (AT-966)', () => {
   it('a atividade é UMA linha por projeto (contagem e idade) e abre a Visão geral', () => {
     const p = montar();
     expect(screen.getByText('Atividade por projeto')).toBeTruthy();
-    expect(screen.getByText(/8404 eventos · há 1 d/)).toBeTruthy();
+    expect(screen.getByText(/8.404 eventos · há 1 d/)).toBeTruthy();
     expect(screen.queryByText(/atividade em/)).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: /Acme/ }));
     expect(p.onAbrirProjeto).toHaveBeenCalledWith('p-1');

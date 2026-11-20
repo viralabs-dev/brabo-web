@@ -173,9 +173,9 @@
       "total": "TOTAL"
     },
     "credentialNotRegistered": "chave não cadastrada",
-    "callsCount_zero": "({{count}} chamadas)",
-    "callsCount_one": "({{count}} chamada)",
-    "callsCount_other": "({{count}} chamadas)",
+    "callsCount_zero": "({{count, number}} chamadas)",
+    "callsCount_one": "({{count, number}} chamada)",
+    "callsCount_other": "({{count, number}} chamadas)",
     "currency": {
       "belowCent": "< {{value}}"
     }

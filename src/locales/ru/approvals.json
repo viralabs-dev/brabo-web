@@ -10,10 +10,10 @@
     "gitCommit": {
       "verb": "предлагает изменение",
       "base": "Создаёт коммит",
-      "filesSuffix_one": " из {{count}} файла",
-      "filesSuffix_few": " из {{count}} файлов",
-      "filesSuffix_many": " из {{count}} файлов",
-      "filesSuffix_other": " из {{count}} файла",
+      "filesSuffix_one": " из {{count, number}} файла",
+      "filesSuffix_few": " из {{count, number}} файлов",
+      "filesSuffix_many": " из {{count, number}} файлов",
+      "filesSuffix_other": " из {{count, number}} файла",
       "pathSuffix": " файла {{path}}",
       "branchSuffix": " в ветке {{branch}}",
       "repoSuffix": " в репозитории проекта",
@@ -74,10 +74,10 @@
       "verb": "открыл pull request инфраструктуры",
       "base": "Открывает pull request инфраструктуры",
       "titled": " \"{{title}}\"",
-      "filesSuffix_one": " с {{count}} файлом",
-      "filesSuffix_few": " с {{count}} файлами",
-      "filesSuffix_many": " с {{count}} файлами",
-      "filesSuffix_other": " с {{count}} файла"
+      "filesSuffix_one": " с {{count, number}} файлом",
+      "filesSuffix_few": " с {{count, number}} файлами",
+      "filesSuffix_many": " с {{count, number}} файлами",
+      "filesSuffix_other": " с {{count, number}} файла"
     },
     "gitMerge": {
       "verb": "хочет выполнить merge",
@@ -173,10 +173,10 @@
     },
     "body": {
       "commit": {
-        "files_one": "{{count}} файл",
-        "files_few": "{{count}} файла",
-        "files_many": "{{count}} файлов",
-        "files_other": "{{count}} файла"
+        "files_one": "{{count, number}} файл",
+        "files_few": "{{count, number}} файла",
+        "files_many": "{{count, number}} файлов",
+        "files_other": "{{count, number}} файла"
       },
       "terminal": {
         "invalidCommand": "Модель не сформировала корректную команду для этого действия.",
@@ -189,10 +189,10 @@
         "invalidPath": "Модель не сформировала корректный путь для этого действия.",
         "invalidContent": "Модель не сформировала корректное содержимое для этого действия.",
         "previewHeader": "предпросмотр содержимого",
-        "linesTruncated_one": "{{shown}} из {{count}} строки",
-        "linesTruncated_few": "{{shown}} из {{count}} строк",
-        "linesTruncated_many": "{{shown}} из {{count}} строк",
-        "linesTruncated_other": "{{shown}} из {{count}} строки"
+        "linesTruncated_one": "{{shown}} из {{count, number}} строки",
+        "linesTruncated_few": "{{shown}} из {{count, number}} строк",
+        "linesTruncated_many": "{{shown}} из {{count, number}} строк",
+        "linesTruncated_other": "{{shown}} из {{count, number}} строки"
       },
       "prOpen": {
         "defaultTitle": "Pull request"

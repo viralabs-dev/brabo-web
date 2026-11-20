@@ -29,6 +29,10 @@ interface CodeEditorProps {
   activePath: string | null;
   onSelectTab: (path: string) => void;
   onCloseTab: (path: string) => void;
+  /** O README abriu sem escolha (RN-1473): a linha do caminho diz "aberto por padrão" (RN-1494). */
+  abertoPorPadrao?: boolean;
+  /** Campo "Buscar no código" do cabeçalho: entrega o termo à busca do painel lateral (RN-1494). */
+  onBuscar?: (termo: string) => void;
 }
 
 const CLASSE_POR_TOKEN: Record<TokenKind, string> = {
@@ -108,8 +112,11 @@ export function CodeEditor({
   activePath,
   onSelectTab,
   onCloseTab,
+  abertoPorPadrao = false,
+  onBuscar,
 }: CodeEditorProps) {
   const { t } = useTranslation('code');
+  const [termoDeBusca, setTermoDeBusca] = useState('');
   const fileQuery = useQuery({
     queryKey: ['code-file', projectId, gitRef, activePath],
     queryFn: () => getCodeFile(projectId, { ref: gitRef, path: activePath! }),
@@ -239,7 +246,26 @@ export function CodeEditor({
                 {i < arr.length - 1 && <span className={styles.breadcrumbSep}>/</span>}
               </span>
             ))}
+            {abertoPorPadrao && <span className={styles.padrao}>{t('editor.openedByDefault')}</span>}
           </div>
+          {onBuscar && (
+            <form
+              className={styles.buscaNoCodigo}
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (termoDeBusca.trim().length >= 2) onBuscar(termoDeBusca.trim());
+              }}
+            >
+              <input
+                type="search"
+                className={styles.buscaCampo}
+                value={termoDeBusca}
+                onChange={(e) => setTermoDeBusca(e.target.value)}
+                placeholder={t('editor.searchPlaceholder')}
+                aria-label={t('editor.searchPlaceholder')}
+              />
+            </form>
+          )}
           <button
             type="button"
             className={[styles.blameToggle, blameOn && styles.blameToggleAtivo]

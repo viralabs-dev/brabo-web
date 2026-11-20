@@ -19,7 +19,7 @@
   },
   "coverage": {
     "uncoveredBadge_other": "{{count}} 条未覆盖",
-    "coveredBy_other": "被 {{count}} 个用户故事覆盖",
+    "coveredBy_other": "{{count}} 个用户故事",
     "uncovered": "未覆盖——没有用户故事"
   },
   "ruleRefs_other": "关联 {{count}} 条业务规则",
@@ -117,7 +117,7 @@
     "recorte": "问题计数只是片段：{{total}} 个中仅包含前 50 个。"
   },
   "epico": {
-    "progresso_other": "{{prontas}}/{{count}} 已完成"
+    "progresso_other": "{{count}} 个故事 · {{prontas}}/{{count}} 已完成"
   },
   "historia": {
     "perguntas_other": "{{count}} 个问题"

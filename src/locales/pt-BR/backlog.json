@@ -21,9 +21,9 @@
     "uncoveredBadge_zero": "{{count}} descobertas",
     "uncoveredBadge_one": "{{count}} descoberta",
     "uncoveredBadge_other": "{{count}} descobertas",
-    "coveredBy_zero": "coberta por {{count}} histórias",
-    "coveredBy_one": "coberta por {{count}} história",
-    "coveredBy_other": "coberta por {{count}} histórias",
+    "coveredBy_zero": "{{count}} histórias",
+    "coveredBy_one": "{{count}} história",
+    "coveredBy_other": "{{count}} histórias",
     "uncovered": "descoberta — sem história"
   },
   "ruleRefs_zero": "{{count}} regras de negócio vinculadas",
@@ -144,8 +144,8 @@
   },
   "epico": {
     "progresso_zero": "nenhuma história",
-    "progresso_one": "{{prontas}} de {{count}} concluída",
-    "progresso_other": "{{prontas}} de {{count}} concluídas"
+    "progresso_one": "{{count}} história · {{prontas}} de {{count}} concluída",
+    "progresso_other": "{{count}} histórias · {{prontas}} de {{count}} concluídas"
   },
   "historia": {
     "perguntas_zero": "nenhuma pergunta",

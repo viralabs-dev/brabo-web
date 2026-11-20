@@ -37,6 +37,12 @@
       "dependsOn": "Depends on",
       "stories": "Stories"
     },
+    "chips": {
+      "modulos": "modules · v{{version}}",
+      "c4": "C4 level 2"
+    },
+    "grafoLegenda_one": "{{count, number}} module · flow from left to right",
+    "grafoLegenda_other": "{{count, number}} modules · flow from left to right",
     "views": {
       "label": "Architecture views",
       "diagrama": "Diagram",

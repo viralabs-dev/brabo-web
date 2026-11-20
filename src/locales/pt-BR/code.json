@@ -79,13 +79,14 @@
     "railDisabledAriaLabel": "{{label}} (indisponível)",
     "bottomPanelOpen": "Painel inferior",
     "bottomPanelClose": "Fechar painel inferior",
-    "refLabel": "ref",
     "encodingLabel": "UTF-8",
     "activeAgents_zero": "{{count}} agentes ativos",
     "activeAgents_one": "{{count}} agente ativo",
     "activeAgents_other": "{{count}} agentes ativos"
   },
   "editor": {
+    "openedByDefault": "aberto por padrão",
+    "searchPlaceholder": "Buscar no código",
     "openTabsAriaLabel": "Arquivos abertos",
     "closeFileAriaLabel": "Fechar {{path}}",
     "blameButton": "Blame",
@@ -161,6 +162,7 @@
     "noPrsMatchSearch": "Nenhuma PR combina com “{{query}}”. Enter abre o diff pelo id digitado.",
     "noPatchText": "Sem texto de diff disponível para este arquivo.",
     "emptyPatchText": "Diff sem conteúdo de texto (ex.: só mudança de modo).",
+    "viewDiff": "Ver diff",
     "openPrAriaLabel": "Abrir PR #{{number}}: {{title}}",
     "unknownAuthor": "autor desconhecido"
   },

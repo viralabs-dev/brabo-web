@@ -20,8 +20,8 @@
   "coverage": {
     "uncoveredBadge_one": "{{count}} uncovered",
     "uncoveredBadge_other": "{{count}} uncovered",
-    "coveredBy_one": "covered by {{count}} story",
-    "coveredBy_other": "covered by {{count}} stories",
+    "coveredBy_one": "{{count}} story",
+    "coveredBy_other": "{{count}} stories",
     "uncovered": "uncovered — no story"
   },
   "ruleRefs_one": "{{count}} linked business rule",
@@ -130,8 +130,8 @@
     "recorte": "The question count is a slice: only the first 50 of {{total}} are included."
   },
   "epico": {
-    "progresso_one": "{{prontas}} of {{count}} done",
-    "progresso_other": "{{prontas}} of {{count}} done"
+    "progresso_one": "{{count}} story · {{prontas}} of {{count}} done",
+    "progresso_other": "{{count}} stories · {{prontas}} of {{count}} done"
   },
   "historia": {
     "perguntas_one": "{{count}} question",

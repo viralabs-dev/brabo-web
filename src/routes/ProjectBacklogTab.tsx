@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Archive, ListTree, Pencil, Save, X } from 'lucide-react';
+import { Archive, ListTree, Pencil, Save, Search, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -19,7 +19,6 @@ import { roleAtLeast } from '../lib/roles';
 import { estadoDaTarefa, type EstadoDaTarefa } from '../lib/execution';
 import { usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import { AtivarExecucao } from '../components/AtivarExecucao';
-import { Chip } from '../components/ui/Chip';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { useHistoriaInicial } from '../lib/historia-inicial';
 import { Checkbox } from '../components/shadcn/checkbox';
@@ -128,12 +127,14 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
             className={styles.busca}
             placeholder={t('busca.label')}
             aria-label={t('busca.label')}
+            icon={<Search size={14} aria-hidden="true" />}
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />
-          <Chip pressed={soComPergunta} onClick={() => setSoComPergunta((v) => !v)}>
+          <label className={styles.soComPergunta}>
+            <Checkbox checked={soComPergunta} onCheckedChange={(v) => setSoComPergunta(v === true)} />
             {t('filtro.comPergunta', { count: totalComPergunta })}
-          </Chip>
+          </label>
           <NativeSelect wrapperClassName={styles.modulo} aria-label={t('filtro.modulo')} value={modulo} onChange={(e) => setModulo(e.target.value)}>
             <option value="">{t('filtro.todosModulos')}</option>
             {modulos.map((m) => (
@@ -198,26 +199,20 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
         ) : !coverage || coverage.rules.length === 0 ? (
           <EmptyState titulo={t('empty.rulesTitle')} icone={<ListTree size={18} />}>{t('empty.rules')}</EmptyState>
         ) : (
-          coverage.rules.map((r) => (
-            <div
-              key={r.ruleId}
-              className={[styles.ruleCard, !r.covered && styles.uncovered]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              <div className={styles.ruleTitle}>{r.title}</div>
-              {r.covered ? (
-                <div className={styles.ruleMeta}>
-                  <CheckIcon size={12} />{' '}
-                  {t('coverage.coveredBy', {
-                    count: r.coveredByStoryIds.length,
-                  })}
-                </div>
-              ) : (
-                <Badge tone="danger">{t('coverage.uncovered')}</Badge>
-              )}
-            </div>
-          ))
+          <ul className={styles.ruleList}>
+            {coverage.rules.map((r) => (
+              <li key={r.ruleId} className={[styles.ruleRow, !r.covered && styles.uncovered].filter(Boolean).join(' ')}>
+                <span className={styles.ruleTitle}>{r.title}</span>
+                {r.covered ? (
+                  <span className={styles.ruleMeta}>
+                    <CheckIcon size={12} /> {t('coverage.coveredBy', { count: r.coveredByStoryIds.length })}
+                  </span>
+                ) : (
+                  <Badge tone="danger">{t('coverage.uncovered')}</Badge>
+                )}
+              </li>
+            ))}
+          </ul>
         )}
       </aside>
     </div>

@@ -2,7 +2,7 @@ import { Shimmer } from '../../components/ui/Shimmer';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { mensagemDaApi, searchCode } from '../../lib/api-client';
@@ -15,6 +15,10 @@ interface CodeSearchPanelProps {
   /** Não `ref`: reservado pelo React mesmo em componente de função. Ver CodeExplorer.tsx. */
   gitRef: string;
   onOpenFile: (path: string) => void;
+  /** Termo vindo do campo "Buscar no código" do editor (RN-1494): já abre buscando. */
+  termoInicial?: string;
+  /** O botão da ref, também aqui: a ref vale para a busca (RN-1494). */
+  seletorDeRef?: ReactNode;
 }
 
 /**
@@ -22,10 +26,10 @@ interface CodeSearchPanelProps {
  * orçada (item 34). Não busca a cada tecla: só ao SUBMETER, para não gastar o
  * orçamento da busca a cada caractere digitado.
  */
-export function CodeSearchPanel({ projectId, gitRef, onOpenFile }: CodeSearchPanelProps) {
+export function CodeSearchPanel({ projectId, gitRef, onOpenFile, termoInicial = '', seletorDeRef }: CodeSearchPanelProps) {
   const { t } = useTranslation('code');
-  const [termo, setTermo] = useState('');
-  const [buscado, setBuscado] = useState<string | null>(null);
+  const [termo, setTermo] = useState(termoInicial);
+  const [buscado, setBuscado] = useState<string | null>(termoInicial.length >= 2 ? termoInicial : null);
 
   const searchQuery = useQuery({
     queryKey: ['code-search', projectId, gitRef, buscado],
@@ -41,7 +45,10 @@ export function CodeSearchPanel({ projectId, gitRef, onOpenFile }: CodeSearchPan
 
   return (
     <div className={styles.busca}>
-      <div className={styles.cabecalho}>{t('search.title')}</div>
+      <div className={styles.cabecalho}>
+        <span>{t('search.title')}</span>
+        {seletorDeRef}
+      </div>
 
       <form className={styles.formulario} onSubmit={submeter}>
         <Input

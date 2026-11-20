@@ -36,8 +36,7 @@
     "since": "С",
     "sinceNone": "—",
     "actions": "Действия",
-    "detail": "Детали",
-    "openDetail": "Открыть"
+    "verDetalhe": "Подробнее"
   },
   "status": {
     "provisioning": "подготавливается",

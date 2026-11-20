@@ -257,19 +257,37 @@
 
 /* --- Rastreabilidade --- */
 
-.ruleCard {
+.ruleList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
   background: var(--surface-1);
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  padding: 10px 12px;
-  margin-bottom: 8px;
+}
+
+.ruleRow {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+}
+
+.ruleRow + .ruleRow {
+  border-top: 1px solid var(--border);
+}
+
+.soComPergunta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
 }
 
 .uncovered {
-  border-color: var(--danger-panel-border);
   background: var(--danger-panel);
 }
 
@@ -281,8 +299,9 @@
 }
 
 .ruleMeta {
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 6px;
   font-size: var(--fs-meta);
   color: var(--success);

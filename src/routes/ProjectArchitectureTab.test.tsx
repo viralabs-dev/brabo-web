@@ -356,4 +356,39 @@ describe('ProjectArchitectureTab — erro de carga não é vazio (AT-965)', () =
     montar();
     expect(screen.queryByText(/Sem arquitetura ainda/)).not.toBeInTheDocument();
   });
+
+  it('AT-1006 (RN-1495): chips "módulos · v‹N›" e "C4 nível 2" e a legenda do grafo só com dado', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      moduleMap: {
+        id: 'mm-1',
+        projectId: 'proj-1',
+        sessionId: 'sess-1',
+        version: 3,
+        modules: [
+          { name: 'A', stack: 's', responsibility: 'r', dependsOn: [] },
+          { name: 'B', stack: 's', responsibility: 'r', dependsOn: ['A'] },
+        ],
+        createdAt: '2026-08-10T10:00:00.000Z',
+      },
+      c4Diagram: {
+        status: 'gerado',
+        diagrama: { systemName: 'X', systemDescription: '', actors: [], contextDiagram: 'C4Context', containerDiagram: 'C4Container' },
+        version: 1,
+        eventId: 'evt-1',
+        createdAt: '2026-08-10T10:00:00.000Z',
+      },
+    });
+    const { unmount } = montar();
+    expect(await screen.findByText('módulos · v3')).toBeInTheDocument();
+    expect(screen.getByText('C4 nível 2')).toBeInTheDocument();
+    expect(screen.getByText('2 módulos · fluxo da esquerda para a direita')).toBeInTheDocument();
+    unmount();
+
+    getArchitecture.mockResolvedValue({ ...ARQUITETURA_VAZIA, adrs: [{ actionId: 'a1', title: 'ADR', status: 'approved', pullRequestUrl: null }] });
+    montar();
+    await screen.findByText(/ADRs · 1/);
+    expect(screen.queryByText(/módulos · v/)).toBeNull();
+    expect(screen.queryByText('C4 nível 2')).toBeNull();
+  });
 });

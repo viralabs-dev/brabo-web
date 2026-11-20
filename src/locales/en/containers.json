@@ -34,8 +34,7 @@
     "since": "Since",
     "sinceNone": "—",
     "actions": "Actions",
-    "detail": "Detail",
-    "openDetail": "Open"
+    "verDetalhe": "See detail"
   },
   "status": {
     "provisioning": "provisioning",

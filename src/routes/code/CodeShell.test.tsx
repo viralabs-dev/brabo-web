@@ -37,9 +37,18 @@ vi.mock('./CodeSearchPanel', () => ({
   CodeSearchPanel: () => <div>painel busca</div>,
 }));
 vi.mock('./CodeEditor', () => ({
-  CodeEditor: ({ activePath, openTabs }: { activePath: string | null; openTabs: string[] }) => (
+  CodeEditor: ({
+    activePath,
+    openTabs,
+    abertoPorPadrao,
+  }: {
+    activePath: string | null;
+    openTabs: string[];
+    abertoPorPadrao?: boolean;
+  }) => (
     <div>
       painel editor · ativo: {activePath ?? 'nenhum'} · abas: {openTabs.length}
+      {abertoPorPadrao && ' · padrão'}
     </div>
   ),
 }));
@@ -166,7 +175,7 @@ describe('CodeShell', () => {
       truncated: false,
     });
     montar();
-    expect(await screen.findByText(/ativo: README\.md · abas: 1/)).toBeInTheDocument();
+    expect(await screen.findByText(/ativo: README\.md · abas: 1 · padrão/)).toBeInTheDocument();
     expect(getCodeTree).toHaveBeenCalledWith('p-1', { ref: 'dev', path: '' });
   });
 

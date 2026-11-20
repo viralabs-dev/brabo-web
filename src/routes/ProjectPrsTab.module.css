@@ -1,13 +1,20 @@
 .cabecalho {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   margin-bottom: 16px;
 }
 
 .titulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 17px;
   color: var(--text-primary);
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .subtitulo {

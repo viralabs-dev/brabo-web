@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type React from 'react';
 import { describe, expect, it, vi, beforeEach, beforeAll, afterAll, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -130,6 +132,7 @@ function item(overrides: Partial<ContainerOverviewItem> = {}): ContainerOverview
     brokerConfigurado: true,
     decisaoVigente: null,
     imagemDesatualizada: false,
+    motivoDaFalha: null,
     ...overrides,
   };
 }
@@ -922,6 +925,45 @@ describe('ContainersPage — layout estreito (AT-330)', () => {
     expect(screen.queryByTestId('linha-da-tabela')).toBeNull();
     expect(screen.getAllByText('Ações')).toHaveLength(1);
   });
+});
+
+it('AT-1006 (RN-1493): falhou mostra a primeira linha do motivo e "Ver detalhe"; sem motivo, só "falhou"', () => {
+  useContainersOverview.mockReturnValue({
+    isPending: false,
+    isError: false,
+    data: [
+      item({
+        projectId: 'p-f',
+        projectName: 'quebrado',
+        registrado: registro({ status: 'failed', failureReason: 'port is already allocated\nstack' }),
+        motivoDaFalha: 'port is already allocated',
+      }),
+      item({ projectId: 'p-g', projectName: 'mudo', registrado: registro({ status: 'failed' }) }),
+    ],
+    refetch: vi.fn(),
+  });
+  montar();
+  expect(screen.getByText('port is already allocated')).toBeInTheDocument();
+  expect(screen.getAllByRole('link', { name: 'Ver detalhe' })).toHaveLength(1);
+  expect(screen.getAllByText('falhou')).toHaveLength(2);
+});
+
+it('AT-1006: sem a coluna "Detalhe" (7 colunas) e o nome do projeto abre o detalhe', () => {
+  useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
+  montar();
+  for (const r of ['Projeto', 'Imagem', 'Registrado', 'Observado', 'Recursos', 'Desde', 'Ações']) {
+    expect(screen.getAllByText(r).length).toBeGreaterThan(0);
+  }
+  expect(screen.queryByText('Detalhe')).toBeNull();
+  expect(screen.getByRole('link', { name: 'core' })).toHaveAttribute('href', '/containers/$projectId-{"projectId":"proj-1"}');
+});
+
+it('AT-1006 (RN-1493): o nome de imagem quebra a linha, sem reticências', () => {
+  const css = readFileSync(resolve(__dirname, 'ContainersPage.module.css'), 'utf8');
+  const bloco = /\.imagemTexto \{[^}]*\}/.exec(css)?.[0] ?? '';
+  expect(bloco).toContain('overflow-wrap: anywhere');
+  expect(bloco).not.toContain('text-overflow');
+  expect(bloco).not.toContain('nowrap');
 });
 
 it('AT-976 (RN-1481): o menu "…" é só ícone, com nome e legenda no hover e no foco', async () => {

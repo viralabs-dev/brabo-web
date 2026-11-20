@@ -109,6 +109,31 @@
   color: var(--text-muted);
 }
 
+/* RN-1494: "aberto por padrão" ao lado do caminho; o campo de busca fica à direita. */
+.padrao {
+  margin-left: 10px;
+  font-family: var(--font-body);
+  color: var(--text-muted);
+}
+
+.buscaNoCodigo {
+  flex: 0 1 220px;
+  margin-left: auto;
+  min-width: 0;
+}
+
+.buscaCampo {
+  width: 100%;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-label);
+}
+
 /* Toggle de blame — chamada sob demanda, nunca em toda leitura (RN-113). */
 .blameToggle {
   flex-shrink: 0;

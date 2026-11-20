@@ -60,6 +60,22 @@
   font-family: var(--font-mono);
   font-size: var(--fs-meta);
   color: var(--text-primary);
+  /* RN-1493: nome de imagem longo quebra a linha, sem reticências. */
+  overflow-wrap: anywhere;
+}
+
+.statusCelula {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.motivoDaFalha {
+  max-width: 100%;
+  font-size: var(--fs-meta);
+  color: var(--danger);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

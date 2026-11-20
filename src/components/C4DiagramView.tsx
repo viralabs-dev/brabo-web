@@ -1,8 +1,8 @@
-import { useEffect, useId, useState, type CSSProperties } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { C4Diagrama } from '../lib/api-types';
 import { renderMermaid } from '../lib/mermaid-render';
-import { larguraNatural } from '../lib/svg-largura';
+import { ajustarAoConteudo, larguraNatural } from '../lib/svg-largura';
 import { Alert } from './ui/Alert';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
@@ -83,18 +83,29 @@ function DiagramaMermaid({
   const [ampliado, setAmpliado] = useState(false);
   // "Ajustar à largura" encolhe o SVG ao cartão (texto menor); o padrão é o tamanho natural, rolando na horizontal.
   const [ajustado, setAjustado] = useState(false);
-  const natural = estado.fase === 'pronto' ? larguraNatural(estado.svg) : null;
+  const wrap = useRef<HTMLDivElement>(null);
+  // O Mermaid deixa uma margem enorme em volta do C4: o viewBox passa a seguir o conteúdo real (getBBox).
+  // O SVG ajustado vira o HTML renderizado (o React reescreve o innerHTML a cada render e apagaria o ajuste no DOM).
+  const [ajuste, setAjuste] = useState<{ de: string; svg: string; largura: number } | null>(null);
+  const svgPronto = estado.fase === 'pronto' ? estado.svg : null;
+  useEffect(() => {
+    const el = wrap.current?.querySelector('svg');
+    if (!svgPronto || !el || ajuste?.de === svgPronto) return;
+    const largura = ajustarAoConteudo(el);
+    if (largura) setAjuste({ de: svgPronto, svg: el.outerHTML, largura });
+  }, [svgPronto, ajuste]);
+  const html = svgPronto && ajuste?.de === svgPronto ? ajuste.svg : svgPronto;
+  const natural = svgPronto ? (ajuste?.de === svgPronto ? ajuste.largura : larguraNatural(svgPronto)) : null;
 
   return (
     <Card padding="none" className={styles.card}>
       <div className={styles.cardHeader}>
         <div className={styles.cardTitulo}>{titulo}</div>
         {estado.fase === 'pronto' && (
+          <div className={styles.acoes}>
           <Button variant="secondary" size="sm" aria-pressed={ajustado} onClick={() => setAjustado((a) => !a)}>
             {t('c4.fitWidth')}
           </Button>
-        )}
-        {estado.fase === 'pronto' && (
           <Button
             variant="ghost"
             size="sm"
@@ -106,6 +117,7 @@ function DiagramaMermaid({
           >
             <ExpandIcon size={13} />
           </Button>
+          </div>
         )}
       </div>
       {estado.fase === 'rendering' && <Skeleton height={220} />}
@@ -120,13 +132,14 @@ function DiagramaMermaid({
       )}
       {estado.fase === 'pronto' && (
         <div
+          ref={wrap}
           className={styles.svgWrap}
           style={{ '--c4-largura': ajustado || !natural ? '100%' : `${natural}px` } as CSSProperties}
           // O SVG vem do `renderMermaid` que ACABAMOS de chamar acima —
           // conteúdo gerado por nós a partir de sintaxe já validada, nunca
           // HTML de terceiro repassado direto. `securityLevel: 'strict'`
           // garante que o Mermaid não emite `<script>`/handlers inline.
-          dangerouslySetInnerHTML={{ __html: estado.svg }}
+          dangerouslySetInnerHTML={{ __html: html ?? '' }}
         />
       )}
       {ampliado && estado.fase === 'pronto' && (
@@ -140,7 +153,7 @@ function DiagramaMermaid({
             className={styles.svgWrapAmpliado}
             // Mesmo SVG do card, mesma garantia de origem — ver comentário
             // acima. Vetor: ampliar não perde qualidade.
-            dangerouslySetInnerHTML={{ __html: estado.svg }}
+            dangerouslySetInnerHTML={{ __html: html ?? '' }}
           />
         </Modal>
       )}

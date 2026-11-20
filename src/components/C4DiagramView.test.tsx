@@ -162,9 +162,31 @@ describe('C4DiagramView', () => {
 
       const botoes = await screen.findAllByRole('button', { name: 'Ajustar à largura' });
       const wrap = document.querySelector('[data-testid="fake-svg"]')!.parentElement!;
-      expect(wrap.style.getPropertyValue('--c4-largura')).toBe('1200px');
+      await waitFor(() => expect(wrap.style.getPropertyValue('--c4-largura')).toBe('1200px'));
       await user.click(botoes[0]);
       expect(wrap.style.getPropertyValue('--c4-largura')).toBe('100%');
+    });
+
+    it('o viewBox acompanha o conteúdo real (getBBox + 16 px), sem o vazio antes do primeiro nó', async () => {
+      const original = (SVGElement.prototype as unknown as { getBBox?: unknown }).getBBox;
+      (SVGElement.prototype as unknown as { getBBox: () => unknown }).getBBox = () => ({ x: 300, y: 250, width: 800, height: 400 });
+      try {
+        render_.mockResolvedValue({ svg: '<svg viewBox="0 0 1600 1200" data-testid="fake-svg"><text data-testid="titulo-mermaid">Contexto</text></svg>' });
+        renderComI18n(<C4DiagramView diagrama={diagrama()} />);
+        await screen.findAllByTestId('fake-svg');
+        const svg = document.querySelector('[data-testid="fake-svg"]') as unknown as SVGSVGElement;
+        await waitFor(() => expect(svg.getAttribute('viewBox')).toBe('284 234 832 432'));
+        expect(document.querySelector('[data-testid="titulo-mermaid"]')!.getAttribute('display')).toBe('none');
+        // o vazio antes do primeiro nó (origem do viewBox até o conteúdo) é a folga de 16 px
+        const [vx, vy] = svg.getAttribute('viewBox')!.split(' ').map(Number);
+        expect(300 - vx!).toBe(16);
+        expect(250 - vy!).toBe(16);
+        const wrap = document.querySelector('[data-testid="fake-svg"]')!.parentElement!;
+        expect(document.querySelector('[data-testid="fake-svg"]')!.getAttribute('viewBox')).toBe('284 234 832 432');
+        await waitFor(() => expect(wrap.style.getPropertyValue('--c4-largura')).toBe('832px'));
+      } finally {
+        (SVGElement.prototype as unknown as { getBBox?: unknown }).getBBox = original;
+      }
     });
   });
 });

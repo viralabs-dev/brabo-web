@@ -1029,3 +1029,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/FaixaDeEstado.module.css`, `SessionPage.module.css` (`.topbarMovel`, `.trilha`, `.meta`, `.composer[data-layout='movel']`), `src/components/AvisoDePrPronta.module.css`.
 - **Teste:** medido no DOM com o harness de `v10-final/fonte/` (jsdom não calcula o layout).
 - **Origem:** AT-1009 (EP-035). Completa a RN-1432 a RN-1434.
+
+<a id="rn-1499"></a>
+
+### RN-1499 — Ação em texto e linha clicável isolada têm alvo de pelo menos 24 px de altura, sem mudar o texto nem a altura da tela {#rn-1499}
+
+- **Regra:** todo `<a>` ou `<button>` que não é um link dentro de frase mede 24 px ou mais de altura (WCAG 2.2, 2.5.8). O `BotaoLink` do kit (`display: inline-flex`, `min-height: 24px`) cobre "O que isso muda" e "Mostrar os outros N agentes"; o mesmo vale para "Ver no fio" (lista de executores), "Abrir a sessão →" (Próximo passo), "Abrir em nova aba" (prévia do entregável), o comando de cada linha da Caixa e a linha de cada turno da Atividade. Onde a linha era menor que 24 px, uma margem vertical negativa devolve o excesso ao fluxo: a altura da tela muda no máximo 8 px (nas telas medidas, 0). Exceções: link dentro de frase, a trilha "Toggle Sidebar" e os campos de 1×1 px de acessibilidade.
+- **Onde:** `src/components/ui/BotaoLink.module.css`, `src/routes/TabelaDeExecutores.module.css`, `src/components/ProximoPasso.module.css`, `src/components/EntregavelPreview.module.css`, `src/components/CaixaDeDecisoes.module.css`, `src/routes/ProjectOverviewTab.module.css`.
+- **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
+- **Origem:** AT-1010 (EP-035), achado 1 da recaptura da v11 (AT-979). Aplica o critério da AT-977.
+
+<a id="rn-1500"></a>
+
+### RN-1500 — O `Checkbox` do kit tem alvo de 24 px e caixa visível de 16 px {#rn-1500}
+
+- **Regra:** a raiz do `Checkbox` mede 24×24 px (`size-6`); a caixa de 16 px é desenhada pelo `::before`, e `-m-1` devolve 4 px por lado ao fluxo, então nenhuma linha ou tela cresce. Foco, erro (`aria-invalid`) e marcado seguem as mesmas cores, agora na caixa; o anel de foco envolve o alvo de 24 px.
+- **Onde:** `src/components/shadcn/checkbox.tsx`.
+- **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
+- **Origem:** AT-1010 (EP-035). Vale para a Caixa, o Backlog, o merge automático, Modelos e os pickers de modelo.
+
+<a id="rn-1501"></a>
+
+### RN-1501 — No editor do Código, o campo "Buscar no código" e o botão "Blame" têm 24 px de altura {#rn-1501}
+
+- **Regra:** `buscaCampo` e `blameToggle` passam de 22 para 24 px; o texto continua em `--fs-label`.
+- **Onde:** `src/routes/code/CodeEditor.module.css`.
+- **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
+- **Origem:** AT-1010 (EP-035). Complementa a [RN-1494](#rn-1494).

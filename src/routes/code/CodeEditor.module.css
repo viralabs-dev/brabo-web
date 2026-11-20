@@ -124,7 +124,7 @@
 
 .buscaCampo {
   width: 100%;
-  height: 22px;
+  height: 24px; /* AT-1010 (RN-1499) */
   padding: 0 8px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
@@ -140,7 +140,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  height: 22px;
+  height: 24px; /* AT-1010 (RN-1499) */
   padding: 0 10px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);

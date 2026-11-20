@@ -142,6 +142,10 @@ grade de 24).
 
 Wordmark: Space Grotesk 700, `letter-spacing:-.045em`.
 
+## Alvo de clique de 24 px (AT-1010, RN-1499 a RN-1501)
+
+Todo controle clicável que não seja link dentro de frase mede 24 px ou mais de altura (WCAG 2.2, 2.5.8); o texto não cresce, cresce a área de toque. `Button` `xs`, `sm` e `icon` já cumprem (24, 28, 28). `BotaoLink` tem `min-height: 24px`. O `Checkbox` tem alvo de 24 px (`size-6`) e caixa visível de 16 px (`::before`), com `-m-1` para não crescer a linha. Onde a linha era menor, use `min-height: 24px` com `margin-block` negativo para manter a altura do layout.
+
 ## Botões (base)
 
 - **primary**: bg `var(--accent)`, texto `var(--on-accent)`, border

@@ -64,7 +64,7 @@ export function MergeAutomaticoSection({ projectId }: { projectId: string }) {
       <Item variant="outline" className={styles.ajusteCard}>
         <div className={styles.ajusteInfo}>
           {/* O `Checkbox` do kit ao lado do rótulo, no lugar do `<input role="switch">` nativo (AT-1005). */}
-          <label className={`${styles.ajusteTitulo} ${styles.ajusteInline}`}>
+          <label className={`${styles.ajusteTitulo} ${styles.rotuloComCheckbox}`}>
             <Checkbox
               checked={ligado}
               disabled={!pode || saving}

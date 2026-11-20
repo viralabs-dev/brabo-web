@@ -927,3 +927,22 @@
   justify-content: flex-end;
   gap: 12px;
 }
+
+/* Degrau da escada: rótulo visível sobre cada campo, com respiro entre os degraus (AT-1005). */
+.degrauDaEscada {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.degrauDaEscada > button {
+  justify-self: start;
+}
+
+/* Rótulo ao lado do `Checkbox` do kit (merge automático, AT-1005). */
+.rotuloComCheckbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+}

@@ -158,7 +158,7 @@ export function TetoPorTarefaSection({ projectId }: { projectId: string }) {
           </div>
           {!podeEditar && <div className={styles.ajusteHint}>{t('execution.semPapel')}</div>}
           {linhas.map((l, i) => (
-            <div key={i} className={styles.ajusteInfo}>
+            <div key={i} className={styles.degrauDaEscada}>
               {/* Rótulo visível ligado pelo `for` (AT-1005): o texto deixou de ir só no `aria-label`. */}
               <Field>
                 <FieldLabel htmlFor={`degrau-modelo-${i}`}>{t('execution.escada.modelo', { n: i + 1 })}</FieldLabel>

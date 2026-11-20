@@ -96,7 +96,7 @@ export function BudgetSection({ projectId }: { projectId: string }) {
                   {t('budget.card.spent', { amount: formatarCustoMicros(area.spentMicros) })}{' '}
                   {/* Um estado só para "sem teto" (AT-1005): o trio "Sem valor próprio / sem teto / placeholder" virou uma frase. */}
                   {area.budgetMicros === null ? (
-                    <span data-testid="area-sem-teto">{t('budget.card.semTetoProprio')}</span>
+                    <span data-testid="area-sem-teto">· {t('budget.card.semTetoProprio')}</span>
                   ) : (
                     <MarcaDeHeranca proprio />
                   )}

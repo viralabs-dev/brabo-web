@@ -178,7 +178,7 @@ describe('padrão único de valor herdado — Teto de gasto por área', () => {
     listAgentAreas.mockResolvedValue([area({ budgetMicros: null })]);
     montar(<BudgetSection projectId="proj-1" />);
 
-    expect(await screen.findByText('sem teto próprio')).toBeInTheDocument();
+    expect(await screen.findByTestId('area-sem-teto')).toHaveTextContent('sem teto próprio');
     expect(screen.queryByText('Sem valor próprio')).toBeNull();
     expect(screen.queryByText('sem teto')).toBeNull();
     expect(screen.queryByPlaceholderText('Sem teto')).toBeNull();

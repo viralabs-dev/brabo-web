@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "черновик",
-    "ready": "готова",
-    "inProgress": "в работе",
+    "ready": "готова к запуску",
+    "inProgress": "выполняется",
     "done": "завершена"
   },
   "sectionLabel": {
@@ -156,10 +156,10 @@
     "recorte": "Счётчик вопросов — срез: учтены только первые 50 из {{total}}."
   },
   "epico": {
-    "progresso_one": "{{count}} история · {{prontas}} из {{count}} готово",
-    "progresso_few": "{{count}} истории · {{prontas}} из {{count}} готово",
-    "progresso_many": "{{count}} историй · {{prontas}} из {{count}} готово",
-    "progresso_other": "{{count}} истории · {{prontas}} из {{count}} готово"
+    "progresso_one": "{{prontas}} из {{count}} готово",
+    "progresso_few": "{{prontas}} из {{count}} готово",
+    "progresso_many": "{{prontas}} из {{count}} готово",
+    "progresso_other": "{{prontas}} из {{count}} готово"
   },
   "historia": {
     "perguntas_one": "{{count}} вопрос",

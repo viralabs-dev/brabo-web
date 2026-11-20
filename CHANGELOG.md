@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Feat (AT-973, EP-035, RN-1450, RN-1451, RN-1452, RN-1265): os Gastos mostram quatro indicadores (Total, Chamadas, Tokens abreviados com o inteiro no `title`, Custo médio com 4 casas abaixo de 1 centavo), o período "Desde o início · N dias" como padrão quando o gasto tem menos de 30 dias, o gráfico sem passar da largura do cartão e o vazio sem "Ver como tabela"; "Por sessão" diz o nome (ou o tipo) antes da hashtag; "Por agente" mostra os 3 maiores. O teto do mês vira o cartão `#teto` à direita dos indicadores (rótulos visíveis, "Salvar teto"), destino de `?tab=spend#teto`. i18n nos quatro idiomas. Regressivo `brabo-qa`: nenhum ajuste previsto (sem seletor novo usado pelos specs).
+- Feat (AT-969, EP-035, RN-1447, RN-1448, RN-1449): o Backlog tem os filtros numa linha que quebra (busca como placeholder, `NativeSelect`), empilha a Rastreabilidade abaixo da lista abaixo de 1000 px do contêiner e usa um vocabulário de status ("pronta para executar", "em execução", "concluída"; épico "N de M concluídas" com `Progress`).
 
 - Feat (AT-980, EP-036, RN-1445, RN-1446): o cartão de uma ação de container que falhou mostra o `motivo` (inclusive "o container subiu sem rede: DNS de X falhou") no lugar do "Falhou" mudo; `/containers` ganha a seção "Remoção pendente" (`GET /workspaces/:id/containers/remocoes-pendentes`), que some sem pendência. `openapi.json` fixado e tipos regenerados da api `dev`. i18n nos quatro idiomas. Regressivo `brabo-qa`: nenhum ajuste previsto.
 

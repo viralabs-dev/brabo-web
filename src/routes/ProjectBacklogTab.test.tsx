@@ -473,3 +473,26 @@ describe('ProjectBacklogTab — erro de carga não é vazio (AT-965)', () => {
     expect(screen.getAllByRole('button', { name: 'Tentar de novo' }).length).toBeGreaterThan(0);
   });
 });
+
+describe('ProjectBacklogTab — filtros numa linha e vocabulário de status (AT-969, RN-1447 a RN-1449)', () => {
+  it('a busca é placeholder com aria-label e o seletor de módulo é o do kit (RN-1447)', async () => {
+    listBacklog.mockResolvedValue([epic([story({ proposedReady: false })])]);
+    montar();
+    const busca = await screen.findByPlaceholderText('Buscar história, tarefa ou RN');
+    expect(busca.getAttribute('aria-label')).toBe('Buscar história, tarefa ou RN');
+    expect(busca.closest('[data-testid="filtros-do-backlog"]')).toBeTruthy();
+    expect(document.querySelector('[data-slot="native-select"]')).toBeTruthy();
+  });
+
+  it('o selo diz o status por extenso e o épico conta só as concluídas (RN-1448)', async () => {
+    listBacklog.mockResolvedValue([
+      epic([
+        story({ id: 's1', title: 'A', proposedReady: false, status: 'ready' }),
+        story({ id: 's2', title: 'B', proposedReady: false, status: 'ready' }),
+      ]),
+    ]);
+    montar();
+    expect(await screen.findByText('0 de 2 concluídas')).toBeTruthy();
+    expect(screen.getAllByText('pronta para executar')).toHaveLength(2);
+  });
+});

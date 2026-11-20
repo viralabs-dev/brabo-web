@@ -296,6 +296,7 @@ export function AcoesDoContainer({
         ? 'decidir'
         : 'subir';
   const botaoDaLinha = 'secondary' as const;
+  const classeDoLink = [buttonVariants({ variant: botaoDaLinha }), styles.acaoLink].join(' ');
 
   return (
     <div className={styles.blocoDeAcoes}>
@@ -304,7 +305,7 @@ export function AcoesDoContainer({
           <Link
             to="/containers/$projectId"
             params={{ projectId: item.projectId }}
-            className={`${buttonVariants({ variant: botaoDaLinha })} ${styles.acaoLink}`}
+            className={classeDoLink}
           >
             {t('actions.open')}
           </Link>
@@ -313,7 +314,7 @@ export function AcoesDoContainer({
           <Link
             to="/projects/$projectId"
             params={{ projectId: item.projectId }}
-            className={`${buttonVariants({ variant: botaoDaLinha })} ${styles.acaoLink}`}
+            className={classeDoLink}
           >
             {t('actions.decideImage')}
           </Link>

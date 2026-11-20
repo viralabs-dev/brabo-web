@@ -35,9 +35,19 @@
   color: var(--text-muted);
 }
 
-/* O filtro por estado é `ui/SegmentedControl` (AT-327); aqui só o espaço. */
-.filtros {
+/* O filtro por estado é `ui/SegmentedControl` (AT-327); a busca da lista
+   (AT-971, RN-1474) fica na mesma linha, à direita. */
+.barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-bottom: 10px;
+}
+
+.busca {
+  margin: 0;
 }
 
 .listaPr {
@@ -56,11 +66,17 @@
    diff. */
 .itemPrLinha {
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  gap: 12px;
+  padding-right: 12px;
+}
+
+/* A linha é `li > .itemPrLinha + motivo`: a borda vai no `li`. */
+.listaPr > li {
   border-bottom: 1px solid var(--border);
 }
 
-.itemPrLinha:last-child {
+.listaPr > li:last-child {
   border-bottom: none;
 }
 
@@ -73,7 +89,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
+  padding: 7px 0 7px 12px;
   background: transparent;
   border: none;
   text-align: left;
@@ -89,7 +105,6 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 12px 9px 0;
 }
 
 .itemPrCorpo {
@@ -100,8 +115,15 @@
   gap: 2px;
 }
 
+.itemPrNumero {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
 .itemPrTitulo {
   font-size: var(--fs-body);
+  font-weight: 600;
   color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -135,20 +157,6 @@
 .estadoSelo_open { color: var(--success); border-color: var(--success); }
 .estadoSelo_merged { color: var(--violet); border-color: var(--violet); }
 .estadoSelo_closed { color: var(--text-muted); }
-
-.formularioManual {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-}
-
-.label {
-  font-family: var(--font-mono);
-  font-size: var(--fs-label);
-  color: var(--text-muted);
-}
 
 .input {
   width: 260px;

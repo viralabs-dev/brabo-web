@@ -158,6 +158,7 @@
 }
 
 .vazio {
+  margin: 24px;
   padding: 24px;
   color: var(--text-muted);
   font-size: var(--fs-sm);

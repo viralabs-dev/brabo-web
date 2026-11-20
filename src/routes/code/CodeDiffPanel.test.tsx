@@ -34,8 +34,7 @@ function montar() {
 
 async function pedirDiffPeloId(id: string) {
   const user = userEvent.setup();
-  await user.type(screen.getByLabelText('Já sabe o id?'), id);
-  await user.click(screen.getByRole('button', { name: 'Ver diff' }));
+  await user.type(screen.getByLabelText('Buscar PR'), `${id}{Enter}`);
 }
 
 const listaVazia: CodePullRequestList = { items: [], truncated: false };
@@ -80,7 +79,7 @@ describe('CodeDiffPanel — lista de PRs', () => {
     getCodeDiff.mockResolvedValue(diff);
 
     montar();
-    expect(await screen.findByText('#218 feat: aba code')).toBeInTheDocument();
+    expect(await screen.findByText('feat: aba code')).toBeInTheDocument();
     expect(screen.getByText('daneiel · feature/aba-code → dev')).toBeInTheDocument();
 
     const user = userEvent.setup();
@@ -93,7 +92,37 @@ describe('CodeDiffPanel — lista de PRs', () => {
 
     // Voltar à lista limpa a PR selecionada e mostra a lista de novo.
     await user.click(screen.getByRole('button', { name: 'Voltar à lista' }));
-    expect(await screen.findByText('#218 feat: aba code')).toBeInTheDocument();
+    expect(await screen.findByText('feat: aba code')).toBeInTheDocument();
+  });
+
+  it('AT-971 (RN-1474): o campo é a busca da lista (nº, título, branch); Enter sem resultado abre o diff pelo id', async () => {
+    const pr = (id: string, number: number, title: string, branch: string) => ({
+      id, number, title, url: '', author: 'daneiel', state: 'open' as const,
+      sourceBranch: branch, targetBranch: 'dev', updatedAt: null,
+    });
+    getCodePullRequests.mockResolvedValue({
+      items: [pr('a', 18, 'Dockerfile do http-api', 'feature/task-fe2fda26'), pr('b', 17, 'Rotas do cancelamento', 'feature/cancela')],
+      truncated: false,
+    });
+    getCodeDiff.mockResolvedValue({ pullRequestId: 'zzz', files: [], truncated: false });
+    montar();
+    const user = userEvent.setup();
+    await screen.findByText('Dockerfile do http-api');
+
+    await user.type(screen.getByLabelText('Buscar PR'), 'cancela');
+    expect(screen.queryByText('Dockerfile do http-api')).not.toBeInTheDocument();
+    expect(screen.getByText('Rotas do cancelamento')).toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText('Buscar PR'));
+    await user.type(screen.getByLabelText('Buscar PR'), '#18');
+    expect(screen.getByText('Dockerfile do http-api')).toBeInTheDocument();
+    expect(screen.queryByText('Rotas do cancelamento')).not.toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText('Buscar PR'));
+    await user.type(screen.getByLabelText('Buscar PR'), 'zzz');
+    expect(screen.getByText(/Nenhuma PR combina com/)).toBeInTheDocument();
+    await user.type(screen.getByLabelText('Buscar PR'), '{Enter}');
+    expect(getCodeDiff).toHaveBeenCalledWith('p-1', 'zzz');
   });
 
   it('filtro de estado troca a chamada à api', async () => {

@@ -81,3 +81,17 @@
   color: var(--accent);
   white-space: nowrap;
 }
+
+/* AT-975 (RN-1480): dentro do cartão "Próximo passo", sem moldura própria. */
+.integrado {
+  margin-top: 8px;
+}
+
+.atual {
+  border-left: 2px solid var(--accent);
+  padding-left: 8px;
+}
+
+.atual .nome {
+  font-weight: 600;
+}

@@ -7,6 +7,7 @@ import { DESTINO_DO_PASSO } from '../lib/primeiros-passos';
 import { DESTINO, derivarProximoPasso, fatosDoBacklog } from '../lib/proximo-passo';
 import { usePrimeirosPassos } from './PrimeirosPassos.helpers';
 import { ComecarIdeacao } from './ComecarIdeacao';
+import { PrimeirosPassos } from './PrimeirosPassos';
 import styles from './ProximoPasso.module.css';
 
 /**
@@ -35,6 +36,16 @@ export function ProximoPasso({
   const { t } = useTranslation('overview');
   const { data: epics } = useBacklog(projectId);
   const primeirosPassos = usePrimeirosPassos(projectId, temSessao);
+  // AT-975 (RN-1480): enquanto houver primeiros passos pendentes (RN-708) o cartão
+  // é UM só e traz os passos, com o atual em destaque; não espera o backlog.
+  if (primeirosPassos?.some((p) => !p.feito)) {
+    return (
+      <Card role="region" className={`${styles.cartao} ${styles.fundido}`} data-testid="proximo-passo" data-passo="primeiro_passo" aria-label={t('proximoPasso.titulo')}>
+        <span className={styles.rotulo}>{t('proximoPasso.titulo')}</span>
+        <PrimeirosPassos projectId={projectId} temSessao={temSessao} integrado />
+      </Card>
+    );
+  }
   if (!epics || temSessao === undefined || execucaoAtiva === undefined) return null;
 
   const fatosDosItens = fatosDoBacklog(epics, architecture);

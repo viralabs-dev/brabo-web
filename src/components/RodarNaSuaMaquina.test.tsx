@@ -36,7 +36,10 @@ function montar() {
 }
 
 describe('RodarNaSuaMaquina (RN-855)', () => {
-  beforeEach(() => vi.restoreAllMocks());
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ type: 'opaque' }));
+  });
 
   it('mostra comando, copiar, link local e a nota de não verificado', async () => {
     vi.spyOn(api, 'getRunInstructions').mockResolvedValue(RUN);
@@ -52,6 +55,25 @@ describe('RodarNaSuaMaquina (RN-855)', () => {
     expect(screen.getByText(/cp \.env\.example \.env$/)).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Copiar' }));
     await waitFor(() => expect(writeText).toHaveBeenCalledWith(RUN.command));
+  });
+
+  it('AT-975: porta que responde mostra a prévia (iframe)', async () => {
+    vi.spyOn(api, 'getRunInstructions').mockResolvedValue(RUN);
+    const { container } = montar();
+    await waitFor(() => expect(container.querySelector('iframe')).not.toBeNull());
+    expect(fetch).toHaveBeenCalledWith('http://localhost:8080/docs', expect.objectContaining({ mode: 'no-cors' }));
+  });
+
+  it('AT-975: porta fechada não deixa iframe no documento; "Tentar de novo" checa outra vez, sem polling', async () => {
+    vi.spyOn(api, 'getRunInstructions').mockResolvedValue(RUN);
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('falhou')));
+    const { container } = montar();
+    expect(await screen.findByText(/não respondeu\. Suba a aplicação com o comando acima\./)).toBeTruthy();
+    expect(container.querySelector('iframe')).toBeNull();
+    expect(screen.getByRole('link', { name: 'Abrir em nova aba' })).toBeTruthy();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    fireEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
   });
 
   it('sem declaração (null) o cartão não aparece', async () => {

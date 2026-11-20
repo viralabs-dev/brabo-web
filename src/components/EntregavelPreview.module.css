@@ -1,0 +1,12 @@
+.fora {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-sm);
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: underline;
+}

@@ -2,7 +2,8 @@
   "faixa": {
     "titulo": "Ждёт вашего решения",
     "verTodas": "Все →",
-    "vazio": "Сейчас ничего не ждёт вас."
+    "vazio": "Сейчас ничего не ждёт вас.",
+    "abrirDecisoes": "Открыть решения →"
   },
   "architectureTab": {
     "title": "Архитектура",
@@ -21,7 +22,14 @@
     "reasonMissingModule": "несуществующий модуль: {{missing}}",
     "contractsLabel": "Контракты модулей",
     "noContracts": "Контракт ещё не объявлен — Архитектор объявляет, что открывает каждый модуль.",
-    "contractTypes": {"funcao": "функция", "rota": "маршрут", "evento": "событие", "dado": "данные", "tabela": "таблица", "identidade": "идентичность"},
+    "contractTypes": {
+      "funcao": "функция",
+      "rota": "маршрут",
+      "evento": "событие",
+      "dado": "данные",
+      "tabela": "таблица",
+      "identidade": "идентичность"
+    },
     "cols": {
       "module": "Модуль",
       "stack": "Стек",
@@ -29,7 +37,12 @@
       "dependsOn": "Зависит от",
       "stories": "Истории"
     },
-    "views": {"label": "Виды архитектуры", "diagrama": "Диаграмма", "adrs": "ADR · {{n}}", "pendencias": "Вопросы · {{n}}"},
+    "views": {
+      "label": "Виды архитектуры",
+      "diagrama": "Диаграмма",
+      "adrs": "ADR · {{n}}",
+      "pendencias": "Вопросы · {{n}}"
+    },
     "noPendencies": "Нет незакрытых вопросов перекрёстной проверки.",
     "proposalTag": "ПРЕДЛОЖЕНИЕ",
     "adrProposal": "ADR «{{titulo}}» ожидает вашего одобрения, чтобы стать PR.",
@@ -63,7 +76,12 @@
     "rearmSuccess": "Агент перезапущен",
     "rearmErrorTitle": "Не удалось перезапустить агента",
     "wakeSuccess": "Ищу задачу",
-    "wakeErrorTitle": "Не удалось разбудить агента"
+    "wakeErrorTitle": "Не удалось разбудить агента",
+    "maisOciosos_one": "+ {{count}} завершён или простаивает",
+    "maisOciosos_other": "+ {{count}} завершены или простаивают",
+    "maisOciosos_few": "+ {{count}} завершены или простаивают",
+    "maisOciosos_many": "+ {{count}} завершены или простаивают",
+    "recolherOciosos": "Свернуть простаивающих"
   },
   "timeline": {
     "title": "Хронология команды",
@@ -118,7 +136,17 @@
     "count_many": "{{count}} событий",
     "count_other": "{{count}} события",
     "loadErrorTitle": "Не удалось загрузить активность.",
-    "emptyNoSession": "Активности пока нет: она начнётся с первой сессии проекта."
+    "emptyNoSession": "Активности пока нет: она начнётся с первой сессии проекта.",
+    "turnosAgrupados_one": "{{agente}} · {{count}} ход, шагов: {{passos}}",
+    "turnosAgrupados_few": "{{agente}} · ходов: {{count}}, шагов: {{passos}}",
+    "turnosAgrupados_many": "{{agente}} · ходов: {{count}}, шагов: {{passos}}",
+    "turnosAgrupados_other": "{{agente}} · ходов: {{count}}, шагов: {{passos}}",
+    "recorteTurnos_one": "последний ход",
+    "recorteTurnos_few": "последние ходы: {{count}}",
+    "recorteTurnos_many": "последние ходы: {{count}}",
+    "recorteTurnos_other": "последние ходы: {{count}}",
+    "verLinhaDoTempo": "Вся лента →",
+    "rotuloModo": "Показать как"
   },
   "executionSection": {
     "title": "Выполнение",
@@ -270,6 +298,9 @@
     "endereco": "Адрес",
     "abrir": "Открыть в новой вкладке",
     "titulo": "Результат",
-    "vazio": "Нет опубликованного результата для просмотра."
+    "vazio": "Нет опубликованного результата для просмотра.",
+    "checando": "Проверяем, ответило ли приложение…",
+    "naoRespondeu": "{{url}} не отвечает. Запустите приложение командой выше.",
+    "tentarDeNovo": "Повторить"
   }
 }

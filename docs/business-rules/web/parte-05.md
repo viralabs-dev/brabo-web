@@ -976,7 +976,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
   (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
   (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:141`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
-  `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:250` (`movel`);
+  `:43` (`movel`); `apps/web/src/routes/Dashboard.tsx:311` (`movel`);
   `apps/web/src/routes/ProjectSessionsTab.tsx:171` (`movel`)
 - **Teste:** `apps/web/src/routes/SessionPage.layout-movel.test.tsx` (a gaveta
   nasce fechada, abre com o foco no X e o Esc fecha devolvendo o foco; X e

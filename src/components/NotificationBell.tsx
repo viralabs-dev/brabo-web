@@ -2,9 +2,9 @@ import { useTranslation } from 'react-i18next';
 import type { SessionEvent } from '../lib/api-types';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/shadcn/popover';
 import { Badge } from './ui/Badge';
+import { formatRelativeTime } from '../lib/time';
+import { agruparAtividade, type ItemQuePrecisaDeVoce } from '../lib/notificacoes';
 import { Button } from './ui/Button';
-import { EmptyState } from './ui/EmptyState';
-import { EventItem } from './EventItem';
 import { BellIcon } from './ui/icons';
 import styles from './NotificationBell.module.css';
 
@@ -28,41 +28,40 @@ export interface NotificationGroup {
 }
 
 interface NotificationBellProps {
+  /** Só o que precisa de você (RN-1469); `undefined` = ainda não lido. */
+  precisam: ItemQuePrecisaDeVoce[] | undefined;
+  /** Total REAL das filas: é o número do selo. */
+  precisamTotal: number;
+  precisamErro?: boolean;
+  /** A atividade por projeto (os eventos não lidos, agrupados); NÃO entra no selo. */
   groups: NotificationGroup[];
-  unreadCount: number;
   /**
    * CONTROLADO por quem monta o sino, e não estado interno: abrir a gaveta é
    * o que dispara a busca dos eventos não lidos (uma consulta por projeto com
-   * pendência). Com o estado aqui dentro, quem faz as consultas não tinha como
-   * saber que ninguém estava olhando — e pagava por todas o tempo todo.
+   * pendência).
    */
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Avança o corte de leitura por `seq` (RN-091); só mexe na atividade. */
   onMarkRead: () => void;
+  onAbrirItem: (item: ItemQuePrecisaDeVoce) => void;
+  onAbrirProjeto: (projectId: string) => void;
 }
 
 export function NotificationBell({
+  precisam,
+  precisamTotal,
+  precisamErro,
   groups,
-  unreadCount,
   open,
   onOpenChange,
   onMarkRead,
+  onAbrirItem,
+  onAbrirProjeto,
 }: NotificationBellProps) {
   const { t } = useTranslation('shell');
-  // O que o botão "marcar lidas" REALMENTE faz, dito antes de ele ser clicado.
-  //
-  // O corte de leitura é UM `seq` por projeto no `localStorage`, e não existe
-  // endpoint de marcar lido, por decisão registrada (RN-091). Um corte por
-  // `seq` marca um PREFIXO; a gaveta mostra um SUFIXO (os mais recentes). Os
-  // dois únicos cortes que ele consegue expressar são "nada" e "tudo até
-  // agora" — não há como marcar lidos só os 50 exibidos sem inventar um
-  // conjunto de lidos por evento, que é tabela nova e está fora de escopo.
-  //
-  // Então a semântica NÃO muda (continua avançando para o último `seq`), e o
-  // que muda é a gaveta parar de esconder o que esse avanço engole: o total
-  // aparece no botão, e cada projeto diz quantos ficaram fora da janela.
-  const ocultos = groups.reduce((total, g) => total + g.olderCount, 0);
-  const totalNaGaveta = groups.reduce((total, g) => total + g.unreadCount, 0);
+  const { recentes, parados } = agruparAtividade(groups);
+  const eventos = (n: number) => t('notificationBell.atividade.eventos', { count: n });
 
   return (
     <div className={styles.wrapper}>
@@ -71,9 +70,9 @@ export function NotificationBell({
           render={<Button variant="secondary" className={styles.button} aria-label={t('notificationBell.label')} />}
         >
           <BellIcon size={17} />
-          {unreadCount > 0 && (
+          {precisamTotal > 0 && (
             <Badge tone="accent" className={styles.badge}>
-              {unreadCount > 99 ? '99+' : unreadCount}
+              {precisamTotal > 99 ? '99+' : precisamTotal}
             </Badge>
           )}
         </PopoverTrigger>
@@ -81,42 +80,60 @@ export function NotificationBell({
         <PopoverContent align="end" sideOffset={8} className={styles.dropdown}>
           <div className={styles.header}>
             <span className={styles.headerTitle}>{t('notificationBell.label')}</span>
-            <Button variant="ghost" size="sm" className={styles.markRead} onClick={onMarkRead}>
-              {ocultos > 0
-                ? t('notificationBell.markRead.withCount', { total: totalNaGaveta })
-                : t('notificationBell.markRead.default')}
-            </Button>
           </div>
 
-          {ocultos > 0 && (
-            <div className={styles.windowNote}>
-              {t('notificationBell.windowNote', { count: ocultos })}
-            </div>
-          )}
-
-          {groups.length === 0 && (
-            <EmptyState>{t('notificationBell.empty')}</EmptyState>
-          )}
-
-          {groups.map((group) => (
-            <div key={group.projectId} className={styles.group}>
-              <div className={styles.groupHeader}>
-                <span className={styles.groupDot} />
-                {group.projectName}
-                <Badge tone="muted" className={styles.groupCount}>{group.unreadCount}</Badge>
-              </div>
-              <div className={styles.list}>
-                {group.events.map((event) => (
-                  <EventItem key={event.id} event={event} />
-                ))}
-              </div>
-              {group.olderCount > 0 && (
-                <div className={styles.older}>
-                  {t('notificationBell.older', { count: group.olderCount })}
+          <section aria-label={t('notificationBell.precisam.titulo')}>
+            <div className={styles.secao}>{t('notificationBell.precisam.titulo')}</div>
+            {precisamErro ? (
+              <div className={styles.aviso}>{t('notificationBell.precisam.erro')}</div>
+            ) : precisam === undefined ? (
+              <div className={styles.aviso}>{t('notificationBell.precisam.carregando')}</div>
+            ) : precisam.length === 0 ? (
+              <div className={styles.aviso}>{t('notificationBell.precisam.vazio')}</div>
+            ) : (
+              precisam.map((item) => (
+                <div key={item.id} className={styles.linha}>
+                  <span className={styles.texto}>
+                    <span className={styles.sujeito}>{item.sujeito}</span>
+                    <span className={styles.motivo}>{item.motivo ?? t(`notificationBell.tipo.${item.fila}`)}</span>
+                    <span className={styles.meta}>
+                      {item.projectName}
+                      {item.desde ? ` · ${formatRelativeTime(item.desde)}` : ''}
+                    </span>
+                  </span>
+                  <Button variant="ghost" size="sm" onClick={() => onAbrirItem(item)}>
+                    {t('notificationBell.abrir')}
+                  </Button>
                 </div>
+              ))
+            )}
+          </section>
+
+          <section aria-label={t('notificationBell.atividade.titulo')}>
+            <div className={styles.secao}>
+              {t('notificationBell.atividade.titulo')}
+              {groups.length > 0 && (
+                <Button variant="ghost" size="sm" className={styles.markRead} onClick={onMarkRead}>
+                  {t('notificationBell.markRead')}
+                </Button>
               )}
             </div>
-          ))}
+            {groups.length === 0 && <div className={styles.aviso}>{t('notificationBell.atividade.vazio')}</div>}
+            {recentes.map((g) => (
+              <button key={g.projectId} type="button" className={styles.linhaProjeto} onClick={() => onAbrirProjeto(g.projectId)}>
+                <span className={styles.sujeito}>{g.projectName}</span>
+                <span className={styles.meta}>
+                  {eventos(g.eventos)}
+                  {g.ultimoEm ? ` · ${formatRelativeTime(g.ultimoEm)}` : ''}
+                </span>
+              </button>
+            ))}
+            {parados.projetos > 0 && (
+              <div className={styles.aviso}>
+                {t('notificationBell.atividade.parados', { count: parados.projetos, eventos: eventos(parados.eventos) })}
+              </div>
+            )}
+          </section>
         </PopoverContent>
       </Popover>
     </div>

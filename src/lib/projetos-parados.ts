@@ -1,7 +1,8 @@
 import type { Project, ProjectCardSummary } from './api-types';
+import { DIAS_DE_PROJETO_PARADO } from './notificacoes';
 
 /** AT-967 / RN-1460: parado = sem evento há mais de 30 dias. Fixo, não configurável. */
-export const DIAS_PARADO = 30;
+export const DIAS_PARADO = DIAS_DE_PROJETO_PARADO; // um limite só, o da AT-966 (RN-1470)
 const DIA_MS = 86_400_000;
 
 export type FiltroDoInicio = 'ativos' | 'parados' | 'todos';

@@ -744,3 +744,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/CaixaDeDecisoes.tsx` (`NegarEmLote`).
 - **Teste:** `src/routes/DecisionsPage.test.tsx`.
 - **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1469"></a>
+
+### RN-1469 — O selo do sino conta só o que precisa de você, e a gaveta lista esses itens primeiro {#rn-1469}
+
+- **Regra:** o selo do sino é a soma dos `total` REAIS das cinco filas da Caixa de decisões (`useDecisionInbox`, o mesmo cache da RN-467; o total vale mesmo com a lista cortada pelo teto), nunca a atividade não lida: com 8.404 eventos e 2 decisões o selo mostra 2, e sem decisões o sino fica sem selo (acima de 99, "99+"). Revisa a contagem antiga (por `seq` mais promoções pendentes) e a [RN-091](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-091) só no que o selo conta; o corte de leitura segue o mesmo. A seção "Precisam de você" lista uma linha por item (sujeito, motivo, projeto, idade e "Abrir", que leva à aba onde a decisão mora). Sem leitura do inbox a seção diz que não conseguiu ler, nunca "nada espera por você" (EP-020). Nenhum endpoint novo. Fora de escopo: eventos de "agente parado" como fonte própria, porque a api não tem sinal distinto além de `agentesAguardando`, já coberto pelas aprovações e PRs.
+- **Onde:** `src/lib/notificacoes.ts`, `src/components/NotificationBell.tsx`, `src/routes/Dashboard.tsx`.
+- **Teste:** `src/lib/notificacoes.test.ts`, `src/components/NotificationBell.test.tsx`.
+- **Origem:** AT-966 (EP-035), prancha L01 da v11.
+
+<a id="rn-1470"></a>
+
+### RN-1470 — A atividade é uma linha por projeto; projetos parados há mais de 30 dias somam numa linha {#rn-1470}
+
+- **Regra:** "Atividade por projeto" mostra uma linha por projeto com a contagem de eventos não lidos e a idade do evento mais recente; clicar abre a Visão geral do projeto. "atividade em ‹ator›" deixa de ser linha individual. Projeto cujo evento mais recente tem mais de 30 dias entra na linha única "N projetos parados há mais de 30 dias · X eventos"; projeto com eventos ainda não carregados nunca é dado como parado, nem ganha idade inventada. Revisa a [RN-100](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-100) do lado do web: a gaveta deixou de listar os eventos e o aviso "+ N mais antigos" saiu, porque a linha do projeto já traz o total.
+- **Onde:** `src/lib/notificacoes.ts` (`agruparAtividade`), `src/components/NotificationBell.tsx`.
+- **Teste:** `src/lib/notificacoes.test.ts`, `src/components/NotificationBell.test.tsx`.
+- **Origem:** AT-966 (EP-035), prancha L01 da v11.
+
+<a id="rn-1471"></a>
+
+### RN-1471 — O painel do sino tem 420 px, sem rolagem horizontal, e o rodapé diz "Marcar atividade como lida" {#rn-1471}
+
+- **Regra:** o painel tem largura fixa de 420 px (menos que a janela em telas estreitas), `scrollWidth === clientWidth` e texto longo quebrando em até 2 linhas. "Marcar atividade como lida" substitui "marcar as N como lidas" e chama o mesmo corte por `seq` de hoje ([RN-091](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-091)); só a atividade é marcada, os itens que precisam de você ficam até serem decididos.
+- **Onde:** `src/components/NotificationBell.module.css`, `src/components/NotificationBell.tsx`.
+- **Teste:** `src/components/NotificationBell.test.tsx` (a rolagem horizontal é medida na prévia, `13-design/notificacoes-v11`).
+- **Origem:** AT-966 (EP-035), prancha L01 da v11.

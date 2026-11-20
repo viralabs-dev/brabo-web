@@ -240,25 +240,9 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
           const gatePendente = gatePendenteNoMerge(task);
           // RN-1474 (revisa RN-663/RN-768): o motivo é UMA frase sob o título.
           // Tarefa bloqueada, em cor de erro; gate pendente, em cor neutra.
-          if (task?.blocked) {
-            return (
-              <p className={styles.motivoErro} data-testid="aviso-merge-indisponivel">
-                {task.blockedReason || !gatePendente
-                  ? t('prsTab.mergeIndisponivelBloqueada', {
-                      reason: task.blockedReason ?? t('prsTab.mergeBlockedFallback'),
-                    })
-                  : t('prsTab.gatePendenteBloqueada', { gate: gatePendente })}
-              </p>
-            );
-          }
-          if (gatePendente) {
-            return (
-              <p className={styles.motivo} data-testid="aviso-gate-pendente">
-                {t('prsTab.gatePendente', { gate: gatePendente })}
-              </p>
-            );
-          }
-          // RN-705: a recusa é AVISO em texto — a decisão continua humana.
+          // RN-705: a recusa é AVISO em texto — a decisão continua humana. Vem ANTES do
+          // bloqueio e do gate pendente: depois de um conflito a tarefa volta a
+          // `in_progress` (gate pendente), e o que o conflito diz é o que destrava.
           const recusa = acaoDaPr(pr) ? undefined : ultimaRecusaDeMerge(mergesFalhosQuery.data, pr);
           if (recusa) {
             return (
@@ -275,6 +259,24 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
                 ]
                   .filter(Boolean)
                   .join(' ')}
+              </p>
+            );
+          }
+          if (task?.blocked) {
+            return (
+              <p className={styles.motivoErro} data-testid="aviso-merge-indisponivel">
+                {task.blockedReason || !gatePendente
+                  ? t('prsTab.mergeIndisponivelBloqueada', {
+                      reason: task.blockedReason ?? t('prsTab.mergeBlockedFallback'),
+                    })
+                  : t('prsTab.gatePendenteBloqueada', { gate: gatePendente })}
+              </p>
+            );
+          }
+          if (gatePendente) {
+            return (
+              <p className={styles.motivo} data-testid="aviso-gate-pendente">
+                {t('prsTab.gatePendente', { gate: gatePendente })}
               </p>
             );
           }

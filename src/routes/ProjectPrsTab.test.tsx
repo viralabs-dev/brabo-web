@@ -577,6 +577,34 @@ describe('ProjectPrsTab — a recusa de merge aparece (RN-705)', () => {
     });
   });
 
+  it('AT-971: depois do conflito a tarefa volta a in_progress (gate pendente) e a recusa continua à vista', async () => {
+    getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ status: 'in_progress', gateStatus: null }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    getProjectPendingActions.mockResolvedValue([
+      acaoDeMerge({
+        status: 'failed',
+        executionResult: {
+          kind: 'git_merge',
+          failed: true,
+          error: 'conflito de merge na PR pr-a: package.json',
+          pullRequestId: 'pr-a',
+          conflictingFiles: ['package.json'],
+        } as unknown as ProposedAction['executionResult'],
+      }),
+    ]);
+
+    montar();
+
+    const aviso = await screen.findByTestId('aviso-merge-recusado');
+    expect(aviso.textContent).toContain('package.json');
+    expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+  });
+
   it('recusa de OUTRA PR não aparece nesta', async () => {
     getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
     getProjectPendingActions.mockResolvedValue([

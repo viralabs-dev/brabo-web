@@ -95,7 +95,11 @@
       "registrado_rodando_observado_parado": "登记为运行中，实际已停止。"
     },
     "ajuda": "容器操作",
-    "ajudaIndisponiveis": "操作为何不可用"
+    "ajudaIndisponiveis": "操作为何不可用",
+    "open": "打开",
+    "decideImage": "确定镜像",
+    "menu": "{{projeto}} 的更多操作",
+    "detalhes": "查看详情"
   },
   "detail": {
     "title": "容器",

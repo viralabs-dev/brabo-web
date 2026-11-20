@@ -853,3 +853,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/ProjectArchitectureTab.tsx`.
 - **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` (classe `celulaQuebra`; a rolagem é medida na prévia).
 - **Origem:** AT-972 (EP-035), prancha L07 da v11.
+
+<a id="rn-1481"></a>
+
+### RN-1481 — Cada linha de Containers tem uma ação com texto, escolhida pelo estado; parar, ver detalhes e remover moram no menu "…" {#rn-1481}
+
+- **Regra:** a coluna Ações tem uma única ação com texto, em variante secundária: container de pé ("rodando" ou "provisionando"), "Abrir" (link para `/containers/$projectId`); projeto sem imagem decidida, "Decidir imagem" (link para o projeto); nos demais casos "Subir de novo" (com registro) ou "Subir container" (sem registro), desabilitada quando o motivo é papel, sessão, broker ou runner, com o motivo no "?" como antes ([RN-646](parte-05.md#rn-646)). "Parar", "Ver detalhes" e "Remover" ficam no menu "…" (botão só de ícone, legenda "Mais ações de ‹projeto›"); "Remover" vem depois de um separador, em variante destrutiva; "Parar" e "Remover" seguem desabilitados quando não há o que parar ou remover. Nenhum botão primário na tabela. O cartão de aprovação de ação pendente, a confirmação por `proposed_action` e a seção "Remoção pendente" ([RN-1446](#rn-1446)) não mudam. Os cabeçalhos ordenáveis têm área de clique de 32 px.
+- **Onde:** `src/components/AcoesDoContainer.tsx`, `src/components/ui/Table.module.css` (`.ordenar`), `src/locales/*/containers.json` (`actions.open`, `actions.decideImage`, `actions.menu`, `actions.detalhes`).
+- **Teste:** `src/routes/ContainersPage.test.tsx` ("uma ação por linha", menu "…").
+- **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa [RN-646](parte-05.md#rn-646): Parar e Remover deixam de ser botões da linha. Fora: "Subir container" primário no topo da página (não há alvo único para ele) e logs (a tela de detalhe não os tem; o menu leva ao detalhe).
+
+<a id="rn-1482"></a>
+
+### RN-1482 — A matriz de capacidades usa rótulos legíveis e as abas do catálogo mostram só providers com chave {#rn-1482}
+
+- **Regra:** as colunas da matriz "O que cada provider sabe fazer" usam o rótulo de `providers.capabilities.columns.<chave>` (Streaming, Ferramentas, Lista de modelos, Embeddings, Raciocínio, Roteamento, Sessão fixa, Cache de preço, Cache de prompt, Visão), com o identificador da API no `title`; chave nova, ainda sem rótulo, aparece pelo identificador. "provado" continua selo verde; "não provado" é texto simples, sem selo. A tabela rola dentro do próprio contêiner (`max-width: 100%`). No catálogo de modelos só viram aba os providers com chave do titular (ou locais); os sem chave, inclusive com modelo ativo, saem das abas e ficam na linha "N de fora, sem chave do titular" e em "Adicionar provider" (Credenciais).
+- **Onde:** `src/routes/ProvidersPage.tsx`, `src/routes/ProvidersPage.module.css`, `src/components/ModelCatalogSection.tsx`, `src/locales/*/providers.json`, `src/locales/*/models.json` (`catalog.tabs.noKey` e `noKeyNote` saíram).
+- **Teste:** `src/routes/ProvidersPage.test.tsx`, `src/components/ModelCatalogSection.test.tsx`.
+- **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa [RN-931](parte-06.md#rn-931) e a [RN-043](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md): a aba marcada "sem chave" para desativar modelo ativo deixou de existir na tela do catálogo. O rótulo "Cache de preço" é o da prancha para `priceCeiling` (na API é o teto de preço).
+
+<a id="rn-1483"></a>
+
+### RN-1483 — Na página Status o "Voltar" tem ícone e texto, fica no topo, à esquerda do título {#rn-1483}
+
+- **Regra:** `/status` mostra, antes do `<h1>`, o botão "Voltar" (ícone de seta e texto, variante secundária) que leva ao destino decidido pelo router; o botão só de ícone abaixo da tabela sai. A página continua fora do shell, com a rota pública.
+- **Onde:** `src/routes/StatusPage.tsx`.
+- **Teste:** `src/routes/StatusPage.test.tsx`.
+- **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa o botão só de ícone da AT-327.

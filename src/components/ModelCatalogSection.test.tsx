@@ -407,17 +407,18 @@ describe('abas por provider com chave do titular (AT-607)', () => {
     expect(screen.getByText(/2 de fora, sem chave do titular: Anthropic, OpenRouter/)).toBeTruthy();
   });
 
-  it('provider sem chave com modelo ATIVO vira aba marcada, para dar para desativar (RN-043)', async () => {
+  it('AT-976 (RN-1482): provider sem chave, mesmo com modelo ativo, não vira aba nem repete "sem chave" nela', async () => {
     const cat = catalogoMisto();
     cat.cloud.anthropic = [model({ id: 'a-1', provider: 'anthropic', name: 'claude-x', displayName: 'Claude direto', isActive: true })];
     listModelCatalog.mockResolvedValue(cat);
     listCredentialedProviders.mockResolvedValue({ providers: ['openai'] });
     montar();
 
-    const aba = await screen.findByRole('tab', { name: /Anthropic · sem chave do titular/ });
-    fireEvent.click(aba);
-    expect(screen.getByText('Claude direto')).toBeTruthy();
-    expect(screen.getByText(/ainda tem modelo ativo/)).toBeTruthy();
+    await screen.findByText('Llama 3.2 1B');
+    await waitFor(() => expect(screen.getAllByRole('tab')).toHaveLength(2));
+    for (const aba of screen.getAllByRole('tab')) expect(aba.textContent).not.toMatch(/sem chave/);
+    expect(screen.queryByText('Claude direto')).toBeNull();
+    expect(screen.getByText(/de fora, sem chave do titular: Anthropic/)).toBeTruthy();
   });
 
   it('a seleção sobrevive à troca de aba e a busca sem resultado na aba nomeia as que casam', async () => {

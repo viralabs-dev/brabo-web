@@ -310,6 +310,11 @@ export function janelaDesdeOInicio(serie: SpendPorDia[]): number | null {
   return primeiro > 0 ? serie.length - primeiro : null;
 }
 
+/** O primeiro dia com gasto da série densa (`YYYY-MM-DD`); `null` sem gasto (AT-1005). */
+export function primeiroDiaComGasto(serie: SpendPorDia[]): string | null {
+  return serie.find((p) => p.costMicros > 0 || p.chamadas > 0)?.dia ?? null;
+}
+
 /** Tokens abreviados ("41,1 mi") a partir de mil; abaixo disso o número inteiro. */
 export function abreviarTokens(n: number): string {
   return n < 1000

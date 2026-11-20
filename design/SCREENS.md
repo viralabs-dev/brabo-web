@@ -24,7 +24,7 @@ Fonte: prévia `13-design/v9-estrutura/` do Vault (`telas/<id> (dark|light).png`
 | Código (explorador de linhas de 28 px, README aberto por padrão, PRs em uma linha com os portões D Q S V — RN-1472 a RN-1474) | Arquivos, PRs | P22, P15, L06 |
 | Decisões | Aprovações, Hipóteses, Permissões | P14, P17 |
 | Arquitetura (chips "módulos · v‹N›" e "C4 nível 2" ao lado do toggle, legenda do grafo, RN-1495; vistas Diagrama / ADRs / Pendências em `ToggleGroup` com contagem, grafo da esquerda para a direita com 300 px e texto de 12,5 px, tabela de módulos sem corte, contratos — RN-1387, RN-1475 a RN-1477) | — | P16, L07 |
-| Gastos (quatro indicadores, período "Desde o início", cartão compacto `#teto` à direita, "Por sessão" pelo nome — RN-1450 a RN-1452) | — | P21, L08 |
+| Gastos (quatro indicadores, período "Desde o início", gráfico por dia com o cartão compacto `#teto` ao lado, "desde" no Total e o modelo nas Chamadas, "Por sessão" pelo nome — RN-1450 a RN-1452, RN-1487) | — | P21, L08 |
 | Configurações | Modelos, Projeto e execução, Pessoas e acesso, Avançado | P18, P19, P20 |
 
 As chaves de URL de hoje viram as chaves das sub-abas; todo link antigo abre a mesma tela.
@@ -330,7 +330,9 @@ relógio); tabela densa (AGENTE com avatar+nome, MODELO VIGENTE =
 `ModelPicker` inline dropdown, ORIGEM = badge colorido pelo nível da
 cascata, FALLBACK mono, EST. MÊS).
 
-**AT-974 (v11, L09):** a linha de configuração é grade (rótulo até 340px, controle até 520px, `gap: 32px`). Em Modelos são quatro colunas (Agente, Modelo vigente, De onde vem, Est. mês): "De onde vem" é um chip (a cadeia e o fallback abrem num Popover), os agentes com gasto vêm primeiro, do maior para o menor ("Mostrar os outros N agentes"), a caixa da área do lead cabe na linha de 44 px e o aviso de roteamento aparece uma vez, numa faixa de aviso acima da tabela. Em Projeto e execução o teto do mês é só o valor com "Editar em Gastos" (`?tab=spend#teto`). O convite de membro é por e-mail e as tabelas vazias mostram uma frase sem cabeçalho.
+**AT-974 (v11, L09):** a linha de configuração é grade (rótulo até 340px, controle até 520px, `gap: 32px`). Em Modelos são quatro colunas (Agente, Modelo vigente, De onde vem, Est. mês): "De onde vem" é um chip (a cadeia e o fallback abrem num Popover), os agentes com gasto vêm primeiro, do maior para o menor ("Mostrar os outros N agentes"), a caixa da área do lead cabe na linha (~55 px, a medida da L09) e o aviso de roteamento aparece uma vez, numa faixa de aviso acima da tabela. Em Projeto e execução o teto do mês é só o valor com "Editar em Gastos" (`?tab=spend#teto`). O convite de membro é por e-mail e as tabelas vazias mostram uma frase sem cabeçalho.
+
+**AT-1005 (v11, L08 e L09, RN-1487 a RN-1489):** o Popover da cascata usa a fonte do texto (só o id do modelo é mono), a faixa de roteamento diz a frase curta e "O que isso muda" abre a inteira, o custo estimado entra no título da tabela de Modelos ("N agentes · US$ X estimado por mês"), o erro do convite tem ícone e texto em cor de erro e as tabelas vazias de tokens e de chaves são uma linha de até 48 px. Em Projeto e execução a escada tem rótulos visíveis e o Salvar no rodapé com a contagem, o merge automático usa o `Checkbox` do kit, o teto por área diz "sem teto próprio" e a promoção de histórias entra na grade de 520 px.
 
 **Seção "Membros e papéis"**: subtítulo; barra de convite (input de
 e-mail + select de papel + botão "Convidar"); tabela de membros

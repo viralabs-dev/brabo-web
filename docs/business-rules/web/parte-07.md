@@ -229,6 +229,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1265 — Configurações tem linhas de configuração e um Salvar no cabeçalho que cumpre a RN-469 {#rn-1265}
 
+> **Complementada pela [RN-1489](#rn-1489) (AT-1005):** o Salvar da escada de modelos, que tem gesto próprio, fica no rodapé da seção, com a contagem de alterações; o gesto e a confirmação não mudam.
+
 - **Regra:** (a linha vira grade com o controle ao lado do rótulo na AT-974, [RN-1455](#rn-1455).) Desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`). **Desde a AT-973 o teto do mês tem um lugar só, o cartão `#teto` dos Gastos (RN-1450):** Configurações mostra só o valor, com "Editar em Gastos".
 - **Onde:** `src/routes/settings/salvar-do-cabecalho.tsx:21` (`ProvedorDoSalvarDoCabecalho`), `src/routes/settings/salvar-do-cabecalho.tsx:100` (`BarraDeSalvar`), `src/routes/settings/secao-salvavel.helpers.ts:118` (`salvarSecao`), `src/routes/settings/LinhaDeConfiguracao.tsx:5` (`LinhaDeConfiguracao`), `src/routes/settings/TetoPorTarefaSection.tsx:39` (`TetoPorTarefaSection`), `src/routes/settings/CabecalhoDaSecao.tsx:5` (`CabecalhoDaSecao`).
 - **Teste:** `src/routes/settings/salvar-do-cabecalho.test.tsx` (tudo em série e desfecho parcial nomeado).
@@ -612,7 +614,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1450 — O teto do mês tem um lugar só: o cartão `#teto` dos Gastos {#rn-1450}
 
-- **Regra:** o teto do mês mora no cartão compacto `id="teto"` da aba Gastos do projeto e da página Gastos do workspace, à direita dos indicadores (320 px; abaixo de 1100 px, abaixo deles). Com teto, mostra o título, o medidor compacto (valor e barra, sem marcadores de 90%/100% nem linha em R$), a previsão e "Editar"; sem teto, mostra "Sem teto do mês" e "Definir". O botão abre o formulário (valor, "Ao atingir o teto", "Salvar teto" com rótulos e texto visíveis) dentro do próprio cartão, sem Popover, para a âncora continuar caindo nele; quem não edita vê o motivo em texto, sem botão. `?tab=spend#teto` (o "Definir teto do mês" do cabeçalho, RN-1210) rola até o cartão quando ele monta. O cartão existe mesmo se o relatório de gasto falhar. As regras do teto (bloquear ou só avisar, RN-1200) não mudam.
+> **Revisada pela [RN-1487](#rn-1487) (AT-1005):** o cartão deixou de ficar ao lado dos indicadores. Os indicadores ocupam a largura inteira e o cartão fica ao lado do gráfico por dia, na faixa de baixo; fechado, ele resume a previsão e a virada do mês numa linha só.
+
+- **Regra:** o teto do mês mora no cartão compacto `id="teto"` da aba Gastos do projeto e da página Gastos do workspace, à direita do gráfico por dia (320 px; abaixo de 1100 px, abaixo dos indicadores). Com teto, mostra o título, o medidor compacto (valor e barra, sem marcadores de 90%/100% nem linha em R$), a previsão e "Editar"; sem teto, mostra "Sem teto do mês" e "Definir". O botão abre o formulário (valor, "Ao atingir o teto", "Salvar teto" com rótulos e texto visíveis) dentro do próprio cartão, sem Popover, para a âncora continuar caindo nele; quem não edita vê o motivo em texto, sem botão. `?tab=spend#teto` (o "Definir teto do mês" do cabeçalho, RN-1210) rola até o cartão quando ele monta. O cartão existe mesmo se o relatório de gasto falhar. As regras do teto (bloquear ou só avisar, RN-1200) não mudam.
 - **Onde:** `src/components/TetoDoMes.tsx` (`CartaoDoTeto`), `src/components/SpendPaineis.tsx` (`GastoDoWorkspace`, prop `teto`), `src/routes/ProjectSpendTab.tsx`, `src/routes/SpendPage.tsx`.
 - **Teste:** `src/routes/ProjectSpendTab.test.tsx` (`#teto` rola até o cartão).
 - **Origem:** AT-973 (EP-035), decisão do dono de 17/11. Muda a RN-1265.
@@ -620,6 +624,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 <a id="rn-1451"></a>
 
 ### RN-1451 — Os Gastos mostram quatro indicadores e o período real {#rn-1451}
+
+> **Complementada pela [RN-1487](#rn-1487) (AT-1005):** Total e Chamadas ganham uma segunda linha ("desde 26/10", "<modelo> em N%"), as notas de tokens também são abreviadas e "Ver os N agentes" é um link.
 
 - **Regra:** Total, Chamadas, Tokens e Custo médio por chamada, em grade de quatro. Tokens abreviados a partir de mil ("41,1 mi") com o número inteiro no `title`; custo médio abaixo de 1 centavo mostra 4 casas ("US$ 0,0012"). O seletor de período do owner ganha "Desde o início · N dias" quando o primeiro gasto tem menos de 30 dias (lido da série densa de 30 dias), e ele é o padrão; o eixo do gráfico começa no primeiro dia com gasto. O gráfico nunca passa da largura do cartão. Sem gasto na janela o gráfico diz "Nenhum gasto nos últimos N dias." (N é a janela escolhida) e não oferece "Ver como tabela", e "Onde foi o gasto" vira uma linha no lugar dos rankings. "O meu consumo" do membro usa os mesmos tokens abreviados. Na visão do time, "Por agente" mostra os 3 maiores e "Ver os N agentes".
 - **Onde:** `src/components/SpendPaineis.tsx` (`DestaquesDoTotal`, `SeletorDeJanela`, `GastoDoWorkspace`), `src/lib/spend.ts` (`janelaDesdeOInicio`, `abreviarTokens`), `src/components/CredentialSpendSection.helpers.ts` (`formatarCustoMedio`), `src/components/GraficoDeGastoPorDia.tsx`.
@@ -648,6 +654,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1454 — Em Modelos por agente a linha diz só a origem; a cadeia e o fallback abrem num Popover e o aviso de roteamento vem uma vez {#rn-1454}
 
+> **Revisada pela [RN-1488](#rn-1488) (AT-1005):** o Popover usa a fonte do texto (só o identificador do modelo é mono), a faixa de roteamento mostra a frase curta e "O que isso muda" abre a inteira num Popover, e o custo estimado entra no título da tabela. A altura da linha segue a da L09 (~55 px).
+
 - **Regra:** a tabela tem quatro colunas: Agente, Modelo vigente, "De onde vem" e Est. mês (a coluna Fallback saiu). "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) e o fallback ("Se perder o modelo próprio, vale: X", ou "não há nível abaixo") abrem num Popover do chip. Os agentes com gasto no mês vêm primeiro, do maior para o menor gasto, e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). A caixa "Valer para a área" do lead fica na mesma linha do seletor, sem dobrar a altura da linha. O sobretítulo "binding vigente por cascata" saiu e a explicação da cascata fica visível em linha. O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa de aviso (`Alert` com ícone e borda) acima da tabela, com "O que isso muda". A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px` (o critério de 32 px vale entre as colunas). O erro do convite (RN-1453) usa o `Alert` de erro e "Editar em Gastos" (RN-1455) é o `Link` do roteador.
 - **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/settings/PreferenciaDeRoteamento.tsx` (`semAvisoDeCapability`), `src/routes/settings/LinhaDeConfiguracao.module.css`.
 - **Teste:** `src/routes/settings/cascata.test.tsx`, `src/routes/settings/bindings-em-lote.test.tsx`.
@@ -656,6 +664,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 <a id="rn-1455"></a>
 
 ### RN-1455 — Em Configurações o teto do mês é só o valor e o caminho para Gastos {#rn-1455}
+
+> **Conferida na AT-1005 ([RN-1489](#rn-1489)):** o `Link` do roteador já estava na `dev`; o teste `teto-so-em-gastos.test.tsx` garante que não recarrega a página.
 
 - **Regra:** o teto do mês mora só em Gastos ([RN-1450](#rn-1450)). Em Configurações › Projeto e execução a linha "Teto de gasto do mês" mostra apenas "<gasto> de <teto> · N%" (ou "Sem teto neste mês", ou "Não foi possível ler o teto") e o link "Editar em Gastos", que é o `Link` do roteador para `?tab=spend#teto` (sem roteador no contexto cai no `<a href>`). Não há formulário nesta tela.
 - **Onde:** `src/routes/settings/ExecutionSection.tsx`.
@@ -854,6 +864,39 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` (classe `celulaQuebra`; a rolagem é medida na prévia).
 - **Origem:** AT-972 (EP-035), prancha L07 da v11.
 
+<a id="rn-1487"></a>
+
+### RN-1487 — Nos Gastos do owner o gráfico fica ao lado do cartão do teto, e os indicadores dizem desde quando e quanto {#rn-1487}
+
+> **Revisa** a posição do cartão da [RN-1450](#rn-1450) e completa a [RN-1451](#rn-1451).
+
+- **Regra:** na aba Gastos do projeto e na página Gastos do workspace do owner, os indicadores ocupam a largura inteira e a faixa seguinte é uma grade de duas colunas: o gráfico por dia à esquerda e o cartão `#teto` (320 px) à direita, com o mesmo topo (diferença de até 4 px) e até 160 px de altura com o cartão fechado. Abaixo de 1100 px o cartão desce para baixo dos indicadores. O cartão fechado resume a previsão e a virada do mês numa linha só ("Previsão US$ 41,20 · o mês vira 01/12"); os dias restantes e a frase inteira vão no `title` e em texto para leitor de tela. Total ganha "desde dd/mm", o primeiro dia com gasto da série densa de 30 dias; Chamadas ganha "<modelo> em N%" (o modelo com mais chamadas), e só quando a aba já leu o gasto por modelo, senão fica sem nota (a tela não afirma o que não leu, RN-180). As notas de tokens ("N entrada · N saída") usam os mesmos tokens abreviados, com os inteiros no `title`, em "O meu consumo" do membro e nos indicadores do workspace; nenhum número de mais de 6 dígitos fica visível. "Ver os N agentes" é um link do kit (sublinhado, à esquerda, cor `--text-primary`, que passa AA nos dois temas), não um botão neutro centralizado. O custo médio abaixo de 1 centavo segue com 4 casas ("US$ 0,0012").
+- **Onde:** `src/components/SpendPaineis.tsx` (`GastoDoWorkspace`, `DestaquesDoTotal`, `DetalheDeTokens`), `src/components/TetoDoMes.tsx`, `src/routes/ProjectSpendTab.module.css` (`comTeto`), `src/lib/spend.ts` (`primeiroDiaComGasto`), `src/components/ui/BotaoLink.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx` (as sobras da v11), `src/components/CredentialSpendSection.helpers.test.ts`.
+- **Origem:** AT-1005 (EP-035), prancha L08 da v11 e itens 1, 8 e 14 da AT-1000.
+
+<a id="rn-1488"></a>
+
+### RN-1488 — Em Modelos e Pessoas o Popover usa a fonte do texto, o roteamento tem uma ação e as tabelas vazias são uma linha {#rn-1488}
+
+> **Revisa** a [RN-1454](#rn-1454) e a [RN-1453](#rn-1453).
+
+- **Regra:** o Popover da cascata ("De onde vem") usa a fonte do texto, não a mono; só o identificador do modelo ("Se perder o modelo próprio, vale: `X`") fica em mono. "Mostrar os outros N agentes" é um link do kit ([RN-1487](#rn-1487)). A faixa de aviso de roteamento mostra a frase curta ("Roteamento: não provado em <provider>.") e, à direita, "O que isso muda", que abre a frase inteira num Popover. O cabeçalho "Custo estimado mensal do time" deixa de ser uma faixa à parte e entra no título da tabela ("N agentes · US$ X estimado por mês", com a base de 30 dias no `title`). A linha de Modelos segue com cerca de 55 px, a medida da L09 (decisão do dono de 20/11). O erro do convite tem ícone de erro e o texto na cor de erro (`--danger`). As tabelas vazias de tokens e de chaves de dispositivo são uma linha de até 48 px, e a frase de "Tokens de acesso" não se repete em "Todos os tokens do projeto" (que diz "Ninguém neste projeto emitiu token.").
+- **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/ProjectSettingsTab.module.css` (`cadeiaNoPopover`, `idDoModelo`), `src/routes/settings/MembersSection.tsx`, `src/components/ui/Table.tsx` (`vaziaEmUmaLinha`), `src/routes/settings/PersonalAccessTokensSection.tsx`, `src/routes/settings/RunnerDeviceKeysSection.tsx`.
+- **Teste:** `src/routes/settings/preferencia-de-roteamento.test.tsx`, `src/routes/settings/papel-na-secao-de-membros.test.tsx`, `src/routes/settings/chaves-de-dispositivo.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx`, `test/popover-da-cascata.test.ts`.
+- **Origem:** AT-1005 (EP-035), prancha L09 da v11.
+
+<a id="rn-1489"></a>
+
+### RN-1489 — Em Projeto e execução a escada tem rótulos e o Salvar no rodapé, e os controles usam o kit {#rn-1489}
+
+> **Complementa** a [RN-1265](#rn-1265), a [RN-1142](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1142) e a [RN-1316](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1316); confirma a [RN-1455](#rn-1455).
+
+- **Regra:** "Editar em Gastos" é o `Link` do roteador para `?tab=spend#teto` e não recarrega a página. Cada campo da escada de modelos tem um `<label>` visível ligado pelo `for` ("Modelo do degrau N", "Teto do degrau N (US$)"). O Salvar da escada desce para o rodapé da seção, com a contagem de alterações não salvas; o gesto e a confirmação próprios não mudam ([RN-1265](#rn-1265), [RN-469](parte-03.md#rn-469)). O merge automático usa o `Checkbox` do kit ao lado do rótulo "Entrar sozinha", sem `input[role="switch"]` nativo. No teto por área "sem teto" tem um estado só, "sem teto próprio" (sai o trio "Sem valor próprio", "sem teto" e o placeholder). A promoção de histórias entra na `LinhaDeConfiguracao`: rótulo à esquerda e o controle na coluna de 520 px, como os outros controles da seção.
+- **Onde:** `src/routes/settings/ExecutionSection.tsx`, `src/routes/settings/TetoPorTarefaSection.tsx`, `src/routes/settings/MergeAutomaticoSection.tsx`, `src/routes/settings/BudgetSection.tsx`, `src/routes/settings/PromotionSection.tsx`.
+- **Teste:** `src/routes/settings/teto-e-escada.test.tsx`, `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/settings/MergeAutomaticoSection.test.tsx`, `src/routes/settings/heranca.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx`.
+- **Origem:** AT-1005 (EP-035), prancha L09 da v11 e a W3 da AT-1000.
+
 ### RN-1484 — Moeda e número saem no idioma da interface {#rn-1484}
 
 - **Regra:** a moeda é USD (ADR 0040) e o número de casas é o de cada tela (Execução e turno com 4, aprovações e atividade com 2), mas o separador segue `i18n.language`, lido a cada chamada: em pt-BR "US$ 0,9790", em en "$0.9790". Um formatador só, `formatarUsdCasas` em `lib/currency.ts`, atende `formatMicros`, `dolar`, `formatarCusto`, `dolares` (aprovações) e o teto da atividade; os preços de `lib/models.ts` e do catálogo trocam o `'en-US'` fixo pelo idioma vigente. Os `toLocaleString()` sem argumento e os `'pt-BR'` fixos (gráfico de gasto, janela do agente, Hugging Face, sessões, painel do Código) usam `i18n.language`. O custo médio abaixo de 1 centavo segue com 4 casas (RN-1451).
@@ -874,6 +917,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/ai-elements/copiar.tsx`, `snippet.tsx` e `src/shadcn.css`.
 - **Teste:** `src/lib/formatacao-pt-br.test.ts`.
 - **Origem:** AT-1004 (EP-035).
+
 <a id="rn-1481"></a>
 
 ### RN-1481 — Cada linha de Containers tem uma ação com texto, escolhida pelo estado; parar, ver detalhes e remover moram no menu "…" {#rn-1481}

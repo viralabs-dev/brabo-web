@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Ajuda } from '@/components/ui/Ajuda';
 import { Item } from '@/components/shadcn/item';
+import { Checkbox } from '@/components/shadcn/checkbox';
 import { Button } from '../../components/ui/Button';
 import { Modal } from '../../components/ui/Modal';
 import { useToast } from '../../components/ui/ToastProvider.helpers';
@@ -62,7 +63,15 @@ export function MergeAutomaticoSection({ projectId }: { projectId: string }) {
 
       <Item variant="outline" className={styles.ajusteCard}>
         <div className={styles.ajusteInfo}>
-          <div className={styles.ajusteTitulo}>{t('autoMerge.card.title')}</div>
+          {/* O `Checkbox` do kit ao lado do rótulo, no lugar do `<input role="switch">` nativo (AT-1005). */}
+          <label className={`${styles.ajusteTitulo} ${styles.rotuloComCheckbox}`}>
+            <Checkbox
+              checked={ligado}
+              disabled={!pode || saving}
+              onCheckedChange={() => (ligado ? void gravar(false) : setConfirmando(true))}
+            />
+            {t('autoMerge.card.title')}
+          </label>
           <div className={styles.ajusteHint}>
             {ligado ? t('autoMerge.card.hintOn') : t('autoMerge.card.hintOff')}
           </div>
@@ -71,16 +80,6 @@ export function MergeAutomaticoSection({ projectId }: { projectId: string }) {
               {t(ligado ? 'autoMerge.reason.desligar' : 'autoMerge.reason.ligar')}
             </div>
           )}
-        </div>
-        <div className={styles.ajusteControle}>
-          <input
-            type="checkbox"
-            role="switch"
-            checked={ligado}
-            disabled={!pode || saving}
-            aria-label={t('autoMerge.switchAria')}
-            onChange={() => (ligado ? void gravar(false) : setConfirmando(true))}
-          />
         </div>
       </Item>
 

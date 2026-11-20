@@ -264,6 +264,25 @@ describe('critério de roteamento — quando NÃO há o que escolher', () => {
     expect(screen.queryByRole('combobox', { name: ROTULO })).toBeNull();
   });
 
+  it('a faixa mostra a frase curta e "O que isso muda" abre a frase inteira num Popover (AT-1005)', async () => {
+    listProviderCapabilities.mockResolvedValue(capacidades(false));
+    montar(<ModelsSection projectId="proj-1" />);
+
+    await screen.findByText(/Roteamento: não provado em openrouter/);
+    expect(screen.queryByText(/não foi provada contra a API real/)).toBeNull();
+    const botoes = screen.getAllByRole('button', { name: 'O que isso muda' });
+    expect(botoes).toHaveLength(1);
+    fireEvent.click(botoes[0]);
+    expect(await screen.findByText(/não foi provada contra a API real/)).toBeInTheDocument();
+  });
+
+  it('o custo estimado entra no título da tabela, sem faixa à parte (AT-1005)', async () => {
+    montar(<ModelsSection projectId="proj-1" />);
+
+    expect(await screen.findByText(/\d+ agentes · .* estimado por mês/)).toBeInTheDocument();
+    expect(screen.queryByText('Custo estimado mensal do time')).toBeNull();
+  });
+
   it('a frase existe em `en` também', async () => {
     listProviderCapabilities.mockResolvedValue(capacidades(false));
     montar(<ModelsSection projectId="proj-1" />, 'en');

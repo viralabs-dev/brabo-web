@@ -10,7 +10,7 @@ import { useToast } from '../../components/ui/ToastProvider.helpers';
 import styles from '../ProjectSettingsTab.module.css';
 import { SecaoDeConfiguracoes } from './SecaoDeConfiguracoes';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../../lib/query-policy';
-import { Item } from '@/components/shadcn/item';
+import { LinhaDeConfiguracao } from './LinhaDeConfiguracao';
 
 /**
  * Quem promove história a `ready` (Fase 12c — RN-048). Projeto NOVO nasce em
@@ -62,35 +62,29 @@ export function PromotionSection({ projectId }: { projectId: string }) {
         <span className={styles.eyebrow}>{t('promotion.eyebrow')}</span>
       </div>
 
-      <Item variant="outline" className={styles.ajusteCard}>
-        <div className={styles.ajusteInfo}>
-          <div className={styles.ajusteTitulo}>{t('promotion.card.title')}</div>
-          <div className={styles.ajusteHint}>
-            {project.storyPromotion === 'manual'
-              ? t('promotion.card.hintManual')
-              : t('promotion.card.hintAuto')}
-          </div>
-          {/* RN-659 (AT-313): o default de projeto NOVO é `auto`; a tela diz
-              isso para quem encontra um projeto antigo em `manual` e se
-              pergunta por que difere do recém-criado. */}
-          <div className={styles.ajusteHint} data-testid="promocao-default">
-            {t('promotion.card.defaultNote')}
-          </div>
-        </div>
-        <div className={styles.ajusteControle}>
-          <Select
-            value={project.storyPromotion}
-            disabled={saving}
-            aria-label={t('promotion.selectAria')}
-            onChange={(e) =>
-              handleChange(e.target.value as StoryPromotionMode)
-            }
-          >
-            <option value="manual">{t('promotion.optionManual')}</option>
-            <option value="auto">{t('promotion.optionAuto')}</option>
-          </Select>
-        </div>
-      </Item>
+      {/* Na grade das outras seções: rótulo à esquerda, controle na coluna de 520 px (AT-1005, L09). */}
+      <LinhaDeConfiguracao
+        rotulo={t('promotion.card.title')}
+        descricao={
+          <>
+            {project.storyPromotion === 'manual' ? t('promotion.card.hintManual') : t('promotion.card.hintAuto')}
+            {/* RN-659 (AT-313): o default de projeto NOVO é `auto`; a tela diz
+                isso para quem encontra um projeto antigo em `manual` e se
+                pergunta por que difere do recém-criado. */}
+            <div data-testid="promocao-default">{t('promotion.card.defaultNote')}</div>
+          </>
+        }
+      >
+        <Select
+          value={project.storyPromotion}
+          disabled={saving}
+          aria-label={t('promotion.selectAria')}
+          onChange={(e) => handleChange(e.target.value as StoryPromotionMode)}
+        >
+          <option value="manual">{t('promotion.optionManual')}</option>
+          <option value="auto">{t('promotion.optionAuto')}</option>
+        </Select>
+      </LinhaDeConfiguracao>
     </SecaoDeConfiguracoes>
   );
 }

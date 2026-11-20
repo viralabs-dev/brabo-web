@@ -42,10 +42,10 @@
 .linhaDeAcao[data-agrupada] { border: 0; border-radius: 0; border-bottom: 1px solid var(--border); }
 .linhaDeAcao[data-agrupada]:last-child { border-bottom: 0; }
 .comando {
-  all: unset; box-sizing: border-box; cursor: pointer; max-width: 100%; font-family: var(--font-mono); font-size: var(--fs-meta);
+  all: unset; box-sizing: border-box; display: block; min-height: 24px; line-height: 24px; margin-block: -3px; /* AT-1010 (RN-1499) */ cursor: pointer; max-width: 100%; font-family: var(--font-mono); font-size: var(--fs-meta);
   color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.comando[data-aberto] { white-space: pre-wrap; overflow-wrap: anywhere; }
+.comando[data-aberto] { white-space: pre-wrap; overflow-wrap: anywhere; line-height: normal; margin-block: 0; }
 .comando:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .idade { font-family: var(--font-mono); font-size: var(--fs-meta); color: var(--text-secondary); border: 1px solid var(--border); border-radius: var(--r-pill); padding: 1px 8px; white-space: nowrap; }
 .idade[data-velha] { color: var(--warning); border-color: var(--warning-line); background: var(--warning-soft); }

@@ -31,6 +31,9 @@
 }
 
 .link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px; /* AT-1010 (RN-1499) */
   font-size: var(--fs-sm);
   color: var(--accent);
   grid-column: 2;

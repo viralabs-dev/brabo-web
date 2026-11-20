@@ -1,4 +1,7 @@
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
+import { numberFmt } from '../lib/currency';
 import { useArchitecture } from '../lib/hooks';
 import { GrafoDeModulos } from '../components/GrafoDeModulos';
 import { C4DiagramView } from '../components/C4DiagramView';
@@ -82,6 +85,9 @@ function ArchitectureContent({
   const historias = (nome: string) =>
     backlog ? backlog.flatMap((e) => e.stories).filter((st) => (st.moduleIds ?? []).includes(nome)).length : null;
 
+  // AT-972 (RN-1476): Diagrama, ADRs e Pendências são vistas de um ToggleGroup, com a contagem; o padrão é Diagrama.
+  const [visao, setVisao] = useState<'diagrama' | 'adrs' | 'pendencias'>('diagrama');
+
   const isEmpty = !moduleMap && adrs.length === 0 && pendencies.length === 0 && contratos.length === 0;
 
   return (
@@ -103,50 +109,27 @@ function ArchitectureContent({
         </EmptyState>
       ) : (
         <>
-          {!moduleMap || moduleMap.modules.length === 0 ? (
-            <div className={styles.sectionSub}>{t('architectureTab.noModules')}</div>
-          ) : (
-            <>
-            {/* Grafo derivado do mesmo module_map (RN-149), acima dos cartões. */}
-            <GrafoDeModulos modulos={moduleMap.modules} />
-            <h2 className={styles.titulo}>{t('architectureTab.modulesLabel')}</h2>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead scope="col">{t('architectureTab.cols.module')}</TableHead>
-                  <TableHead scope="col">{t('architectureTab.cols.stack')}</TableHead>
-                  <TableHead scope="col">{t('architectureTab.cols.responsibility')}</TableHead>
-                  <TableHead scope="col">{t('architectureTab.cols.dependsOn')}</TableHead>
-                  <TableHead scope="col">{t('architectureTab.cols.stories')}</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {moduleMap.modules.map((m) => (
-                  <TableRow key={m.name}>
-                    <TableHead scope="row">{m.name}</TableHead>
-                    <TableCell>{m.stack}</TableCell>
-                    <TableCell>{m.responsibility}</TableCell>
-                    <TableCell>
-                      {m.dependsOn.length === 0
-                        ? '—'
-                        : (
-                          <span className={styles.deps}>
-                            {m.dependsOn.map((d) => (
-                              <Badge key={d} tone="neutral">
-                                {d}
-                              </Badge>
-                            ))}
-                          </span>
-                        )}
-                    </TableCell>
-                    <TableCell>{historias(m.name) ?? '—'}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            </>
-          )}
+          <ToggleGroup
+            className={styles.vistas}
+            value={[visao]}
+            onValueChange={(v) => v[0] && setVisao(v[0] as typeof visao)}
+            variant="outline"
+            size="sm"
+            aria-label={t('architectureTab.views.label')}
+          >
+            <ToggleGroupItem value="diagrama">{t('architectureTab.views.diagrama')}</ToggleGroupItem>
+            <ToggleGroupItem value="adrs">
+              {t('architectureTab.views.adrs', { n: numberFmt.format(adrs.length) })}
+            </ToggleGroupItem>
+            <ToggleGroupItem value="pendencias">
+              {t('architectureTab.views.pendencias', { n: numberFmt.format(pendencies.length) })}
+            </ToggleGroupItem>
+          </ToggleGroup>
 
+          {visao === 'diagrama' && (
+            <>
+              {/* Grafo derivado do mesmo module_map (RN-149), da esquerda para a direita (RN-1475). */}
+              {moduleMap && moduleMap.modules.length > 0 && <GrafoDeModulos modulos={moduleMap.modules} />}
           <div className={styles.archLabel}>
             {c4Diagram?.status === 'gerado'
               ? t('architectureTab.c4LabelVersioned', { version: c4Diagram.version })
@@ -158,7 +141,10 @@ function ArchitectureContent({
             <div className={styles.sectionSub}>{t('architectureTab.c4Empty')}</div>
           )}
 
-          <div className={styles.archLabel}>{t('architectureTab.adrsLabel')}</div>
+            </>
+          )}
+          {visao === 'adrs' && (
+            <>
           {adrs.length === 0 ? (
             <div className={styles.sectionSub}>{t('architectureTab.noAdrs')}</div>
           ) : (
@@ -183,6 +169,68 @@ function ArchitectureContent({
             </ul>
           )}
 
+            </>
+          )}
+          {visao === 'pendencias' &&
+            (pendencies.length === 0 ? (
+              <div className={styles.sectionSub}>{t('architectureTab.noPendencies')}</div>
+            ) : (
+              <ul className={styles.pendList}>
+                {pendencies.map((p) => (
+                  <li key={p.storyId} className={styles.pendItem}>
+                    <span className={styles.pendTitle}>{p.title}</span>
+                    <span className={styles.pendReason}>
+                      {p.reason === 'no_module'
+                        ? t('architectureTab.reasonNoModule')
+                        : t('architectureTab.reasonMissingModule', { missing: p.missing.join(', ') })}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ))}
+
+          {!moduleMap || moduleMap.modules.length === 0 ? (
+            <div className={styles.sectionSub}>{t('architectureTab.noModules')}</div>
+          ) : (
+            <>
+            <h2 className={styles.titulo}>{t('architectureTab.modulesLabel')}</h2>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead scope="col">{t('architectureTab.cols.module')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.stack')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.responsibility')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.dependsOn')}</TableHead>
+                  <TableHead scope="col">{t('architectureTab.cols.stories')}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {moduleMap.modules.map((m) => (
+                  <TableRow key={m.name}>
+                    <TableHead scope="row">{m.name}</TableHead>
+                    <TableCell className={styles.celulaQuebra}>{m.stack}</TableCell>
+                    <TableCell className={styles.celulaQuebra}>{m.responsibility}</TableCell>
+                    <TableCell>
+                      {m.dependsOn.length === 0
+                        ? '—'
+                        : (
+                          <span className={styles.deps}>
+                            {m.dependsOn.map((d) => (
+                              <Badge key={d} tone="neutral">
+                                {d}
+                              </Badge>
+                            ))}
+                          </span>
+                        )}
+                    </TableCell>
+                    <TableCell>{historias(m.name) === null ? '—' : numberFmt.format(historias(m.name)!)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            </>
+          )}
+
           <div className={styles.archLabel}>{t('architectureTab.contractsLabel')}</div>
           {contratos.length === 0 ? (
             <div className={styles.sectionSub}>{t('architectureTab.noContracts')}</div>
@@ -205,26 +253,6 @@ function ArchitectureContent({
             ))
           )}
 
-          {pendencies.length > 0 && (
-            <>
-              <div className={styles.archLabel}>
-                {t('architectureTab.pendenciesLabel')}
-                <Badge tone="danger">{pendencies.length}</Badge>
-              </div>
-              <ul className={styles.pendList}>
-                {pendencies.map((p) => (
-                  <li key={p.storyId} className={styles.pendItem}>
-                    <span className={styles.pendTitle}>{p.title}</span>
-                    <span className={styles.pendReason}>
-                      {p.reason === 'no_module'
-                        ? t('architectureTab.reasonNoModule')
-                        : t('architectureTab.reasonMissingModule', { missing: p.missing.join(', ') })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
         </>
       )}
     </div>

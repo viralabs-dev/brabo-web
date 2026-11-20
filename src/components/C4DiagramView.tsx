@@ -1,7 +1,8 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { C4Diagrama } from '../lib/api-types';
 import { renderMermaid } from '../lib/mermaid-render';
+import { larguraNatural } from '../lib/svg-largura';
 import { Alert } from './ui/Alert';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
@@ -80,11 +81,19 @@ function DiagramaMermaid({
   // estado `pronto` — carregando não tem o que ampliar, erro não tem SVG
   // nenhum (a sintaxe crua já está acessível dentro do próprio Alert).
   const [ampliado, setAmpliado] = useState(false);
+  // "Ajustar à largura" encolhe o SVG ao cartão (texto menor); o padrão é o tamanho natural, rolando na horizontal.
+  const [ajustado, setAjustado] = useState(false);
+  const natural = estado.fase === 'pronto' ? larguraNatural(estado.svg) : null;
 
   return (
     <Card padding="none" className={styles.card}>
       <div className={styles.cardHeader}>
         <div className={styles.cardTitulo}>{titulo}</div>
+        {estado.fase === 'pronto' && (
+          <Button variant="secondary" size="sm" aria-pressed={ajustado} onClick={() => setAjustado((a) => !a)}>
+            {t('c4.fitWidth')}
+          </Button>
+        )}
         {estado.fase === 'pronto' && (
           <Button
             variant="ghost"
@@ -112,6 +121,7 @@ function DiagramaMermaid({
       {estado.fase === 'pronto' && (
         <div
           className={styles.svgWrap}
+          style={{ '--c4-largura': ajustado || !natural ? '100%' : `${natural}px` } as CSSProperties}
           // O SVG vem do `renderMermaid` que ACABAMOS de chamar acima —
           // conteúdo gerado por nós a partir de sintaxe já validada, nunca
           // HTML de terceiro repassado direto. `securityLevel: 'strict'`

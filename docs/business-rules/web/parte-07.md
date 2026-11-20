@@ -742,3 +742,30 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/components/NotificationBell.module.css`, `src/components/NotificationBell.tsx`.
 - **Teste:** `src/components/NotificationBell.test.tsx` (a rolagem horizontal é medida na prévia, `13-design/notificacoes-v11`).
 - **Origem:** AT-966 (EP-035), prancha L01 da v11.
+
+<a id="rn-1475"></a>
+
+### RN-1475 — O diagrama da Arquitetura abre legível: da esquerda para a direita, 300 px, texto de 12,5 px ou mais {#rn-1475}
+
+- **Regra:** o grafo de módulos corre da esquerda para a direita (quem depende fica à esquerda, quem não depende de ninguém à direita), com 300 px de altura (420 px quando a altura útil passa de 1000 px). O zoom inicial é 1 e o texto dos nós tem 12,5 px ou mais (nenhum zoom inicial o encolhe); se o grafo não cabe na largura, ele começa na borda esquerda e se arrasta na horizontal. O botão "Ajustar à largura" fica ao lado dos controles de zoom e encolhe o grafo à área. Os diagramas C4 (Mermaid) entram no tamanho natural do SVG, com rolagem na horizontal, e têm o mesmo botão (os rótulos de estereótipo `<<person>>` do Mermaid ficam em 12 px, fora do controle da tela). Não troca a biblioteca do diagrama. O Mermaid C4 não tem direção de fluxo: o "esquerda para direita" vale para o grafo de módulos.
+- **Onde:** `src/components/ai-elements/canvas.tsx`, `src/components/ai-elements/canvas.helpers.tsx`, `src/components/C4DiagramView.tsx`, `src/components/C4DiagramView.module.css`, `src/lib/svg-largura.ts`.
+- **Teste:** `src/components/ai-elements/canvas.test.tsx`, `src/components/C4DiagramView.test.tsx` (o corpo medido no navegador está em `13-design/arquitetura-v11`).
+- **Origem:** AT-972 (EP-035), prancha L07 da v11. Revisa a orientação de baixo para cima da AT-946 (v9).
+
+<a id="rn-1476"></a>
+
+### RN-1476 — Diagrama, ADRs e Pendências são vistas de um ToggleGroup, com a contagem {#rn-1476}
+
+- **Regra:** no topo da Arquitetura, um `ToggleGroup` ("Diagrama", "ADRs · N", "Pendências · N") escolhe a vista; o padrão é Diagrama (grafo de módulos e diagramas C4). ADRs e Pendências só aparecem na própria vista, cada uma com a frase de vazio. A contagem vem da resposta da API e usa o formatador de números do locale. A tabela de módulos e os contratos ficam abaixo, em qualquer vista, e a faixa PROPOSTA continua no topo. Erro de carga segue [RN-088](parte-01.md#rn-088) (AT-965).
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/routes/ProjectArchitectureTab.module.css`, `src/locales/*/overview.json` (`architectureTab.views`).
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx`.
+- **Origem:** AT-972 (EP-035), prancha L07 da v11. Revisa [RN-1387](#rn-1387): os contratos seguem abaixo da tabela, e os ADRs e as pendências deixam de ser seções soltas.
+
+<a id="rn-1477"></a>
+
+### RN-1477 — A tabela de módulos quebra linha em Stack e Responsabilidade e não rola na horizontal {#rn-1477}
+
+- **Regra:** as colunas Stack e Responsabilidade usam `white-space: normal` (classe `celulaQuebra`, que anula o `nowrap` do kit, e quebram palavras longas), de modo que `scrollWidth === clientWidth` na tabela a partir de 1100 px de janela (1366 px medido). A coluna Histórias usa o formatador de números do locale.
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`.
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` (classe `celulaQuebra`; a rolagem é medida na prévia).
+- **Origem:** AT-972 (EP-035), prancha L07 da v11.

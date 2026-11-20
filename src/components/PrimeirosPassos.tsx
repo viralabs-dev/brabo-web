@@ -1,3 +1,4 @@
+import type { ComponentProps } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { DESTINO_DO_PASSO } from '../lib/primeiros-passos';
@@ -28,10 +29,13 @@ import styles from './PrimeirosPassos.module.css';
 export function PrimeirosPassos({
   projectId,
   temSessao,
+  integrado = false,
 }: {
   projectId: string;
   /** `undefined` enquanto a lista de sessões não chegou. */
   temSessao: boolean | undefined;
+  /** AT-975 (RN-1480): sem o cartão próprio, dentro do "Próximo passo". */
+  integrado?: boolean;
 }) {
   const { t } = useTranslation('overview');
   const passos = usePrimeirosPassos(projectId, temSessao);
@@ -51,9 +55,11 @@ export function PrimeirosPassos({
   if (!passos) return null;
 
   const feitos = passos.filter((p) => p.feito).length;
+  const atual = passos.find((p) => !p.feito)?.chave;
+  const Raiz = integrado ? IntegradoRaiz : Card;
 
   return (
-    <Card role="region" className={styles.cartao} data-testid="primeiros-passos" aria-label={t('primeirosPassos.title')}>
+    <Raiz role="region" className={integrado ? styles.integrado : styles.cartao} data-testid="primeiros-passos" aria-label={t('primeirosPassos.title')}>
       <div className={styles.cabecalho}>
         <h2 className={styles.titulo}>{t('primeirosPassos.title')}</h2>
         <span className={styles.contagem}>
@@ -69,9 +75,10 @@ export function PrimeirosPassos({
               key={passo.chave}
               size="xs"
               role="listitem"
-              className={[styles.passo, passo.feito && styles.feito].filter(Boolean).join(' ')}
+              className={[styles.passo, passo.feito && styles.feito, passo.chave === atual && styles.atual].filter(Boolean).join(' ')}
               data-passo={passo.chave}
               data-feito={passo.feito ? 'sim' : 'nao'}
+              data-atual={passo.chave === atual ? 'sim' : 'nao'}
             >
               <ItemMedia className={styles.marca} aria-hidden="true">
                 {passo.feito ? '✓' : '○'}
@@ -126,6 +133,10 @@ export function PrimeirosPassos({
           );
         })}
       </ItemGroup>
-    </Card>
+    </Raiz>
   );
+}
+
+function IntegradoRaiz(props: ComponentProps<'div'>) {
+  return <div {...props} />;
 }

@@ -460,7 +460,7 @@ o do chat.
   `apps/web/src/routes/ProjectApprovalsTab.tsx:106` (`pendentesQuery`), `:112`
   (`sessaoDeTrabalho`), `:312` (`handleApprove`);
   `apps/web/src/routes/ProjectOverviewTab.tsx:111` (`pendentesDoProjeto`);
-  `apps/web/src/routes/ProjectExecutorsTab.tsx:124` (`pendentesQuery`), `:290`
+  `apps/web/src/routes/ProjectExecutorsTab.tsx:135` (`pendentesQuery`), `:290`
   (o bloco); `apps/web/src/routes/code/CodeShell.tsx:101` (`pendentesQuery`);
   `apps/web/src/routes/SessionPage.tsx:782` (o bloco sem `isActive`);
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`), `:180`
@@ -1081,7 +1081,7 @@ automático (RN-471).
 
 - **Código:** `apps/web/src/components/ModoAutomaticoDoTime.tsx:60`
   (`ModoAutomaticoDoTime`), `:97` (`ligar`), `:70`
-  (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:101`
+  (`agentesEmModoAutomatico`); `apps/web/src/routes/ProjectExecutorsTab.tsx:112`
   (`podeLigarModoAutomatico`), `:308` (onde a oferta monta)
 - **Teste:** `apps/web/src/components/ModoAutomaticoDoTime.test.tsx:54` (nada
   gravado ao montar; o clique grava a curinga para cada escolhido — caminho

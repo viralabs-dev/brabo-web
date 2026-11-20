@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "Исполнители",
+    "title": "Выполнение",
     "summary_one": "{{count}} агент · {{working}} работают · {{waiting}} ждут",
     "summary_few": "{{count}} агента · {{working}} работают · {{waiting}} ждут",
     "summary_many": "{{count}} агентов · {{working}} работают · {{waiting}} ждут",
@@ -28,7 +28,13 @@
     },
     "noExecutorsTitle": "Сейчас никто не действует",
     "idleWarning": "Сейчас ни один агент не работает. Выполнение активно: агенты ждут задачу, от которой зависят, и просыпаются, когда зависимость будет смержена.",
-    "modelSemPapel": "Для смены модели нужна роль developer в проекте."
+    "modelSemPapel": "Для смены модели нужна роль developer в проекте.",
+    "sessao": "сессия",
+    "visao": {
+      "rotulo": "Вид выполнения",
+      "executores": "Исполнители",
+      "linhaDoTempo": "Лента времени"
+    }
   },
   "agentCard": {
     "status": {
@@ -377,5 +383,25 @@
       "in_review": "на ревью",
       "done": "завершена"
     }
+  },
+  "tabela": {
+    "agente": "Агент",
+    "estado": "Состояние",
+    "tarefa": "Текущая или последняя задача",
+    "modelo": "Модель",
+    "gasto": "Расход",
+    "acoes": "Действия",
+    "semTarefa": "—",
+    "retomar": "Возобновить",
+    "verNoFio": "Открыть в ленте",
+    "maisAcoes": "Ещё действия для {{agente}}",
+    "autonomia": "Автономность"
+  },
+  "indicadores": {
+    "tarefas": "Задачи",
+    "fila": "Очередь",
+    "gasto": "Расход выполнения",
+    "nDeM": "{{n}} из {{m}}",
+    "verFila": "Открыть очередь"
   }
 }

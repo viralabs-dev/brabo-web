@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "Executores",
+    "title": "Execução",
     "summary_zero": "{{count}} agentes · {{working}} trabalhando · {{waiting}} aguardando",
     "summary_one": "{{count}} agente · {{working}} trabalhando · {{waiting}} aguardando",
     "summary_other": "{{count}} agentes · {{working}} trabalhando · {{waiting}} aguardando",
@@ -27,7 +27,13 @@
     },
     "noExecutorsTitle": "Ninguém em ação agora",
     "idleWarning": "Nenhum agente está trabalhando agora. A execução está ativa: os agentes aguardam a tarefa de que dependem e acordam quando a dependência for mergeada.",
-    "modelSemPapel": "Trocar o modelo exige o papel developer no projeto."
+    "modelSemPapel": "Trocar o modelo exige o papel developer no projeto.",
+    "sessao": "sessão",
+    "visao": {
+      "rotulo": "Visão da execução",
+      "executores": "Executores",
+      "linhaDoTempo": "Linha do tempo"
+    }
   },
   "agentCard": {
     "status": {
@@ -357,5 +363,25 @@
       "in_review": "em revisão",
       "done": "concluída"
     }
+  },
+  "tabela": {
+    "agente": "Agente",
+    "estado": "Estado",
+    "tarefa": "Tarefa atual ou última",
+    "modelo": "Modelo",
+    "gasto": "Gasto",
+    "acoes": "Ações",
+    "semTarefa": "—",
+    "retomar": "Retomar",
+    "verNoFio": "Ver no fio",
+    "maisAcoes": "Mais ações de {{agente}}",
+    "autonomia": "Autonomia"
+  },
+  "indicadores": {
+    "tarefas": "Tarefas",
+    "fila": "Fila",
+    "gasto": "Gasto da execução",
+    "nDeM": "{{n}} de {{m}}",
+    "verFila": "Ver a fila"
   }
 }

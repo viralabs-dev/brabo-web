@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "Executors",
+    "title": "Execution",
     "summary_one": "{{count}} agent · {{working}} working · {{waiting}} waiting",
     "summary_other": "{{count}} agents · {{working}} working · {{waiting}} waiting",
     "subtitle": "Dev agent and QA — who implements and who verifies. The rest of the team is in the Overview.",
@@ -26,7 +26,13 @@
     },
     "noExecutorsTitle": "Nobody acting right now",
     "idleWarning": "No agent is working right now. The execution is active: the agents are waiting for the task they depend on and wake up when the dependency is merged.",
-    "modelSemPapel": "Changing the model requires the developer role on the project."
+    "modelSemPapel": "Changing the model requires the developer role on the project.",
+    "sessao": "session",
+    "visao": {
+      "rotulo": "Execution view",
+      "executores": "Executors",
+      "linhaDoTempo": "Timeline"
+    }
   },
   "agentCard": {
     "status": {
@@ -337,5 +343,25 @@
       "in_review": "in review",
       "done": "done"
     }
+  },
+  "tabela": {
+    "agente": "Agent",
+    "estado": "State",
+    "tarefa": "Current or last task",
+    "modelo": "Model",
+    "gasto": "Spend",
+    "acoes": "Actions",
+    "semTarefa": "—",
+    "retomar": "Resume",
+    "verNoFio": "See in thread",
+    "maisAcoes": "More actions for {{agente}}",
+    "autonomia": "Autonomy"
+  },
+  "indicadores": {
+    "tarefas": "Tasks",
+    "fila": "Queue",
+    "gasto": "Execution spend",
+    "nDeM": "{{n}} of {{m}}",
+    "verFila": "See the queue"
   }
 }

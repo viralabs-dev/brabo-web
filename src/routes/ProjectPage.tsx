@@ -104,6 +104,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
       url.searchParams.set('tab', chave);
       url.searchParams.delete('section');
       url.searchParams.delete('group');
+      url.searchParams.delete('visao');
       url.hash = ancora;
       window.history.replaceState(window.history.state, '', url);
     } catch {

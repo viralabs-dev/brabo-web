@@ -316,6 +316,8 @@ interface ProjectSearch {
   group?: GrupoDoSumario;
   /** RN-884: a história que a aba Histórias abre (o "Corrigir a história"). */
   historia?: string;
+  /** AT-970 (RN-1466): a visão da aba Execução; o `validateSearch` a mantém, senão o router a apaga da URL. */
+  visao?: 'linha-do-tempo';
 }
 
 const projectRoute = createRoute({
@@ -334,6 +336,7 @@ const projectRoute = createRoute({
     section: resolverChaveDeSecao(search.section),
     group: ehGrupoDoSumario(search.group) ? search.group : undefined,
     historia: typeof search.historia === 'string' ? search.historia : undefined,
+    visao: search.visao === 'linha-do-tempo' ? 'linha-do-tempo' : undefined,
   }),
   component: comCarga(ProjectPageLazy, () => {
     const { projectId } = projectRoute.useParams();

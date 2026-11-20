@@ -2,7 +2,8 @@
   "faixa": {
     "titulo": "Precisa de você",
     "verTodas": "Ver todas →",
-    "vazio": "Nada espera por você agora."
+    "vazio": "Nada espera por você agora.",
+    "abrirDecisoes": "Abrir Decisões →"
   },
   "architectureTab": {
     "title": "Arquitetura",
@@ -21,7 +22,14 @@
     "reasonMissingModule": "módulo inexistente: {{missing}}",
     "contractsLabel": "Contratos entre módulos",
     "noContracts": "Sem contrato declarado ainda — o Arquiteto declara o que cada módulo expõe.",
-    "contractTypes": {"funcao": "função", "rota": "rota", "evento": "evento", "dado": "dado", "tabela": "tabela", "identidade": "identidade"},
+    "contractTypes": {
+      "funcao": "função",
+      "rota": "rota",
+      "evento": "evento",
+      "dado": "dado",
+      "tabela": "tabela",
+      "identidade": "identidade"
+    },
     "cols": {
       "module": "Módulo",
       "stack": "Stack",
@@ -110,7 +118,15 @@
     "count_one": "{{count}} evento",
     "count_other": "{{count}} eventos",
     "loadErrorTitle": "Não foi possível carregar a atividade.",
-    "emptyNoSession": "Nenhuma atividade ainda: ela começa com a primeira sessão do projeto."
+    "emptyNoSession": "Nenhuma atividade ainda: ela começa com a primeira sessão do projeto.",
+    "turnosAgrupados_one": "{{agente}} · {{count}} turno, {{passos}} passos",
+    "turnosAgrupados_other": "{{agente}} · {{count}} turnos, {{passos}} passos",
+    "recorteTurnos_one": "último turno",
+    "recorteTurnos_other": "últimos {{count}} turnos",
+    "verLinhaDoTempo": "Ver a linha do tempo inteira →",
+    "rotuloModo": "Ver como",
+    "turnosAgrupados_zero": "{{agente}} · {{count}} turnos, {{passos}} passos",
+    "recorteTurnos_zero": "nenhum turno"
   },
   "executionSection": {
     "title": "Execução",
@@ -256,6 +272,9 @@
     "endereco": "Endereço",
     "abrir": "Abrir em nova aba",
     "titulo": "Entregável",
-    "vazio": "Não há entregável publicado para visualizar."
+    "vazio": "Não há entregável publicado para visualizar.",
+    "checando": "Verificando se a aplicação respondeu…",
+    "naoRespondeu": "{{url}} não respondeu. Suba a aplicação com o comando acima.",
+    "tentarDeNovo": "Tentar de novo"
   }
 }

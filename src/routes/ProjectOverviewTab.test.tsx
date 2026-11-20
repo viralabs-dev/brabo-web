@@ -571,7 +571,7 @@ describe('AT-890: faixa e turnos', () => {
     listSessionEvents.mockResolvedValue({
       items: [
         evento({ id: 'r1', seq: 1, type: 'agent.response', payload: { gravadoNoTurno: { itens: [{ tipo: 'regra', total: 2 }] }, custoMicros: 1000 } }),
-        evento({ id: 'r2', seq: 2, type: 'agent.response', payload: {} }),
+        evento({ id: 'r2', seq: 2, type: 'agent.response', actor: { kind: 'agent', id: 'po' }, payload: {} }),
       ],
       nextCursor: null,
     });
@@ -579,5 +579,32 @@ describe('AT-890: faixa e turnos', () => {
     const linhas = await screen.findAllByTestId('resumo-de-turno');
     expect(linhas).toHaveLength(2);
     expect(linhas[0].textContent).toContain('—');
+  });
+
+  it('AT-975: turnos seguidos do mesmo agente viram uma linha, com a idade do mais recente', async () => {
+    listSessionEvents.mockResolvedValue({
+      items: [1, 2, 3].map((n) => evento({ id: `r${n}`, seq: n, type: 'agent.response', payload: {} })),
+      nextCursor: null,
+    });
+    montar();
+    const linha = await screen.findByTestId('turnos-agrupados');
+    expect(linha.textContent).toMatch(/3 turnos, 0 passos/);
+    expect(screen.queryAllByTestId('resumo-de-turno')).toHaveLength(0);
+    expect(screen.getByText(/linha do tempo inteira/)).toBeInTheDocument();
+  });
+
+  it('AT-975: com as cinco filas em zero a faixa é uma linha, sem chips, com o link das Decisões', async () => {
+    montar();
+    const faixa = await screen.findByTestId('faixa-precisa-de-voce');
+    expect(faixa.getAttribute('data-vazia')).toBe('true');
+    expect(faixa.textContent).toContain('Nada espera por você agora.');
+    expect(faixa.querySelectorAll('[data-slot="badge"], .chips')).toHaveLength(0);
+    expect(within(faixa).getByText(/Abrir Decisões/)).toBeInTheDocument();
+  });
+
+  it('AT-975: Turnos | Eventos é um ToggleGroup', async () => {
+    montar();
+    const grupo = await screen.findByRole('group', { name: 'Ver como' });
+    expect(within(grupo).getByRole('button', { name: 'Turnos' }).getAttribute('aria-pressed')).toBe('true');
   });
 });

@@ -2,7 +2,8 @@
   "faixa": {
     "titulo": "Needs you",
     "verTodas": "View all →",
-    "vazio": "Nothing is waiting for you right now."
+    "vazio": "Nothing is waiting for you right now.",
+    "abrirDecisoes": "Open Decisions →"
   },
   "architectureTab": {
     "title": "Architecture",
@@ -21,7 +22,14 @@
     "reasonMissingModule": "missing module: {{missing}}",
     "contractsLabel": "Module contracts",
     "noContracts": "No contract declared yet — the Architect declares what each module exposes.",
-    "contractTypes": {"funcao": "function", "rota": "route", "evento": "event", "dado": "data", "tabela": "table", "identidade": "identity"},
+    "contractTypes": {
+      "funcao": "function",
+      "rota": "route",
+      "evento": "event",
+      "dado": "data",
+      "tabela": "table",
+      "identidade": "identity"
+    },
     "cols": {
       "module": "Module",
       "stack": "Stack",
@@ -105,7 +113,13 @@
     "count_one": "{{count}} event",
     "count_other": "{{count}} events",
     "loadErrorTitle": "Could not load the activity.",
-    "emptyNoSession": "No activity yet: it starts with the project's first session."
+    "emptyNoSession": "No activity yet: it starts with the project's first session.",
+    "turnosAgrupados_one": "{{agente}} · {{count}} turn, {{passos}} steps",
+    "turnosAgrupados_other": "{{agente}} · {{count}} turns, {{passos}} steps",
+    "recorteTurnos_one": "last turn",
+    "recorteTurnos_other": "last {{count}} turns",
+    "verLinhaDoTempo": "See the whole timeline →",
+    "rotuloModo": "View as"
   },
   "executionSection": {
     "title": "Execution",
@@ -245,6 +259,9 @@
     "endereco": "Address",
     "abrir": "Open in new tab",
     "titulo": "Deliverable",
-    "vazio": "There is no published deliverable to preview."
+    "vazio": "There is no published deliverable to preview.",
+    "checando": "Checking whether the app answered…",
+    "naoRespondeu": "{{url}} did not answer. Start the app with the command above.",
+    "tentarDeNovo": "Try again"
   }
 }

@@ -68,7 +68,7 @@ RUN pnpm build
 # ---------------------------------------------------------------------------
 # Estágio 2: nginx servindo o estático. Base pinada.
 # ---------------------------------------------------------------------------
-FROM nginx:1.31.8-alpine@sha256:785835ea65db4bba6f021acc0f3be91b0fef76a53fe41f8588c6698d2aed0606 AS runtime
+FROM nginx:1.31.9-alpine@sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7 AS runtime
 
 # Hosts liberados no `connect-src` do CSP — mudam por ambiente, então são
 # substituídos em RUNTIME pelo entrypoint (diferente das VITE_*, que não podem).

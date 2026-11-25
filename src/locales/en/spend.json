@@ -6,7 +6,10 @@
     "summing": "Adding up…",
     "retry": "Try again",
     "tokensDetail": "{{input}} in · {{output}} out",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "since {{dia}}",
+    "topModelCalls": "{{modelo}} at {{pct}}%",
+    "callsLabel": "Calls"
   },
   "role": {
     "error": "I couldn't find out your role in this workspace, and that's what decides which report to show."
@@ -31,7 +34,8 @@
     "byProjectTitle": "By project",
     "byProjectEmpty": "No project spent in this window.",
     "byActorTitle": "By agent and person",
-    "byActorEmpty": "No one spent in this window."
+    "byActorEmpty": "No one spent in this window.",
+    "whereEmpty": "Where the spend went: no spend in this window."
   },
   "member": {
     "title": "My consumption",
@@ -53,8 +57,8 @@
     "window_one": "last day",
     "window_other": "last {{count}} days",
     "spend": "Spend",
-    "calls_one": "{{count}} call",
-    "calls_other": "{{count}} calls",
+    "calls_one": "{{count, number}} call",
+    "calls_other": "{{count, number}} calls",
     "viewAsTable": "View as table",
     "colDay": "Day",
     "colSpend": "Spend",
@@ -62,11 +66,13 @@
     "callsTitle": "Calls per day",
     "tokensTitle": "Input and output",
     "tokensIn": "Input",
-    "tokensOut": "Output"
+    "tokensOut": "Output",
+    "noSpendInDays_one": "No spend in the last day.",
+    "noSpendInDays_other": "No spend in the last {{count}} days."
   },
   "libSpend": {
-    "callTitle_one": "{{dia}} · {{custo}} · {{count}} call",
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} calls",
+    "callTitle_one": "{{dia}} · {{custo}} · {{count, number}} call",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} calls",
     "actorPerson": "{{id}} (person)",
     "budgetBlocked": "Reached {{pct}}% of the monthly cap — new LLM calls are BLOCKED until the cap is raised or the month rolls over.",
     "budgetWarning": "Already past {{pct}}% of the monthly cap."
@@ -74,7 +80,8 @@
   "window": {
     "month": "Month",
     "label": "Window",
-    "option": "{{n}} days"
+    "option": "{{n}} days",
+    "sinceStart": "Since the start · {{n}} days"
   },
   "subscription": {
     "label": "Subscription",
@@ -114,7 +121,9 @@
     "byAgentEmpty": "No agent spent in this window.",
     "byAreaTitle": "By area",
     "byAreaEmpty": "No area spent in this window.",
-    "noArea": "no area"
+    "noArea": "no area",
+    "showAll": "See all {{n}} agents",
+    "showTop": "Show only the top 3"
   },
   "budgetEditor": {
     "title": "Project budget",
@@ -122,7 +131,7 @@
     "policyLabel": "When the limit is reached",
     "block": "block new calls",
     "allow": "only warn",
-    "save": "Save budget",
+    "save": "Save cap",
     "saving": "Saving…",
     "saved": "Budget saved.",
     "error": "I could not save the budget. Nothing changed.",
@@ -134,6 +143,7 @@
     "restantes_other": "{{count}} days left.",
     "previsao": "End-of-month forecast: {{valor}}.",
     "virada": "The month rolls over at {{quando}} (00:00 UTC).",
+    "resumo": "Forecast {{valor}} · month rolls over {{quando}}",
     "projeto": {
       "titulo": "Monthly cap",
       "semTeto": "No monthly cap set for this project yet.",
@@ -146,6 +156,11 @@
       "editor": "Workspace monthly cap",
       "semPapel": "Only the owner sets the workspace cap."
     },
-    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it."
+    "membro": "The workspace monthly cap belongs to the owner; you only see it when a call is refused by it.",
+    "cartao": {
+      "semTeto": "No monthly cap",
+      "definir": "Set",
+      "editar": "Edit"
+    }
   }
 }

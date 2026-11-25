@@ -1,4 +1,5 @@
 import i18n from '../lib/i18n';
+import { formatarUsdCasas } from '../lib/currency';
 
 export function formatadorUsd(): Intl.NumberFormat {
   return new Intl.NumberFormat(i18n.language, {
@@ -25,6 +26,13 @@ export function formatarUsd(micros: number): string {
     });
   }
   return formatadorUsd().format(usd);
+}
+
+/** Custo médio por chamada: abaixo de 1 centavo mostra 4 casas ("US$ 0,0012"), nunca "< US$ 0,01". */
+export function formatarCustoMedio(micros: number): string {
+  const usd = micros / 1_000_000;
+  if (usd <= 0 || usd >= 0.01) return formatarUsd(micros);
+  return formatarUsdCasas(usd, 4);
 }
 
 export function formatarMes(iso: string): string {

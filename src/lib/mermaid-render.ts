@@ -49,6 +49,9 @@ function temaMermaid() {
   };
 }
 
+/** Menor `font-size`, em px, dos rótulos de relação dos quadros C4 (RN-1495). */
+export const TAMANHO_MINIMO_DO_ROTULO_C4 = 12;
+
 /**
  * Renderiza sintaxe Mermaid para SVG (string). Lança em sintaxe inválida — o
  * chamador decide o que fazer com o erro (`C4DiagramView` mostra um Alert e
@@ -61,6 +64,9 @@ export async function renderMermaid(id: string, sintaxe: string): Promise<Result
     securityLevel: 'strict',
     theme: 'base',
     themeVariables: temaMermaid(),
+    // RN-1495: rótulo de relação ("usa") nunca abaixo de 12 px. A prancha L07 e o
+    // Mermaid concordam no 12; fixar aqui impede que uma versão nova baixe o padrão.
+    c4: { messageFontSize: TAMANHO_MINIMO_DO_ROTULO_C4 },
   });
   return mermaid.render(id, sintaxe);
 }

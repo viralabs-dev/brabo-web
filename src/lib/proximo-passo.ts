@@ -48,7 +48,7 @@ export const PASSOS: readonly { tipo: TipoDoPasso; vale: (f: Fatos) => boolean }
   { tipo: 'agente_trabalhando', vale: (f) => f.agenteTrabalhando !== null },
   { tipo: 'continuar_ideacao', vale: (f) => f.temSessao && f.historias === 0 },
   { tipo: 'confirmar_arquitetura', vale: (f) => f.historias > 0 && f.arquiteturaPendente },
-  { tipo: 'ligar_modulo', vale: (f) => f.semModulo > 0 },
+  { tipo: 'ligar_modulo', vale: (f) => f.execucaoAtiva && f.semModulo > 0 },
   { tipo: 'desbloquear', vale: (f) => f.bloqueadas > 0 },
   { tipo: 'ativar_execucao', vale: (f) => f.prontas > 0 && !f.execucaoAtiva },
   { tipo: 'acompanhar_execucao', vale: (f) => f.execucaoAtiva && f.emAndamento > 0 },

@@ -52,13 +52,13 @@
 .messageName {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--msg-color);
 }
 
 .messageMeta {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -68,7 +68,7 @@
   border-radius: 10px;
   border-top-left-radius: 2px;
   padding: 12px 15px;
-  font-size: 14px;
+  font-size: var(--fs-body);
   line-height: 1.5;
   color: var(--text-secondary);
   white-space: pre-wrap;

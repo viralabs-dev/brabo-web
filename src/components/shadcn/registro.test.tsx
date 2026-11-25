@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogTitle } from './dialog';
 import { Empty } from './empty';
 import { Input } from './input';
 import { Label } from './label';
+import { Marker } from './marker';
+import { ScrollFade } from './scroll-fade';
 import { NativeSelect } from './native-select';
 import { Popover, PopoverTrigger } from './popover';
 import { Progress } from './progress';
@@ -28,6 +30,8 @@ import { Trace } from './trace';
 // registry base-nova. Nada disto é usado em tela ainda; a prova é só que cada um
 // monta sem lançar.
 const simples = {
+  marker: <Marker>x</Marker>,
+  scrollFade: <ScrollFade>x</ScrollFade>,
   alert: <Alert />,
   badge: <Badge>x</Badge>,
   breadcrumb: <Breadcrumb />,

@@ -40,6 +40,16 @@ export function FaixaPrecisaDeVoce({ projectId }: { projectId: string }) {
     }
   }
 
+  // AT-975 (RN-1478): com as cinco filas em zero a faixa é UMA linha.
+  if (!item) {
+    return (
+      <section className={styles.linha} aria-label={t('faixa.titulo')} data-testid="faixa-precisa-de-voce" data-vazia="true">
+        <p className={styles.vazio}>{t('faixa.vazio')}</p>
+        <Link to="/decisions" className={styles.verTodas}>{t('faixa.abrirDecisoes')}</Link>
+      </section>
+    );
+  }
+
   return (
     <section className={styles.faixa} aria-label={t('faixa.titulo')} data-testid="faixa-precisa-de-voce">
       <div className={styles.topo}>
@@ -47,14 +57,13 @@ export function FaixaPrecisaDeVoce({ projectId }: { projectId: string }) {
         <Link to="/decisions" className={styles.verTodas}>{t('faixa.verTodas')}</Link>
       </div>
       <div className={styles.chips}>
-        {filas.map((fila) => (
-          <Badge key={fila.chave} tone={fila.itens.length > 0 ? 'warning' : 'muted'}>
+        {filas.filter((fila) => fila.itens.length > 0).map((fila) => (
+          <Badge key={fila.chave} tone="warning">
             {tp(`precisaDeVoce.filas.${fila.chave}`)} {fila.itens.length}
           </Badge>
         ))}
       </div>
-      {!item && <p className={styles.vazio}>{t('faixa.vazio')}</p>}
-      {item && primeira && FILAS_ACIONAVEIS.has(primeira.chave) && acao && (
+      {primeira && FILAS_ACIONAVEIS.has(primeira.chave) && acao && (
         <div className={styles.item}>
           {gate && (
             <p role="status" className={styles.nota}>
@@ -70,7 +79,7 @@ export function FaixaPrecisaDeVoce({ projectId }: { projectId: string }) {
           />
         </div>
       )}
-      {item && primeira && !FILAS_ACIONAVEIS.has(primeira.chave) && item.aba && (
+      {primeira && !FILAS_ACIONAVEIS.has(primeira.chave) && item.aba && (
         <Link to="/projects/$projectId" params={{ projectId }} search={{ tab: item.aba }} className={styles.item}>
           {item.titulo}
         </Link>

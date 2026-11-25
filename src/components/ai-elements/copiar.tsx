@@ -8,11 +8,14 @@ export function AcaoCopiar({
   rotulo,
   rotuloCopiado,
   aoFalhar,
+  comTexto = false,
 }: {
   texto: string;
   rotulo: string;
   rotuloCopiado: string;
   aoFalhar?: () => void;
+  /** Rótulo visível ao lado do ícone (RN-102); o padrão continua só com ícone. */
+  comTexto?: boolean;
 }) {
   const [copiado, setCopiado] = useState(false);
   const nome = copiado ? rotuloCopiado : rotulo;
@@ -20,7 +23,7 @@ export function AcaoCopiar({
     <Button
       type="button"
       variant="ghost"
-      size="icon-sm"
+      size={comTexto ? 'sm' : 'icon-sm'}
       data-slot="ai-copiar"
       aria-label={nome}
       title={nome}
@@ -35,6 +38,7 @@ export function AcaoCopiar({
       }}
     >
       {copiado ? <CheckIcon /> : <CopyIcon />}
+      {comTexto && nome}
     </Button>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import i18n from '@/lib/i18n';
 import { Ajuda } from '@/components/ui/Ajuda';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -114,7 +115,7 @@ export function CodeBottomPanel({ projectId }: { projectId: string }) {
                     </Badge>
                     <span className={styles.cicloDeVidaDetalhe}>
                       {t('bottomPanel.since')}{' '}
-                      {new Date(lifecycleQuery.data.statusChangedAt).toLocaleString('pt-BR')}
+                      {new Date(lifecycleQuery.data.statusChangedAt).toLocaleString(i18n.language)}
                     </span>
                     {lifecycleQuery.data.status === 'failed' &&
                       lifecycleQuery.data.failureReason && (

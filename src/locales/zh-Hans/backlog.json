@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "草稿",
-    "ready": "就绪",
-    "inProgress": "进行中",
+    "ready": "可执行",
+    "inProgress": "执行中",
     "done": "已完成"
   },
   "sectionLabel": {
@@ -19,7 +19,7 @@
   },
   "coverage": {
     "uncoveredBadge_other": "{{count}} 条未覆盖",
-    "coveredBy_other": "被 {{count}} 个用户故事覆盖",
+    "coveredBy_other": "{{count}} 个用户故事",
     "uncovered": "未覆盖——没有用户故事"
   },
   "ruleRefs_other": "关联 {{count}} 条业务规则",
@@ -121,5 +121,11 @@
   },
   "historia": {
     "perguntas_other": "{{count}} 个问题"
+  },
+  "loadError": {
+    "epics": "无法加载待办列表",
+    "epicsThing": "史诗或故事",
+    "rules": "无法加载规则覆盖",
+    "rulesThing": "规则"
   }
 }

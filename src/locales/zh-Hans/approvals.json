@@ -10,7 +10,7 @@
     "gitCommit": {
       "verb": "提议更改",
       "base": "记录一次提交",
-      "filesSuffix_other": "，包含 {{count}} 个文件",
+      "filesSuffix_other": "，包含 {{count, number}} 个文件",
       "pathSuffix": "，文件 {{path}}",
       "branchSuffix": "，在分支 {{branch}} 上",
       "repoSuffix": "，在项目仓库中",
@@ -71,7 +71,7 @@
       "verb": "开启了基础设施的 pull request",
       "base": "开启一个基础设施 pull request",
       "titled": " \"{{title}}\"",
-      "filesSuffix_other": "，包含 {{count}} 个文件"
+      "filesSuffix_other": "，包含 {{count, number}} 个文件"
     },
     "gitMerge": {
       "verb": "想要合并",
@@ -146,6 +146,8 @@
     "decided": {
       "denied": "已拒绝",
       "alwaysAllowed": "始终允许 · 已写入 permissions.json",
+      "autoMerged": "由自动合并完成合并",
+      "autoMergedDesligar": "关闭",
       "failed": "失败",
       "approvedTerminal": "已批准 · 命令执行中",
       "approved": "已批准",
@@ -153,7 +155,7 @@
     },
     "body": {
       "commit": {
-        "files_other": "{{count}} 个文件"
+        "files_other": "{{count, number}} 个文件"
       },
       "terminal": {
         "invalidCommand": "模型没有为此操作生成有效的命令。",
@@ -166,7 +168,7 @@
         "invalidPath": "模型没有为此操作生成有效的路径。",
         "invalidContent": "模型没有为此操作生成有效的内容。",
         "previewHeader": "内容预览",
-        "linesTruncated_other": "{{count}} 行中的 {{shown}} 行"
+        "linesTruncated_other": "{{count, number}} 行中的 {{shown}} 行"
       },
       "prOpen": {
         "defaultTitle": "Pull request"
@@ -347,7 +349,7 @@
     "gatePendenteBloqueada": "此 PR 的 gate {{gate}} 仍待处理，且其任务已被阻塞：在任务解除阻塞之前无法合并。",
     "mergeIndisponivelBloqueada": "无法合并：此 PR 的任务已被阻塞——{{reason}}",
     "mergeIndisponivelSemSessao": "无法合并：项目中没有可用于提议操作的会话。",
-    "gatePendente": "此 PR 的 gate {{gate}} 仍待处理。合并仍然可用——由你决定。",
+    "gatePendente": "gate {{gate}} 仍待处理：D、Q、S 都变绿后才会出现“合并”。",
     "mergeRecusado": "上一次合并尝试被拒绝：{{reason}}",
     "mergeRecusadoArquivos_other": "冲突文件：{{files}}",
     "mergeResolverAntes": "请先解决冲突（将 PR 分支 rebase 到 dev 上），然后重试合并。",
@@ -355,10 +357,16 @@
       "verAprovacao": "查看审批",
       "ativarExecucao": "启用执行"
     },
+    "pedirParecer": "再次请求审查",
+    "portoes": {
+      "rotulo": "PR 关卡",
+      "nome": { "dev": "Dev", "qa": "QA", "secops": "SecOps", "user": "你" },
+      "estado": { "done": "已通过", "current": "进行中", "blocked": "已阻塞", "pending": "待处理" }
+    },
     "fluxo": {
-      "titulo": "PR 在这里的流程：",
-      "passos": "由智能体打开，QA，SecOps，等待你，已合并。",
-      "mergeManual": "合并到受保护分支始终需要手动操作。"
+      "titulo": "关卡：",
+      "passos": "D Dev · Q QA · S SecOps · V 你。",
+      "mergeManual": "合并到受保护分支始终需要手动操作；三个关卡都变绿后按钮才会出现。"
     }
   },
   "politica": {

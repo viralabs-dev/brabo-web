@@ -1,0 +1,96 @@
+/* AT-970: uma linha de 44 px por agente; cor, espaço e tipo só dos tokens. */
+.tabela {
+  width: 100%;
+  font-size: var(--fs-sm);
+}
+
+.linha > td {
+  height: 44px;
+  padding-block: 0;
+}
+
+.agente {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nome {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.tarefa {
+  /* max-width 0 + width 100%: a coluna toma o que sobra e trunca, em vez de alargar a tabela. */
+  max-width: 0;
+  width: 100%;
+  min-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.branch,
+.vazio {
+  color: var(--text-muted);
+}
+
+.modelo {
+  min-width: 150px;
+  height: 36px;
+}
+
+.direita {
+  text-align: right;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+.acoes {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: 100%;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px; /* AT-1010 (RN-1499) */
+  color: var(--accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* AT-1007 (RN-1491): o menu da linha tem 280 px no mínimo, e a dica do modo automático cabe em 3 linhas. */
+.menu.menu {
+  min-width: 280px;
+}
+
+.dica {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  max-width: 280px;
+  padding: 6px 8px;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.somenteLeitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}

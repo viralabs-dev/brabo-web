@@ -12,7 +12,9 @@
     "loadError": "Could not load your projects.",
     "noProjectsYet": "No projects here yet.",
     "createProject": "Create project",
-    "noSearchResults": "No projects found for \"{{search}}\"."
+    "noSearchResults": "No projects found for \"{{search}}\".",
+    "semAtivos": "No active projects. The idle ones are under “Idle”.",
+    "semParados": "No idle projects."
   },
   "activity": {
     "noSession": "No session yet",
@@ -65,6 +67,7 @@
       "awaitingPlanDecision": "Awaiting your decision"
     },
     "online": "{{count}} online",
+    "parado": "idle",
     "aguardandoVoce": "{{agente}} waiting for you"
   },
   "projectStatus": {
@@ -76,7 +79,9 @@
   "inicio": {
     "indisponivel": "unavailable",
     "projetos": {
-      "rotulo": "Active projects"
+      "rotulo": "Active projects",
+      "parados_one": "{{count}} idle for over {{dias}} days",
+      "parados_other": "{{count}} idle for over {{dias}} days"
     },
     "agentes": {
       "rotulo": "Agents now",
@@ -95,7 +100,8 @@
       "rotulo": "Decision inbox",
       "aprovacoes_one": "{{n}} approval",
       "aprovacoes_other": "{{n}} approvals",
-      "demais": "PRs {{prs}} · promotions {{promocoes}} · architecture {{arquitetura}} · hypotheses {{hipoteses}}"
+      "demais": "PRs {{prs}} · promotions {{promocoes}} · architecture {{arquitetura}} · hypotheses {{hipoteses}}",
+      "maisAntiga": "the oldest has been waiting {{quando}}"
     }
   },
   "secaoProjetos": "Projects",
@@ -106,5 +112,11 @@
   "atividadeRecente": {
     "titulo": "Recent activity",
     "indisponivel": "Could not read recent activity."
+  },
+  "filtro": {
+    "aria": "Filter projects",
+    "ativos": "Active · {{n}}",
+    "parados": "Idle · {{n}}",
+    "todos": "All"
   }
 }

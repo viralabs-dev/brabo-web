@@ -191,7 +191,7 @@ describe('SessionPage — o aviso do canal compõe com o acompanhamento pelo log
     confirmReadiness.mockResolvedValue({ ok: true });
     cauda.mockResolvedValue({ items: [STATUS(4, 'working')], nextCursor: null });
     montar();
-    const botao = await screen.findByRole('button', { name: 'Estou pronto — a necessidade está validada' });
+    const botao = await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' });
     fireEvent.click(botao);
     const campo = await screen.findByPlaceholderText(
       'Escreva uma mensagem… (Enter envia, Shift+Enter quebra linha)',

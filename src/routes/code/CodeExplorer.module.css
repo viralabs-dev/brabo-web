@@ -7,9 +7,13 @@
 
 .cabecalho {
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
   padding: 10px 14px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--text-muted);
@@ -38,7 +42,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px 4px var(--indent, 8px);
+  /* AT-971 (RN-1472): linha de 28 px, ícone e nome na mesma linha; o Disclosure
+     põe `py-2` no cabeçalho, então a altura é fixa aqui e não pelo padding. */
+  height: 28px;
+  min-height: 0;
+  padding: 0 10px 0 var(--indent, 8px);
   background: transparent;
   border: none;
   border-left: 2px solid transparent;
@@ -47,6 +55,18 @@
   font-size: var(--fs-body);
   text-align: left;
   cursor: pointer;
+}
+
+.tituloPasta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.tituloPasta svg,
+.linha svg {
+  flex-shrink: 0;
 }
 
 .linha:hover {
@@ -68,7 +88,7 @@
 .estado,
 .estadoFilho {
   padding: 10px 14px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
 
@@ -77,13 +97,13 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--danger);
 }
 
 .truncado,
 .truncadoFilho {
   padding: 6px 14px;
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--warning);
 }

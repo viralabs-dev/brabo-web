@@ -1,7 +1,7 @@
 import { Shimmer } from '../../components/ui/Shimmer';
 import { Button } from '@/components/ui/Button';
 import { RotateCcw } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { getCodeTree, mensagemDaApi } from '../../lib/api-client';
@@ -10,6 +10,11 @@ import { FileTree } from '../../components/ai-elements/file-tree';
 import { Disclosure } from '../../components/ui/Disclosure';
 import type { CodeTreeEntry } from '../../lib/api-types';
 import styles from './CodeExplorer.module.css';
+
+/** Recuo por nível da árvore, em px (AT-971, RN-1472). */
+const RECUO_POR_NIVEL = 18;
+/** Largura do chevron + respiro: o nome do arquivo alinha com o nome da pasta do mesmo nível. */
+const RECUO_DO_ARQUIVO = 18;
 
 interface CodeExplorerProps {
   projectId: string;
@@ -22,6 +27,8 @@ interface CodeExplorerProps {
   gitRef: string;
   activePath: string | null;
   onOpenFile: (path: string) => void;
+  /** O botão da ref (CodeBranchPicker) no cabeçalho, como na L06 (RN-1494). */
+  seletorDeRef?: ReactNode;
 }
 
 /**
@@ -30,7 +37,7 @@ interface CodeExplorerProps {
  * tráfego). A raiz carrega ao montar; cada subpasta só chama a api quando o
  * usuário a abre.
  */
-export function CodeExplorer({ projectId, gitRef, activePath, onOpenFile }: CodeExplorerProps) {
+export function CodeExplorer({ projectId, gitRef, activePath, onOpenFile, seletorDeRef }: CodeExplorerProps) {
   const { t } = useTranslation('code');
   const raizQuery = useQuery({
     queryKey: ['code-tree', projectId, gitRef, ''],
@@ -40,7 +47,10 @@ export function CodeExplorer({ projectId, gitRef, activePath, onOpenFile }: Code
 
   return (
     <div className={styles.explorador}>
-      <div className={styles.cabecalho}>{t('explorer.title')}</div>
+      <div className={styles.cabecalho}>
+        <span>{t('explorer.title')}</span>
+        {seletorDeRef}
+      </div>
       <div className={styles.arvore}>
         {!gitRef && <div className={styles.estado}>{t('explorer.noRef')}</div>}
 
@@ -103,7 +113,7 @@ interface TreeEntryProps {
 function TreeEntry({ entrada, projectId, gitRef, depth, activePath, onOpenFile }: TreeEntryProps) {
   const { t } = useTranslation('code');
   const [aberto, setAberto] = useState(false);
-  const indentacao = 8 + depth * 13;
+  const indentacao = 8 + depth * RECUO_POR_NIVEL;
 
   const filhosQuery = useQuery({
     queryKey: ['code-tree', projectId, gitRef, entrada.path],
@@ -121,11 +131,11 @@ function TreeEntry({ entrada, projectId, gitRef, depth, activePath, onOpenFile }
           data-tree-row=""
           aria-selected={ativo}
           className={[styles.linha, ativo && styles.linhaAtiva].filter(Boolean).join(' ')}
-          style={{ paddingLeft: indentacao + 18 }}
+          style={{ paddingLeft: indentacao + RECUO_DO_ARQUIVO }}
           onClick={() => onOpenFile(entrada.path)}
           title={entrada.path}
         >
-          <FileIcon size={13} />
+          <FileIcon size={14} />
           <span className={styles.nome}>{entrada.name}</span>
         </button>
       </li>
@@ -147,27 +157,27 @@ function TreeEntry({ entrada, projectId, gitRef, depth, activePath, onOpenFile }
         onAlternar={() => setAberto((v) => !v)}
         classNameCabecalho={styles.linha}
         titulo={
-          <>
-            <FolderIcon size={13} />
+          <span className={styles.tituloPasta}>
+            <FolderIcon size={14} />
             <span className={styles.nome}>{entrada.name}</span>
-          </>
+          </span>
         }
       >
         <ul role="group" className={styles.lista}>
           {filhosQuery.isLoading && (
-            <li className={styles.estadoFilho} style={{ paddingLeft: indentacao + 18 }}>
+            <li className={styles.estadoFilho} style={{ paddingLeft: indentacao + RECUO_DO_ARQUIVO }}>
               <Shimmer>{t('explorer.loading')}</Shimmer>
             </li>
           )}
           {filhosQuery.isError && (
-            <li className={styles.estadoFilho} style={{ paddingLeft: indentacao + 18 }}>
+            <li className={styles.estadoFilho} style={{ paddingLeft: indentacao + RECUO_DO_ARQUIVO }}>
               <span role="alert">
                 {mensagemDaApi(filhosQuery.error, t('explorer.folderErrorFallback'))}
               </span>
             </li>
           )}
           {filhosQuery.data && filhosQuery.data.entries.length === 0 && (
-            <li className={styles.estadoFilho} style={{ paddingLeft: indentacao + 18 }}>
+            <li className={styles.estadoFilho} style={{ paddingLeft: indentacao + RECUO_DO_ARQUIVO }}>
               {t('explorer.folderEmpty')}
             </li>
           )}
@@ -186,7 +196,7 @@ function TreeEntry({ entrada, projectId, gitRef, depth, activePath, onOpenFile }
           {filhosQuery.data?.truncated && (
             <li
               className={styles.truncadoFilho}
-              style={{ paddingLeft: indentacao + 18 }}
+              style={{ paddingLeft: indentacao + RECUO_DO_ARQUIVO }}
             >
               {t('explorer.folderTruncated')}
             </li>

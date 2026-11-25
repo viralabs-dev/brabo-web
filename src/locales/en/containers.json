@@ -34,8 +34,7 @@
     "since": "Since",
     "sinceNone": "—",
     "actions": "Actions",
-    "detail": "Detail",
-    "openDetail": "Open"
+    "verDetalhe": "See detail"
   },
   "status": {
     "provisioning": "provisioning",
@@ -96,7 +95,11 @@
       "registrado_rodando_observado_parado": "Recorded as running, observed stopped."
     },
     "ajuda": "Container actions",
-    "ajudaIndisponiveis": "Why the actions are unavailable"
+    "ajudaIndisponiveis": "Why the actions are unavailable",
+    "open": "Open",
+    "decideImage": "Decide image",
+    "menu": "More actions for {{projeto}}",
+    "detalhes": "View details"
   },
   "detail": {
     "title": "Container",
@@ -150,5 +153,15 @@
       "nomeReservado": "reserved name"
     },
     "ajuda": "Container network"
+  },
+  "remocoes": {
+    "title": "Pending removal",
+    "help": "Deleted projects whose containers will still be removed when the broker is back.",
+    "recursos_one": "{{count}} resource",
+    "recursos_other": "{{count}} resources",
+    "tentativas_one": "{{count}} attempt",
+    "tentativas_other": "{{count}} attempts",
+    "semMotivo": "no reason recorded",
+    "apagado": "deleted project · {{id}}"
   }
 }

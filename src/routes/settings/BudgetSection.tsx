@@ -94,10 +94,12 @@ export function BudgetSection({ projectId }: { projectId: string }) {
               descricao={
                 <>
                   {t('budget.card.spent', { amount: formatarCustoMicros(area.spentMicros) })}{' '}
-                  <MarcaDeHeranca
-                    proprio={area.budgetMicros !== null}
-                    detalhe={area.budgetMicros === null ? t('budget.card.noCap') : undefined}
-                  />
+                  {/* Um estado só para "sem teto" (AT-1005): o trio "Sem valor próprio / sem teto / placeholder" virou uma frase. */}
+                  {area.budgetMicros === null ? (
+                    <span data-testid="area-sem-teto">· {t('budget.card.semTetoProprio')}</span>
+                  ) : (
+                    <MarcaDeHeranca proprio />
+                  )}
                 </>
               }
             >
@@ -106,7 +108,6 @@ export function BudgetSection({ projectId }: { projectId: string }) {
                 type="number"
                 min={0}
                 step="any"
-                placeholder={t('budget.placeholder')}
                 aria-label={t('budget.card.capAria', { area: area.key })}
                 value={secao.textoDe(area)}
                 onChange={(e) => secao.editar(area.key, e.target.value)}

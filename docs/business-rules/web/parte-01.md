@@ -142,6 +142,8 @@ o motivo existia só no console. No dashboard era pior que branco: `!projects`
 também era verdadeiro no erro, então a tela convidava a criar o **primeiro**
 projeto de um workspace que podia ter vinte.
 
+**Complemento (AT-965).** O estado vazio só renderiza com a leitura concluída e vazia: Arquitetura e Backlog (épicos e cobertura de regras) passaram a seguir a regra, e a Arquitetura mostra esqueleto enquanto carrega. Com 429 o erro diz "O servidor recusou a leitura (429). Isto não quer dizer que o projeto não tem ‹coisa›." (`ErroDeCarregamento`, prop `coisa`). Com dado em cache e a revalidação em erro, a tela mantém o dado e `FaixaDeRevalidacao` mostra uma linha no topo da página do projeto com "Tentar agora" (sem contagem regressiva: o cliente não sabe quando a próxima tentativa roda). A sidebar mantém o projeto da rota e as oito seções quando `useProjects` falha. Testes: `ProjectArchitectureTab.test.tsx`, `ProjectBacklogTab.test.tsx`, `FaixaDeRevalidacao.test.tsx`, `Shell.test.tsx`.
+
 É a [RN-059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-059) do outro lado do fio: falha nunca vira resposta vazia.
 Quem falha, diz.
 
@@ -208,6 +210,11 @@ num comando ou numa conversa, e um nome escolhido por uma pessoa **não é
 espaços) conta como **ausência**, tanto na criação quanto ao renomear:
 gravar `''` transformaria o rótulo em `" · #a1b2c3d4"`, pior que a hashtag
 sozinha. `null` no corpo do `PATCH` é o jeito de **desfazer**.
+
+Na lista de sessões do projeto, o **título é o link da sessão** (clique ou
+Enter abrem) e **renomear é um controle próprio**: o lápis "Renomear sessão"
+(24 px no mínimo), visível ao passar o mouse ou focar a linha e sempre
+alcançável pelo Tab (AT-962). Enter confirma, Esc desiste, em branco apaga.
 
 Renomear **não** é evento de sessão. O log de eventos é o que a sessão
 viveu, e o nome é um rótulo de navegação, trocado quantas vezes se
@@ -340,7 +347,7 @@ com `key`, e quem escreve `active` recebe a chave crua do
 - **Onde:** `apps/web/src/routes/project-tabs.ts:95` (as duas entradas),
   `apps/web/src/routes/ProjectSessionsTab.tsx:114` (o filtro pelo `kind`
   gravado) e `:98` (o CTA criando no `kind` da aba),
-  `apps/web/src/routes/SessionPage.tsx:715` (`conviteVisivel`, a única
+  `apps/web/src/routes/SessionPage.tsx:725` (`conviteVisivel`, a única
   pergunta que a topbar e o convite compartilham)
 - **Teste:** `apps/web/src/routes/ProjectSessionsTab.test.tsx`,
   `apps/web/src/routes/project-tabs.test.tsx`,
@@ -618,7 +625,7 @@ uma.
 
 - **Onde:** `apps/web/src/lib/session-destinatario.ts:290`
   (`useDestinatarioDoChat`, desde a RN-631),
-  `apps/web/src/lib/api-client.ts:1223` (`getSessionModelBinding`, o
+  `apps/web/src/lib/api-client.ts:1242` (`getSessionModelBinding`, o
   `agentId`), `apps/api/src/interfaces/http/llm/model-bindings.controller.ts:166`
   (`getSessionBinding`, `@Query('agentId')`)
 - **Teste:** `apps/web/src/routes/SessionPage.destinatario-do-chat.test.tsx`
@@ -647,7 +654,7 @@ OPCIONAL, padrão `false`: os outros consumidores do hook (Overview, Code,
 Provisioning, AdoptionPlan) não têm turno conversacional em andamento e
 ficam como estavam.
 
-- **Onde:** `apps/web/src/lib/hooks.ts:250` (`useSessionEvents`),
+- **Onde:** `apps/web/src/lib/hooks.ts:260` (`useSessionEvents`),
   `apps/web/src/routes/SessionPage.tsx:269` (`eventsQuery`)
 - **Teste:** `apps/web/src/lib/hooks.pausar-poll.test.tsx`
 - **Caso de borda:** pausar o timer não é desabilitar a query — a invalidação
@@ -658,6 +665,8 @@ ficam como estavam.
 <a id="rn-121"></a>
 
 ### RN-121 — Dev agent e QA são "executores": aba própria, fora do "Time de agentes" {#rn-121}
+
+> **Revisada pela [RN-1466](parte-07.md#rn-1466) a [RN-1468](parte-07.md#rn-1468) (AT-970):** a aba Execução lista os executores numa tabela e a linha do tempo é uma visão própria; o `AgentTeamGrid` descrito abaixo segue só na Visão geral. A separação (`isExecutorGroup`) não mudou.
 
 O grid "Time de agentes" e a "Linha do tempo do time" da Visão geral
 misturavam Criativo/PO/Arquiteto/Infra com dev-`<módulo>` e QA (lead +
@@ -733,7 +742,7 @@ qualquer dos dois caminhos. O que mudou é que a PRIMEIRA MENSAGEM agora também
 conta como esse gesto: ninguém deveria precisar de um clique à parte antes de falar
 com quem a tela já o convidou a falar.
 
-- **Onde:** `apps/web/src/routes/SessionPage.tsx:690` (`handleSend`)
+- **Onde:** `apps/web/src/routes/SessionPage.tsx:700` (`handleSend`)
 - **Teste:** `apps/web/src/routes/SessionPage.ideacao-automatica.test.tsx`
 - **Caso de borda:** sessão `consultiva` não tem agente Criativo — a regra
   não se aplica, e o caminho SSE genérico segue sendo o certo para ela.

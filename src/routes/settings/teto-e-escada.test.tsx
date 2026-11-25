@@ -84,6 +84,34 @@ describe('TetoPorTarefaSection — teto e escada (AT-916/917)', () => {
     );
   });
 
+  it('cada campo da escada tem um <label> visível ligado pelo for (AT-1005)', async () => {
+    montar();
+    const modelo2 = await screen.findByLabelText('Modelo do degrau 2');
+    const rotulo = document.querySelector(`label[for="${modelo2.id}"]`);
+    expect(rotulo).not.toBeNull();
+    expect(rotulo).toHaveTextContent('Modelo do degrau 2');
+    const teto2 = screen.getByLabelText('Teto do degrau 2 (US$)');
+    expect(document.querySelector(`label[for="${teto2.id}"]`)).toHaveTextContent('Teto do degrau 2 (US$)');
+    expect(modelo2).not.toHaveAttribute('aria-label');
+  });
+
+  it('o Salvar da escada fica no rodapé da seção, com a contagem de alterações (AT-1005)', async () => {
+    montar();
+    const teto2 = await screen.findByLabelText('Teto do degrau 2 (US$)');
+    await waitFor(() => expect(teto2).toBeEnabled());
+    const contagem = screen.getByTestId('alteracoes-da-escada');
+    expect(contagem).toHaveTextContent('Nenhuma alteração');
+    fireEvent.change(teto2, { target: { value: '3' } });
+    expect(contagem).toHaveTextContent('1 alteração não salva');
+    const rodape = contagem.parentElement!;
+    const salvar = rodape.querySelector('button')!;
+    expect(salvar).toHaveTextContent('Salvar');
+    // O botão não é mais irmão dos campos: sai do cartão da escada.
+    expect(screen.getByTestId('escada-de-modelos').contains(salvar)).toBe(false);
+    fireEvent.click(salvar);
+    await waitFor(() => expect(updateProject).toHaveBeenCalled());
+  });
+
   it('sem maintainer os controles ficam inertes com o motivo em texto', async () => {
     listWorkspaces.mockResolvedValue([{ workspace: { id: 'w1' }, role: 'developer' }]);
     montar();

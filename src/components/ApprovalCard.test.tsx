@@ -142,6 +142,29 @@ describe('ApprovalCard', () => {
     expect(onActivateAutoMode).toHaveBeenCalledTimes(1);
   });
 
+  // AT-950 (RN-728): no fio ("compacto"), Aprovar e Negar ficam à vista e o resto vai para o "⋯".
+  it('compacto: só Aprovar e Negar à vista; "Sempre permitir" e "Modo automático" no menu "⋯"', async () => {
+    const onAlwaysAllow = vi.fn();
+    const onActivateAutoMode = vi.fn();
+    render(
+      <ApprovalCard
+        compacto
+        action={makeAction()}
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={onAlwaysAllow}
+        onActivateAutoMode={onActivateAutoMode}
+      />,
+    );
+    expect(screen.getByRole('button', { name: 'Aprovar' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Negar' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Sempre permitir' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Modo automático' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId('mais-acoes-do-cartao'));
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'Modo automático' }));
+    expect(onActivateAutoMode).toHaveBeenCalledTimes(1);
+  });
+
   // AT-443 (RN-755): ligar o modo não decide o próprio card.
   it('ligar o "Modo automático" não aprova o card, e o card diz isso', () => {
     const onApprove = vi.fn();
@@ -359,6 +382,25 @@ describe('ApprovalCard', () => {
     expect(screen.queryByRole('button', { name: 'Aprovar' })).not.toBeInTheDocument();
     expect(screen.getByText(/Negado/)).toBeInTheDocument();
     expect(screen.getByText(/comando destrutivo/)).toBeInTheDocument();
+  });
+
+  it('AT-987: git_merge do merge automático diz "Mergeado pelo merge automático" com "desligar", nunca "Sempre permitido"', () => {
+    render(
+      <ApprovalCard
+        action={makeAction({
+          actionType: 'git_merge',
+          payload: { pullRequestId: 'pr-1', origem: 'merge_automatico' },
+          status: 'auto_approved',
+          resolvedPolicy: 'auto_approve',
+        })}
+        onApprove={vi.fn()}
+        onDeny={vi.fn()}
+        onAlwaysAllow={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(/Mergeado pelo merge automático/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'desligar' }).getAttribute('href')).toContain('tab=settings&group=projeto');
+    expect(screen.queryByText(/Sempre permitido/)).toBeNull();
   });
 
   it('mostra "sempre permitido" quando auto_approved com política auto_approve', () => {

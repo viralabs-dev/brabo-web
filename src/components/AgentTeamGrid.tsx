@@ -106,6 +106,8 @@ export function AgentTeamGrid({
         status={r.status}
         badge={badge}
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
+        // RN-1492: o mesmo critério do catálogo (`provider === 'ollama'` = categoria `local`).
+        local={model?.provider === 'ollama'}
         modelOptions={onModelChange ? allModels.map((m) => ({ id: m.id, name: m.displayName })) : undefined}
         modelId={modelId}
         onModelChange={onModelChange ? (id) => onModelChange(r.id, id) : undefined}
@@ -156,6 +158,7 @@ export function AgentTeamGrid({
         status={r.status}
         compact
         model={model ? { name: model.displayName, provider: model.provider } : undefined}
+        local={model?.provider === 'ollama'}
         modelOptions={onModelChange ? allModels.map((m) => ({ id: m.id, name: m.displayName })) : undefined}
         modelId={modelId}
         onModelChange={onModelChange ? (id) => onModelChange(r.id, id) : undefined}

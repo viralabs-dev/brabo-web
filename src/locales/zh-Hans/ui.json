@@ -20,7 +20,7 @@
   "markdownMessage": {
     "codeFence": {
       "defaultLanguage": "文本",
-      "mostrarLinhas_other": "显示全部 {{count}} 行",
+      "mostrarLinhas_other": "显示全部 {{count, number}} 行",
       "recolher": "收起"
     },
     "table": {
@@ -36,7 +36,11 @@
   "erroDeCarregamento": {
     "defaultMessage": "无法连接到 api。",
     "trace": "trace {{traceId}}",
-    "retry": "重试"
+    "retry": "重试",
+    "rateLimited": "服务器拒绝了读取（429）。这并不表示项目没有{{coisa}}。",
+    "faixa429": "当前请求过多。屏幕上的内容可能已过期。",
+    "faixaGenerica": "暂时无法刷新。屏幕上的内容可能已过期。",
+    "tentarAgora": "立即重试"
   },
   "codeBlock": {
     "copiar": "复制",

@@ -1,7 +1,15 @@
+import type { ComponentProps } from 'react';
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { DESTINO_DO_PASSO } from '../lib/primeiros-passos';
-import { usePrimeirosPassos } from './PrimeirosPassos.helpers';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from './ui/Button';
+import { ComecarIdeacao } from './ComecarIdeacao';
+import { useModeloDoTime, usePrimeirosPassos } from './PrimeirosPassos.helpers';
+import { setProjectModelBinding } from '../lib/api-client';
+import { invalidarBindingsResolvidos } from '../lib/bindings-resolvidos';
+import { useCurrentWorkspaceWithRole } from '../lib/hooks';
+import { roleAtLeast } from '../lib/roles';
 import { Card } from '@/components/shadcn/card';
 import { Item, ItemActions, ItemContent, ItemGroup, ItemMedia, ItemTitle, ItemDescription } from '@/components/shadcn/item';
 import styles from './PrimeirosPassos.module.css';
@@ -21,19 +29,37 @@ import styles from './PrimeirosPassos.module.css';
 export function PrimeirosPassos({
   projectId,
   temSessao,
+  integrado = false,
 }: {
   projectId: string;
   /** `undefined` enquanto a lista de sessões não chegou. */
   temSessao: boolean | undefined;
+  /** AT-975 (RN-1480): sem o cartão próprio, dentro do "Próximo passo". */
+  integrado?: boolean;
 }) {
   const { t } = useTranslation('overview');
   const passos = usePrimeirosPassos(projectId, temSessao);
+  const { local, nomeLocal, haiku } = useModeloDoTime(projectId);
+  const queryClient = useQueryClient();
+  const { data: comPapel } = useCurrentWorkspaceWithRole();
+  // RN-1395: grava o modelo do PROJETO (`maintainer`); o Haiku precisa estar ativo no catálogo (RN-043).
+  const aplicar = useMutation({
+    mutationFn: () => setProjectModelBinding(projectId, haiku!.id),
+    onSuccess: () => invalidarBindingsResolvidos(queryClient, projectId),
+  });
+  const motivoDoAplicar = !roleAtLeast(comPapel?.role, 'maintainer')
+    ? t('primeirosPassos.modelo.aplicarSemPapel')
+    : !haiku
+      ? t('primeirosPassos.modelo.aplicarSemHaiku')
+      : null;
   if (!passos) return null;
 
   const feitos = passos.filter((p) => p.feito).length;
+  const atual = passos.find((p) => !p.feito)?.chave;
+  const Raiz = integrado ? IntegradoRaiz : Card;
 
   return (
-    <Card role="region" className={styles.cartao} data-testid="primeiros-passos" aria-label={t('primeirosPassos.title')}>
+    <Raiz role="region" className={integrado ? styles.integrado : styles.cartao} data-testid="primeiros-passos" aria-label={t('primeirosPassos.title')}>
       <div className={styles.cabecalho}>
         <h2 className={styles.titulo}>{t('primeirosPassos.title')}</h2>
         <span className={styles.contagem}>
@@ -49,9 +75,10 @@ export function PrimeirosPassos({
               key={passo.chave}
               size="xs"
               role="listitem"
-              className={[styles.passo, passo.feito && styles.feito].filter(Boolean).join(' ')}
+              className={[styles.passo, passo.feito && styles.feito, passo.chave === atual && styles.atual].filter(Boolean).join(' ')}
               data-passo={passo.chave}
               data-feito={passo.feito ? 'sim' : 'nao'}
+              data-atual={passo.chave === atual ? 'sim' : 'nao'}
             >
               <ItemMedia className={styles.marca} aria-hidden="true">
                 {passo.feito ? '✓' : '○'}
@@ -59,12 +86,28 @@ export function PrimeirosPassos({
               <ItemContent className={styles.texto}>
                 <ItemTitle className={styles.nome}>{t(`primeirosPassos.${passo.chave}.titulo`)}</ItemTitle>
                 <ItemDescription className={styles.estado}>
-                  {passo.feito ? t('primeirosPassos.feito') : t(`primeirosPassos.${passo.chave}.pendente`)}
+                  {passo.feito
+                    ? t('primeirosPassos.feito')
+                    : passo.chave === 'modelo' && local
+                      ? t('primeirosPassos.modelo.pendenteLocal', { modelo: nomeLocal })
+                      : t(`primeirosPassos.${passo.chave}.pendente`)}
                 </ItemDescription>
+                {passo.chave === 'modelo' && !passo.feito && local && motivoDoAplicar && (
+                  <ItemDescription className={styles.estado} role="note">
+                    {motivoDoAplicar}
+                  </ItemDescription>
+                )}
+                {aplicar.isError && passo.chave === 'modelo' && (
+                  <ItemDescription className={styles.estado} role="alert">
+                    {t('primeirosPassos.modelo.aplicarFalhou')}
+                  </ItemDescription>
+                )}
               </ItemContent>
               {!passo.feito && (
                 <ItemActions>
-                  {alvo === 'providers' ? (
+                  {passo.chave === 'ideacao' ? (
+                    <ComecarIdeacao projectId={projectId} className={styles.link} />
+                  ) : alvo === 'providers' ? (
                     <Link to="/providers" className={styles.link}>
                       {rotulo}
                     </Link>
@@ -73,12 +116,27 @@ export function PrimeirosPassos({
                       {rotulo}
                     </Link>
                   )}
+                  {passo.chave === 'modelo' && local && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      loading={aplicar.isPending}
+                      disabled={motivoDoAplicar !== null || aplicar.isPending}
+                      onClick={() => aplicar.mutate()}
+                    >
+                      {t('primeirosPassos.modelo.aplicar', { modelo: haiku?.displayName ?? 'Claude Haiku 5.5' })}
+                    </Button>
+                  )}
                 </ItemActions>
               )}
             </Item>
           );
         })}
       </ItemGroup>
-    </Card>
+    </Raiz>
   );
+}
+
+function IntegradoRaiz(props: ComponentProps<'div'>) {
+  return <div {...props} />;
 }

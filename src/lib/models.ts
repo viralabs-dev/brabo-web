@@ -398,11 +398,8 @@ export const CREDENCIAIS_DE_LLM: CredencialDeLlm[] = (
   .map((id) => ({ id, label: ROTULO_DO_PROVIDER[id], kind: providerKind(id) }))
   .filter((c): c is CredencialDeLlm => c.kind !== 'local');
 
-const usd = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  maximumFractionDigits: 2,
-});
+const usd = (v: number) =>
+  new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', maximumFractionDigits: 2 }).format(v);
 
 /**
  * Entrada e saída SEPARADAS, e não a média das duas.
@@ -421,8 +418,8 @@ export function formatarPreco(model: Model): string {
     return i18n.t('price.subscriptionNoPrice', { ns: 'models' });
   // Preço zero nunca é "$0.00": vazio tem texto próprio (RN-470).
   if (zero) return i18n.t('price.noPrice', { ns: 'models' });
-  const entrada = usd.format(model.inputPricePerMillionMicros / 1_000_000);
-  const saida = usd.format(model.outputPricePerMillionMicros / 1_000_000);
+  const entrada = usd(model.inputPricePerMillionMicros / 1_000_000);
+  const saida = usd(model.outputPricePerMillionMicros / 1_000_000);
   const per1m = i18n.t('price.per1m', { ns: 'models' });
   const preco = `${entrada} / ${saida} ${per1m}`;
   return model.billing === 'subscription'

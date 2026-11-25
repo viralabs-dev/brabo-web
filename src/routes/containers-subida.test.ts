@@ -41,6 +41,7 @@ function item(overrides: Partial<ContainerOverviewItem> = {}): ContainerOverview
     brokerConfigurado: true,
     decisaoVigente: null,
     imagemDesatualizada: false,
+    motivoDaFalha: null,
     ...overrides,
   };
 }

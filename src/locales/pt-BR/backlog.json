@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "rascunho",
-    "ready": "pronta",
-    "inProgress": "em progresso",
+    "ready": "pronta para executar",
+    "inProgress": "em execução",
     "done": "concluída"
   },
   "sectionLabel": {
@@ -21,9 +21,9 @@
     "uncoveredBadge_zero": "{{count}} descobertas",
     "uncoveredBadge_one": "{{count}} descoberta",
     "uncoveredBadge_other": "{{count}} descobertas",
-    "coveredBy_zero": "coberta por {{count}} histórias",
-    "coveredBy_one": "coberta por {{count}} história",
-    "coveredBy_other": "coberta por {{count}} histórias",
+    "coveredBy_zero": "{{count}} histórias",
+    "coveredBy_one": "{{count}} história",
+    "coveredBy_other": "{{count}} histórias",
     "uncovered": "descoberta — sem história"
   },
   "ruleRefs_zero": "{{count}} regras de negócio vinculadas",
@@ -144,12 +144,18 @@
   },
   "epico": {
     "progresso_zero": "nenhuma história",
-    "progresso_one": "{{count}} história · {{prontas}} de {{count}} prontas",
-    "progresso_other": "{{count}} histórias · {{prontas}} de {{count}} prontas"
+    "progresso_one": "{{count}} história · {{prontas}} de {{count}} concluída",
+    "progresso_other": "{{count}} histórias · {{prontas}} de {{count}} concluídas"
   },
   "historia": {
     "perguntas_zero": "nenhuma pergunta",
     "perguntas_one": "{{count}} pergunta",
     "perguntas_other": "{{count}} perguntas"
+  },
+  "loadError": {
+    "epics": "Não deu para carregar o Backlog",
+    "epicsThing": "épicos nem histórias",
+    "rules": "Não deu para carregar a cobertura de regras",
+    "rulesThing": "regras"
   }
 }

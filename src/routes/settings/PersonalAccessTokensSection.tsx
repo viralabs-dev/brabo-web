@@ -243,6 +243,8 @@ export function PersonalAccessTokensSection({ projectId }: { projectId: string }
         rows={tokens ?? []}
         rowKey={(pat) => pat.id}
         emptyMessage={t('personalAccessTokens.emptyMessage')}
+        semCabecalhoSeVazia
+        vaziaEmUmaLinha
       />
 
       {podeGerenciarDeTodos && (
@@ -257,6 +259,8 @@ export function PersonalAccessTokensSection({ projectId }: { projectId: string }
             rows={todosOsTokens ?? []}
             rowKey={(tok) => tok.id}
             emptyMessage={t('personalAccessTokens.admin.emptyMessage')}
+            semCabecalhoSeVazia
+        vaziaEmUmaLinha
           />
         </div>
       )}

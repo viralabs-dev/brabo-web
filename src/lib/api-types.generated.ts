@@ -621,6 +621,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/projects/{projectId}/qa-environments/{taskId}/compose": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Proves the clean clone with a real `docker compose up` (RN-1328)
+         * @description Asks the broker (ADR 0297; up to 10 min). Never an error for lack of proof: no broker, `runner` project, infra origin or ceiling -> `veredito: aprova_com_aviso` with `aviso: "sem prova de compose"`. `falhou` is the project's own failure. Auto-approved QA step, outside the RN-418 ceiling.
+         */
+        post: operations["InternalQaEnvironmentsController_provarCompose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/projects/{projectId}/qa-environments/{taskId}/remove": {
         parameters: {
             query?: never;
@@ -1459,6 +1479,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/internal/sessions/{sessionId}/tasks/{taskId}/levantamento": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Writes the survey (levantamento) of a task
+         * @description Replaces `levantamento` (`arquivos`, `expoe`, `consome`, `dependenciasNpm`, `aceite`). The execution plan reads it to validate `dependeDe` and `consome` (RN-1371).
+         */
+        put: operations["InternalSessionsController_levantamentoRoute"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/internal/sessions/{sessionId}/tasks/{taskId}/status": {
         parameters: {
             query?: never;
@@ -1953,6 +1993,54 @@ export interface paths {
         put: operations["ProjectsController_setAutoMergeRoute"];
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/automacoes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists the project's automation keys (RN-1421, AT-994)
+         * @description The handoff passages that happen without a click (Architect→Infra, Infra→Dev Lead). A key with no row is ON by default (`origem: padrao`).
+         */
+        get: operations["ProjectsController_listAutomacoesRoute"];
+        put?: never;
+        /**
+         * Answers an automation offer: accept it (becomes a rule) or refuse
+         * @description RN-1436/RN-1437 (AT-998). Answers the `automacao.oferecida` session event with the same `categoria`/`chave`/`escopo`. `aceitar` writes the rule (`origem: oferta`, project scope) and logs `automacao.aceita`; `recusar` logs `automacao.recusada` and the offer never comes back. Unknown offer: 404; already answered: 409; a type that is capped today (e.g. `open_infra_pr` after a git credential was linked): 400.
+         */
+        post: operations["ProjectsController_answerOfferRoute"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/automacoes/{categoria}/{chave}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Turns one automation key of the project on or off
+         * @description RN-1421 (AT-994). `categoria`/`chave` today: `handoff` + `arquiteto->infra` or `infra->dev-lead`. OFF puts the click back on that passage; the row keeps who changed it and when. Unknown key: 400.
+         */
+        put: operations["ProjectsController_setAutomacaoRoute"];
+        post?: never;
+        /**
+         * Undoes an automation rule (puts the decision back on the person)
+         * @description RN-1437 (AT-998). Turns the rule OFF (the row stays, `origem: manual`, with who and when), so the next case asks again and the offer is not re-made. `chave` is the rule key as listed (`<tipo>@<agente>` for approvals). Unknown rule: 400.
+         */
+        delete: operations["ProjectsController_undoAutomacaoRoute"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2782,6 +2870,26 @@ export interface paths {
          * @description Only the author of the session where the question was born answers. Writes a `decision_record` (actor: the user, with `questionId`) and `open_question.answered`, and asks the engine to resume the parked QA gate of each affected task (RN-860), best effort.
          */
         post: operations["OpenQuestionsController_answer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{projectId}/open-questions/accept-suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Accepts the suggestion of several open questions at once (RN-858)
+         * @description Always a human gesture. Each question closes like `answer` with `aceitarSugestao`; one that is already answered, has no suggestion, was not opened by the caller or does not exist is skipped with its status (idempotent, never 409).
+         */
+        post: operations["OpenQuestionsController_acceptSuggestions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4439,6 +4547,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/workspaces/{workspaceId}/containers/remocoes-pendentes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lists deleted projects whose host resources are still pending removal
+         * @description RN-1439: one row per deleted project of the workspace whose containers (work or QA) the broker has not removed yet. A separate route, not extra rows of the list above, because that list is per-project and the project no longer exists.
+         */
+        get: operations["ContainersOverviewController_remocoesPendentes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/workspaces/{workspaceId}/credential-spend": {
         parameters: {
             query?: never;
@@ -5031,6 +5159,19 @@ export interface components {
              */
             module: string;
         };
+        AcceptSuggestionsDto: {
+            /** @description Questions whose suggestion the user accepts (max 50). */
+            questionIds: string[];
+        };
+        AcceptSuggestionsItemDto: {
+            /** Format: uuid */
+            questionId: string;
+            /** @enum {string} */
+            status: "answered" | "already_answered" | "sem_sugestao" | "nao_autor" | "nao_encontrada";
+        };
+        AcceptSuggestionsResponseDto: {
+            resultados: components["schemas"]["AcceptSuggestionsItemDto"][];
+        };
         AceiteAutomaticoResponseDto: {
             /** @example true */
             aceito: boolean;
@@ -5040,7 +5181,7 @@ export interface components {
              * @example regras_sem_historia
              * @enum {string}
              */
-            motivo?: "nao_e_po_para_arquiteto" | "oferta_nao_pendente" | "sem_regras_de_negocio" | "regras_sem_historia" | "repositorio_nao_local" | "credencial_de_git_no_projeto" | "autor_sem_papel" | "falhou";
+            motivo?: "passagem_sem_aceite_automatico" | "passagem_desligada" | "sem_module_map" | "sem_adr_proposta" | "pergunta_em_aberto" | "pr_de_infra_nao_mergeada" | "container_nao_rodando" | "oferta_nao_pendente" | "sem_regras_de_negocio" | "regras_sem_historia" | "repositorio_nao_local" | "credencial_de_git_no_projeto" | "autor_sem_papel" | "falhou";
         };
         AceiteResponseDto: {
             /**
@@ -5115,6 +5256,24 @@ export interface components {
             userId: string;
             /**
              * @description Role in this association. On a PROJECT it OVERRIDES the workspace role in both directions — the effective role is this one whenever the association exists, higher OR lower — and two movements are refused with 403: downgrading a workspace `owner`, and changing your own role (either way). On a WORKSPACE it is simply the role, with only the second of those caps: you cannot change your own.
+             * @example developer
+             * @enum {string}
+             */
+            role: "viewer" | "developer" | "maintainer" | "owner";
+        };
+        AddProjectMemberDto: {
+            /**
+             * Format: uuid
+             * @description Id of the user. Required when `email` is absent.
+             */
+            userId?: string;
+            /**
+             * Format: email
+             * @description E-mail of a workspace user. Answers 404 when nobody in the workspace has it.
+             */
+            email?: string;
+            /**
+             * @description Role in this association; it OVERRIDES the workspace role (see the operation description for the two refused movements).
              * @example developer
              * @enum {string}
              */
@@ -5561,6 +5720,8 @@ export interface components {
             /** @description Story↔map cross-validation. An empty list is the healthy state. */
             pendencies: components["schemas"]["ArchitecturePendencyResponseDto"][];
             c4Diagram: components["schemas"]["EstadoDoC4DiagramaResponseDto"];
+            /** @description Current module contracts (what each module exposes, incl. `tabela` and `identidade` items). Empty until the Architect declares them. */
+            contratos: components["schemas"]["ContratoDeModuloResponseDto"][];
         };
         ArchiveStoryDto: {
             /**
@@ -5702,6 +5863,27 @@ export interface components {
             filesSkipped: number;
             chunksCreated: number;
             embedding: components["schemas"]["IndexEmbeddingResponseDto"];
+        };
+        AutomacaoResponseDto: {
+            /** @example handoff */
+            categoria: string;
+            /** @example arquiteto->infra */
+            chave: string;
+            /** @example true */
+            ligada: boolean;
+            /**
+             * @example padrao
+             * @enum {string}
+             */
+            origem: "padrao" | "oferta" | "manual";
+            /** @example null */
+            userId: string | null;
+            /**
+             * Format: date-time
+             * @description When the key was last changed; null while it is the default.
+             * @example null
+             */
+            alteradaEm: string | null;
         };
         AutoMergeInternalDto: {
             /** @description The session of the task that just resolved its gate; the `git_merge` is proposed in it. */
@@ -6052,6 +6234,116 @@ export interface components {
              */
             detalheDaObservacao: Record<string, never> | null;
         };
+        ClaimedTaskResponseDto: {
+            /** @example 01JC4Z0000TAREFA00000000001 */
+            id: string;
+            /** @example 01JC4Z0000HISTORIA000000001 */
+            storyId: string;
+            /** @example POST /cart/items endpoint */
+            title: string;
+            /** @example Accepts SKU and quantity; validates stock. */
+            description: string;
+            /**
+             * @example in_progress
+             * @enum {string}
+             */
+            status: "todo" | "in_progress" | "in_review" | "done";
+            /**
+             * @description Slug of the dev agent that claimed the task.
+             * @example dev-api
+             */
+            assignedTo: Record<string, never> | null;
+            /**
+             * @description Task blocked waiting on a decision or a dependency.
+             * @example false
+             */
+            blocked: boolean;
+            /** @example null */
+            blockedReason: Record<string, never> | null;
+            /**
+             * @description The ORIGIN of the block (ADR 0020/0038), when known. `null` for every Phase 4a block — only the QA Lead (Phase 8b) fills it in.
+             * @example null
+             * @enum {string|null}
+             */
+            blockedOrigin: "infra" | "modelo" | "codigo" | "politica" | null;
+            /**
+             * @description Where the task's PR is in the gate pipeline: QA, then SecOps, then the user. `null` while no PR is open.
+             * @example null
+             * @enum {string|null}
+             */
+            gateStatus: "awaiting_qa" | "awaiting_secops" | "awaiting_user" | null;
+            /**
+             * @description How many correction rounds the gates have already requested.
+             * @example 0
+             */
+            gateCorrectionCount: number;
+            /**
+             * @description The module the task belongs to, assigned by the Dev Lead in the approved execution plan (RN-678). Only the dev agent of that module claims it. `null` while no plan assigned one — such a task is claimable only when its story has exactly one module.
+             * @example api
+             */
+            module: Record<string, never> | null;
+            /**
+             * Format: date-time
+             * @description When the task was archived (AT-912). An archived task leaves the claim, the parallelization count and the dependencies, and stays in the history.
+             * @example null
+             */
+            archivedAt: Record<string, never> | null;
+            /**
+             * @description Why the task was archived (required when archiving).
+             * @example null
+             */
+            archivedReason: Record<string, never> | null;
+            /**
+             * @description The module FOUNDATION task (AT-901, RN-1138): created by the Dev Lead; the claim hands it out before the other tasks of the module.
+             * @example false
+             */
+            fundacao: boolean;
+            /**
+             * @description The Dev Lead survey of the task (AT-990, RN-1370): `{ arquivos, expoe, consome, dependenciasNpm, aceite }`. `null` until written.
+             * @example {
+             *       "arquivos": [
+             *         "src/agenda/agenda.service.ts"
+             *       ],
+             *       "expoe": [
+             *         "AgendaService.listar"
+             *       ],
+             *       "consome": [
+             *         "CadastroService.buscar"
+             *       ],
+             *       "dependenciasNpm": [],
+             *       "aceite": "GET /agenda lista os horários"
+             *     }
+             */
+            levantamento: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * @description Tasks that must be `done` before this one is claimable (AT-990, RN-1372). Empty = the module rule (RN-1005).
+             * @example []
+             */
+            dependeDe: string[];
+            /**
+             * Format: date-time
+             * @example 2026-07-25T10:00:00.000Z
+             */
+            createdAt: string;
+            /**
+             * Format: date-time
+             * @example 2026-07-25T12:30:00.000Z
+             */
+            updatedAt: string;
+            /**
+             * @description `merge_conflict` when the task was reopened by a merge conflict and was not re-delivered or blocked since; `null` otherwise.
+             * @example null
+             * @enum {string|null}
+             */
+            retomada: "merge_conflict" | null;
+            /**
+             * @description Files in conflict, from the latest `backlog.task_merge_conflict` of the task. Empty when `retomada` is `null`.
+             * @example []
+             */
+            conflictingFiles: string[];
+        };
         ClaimTaskInternalDto: {
             /**
              * Format: uuid
@@ -6378,6 +6670,24 @@ export interface components {
              */
             questionId?: string;
         };
+        ComposeProofRecusaDto: {
+            /** @example privileged */
+            campo: string;
+            motivo: string;
+        };
+        ComposeProofResultadoDto: {
+            subiu: boolean;
+            sondas: components["schemas"]["ComposeProofSondaDto"][];
+            recusas?: components["schemas"]["ComposeProofRecusaDto"][];
+            /** @enum {string} */
+            origem: "projeto" | "infra";
+        };
+        ComposeProofSondaDto: {
+            /** @example /docs */
+            caminho: string;
+            /** @description HTTP status; 0 when the probe got no answer. */
+            status: number;
+        };
         ConfirmacaoDeArquiteturaResponseDto: {
             /**
              * @example true
@@ -6526,6 +6836,11 @@ export interface components {
              * @example false
              */
             imagemDesatualizada: boolean;
+            /**
+             * @description RN-1493: the first non-empty line of the STORED `failureReason` of the registered container, or `null` when it has none. Never derived from the broker.
+             * @example port is already allocated
+             */
+            motivoDaFalha: string | null;
             /**
              * @description Whether THIS INSTALLATION has a container broker configured (`BROKER_URL` set, ADR 0130) — the same value on every row, because it is installation configuration and not a property of the project. `container` and `mounted` projects only start a container through the broker (ADR 0144), so with `false` the page refuses the start button for them BEFORE the click and says why (ADR 0161, RN-574); `runner` projects are unaffected. It says the variable exists, never that the broker answers — that is what `naoObservado` reports.
              * @example false
@@ -7085,15 +7400,20 @@ export interface components {
         };
         CriterioDoAceiteResponseDto: {
             /**
-             * @description Business rules in the project.
+             * @description Business rules in the project (PO → Architect only).
              * @example 4
              */
-            regras: number;
+            regras?: number;
             /**
              * @description Rules cited by at least one story — equal to `regras`.
              * @example 4
              */
-            cobertas: number;
+            cobertas?: number;
+            /**
+             * @description Which later passage was accepted without a click (RN-1421..1424).
+             * @enum {string}
+             */
+            passagem?: "arquiteto->infra" | "infra->dev-lead";
             /**
              * @description `local`: the project already had a `local` repository. `a_provisionar_local`: none yet — the accept provisions a `local` one.
              * @example a_provisionar_local
@@ -7342,6 +7662,12 @@ export interface components {
             moduleContract: components["schemas"]["ContratoDeModuloResponseDto"] | null;
             /** @description Whether this is the FIRST task of the module: the oldest `backlog.task_claimed` of the project for `module` is this task. The engine gives it twice the per-task budget (RN-774). `false` without `module`. */
             primeiraDoModulo: boolean;
+            /** @description AT-982: true when no OTHER non-archived task of the project is open (every one is done). The engine then asks the QA gate for the end-to-end proof of the deliverable. */
+            ultimaDoProjeto: boolean;
+            /** @description AT-982: the business rules of ALL stories of the project (at most 50); empty unless `ultimaDoProjeto`. */
+            regrasDoProjeto: components["schemas"]["DevContextBusinessRuleResponseDto"][];
+            /** @description Real number of project rules — larger than `regrasDoProjeto.length` when the list was cut. */
+            regrasDoProjetoTotal: number;
             /** @description RN-859: the user's decisions tied to this task, its story or its rules by `afeta` — they win over RF/DoR on conflict. Newest first, at most 10, each text cut at 1,500 characters. */
             decisoes: components["schemas"]["DevContextDecisaoResponseDto"][];
             /** @description RN-872 (ADR 0215): the project's OTHER decisions — those whose `afeta` does not touch this task. Separate section, inside the SAME cap of 10 as `decisoes` (task decisions take the cap first), newest first. */
@@ -8203,7 +8529,7 @@ export interface components {
              * @example funcao
              * @enum {string}
              */
-            tipo: "funcao" | "rota" | "evento" | "dado";
+            tipo: "funcao" | "rota" | "evento" | "dado" | "tabela" | "identidade";
             /**
              * @description How another module uses it. Up to 300 characters.
              * @example placePiece(board: Board, piece: Piece, pos: Pos): Board
@@ -8217,7 +8543,7 @@ export interface components {
              * @example funcao
              * @enum {string}
              */
-            tipo: "funcao" | "rota" | "evento" | "dado";
+            tipo: "funcao" | "rota" | "evento" | "dado" | "tabela" | "identidade";
             /** @example placePiece(board: Board, piece: Piece, pos: Pos): Board */
             assinatura: string;
             /** @example Returns a new board; never mutates the one passed in. */
@@ -8311,6 +8637,35 @@ export interface components {
             vramLivreMiB: number | null;
             /** @example 59 */
             p95Ms: number | null;
+        };
+        LevantamentoInternalDto: {
+            /**
+             * Format: uuid
+             * @example 01JC4Z0000PROJETO0000000001
+             */
+            projectId: string;
+            /**
+             * @example [
+             *       "src/agenda/agenda.service.ts"
+             *     ]
+             */
+            arquivos: string[];
+            /**
+             * @example [
+             *       "AgendaService.listar"
+             *     ]
+             */
+            expoe: string[];
+            /**
+             * @example [
+             *       "CadastroService.buscar"
+             *     ]
+             */
+            consome: string[];
+            /** @example [] */
+            dependenciasNpm: string[];
+            /** @example GET /agenda lista os horários do dia. */
+            aceite: string;
         };
         LlmMessageResponseDto: {
             /**
@@ -10359,6 +10714,22 @@ export interface components {
              */
             enabled: boolean;
         };
+        QaComposeProofResponseDto: {
+            /**
+             * @description `falhou` is the PROJECT's fault (a verdict item); `aprova_com_aviso` means the proof could not run (no broker, runner, infra origin, ceiling).
+             * @enum {string}
+             */
+            veredito: "provou" | "falhou" | "aprova_com_aviso";
+            /**
+             * @description The warning the verdict must carry; `null` otherwise.
+             * @example sem prova de compose
+             */
+            aviso: string | null;
+            motivo: string | null;
+            /** @example a1b2c3d4 */
+            chave: string;
+            resultado: components["schemas"]["ComposeProofResultadoDto"] | null;
+        };
         QaEnvironmentResponseDto: {
             /** @description `false` when the broker refused; `motivo` explains. */
             sucesso: boolean;
@@ -10751,12 +11122,35 @@ export interface components {
              * @description Present only when `reiniciou: false`.
              * @enum {string}
              */
-            motivo?: "sem_container" | "tempo_esgotado" | "falha_no_exec" | "app_saiu" | "sem_app";
+            motivo?: "sem_container" | "tempo_esgotado" | "falha_no_exec" | "app_saiu" | "sem_app" | "alvo_pendente";
             /**
              * @description Present only when `motivo: app_saiu`.
              * @example 1
              */
             exitCode?: number;
+        };
+        RemocaoPendenteResponseDto: {
+            /**
+             * Format: uuid
+             * @description Id of the deleted project.
+             */
+            projectId: string;
+            /** @description Project name saved when it was deleted; null on rows older than migration 0096. */
+            projetoNome: string | null;
+            /**
+             * @description Resources (work container and QA instances) still to remove.
+             * @example 2
+             */
+            recursos: number;
+            /** @description Last failure reason of the cleanup. */
+            motivo: string | null;
+            /**
+             * @description Cleanup attempts so far.
+             * @example 3
+             */
+            tentativas: number;
+            /** Format: date-time */
+            atualizadoEm: string;
         };
         RenameSessionDto: {
             /**
@@ -10859,6 +11253,19 @@ export interface components {
              * @example secops
              */
             herdadoDoLead?: string;
+        };
+        ResponderOfertaDto: {
+            /** @enum {string} */
+            categoria: "aprovacao" | "handoff" | "desbloqueio";
+            /** @example container_start */
+            chave: string;
+            /**
+             * @description Who proposed it (the offer payload `escopo`); default empty.
+             * @example infra
+             */
+            escopo?: string;
+            /** @enum {string} */
+            decisao: "aceitar" | "recusar";
         };
         ResultadoPorProviderResponseDto: {
             /**
@@ -11573,6 +11980,13 @@ export interface components {
              */
             limitUsd: Record<string, never> | null;
         };
+        SetAutomacaoDto: {
+            /**
+             * @description Turns the automation on or off. Required: an omitted key is a 400.
+             * @example false
+             */
+            ligada: boolean;
+        };
         SetAutoMergeDto: {
             /**
              * @description Turns the auto-merge switch on (`true`, workspace `owner` only) or off (`false`, `maintainer` is enough). Required: an omitted key is a 400, never an implicit "off".
@@ -12114,6 +12528,30 @@ export interface components {
              */
             fundacao: boolean;
             /**
+             * @description The Dev Lead survey of the task (AT-990, RN-1370): `{ arquivos, expoe, consome, dependenciasNpm, aceite }`. `null` until written.
+             * @example {
+             *       "arquivos": [
+             *         "src/agenda/agenda.service.ts"
+             *       ],
+             *       "expoe": [
+             *         "AgendaService.listar"
+             *       ],
+             *       "consome": [
+             *         "CadastroService.buscar"
+             *       ],
+             *       "dependenciasNpm": [],
+             *       "aceite": "GET /agenda lista os horários"
+             *     }
+             */
+            levantamento: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * @description Tasks that must be `done` before this one is claimable (AT-990, RN-1372). Empty = the module rule (RN-1005).
+             * @example []
+             */
+            dependeDe: string[];
+            /**
              * Format: date-time
              * @example 2026-07-25T10:00:00.000Z
              */
@@ -12235,6 +12673,8 @@ export interface components {
              * @example dev-api
              */
             agentId: string;
+            /** @description RN-1430: guidance recorded on the unblock event, same as the human one. */
+            orientacao?: string;
         };
         UnreadCursorDto: {
             /**
@@ -13674,6 +14114,49 @@ export interface operations {
             };
             /** @description Project does not exist. */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    InternalQaEnvironmentsController_provarCompose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QaComposeProofResponseDto"];
+                };
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project or task (of that project) not found. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Ambiguous task key. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -15659,6 +16142,52 @@ export interface operations {
             };
         };
     };
+    InternalSessionsController_levantamentoRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                taskId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LevantamentoInternalDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskResponseDto"];
+                };
+            };
+            /** @description Malformed survey. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service token missing or different from the shared one. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Task is not in this project, or is archived. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     InternalSessionsController_markTaskStatus: {
         parameters: {
             query?: never;
@@ -15833,7 +16362,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["TaskResponseDto"];
+                    "application/json": components["schemas"]["ClaimedTaskResponseDto"];
                 };
             };
             /** @description Invalid body. */
@@ -17175,6 +17704,228 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_listAutomacoesRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_answerOfferRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ResponderOfertaDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_setAutomacaoRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                categoria: string;
+                chave: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SetAutomacaoDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role on the project. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Project doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProjectsController_undoAutomacaoRoute: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+                categoria: string;
+                chave: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AutomacaoResponseDto"][];
+                };
             };
             /** @description No token, expired token, or invalid signature. */
             401: {
@@ -19181,7 +19932,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["AddMemberDto"];
+                "application/json": components["schemas"]["AddProjectMemberDto"];
             };
         };
         responses: {
@@ -19691,6 +20442,52 @@ export interface operations {
             };
             /** @description Already answered — `reason: "pergunta_ja_respondida"`. */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    OpenQuestionsController_acceptSuggestions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                projectId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AcceptSuggestionsDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcceptSuggestionsResponseDto"];
+                };
+            };
+            /** @description Invalid body. The `ValidationPipe` runs with `whitelist` and `forbidNonWhitelisted`, so an unknown field also fails. */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -24910,6 +25707,55 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ContainerOverviewItemResponseDto"][];
+                };
+            };
+            /** @description No token, expired token, or invalid signature. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Insufficient role in the workspace. */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Workspace doesn't exist or is invisible to the caller. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Rate limit per user or per IP. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ContainersOverviewController_remocoesPendentes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                workspaceId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RemocaoPendenteResponseDto"][];
                 };
             };
             /** @description No token, expired token, or invalid signature. */

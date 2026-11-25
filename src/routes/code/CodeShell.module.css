@@ -7,27 +7,6 @@
   background: var(--surface-0);
 }
 
-/* Barra de topo: rótulo "ref" + o dropdown rico de branch (CodeBranchPicker,
-   nome + ahead/behind + PR associada). 44px como o handoff especifica. */
-.topo {
-  flex-shrink: 0;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 0 16px;
-  background: var(--surface-1);
-  border-bottom: 1px solid var(--border);
-}
-
-.topoRotulo {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--text-muted);
-}
-
 .corpo {
   flex: 1;
   min-height: 0;
@@ -84,7 +63,7 @@
 
 .railItemDesabilitadoLetra {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
 }
 
 .painelLateral {
@@ -121,7 +100,7 @@
   border: none;
   color: var(--text-secondary);
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   cursor: pointer;
 }
 

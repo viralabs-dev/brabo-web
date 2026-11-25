@@ -9,6 +9,7 @@ import { ChatIcon } from './ui/icons';
 import { Tool } from './ai-elements/tool';
 import { ChainOfThought } from './ai-elements/chain-of-thought';
 import { Reasoning } from './ai-elements/reasoning';
+import { LinhaDeTrabalho } from './ai-elements/linha-de-trabalho';
 import { Plan, type EstadoDoPasso } from './ai-elements/plan';
 import { TraceIcon, TraceLine, TraceTitle } from './shadcn/trace';
 import type { PlanoDoAgente } from '../routes/RetomarTurnoInterrompido';
@@ -79,40 +80,44 @@ export function TurnActivityStrip({ estado, agente, pensandoVisivel, plano }: Tu
         <div className={styles.previa} title={previa ?? undefined}>
           {previa ?? <Shimmer>{t('turno.pensando')}</Shimmer>}
         </div>
-        {estado.raciocinio && (
-          <Reasoning titulo={t('turno.raciocinando')} texto={estado.raciocinio} emCurso />
-        )}
-        {plano && plano.passos.length > 0 && (
-          <Plan
-            objetivo={plano.objetivo}
-            passos={plano.passos.map((p) => ({ texto: p.texto, estado: p.estado as EstadoDoPasso }))}
-          />
-        )}
-        {linhasParaExpandir.length > 0 && (
-          <ChainOfThought
-            titulo={t('turno.passosDoTurno')}
-            contagem={t('turno.passosCount', { count: linhasParaExpandir.length })}
-            emCurso
-          >
-            <div className={styles.linhas}>
-              {linhasParaExpandir.map((linha, indice) =>
-                // Índice como key: as linhas não têm id próprio (narração
-                // efêmera, nunca persistida) e a lista só cresce ao FIM.
-                linha.tipo === 'ferramenta' ? (
-                  <Tool
-                    key={indice}
-                    titulo={linha.texto}
-                    estado={indice === linhasParaExpandir.length - 1 ? 'running' : undefined}
-                  />
-                ) : (
-                  <TraceLine key={indice}>
-                    <TraceIcon><ChatIcon size={12} /></TraceIcon>
-                    <TraceTitle>{linha.texto}</TraceTitle>
-                  </TraceLine>
-                ),
-              )}
-            </div>
-          </ChainOfThought>
+        {(estado.raciocinio || (plano && plano.passos.length > 0) || linhasParaExpandir.length > 0) && (
+          <LinhaDeTrabalho emCurso passos={linhasParaExpandir.length}>
+          {estado.raciocinio && (
+            <Reasoning titulo={t('turno.raciocinando')} texto={estado.raciocinio} emCurso />
+          )}
+          {plano && plano.passos.length > 0 && (
+            <Plan
+              objetivo={plano.objetivo}
+              passos={plano.passos.map((p) => ({ texto: p.texto, estado: p.estado as EstadoDoPasso }))}
+            />
+          )}
+          {linhasParaExpandir.length > 0 && (
+            <ChainOfThought
+              titulo={t('turno.passosDoTurno')}
+              contagem={t('turno.passosCount', { count: linhasParaExpandir.length })}
+              emCurso
+            >
+              <div className={styles.linhas}>
+                {linhasParaExpandir.map((linha, indice) =>
+                  // Índice como key: as linhas não têm id próprio (narração
+                  // efêmera, nunca persistida) e a lista só cresce ao FIM.
+                  linha.tipo === 'ferramenta' ? (
+                    <Tool
+                      key={indice}
+                      titulo={linha.texto}
+                      estado={indice === linhasParaExpandir.length - 1 ? 'running' : undefined}
+                    />
+                  ) : (
+                    <TraceLine key={indice}>
+                      <TraceIcon><ChatIcon size={12} /></TraceIcon>
+                      <TraceTitle>{linha.texto}</TraceTitle>
+                    </TraceLine>
+                  ),
+                )}
+              </div>
+            </ChainOfThought>
+          )}
+          </LinhaDeTrabalho>
         )}
       </div>
     </div>

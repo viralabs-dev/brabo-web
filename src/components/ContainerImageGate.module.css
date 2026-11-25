@@ -39,7 +39,7 @@
 
 .bloqueadoTexto {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.5;
   color: var(--text-secondary);
 }

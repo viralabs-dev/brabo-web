@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { getCodeBranches, getRepository } from '../../lib/api-client';
+import { getCodeBranches, getCodeTree, getRepository } from '../../lib/api-client';
 import {
   useArchitecture,
   useHandoffs,
@@ -56,12 +56,17 @@ export function CodeShell({ projectId }: { projectId: string }) {
   const [openTabs, setOpenTabs] = useState<string[]>([]);
   const [activePath, setActivePath] = useState<string | null>(null);
   const [bottomOpen, setBottomOpen] = useState(false);
+  // RN-1494: o README abriu sem escolha ("aberto por padrão") até a pessoa escolher outro arquivo.
+  const [abertoPorPadrao, setAbertoPorPadrao] = useState(false);
+  // Termo do campo "Buscar no código" do editor; a chave remonta o painel de busca com ele.
+  const [buscaPedida, setBuscaPedida] = useState('');
 
   const { data: repository } = useQuery({
     queryKey: ['repository', projectId],
     queryFn: () => getRepository(projectId),
   });
   const refEfetiva = ref || repository?.defaultBranch || '';
+  const seletorDeRef = <CodeBranchPicker projectId={projectId} currentRef={refEfetiva} onSelect={setRef} />;
 
   // MESMA queryKey do `CodeBranchPicker` — dedup pelo React Query, zero
   // requisição a mais (RN-090/091). ahead/behind da ref atual, para a status
@@ -74,12 +79,46 @@ export function CodeShell({ projectId }: { projectId: string }) {
   const branchAtual = branchesQuery.data?.items.find((b) => b.name === refEfetiva);
   const aheadBehind = formatarAheadBehind(branchAtual?.ahead, branchAtual?.behind);
 
+  // AT-971 (RN-1473): sem arquivo escolhido, o editor abre o `README.md` da raiz
+  // quando ele existe. MESMA queryKey do `CodeExplorer` (dedup, zero requisição
+  // a mais). Vale uma vez por ref, e só se a pessoa ainda não abriu nada: fechar
+  // todas as abas depois não reabre o README.
+  const raizQuery = useQuery({
+    queryKey: ['code-tree', projectId, refEfetiva, ''],
+    queryFn: () => getCodeTree(projectId, { ref: refEfetiva, path: '' }),
+    enabled: Boolean(refEfetiva),
+  });
+  const [readmeVistoNaRef, setReadmeVistoNaRef] = useState<string | null>(null);
+  useEffect(() => {
+    if (!raizQuery.data || readmeVistoNaRef === refEfetiva) return;
+    setReadmeVistoNaRef(refEfetiva);
+    if (openTabs.length > 0 || activePath) return;
+    const readme = raizQuery.data.entries.find((e) => e.type === 'file' && e.name === 'README.md');
+    if (readme) {
+      setOpenTabs([readme.path]);
+      setActivePath(readme.path);
+      setAbertoPorPadrao(true);
+    }
+  }, [raizQuery.data, refEfetiva, readmeVistoNaRef, openTabs.length, activePath]);
+
   function abrirArquivo(path: string) {
+    setAbertoPorPadrao(false);
     setOpenTabs((abas) => (abas.includes(path) ? abas : [...abas, path]));
     setActivePath(path);
   }
 
+  function selecionarAba(path: string) {
+    setAbertoPorPadrao(false);
+    setActivePath(path);
+  }
+
+  function buscarNoCodigo(termo: string) {
+    setBuscaPedida(termo);
+    setRailView('search');
+  }
+
   function fecharAba(path: string) {
+    setAbertoPorPadrao(false);
     setOpenTabs((abas) => {
       const resto = abas.filter((p) => p !== path);
       if (activePath === path) {
@@ -118,11 +157,6 @@ export function CodeShell({ projectId }: { projectId: string }) {
 
   return (
     <div className={styles.shell}>
-      <div className={styles.topo}>
-        <span className={styles.topoRotulo}>{t('shell.refLabel')}</span>
-        <CodeBranchPicker projectId={projectId} currentRef={refEfetiva} onSelect={setRef} />
-      </div>
-
       <div className={styles.corpo}>
         <div className={styles.rail} role="tablist" aria-label={t('shell.railTablistLabel')}>
           <Button
@@ -178,9 +212,13 @@ export function CodeShell({ projectId }: { projectId: string }) {
               gitRef={refEfetiva}
               activePath={activePath}
               onOpenFile={abrirArquivo}
+              seletorDeRef={seletorDeRef}
             />
           ) : (
             <CodeSearchPanel
+              key={buscaPedida}
+              termoInicial={buscaPedida}
+              seletorDeRef={seletorDeRef}
               projectId={projectId}
               gitRef={refEfetiva}
               onOpenFile={abrirArquivo}
@@ -194,8 +232,10 @@ export function CodeShell({ projectId }: { projectId: string }) {
             gitRef={refEfetiva}
             openTabs={openTabs}
             activePath={activePath}
-            onSelectTab={setActivePath}
+            onSelectTab={selecionarAba}
             onCloseTab={fecharAba}
+            abertoPorPadrao={abertoPorPadrao}
+            onBuscar={buscarNoCodigo}
           />
 
           {/* Migrado para o `Disclosure` do design system (Onda 4/frente H4)

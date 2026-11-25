@@ -138,8 +138,6 @@
     },
     "tabs": {
       "aria": "Providers do catálogo",
-      "noKey": "sem chave do titular",
-      "noKeyNote": "Este provider não tem chave do titular do workspace, mas ainda tem modelo ativo. Desative-o se não for usá-lo; sem chave, nada novo é sincronizado.",
       "noMatchHere": "Nenhum modelo de {{provider}} casa com a busca ou os filtros. Casam em: {{tabs}}.",
       "outside_zero": "Nenhum provider de fora.",
       "outside_one": "{{count}} de fora, sem chave do titular: {{names}}",
@@ -173,9 +171,9 @@
       "total": "TOTAL"
     },
     "credentialNotRegistered": "chave não cadastrada",
-    "callsCount_zero": "({{count}} chamadas)",
-    "callsCount_one": "({{count}} chamada)",
-    "callsCount_other": "({{count}} chamadas)",
+    "callsCount_zero": "({{count, number}} chamadas)",
+    "callsCount_one": "({{count, number}} chamada)",
+    "callsCount_other": "({{count, number}} chamadas)",
     "currency": {
       "belowCent": "< {{value}}"
     }

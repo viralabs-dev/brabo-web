@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { formatarUsdCasas } from './currency';
 import type { DelegationEventPayload, SessionEvent } from './api-types';
 import { AGENTS } from './agents';
 import { linhaDoEventoDePolitica } from './decisao-da-politica';
@@ -52,6 +53,16 @@ const EVENTOS_DE_MAQUINA = new Set([
   'tool.result',
   'context.compacted',
 ]);
+
+/**
+ * AT-967 / RN-1462: o evento tem sujeito e resultado? O fallback de `classifyEvent`
+ * ("atividade em <ator>") não diz o que aconteceu.
+ * shortcut: casa pelo prefixo do texto do fallback; trocar por um campo do
+ * `ActivityDisplay` se o fallback ganhar outro texto.
+ */
+export function temSujeitoEResultado(event: SessionEvent): boolean {
+  return !classifyEvent(event).text.startsWith('atividade em ');
+}
 
 /** Se o feed deve ESCONDER o evento (ruído de máquina, não narrativa). */
 export function isMachineEvent(event: SessionEvent): boolean {
@@ -491,7 +502,7 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
       text:
         `${agente} subiu de ${payloadField(payload, 'de') ?? 'o modelo base'} para ${payloadField(payload, 'para') ?? 'o próximo modelo'}` +
         ' depois de 2 bloqueios por limite de iterações' +
-        (Number.isFinite(teto) && teto > 0 ? ` (teto por tarefa US$ ${(teto / 1_000_000).toFixed(2)})` : ''),
+        (Number.isFinite(teto) && teto > 0 ? ` (teto por tarefa ${formatarUsdCasas(teto / 1_000_000, 2)})` : ''),
     };
   }
   if (type === 'agent.model_escalation_exhausted') {

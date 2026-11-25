@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import i18n from '@/lib/i18n';
 import { useTranslation } from 'react-i18next';
 import { getSessionTokenUsage } from '../lib/api-client';
 import { Context } from '../components/ai-elements/context';
@@ -33,8 +34,8 @@ export default function JanelaDoAgente({
       usados={inputTokens}
       janela={contextWindow}
       rotulo={t('contexto.rotulo', {
-        usados: inputTokens.toLocaleString(),
-        janela: (contextWindow ?? 0).toLocaleString(),
+        usados: inputTokens.toLocaleString(i18n.language),
+        janela: (contextWindow ?? 0).toLocaleString(i18n.language),
         modelo: modelName,
       })}
       textoSemJanela={t('contexto.semJanela', { modelo: modelName })}

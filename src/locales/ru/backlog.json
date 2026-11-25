@@ -1,8 +1,8 @@
 {
   "statusLabel": {
     "draft": "черновик",
-    "ready": "готова",
-    "inProgress": "в работе",
+    "ready": "готова к запуску",
+    "inProgress": "выполняется",
     "done": "завершена"
   },
   "sectionLabel": {
@@ -22,10 +22,10 @@
     "uncoveredBadge_few": "{{count}} не покрыты",
     "uncoveredBadge_many": "{{count}} не покрыто",
     "uncoveredBadge_other": "{{count}} не покрыто",
-    "coveredBy_one": "покрыта {{count}} историей",
-    "coveredBy_few": "покрыта {{count}} историями",
-    "coveredBy_many": "покрыта {{count}} историями",
-    "coveredBy_other": "покрыта {{count}} историями",
+    "coveredBy_one": "{{count}} история",
+    "coveredBy_few": "{{count}} истории",
+    "coveredBy_many": "{{count}} историй",
+    "coveredBy_other": "{{count}} историй",
     "uncovered": "не покрыта — нет истории"
   },
   "ruleRefs_one": "{{count}} связанное бизнес-правило",
@@ -159,12 +159,18 @@
     "progresso_one": "{{count}} история · {{prontas}} из {{count}} готово",
     "progresso_few": "{{count}} истории · {{prontas}} из {{count}} готово",
     "progresso_many": "{{count}} историй · {{prontas}} из {{count}} готово",
-    "progresso_other": "{{count}} истории · {{prontas}} из {{count}} готово"
+    "progresso_other": "{{count}} историй · {{prontas}} из {{count}} готово"
   },
   "historia": {
     "perguntas_one": "{{count}} вопрос",
     "perguntas_few": "{{count}} вопроса",
     "perguntas_many": "{{count}} вопросов",
     "perguntas_other": "{{count}} вопроса"
+  },
+  "loadError": {
+    "epics": "Не удалось загрузить бэклог",
+    "epicsThing": "эпиков и историй",
+    "rules": "Не удалось загрузить покрытие правил",
+    "rulesThing": "правил"
   }
 }

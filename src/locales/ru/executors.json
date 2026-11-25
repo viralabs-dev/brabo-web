@@ -1,6 +1,6 @@
 {
   "tab": {
-    "title": "Исполнители",
+    "title": "Выполнение",
     "summary_one": "{{count}} агент · {{working}} работают · {{waiting}} ждут",
     "summary_few": "{{count}} агента · {{working}} работают · {{waiting}} ждут",
     "summary_many": "{{count}} агентов · {{working}} работают · {{waiting}} ждут",
@@ -28,9 +28,16 @@
     },
     "noExecutorsTitle": "Сейчас никто не действует",
     "idleWarning": "Сейчас ни один агент не работает. Выполнение активно: агенты ждут задачу, от которой зависят, и просыпаются, когда зависимость будет смержена.",
-    "modelSemPapel": "Для смены модели нужна роль developer в проекте."
+    "modelSemPapel": "Для смены модели нужна роль developer в проекте.",
+    "sessao": "сессия",
+    "visao": {
+      "rotulo": "Вид выполнения",
+      "executores": "Исполнители",
+      "linhaDoTempo": "Лента времени"
+    }
   },
   "agentCard": {
+    "local": "локальная",
     "status": {
       "trabalhando": "работает",
       "aguardando": "ждёт",
@@ -40,6 +47,7 @@
     },
     "autonomy": {
       "manual": "вручную",
+      "piloto": "Автопилот",
       "auto": "авто",
       "autoModeHint": "Автоматический режим: выполняет любую команду, в том числе вне папки проекта. git push и PR разрешены; deploy, sudo/doas и merge в защищённую ветку по-прежнему требуют вашего одобрения."
     },
@@ -98,6 +106,7 @@
       "artifactBusinessRuleRetired": "отозвал бизнес-правило",
       "artifactModuleMap": "выпустил module_map",
       "artifactModuleRouting": "распределил модули для инфраструктуры",
+      "artifactModuleContracts": "объявил контракты между модулями",
       "artifactInsight": "выпустил гипотезу",
       "delegationCompleted": "субагент завершил",
       "delegationFailed": "субагент дал сбой",
@@ -202,14 +211,10 @@
     "regiao": "Выполнение идёт",
     "titulo": "Выполнение",
     "progresso": "{{done}} из {{total}} задач",
-    "minimizar": "Свернуть карусель исполнителей",
-    "restaurar": "Показать подробности исполнителей",
-    "minimizadoLista": "Исполнители (сводка)",
     "verExecutores": "Исполнители",
     "verNoFio": "Открыть в ленте",
     "dispensar": "Закрыть сводку выполнения",
     "ultimaAcao": "Последнее действие: {{acao}}",
-    "cartaoRotulo": "{{posicao}} из {{total}}: {{nome}}, {{estado}}",
     "haSeg": "{{n}} с назад",
     "haMin": "{{n}} мин назад",
     "haH": "{{n}} ч назад",
@@ -251,7 +256,7 @@
       "esperaModulos": "Ждёт модулей: {{n}}; первым разблокируется {{primeiro}}.",
       "tarefaBloqueada": "Задача заблокирована: {{motivo}}",
       "bloqueado": "Контейнер проекта не запущен. Infra предлагает его запустить; агент повторит попытку сам.",
-      "travado": "{{motivo}} Перезапуск в разделе «Исполнители».",
+      "travado": "{{motivo}} Используйте «Перезапуск» здесь, в ожидающих действиях, или в разделе «Исполнители».",
       "falhou": "Сбой: {{motivo}}",
       "falhouSemMotivo": "Сбой.",
       "concluido": "{{done}} из {{total}} задач модуля выполнено.",
@@ -260,10 +265,65 @@
       "gateJulgaSemTarefa": "Проверяет PR.",
       "gateFalhou": "Цикл gate завершился сбоем.",
       "gateOcioso": "Сейчас нет PR для проверки.",
+      "gateEsperaVolta": "Задача в очереди dev: PR ждёт возврата в QA.",
+      "gateEsperaVoltaPr": "PR #{{pr}} ждёт возврата в QA: задача в очереди dev.",
+      "gateEsperaDesbloqueio": "Задача заблокирована: PR ждёт разблокировки, чтобы вернуться на gate.",
+      "gateEsperaDesbloqueioPr": "PR #{{pr}} ждёт возврата в QA: задача заблокирована.",
+      "gateTarefaBloqueada": "Задача заблокирована: gate ждёт исправления.",
       "gateUltimoAprovado": "Последний вердикт: одобрено.",
       "gateUltimoAprovadoPr": "Последний вердикт: одобрено (PR #{{pr}}).",
       "gateUltimoMudancas": "Последний вердикт: нужны изменения.",
       "gateUltimoMudancasPr": "Последний вердикт: нужны изменения (PR #{{pr}})."
+    },
+    "plano": {
+      "titulo": "План по раундам",
+      "rodada": "Раунд {{n}} из {{total}}",
+      "etapa": {
+        "aFazer": "в очереди",
+        "espera": "ожидание",
+        "implementando": "в работе",
+        "noGate": "на проверке",
+        "pronta": "готова",
+        "mergeada": "влита"
+      },
+      "espera": "Ждёт попадания «{{titulo}}» в main",
+      "esperaVarias": "Ждёт попадания {{n}} задач в main: «{{titulo}}» и других",
+      "rodadaFechada": "Раунд {{n}} · {{resumo}}",
+      "resumoMergeadas_one": "{{count}} влита",
+      "resumoMergeadas_few": "{{count}} влиты",
+      "resumoMergeadas_many": "{{count}} влито",
+      "resumoMergeadas_other": "{{count}} влито",
+      "resumoTarefas_one": "{{count}} задача",
+      "resumoTarefas_few": "{{count}} задачи",
+      "resumoTarefas_many": "{{count}} задач",
+      "resumoTarefas_other": "{{count}} задач",
+      "agente": "Выполняет: {{agente}}",
+      "esperaCom": "Ждёт попадания {{itens}} из задачи «{{titulo}}» в main"
+    }
+  },
+  "secoes": {
+    "ver": "Открыть",
+    "modoAutomatico": {
+      "titulo": "Авторежим",
+      "emManual_one": "{{count, number}} агент вручную",
+      "emManual_few": "{{count, number}} агента вручную",
+      "emManual_many": "{{count, number}} агентов вручную",
+      "emManual_other": "{{count, number}} агентов вручную"
+    },
+    "acoes": {
+      "titulo": "Ожидающее в выполнении",
+      "bloqueadas_one": "{{count}} заблокированная задача",
+      "bloqueadas_few": "{{count}} заблокированные задачи",
+      "bloqueadas_many": "{{count}} заблокированных задач",
+      "bloqueadas_other": "{{count}} заблокированных задач",
+      "sugestoes_one": "{{count}} предложение",
+      "sugestoes_few": "{{count}} предложения",
+      "sugestoes_many": "{{count}} предложений",
+      "sugestoes_other": "{{count}} предложений",
+      "prs_one": "{{count}} PR ждёт вас",
+      "prs_few": "{{count}} PR ждут вас",
+      "prs_many": "{{count}} PR ждут вас",
+      "prs_other": "{{count}} PR ждут вас"
     }
   },
   "acoes": {
@@ -350,5 +410,25 @@
       "in_review": "на ревью",
       "done": "завершена"
     }
+  },
+  "tabela": {
+    "agente": "Агент",
+    "estado": "Состояние",
+    "tarefa": "Текущая или последняя задача",
+    "modelo": "Модель",
+    "gasto": "Расход",
+    "acoes": "Действия",
+    "semTarefa": "—",
+    "retomar": "Возобновить",
+    "verNoFio": "Открыть в ленте",
+    "maisAcoes": "Ещё действия для {{agente}}",
+    "autonomia": "Автономность"
+  },
+  "indicadores": {
+    "tarefas": "Задачи",
+    "fila": "Очередь",
+    "gasto": "Расход выполнения",
+    "nDeM": "{{n}} из {{m}}",
+    "verFila": "Открыть очередь"
   }
 }

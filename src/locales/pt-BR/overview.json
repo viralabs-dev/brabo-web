@@ -2,12 +2,13 @@
   "faixa": {
     "titulo": "Precisa de você",
     "verTodas": "Ver todas →",
-    "vazio": "Nada espera por você agora."
+    "vazio": "Nada espera por você agora.",
+    "abrirDecisoes": "Abrir Decisões →"
   },
   "architectureTab": {
     "title": "Arquitetura",
     "emptyTitle": "Sem arquitetura ainda",
-    "emptyState": "Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.",
+    "emptyState": "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.",
     "modulesLabel": "Módulos",
     "modulesLabelVersioned": "Módulos · v{{version}}",
     "noModules": "Nenhum módulo ainda.",
@@ -19,6 +20,16 @@
     "pendenciesLabel": "Pendências de validação cruzada",
     "reasonNoModule": "sem módulo vinculado",
     "reasonMissingModule": "módulo inexistente: {{missing}}",
+    "contractsLabel": "Contratos entre módulos",
+    "noContracts": "Sem contrato declarado ainda — o Arquiteto declara o que cada módulo expõe.",
+    "contractTypes": {
+      "funcao": "função",
+      "rota": "rota",
+      "evento": "evento",
+      "dado": "dado",
+      "tabela": "tabela",
+      "identidade": "identidade"
+    },
     "cols": {
       "module": "Módulo",
       "stack": "Stack",
@@ -26,6 +37,20 @@
       "dependsOn": "Depende de",
       "stories": "Histórias"
     },
+    "chips": {
+      "modulos": "módulos · v{{version}}",
+      "c4": "C4 nível 2"
+    },
+    "grafoLegenda_zero": "{{count, number}} módulos · fluxo da esquerda para a direita",
+    "grafoLegenda_one": "{{count, number}} módulo · fluxo da esquerda para a direita",
+    "grafoLegenda_other": "{{count, number}} módulos · fluxo da esquerda para a direita",
+    "views": {
+      "label": "Vistas da Arquitetura",
+      "diagrama": "Diagrama",
+      "adrs": "ADRs · {{n}}",
+      "pendencias": "Pendências · {{n}}"
+    },
+    "noPendencies": "Nenhuma pendência de validação cruzada.",
     "proposalTag": "PROPOSTA",
     "adrProposal": "ADR “{{titulo}}” espera sua aprovação para virar PR.",
     "decide": "Decidir",
@@ -33,12 +58,15 @@
       "modules": "módulos · v{{version}}",
       "c4": "C4 nível 2",
       "byArchitect": "pelo Arquiteto · {{hora}}"
-    }
+    },
+    "loadErrorTitle": "Não deu para carregar a Arquitetura",
+    "loadErrorThing": "módulos nem ADRs"
   },
   "c4": {
     "titleContext": "Contexto",
     "titleContainer": "Container",
     "expandLabel": "Ampliar diagrama {{titulo}}",
+    "fitWidth": "Ajustar à largura",
     "expandTitle": "Ampliar",
     "renderErrorTitle": "Não foi possível desenhar este diagrama.",
     "viewRawSyntax": "Ver sintaxe Mermaid",
@@ -54,7 +82,11 @@
     "rearmSuccess": "Agente rearmado",
     "rearmErrorTitle": "Não foi possível rearmar o agente",
     "wakeSuccess": "Procurando tarefa",
-    "wakeErrorTitle": "Não foi possível acordar o agente"
+    "wakeErrorTitle": "Não foi possível acordar o agente",
+    "maisOciosos_one": "+ {{count, number}} concluído ou ocioso",
+    "maisOciosos_other": "+ {{count, number}} concluídos ou ociosos",
+    "maisOciosos_zero": "+ {{count, number}} concluídos ou ociosos",
+    "recolherOciosos": "Recolher os ociosos"
   },
   "timeline": {
     "title": "Linha do tempo do time",
@@ -77,9 +109,9 @@
     "runnerRessalvaNunca": "Nenhum runner conectou a este projeto ainda. Instale e rode o `brabo-runner` pela aba Código.",
     "espelho": "espelho",
     "espelhoNunca": "nunca sincronizou",
-    "espelhoValor_zero": "{{count}} arquivos copiados em {{data}}",
-    "espelhoValor_one": "{{count}} arquivo copiado em {{data}}",
-    "espelhoValor_other": "{{count}} arquivos copiados em {{data}}",
+    "espelhoValor_zero": "{{count, number}} arquivos copiados em {{data}}",
+    "espelhoValor_one": "{{count, number}} arquivo copiado em {{data}}",
+    "espelhoValor_other": "{{count, number}} arquivos copiados em {{data}}",
     "espelhoSemNovidade": "sincronizou em {{data}} — nada a copiar",
     "espelhoFalhou": "a última rodada falhou",
     "espelhoFalhouComUltima": "a última rodada falhou — última cópia boa em {{data}}",
@@ -101,11 +133,19 @@
     "verTurnos": "Turnos",
     "turnosVazio": "Nenhum turno terminou ainda.",
     "title": "Atividade",
-    "count_zero": "{{count}} eventos",
-    "count_one": "{{count}} evento",
-    "count_other": "{{count}} eventos",
+    "count_zero": "{{count, number}} eventos",
+    "count_one": "{{count, number}} evento",
+    "count_other": "{{count, number}} eventos",
     "loadErrorTitle": "Não foi possível carregar a atividade.",
-    "emptyNoSession": "Nenhuma atividade ainda: ela começa com a primeira sessão do projeto."
+    "emptyNoSession": "Nenhuma atividade ainda: ela começa com a primeira sessão do projeto.",
+    "turnosAgrupados_one": "{{agente}} · {{count, number}} turno, {{passos}} passos",
+    "turnosAgrupados_other": "{{agente}} · {{count, number}} turnos, {{passos}} passos",
+    "recorteTurnos_one": "último turno",
+    "recorteTurnos_other": "últimos {{count, number}} turnos",
+    "verLinhaDoTempo": "Ver a linha do tempo inteira →",
+    "rotuloModo": "Ver como",
+    "turnosAgrupados_zero": "{{agente}} · {{count, number}} turnos, {{passos}} passos",
+    "recorteTurnos_zero": "nenhum turno"
   },
   "executionSection": {
     "title": "Execução",
@@ -147,7 +187,7 @@
   },
   "architectureSummary": {
     "title": "Arquitetura",
-    "emptyState": "Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.",
+    "emptyState": "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.",
     "summary_zero": "{{count}} módulos mapeados, diagrama C4 {{status}}.",
     "summary_one": "{{count}} módulo mapeado, diagrama C4 {{status}}.",
     "summary_other": "{{count}} módulos mapeados, diagrama C4 {{status}}.",
@@ -167,12 +207,18 @@
     "modelo": {
       "titulo": "Ativar um modelo e aplicá-lo ao time",
       "pendente": "Nenhum agente tem modelo ainda: ative um modelo em Providers e escolha-o aqui.",
-      "link": "Escolher o modelo →"
+      "link": "Escolher o modelo →",
+      "pendenteLocal": "O time está no modelo local {{modelo}}. Escolha um modelo do seu provedor.",
+      "aplicar": "Aplicar {{modelo}} ao time",
+      "aplicarSemPapel": "Só quem mantém o projeto (maintainer) aplica o modelo ao time.",
+      "aplicarSemHaiku": "O Claude Haiku 5.5 não está ativo no catálogo: ative-o em Providers.",
+      "aplicarFalhou": "Não deu para aplicar o modelo ao time. Tente de novo."
     },
     "ideacao": {
       "titulo": "Começar a primeira ideação",
       "pendente": "Conte a ideia ao Criativo — é daí que saem as histórias.",
-      "link": "Abrir o Criativo →"
+      "link": "Começar a ideação",
+      "semPapel": "Criar sessão pede o papel developer."
     }
   },
   "proximoPasso": {
@@ -245,6 +291,9 @@
     "endereco": "Endereço",
     "abrir": "Abrir em nova aba",
     "titulo": "Entregável",
-    "vazio": "Não há entregável publicado para visualizar."
+    "vazio": "Não há entregável publicado para visualizar.",
+    "checando": "Verificando se a aplicação respondeu…",
+    "naoRespondeu": "{{url}} não respondeu. Suba a aplicação com o comando acima.",
+    "tentarDeNovo": "Tentar de novo"
   }
 }

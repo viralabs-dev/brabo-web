@@ -1,0 +1,118 @@
+/* AT-957: a aba Executores do painel da sessão. Tokens do design system. */
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 16px;
+  font-size: var(--fs-meta);
+}
+
+.itens {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+}
+
+.nome {
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.tarefa {
+  margin: 0;
+  font-weight: 600;
+}
+
+.texto {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.rodape {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+}
+
+.rodape .link {
+  margin-left: auto;
+  font-family: var(--font-body);
+}
+
+.link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.vazio {
+  margin: 0;
+  padding: 16px;
+  color: var(--text-secondary);
+  font-size: var(--fs-meta);
+}
+
+/* AT-993: o plano por rodada (só visão, sem botão de fechar rodada). */
+.plano {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.rodada {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rodadaTitulo {
+  margin: 0;
+  font-size: var(--fs-label);
+  color: var(--text-muted);
+}
+
+.lane {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+
+.rodadaBotao {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}

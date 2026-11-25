@@ -35,7 +35,7 @@
 .name {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14.5px;
+  font-size: var(--fs-body);
   color: var(--text-primary);
   display: flex;
   align-items: center;
@@ -65,15 +65,15 @@
 }
 
 .card.compact .name {
-  font-size: 13px;
+  font-size: var(--fs-sm);
 }
 
 .card.compact .role {
-  font-size: 11px;
+  font-size: var(--fs-label);
 }
 
 .role {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
   margin-top: 2px;
 }
@@ -83,7 +83,7 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   border-radius: var(--radius-full);
   padding: 3px 8px;
   margin-top: 6px;
@@ -110,13 +110,17 @@
   border-top: 1px solid var(--border);
   padding-top: 10px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
 }
 
 .footer .modelIcon {
   color: var(--text-muted);
   display: flex;
+}
+
+.chipLocal {
+  flex-shrink: 0;
 }
 
 .model {
@@ -144,7 +148,7 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
@@ -160,7 +164,7 @@
   gap: 4px;
   flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
   background: var(--surface-2);
   border: 1px solid var(--border);
@@ -181,20 +185,20 @@
 /*
  * `min-height: 24px` — piso de alvo de toque da WCAG 2.2 AA (2.5.8) que
  * `scripts/dev/validacao-visual.js` cobra (PROGRAMA 28, Onda 5/H5). Era
- * 19px de altura efetiva (`padding: 3px` + `font-size: 10px`); o `padding`
+ * 19px de altura efetiva (`padding: 3px` + `font-size: var(--fs-label)`); o `padding`
  * horizontal não muda, só ganha `display: inline-flex` para centralizar o
  * texto na altura nova.
  */
 
 .autonomyHint {
   margin: 0;
-  font-size: 11px;
+  font-size: var(--fs-label);
   line-height: 1.4;
   color: var(--text-muted);
 }
 
 .catalog {
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 

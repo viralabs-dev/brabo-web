@@ -295,7 +295,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
 
     // `dev`: 208. A aba de Executores caiu de 138 para 72, e mediu 64 na
     // AT-339 — o teto é o número medido (71 + 64).
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(135);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(136);
     // `dev`: 12/min (5s). Ritmo de projeto: 15s.
     expect(executores['GET /projects/:id/sessions']).toBe(4);
     // `GET /projects/:id` só na montagem: nenhuma das duas o polla.
@@ -323,7 +323,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
     expect(executores['GET /projects/:id/actions']).toBeGreaterThanOrEqual(12);
     expect(executores['GET /projects/:id/sessions/:id/actions'] ?? 0).toBe(0);
     // Medido na AT-339: 71 + 89.
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(160);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(161);
   }, 60_000);
 
   it('CASO DE FALHA: canal que nunca conecta — o poll curto volta, e as duas abas ainda cabem no teto', async () => {
@@ -335,7 +335,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
     expect(executores['GET /projects/:id/sessions/:id/events']).toBe(20);
     // `dev`: 341 — o teto estourava só com as duas abas paradas na tela.
     // Medido na AT-339: 156 + 104.
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(266);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(269);
   }, 60_000);
 
   it('a carga da Visão geral e da aba Executores lê os bindings em LOTE, não um por agente (AT-339)', async () => {

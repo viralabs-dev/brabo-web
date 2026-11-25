@@ -12,7 +12,9 @@
     "loadError": "Não foi possível carregar seus projetos.",
     "noProjectsYet": "Nenhum projeto por aqui ainda.",
     "createProject": "Criar projeto",
-    "noSearchResults": "Nenhum projeto encontrado para \"{{search}}\"."
+    "noSearchResults": "Nenhum projeto encontrado para \"{{search}}\".",
+    "semAtivos": "Nenhum projeto ativo. Os parados estão em “Parados”.",
+    "semParados": "Nenhum projeto parado."
   },
   "activity": {
     "noSession": "Nenhuma sessão ainda",
@@ -65,6 +67,7 @@
       "awaitingPlanDecision": "Aguardando sua decisão"
     },
     "online": "{{count}} online",
+    "parado": "parado",
     "aguardandoVoce": "{{agente}} aguardando você"
   },
   "projectStatus": {
@@ -76,7 +79,10 @@
   "inicio": {
     "indisponivel": "indisponível",
     "projetos": {
-      "rotulo": "Projetos ativos"
+      "rotulo": "Projetos ativos",
+      "parados_zero": "nenhum parado há mais de {{dias}} dias",
+      "parados_one": "{{count}} parado há mais de {{dias}} dias",
+      "parados_other": "{{count}} parados há mais de {{dias}} dias"
     },
     "agentes": {
       "rotulo": "Agentes agora",
@@ -98,7 +104,8 @@
       "aprovacoes_one": "{{n}} aprovação",
       "aprovacoes_other": "{{n}} aprovações",
       "aprovacoes_zero": "nenhuma aprovação",
-      "demais": "PRs {{prs}} · promoções {{promocoes}} · arquitetura {{arquitetura}} · hipóteses {{hipoteses}}"
+      "demais": "PRs {{prs}} · promoções {{promocoes}} · arquitetura {{arquitetura}} · hipóteses {{hipoteses}}",
+      "maisAntiga": "a mais antiga espera {{quando}}"
     }
   },
   "secaoProjetos": "Projetos",
@@ -109,5 +116,11 @@
   "atividadeRecente": {
     "titulo": "Atividade recente",
     "indisponivel": "Não foi possível ler a atividade recente."
+  },
+  "filtro": {
+    "aria": "Filtrar projetos",
+    "ativos": "Ativos · {{n}}",
+    "parados": "Parados · {{n}}",
+    "todos": "Todos"
   }
 }

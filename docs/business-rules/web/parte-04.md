@@ -583,8 +583,8 @@ diferença não é escolha de desenho: é a forma do endpoint.
   `maquinaJaPareada`), `apps/web/src/components/RunnerOnboardingPanel.tsx:173`
   (as duas consultas e o `ReconhecimentoDeMaquina`),
   `apps/web/src/components/RunnerOnboardingPanel.module.css`
-  (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:462`
-  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:829`
+  (`.reconhecimento`, `.gesto`), `apps/web/src/lib/api-client.ts:477`
+  (`listRunnerDeviceKeys`), `apps/web/src/lib/api-types.ts:839`
   (`RunnerDeviceKeyListItem`, `RunnerDeviceKeyEspecie`),
   `apps/web/src/locales/{en,pt-BR}/terminal.json` (`agenteDeMaquina.*`)
 - **Teste:** `apps/web/src/lib/agente-de-maquina.test.ts` — o caminho feliz
@@ -1003,9 +1003,9 @@ lógico, monótono) à janela e ao parâmetro, que também passa a olhar
 evento pode ter saído da janela e a aba volta a decidir só por ela — é o custo
 da guarda, o mesmo dos outros dois fatos.
 
-- **Código:** `apps/web/src/lib/agent-status.ts:356` (`AgregadoDaSessao`),
+- **Código:** `apps/web/src/lib/agent-status.ts:376` (`AgregadoDaSessao`),
 
-- **Código:** `apps/web/src/lib/agent-status.ts:356` (`AgregadoDaSessao`),
+- **Código:** `apps/web/src/lib/agent-status.ts:376` (`AgregadoDaSessao`),
   `:296` (o parâmetro opcional de `rosterFactsFromEvents`), `:304` (a união das
   delegações), `:312` (o OU do gate), `:410` (o parâmetro repassado por
   `deriveAgentRoster`); `apps/web/src/routes/ProjectOverviewTab.tsx:97` e
@@ -1088,7 +1088,7 @@ delas estava coberta pela comparação com o vocabulário do engine.
   (`dev.started`), `:212` (`dev.working` com o título), `:230`
   (`dev.blocked_by_container`), `:235` (`dev.error`), `:255`
   (`TRADUCAO_FORA`), `:307` (o `ativo` lido do painel), `:96`
-  (`ChaveDeRotulo`, AT-134), `:135` (`tradutorDaArvore`);
+  (`ChaveDeRotulo`, AT-134), `:139` (`tradutorDaArvore`);
   `apps/web/src/locales/{en,pt-BR}/executors.json` (`timelineTree.label`,
   `timelineTree.now`, `timelineTree.detail`);
   `apps/web/src/lib/agent-status.ts:134` (`statusDoEventoDev`);
@@ -1222,7 +1222,7 @@ botão seria um controle que não controla nada; a seção diz isso em texto
   (`RunnerOnboardingPanel`, o mesmo da aba Código);
   `apps/web/src/locales/pt-BR/settings.json:249` e
   `apps/web/src/locales/en/settings.json:249` (`executionMode.nextStep.*`) e
-  `:251` (`executionMode.path.runnerTyped`, reescrito); a cadência medida em
+  `:270` (`executionMode.path.runnerTyped`, reescrito); a cadência medida em
   `apps/runner/src/espera-de-projetos.ts:60` (`CADENCIA_DA_ESPERA_MS`) e a
   lista lida uma vez em `apps/runner/src/index.ts` (`rodarComoAgenteDeMaquina`)
 - **Teste:** o describe `RN-612` em
@@ -1369,8 +1369,8 @@ tela não reconstrói caminho nenhum. As frases estão em `en` e `pt-BR`
 - **Código:** `apps/web/src/routes/SessionLanguageIndicator.tsx:72`
   (`SessionLanguageIndicator`), `:29` (`idiomaSemOverride`), `:163`
   (`origemPorExtenso`), `:215` (`podeTrocar`);
-  `apps/web/src/routes/SessionTopbar.tsx:281` (`SessionLanguageIndicator`),
-  `:139` (`modoDaBarra`), `:398` (`AjustesAgrupados`);
+  `apps/web/src/routes/SessionTopbar.tsx:337` (`SessionLanguageIndicator`),
+  `:130` (`modoDaBarra`), `:420` (`AjustesAgrupados`); no telefone esses controles moram na aba Contexto (`ControlesDaSessao`, RN-1433);
   `apps/web/src/lib/modo-da-barra-da-sessao.ts:35` (`modoDaBarra`)
 - **Teste:** `apps/web/src/routes/SessionTopbar.test.tsx:174` (a barra de
   1440px não é completa), `:191` (agrupa, e o painel traz idioma com origem),

@@ -1,7 +1,9 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import type React from 'react';
 import { describe, expect, it, vi, beforeEach, beforeAll, afterAll, afterEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { act, render, screen, waitFor, fireEvent, within } from '@testing-library/react';
+import { act, cleanup, render, screen, waitFor, fireEvent, within } from '@testing-library/react';
 import { ContainersPage } from './ContainersPage';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import type {
@@ -42,12 +44,14 @@ vi.mock('../lib/api-client', async (importOriginal) => {
 const useContainersOverview = vi.fn();
 const useCurrentWorkspaceWithRole = vi.fn();
 const useLatestSession = vi.fn();
+const useRemocoesPendentes = vi.fn(() => ({ data: [] as unknown[] }));
 
 vi.mock('../lib/hooks', () => ({
   useContainersOverview: (...args: unknown[]) => useContainersOverview(...args),
   useCurrentWorkspaceWithRole: (...args: unknown[]) =>
     useCurrentWorkspaceWithRole(...args),
   useLatestSession: (...args: unknown[]) => useLatestSession(...args),
+  useRemocoesPendentes: () => useRemocoesPendentes(),
 }));
 
 vi.mock('../lib/auth', () => ({
@@ -128,6 +132,7 @@ function item(overrides: Partial<ContainerOverviewItem> = {}): ContainerOverview
     brokerConfigurado: true,
     decisaoVigente: null,
     imagemDesatualizada: false,
+    motivoDaFalha: null,
     ...overrides,
   };
 }
@@ -176,6 +181,14 @@ beforeEach(() => {
 });
 
 const INDISPONIVEIS = '(Por que as ações estão indisponíveis|Why the actions are unavailable)';
+
+/** AT-976 (RN-1481): parar/remover moram no menu "…" da linha. */
+function itemDoMenu(nome: string) {
+  if (!screen.queryByRole('menuitem', { name: nome })) {
+    fireEvent.click(screen.getByRole('button', { name: /Mais ações de/ }));
+  }
+  return screen.getByRole('menuitem', { name: nome });
+}
 
 function abrirAjuda(nome: string) {
   fireEvent.click(screen.getByRole('button', { name: new RegExp(`(Ajuda|Help): ${nome}`) }));
@@ -296,7 +309,7 @@ describe('ContainersPage', () => {
     proposeAction.mockResolvedValue(acaoPendente());
 
     montar();
-    fireEvent.click(screen.getByRole('button', { name: 'Parar' }));
+    fireEvent.click(itemDoMenu('Parar'));
 
     await waitFor(() => {
       expect(proposeAction).toHaveBeenCalledWith('proj-1', 'sess-1', {
@@ -312,7 +325,7 @@ describe('ContainersPage', () => {
     proposeAction.mockResolvedValue(acaoPendente({ actionType: 'container_remove' }));
 
     montar();
-    fireEvent.click(screen.getByRole('button', { name: 'Remover' }));
+    fireEvent.click(itemDoMenu('Remover'));
 
     await waitFor(() => {
       expect(proposeAction).toHaveBeenCalledWith(
@@ -397,8 +410,8 @@ describe('ContainersPage', () => {
 
     montar();
 
-    expect(screen.getByRole('button', { name: 'Parar' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Remover' })).toBeDisabled();
+    expect(itemDoMenu('Parar')).toHaveAttribute('aria-disabled', 'true');
+    expect(itemDoMenu('Remover')).toHaveAttribute('aria-disabled', 'true');
     expect(screen.getByRole('button', { name: 'Subir de novo' })).toBeDisabled();
     abrirAjuda(INDISPONIVEIS);
     expect(
@@ -599,7 +612,9 @@ describe('ContainersPage', () => {
 
     montar();
 
-    expect(screen.getByRole('button', { name: 'Subir container' })).toBeDisabled();
+    // AT-976 (RN-1481): sem imagem a ação da linha é "Decidir imagem", um link; nada de "Subir".
+    expect(screen.getByRole('link', { name: 'Decidir imagem' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Subir container' })).toBeNull();
     abrirAjuda(INDISPONIVEIS);
     expect(
       screen.getByText(
@@ -650,8 +665,8 @@ describe('ContainersPage', () => {
 
     montar();
 
-    expect(screen.getByRole('button', { name: 'Parar' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Remover' })).toBeDisabled();
+    expect(itemDoMenu('Parar')).toHaveAttribute('aria-disabled', 'true');
+    expect(itemDoMenu('Remover')).toHaveAttribute('aria-disabled', 'true');
     abrirAjuda(INDISPONIVEIS);
     expect(screen.getByText(/stops and removes containers|para e remove os containers/)).toBeInTheDocument();
     expect(proposeAction).not.toHaveBeenCalled();
@@ -693,7 +708,10 @@ describe('ContainersPage', () => {
     expect(screen.getByText(/Parar → Remover → Subir de novo|Stop → Remove → Start again/)).toBeInTheDocument();
     abrirAjuda(INDISPONIVEIS);
     expect(screen.getByText(/subir de novo não aplica|starting again does not apply/)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Subir de novo' })).toBeDisabled();
+    // (a coluna "Detalhe" também diz "Abrir"; a ação da linha é a que mora ao lado do menu.)
+    const acoes = screen.getByRole('button', { name: /Mais ações de/ }).closest('[class*="acoes"]') as HTMLElement;
+    expect(within(acoes).getByRole('link', { name: 'Abrir' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Subir de novo' })).toBeNull();
   });
 
   it('RN-902: sem divergência o aviso e o motivo "já está de pé" não aparecem', () => {
@@ -720,7 +738,7 @@ describe('ContainersPage', () => {
 
     montar();
 
-    expect(screen.getByRole('button', { name: 'Parar' })).not.toBeDisabled();
+    expect(itemDoMenu('Parar')).not.toHaveAttribute('aria-disabled', 'true');
   });
 
   it('instalação SEM broker não afeta projeto runner: ele sobe pelo agente local', () => {
@@ -768,7 +786,7 @@ describe('ContainersPage', () => {
     montar();
 
     expect(screen.getByRole('button', { name: 'Subir de novo' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Remover' })).toBeDisabled();
+    expect(itemDoMenu('Remover')).toHaveAttribute('aria-disabled', 'true');
     expect(
       screen.getByText('Subir container exige o papel maintainer neste workspace.'),
     ).toBeInTheDocument();
@@ -808,9 +826,9 @@ describe('ContainersPage — Parar/Remover sem container e o motivo curto (AT-32
 
     montar();
 
-    const remover = screen.getByRole('button', { name: 'Remover' });
-    expect(screen.getByRole('button', { name: 'Parar' })).toBeDisabled();
-    expect(remover).toBeDisabled();
+    const remover = itemDoMenu('Remover');
+    expect(itemDoMenu('Parar')).toHaveAttribute('aria-disabled', 'true');
+    expect(remover).toHaveAttribute('aria-disabled', 'true');
     abrirAjuda(INDISPONIVEIS);
     expect(
       screen.getByText('Nunca provisionado: não há container para parar nem remover.'),
@@ -824,7 +842,7 @@ describe('ContainersPage — Parar/Remover sem container e o motivo curto (AT-32
 
     montar();
 
-    expect(screen.getByRole('button', { name: 'Remover' })).toBeDisabled();
+    expect(itemDoMenu('Remover')).toHaveAttribute('aria-disabled', 'true');
     abrirAjuda(INDISPONIVEIS);
     expect(
       screen.getByText('Container removido: não há o que parar nem remover.'),
@@ -837,7 +855,7 @@ describe('ContainersPage — Parar/Remover sem container e o motivo curto (AT-32
 
     montar();
 
-    expect(screen.getByRole('button', { name: 'Remover' })).toBeEnabled();
+    expect(itemDoMenu('Remover')).not.toHaveAttribute('aria-disabled', 'true');
     expect(screen.queryByText(/não há container para parar/)).toBeNull();
     expect(screen.queryByText(/Container removido/)).toBeNull();
   });
@@ -894,7 +912,7 @@ describe('ContainersPage — layout estreito (AT-330)', () => {
       expect(noCartao.getByText(rotulo)).toBeInTheDocument();
     }
     expect(noCartao.getByText('node:22-bookworm-slim')).toBeInTheDocument();
-    const parar = noCartao.getByRole('button', { name: 'Parar' });
+    const parar = noCartao.getByRole('button', { name: /Mais ações de/ });
     expect(parar.closest('[data-campo]')).toHaveAttribute('data-campo', 'actions');
     expect(parar.closest('[data-campo]')).toHaveAttribute('data-largo');
   });
@@ -909,13 +927,110 @@ describe('ContainersPage — layout estreito (AT-330)', () => {
   });
 });
 
-it('AT-682: Parar/Remover/Subir são só ícone, com nome e legenda no hover e no foco', async () => {
+it('AT-1006 (RN-1493): falhou mostra a primeira linha do motivo e "Ver detalhe"; sem motivo, só "falhou"', () => {
+  useContainersOverview.mockReturnValue({
+    isPending: false,
+    isError: false,
+    data: [
+      item({
+        projectId: 'p-f',
+        projectName: 'quebrado',
+        registrado: registro({ status: 'failed', failureReason: 'port is already allocated\nstack' }),
+        motivoDaFalha: 'port is already allocated',
+      }),
+      item({ projectId: 'p-g', projectName: 'mudo', registrado: registro({ status: 'failed' }) }),
+    ],
+    refetch: vi.fn(),
+  });
+  montar();
+  expect(screen.getByText('port is already allocated')).toBeInTheDocument();
+  expect(screen.getAllByRole('link', { name: 'Ver detalhe' })).toHaveLength(1);
+  expect(screen.getAllByText('falhou')).toHaveLength(2);
+});
+
+it('AT-1006: sem a coluna "Detalhe" (7 colunas) e o nome do projeto abre o detalhe', () => {
   useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
   montar();
-  const botao = screen.getAllByRole('button', { name: /^(Parar|Remover|Subir)/ })[0];
+  for (const r of ['Projeto', 'Imagem', 'Registrado', 'Observado', 'Recursos', 'Desde', 'Ações']) {
+    expect(screen.getAllByText(r).length).toBeGreaterThan(0);
+  }
+  expect(screen.queryByText('Detalhe')).toBeNull();
+  expect(screen.getByRole('link', { name: 'core' })).toHaveAttribute('href', '/containers/$projectId-{"projectId":"proj-1"}');
+});
+
+it('AT-1006 (RN-1493): o nome de imagem quebra a linha, sem reticências', () => {
+  const css = readFileSync(resolve(__dirname, 'ContainersPage.module.css'), 'utf8');
+  const bloco = /\.imagemTexto \{[^}]*\}/.exec(css)?.[0] ?? '';
+  expect(bloco).toContain('overflow-wrap: anywhere');
+  expect(bloco).not.toContain('text-overflow');
+  expect(bloco).not.toContain('nowrap');
+});
+
+it('AT-976 (RN-1481): o menu "…" é só ícone, com nome e legenda no hover e no foco', async () => {
+  useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
+  montar();
+  const botao = screen.getByRole('button', { name: /Mais ações de core/ });
   expect(botao.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   expect(botao.textContent?.trim()).toBe('');
   const nome = botao.getAttribute('aria-label')!;
   act(() => botao.focus());
   expect(await screen.findByText(nome, { selector: '[data-slot="tooltip-content"]' })).toBeTruthy();
+});
+
+describe('ContainersPage — uma ação por linha (AT-976, RN-1481)', () => {
+  const textoDasAcoes = (linha: HTMLElement) =>
+    [...linha.querySelectorAll('a, button')]
+      .filter((e) => e.textContent?.trim() && !e.closest('[data-slot="popover-trigger"]') && !/^(Ajuda|Help)/.test(e.getAttribute('aria-label') ?? ''))
+      .map((e) => e.textContent!.trim());
+
+  it('cada estado tem UMA ação com texto, escolhida pelo estado, e nenhum botão primário', () => {
+    useContainersOverview.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: [
+        item({ projectId: 'p-run', projectName: 'rodando' }),
+        item({ projectId: 'p-stop', projectName: 'parado', registrado: registro({ status: 'stopped' }) }),
+        item({ projectId: 'p-img', projectName: 'sem-imagem', registrado: null, temImagemDecidida: false, naoVerificado: 'sem_container_registrado' }),
+      ],
+      refetch: vi.fn(),
+    });
+    montar();
+    const acoes = screen.getAllByRole('button', { name: /Mais ações de/ }).map((b) => b.closest('[class*="acoes"]') as HTMLElement);
+    expect(acoes).toHaveLength(3);
+    expect(acoes.map((a) => textoDasAcoes(a))).toEqual([['Abrir'], ['Subir de novo'], ['Decidir imagem']]);
+    expect(document.querySelectorAll('[data-variant="primary"]')).toHaveLength(0);
+  });
+
+  it('parar, remover e ver detalhes moram no menu, com o remover separado e destrutivo', () => {
+    useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
+    montar();
+    expect(screen.queryByRole('button', { name: 'Parar' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Remover' })).toBeNull();
+    fireEvent.click(screen.getByRole('button', { name: /Mais ações de core/ }));
+    const itens = screen.getAllByRole('menuitem').map((i) => i.textContent);
+    expect(itens).toEqual(['Parar', 'Ver detalhes', 'Remover']);
+    expect(screen.getByRole('menuitem', { name: 'Remover' })).toHaveAttribute('data-variant', 'destructive');
+    expect(screen.getByRole('separator')).toBeInTheDocument();
+  });
+});
+
+it('AT-980 (RN-1446): remoção pendente lista o projeto apagado; sem pendência, a seção some', () => {
+  useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
+  montar();
+  expect(screen.queryByTestId('remocoes-pendentes')).toBeNull();
+  cleanup();
+  useRemocoesPendentes.mockReturnValue({
+    data: [
+      { projectId: 'aaaaaaaa-1111-2222-3333-444444444444', projetoNome: null, recursos: 2, motivo: 'broker fora do ar', tentativas: 3, atualizadoEm: '2026-11-19T10:00:00.000Z' },
+    ],
+  });
+  montar();
+  const secao = screen.getByTestId('remocoes-pendentes');
+  expect(secao).toHaveTextContent('Remoção pendente');
+  expect(secao).toHaveTextContent('projeto apagado · aaaaaaaa');
+  expect(secao).toHaveTextContent(new Date('2026-11-19T10:00:00.000Z').toLocaleString(i18n.language));
+  expect(secao).toHaveTextContent('2 recursos');
+  expect(secao).toHaveTextContent('3 tentativas');
+  expect(secao).toHaveTextContent('broker fora do ar');
+  useRemocoesPendentes.mockReturnValue({ data: [] });
 });

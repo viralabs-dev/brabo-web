@@ -1,0 +1,51 @@
+/* AT-960: estilos do composer em caixa única. O que era de SessionPage.module.css
+   (.destinatarioRow, .composerComDestinatario) fica lá, morto, até a AT-956 apagar. */
+
+/* Âncora do menu de @/ em volta do campo: sem isto o campo fica na largura do conteúdo. */
+.ancoraDoCampo {
+  /* O InputGroup do composer é COLUNA e centraliza os filhos: sem `align-self: stretch`
+     a âncora fica com a largura do conteúdo (179px medidos num grupo de 1224px). */
+  display: flex;
+  flex: 1 1 auto;
+  align-self: stretch;
+  width: 100%;
+  min-width: 0;
+}
+
+.paraLabel {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.paraSelect {
+  min-width: 140px;
+  max-width: 220px;
+  width: auto;
+}
+
+/* Empurra Parar e Enviar para a direita da barra. */
+.espaco {
+  flex: 1 1 0;
+}
+
+/* AT-1009 (RN-1496): o campo nasce de uma linha e cresce até 160 px; o composer inteiro
+   fica em ~124 px (a prévia v10) e o fio ganha o que sobra, 70% ou mais da altura. */
+.campo {
+  field-sizing: content;
+  min-height: 44px;
+  max-height: 160px;
+}
+
+/* A dica do campo é UMA linha: com 390 px ela quebrava em duas e custava 11 px do fio. */
+.campo::placeholder {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+@media (max-height: 800px) and (min-width: 768px) {
+  .campo {
+    min-height: 36px;
+  }
+}

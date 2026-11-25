@@ -47,7 +47,7 @@
    (acessível a leitor de tela e a `getByText` em teste), só a exibição
    visual é que trunca. */
 .previa {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.4;
   color: var(--text-secondary);
   white-space: nowrap;

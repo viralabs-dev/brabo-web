@@ -18,6 +18,7 @@ import {
 import { setLastSeenSeq } from '../lib/read-state';
 import { MedidorDeGasto } from '../components/MedidorDeGasto';
 import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
+import { FaixaDeRevalidacao } from '../components/FaixaDeRevalidacao';
 import { Skeleton } from '../components/ui/Skeleton';
 import { CarregandoRota } from '../components/CarregandoRota';
 import { useLayoutMovel } from '../lib/layout-movel';
@@ -96,13 +97,15 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
     }
   }
   // Trocar de sub-aba: estado local + o endereço acompanha (como `trocarGrupo`).
-  function trocarSub(chave: ChaveDeAba) {
+  function trocarSub(chave: ChaveDeAba, ancora = '') {
     setTab(chave);
     try {
       const url = new URL(window.location.href);
       url.searchParams.set('tab', chave);
       url.searchParams.delete('section');
       url.searchParams.delete('group');
+      url.searchParams.delete('visao');
+      url.hash = ancora;
       window.history.replaceState(window.history.state, '', url);
     } catch {
       // sem `window` (teste/SSR): só a troca local
@@ -259,7 +262,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
         acoes={
           <>
             {budget !== undefined && (
-              <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('settings')} />
+              <MedidorDeGasto budget={budget} onDefinir={() => trocarSub('spend', 'teto')} />
             )}
             {acaoPrimaria}
           </>
@@ -271,7 +274,16 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
             escrito aqui: a Visão geral desenha as próprias regiões até a borda
             (o feed é um trilho com divisória à esquerda, não um card solto). */}
         <div className={[styles.body, aba.semRespiro && styles.bodyRente].filter(Boolean).join(' ')}>
-          <div className={styles.coluna}>
+          <div
+            className={[
+              styles.coluna,
+              // AT-971 (RN-1472): aba que desenha até a borda E tem sub-abas (Código):
+              // a faixa fica em cima e o painel embaixo, não lado a lado.
+              aba.semRespiro && secaoDaChave(tab).subs.length > 1 && styles.colunaComSubAbas,
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
           <ContextoDeSecaoInicial.Provider value={initialSection}>
           <ContextoDeGrupoInicial.Provider value={grupo}>
           <ContextoDeTrocaDeGrupo.Provider value={trocarGrupo}>
@@ -279,6 +291,7 @@ export function ProjectPage({ projectId, initialTab, initialSection, initialGrou
             {/* Cada painel é um chunk próprio (AT-300): o `Suspense` fica AQUI,
                 em volta só do painel, para que trocar de aba nunca apague o
                 cabeçalho enquanto o chunk chega. */}
+            <FaixaDeRevalidacao projectId={projectId} />
             <FaixaDeSubAbas ativa={tab} contagens={filasDoProjeto.contagens} onChange={trocarSub} />
             <Suspense fallback={<CarregandoRota />}>
               <PainelDaAba projectId={projectId} />

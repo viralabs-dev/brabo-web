@@ -1,12 +1,15 @@
 import type { CSSProperties } from 'react';
-import { Hand, Plane, RotateCcw, Search } from 'lucide-react';
+import { Ellipsis, Hand, Plane, RotateCcw, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentDef } from '../lib/agents';
+import { formatMicros } from '../lib/execution';
 import { BranchIcon, ModelIcon } from './ui/icons';
 import { Badge } from './ui/Badge';
 import { Select } from './ui/Select';
 import { Button as BotaoDeIcone } from '@/components/ui/Button';
 import { Card } from '@/components/shadcn/card';
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/shadcn/dropdown-menu';
 import { Shimmer } from './ui/Shimmer';
 import { OQueOPilotoLibera } from './OQueOPilotoLibera';
 import styles from './AgentCard.module.css';
@@ -41,6 +44,8 @@ interface AgentCardProps {
   agent: AgentDef;
   status: AgentStatus;
   model?: { name: string; provider: string };
+  /** AT-1007 (RN-1492): o modelo é local (categoria `local` do catálogo); sem a categoria, não vem. */
+  local?: boolean;
   /**
    * AT-916: troca o modelo do agente pelo cartão (o mesmo `PUT agent-bindings`
    * da tela de Modelos). Sem `onModelChange` o modelo é só leitura.
@@ -81,14 +86,11 @@ interface AgentCardProps {
   onWake?: () => void;
 }
 
-function formatMicros(micros: number): string {
-  return `US$ ${(micros / 1_000_000).toFixed(4)}`;
-}
-
 export function AgentCard({
   agent,
   status,
   model,
+  local,
   modelOptions,
   modelId,
   onModelChange,
@@ -156,6 +158,11 @@ export function AgentCard({
               {model.name} · {model.provider}
             </span>
           )}
+          {model && local && (
+            <Badge tone="warning" dot className={styles.chipLocal}>
+              {t('agentCard.local')}
+            </Badge>
+          )}
           {tokensMicros !== undefined && (
             <span className={styles.tokens}>{formatMicros(tokensMicros)}</span>
           )}
@@ -182,28 +189,23 @@ export function AgentCard({
       )}
 
       {autonomy && onAutonomyChange && (
-        <div className={styles.autonomy}>
-          <BotaoDeIcone
-            type="button"
-            size="sm"
-            variant={autonomy === 'manual' ? 'secondary' : 'ghost'}
-            legenda={t('agentCard.autonomy.manual')}
-            aria-pressed={autonomy === 'manual'}
-            onClick={() => onAutonomyChange('manual')}
-          >
+        <ToggleGroup
+          className={styles.autonomy}
+          value={[autonomy]}
+          variant="outline"
+          size="sm"
+          aria-label={t('tabela.autonomia')}
+          onValueChange={(v) => v[0] && onAutonomyChange(v[0] as AutonomyMode)}
+        >
+          <ToggleGroupItem value="manual" aria-pressed={autonomy === 'manual'}>
             <Hand aria-hidden="true" />
-          </BotaoDeIcone>
-          <BotaoDeIcone
-            type="button"
-            size="sm"
-            variant={autonomy === 'auto' ? 'secondary' : 'ghost'}
-            legenda={t('agentCard.autonomy.auto')}
-            aria-pressed={autonomy === 'auto'}
-            onClick={() => onAutonomyChange('auto')}
-          >
+            {t('agentCard.autonomy.manual')}
+          </ToggleGroupItem>
+          <ToggleGroupItem value="auto" aria-pressed={autonomy === 'auto'}>
             <Plane aria-hidden="true" />
-          </BotaoDeIcone>
-        </div>
+            {t('agentCard.autonomy.piloto')}
+          </ToggleGroupItem>
+        </ToggleGroup>
       )}
       {autonomy && onAutonomyChange && autonomyHint && (
         <>
@@ -221,10 +223,19 @@ export function AgentCard({
       )}
       {status === 'ocioso' && onWake && (
         <div className={styles.autonomy}>
-          <BotaoDeIcone type="button" variant="secondary" onClick={onWake}>
-            <Search aria-hidden="true" />
-            {t('agentCard.wake')}
-          </BotaoDeIcone>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={<BotaoDeIcone variant="ghost" size="sm" legenda={t('tabela.maisAcoes', { agente: agent.name })} />}
+            >
+              <Ellipsis aria-hidden="true" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem onClick={onWake}>
+                <Search aria-hidden="true" />
+                {t('agentCard.wake')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
     </Card>

@@ -157,6 +157,17 @@ describe('MergearNoChat (AT-266, AT-753 UX-2)', () => {
     expect(alerta).not.toHaveTextContent('Detalhes longos');
   });
 
+  it('AT-960: a confirmação é um Popover; Esc fecha e o foco volta ao botão', async () => {
+    montar();
+    const botao = screen.getByRole('button', { name: 'Mergear' });
+    fireEvent.click(botao);
+    expect(screen.getByTestId('mergear-confirmacao').closest('[data-slot=popover-content]')).not.toBeNull();
+    fireEvent.keyDown(screen.getByTestId('mergear-confirmacao'), { key: 'Escape' });
+    await waitFor(() => expect(screen.queryByTestId('mergear-confirmacao')).toBeNull());
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Mergear' })).toHaveFocus());
+    expect(proposeAction).not.toHaveBeenCalled();
+  });
+
   it('gate pendente é AVISO (AT-249, RN-663): o texto nomeia o gate e o botão segue ativo', async () => {
     montar(true, 'qa-verificada');
 
@@ -187,4 +198,14 @@ it('AT-682: o ícone do botão é decorativo (aria-hidden) e o nome vem do texto
   const botao = document.body.querySelector('button svg')!.closest('button')!;
   expect(botao.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
   expect(botao.textContent?.trim().length).toBeGreaterThan(0);
+});
+
+describe('MergearNoChat — telefone (AT-961, RN-1434)', () => {
+  it('abaixo de 768px o aviso marca o layout móvel (uma linha, Mergear visível)', async () => {
+    const { simularLayoutMovel } = await import('../test/match-media');
+    const largura = simularLayoutMovel(true);
+    montar();
+    expect(screen.getByRole('button', { name: /Mergear/ }).parentElement).toHaveAttribute('data-layout', 'movel');
+    largura.restaurar();
+  });
 });

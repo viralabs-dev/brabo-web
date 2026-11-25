@@ -606,3 +606,21 @@
   font-weight: 600;
   text-align: left;
 }
+
+/* --- AT-964: esmaecido e barra de rolagem do corpo da sidebar ------------- */
+.conteudo {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+.conteudo:hover,
+.conteudo:focus-within {
+  scrollbar-color: var(--border) transparent;
+}
+/* 20 px de esmaecido na borda de baixo enquanto há conteúdo abaixo. */
+.conteudo[data-mais-abaixo='true'] {
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 20px), transparent);
+}
+.parados {
+  font-size: var(--fs-sm);
+  color: var(--text-muted);
+}

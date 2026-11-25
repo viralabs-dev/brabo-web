@@ -33,8 +33,7 @@
     "since": "起始",
     "sinceNone": "—",
     "actions": "操作",
-    "detail": "详情",
-    "openDetail": "打开"
+    "verDetalhe": "查看详情"
   },
   "status": {
     "provisioning": "正在创建",
@@ -95,7 +94,11 @@
       "registrado_rodando_observado_parado": "登记为运行中，实际已停止。"
     },
     "ajuda": "容器操作",
-    "ajudaIndisponiveis": "操作为何不可用"
+    "ajudaIndisponiveis": "操作为何不可用",
+    "open": "打开",
+    "decideImage": "确定镜像",
+    "menu": "{{projeto}} 的更多操作",
+    "detalhes": "查看详情"
   },
   "detail": {
     "title": "容器",
@@ -149,5 +152,13 @@
       "nomeReservado": "保留名称"
     },
     "ajuda": "容器网络"
+  },
+  "remocoes": {
+    "title": "待移除",
+    "help": "已删除项目的容器将在 broker 恢复后移除。",
+    "recursos_other": "{{count}} 个资源",
+    "tentativas_other": "{{count}} 次尝试",
+    "semMotivo": "未记录原因",
+    "apagado": "已删除的项目 · {{id}}"
   }
 }

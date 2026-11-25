@@ -616,29 +616,36 @@ export function NewProjectWizard({ workspaceId, onClose }: NewProjectWizardProps
   return (
     <>
     <Modal title={t('modal.title')} icon={<PlusIcon size={16} />} onClose={onClose}>
-      <div className={styles.stepper}>
+      <ol className={styles.stepper}>
         {stepKeys.map((key, n) => (
-          <div
+          <li
             key={key}
-            style={{ display: 'flex', alignItems: 'center', flex: n === stepKeys.length - 1 ? '0 0 auto' : 1 }}
+            className={styles.step}
+            aria-current={n === stepIndex ? 'step' : undefined}
+            style={{ flex: n === stepKeys.length - 1 ? '0 0 auto' : 1 }}
           >
-            <span
-              className={[
-                styles.stepCircle,
-                n < stepIndex && styles.done,
-                n === stepIndex && styles.current,
-              ]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              {n + 1}
+            <span className={styles.stepHead}>
+              <span
+                className={[
+                  styles.stepCircle,
+                  n < stepIndex && styles.done,
+                  n === stepIndex && styles.current,
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+              >
+                {n + 1}
+              </span>
+              {n < stepKeys.length - 1 && (
+                <span className={[styles.stepLine, n < stepIndex && styles.done].filter(Boolean).join(' ')} />
+              )}
             </span>
-            {n < stepKeys.length - 1 && (
-              <span className={[styles.stepLine, n < stepIndex && styles.done].filter(Boolean).join(' ')} />
-            )}
-          </div>
+            <span className={[styles.stepName, n === stepIndex && styles.stepNameCurrent].filter(Boolean).join(' ')}>
+              {t(`stepNames.${key}`)}
+            </span>
+          </li>
         ))}
-      </div>
+      </ol>
 
       <div className={styles.stepTitle}>{t(STEP_TITLE_KEY[currentStep])}</div>
 
@@ -796,7 +803,7 @@ export function NewProjectWizard({ workspaceId, onClose }: NewProjectWizardProps
           )}
         <div>
           <ToggleGroup
-            className={styles.providerGrid}
+            className={styles.modoGrid}
             value={modoDeWorkspace ? [modoDeWorkspace] : []}
             // Reclicar o ligado esvazia o grupo: ainda é uma ESCOLHA humana do mesmo modo.
             onValueChange={(v) => setModoDeWorkspaceEscolhido((v[0] as typeof modoDeWorkspace) ?? modoDeWorkspace)}

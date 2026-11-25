@@ -1,12 +1,15 @@
 import { useState, type ReactNode } from 'react';
 import { Link } from '@tanstack/react-router';
 import { Trans, useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { getSessionTokenUsage } from '../lib/api-client';
+import { pollQueParaNoErro } from '../lib/query-policy';
+import { intervaloDaSessao, useCanalDaSessaoVivo } from '../lib/canal-vivo';
 import { useSessionEventHistory } from '../lib/hooks';
 import { usePerguntasEmAberto, rolarAteAsPerguntas } from '../lib/perguntas-em-aberto';
 import {
   artefatosDoAgenteNoAgregado,
   objetivoDaSessao,
-  gastoPorAgente,
   totalDaSessao,
   useContextoDaSessaoInteira,
 } from '../lib/contexto-da-sessao';
@@ -29,6 +32,7 @@ import { Card } from '../components/ui/Card';
 import { Skeleton } from '../components/ui/Skeleton';
 import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import { Disclosure } from '../components/ui/Disclosure';
+import { MarkdownMessage } from '../components/ui/MarkdownMessage';
 import { PrIcon, StackIcon } from '../components/ui/icons';
 import styles from './SessionPage.module.css';
 
@@ -153,7 +157,15 @@ export function ContextAside({
   const events = historico.baixados;
   const objetivo = objetivoDaSessao(events);
   const perguntas = usePerguntasEmAberto(projectId).data;
-  const gasto = gastoPorAgente(events);
+  // RN-1426: o gasto vem do resumo da sessão (a mesma queryKey da faixa de execução), não dos eventos baixados.
+  // Direto no useQuery, não por `lib/hooks`: as suítes da Sessão substituem esse módulo inteiro.
+  const canalVivo = useCanalDaSessaoVivo(sessionId);
+  const uso = useQuery({
+    queryKey: ['session-token-usage', projectId, sessionId],
+    queryFn: () => getSessionTokenUsage(projectId, sessionId),
+    refetchInterval: pollQueParaNoErro(intervaloDaSessao(15_000, canalVivo)),
+  });
+  const gasto = (uso.data ?? []).filter((u) => u.costMicros > 0);
   // O Log mora nos detalhes: citar um evento (logOpen) abre os dois.
   const [detalhesAbertos, setDetalhesAbertos] = useState(false);
 
@@ -401,7 +413,7 @@ export function ContextAside({
       {objetivo && (
         <div className={styles.asideSection} data-testid="aside-objetivo">
           <div className={styles.asideHeader}>{t('aside.objetivo')}</div>
-          <div>{objetivo}</div>
+          <MarkdownMessage text={objetivo} />
         </div>
       )}
 
@@ -468,14 +480,18 @@ export function ContextAside({
 
       <div className={styles.asideSection} data-testid="aside-gasto">
         <div className={styles.asideHeader}>{t('aside.gastoPorAgente')}</div>
-        {gasto.length === 0 ? (
+        {uso.isError ? (
+          <div className={styles.asideEmpty} role="alert">{t('aside.gastoErro')}</div>
+        ) : !uso.data ? (
+          <Skeleton height={20} />
+        ) : gasto.length === 0 ? (
           <div className={styles.asideEmpty}>{t('aside.gastoVazio')}</div>
         ) : (
           gasto.map((g) => (
             <div key={g.actorId} className={styles.asideItem} style={corDoAgente(g.actorId)}>
               <AvatarDoAgente id={g.actorId} />
               <span>{nomeDoAgente(g.actorId)}</span>
-              <span>{formatarCusto(g.usd)}</span>
+              <span>{formatarCusto(g.costMicros / 1_000_000)}</span>
             </div>
           ))
         )}

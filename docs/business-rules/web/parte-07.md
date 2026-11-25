@@ -23,8 +23,8 @@ keywords: [regras de negócio, web]
 ### RN-979 — Decisão, mapa de módulos, C4, imagem e parecer de QA/SecOps ganham cartão no fio {#rn-979}
 
 - **Regra:** os eventos `artifact.decision_record`, `artifact.module_map`, `artifact.c4_diagram`, `artifact.project_image`, `artifact.qa_verdict` e `artifact.secops_verdict` aparecem no fio com o MESMO cartão do épico/história, com link para a aba (Arquitetura ou PRs). Título e descrição saem dos campos REAIS do payload: decisão (`choice`, `context`), mapa de módulos (sem título; descrição = `modules[].name`), C4 (`systemName`, `systemDescription`), imagem (`image`, `rationale`), pareceres (`veredito` traduzido, `resumo`). Campo ausente cai no rótulo do tipo; descrição passa de 200 caracteres é cortada. Leitura do payload, sem query nova.
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:138` (`ARTEFATOS_DO_FIO`).
-- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:140` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:147` (`ARTEFATOS_DO_FIO`).
+- **Onde:** `apps/web/src/lib/artefato-do-fio.ts:11` (`camposDoArtefato`), `apps/web/src/routes/session-timeline-montagem.tsx:145` (`ARTEFATOS_DO_FIO`).
 - **Teste:** `apps/web/src/lib/artefato-do-fio.test.ts` (um caso por tipo e payload sem campo opcional).
 - **Origem:** AT-683 (EP-031).
 
@@ -33,7 +33,7 @@ keywords: [regras de negócio, web]
 ### RN-980 — As Configurações do projeto são uma página por grupo, com os grupos como abas dentro da página; só o grupo aberto monta {#rn-980}
 
 - **Regra:** revisa a [RN-645](parte-05.md#rn-645) no item 3. O sumário lateral deixa de existir: cada grupo do registro (`modelos`, `projeto`, `pessoas`, `avancado`) é uma PÁGINA, e os quatro são ABAS numa faixa no topo da página de Configurações (setas, Home e End; `aria-selected`/`aria-controls`); "Configurações" segue UM item só da barra lateral, sem sub-itens (decisão do dono, 03/11). O endereço é `?tab=settings&group=<grupo>`; Modelos é a página padrão. `?section=` continua valendo: abre a página do grupo da seção e rola até ela, e vence um `group` incoerente; chave aposentada ([RN-911](parte-06.md#rn-911)) ou desconhecida abre Modelos no topo. O grupo é derivado do campo `grupo` do registro, nunca de outra lista. Só as seções do grupo aberto montam, então a carga busca só o que é da página (abrindo em Modelos, no máximo 21 requisições, contra 30; teto em `configuracoes.orcamento.test.tsx`). Os itens 1 e 2 da RN-645 (frescor de um minuto, sem poll) não mudam, e trocar de página dentro do minuto não refaz busca. Trocar de página descarta rascunho não salvo, como trocar de aba.
-- **Onde:** `apps/web/src/routes/settings/sumario.ts:114` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:119` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:67` (`ProjectSettingsTab`).
+- **Onde:** `apps/web/src/routes/settings/sumario.ts:115` (`grupoDaSecao`), `apps/web/src/routes/settings/sumario.ts:120` (`resolverGrupo`), `apps/web/src/routes/ProjectSettingsTab.tsx:71` (`ProjectSettingsTab`).
 - **Teste:** `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (página só com as seções do grupo; todo `?section=` antigo cai no seu grupo; rola até a seção), `apps/web/src/routes/configuracoes.orcamento.test.tsx` (carga de Modelos não busca o resto), `apps/web/src/routes/settings/paginas-por-grupo.test.tsx` (a faixa de abas e o teclado).
 - **Origem:** AT-719 (EP-031).
 
@@ -42,7 +42,7 @@ keywords: [regras de negócio, web]
 ### RN-981 — Na Sessão, as caixas de pergunta e de aprovação ficam na borda do fio, e o contexto e o esqueleto de carregamento ganham o tratamento R3 {#rn-981}
 
 - **Regra:** revisa a [RN-171](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-171) e a [RN-173](parte-02.md#rn-173) no alinhamento: a caixa de pergunta estruturada e o contêiner da ação no fio deixam de ser centralizados (`margin: auto`) e ficam encostados na borda esquerda do fio, mantendo o teto de 560px. Decisão do dono (03/11/2026). O resto da RN-171 (texto livre) e da RN-173 (um só `ApprovalCard`) fica. Junto: o botão do contexto tem só ícone, com legenda "Recolher contexto"/"Abrir contexto" e `aria-expanded`; o fio mostra "Carregando sessão…" com esqueleto na mesma condição que adia o convite (RN-131); "Arquivos tocados" é um `Disclosure` com a contagem; a faixa de sessão encerrada tem ícone, título e explicação, e "Reabrir sessão" segue com a regra de papel da RN-650.
-- **Onde:** `apps/web/src/routes/SessionPage.module.css:1261` (`.acaoNoFio`), `apps/web/src/routes/SessionFio.tsx:59` (`SessionFio`), `apps/web/src/routes/SessionTopbar.tsx:108` (`SessionTopbar`).
+- **Onde:** `apps/web/src/routes/SessionPage.module.css:1261` (`.acaoNoFio`), `apps/web/src/routes/SessionFio.tsx:59` (`SessionFio`), `apps/web/src/routes/SessionTopbar.tsx:111` (`SessionTopbar`).
 - **Teste:** `apps/web/src/routes/SessionPage.layout-movel.test.tsx` (legenda e `aria-expanded`), `apps/web/src/routes/SessionPage.sessao-encerrada.test.tsx`.
 - **Origem:** AT-720 (EP-031).
 
@@ -60,7 +60,7 @@ keywords: [regras de negócio, web]
 ### RN-994 — Na Sessão, a pergunta estruturada vem depois da mensagem do agente que a introduz {#rn-994}
 
 - **Regra:** revisa a [RN-162](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-162) só na posição. O agente pergunta no meio do turno e fecha com o `agent.response`, então o `chat.structured_question` tem `seq` menor que a resposta; o fio põe o cartão (aberto ou já respondido) logo DEPOIS da bolha de `agent.response` do MESMO agente com `seq` maior, antes da próxima `chat.message` do usuário. Sem resposta depois (turno em curso), o cartão fica onde está. Move-se o item, não o evento, e o item mantém a flag `mensagem` do corte da [RN-644](parte-05.md#rn-644). Raciocínio e "Passos do turno" seguem antes da resposta. Decisão do dono (03/11/2026).
-- **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:151` (`montarTimeline`).
+- **Onde:** `apps/web/src/routes/session-timeline-montagem.tsx:160` (`montarTimeline`).
 - **Teste:** `apps/web/src/routes/session-timeline-montagem.perguntas.test.tsx` (resposta antes do cartão; turno em curso; duas perguntas na ordem; não pula para a resposta do turno seguinte).
 - **Origem:** pedido do dono, 03/11/2026.
 
@@ -92,8 +92,10 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1061 — O aviso de execução parada, no feed, no fio e em Executores, oferece Rearmar e Desbloquear {#rn-1061}
 
+> **Revisada pela [RN-1491](#rn-1491) (AT-1007):** na aba Execução a faixa é de aviso (âmbar), não de perigo, e oferece "Pedir o parecer de novo" quando um gate estacionado está por trás da parada.
+
 - **Regra:** o `execution.stalled` que o engine grava ([RN-1059](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-1059): todos os dev agents parados, tarefa pendente atrás de tarefa bloqueada ou de agente travado) aparece em vermelho no feed de atividade, nomeando as tarefas e os agentes que seguram a execução. Na sessão de execução ele vira uma mensagem do fio (`data-testid="execucao-parada"`) e, acima do time, na aba Executores, o mesmo aviso. Sob ele, `DestravarExecucao` traz um **Rearmar** por agente travado (`rearmDevAgent`, [RN-047](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-047)) e um **Desbloquear** por tarefa bloqueada (`unblockTask`, [RN-826](parte-06.md#rn-826)), com as mesmas rotas dos atalhos do chat. Os botões só existem enquanto a parada é VIGENTE: o último evento entre `execution.stalled`, `dev.working`, `dev.rearmed` e `backlog.task_unblocked` é um `execution.stalled`; depois do destrave o aviso fica no histórico, sem botões. Papel abaixo de `developer` vê os botões inertes e o motivo em texto; a recusa da api vira toast com a frase dela. A web não decide nada: só lê o payload do engine.
-- **Onde:** `apps/web/src/lib/execution.ts:169` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:218` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:215` (`paradaVigente`).
+- **Onde:** `apps/web/src/lib/execution.ts:173` (`execucaoParadaDe`), `apps/web/src/routes/DestravarExecucao.tsx:25` (`DestravarExecucao`), `apps/web/src/lib/activity.ts:228` (`classifyEvent`), `apps/web/src/routes/ProjectExecutorsTab.tsx:223` (`paradaVigente`).
 - **Teste:** `apps/web/src/routes/DestravarExecucao.test.tsx`, `apps/web/src/lib/execution.test.ts`, `apps/web/src/lib/activity.test.ts`.
 - **Origem:** AT-800 (EP-030), parte web; engine#57.
 
@@ -102,7 +104,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1062 — O cartão do plano mostra o teto do projeto e das áreas dev/qa, avisa quando a estimativa passa do que resta e ajusta o teto da área dev ali {#rn-1062}
 
 - **Regra:** o "custo esperado" do plano do Dev Lead é o teto POR TAREFA × tarefas ([RN-802](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-802)), não o preço. Enquanto o plano está pendente, logo abaixo dele o cartão mostra o teto do projeto (`GET /projects/:id/budget`, `maintainer`; para papel abaixo a linha do projeto some) e o das áreas `dev` e `qa` (`GET .../agent-areas`), cada um com o gasto, ou "sem teto" ([RN-443](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-443)). Quando a estimativa passa do que resta (`limite − gasto`, nunca negativo) do MENOR teto aplicável, entre o do projeto (só com política `block`; `allow` não para nada) e o da área `dev`, aparece um aviso `warning` com o que resta e a frase "a execução para quando o teto for atingido; a estimativa é o teto por tarefa, não o preço". O aviso NÃO trava o Aprovar ([RN-677](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-677)). "Ajustar teto" (ícone e rótulo) abre na própria linha um campo em dólar para o teto da área `dev` só, com Salvar e Cancelar (`setAreaBudget`; vazio = sem teto, como na [RN-980](#rn-980)); abaixo de `maintainer` fica inerte, com o motivo em texto (ADR 0064). "Outros tetos" abre `?section=budget` em outra aba: o teto do projeto, que tem política, segue em Configurações. Reusa as chaves de cache `['budget', projectId]` e `['agent-areas', projectId]`; sem `QueryClient` (teste isolado do card) nada é lido nem mostrado.
-- **Onde:** `apps/web/src/components/TetoDoPlano.tsx:33` (`TetoDoPlano`), `apps/web/src/components/TetoDoPlano.helpers.ts:15` (`menorTetoAplicavel`), `apps/web/src/components/ApprovalCard.tsx:495` (`TetoDoPlano`).
+- **Onde:** `apps/web/src/components/TetoDoPlano.tsx:33` (`TetoDoPlano`), `apps/web/src/components/TetoDoPlano.helpers.ts:15` (`menorTetoAplicavel`), `apps/web/src/components/ApprovalCard.tsx:503` (`TetoDoPlano`).
 - **Teste:** `apps/web/src/components/ApprovalCard.teto-do-plano.test.tsx`.
 - **Origem:** AT-808 (EP-031); decisão do dono, 07/11/2026 (ajuste só da área dev; o aviso não trava).
 
@@ -110,26 +112,28 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1063 — PR que entra na fila de prontas avisa na borda do fio e no título da aba, com Mergear e o tempo de espera, e se dispensa {#rn-1063}
 
-- **Regra:** estende a [RN-825](parte-06.md#rn-825)/[RN-841](parte-06.md#rn-841). Quando há PR pronta para o dono mergear (a fila `prontas`: gates aprovados, ou PR sem tarefa), um `Alert` accent fica FIXO na borda do fio, entre o fio e o composer (RN-981), com `role="status"`: "PR #3 "título" está pronta para você mergear: os gates passaram", com "Pronta há N min" (sobre o `updatedAt` da tarefa da PR, quando há) e o `MergearNoChat` com a confirmação na linha (AT-753 P1). Com várias: "N PRs prontas para você mergear" e "Ver as N", que abre a aba `prontas` ([RN-975](parte-06.md#rn-975)). "Agora não" dispensa as PRs avisadas; o aviso só volta se ENTRAR uma PR nova. Quando a PR sai da fila (mergeada), o aviso some. O título da aba mostra o contador enquanto houver PR pronta ("(1) Brabo"), mesmo com o aviso dispensado, e volta ao normal quando a fila esvazia. PR que ENTRA na fila (na primeira leitura, as que já esperavam) abre sozinha a aba `prontas` do painel de pendências quando nenhuma está aberta (exceção declarada à "nenhuma aba nasce aberta" da RN-975). Sem evento novo, sem mudança em api ou engine e sem notificação do navegador: o aviso lê as mesmas prontas do painel (`usePrsProntas`, cache compartilhado), pela releitura de 15 s do backlog. **Destrava (AT-902):** a faixa diz quantas tarefas o merge destrava ("Destrava N tarefas"; com várias, "A PR #X destrava N tarefas" para a do topo): as `todo` dos módulos que dependem (`dependsOn` direto) do módulo da tarefa da PR, contadas só quando essa tarefa é a última aberta do módulo (a régua da [RN-1005](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1005)); a conta usa só o backlog e o `module_map` já lidos. Com várias prontas, a que destrava mais vem primeiro (empate: a ordem da fila). O título da aba segue "(N) Brabo". O merge segue gesto humano ([RN-418](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-418)/[RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)): o aviso só oferece o `MergearNoChat`.
-- **Onde:** `apps/web/src/components/AvisoDePrPronta.tsx:29` (`AvisoDePrPronta`), `apps/web/src/components/AvisoDePrPronta.helpers.ts` (`tarefasQueODestrava`), `apps/web/src/lib/prs-prontas.ts:14` (`usePrsProntas`), `apps/web/src/lib/saidas-da-fila.ts:30` (`entradasDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:184` (`idsDasProntas`), `apps/web/src/routes/SessionPage.tsx:830` (`AvisoDePrPronta`).
+- **Regra:** estende a [RN-825](parte-06.md#rn-825)/[RN-841](parte-06.md#rn-841). Quando há PR pronta para o dono mergear (a fila `prontas`: gates aprovados, ou PR sem tarefa), um `Item` de 44 px (AT-960; antes `Alert` accent) fica FIXO na borda do fio, entre o fio e o composer (RN-981), com `role="status"`: "PR #3 "título" está pronta para você mergear: os gates passaram", com "Pronta há N min" (sobre o `updatedAt` da tarefa da PR, quando há) e o `MergearNoChat` com a confirmação num Popover ([RN-1358](#rn-1358); antes na linha, AT-753 P1). Com várias: "N PRs prontas para você mergear" e "Ver as N", que abre a aba `prontas` ([RN-975](parte-06.md#rn-975)). "Agora não" dispensa as PRs avisadas; o aviso só volta se ENTRAR uma PR nova. Quando a PR sai da fila (mergeada), o aviso some. O título da aba mostra o contador enquanto houver PR pronta ("(1) Brabo"), mesmo com o aviso dispensado, e volta ao normal quando a fila esvazia. PR que ENTRA na fila (na primeira leitura, as que já esperavam) abre sozinha a aba `prontas` do painel de pendências quando nenhuma está aberta (exceção declarada à "nenhuma aba nasce aberta" da RN-975). Sem evento novo, sem mudança em api ou engine e sem notificação do navegador: o aviso lê as mesmas prontas do painel (`usePrsProntas`, cache compartilhado), pela releitura de 15 s do backlog. **Destrava (AT-902):** a faixa diz quantas tarefas o merge destrava ("Destrava N tarefas"; com várias, "A PR #X destrava N tarefas" para a do topo): as `todo` dos módulos que dependem (`dependsOn` direto) do módulo da tarefa da PR, contadas só quando essa tarefa é a última aberta do módulo (a régua da [RN-1005](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1005)); a conta usa só o backlog e o `module_map` já lidos. Com várias prontas, a que destrava mais vem primeiro (empate: a ordem da fila). O título da aba segue "(N) Brabo". O merge segue gesto humano ([RN-418](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-418)/[RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)): o aviso só oferece o `MergearNoChat`.
+- **Onde:** `apps/web/src/components/AvisoDePrPronta.tsx:29` (`AvisoDePrPronta`), `apps/web/src/components/AvisoDePrPronta.helpers.ts` (`tarefasQueODestrava`), `apps/web/src/lib/prs-prontas.ts:14` (`usePrsProntas`), `apps/web/src/lib/saidas-da-fila.ts:30` (`entradasDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:208` (`idsDasProntas`), `apps/web/src/routes/SessionPage.tsx:837` (`AvisoDePrPronta`).
 - **Teste:** `apps/web/src/components/AvisoDePrPronta.test.tsx`, `apps/web/src/components/AvisoDePrPronta.destrava.test.ts`, `apps/web/src/lib/saidas-da-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`.
 - **Origem:** AT-810 (EP-031); decisão do dono, 07/11/2026 (aviso fixo na borda do fio; contador no título da aba; sem notificação do navegador).
 
 <a id="rn-1303"></a>
 
-### RN-1303 — O chat de sessão criativa mostra os executores da execução vigente num carrossel manual acima do fio, que se minimiza e some quando a execução termina {#rn-1303}
+### RN-1303 — O chat de sessão criativa mostra a execução vigente numa faixa de uma linha acima do fio, e o detalhe dos executores mora na aba Executores do painel {#rn-1303}
 
-- **Regra:** quando a sessão aberta é `kind=criativa` e há execução vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)) com `module_map`, uma faixa FIXA acima do fio (RN-816), logo abaixo das pendências de outras sessões, mostra um cartão por executor: os dev agents (um por módulo) e, com evidência (`pr.gate_changed`, `artifact.qa_verdict`/`artifact.secops_verdict`, `delegation.*`), QA e SecOps em cartões próprios, com o gate que julgam, a PR, o último veredito e há quanto tempo. A lista lê a sessão de execução (outra sessão, mesmas chaves de cache de `useAgentesTravados`) e se mantém viva pelo heartbeat dela; sem endpoint nem evento novo. O cabeçalho traz "x de N tarefas" (`done` sobre o backlog vigente, mesmo conjunto da [RN-794](parte-06.md#rn-794)) com barra `role="progressbar"`, a contagem por estado, o custo total e o link para Executores. O casco é o `ui/Carousel` ([RN-148](parte-02.md#rn-148)) com páginas de 3 cartões (1 no celular), SEM autoplay (decisão do dono), e `anunciar={false}` para não falar a cada evento: só o resumo tem `role="status"`. A ordem é a de atenção primeiro: travado, bloqueado, falhou, trabalhando, aguardando, ocioso, concluído, e dentro do estado a do `module_map`. Cada cartão mostra o estado (badge), a tarefa, o texto do estado, a última ação, o tempo (minutos, sem tique), o custo (`token-usage` da execução) e "Ver no fio" (`?highlightEvent=` do último evento). **Minimizar:** um botão com `aria-expanded` reduz cada executor a um chip com nome, estado, tempo e gasto (somem tarefa, última ação, motivo e link do fio) e a barra continua; a escolha fica em `localStorage` (`brabo:carrossel-de-executores:minimizado`, em try/catch) e vale ao recarregar; sem escolha salva, o celular abre minimizado (o "recolhido" do levantamento é o mesmo estado). **Fim:** quando a execução deixa de ser a vigente, a faixa vira uma linha de resumo ("execução concluída" com todas as tarefas `done`, senão "execução parada") com o "x de N", o custo e "Ver Executores", dispensável no ×.
-- **Onde:** `apps/web/src/components/CarrosselDeExecutores.tsx:71` (`CarrosselDeExecutores`), `apps/web/src/lib/executores-ao-vivo-query.ts:23` (`useExecutoresAoVivo`), `apps/web/src/lib/executores-ao-vivo.ts:212` (`cartoesDaExecucao`), `apps/web/src/components/ui/Carousel.tsx:47` (`anunciar`, Home/End), `apps/web/src/routes/SessionPage.tsx:775` (montagem).
-- **Teste:** `apps/web/src/components/CarrosselDeExecutores.test.tsx`, `apps/web/src/lib/executores-ao-vivo.test.ts`, `apps/web/src/components/ui/Carousel.test.tsx`.
-- **Origem:** AT-880 (EP-031); decisão do dono, 09/11/2026 (carrossel manual, resumo no fim, atenção primeiro, devs + QA + SecOps, minimizar).
+> **Revisada pela AT-957 (v10):** o carrossel saiu de cima do fio. O "minimizar" e a chave `localStorage` `brabo:carrossel-de-executores:minimizado` não existem mais; a faixa é a [RN-1354](#rn-1354) e a lista é a aba Executores do painel ([RN-1353](#rn-1353)).
+
+- **Regra:** quando a sessão aberta é `kind=criativa` e há execução vigente ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)) com `module_map`, o painel da sessão ganha a aba Executores com UM item por executor: os dev agents (um por módulo) e, com evidência (`pr.gate_changed`, `artifact.qa_verdict`/`artifact.secops_verdict`, `delegation.*`), QA e SecOps, com estado (badge), tarefa, texto do estado (o motivo da espera), última ação, tempo (minutos, sem tique), custo (`token-usage` da execução) e "Ver no fio" (`?highlightEvent=` do último evento) na própria linha. A ordem é a de atenção primeiro: travado, bloqueado, falhou, trabalhando, aguardando, ocioso, concluído, e dentro do estado a do `module_map`. A leitura é a de sempre: a sessão de execução (outra sessão, mesmas chaves de cache de `useAgentesTravados`), viva pelo heartbeat dela; sem endpoint nem evento novo. **Fim:** quando a execução deixa de ser a vigente, a faixa vira o resumo ("execução concluída" com todas as tarefas `done`, senão "execução parada") com o "x de N" e o custo, dispensável no ×.
+- **Onde:** `src/routes/ListaDeExecutores.tsx` (`ListaDeExecutores`), `src/routes/FaixaDeEstado.tsx` (`FaixaDeEstado`), `src/lib/executores-ao-vivo-query.ts` (`useExecutoresAoVivo`), `src/lib/executores-ao-vivo.ts` (`cartoesDaExecucao`).
+- **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`, `src/lib/executores-ao-vivo.test.ts`.
+- **Origem:** AT-880 (EP-031); decisão do dono, 09/11/2026 (resumo no fim, atenção primeiro, devs + QA + SecOps); AT-957 (EP-035), v10 de 14/11/2026 (carrossel sai do topo).
 
 <a id="rn-1073"></a>
 
 ### RN-1073 — O motivo do ócio do dev agent é derivado no web do `module_map` e do backlog, com o predicado da RN-1005; sem causa achada, diz "sem tarefa disponível agora" {#rn-1073}
 
 - **Regra:** o `dev.idle` do engine só diz "sem task pegável" (ou a pausa de rede, [RN-864](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules.md#rn-864)), e o claim vazio é decidido na api por [RN-1005](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1005): a tarefa do módulo só sai enquanto nenhum módulo do `dependsOn` DIRETO tiver tarefa aberta. O web relê esse predicado para o cartão, em ordem: (a) pausa de rede: o próprio `reason`; (b) o módulo não tem tarefa aberta: concluído; (c) o módulo tem tarefa aberta e algum `dependsOn` tem tarefa ≠ `done`: "esperando a fundação de X" com a PR aberta da tarefa de X (branch `feature/task-<id>`) ou o título da tarefa em andamento, e com várias dependências "esperando N módulos; o primeiro a destravar é X" (o que tem PR); (d) todas as tarefas abertas bloqueadas: "tarefa bloqueada" com o motivo; (e) fora disso, "sem tarefa disponível agora", nunca um motivo inventado. A tarefa ainda não pega não tem `module`: ela herda os `moduleIds` da história (AT-881), que o backlog já manda. `Task.module` já vinha no DTO e passou a existir no tipo do web.
-- **Onde:** `apps/web/src/lib/executores-ao-vivo.ts:68` (`motivoDoOcio`), `apps/web/src/lib/api-types.ts:1110` (`Task.module`).
+- **Onde:** `apps/web/src/lib/executores-ao-vivo.ts:68` (`motivoDoOcio`), `apps/web/src/lib/api-types.ts:1120` (`Task.module`).
 - **Teste:** `apps/web/src/lib/executores-ao-vivo.test.ts`.
 - **Origem:** AT-880 (EP-031); levantamento de 09/11/2026 (TP-01 28ª).
 
@@ -137,8 +141,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1162 — A Visão geral diz UM próximo passo do projeto, tirado de uma tabela tipada e ordenada; sem situação verdadeira, o cartão some {#rn-1162}
 
-- **Regra:** depois dos "Primeiros passos" (RN-708) a Visão geral não dizia mais o que fazer. Desde a AT-936 o cartão "Próximo passo" mostra UMA situação, a primeira verdadeira de uma tabela ordenada: (1) primeiro passo pendente da RN-708, (2) agente conversacional trabalhando, (3) continuar a ideação (há sessão e o backlog não tem histórias), (4) confirmar a arquitetura (há histórias e o mapa de módulos falta ou tem pendência), (5) ligar tarefas a um módulo (RN-1085), (6) desbloquear tarefas, (7) ativar a execução (tarefas prontas e execução inativa), (8) acompanhar a execução (execução ativa com tarefa em andamento), (9) rodar o entregável (todas as tarefas não arquivadas concluídas). O passo 1 reusa o texto e o destino da RN-708, sem duplicar a regra. A regra só ORDENA fatos que a aba já lê: nenhuma leitura nova (o orçamento de carga da Visão geral não muda), e insumo ainda não lido é "não sei" (RN-470), então o cartão espera. Decisões pendentes (aprovações, PRs, hipóteses, promoções) ficam de fora de propósito: já são a faixa "Precisa de você" (RN-467). Tarefa arquivada não conta. Sem situação verdadeira o cartão não aparece, sem texto inventado. "Mapa de módulos sem confirmação" não existe como dado no web: vale "mapa ausente ou com pendência".
-- **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:18` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
+- **Regra:** depois dos "Primeiros passos" (RN-708) a Visão geral não dizia mais o que fazer. Desde a AT-936 o cartão "Próximo passo" mostra UMA situação, a primeira verdadeira de uma tabela ordenada: (1) primeiro passo pendente da RN-708, (2) agente conversacional trabalhando, (3) continuar a ideação (há sessão e o backlog não tem histórias), (4) confirmar a arquitetura (há histórias e o mapa de módulos falta ou tem pendência), (5) ligar tarefas a um módulo (RN-1085; só com a execução ativa, RN-1397), (6) desbloquear tarefas, (7) ativar a execução (tarefas prontas e execução inativa), (8) acompanhar a execução (execução ativa com tarefa em andamento), (9) rodar o entregável (todas as tarefas não arquivadas concluídas). O passo 1 reusa o texto e o destino da RN-708, sem duplicar a regra. A regra só ORDENA fatos que a aba já lê: nenhuma leitura nova (o orçamento de carga da Visão geral não muda), e insumo ainda não lido é "não sei" (RN-470), então o cartão espera. Decisões pendentes (aprovações, PRs, hipóteses, promoções) ficam de fora de propósito: já são a faixa "Precisa de você" (RN-467). Tarefa arquivada não conta. Sem situação verdadeira o cartão não aparece, sem texto inventado. "Mapa de módulos sem confirmação" não existe como dado no web: vale "mapa ausente ou com pendência".
+- **Onde:** `apps/web/src/lib/proximo-passo.ts:46` (`PASSOS`), `apps/web/src/lib/proximo-passo.ts:72` (`derivarProximoPasso`), `apps/web/src/components/ProximoPasso.tsx:19` (`ProximoPasso`), `apps/web/src/routes/ProjectOverviewTab.tsx:310` (montagem logo abaixo dos Primeiros passos).
 - **Teste:** `apps/web/src/lib/proximo-passo.test.ts` (um caso por situação, precedência, "nenhuma" e tarefa arquivada), `apps/web/src/routes/ProjectOverviewTab.test.tsx` (describe "próximo passo": fixture da P10, bloqueada, cartão que some).
 - **Origem:** AT-936 (EP-035); prévia em `13-design/proximo-passo`. Revisa a RN-708: o primeiro passo pendente dela é a situação 1 desta tabela.
 
@@ -147,7 +151,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1200 — O teto do projeto é MENSAL na tela: medidor, dias restantes, previsão e a legenda da virada em UTC {#rn-1200}
 
 - **Regra:** o teto do projeto (`GET/PUT projects/:id/budget`, `maintainer`) passa a ser do mês civil em UTC (api RN-1168..1171): o `spentMicros` é o gasto do mês e a resposta traz `periodo { inicio, fim, diasRestantes, previsaoMicros }`. A aba Gastos chama o bloco de "Teto do mês" e diz "N dias restantes", "Previsão no fim do mês: US$ X" e "O mês vira em <data> (00:00 UTC)". A virada é em UTC; SÓ a legenda é convertida para a hora local do navegador. Os avisos 70/90 e o bloqueio falam "do mês" (a sessão segue acumulada e sem `periodo`). O cartão do plano (RN-1062) compara a estimativa com o que resta do teto do projeto NO MÊS. O motivo `politica` do engine agora também vem do teto do mês; o cartão "Aumentar o teto por tarefa" (AT-917) só vale para o motivo do ToolLoop e deve oferecer "ver o teto do projeto" no motivo `politica`.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/lib/spend.ts:289` (`viradaDoMesLocal`), `src/routes/ProjectSpendTab.tsx:95` (`OrcamentoDoProjeto`).
+- **Onde:** `src/components/TetoDoMes.tsx:41` (`TetoDoMes`), `src/lib/spend.ts:289` (`viradaDoMesLocal`), `src/routes/ProjectSpendTab.tsx:95` (`OrcamentoDoProjeto`).
 - **Teste:** `src/routes/ProjectSpendTab.test.tsx` ("mostra dias restantes, previsão e a virada do mês"), `src/lib/spend.test.ts` (`viradaDoMesLocal`).
 - **Origem:** AT-934 (EP-035). Revisa a RN-213 (o alerta é do mês).
 
@@ -156,7 +160,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1201 — O workspace tem teto de gasto mensal, que só o owner vê e define {#rn-1201}
 
 - **Regra:** a S06 (Gastos) mostra ao `owner` o teto do mês do workspace (`GET/PUT workspaces/:id/budget`, 403 para os demais), com o mesmo medidor, previsão e legenda da RN-1200, e o editor (valor e política `block`/`allow`). Quem não é owner não lê o valor (a api recusa): vê, em texto, que o teto é do owner e que só o conhece quando uma chamada é recusada ("Budget do workspace atingiu o teto do mês"). O controle nunca é oferecido a quem a api não deixa usar (RN-102); erro de leitura de quem não edita é silencioso. O teto do workspace soma todos os projetos e é independente dos de projeto, sessão e área: basta um no limite com `block` para recusar.
-- **Onde:** `src/components/TetoDoMes.tsx:27` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1360` (`getWorkspaceBudget`).
+- **Onde:** `src/components/TetoDoMes.tsx:41` (`TetoDoMes`), `src/routes/SpendPage.tsx:23` (`SpendPage`), `src/lib/api-client.ts:1379` (`getWorkspaceBudget`).
 - **Teste:** `src/components/TetoDoMes.test.tsx` (owner edita; sem papel fica inerte com o motivo; 403 silencioso).
 - **Origem:** AT-935 (EP-035).
 
@@ -164,8 +168,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1185 — Os passos do turno se recolhem numa linha e se agrupam por INTENÇÃO, num mapa tipado; nenhum passo some {#rn-1185}
 
-- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Os turnos ANTERIORES ao último `agent.response` mostram o bloco de passos como UMA linha (`ResumoDeTurno`: agente, passos, `gravadoNoTurno` do engine, custo) que expande no lugar; a mensagem do agente continua inteira no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
-- **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ResumoDeTurno.tsx:17` (`ResumoDeTurno`), `src/routes/session-timeline-montagem.tsx:443` (`ultimaRespostaId`).
+- **Regra:** `PassosDoTurno` recolhido mostra "N passos", até 3 ferramentas mais usadas com ×N, o custo (`custoMicros` do `agent.response`, RN-1158) e a duração do TURNO (`duracaoMs`); campo ausente (evento antigo ou do `ToolLoop`) é traço ou some, nunca zero. Aberto, o seletor "Agrupados | Em ordem": "Em ordem" é a lista de `passosDoTurno`; "Agrupados" parte o MESMO conjunto por intenção (Leu o contexto, Desenhou, Registrou, Outros) por `GRUPO_DA_FERRAMENTA`, `Record<FerramentaConhecida, Grupo>` exaustivo pelo tipo; ferramenta fora do tipo cai em Outros. O fio não agrupa por origem (RN-644). Desde a AT-958 (RN-1392) o raciocínio, as consultas e os passos de cada turno, o último e os anteriores, moram dentro de UMA linha de trabalho (`LinhaDeTrabalho`); `ResumoDeTurno` saiu do fio (segue na visão geral do projeto). A mensagem do agente (a última de todas inteira; as anteriores em 3 linhas com "Ver resposta inteira", RN-1406) continua no fio e o texto dela fica em 62ch (ADR 0248). O `Reasoning` mostra "N tokens" quando o fecho traz `raciocinioTokens`, senão a contagem de caracteres. Recorte declarado (RN-180): o texto lateral por passo da prévia não tem fonte estruturada e sai; "iteração N de 14" sai; o papel do raciocínio é filtrado pela api (ADR 0249), não pelo web.
+- **Onde:** `src/lib/grupos-de-ferramenta.ts:12` (`GRUPO_DA_FERRAMENTA`), `src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`), `src/lib/resumo-de-turno.ts:20` (`gravadoDoPayload`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
 - **Teste:** `src/lib/grupos-de-ferramenta.test.ts`, `src/components/ai-elements/passos-do-turno.test.tsx` (seletor Agrupados | Em ordem).
 - **Origem:** AT-891 (EP-035), ADR 0290/0294.
 
@@ -182,7 +186,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1210 — O cabeçalho do projeto tem trilha, chips, medidor de gasto do mês e UMA ação primária por seção {#rn-1210}
 
-- **Regra:** desde a AT-888 o cabeçalho (56 px) mostra a trilha `Projeto / Seção` (a seção vem de `secaoDaChave`), os chips `provider · visibilidade` e a branch padrão do repositório (não a checada), o `MedidorDeGasto` e a ação primária da seção: Visão geral e Sessões = "Nova sessão"; Trabalho = "Ativar execução" só na sub-aba Backlog (some com a execução já ativa; em Execução o cartão de chamada tem a ação, RN-1220); demais = nenhuma. O medidor lê `GET projects/:id/budget`: gasto do mês, barra por faixa (70% aviso, 90% perigo) e a previsão de `periodo.previsaoMicros` só quando a api a devolve; sem teto (`null`) diz "sem teto" com barra neutra e leva a Configurações. "Nova sessão" cria `consultiva` em Sessões › Conversa e `criativa` nos demais lugares, ativa e navega, pelo MESMO `useCriarSessao` da aba (uma régua só). "Ativar execução" usa `useAtivarExecucao`: recusa por repositório ausente confirmado (RN-582) e toast com a causa real da api. Papel mínimo do controle = o do endpoint (RN-102): `developer` para criar sessão, `maintainer` para ativar. O chip "Precisa de você" fica até a AT-889.
+- **Regra:** desde a AT-888 o cabeçalho (56 px) mostra a trilha `Projeto / Seção` (a seção vem de `secaoDaChave`), os chips `provider · visibilidade` e a branch padrão do repositório (não a checada), o `MedidorDeGasto` e a ação primária da seção: Visão geral e Sessões = "Nova sessão"; Trabalho = "Ativar execução" só na sub-aba Backlog (some com a execução já ativa; em Execução o cartão de chamada tem a ação, RN-1220); demais = nenhuma. O medidor lê `GET projects/:id/budget`: gasto do mês, barra por faixa (70% aviso, 90% perigo) e a previsão de `periodo.previsaoMicros` só quando a api a devolve; sem teto (`null`) diz "sem teto" com barra neutra e "Definir teto" leva a `?tab=spend#teto` (Gastos#teto: o teto tem um lugar só). "Nova sessão" cria `consultiva` em Sessões › Conversa e `criativa` nos demais lugares, ativa e navega, pelo MESMO `useCriarSessao` da aba (uma régua só). "Ativar execução" usa `useAtivarExecucao`: recusa por repositório ausente confirmado (RN-582) e toast com a causa real da api. Papel mínimo do controle = o do endpoint (RN-102): `developer` para criar sessão, `maintainer` para ativar. O chip "Precisa de você" fica até a AT-889.
 - **Onde:** `apps/web/src/routes/ProjectPage.tsx` (`ProjectPage`), `apps/web/src/components/MedidorDeGasto.tsx:14` (`MedidorDeGasto`), `apps/web/src/lib/use-criar-sessao.ts:17` (`useCriarSessao`), `apps/web/src/lib/use-ativar-execucao.ts:12` (`useAtivarExecucao`).
 - **Teste:** `apps/web/src/components/MedidorDeGasto.test.tsx` (com teto, faixa e previsão; sem teto).
 - **Origem:** AT-888 (EP-035), ADR 0294 e 0296 (previsão: AT-934).
@@ -192,7 +196,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1220 — Trabalho junta Backlog e Execução: ativar, áreas, fila, ações da execução e Quadro por estado da tarefa {#rn-1220}
 
 - **Regra:** em Trabalho › Execução, com a execução parada, o topo de `ResumoDaExecucao` é só o cartão de chamada (AT-943, v9): o que acontece ao ativar, o teto do projeto (SEM estimativa de custo, AT-883 #21) e a ação "Ativar execução" (`AtivarExecucao`, `maintainer` no endpoint, RN-102; trancada sem repositório confirmado, com o motivo dito no próprio cartão, RN-582; a recusa da api, como o 409 sem container da RN-1101, é dita ao lado). Abaixo, um cartão por área executora (Dev, Infra, QA…) com situação, paralelismo `ativos / maxParallel` e lead com o número de membros, e a fila de tarefas em tabela (título, módulo, estado; `N prontas · N rodando · N bloqueadas`, cada contagem do ESTADO da tarefa e nunca somada, RN-467; arquivada fora; pronta = `todo` de história que não está em rascunho, RN-048). `AcoesDaExecucao` traz da Visão geral o desbloqueio com orientação (RN-835), o aceite de paralelização (RN-083) e a lista de PRs de dev; as duas ações pedem `developer` (RN-102) e a lista só tem as PRs PENDENTES do projeto. A lista de áreas vem da leitura de áreas só com a execução parada; com a execução de pé vem do roster, sem leitura nova (RN-632, RN-794). A sub-aba "Histórias" passou a se chamar "Backlog". Em Trabalho › Backlog: ação "Ativar execução" no cabeçalho, busca e filtros (pergunta aberta, módulo) locais sobre a árvore carregada, épico recolhível com progresso, chips de módulo e "N pergunta(s)" por história (a lista de perguntas tem teto de 50, e acima dele a tela diz que é recorte, RN-180), e o seletor Por épico | Quadro, só leitura, com cinco colunas pelo `estadoDaTarefa` (a fazer, em curso, em revisão, concluída, bloqueada).
-- **Onde:** `apps/web/src/routes/ResumoDaExecucao.tsx:34` (`ResumoDaExecucao`), `apps/web/src/components/AtivarExecucao.tsx:17` (`AtivarExecucao`), `apps/web/src/routes/AcoesDaExecucao.tsx:22` (`AcoesDaExecucao`), `apps/web/src/lib/trabalho-v9.ts:5` (`filaDeTarefas`), `apps/web/src/lib/trabalho-v9.ts:22` (`historiaPassaNoFiltro`), `apps/web/src/routes/ProjectBacklogTab.tsx:776` (`QuadroDeTarefas`), `apps/web/src/routes/ProjectExecutorsTab.tsx:112` (`backlogEmCache`).
+- **Onde:** `apps/web/src/routes/ResumoDaExecucao.tsx:34` (`ResumoDaExecucao`), `apps/web/src/components/AtivarExecucao.tsx:17` (`AtivarExecucao`), `apps/web/src/routes/AcoesDaExecucao.tsx:22` (`AcoesDaExecucao`), `apps/web/src/lib/trabalho-v9.ts:5` (`filaDeTarefas`), `apps/web/src/lib/trabalho-v9.ts:22` (`historiaPassaNoFiltro`), `apps/web/src/routes/ProjectBacklogTab.tsx:801` (`QuadroDeTarefas`), `apps/web/src/routes/ProjectExecutorsTab.tsx:130` (`backlogEmCache`).
 - **Teste:** `apps/web/src/routes/AcoesDaExecucao.test.tsx` (desbloqueio e botão inerte sem papel), `apps/web/src/routes/ProjectBacklogTab.quadro.test.tsx` (5 colunas, arquivada fora, fila, busca e filtro), `apps/web/src/routes/duas-abas.orcamento.test.tsx` (teto de requisições intacto).
 - **Origem:** AT-894 (EP-035).
 
@@ -210,7 +214,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1225 — Decisões ganha "Decididas recentemente" e a sub-aba Permissões; PRs diz as próximas ações e que o merge é manual {#rn-1225}
 
 - **Regra:** desde a AT-895 (ADR 0294) a sub-aba Aprovações lista, abaixo da fila pendente, o que JÁ foi decidido (`GET /projects/:projectId/actions?status=decided&since=`, RN-1154): aprovadas, negadas com o motivo, automáticas (rotuladas "pela política"), executadas e falhas, mais novas primeiro, 24 h por padrão e "Ver todas" alarga para 30 dias (teto de 100 da api). A leitura não tem poll próprio: a chave começa por `['project-pending-actions', projectId]`, e quem decide invalida o prefixo. Erro da api diz que falhou, nunca "nada decidido" (RN-088), e a lista não soma com a fila pendente (RN-467, RN-638). A tabela do `permissions.json` saiu da aba Aprovações para a sub-aba Permissões (`PermissoesDoProjeto`), sem mudar comportamento. A aba PRs ganha, no vazio, "Ver a aprovação" e "Ativar execução" e o bloco "Como uma PR anda aqui", que diz que o merge em branch protegida é sempre manual: o card só PROPÕE (RN-418 intacta). O rótulo da fila pendente passa de "ordenadas por urgência" para "mais antigas primeiro" (não existe regra de urgência). A frase "o que acontece se aprovar" segue vindo de `FRASE_DA_ACAO` em `lib/aprovacoes.ts`, exaustiva sobre o `ActionType` gerado.
-- **Onde:** `src/routes/DecididasRecentemente.tsx:21` (`DecididasRecentemente`), `src/lib/decididas-queries.ts:13` (`useProjectDecidedActions`), `src/routes/PermissoesDoProjeto.tsx:26` (`PermissoesDoProjeto`), `src/routes/project-tabs.ts:258` (registro da sub-aba `permissoes`), `src/routes/code/PrListAndDiff.tsx:62` (`vazioExtra`).
+- **Onde:** `src/routes/DecididasRecentemente.tsx:21` (`DecididasRecentemente`), `src/lib/decididas-queries.ts:13` (`useProjectDecidedActions`), `src/routes/PermissoesDoProjeto.tsx:26` (`PermissoesDoProjeto`), `src/routes/project-tabs.ts:258` (registro da sub-aba `permissoes`), `src/routes/code/PrListAndDiff.tsx:66` (`vazioExtra`).
 - **Teste:** `src/routes/DecididasRecentemente.test.tsx` (automática com origem, negada com motivo, vazio, "Ver todas", erro), `src/routes/PermissoesDoProjeto.test.tsx` (as três de hoje, extraídas), `src/routes/project-tabs.test.tsx` (13 abas, deep-link `permissoes`), `src/routes/ProjectPrsTab.test.tsx` (vazio e fluxo).
 - **Origem:** AT-895 (EP-035), ADR 0294. Fica de fora, declarado: Hipóteses (P17) sem o bloco "Exemplo", "Aprovar e criar regra" (rótulo) e o rodapé "0 agentes editando", que sai.
 
@@ -227,7 +231,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1265 — Configurações tem linhas de configuração e um Salvar no cabeçalho que cumpre a RN-469 {#rn-1265}
 
-- **Regra:** desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`).
+> **Complementada pela [RN-1489](#rn-1489) (AT-1005):** o Salvar da escada de modelos, que tem gesto próprio, fica no rodapé da seção, com a contagem de alterações; o gesto e a confirmação não mudam.
+
+- **Regra:** (a linha vira grade com o controle ao lado do rótulo na AT-974, [RN-1455](#rn-1455).) Desde a AT-896 (lane F) as seções escalares (paralelismo e teto por área) mostram cada ajuste como linha (rótulo e descrição à esquerda, controle à direita) e a aba ganha, acima dos grupos, "N alterações não salvas · Descartar · Salvar". O Salvar do cabeçalho junta as linhas sujas de todas as seções montadas e as salva em SÉRIE, sem abortar na primeira recusa (RN-469): todas passaram diz a contagem; nenhuma passou diz a mensagem da api; algumas passaram diz "Salvou N de M" nomeando as que ficaram (`<seção>: <linha>`), que continuam sujas. Valor inválido bloqueia o botão e a barra diz quantos. Só as linhas escalares entram; converter modo de execução, arquivar e as chaves seguem com a confirmação própria. A linha "Teto de gasto do mês" usa o `TetoDoMes` (RN-1200) e o papel mínimo é o do endpoint (`maintainer`, RN-102): quem não pode vê o valor e o motivo em texto. Desde a AT-946 (P18) as linhas escalares (bloqueadas seguidas, teto por tarefa, paralelismo por área, teto por área) NÃO têm mais botão por seção: o Salvar do cabeçalho é o único gesto. A escada de modelos (lista), o teto de gasto do mês e a conversão de modo mantêm gesto próprio, com confirmação própria. Teto por tarefa e escada de modelos formam a seção "Teto por tarefa e escada de modelos" (`TetoPorTarefaSection`). **Desde a AT-973 o teto do mês tem um lugar só, o cartão `#teto` dos Gastos (RN-1450):** Configurações mostra só o valor, com "Editar em Gastos".
 - **Onde:** `src/routes/settings/salvar-do-cabecalho.tsx:21` (`ProvedorDoSalvarDoCabecalho`), `src/routes/settings/salvar-do-cabecalho.tsx:100` (`BarraDeSalvar`), `src/routes/settings/secao-salvavel.helpers.ts:118` (`salvarSecao`), `src/routes/settings/LinhaDeConfiguracao.tsx:5` (`LinhaDeConfiguracao`), `src/routes/settings/TetoPorTarefaSection.tsx:39` (`TetoPorTarefaSection`), `src/routes/settings/CabecalhoDaSecao.tsx:5` (`CabecalhoDaSecao`).
 - **Teste:** `src/routes/settings/salvar-do-cabecalho.test.tsx` (tudo em série e desfecho parcial nomeado).
 - **Origem:** AT-896 lane F (EP-035), ADR 0294; revisada na AT-946 (P18).
@@ -272,9 +278,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1329 — A sidebar mostra um projeto por vez: fora de projeto, PROJETOS é lista plana; dentro, o seletor e as oito seções do escolhido {#rn-1329}
 
-- **Regra:** fora de projeto, PROJETOS é uma lista plana (ponto de status, nome, badge de aprovações pendentes e "+ Novo projeto"). Dentro de projeto, PROJETO traz o seletor com os projetos e "Novo projeto", e as oito seções do projeto escolhido logo abaixo; escolher outro projeto abre a aba padrão dele. Não há estado de expansão por projeto: `brabo.sidebar.open` não é mais lida. O recolhimento (RN-195) segue. O topo traz o chip do ambiente (`VITE_BRABO_AMBIENTE`), o atalho ⌘K/Ctrl K no Buscar e o item "Início". Revoga a RN-196 e a RN-729 (a parte "a sidebar abre só o projeto aberto"); a RN-1205 perde o "ver todos" de Agentes agora.
-- **Onde:** `src/routes/Shell.tsx:252` (`SeletorDeProjeto`), `src/routes/Shell.tsx:300` (`Shell`), `src/lib/sidebar-state.ts:57` (`lerProjetoAtivo`).
-- **Teste:** `src/routes/Shell.test.tsx` (lista plana fora de projeto, seletor e oito seções dentro, sem "ver todos").
+- **Regra:** fora de projeto, PROJETOS é uma lista plana (ponto de status, nome, badge de aprovações pendentes e "+ Novo projeto"). Dentro de projeto, PROJETO traz o seletor com os projetos e "Novo projeto", e as oito seções do projeto escolhido logo abaixo; escolher outro projeto abre a aba padrão dele. Não há estado de expansão por projeto: `brabo.sidebar.open` não é mais lida. O recolhimento (RN-195) segue. O topo traz o chip do ambiente (`VITE_BRABO_AMBIENTE`), o atalho ⌘K/Ctrl K no Buscar e o item "Início". Revoga a RN-196 e a RN-729 (a parte "a sidebar abre só o projeto aberto"); a RN-1205 perde o "ver todos" de Agentes agora. Com altura útil abaixo de 800 px (`matchMedia('(max-height: 799px)')`, AT-964) e a sidebar expandida, os quatro links de Workspace viram uma linha "Workspace" que abre um menu com os quatro e "Recolher menu", o rótulo PROJETO some quando há projeto aberto, e Agentes agora lista só quem trabalha, espera ou falhou, mais "+ N parados · ver todos" (leva a Executores). O corpo da sidebar rola, com esmaecido de 20 px embaixo enquanto houver conteúdo abaixo e barra de rolagem ao passar o mouse; recolhida (48 px) não muda.
+- **Onde:** `src/routes/Shell.tsx:329` (`SeletorDeProjeto`), `src/routes/Shell.tsx:377` (`Shell`), `src/lib/sidebar-state.ts:57` (`lerProjetoAtivo`).
+- **Teste:** `src/routes/Shell.test.tsx` (lista plana fora de projeto, seletor e oito seções dentro, sem "ver todos"). Altura baixa e normal em `Shell — sidebar em altura baixa (AT-964)`.
 - **Origem:** AT-939 (v9), decisão do dono de 13/11/2026.
 
 <a id="rn-1331"></a>
@@ -285,3 +291,768 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Onde:** `src/routes/settings/RoteadorDeFerramentasSection.tsx` (`RoteadorDeFerramentasSection`), `src/lib/api-client.ts` (`getWorkspaceToolRouter`, `setWorkspaceToolRouter`).
 - **Teste:** `src/routes/settings/RoteadorDeFerramentasSection.test.tsx` (um caso por estado e motivo, não-owner, PUT, 409, aviso de queda).
 - **Origem:** AT-626 (Rodada C), decisão do dono de 13/11/2026.
+
+### RN-1332 — O cartão do QA e do SecOps diz o estado real do gate: tarefa bloqueada ou de volta na fila do dev nunca aparece como "Julgando" {#rn-1332}
+
+- **Regra:** o `markBlocked` mantém `gate_status = awaiting_qa` sem emitir `pr.gate_changed`, então o último parecer não basta. (a) Um `backlog.task_blocked` da MESMA `taskId` depois do último `pr.gate_changed`/`infra.gate_changed` encerra o "trabalhando" do gate (`gateStatus` devolve `ocioso`; o carrossel e a aba Executores usam a mesma função), com o texto "A tarefa bloqueou: o gate espera a correção". (b) Se o backlog tem tarefa `todo` com `gateStatus` aberto do gate (`awaiting_qa` no QA, `awaiting_secops` no SecOps), o cartão diz "A PR #N espera voltar ao QA: a tarefa está na fila do dev" ou, com `blocked`, "… a tarefa está bloqueada"; esse estado vale mais que o último parecer. Os campos novos da api (`origin`, `blockedBy`) não são exigidos. O texto do dev travado aponta o botão que existe: "Use Rearmar aqui nas pendências ou em Executores."
+- **Onde:** `src/lib/agent-status.ts` (`gateStatus`, `gateParadoPorBloqueio`), `src/lib/executores-ao-vivo.ts` (`cartaoDoGate`), `src/locales/*/executors.json` (`gateEsperaVolta*`, `gateEsperaDesbloqueio*`, `gateTarefaBloqueada`, `travado`).
+- **Teste:** `src/lib/agent-status.test.ts`, `src/lib/executores-ao-vivo.test.ts`.
+- **Origem:** AT-982 (achado 44), AT-985 (achado 34) e AT-984 (passo 8); Rodada 382.
+
+### RN-1333 — Nenhum texto fica abaixo de 11 px e links e cabeçalhos de ordenação têm alvo de pelo menos 24 px {#rn-1333}
+
+- **Regra:** o piso tipográfico é `--fs-label` (11 px); não existe token menor. Todo `font-size` dos `*.module.css` usa os tokens `--fs-*` (nenhum literal em px de 14,5 px para baixo), e as utilidades do kit (`text-[…px]`) e o texto do canvas seguem o mesmo piso. Links de texto ("Ver todas →") e cabeçalhos de ordenação das tabelas têm `min-height: 24px`, sem mudar o tamanho visual do texto.
+- **Onde:** `src/tipografia-minima.test.ts` (`violacoes`), `src/components/FaixaPrecisaDeVoce.module.css` (`.verTodas`), `src/components/ui/Table.module.css` (`.ordenar`), `design/tokens.css` (`--fs-label`).
+- **Teste:** `src/tipografia-minima.test.ts` (reprova `font-size` literal abaixo de 15 px nos módulos).
+- **Origem:** AT-977 (EP-035), v11 de 14/11/2026.
+
+<a id="rn-1353"></a>
+
+### RN-1353 — O painel da sessão é UM só, com as abas Contexto, Executores e Pendências; abaixo de 1024 px ele é o Sheet {#rn-1353}
+
+- **Regra:** o lado direito da sessão é um painel único de 360 px com `Tabs`: **Contexto** (o `ContextAside`, sem mudar o conteúdo), **Executores** (a lista da [RN-1303](#rn-1303); só em sessão criativa) e **Pendências** (o corpo de `PendenciasDeOutrasSessoes`, [RN-626](parte-05.md#rn-626), com o contador na aba). As filas continuam separadas dentro da aba e o contador não soma filas ([RN-467](parte-03.md#rn-467)); a aba mostra uma pergunta por vez, como o Sheet de antes. O contador "Pendências N" do cabeçalho e a faixa abrem o painel na aba certa. Abaixo de 1024 px (consulta própria `(max-width: 1023px)`; o corte da sidebar da [RN-643](parte-05.md#rn-643), 767 px, não muda) o painel é o `Sheet` do chat compacto, com as mesmas três abas, e nasce fechado. **Sempre montado:** recolhido, o painel segue montado (`hidden` no desktop, `keepMounted` no Sheet) e a aba Pendências mantém os ouvintes de `brabo:abrir-fila`/`brabo:abrir-perguntas` (que abrem o painel na aba Pendências, na fila pedida), o contador e o registro do cartão de merge no fio ([RN-843](parte-06.md#rn-843)); Contexto e Executores só montam com o painel aberto, sem leitura nova na rede. O `data-modo` do painel diz `aba` (desktop) ou `sheet`.
+- **Onde:** `src/routes/PainelDaSessao.tsx` (`PainelDaSessao`), `src/lib/layout-movel.ts` (`usePainelEmSheet`), `src/components/PendenciasDeOutrasSessoes.tsx` (`modo="painel"`), `src/components/shadcn/sheet.tsx` (`keepMounted`), `src/routes/SessionPage.tsx` (montagem).
+- **Teste:** `src/routes/PainelDaSessao.test.tsx`, `src/components/PendenciasDeOutrasSessoes.test.tsx`.
+- **Origem:** AT-957 (EP-035), v10 de 14/11/2026; decisão do dono de 14/11/2026 na AT-954.
+
+<a id="rn-1354"></a>
+
+### RN-1354 — A execução vigente é uma faixa de 40 px que nunca cresce: progresso, quantos esperam e custo {#rn-1354}
+
+- **Regra:** em sessão criativa com execução vigente, uma linha de 40 px fixos acima do fio mostra "x de N tarefas" (`role="progressbar"`, mesmo conjunto da [RN-794](parte-06.md#rn-794)), quantos executores esperam (aguardando, ocioso, bloqueado ou travado) e o custo total; o botão "Executores" abre o painel na aba Executores. Ela reforça a [RN-816](parte-06.md#rn-816): a coluna do chat não ganha altura com o número de executores. A região viva (`role="status"`) é só a contagem de espera.
+- **Onde:** `src/routes/FaixaDeEstado.tsx` (`FaixaDeEstado`), `src/routes/FaixaDeEstado.module.css` (`.faixa`).
+- **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`.
+- **Origem:** AT-957 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1357"></a>
+
+### RN-1357 — O composer é uma caixa só: o "Para" mora na barra de baixo, entre o "+" e o Enviar {#rn-1357}
+
+- **Regra:** o composer da conversa é um único `InputGroup`: o campo em cima e, na barra de baixo, o "+" (menu de ações e "Endereçar handoff…"), o anexo, o destinatário ("Para: <agente>") e Parar/Enviar. A linha "Para" própria (51 px) deixou de existir; a doca (aviso + composer) cabe em 168 px com o aviso e 124 px sem. A regra do destinatário ([RN-631](parte-05.md#rn-631)) não muda: continua escolhido e visível, o envio trava sem escolha e o motivo é dito em texto; muda só o lugar. Ordem do Tab: campo, "+", destinatário, enviar. O contrato do E2E são `data-testid="destinatario-do-chat"` (o `select`) e `data-testid="enviar-mensagem"`.
+- **Onde:** `src/routes/SessionComposer.tsx` (`PromptInputToolbar`), `src/routes/SessionComposer.module.css`.
+- **Teste:** `src/routes/SessionPage.sugestoes-no-chat.test.tsx`, `src/routes/SessionComposer.ancora.test.ts`.
+- **Origem:** AT-960 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1358"></a>
+
+### RN-1358 — O "Mergear" confirma num Popover do próprio botão, e o merge segue gesto humano {#rn-1358}
+
+- **Regra:** o botão "Mergear" do `MergearNoChat` (aviso de PR pronta, fila de prontas e cartão da PR) abre um `Popover` com "Mergear #N em <alvo>?", Confirmar e Cancelar; Esc fecha e o foco volta ao botão. Confirmar propõe o `git_merge` (ator `user`) e o aprova no mesmo gesto, pelos mesmos endpoints; nada muda na proposição ([RN-418](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-418), [RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)).
+- **Onde:** `src/routes/MergearNoChat.tsx`.
+- **Teste:** `src/routes/MergearNoChat.test.tsx` ("Popover; Esc fecha").
+- **Origem:** AT-960 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1387"></a>
+
+### RN-1387 — A aba Arquitetura mostra os contratos vigentes por módulo, com o tipo de cada item {#rn-1387}
+
+- **Regra:** abaixo do diagrama C4 e dos ADRs, a seção "Contratos entre módulos" lista, por módulo, o que ele expõe (`contratos` de `GET /projects/:id/backlog/architecture`, [RN-684](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-684)): o tipo (`funcao`, `rota`, `evento`, `dado`, `tabela`, `identidade`), a assinatura e a descrição. `tabela` e `identidade` levam o Badge de destaque. Sem contrato declarado, a seção diz que o Arquiteto ainda não declarou; erro e carga seguem os estados da aba ([RN-088](parte-01.md#rn-088)). Só leitura.
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/routes/ProjectArchitectureTab.module.css`.
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` ("tabela agendamento sob agenda").
+- **Origem:** AT-981 (EP-036).
+
+<a id="rn-1388"></a>
+
+### RN-1388 — O evento `artifact.module_contracts` aparece na timeline com rótulo próprio {#rn-1388}
+
+- **Regra:** o fio da sessão rotula o evento do contrato declarado ("declarou o contrato entre módulos") e o cartão de artefato lista os módulos do contrato (`contratos[].modulo`); antes o evento caía sem rótulo. A recusa do contrato é erro da ferramenta, não evento, e não ganha rótulo.
+- **Onde:** `src/lib/timeline-tree.ts`, `src/lib/artefato-do-fio.ts`, `src/locales/*/executors.json` (`artifactModuleContracts`).
+- **Teste:** `src/lib/artefato-do-fio.test.ts`.
+- **Origem:** AT-981 (EP-036).
+
+<a id="rn-1392"></a>
+
+### RN-1392 — Cada turno mostra UMA linha de trabalho que abre no lugar: raciocínio, consultas e passos dentro {#rn-1392}
+
+- **Regra:** o `agent.response` encerrado ganha, depois da bolha, um só `Trace` recolhido ("Trabalhou 14,0 s · 5 passos") no lugar dos três blocos separados (passos, raciocínio, "Consultado neste turno"). Ao abrir, mostra nessa ordem o `Reasoning` (`data-testid` `raciocinio-do-turno`), o "Consultado neste turno" e os passos (`PassosDoTurno`, com o seletor da RN-1185). A duração é o `duracaoMs` do fecho do turno, nunca relógio da tela; sem o campo o título diz "Trabalhou · N passos", sem "0 s". Turno sem passos, raciocínio nem fontes não gera linha. O raciocínio só chega a quem a api autoriza (ADR 0249, RN-993): o web mostra o que vier. A linha não conta no corte do fio (RN-974, RN-644) e a chave é `${event.id}-trabalho`.
+- **Onde:** `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`), `src/routes/session-timeline-montagem.tsx:1022` (`LinhaDeTrabalho`).
+- **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/routes/session-timeline-montagem.raciocinio.test.tsx`.
+- **Origem:** AT-958 (EP-035), v10 (K02).
+
+<a id="rn-1393"></a>
+
+### RN-1393 — Durante o turno a linha de trabalho nasce aberta, com o título em brilho e sem segundos {#rn-1393}
+
+- **Regra:** a faixa do turno (`TurnActivityStrip`) põe o raciocínio em curso, o plano (RN-967) e os passos dentro da MESMA `LinhaDeTrabalho`, aberta, "Trabalhando · N passos". Não há duração em curso (a fonte é o `duracaoMs` do fecho), então o "9 s" da prancha não existe. O brilho é o `Shimmer` e respeita `prefers-reduced-motion`. A faixa continua montada acima da doca; levá-la ao fio é da AT-959. Quando a resposta chega, a faixa some e o turno passa a ter a linha fechada da RN-1392.
+- **Onde:** `src/components/TurnActivityStrip.tsx:49` (`TurnActivityStrip`), `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`).
+- **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/components/TurnActivityStrip.test.tsx`.
+- **Origem:** AT-958 (EP-035).
+
+<a id="rn-1395"></a>
+
+### RN-1395 — Com chave de nuvem, o time no modelo local não é "modelo aplicado" {#rn-1395}
+
+- **Regra:** no passo `modelo` dos Primeiros passos (RN-708), o time no modelo LOCAL (o `modelId` do Criativo está em `modelsByCategory.local`, da mesma `['models', projectId]` que a Visão geral já lê) só conta como feito quando a conta NÃO tem credencial de nuvem. Com chave de nuvem, o passo fica pendente: "O time está no modelo local ‹nome›. Escolha um modelo do seu provedor.", com "Escolher o modelo" e o botão "Aplicar Claude Haiku 5.5 ao time", que grava o modelo do PROJETO (`PUT /projects/:id/model-binding`, `maintainer`, RN-102). Sem o papel, ou sem o Haiku ativo no catálogo (RN-043), o botão fica inerte com o motivo visível; falha da api é dita ao lado. A leitura de credenciais passa a ligar também com o time no modelo local (com modelo de nuvem segue desligada, orçamento da Visão geral). Sem a lista de modelos lida, o cartão espera (RN-470).
+- **Onde:** `src/lib/primeiros-passos.ts` (`derivarPrimeirosPassos`), `src/components/PrimeirosPassos.helpers.ts` (`useModeloDoTime`), `src/components/PrimeirosPassos.tsx`.
+- **Teste:** `src/lib/primeiros-passos.test.ts`, `src/routes/ProjectOverviewTab.test.tsx` ("time no modelo local").
+- **Origem:** AT-986 (EP-035), decisão do dono de 17/11 (P1 = A).
+
+<a id="rn-1396"></a>
+
+### RN-1396 — "Começar a ideação" cria e abre a sessão do Criativo {#rn-1396}
+
+- **Regra:** o passo `ideacao` dos Primeiros passos e o "Próximo passo" que o reusa deixam de ser link para a lista de sessões: o botão "Começar a ideação" cria, ativa e abre a sessão `criativa` pelo `useCriarSessao` (a régua única da RN-1210), desabilitado enquanto cria. Papel mínimo `developer` (RN-102); sem ele o botão fica inerte com o motivo visível.
+- **Onde:** `src/components/ComecarIdeacao.tsx`, `src/components/PrimeirosPassos.tsx`, `src/components/ProximoPasso.tsx`.
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx` ("Começar a ideação" cria, ativa e abre a sessão).
+- **Origem:** AT-986 (EP-035).
+
+<a id="rn-1397"></a>
+
+### RN-1397 — "Tarefas sem módulo" e `ligar_modulo` só valem com a execução ativa {#rn-1397}
+
+- **Regra:** antes do plano do Dev Lead (sem execução ativa) atribuir o módulo da tarefa é trabalho dele (RN-678), não pendência do dono. A fila "Tarefas sem módulo" (RN-1085) só aparece com a execução ativa, e o próximo passo `ligar_modulo` (RN-1162) só vale com `execucaoAtiva`. Sem execução, a fila e o passo somem, sem texto no lugar.
+- **Onde:** `src/components/PendenciasDeOutrasSessoes.tsx` (`semModulo`), `src/lib/proximo-passo.ts` (`PASSOS`).
+- **Teste:** `src/lib/proximo-passo.test.ts`, `src/components/PendenciasDeOutrasSessoes.test.tsx` (RN-1397).
+- **Origem:** AT-986 (EP-035), decisão do dono de 17/11 (P2 = A).
+
+<a id="rn-1389"></a>
+
+### RN-1389 — A Sessão ocupa a janela: só o fio rola {#rn-1389}
+
+- **Regra:** a página da sessão tem a altura da janela e não rola; barra, faixa de estado, avisos e doca (aviso de PR, fila e composer) têm altura de conteúdo e não encolhem, e o fio (`role="log"`) é o único elemento com rolagem vertical. O composer nunca fica cortado ([RN-751](parte-06.md#rn-751), item 1, não muda).
+- **Onde:** `src/routes/SessionPage.module.css` (`.wrapper`, `.chatColumn`, `.messages`).
+- **Teste:** `src/routes/SessionPage.altura-fixa.test.ts` (estrutura do CSS; a altura medida é do Playwright).
+- **Origem:** AT-956 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1390"></a>
+
+### RN-1390 — A barra da sessão tem 56 px {#rn-1390}
+
+- **Regra:** no desktop a barra da sessão tem 56 px (eram 60); abaixo de 1024 px ela quebra linha e fica com altura automática, como antes.
+- **Onde:** `src/routes/SessionPage.module.css` (`.topbar`).
+- **Teste:** `src/routes/SessionPage.altura-fixa.test.ts`.
+- **Origem:** AT-956 (EP-035).
+
+<a id="rn-1391"></a>
+
+### RN-1391 — Com pendência, execução e aviso de PR, o fio tem ao menos 70% da coluna em 1366 × 768 {#rn-1391}
+
+- **Regra:** o orçamento da coluna do chat em 1366 × 768 é 768 − 56 (barra) = 712; faixa de 40, aviso de PR de 44 e composer de 124 deixam 504 px para o fio (70,8%). Revê o critério de 70% da AT-950 sem afrouxar. Se o `ModoAutomaticoNoChat` estourar a folga, ele vai para o topo da aba Executores, com o mesmo predicado.
+- **Onde:** `src/routes/SessionPage.module.css`; medida em `brabo-qa` (`sessao-e-canal-altura`, AT-956).
+- **Teste:** `src/routes/SessionPage.altura-fixa.test.ts` (conta do orçamento).
+- **Origem:** AT-956 (EP-035).
+
+<a id="rn-1408"></a>
+
+### RN-1408 — A aba Executores agrupa as tarefas por rodada, calculada no web {#rn-1408}
+
+- **Regra:** quando alguma tarefa não arquivada depende de outra (`Task.dependeDe`, RN-1372), a aba Executores mostra o plano da execução em grupos "Rodada N de M". Só a rodada em curso (a primeira com lane não mergeada) nasce aberta; as outras são uma linha ("Rodada 1 · 3 mergeadas") que abre no clique. O nível de uma tarefa é 1 mais o maior nível das suas dependências (sem dependência, 1); a api não manda nível. Sem dependência nenhuma, ou só com tarefa arquivada, o plano não aparece (é uma rodada só).
+- **Onde:** `src/lib/plano-por-rodada.ts` (`planoPorRodada`), `src/routes/ListaDeExecutores.tsx`.
+- **Teste:** `src/lib/plano-por-rodada.test.ts`, `src/routes/FaixaEListaDeExecutores.test.tsx`.
+- **Origem:** AT-993 (EP-035, AT-952 desenho 5).
+
+<a id="rn-1409"></a>
+
+### RN-1409 — Cada lane diz a etapa {#rn-1409}
+
+- **Regra:** a etapa vem de `status` e `gateStatus`: `done` = mergeada; `in_progress` = implementando; `in_review` com gate aberto = no gate; `in_review` sem gate = pronta; `todo` = esperando (há dependência não mergeada) ou na fila. Cor só no que pede ação: verde mergeada, amarelo esperando, azul (`--ag-infra`) pronta (espera o merge de quem decide) e no gate; implementando e na fila ficam neutros. A linha diz o agente que executa (`assignedTo`, ou o dev do módulo). Filas não são somadas num número só (RN-467).
+- **Onde:** `src/lib/plano-por-rodada.ts` (`etapaDaTarefa`, `agente`), `src/routes/ListaDeExecutores.tsx` (`TOM_DA_ETAPA`).
+- **Teste:** `src/lib/plano-por-rodada.test.ts`.
+- **Origem:** AT-993 (EP-035).
+
+<a id="rn-1410"></a>
+
+### RN-1410 — A lane que espera diz por quê, e a rodada é só visão {#rn-1410}
+
+- **Regra:** a lane com dependência não mergeada mostra o que falta: "Espera `criarAcesso` da tarefa «título» entrar na main", com os símbolos de `levantamento.expoe` da dependência (os que a lane consome, de `levantamento.consome`, quando casam); sem levantamento, "Espera «título» entrar na main"; com mais de uma, o primeiro título e a contagem. A rodada não tem botão nem barreira: nada de "fechar rodada"; a única barreira é a rodada de integração, que não é desenhada aqui (RN-1005 segue valendo no claim).
+- **Onde:** `src/routes/ListaDeExecutores.tsx` (`plano-por-rodada`).
+- **Teste:** `src/routes/FaixaEListaDeExecutores.test.tsx`.
+- **Origem:** AT-993 (EP-035), decisão 3 da AT-951/952 (14/11).
+
+<a id="rn-1405"></a>
+
+### RN-1405 — "Ir ao fim · N novas" e a âncora ao enviar {#rn-1405}
+
+- **Regra:** revisa a [RN-977](parte-06.md#rn-977), que mantém limiar de 80 px, pausa, gatilhos e `?highlightEvent`. Com o fio pausado, o botão diz "Ir ao fim · N novas", onde N é o número de mensagens (`chat.message` e `agent.response`) com `seq` maior que o do último evento visto quando a pessoa subiu; o clique, ou a volta ao fim, zera. Ao ENVIAR uma mensagem (não ao enfileirar), o fio retoma o acompanhamento e sobe o turno do usuário (`[data-autor="voce"]`) ao topo da janela; quando a resposta passa da janela vale o "segue no fim". A casca é o Message Scroller do kit, sem `use-stick-to-bottom`: quem decide seguir ou pausar continua sendo `useRolagemDoFio`.
+- **Onde:** `src/lib/session-rolagem.ts` (`useRolagemDoFio`, `novasDepoisDe`, `ancorarNoEnvio`), `src/components/shadcn/message-scroller.tsx`, `src/routes/SessionPage.tsx` (`enviarMensagem`).
+- **Teste:** `src/lib/session-rolagem.test.tsx` (novas, âncora).
+- **Origem:** AT-959 (EP-035), v10 de 14/11/2026.
+
+<a id="rn-1406"></a>
+
+### RN-1406 — O turno antigo fica em 3 linhas {#rn-1406}
+
+- **Regra:** revisa a [RN-1185](#rn-1185) no trecho da mensagem inteira. Toda `agent.response` que não é a última do fio fica recolhida em 3 linhas (`line-clamp` por CSS, o próprio texto, sem resumo gerado) e tem "Ver resposta inteira" quando passa de 240 caracteres ou de 3 linhas; o texto inteiro permanece no DOM. A última resposta não recolhe (RN-138).
+- **Onde:** `src/routes/TextoDoAgente.tsx`, `src/routes/session-timeline-montagem.tsx` (`ultimaRespostaId`).
+- **Teste:** `src/routes/TextoDoAgente.test.tsx`.
+- **Origem:** AT-959 (EP-035), decisão do dono de 14/11/2026.
+
+<a id="rn-1407"></a>
+
+### RN-1407 — O trilho de turnos mostra só o carregado {#rn-1407}
+
+- **Regra:** à direita do fio, em 28 px, um ponto por mensagem da janela de eventos já baixada (RN-632, nenhuma leitura nova), na cor do agente; âmbar quando o agente tem ação `pending`. Passar o mouse mostra o turno (`HoverCard`); clicar leva a ele; cada ponto é um botão com nome acessível. Se a janela não começa no primeiro evento (`events[0].seq > 1`), o trilho marca "…" e diz que mostra só os turnos carregados. Some abaixo de 768 px e com menos de 2 pontos.
+- **Onde:** `src/routes/TrilhoDeTurnos.tsx`, `src/lib/trilho-de-turnos.ts` (`pontosDoTrilho`).
+- **Teste:** `src/routes/TextoDoAgente.test.tsx` (trilho).
+- **Origem:** AT-959 (EP-035).
+
+<a id="rn-1426"></a>
+
+### RN-1426 — "Gasto por agente" lê o resumo da sessão {#rn-1426}
+
+- **Regra:** o bloco "Gasto por agente" do painel de contexto usa a mesma fonte do custo da faixa de execução, o resumo de gasto da sessão (`GET /projects/:projectId/sessions/:sessionId/token-usage`, AT-931), e não a soma do `custoMicros` dos eventos baixados. Só aparecem agentes com custo maior que zero. Nenhuma rota nova.
+- **Onde:** `src/routes/ContextAside.tsx` (`aside-gasto`), `src/lib/hooks.ts` (`useSessionTokenUsage`).
+- **Teste:** `src/routes/ContextAside.gasto.test.tsx`.
+- **Origem:** AT-978 (EP-035), v11 de 14/11/2026.
+
+<a id="rn-1427"></a>
+
+### RN-1427 — "Sem gasto ainda" só quando o resumo veio com zero {#rn-1427}
+
+- **Regra:** enquanto o resumo não chegou o bloco mostra carregando; se a leitura falha, mostra "Não foi possível ler o gasto da sessão" (EP-020: erro nunca vira estado vazio). "Sem gasto ainda" só aparece quando o resumo chegou sem custo. Com gasto de execução acima de zero o texto não está no documento.
+- **Onde:** `src/routes/ContextAside.tsx`, `aside.gastoErro` e `aside.gastoVazio` em `sessionPage.json` (4 idiomas).
+- **Teste:** `src/routes/ContextAside.gasto.test.tsx`.
+- **Origem:** AT-978 (EP-035).
+
+<a id="rn-1428"></a>
+
+### RN-1428 — A sessão de execução usa a página da v10 e se chama "Execução · #hash" {#rn-1428}
+
+- **Regra:** a sessão de execução não tem layout próprio: é a mesma `SessionPage` da v10 (altura fixa RN-1389, faixa de 40 px e painel com abas RN-1353, composer em caixa RN-1357). Sem nome, o título diz o tipo: "Execução · #6fcfa54b"; com nome vale o nome (RN-098); sessão que não é de execução segue "Sessão #hash".
+- **Onde:** `src/routes/SessionTopbar.tsx` (`topbar.tituloExecucao`, `TIPO_DE_EXECUCAO`).
+- **Teste:** `src/routes/SessionTopbar.test.tsx` (AT-978).
+- **Origem:** AT-978 (EP-035).
+
+<a id="rn-1432"></a>
+
+### RN-1432 — No telefone a barra da sessão tem 52 px e uma linha {#rn-1432}
+
+- **Regra:** abaixo de 768 px (`useLayoutMovel`, RN-643) a barra da sessão deixa de quebrar linha: 52 px, com voltar ao projeto, estado, UM título com reticências e o botão do painel. O botão mostra o contador de pendências (`Badge`) e, havendo pendência e o painel fechado, abre o Sheet já na aba Pendências (RN-626). O botão "Pendências N" da barra de desktop não aparece no telefone. Trilha e metadados também saem da barra. Alvos de toque de 40 px.
+- **Onde:** `src/routes/SessionTopbar.tsx` (`SessionTopbar`), `src/routes/SessionPage.module.css` (`.topbarMovel`).
+- **Teste:** `src/routes/SessionPage.layout-movel.test.tsx`.
+- **Origem:** AT-961 (EP-035), v10 prancha K05.
+
+<a id="rn-1433"></a>
+
+### RN-1433 — No telefone os ajustes da sessão moram na aba Contexto {#rn-1433}
+
+- **Regra:** tipo da sessão, modelo, idioma das respostas (RN-620), medidor da janela (RN-969), "Iniciar ideação" e Encerrar saem da barra e ficam no topo da aba Contexto do painel (Sheet), com os mesmos comportamentos e nomes acessíveis. Na faixa de estado, no composer e no Mergear os alvos de toque têm 40 px. Nada some: só muda de lugar.
+- **Onde:** `src/routes/SessionTopbar.tsx` (`ControlesDaSessao`), `src/routes/SessionPage.tsx` (`controlesNoPainel`), `src/routes/FaixaDeEstado.module.css`.
+- **Teste:** `src/routes/SessionPage.layout-movel.test.tsx`.
+- **Origem:** AT-961 (EP-035).
+
+<a id="rn-1447"></a>
+
+### RN-1447 — Os filtros do Backlog ficam numa linha que quebra {#rn-1447}
+
+- **Regra:** a barra de filtros é um `flex` com `gap` de 8 px e `flex-wrap`, na ordem busca (`flex: 1 1 260px`, máximo 420 px), "Com pergunta aberta · N" (uma `Checkbox` do kit com rótulo, não mais um `Chip`), seletor de módulo (`NativeSelect` do kit) e, à direita, "Por épico / Quadro". Nenhum item usa posição absoluta nem margem negativa, então nenhum par de controles se sobrepõe em 1848, 1366 ou 589 px. O rótulo da busca é `placeholder` com `aria-label` igual, e o campo leva a lupa do kit à esquerda (AT-1006).
+- **Onde:** `src/routes/ProjectBacklogTab.tsx`, `src/routes/ProjectBacklogTab.module.css` (`.filtros`).
+- **Teste:** `src/routes/ProjectBacklogTab.test.tsx`.
+- **Origem:** AT-969 (EP-035), prancha L04 da v11.
+
+<a id="rn-1448"></a>
+
+### RN-1448 — O Backlog diz o status por extenso e o épico conta só as concluídas {#rn-1448}
+
+- **Regra:** o selo da história mostra "pronta para executar" (`ready`, tom neutro), "em execução" (`in_progress`) ou "concluída" (`done`); `draft` segue "rascunho". O épico diz "N histórias · N de M concluídas" (AT-1006, como a L04), contando só histórias `done`, com uma barra `Progress` ao lado. O número de tarefas da história não quebra linha.
+- **Onde:** `src/routes/ProjectBacklogTab.tsx` (`STATUS_TONE`, `EpicNode`), `src/locales/*/backlog.json` (`statusLabel`, `epico.progresso`).
+- **Teste:** `src/routes/ProjectBacklogTab.test.tsx`.
+- **Origem:** AT-969 (EP-035).
+
+<a id="rn-1449"></a>
+
+### RN-1449 — A Rastreabilidade vai para baixo da lista no estreito {#rn-1449}
+
+- **Regra:** o contêiner da aba é uma grade `minmax(0, 1fr) 320px` a partir de 1000 px de largura do contêiner (container query; o corte é do contêiner, não da janela: cerca de 1304 px de janela, então em 1366 × 768 a Rastreabilidade fica ao lado) e uma coluna abaixo disso, com a Rastreabilidade depois da lista. As regras da Rastreabilidade são UMA lista (`ul`), uma linha por regra, com "N histórias" à direita (AT-1006).
+- **Onde:** `src/routes/ProjectBacklogTab.module.css` (`.pagina`, `.wrapper`).
+- **Teste:** `src/routes/ProjectBacklogTab.test.tsx` cobre a estrutura; a largura se confere na captura (CSS de contêiner não roda no jsdom).
+- **Origem:** AT-969 (EP-035).
+
+<a id="rn-1434"></a>
+
+### RN-1434 — No telefone o aviso de PR cabe em uma linha {#rn-1434}
+
+- **Regra:** o aviso do PR aberto no fio ("Mergear" + nota) fica em uma linha abaixo de 768 px: a nota é cortada com reticências e o botão Mergear fica sempre visível.
+- **Onde:** `src/routes/MergearNoChat.tsx` (`MergearNoChat`), `src/routes/SessionPage.module.css` (`.mergearNoChat`).
+- **Teste:** `src/routes/MergearNoChat.test.tsx`.
+- **Origem:** AT-961 (EP-035).
+
+<a id="rn-1445"></a>
+
+### RN-1445 — A falha de uma ação de container mostra o motivo no cartão {#rn-1445}
+
+- **Regra:** o cartão de aprovação de uma ação que falhou lê a causa de `executionResult.error` (ações git) OU de `executionResult.motivo` (ações de container, inclusive "o container subiu sem rede: DNS de X falhou"), em texto não vazio: 1ª frase, teto de 160 caracteres, no `Alert` abaixo de "Falhou". Sem nenhum dos dois, fica só "Falhou".
+- **Onde:** `src/components/ApprovalCard.tsx` (`causaDaFalha`), `src/lib/api-types.ts` (`ContainerActionResult`).
+- **Teste:** `src/components/ApprovalCard.falha-com-causa.test.tsx`.
+- **Origem:** AT-980 (EP-036), achado 7c.
+
+<a id="rn-1446"></a>
+
+### RN-1446 — `/containers` mostra a remoção pendente {#rn-1446}
+
+- **Regra:** a página global lê `GET /workspaces/:workspaceId/containers/remocoes-pendentes` (papel `viewer`, poll como a lista) e, havendo pendência, mostra a seção "Remoção pendente": projetos apagados cujos containers ainda serão removidos quando o broker voltar. Cada linha traz o nome (ou o `projectId` encurtado em 8 caracteres quando `projetoNome` é nulo), os recursos, as tentativas, quando e o motivo. Sem pendência, a seção não aparece.
+- **Onde:** `src/routes/ContainersPage.tsx`, `src/lib/hooks.ts` (`useRemocoesPendentes`), `src/lib/api-client.ts` (`getRemocoesPendentes`), `src/locales/*/containers.json` (`remocoes`).
+- **Teste:** `src/routes/ContainersPage.test.tsx`.
+- **Origem:** AT-980 (EP-036), lane L8.
+
+<a id="rn-1442"></a>
+
+### RN-1442 — A oferta de "fazer sozinho" aparece no chat e vira estado respondido {#rn-1442}
+
+- **Regra:** o evento `automacao.oferecida` vira um cartão no fio com o texto da categoria (aprovação, passagem ou desbloqueio), onde se desfazer (link para `?tab=settings&group=projeto&section=regras-de-oferta`, montado na web; o `comoDesfazer` do payload é um `DELETE` e não é mostrado) e duas ações visíveis: "Fazer sozinho daqui em diante" (`POST /projects/:id/automacoes` com `decisao: 'aceitar'`) e "Não, continue perguntando" (`recusar`). Só `maintainer` responde; os demais veem os botões inertes com o motivo em texto. O cartão deixa de pedir clique quando `automacao.aceita` ou `automacao.recusada` da mesma categoria e chave o segue no fio, e passa a dizer só o desfecho.
+- **Onde:** `src/routes/OfertaDeAutomacao.tsx`, `src/lib/automacao-oferta.ts` (`respostaDaOferta`), `src/routes/session-timeline-montagem.tsx`.
+- **Teste:** `src/routes/OfertaDeAutomacao.test.tsx`, `src/lib/automacao-oferta.test.ts`.
+- **Origem:** AT-999 (EP-035, AT-953).
+
+<a id="rn-1443"></a>
+
+### RN-1443 — As regras de oferta se desfazem em Configurações › Projeto {#rn-1443}
+
+- **Regra:** abaixo de "Passagens entre agentes sem clique", a seção "Regras de fazer sozinho" lista as regras com origem `oferta` (`GET /projects/:id/automacoes`), cada uma com "Desfazer" (`DELETE /projects/:id/automacoes/:categoria/:chave`; na aprovação a chave é `<tipo>@<agente>`). Só `maintainer` desfaz; os demais veem o botão inerte com o motivo. Sem regra de oferta, a seção não aparece. As saídas do `automacao.outro_caminho` (RN-1444) ainda são só texto, não clicáveis.
+- **Onde:** `src/routes/settings/RegrasDeOfertaSection.tsx`.
+- **Teste:** `src/routes/settings/RegrasDeOfertaSection.test.tsx`.
+- **Origem:** AT-999 (EP-035).
+
+<a id="rn-1444"></a>
+
+### RN-1444 — O fio narra o que a regra fez e o anti-laço não oferece automatizar {#rn-1444}
+
+- **Regra:** `automacao.aplicada` vira a linha "Feito sozinho pela regra de …, desde … · desfazer", e "desfazer" é o link para Configurações › Projeto, seção "Regras de fazer sozinho". `automacao.outro_caminho` diz que a decisão já repetiu sem resolver e lista as saídas (trocar o modelo da tarefa, pedir ao Dev Lead, arquivar), sem o botão de automatizar.
+- **Onde:** `src/routes/session-timeline-montagem.tsx`.
+- **Teste:** `src/routes/OfertaDeAutomacao.test.tsx` (montagem do fio).
+- **Origem:** AT-999 (EP-035).
+
+<a id="rn-1450"></a>
+
+### RN-1450 — O teto do mês tem um lugar só: o cartão `#teto` dos Gastos {#rn-1450}
+
+> **Revisada pela [RN-1487](#rn-1487) (AT-1005):** o cartão deixou de ficar ao lado dos indicadores. Os indicadores ocupam a largura inteira e o cartão fica ao lado do gráfico por dia, na faixa de baixo; fechado, ele resume a previsão e a virada do mês numa linha só.
+
+- **Regra:** o teto do mês mora no cartão compacto `id="teto"` da aba Gastos do projeto e da página Gastos do workspace, à direita do gráfico por dia (320 px; abaixo de 1100 px, abaixo dos indicadores). Com teto, mostra o título, o medidor compacto (valor e barra, sem marcadores de 90%/100% nem linha em R$), a previsão e "Editar"; sem teto, mostra "Sem teto do mês" e "Definir". O botão abre o formulário (valor, "Ao atingir o teto", "Salvar teto" com rótulos e texto visíveis) dentro do próprio cartão, sem Popover, para a âncora continuar caindo nele; quem não edita vê o motivo em texto, sem botão. `?tab=spend#teto` (o "Definir teto do mês" do cabeçalho, RN-1210) rola até o cartão quando ele monta. O cartão existe mesmo se o relatório de gasto falhar. As regras do teto (bloquear ou só avisar, RN-1200) não mudam.
+- **Onde:** `src/components/TetoDoMes.tsx` (`CartaoDoTeto`), `src/components/SpendPaineis.tsx` (`GastoDoWorkspace`, prop `teto`), `src/routes/ProjectSpendTab.tsx`, `src/routes/SpendPage.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx` (`#teto` rola até o cartão).
+- **Origem:** AT-973 (EP-035), decisão do dono de 17/11. Muda a RN-1265.
+
+<a id="rn-1451"></a>
+
+### RN-1451 — Os Gastos mostram quatro indicadores e o período real {#rn-1451}
+
+> **Complementada pela [RN-1487](#rn-1487) (AT-1005):** Total e Chamadas ganham uma segunda linha ("desde 26/10", "<modelo> em N%"), as notas de tokens também são abreviadas e "Ver os N agentes" é um link.
+
+- **Regra:** Total, Chamadas, Tokens e Custo médio por chamada, em grade de quatro. Tokens abreviados a partir de mil ("41,1 mi") com o número inteiro no `title`; custo médio abaixo de 1 centavo mostra 4 casas ("US$ 0,0012"). O seletor de período do owner ganha "Desde o início · N dias" quando o primeiro gasto tem menos de 30 dias (lido da série densa de 30 dias), e ele é o padrão; o eixo do gráfico começa no primeiro dia com gasto. O gráfico nunca passa da largura do cartão. Sem gasto na janela o gráfico diz "Nenhum gasto nos últimos N dias." (N é a janela escolhida) e não oferece "Ver como tabela", e "Onde foi o gasto" vira uma linha no lugar dos rankings. "O meu consumo" do membro usa os mesmos tokens abreviados. Na visão do time, "Por agente" mostra os 3 maiores e "Ver os N agentes".
+- **Onde:** `src/components/SpendPaineis.tsx` (`DestaquesDoTotal`, `SeletorDeJanela`, `GastoDoWorkspace`), `src/lib/spend.ts` (`janelaDesdeOInicio`, `abreviarTokens`), `src/components/CredentialSpendSection.helpers.ts` (`formatarCustoMedio`), `src/components/GraficoDeGastoPorDia.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx`, `src/components/GraficoDeGastoPorDia.test.tsx`.
+- **Origem:** AT-973 (EP-035), prancha L08 da v11.
+
+<a id="rn-1452"></a>
+
+### RN-1452 — "Por sessão" diz o nome (ou o tipo) antes da hashtag {#rn-1452}
+
+- **Regra:** o ranking por sessão dos Gastos mostra "<nome> · #hash"; sessão sem nome mostra o tipo ("Criativa · #hash"). O relatório só traz o id, então o nome vem da lista de sessões do projeto; sem ela (carga ou erro) a linha cai na hashtag sozinha, sem inventar nome (EP-020).
+- **Onde:** `src/components/SpendPaineis.tsx` (`useRotuloDaSessao`), `src/routes/ProjectSpendTab.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx`.
+- **Origem:** AT-973 (EP-035), prancha L08 da v11.
+
+<a id="rn-1453"></a>
+
+### RN-1453 — O convite de membro do projeto é por e-mail {#rn-1453}
+
+- **Regra:** em Configurações › Pessoas e acesso o campo do convite é "E-mail" (antes pedia o UUID do usuário); a tela envia `{ email, role }` e a api resolve o e-mail entre os membros do workspace do projeto. E-mail de fora devolve 404 com a frase da api, mostrada na linha do convite. Tabelas vazias de membros, tokens e chaves mostram uma frase só, sem cabeçalho de colunas. Regra da api: `brabo-api` RN-1453.
+- **Onde:** `src/routes/settings/MembersSection.tsx` (`handleInvite`), `src/components/ui/Table.tsx` (`semCabecalhoSeVazia`), `src/lib/api-client.ts` (`addProjectMember`).
+- **Teste:** `src/routes/settings/papel-na-secao-de-membros.test.tsx`.
+- **Origem:** AT-974 (EP-035), prancha L09 da v11.
+
+<a id="rn-1454"></a>
+
+### RN-1454 — Em Modelos por agente a linha diz só a origem; a cadeia e o fallback abrem num Popover e o aviso de roteamento vem uma vez {#rn-1454}
+
+> **Revisada pela [RN-1488](#rn-1488) (AT-1005):** o Popover usa a fonte do texto (só o identificador do modelo é mono), a faixa de roteamento mostra a frase curta e "O que isso muda" abre a inteira num Popover, e o custo estimado entra no título da tabela. A altura da linha segue a da L09 (~55 px).
+
+- **Regra:** a tabela tem quatro colunas: Agente, Modelo vigente, "De onde vem" e Est. mês (a coluna Fallback saiu). "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) e o fallback ("Se perder o modelo próprio, vale: X", ou "não há nível abaixo") abrem num Popover do chip. Os agentes com gasto no mês vêm primeiro, do maior para o menor gasto, e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). A caixa "Valer para a área" do lead fica na mesma linha do seletor, sem dobrar a altura da linha. O sobretítulo "binding vigente por cascata" saiu e a explicação da cascata fica visível em linha. O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa de aviso (`Alert` com ícone e borda) acima da tabela, com "O que isso muda". A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px` (o critério de 32 px vale entre as colunas). O erro do convite (RN-1453) usa o `Alert` de erro e "Editar em Gastos" (RN-1455) é o `Link` do roteador.
+- **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/settings/PreferenciaDeRoteamento.tsx` (`semAvisoDeCapability`), `src/routes/settings/LinhaDeConfiguracao.module.css`.
+- **Teste:** `src/routes/settings/cascata.test.tsx`, `src/routes/settings/bindings-em-lote.test.tsx`.
+- **Origem:** AT-974 (EP-035), prancha L09 da v11; decisão do dono de 17/11 (v11 vale sobre a revisão visual).
+
+<a id="rn-1455"></a>
+
+### RN-1455 — Em Configurações o teto do mês é só o valor e o caminho para Gastos {#rn-1455}
+
+> **Conferida na AT-1005 ([RN-1489](#rn-1489)):** o `Link` do roteador já estava na `dev`; o teste `teto-so-em-gastos.test.tsx` garante que não recarrega a página.
+
+- **Regra:** o teto do mês mora só em Gastos ([RN-1450](#rn-1450)). Em Configurações › Projeto e execução a linha "Teto de gasto do mês" mostra apenas "<gasto> de <teto> · N%" (ou "Sem teto neste mês", ou "Não foi possível ler o teto") e o link "Editar em Gastos", que é o `Link` do roteador para `?tab=spend#teto` (sem roteador no contexto cai no `<a href>`). Não há formulário nesta tela.
+- **Onde:** `src/routes/settings/ExecutionSection.tsx`.
+- **Teste:** `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx` (ExecutionSection).
+- **Origem:** AT-974 (EP-035), decisão do dono de 17/11.
+
+<a id="rn-1460"></a>
+
+### RN-1460 — O cartão do projeto tem o nome na primeira linha, os agentes por extenso e "sem teto do mês · definir"; a grade filtra Ativos, Parados e Todos {#rn-1460}
+
+> **Revisada pela [RN-1490](#rn-1490) (AT-1007):** o cartão parado ganha o chip "parado" e o rodapé não repete "atividade em ‹ator›".
+
+> **Revisa** a regra do botão "Definir orçamento" do cartão ([RN-963](parte-06.md#rn-963), item 3, e [RN-212](parte-02.md#rn-212)): o botão sai; o `?tab=spend` virou `?tab=spend#teto` ([RN-1450](#rn-1450)).
+
+- **Regra:** no `ProjectCard` o nome ocupa a linha inteira ao lado do ícone do provider (só se corta com reticências quando passa da largura do cartão), e os chips (aprovações, "<agente> aguardando você", "N online", provisionamento) descem para uma linha própria, que não existe sem chip. Os agentes do roster (até 4, o resto como "+N") mostram o nome por extenso ao lado do avatar, não só no `title`; o web não afirma "trabalhando" por agente porque o resumo da grade só traz a contagem de online. Projeto sem teto do mês (resumo lido e `budget` nulo) mostra o texto "sem teto do mês · definir", com "definir" como link (`role="link"`) para `/projects/:id?tab=spend#teto`; nenhum botão "Definir orçamento" existe na página. Acima da grade um `ToggleGroup` com "Ativos · N", "Parados · N" e "Todos". **Parado** é o projeto cujo último evento tem mais de 30 dias (fixo, `DIAS_PARADO`); sem evento vale a data de criação do projeto; **sem o resumo da grade lido (carregando ou erro) ninguém é dado como parado**, porque a tela não afirma o que não leu (EP-020). O padrão é Ativos e a escolha fica em `localStorage` (`brabo.inicio.filtro`, com `try/catch`). A busca atua dentro do filtro; filtro sem resultado diz "Nenhum projeto ativo" ou "Nenhum projeto parado" e o seletor continua na tela. O cartão "Novo projeto" segue como último item da grade.
+- **Onde:** `src/components/ProjectCard.tsx`, `src/components/TokenMeter.tsx` (`compact` + `noBudget`), `src/lib/projetos-parados.ts`, `src/routes/Dashboard.tsx`.
+- **Teste:** `src/components/ProjectCard.test.tsx`, `src/components/TokenMeter.test.tsx`, `src/lib/projetos-parados.test.ts`, `src/routes/Dashboard.test.tsx`.
+- **Origem:** AT-967 (EP-035), prancha L02 da v11 e itens 16 da AT-1000; decisão do dono de 17/11 (o teto tem um lugar só, Gastos).
+
+<a id="rn-1461"></a>
+
+### RN-1461 — Os indicadores do Início contam só o que foi lido: "Projetos ativos" sem os parados e a Caixa com a idade do item mais antigo {#rn-1461}
+
+- **Regra:** "Projetos ativos" é a contagem de projetos NÃO parados ([RN-1460](#rn-1460)) calculada sobre a lista de projetos e o resumo da grade (não mais o `activeProjects` do resumo do workspace), com a nota "N parados há mais de 30 dias" ("nenhum parado…" com zero). Carregando mostra "…", erro de leitura mostra "indisponível", e sem o resumo da grade a nota some. A "Caixa de decisões" mantém uma contagem por fila, nunca somadas ([RN-467](parte-03.md#rn-467)), e ganha embaixo "a mais antiga espera há X": o menor `createdAt` das ações (aprovações e PRs) ou `desde` (promoções, arquitetura, hipóteses). Só aparece com TODAS as filas inteiras: fila cortada pelo teto (`truncada`) não garante que o mais antigo esteja na lista, e a tela não afirma o que não leu ([RN-180](parte-02.md#rn-180)).
+- **Onde:** `src/routes/Dashboard.tsx` (`CartoesDoInicio`, `itemMaisAntigo`).
+- **Teste:** `src/routes/Dashboard.test.tsx` (Ativos, Parados e Todos).
+- **Origem:** AT-967 (EP-035), prancha L02 da v11.
+
+<a id="rn-1462"></a>
+
+### RN-1462 — "Atividade recente" só lista evento com sujeito e resultado {#rn-1462}
+
+- **Regra:** o evento cujo texto de `classifyEvent` é o fallback "atividade em <ator>" não diz o que aconteceu e não entra na lista (`temSujeitoEResultado`); o projeto cujo último evento é assim sai da lista, sem buscar outro (um evento por projeto, [RN-632](parte-05.md#rn-632)). O rodapé do cartão do projeto segue como estava ([RN-648](parte-05.md#rn-648)).
+- **Onde:** `src/lib/activity.ts` (`temSujeitoEResultado`), `src/components/AtividadeRecente.tsx`.
+- **Teste:** `src/routes/Dashboard.test.tsx` (Atividade recente só com sujeito e resultado).
+- **Origem:** AT-967 (EP-035), prancha L02 da v11.
+
+<a id="rn-1466"></a>
+
+### RN-1466 — A Execução tem uma linha de topo e duas visões, Executores e Linha do tempo, guardadas na URL {#rn-1466}
+
+- **Regra:** com a execução vigente, o topo da aba é uma linha: "Execução", o estado da sessão, a sessão ([RN-139](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-139)), a contagem de agentes e, à direita, um `ToggleGroup` "Executores | Linha do tempo" e "Parar execução" (RN-763). A escolha vai para `?visao=linha-do-tempo` (a visão Executores é a ausência do parâmetro; o `validateSearch` do router a mantém e trocar de sub-aba a apaga). A visão "Linha do tempo" mostra o `AgentTimelineTree` sozinho; a página deixou de empilhar a árvore embaixo dos executores. A faixa de execução parada ([RN-1061](#rn-1061)) segue numa linha, com as ações de `DestravarExecucao`. Com a execução parada o topo continua sendo só o cartão de chamada ([RN-794](parte-06.md#rn-794)).
+- **Onde:** `src/routes/ProjectExecutorsTab.tsx`, `src/lib/execucao-tabela.ts` (`resolverVisao`), `src/router.tsx`, `src/routes/ProjectPage.tsx` (`trocarSub`), `src/components/PararExecucao.tsx` (`compacto`).
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx` (tabela de executores, AT-970), `src/lib/execucao-tabela.test.ts`.
+- **Origem:** AT-970 (EP-035), prancha L05 da v11. Revisa a [RN-121](parte-01.md#rn-121): a aba continua isolando dev agent e QA, mas a renderização deixa de ser o `AgentTeamGrid` (que segue na Visão geral).
+
+<a id="rn-1467"></a>
+
+### RN-1467 — Os executores são uma tabela, uma linha por agente, na ordem de atenção {#rn-1467}
+
+- **Regra:** colunas Agente, Estado, Tarefa atual ou última, Modelo (o mesmo seletor do cartão, compacto), Gasto e ações; linha de 44 px. Ordem: lead de área primeiro, depois parados e esperando você, depois trabalhando, por fim ociosos (estável dentro de cada faixa). A coluna de tarefa mostra o motivo quando travado, a tarefa do progresso, ou o desfecho da delegação do subagente. Toda ação do antigo cartão continua: Retomar (rearmar, travado) e "Procurar tarefa de novo" (ocioso) com texto na linha; "Ver no fio" com texto quando trabalhando; autonomia (manual ou automático, só lead e agente solo) e "Ver no fio" no menu "…". A tela só diz o que leu: gasto sem leitura é "—".
+- **Onde:** `src/routes/TabelaDeExecutores.tsx`, `src/routes/TabelaDeExecutores.module.css`, `src/lib/execucao-tabela.ts` (`ordenarExecutores`), `src/routes/ProjectExecutorsTab.tsx`.
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx`, `src/lib/execucao-tabela.test.ts`.
+- **Origem:** AT-970 (EP-035), prancha L05 da v11.
+
+<a id="rn-1468"></a>
+
+### RN-1468 — A Execução mostra três indicadores no lugar de "Áreas" e "Fila de tarefas" {#rn-1468}
+
+- **Regra:** com a execução de pé, Tarefas ("N de M" e uma barra), Fila (prontas, bloqueadas e rodando; "Ver a fila" abre num `Popover` a lista das tarefas) e Gasto da execução (soma do gasto por agente da sessão). Tudo vem do backlog em cache e do resumo de gasto, sem leitura nova ([RN-632](parte-05.md#rn-632), [RN-794](parte-06.md#rn-794)); sem leitura o indicador diz "—", nunca zero. Com a execução parada o cartão de chamada, as áreas com o paralelismo e a fila seguem como eram ([RN-1220](#rn-1220)). O indicador só aparece na visão Executores.
+- **Onde:** `src/routes/IndicadoresDaExecucao.tsx`, `src/lib/execucao-tabela.ts` (`contarTarefas`), `src/routes/ResumoDaExecucao.tsx` (agora só parada).
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx`, `src/lib/execucao-tabela.test.ts`.
+- **Origem:** AT-970 (EP-035), prancha L05 da v11.
+
+<a id="rn-1463"></a>
+
+### RN-1463 — A linha de aprovação tem título curto, comando recolhido e idade {#rn-1463}
+
+- **Regra:** o título de uma aprovação de terminal é a justificativa do agente quando o payload traz uma (`justificativa`, `justification`, `motivo` ou `rationale`); sem ela, "Terminal · ‹primeiro comando›" (a primeira palavra depois de `cd … &&`, `;` ou variáveis `X=1`). Nenhum título passa de 80 caracteres (corta com reticências, nas outras ações também). O comando inteiro fica numa linha mono cortada com reticências e abre inteiro ao clicar nela (`aria-expanded`). Cada linha mostra a idade num chip; acima de 30 dias o chip é âmbar (`--warning`). A decisão de plano segue só no card (RN-467 e AT-910), sem caixa de seleção.
+- **Onde:** `src/lib/caixa-de-decisoes.ts` (`tituloDoTerminal`, `primeiroComando`), `src/components/CaixaDeDecisoes.tsx` (`LinhaDeAprovacao`).
+- **Teste:** `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1464"></a>
+
+### RN-1464 — As aprovações agrupam por projeto, mais antigas primeiro, e a sessão encerrada não aprova {#rn-1464}
+
+- **Regra:** a fila Aprovações ordena pela idade (a mais antiga primeiro) e agrupa por projeto, com o cabeçalho "‹projeto› · N aprovações". Se a sessão da aprovação está encerrada (`closed` ou `closed_abnormally`, lida de `GET /projects/:id/sessions`), o cabeçalho diz "sessão encerrada há N dias: aprovar não executa mais nada" e a linha perde o "Aprovar"; "Negar" fica. Sem a leitura da sessão a tela não afirma nada: a linha mantém o "Aprovar" (EP-020). O cartão "Aprovações" diz "N esperam há mais de 30 dias" (com "pelo menos" quando a fila vem truncada, porque só as lidas são contadas); as cinco filas continuam sem soma (RN-467).
+- **Onde:** `src/components/CaixaDeDecisoes.tsx`.
+- **Teste:** `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1465"></a>
+
+### RN-1465 — Negar em lote pede um motivo único e chama a negação existente uma vez por item {#rn-1465}
+
+- **Regra:** cada linha decidível das Aprovações tem caixa de seleção. Com uma ou mais marcadas aparecem "N selecionadas" e "Negar selecionadas…", que abre um diálogo com os títulos e um motivo obrigatório e único; confirmar chama `denyAction` uma vez por item (`allSettled`): as negadas saem da seleção e da lista, as que falharem ficam marcadas e o diálogo diz quantas. "Selecionar as de mais de 30 dias" marca as antigas. NÃO existe "Aprovar selecionadas", de propósito. Nenhuma rota nova na api. O kit não tem `AlertDialog`; o diálogo usa o `Modal` (Dialog do shadcn).
+- **Onde:** `src/components/CaixaDeDecisoes.tsx` (`NegarEmLote`).
+- **Teste:** `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-968 (EP-035), prancha L03 da v11.
+
+<a id="rn-1472"></a>
+
+### RN-1472 — O explorador de arquivos tem linhas de 28 px com ícone e nome juntos, e a faixa do Código não deixa coluna vazia {#rn-1472}
+
+- **Regra:** cada linha do explorador (pasta ou arquivo) é uma linha `flex` de 28 px de altura, com o ícone de 14 px e o nome na mesma linha, e o recuo é de 18 px por nível (antes 13 px; o nome do arquivo alinha com o da pasta do mesmo nível). A pasta antes deixava o ícone numa linha acima do nome, porque o título do `Disclosure` é um bloco. Na página do projeto, uma aba que desenha até a borda e tem sub-abas (só o Código: Arquivos, PRs) empilha a faixa de sub-abas EM CIMA do painel; antes elas ficavam lado a lado e sobrava uma coluna vazia de cerca de 134 px entre a sidebar e a trilha do explorador, que agora fica colada na borda da área de conteúdo.
+- **Onde:** `src/routes/code/CodeExplorer.tsx` e `.module.css` (`.linha`, `.tituloPasta`, `RECUO_POR_NIVEL`), `src/routes/ProjectPage.tsx` e `.module.css` (`.colunaComSubAbas`).
+- **Teste:** `src/routes/code/CodeExplorer.test.tsx` ("a linha é uma só").
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. Altura não medida em jsdom: a prévia `13-design/codigo-v11/` traz as medidas no navegador.
+
+<a id="rn-1473"></a>
+
+### RN-1473 — Sem arquivo escolhido, o editor abre o README.md da raiz {#rn-1473}
+
+- **Regra:** ao carregar a raiz da ref, se nenhum arquivo foi aberto ainda e a raiz tem um arquivo `README.md`, ele abre numa aba e fica ativo. Vale uma vez por ref: fechar todas as abas depois NÃO o reabre, e um README em subpasta não conta. Sem README, o editor mostra o estado vazio do kit (`Empty`) com "Escolha um arquivo no explorador." (texto novo nos quatro idiomas; a menção à aba Buscar saiu). A leitura da raiz usa a MESMA `queryKey` do explorador (sem requisição a mais); erro de carga da raiz não abre nada e o explorador segue mostrando o erro.
+- **Onde:** `src/routes/code/CodeShell.tsx` (`raizQuery`, `readmeVistoNaRef`), `src/routes/code/CodeEditor.tsx` (`Empty`).
+- **Teste:** `src/routes/code/CodeShell.test.tsx` ("AT-971 (RN-1473)").
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. O rótulo "aberto por padrão" veio na [RN-1494](#rn-1494).
+
+<a id="rn-1474"></a>
+
+### RN-1474 — Uma PR é uma linha, com os portões D, Q, S e V; o Merge só aparece com D, Q e S verdes {#rn-1474}
+
+- **Regra:** na lista de PRs, cada PR é uma linha com número (mono, apagado), título em negrito, autor, branch e data, os quatro portões em linha (D Dev, Q QA, S SecOps, V você, cada um com a cor do estado: verde passou, terracota em curso, vermelho bloqueado, apagado pendente), o selo de estado e as ações. Os portões vêm da TAREFA da branch (`feature/task-…`): sem tarefa (PR de infra ou aberta à mão) não há portão a mostrar e o Merge segue (a tela não afirma o que não leu); PR mesclada mostra os quatro verdes. O motivo é UMA frase sob o título, na ordem: a recusa de merge (RN-705) em âmbar, num único parágrafo (vem primeiro porque, depois de um conflito, a tarefa volta a `in_progress` com o gate pendente, e é o conflito que diz o que destrava); tarefa bloqueada em cor de erro (o motivo gravado da tarefa; sem motivo, o gate pendente, como na RN-768); portão pendente em cor neutra. **Revisa a RN-663 (api) e a RN-768:** o "Merge" só aparece com D, Q e S verdes e a tarefa sem bloqueio; com portão pendente ou falho a ação é a que destrava, "Pedir o parecer de novo" (o `RetomarGateEstacionado` da Sessão, sem a nota ao lado), quando o ciclo do gate da tarefa está estacionado (`gate.rescue_parked` da sessão mais recente), e nada quando não está. O botão desabilitado que flutuava saiu. Enquanto o backlog carrega, a coluna das ações tem o lugar reservado ([RN-816](parte-06.md#rn-816), agora uma caixa de 160 × 24 px). O campo "Já sabe o nº?" virou a busca da lista (número, título, autor ou branch, ignorando `#` e caixa); Enter sem nenhuma PR que combine abre o diff pelo id digitado, como antes. A legenda dos portões fica numa linha abaixo da lista; o diff continua no painel que já existia.
+- **Onde:** `src/routes/ProjectPrsTab.tsx`, `src/routes/code/PrListAndDiff.tsx` (`renderItemPortoes`, `renderItemMotivo`, busca), `src/components/PortoesDaPr.tsx`, `src/lib/portoes-da-pr.ts`, `src/routes/RetomarGateEstacionado.tsx` (`rotulo`, `compacto`).
+- **Teste:** `src/routes/ProjectPrsTab.test.tsx`, `src/routes/code/CodeDiffPanel.test.tsx`, `src/lib/portoes-da-pr.test.ts`.
+- **Origem:** AT-971 (EP-035), prancha L06 da v11. Declarado: "Pedir o parecer de novo" depende do evento de estacionamento estar entre os 200 últimos da sessão mais recente; o "Ver diff" da prancha não foi feito (a linha inteira abre o diff).
+
+
+<a id="rn-1469"></a>
+
+### RN-1469 — O selo do sino conta só o que precisa de você, e a gaveta lista esses itens primeiro {#rn-1469}
+
+- **Regra:** o selo do sino é a soma dos `total` REAIS das cinco filas da Caixa de decisões (`useDecisionInbox`, o mesmo cache da RN-467; o total vale mesmo com a lista cortada pelo teto), nunca a atividade não lida: com 8.404 eventos e 2 decisões o selo mostra 2, e sem decisões o sino fica sem selo (acima de 99, "99+"). Revisa a contagem antiga (por `seq` mais promoções pendentes) e a [RN-091](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-091) só no que o selo conta; o corte de leitura segue o mesmo. A seção "Precisam de você" lista uma linha por item (sujeito, motivo, projeto, idade e "Abrir", que leva à aba onde a decisão mora). Sem leitura do inbox a seção diz que não conseguiu ler, nunca "nada espera por você" (EP-020). Nenhum endpoint novo. Fora de escopo: eventos de "agente parado" como fonte própria, porque a api não tem sinal distinto além de `agentesAguardando`, já coberto pelas aprovações e PRs.
+- **Onde:** `src/lib/notificacoes.ts`, `src/components/NotificationBell.tsx`, `src/routes/Dashboard.tsx`.
+- **Teste:** `src/lib/notificacoes.test.ts`, `src/components/NotificationBell.test.tsx`.
+- **Origem:** AT-966 (EP-035), prancha L01 da v11.
+
+<a id="rn-1470"></a>
+
+### RN-1470 — A atividade é uma linha por projeto; projetos parados há mais de 30 dias somam numa linha {#rn-1470}
+
+- **Regra:** "Atividade por projeto" mostra uma linha por projeto com a contagem de eventos não lidos e a idade do evento mais recente; clicar abre a Visão geral do projeto. "atividade em ‹ator›" deixa de ser linha individual. Projeto cujo evento mais recente tem mais de 30 dias entra na linha única "N projetos parados há mais de 30 dias · X eventos"; projeto com eventos ainda não carregados nunca é dado como parado, nem ganha idade inventada. Revisa a [RN-100](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-100) do lado do web: a gaveta deixou de listar os eventos e o aviso "+ N mais antigos" saiu, porque a linha do projeto já traz o total.
+- **Onde:** `src/lib/notificacoes.ts` (`agruparAtividade`), `src/components/NotificationBell.tsx`.
+- **Teste:** `src/lib/notificacoes.test.ts`, `src/components/NotificationBell.test.tsx`.
+- **Origem:** AT-966 (EP-035), prancha L01 da v11.
+
+<a id="rn-1471"></a>
+
+### RN-1471 — O painel do sino tem 420 px, sem rolagem horizontal, e o rodapé diz "Marcar atividade como lida" {#rn-1471}
+
+- **Regra:** o painel tem largura fixa de 420 px (menos que a janela em telas estreitas), `scrollWidth === clientWidth` e texto longo quebrando em até 2 linhas. "Marcar atividade como lida" substitui "marcar as N como lidas" e chama o mesmo corte por `seq` de hoje ([RN-091](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-091)); só a atividade é marcada, os itens que precisam de você ficam até serem decididos.
+- **Onde:** `src/components/NotificationBell.module.css`, `src/components/NotificationBell.tsx`.
+- **Teste:** `src/components/NotificationBell.test.tsx` (a rolagem horizontal é medida na prévia, `13-design/notificacoes-v11`).
+- **Origem:** AT-966 (EP-035), prancha L01 da v11.
+
+<a id="rn-1478"></a>
+
+### RN-1478 — Com as cinco filas em zero, "Precisa de você" é uma linha de até 48 px {#rn-1478}
+
+- **Regra:** na Visão geral, com as cinco filas (RN-467) em zero a faixa vira uma linha ("Nada espera por você agora." e o link "Abrir Decisões"), sem os cinco contadores. Com qualquer fila acima de zero volta a faixa de hoje, mas só com os chips das filas que têm item. Fila ainda não lida continua sendo "não sei" (EP-020), como na RN-890. Revisa a RN-890 só na forma; as filas seguem separadas e lidas pelo projeto (RN-638).
+- **Onde:** `src/components/FaixaPrecisaDeVoce.tsx`.
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx` (a altura de 48 px é medida na prévia, `13-design/visao-geral-v11`).
+- **Origem:** AT-975 (EP-035), prancha L10 da v11.
+
+<a id="rn-1479"></a>
+
+### RN-1479 — A prévia do entregável só existe depois que a porta responde {#rn-1479}
+
+- **Regra:** "Rodar na sua máquina" só monta o `iframe` depois de um `fetch` com `mode: 'no-cors'` à primeira URL local declarada responder em até 3 s. Sem resposta a prévia dá lugar a uma linha: "‹endereço› não respondeu. Suba a aplicação com o comando acima.", com "Tentar de novo" e "Abrir em nova aba". A checagem roda ao abrir a aba e ao clicar em "Tentar de novo"; não há polling. Revisa a RN-855 só na prévia; a nota "declarado pela Infra na PR, não verificado na sua máquina" continua. A resposta opaca do `no-cors` só prova que a porta atende, não que a página está certa.
+- **Onde:** `src/components/EntregavelPreview.tsx`.
+- **Teste:** `src/components/RodarNaSuaMaquina.test.tsx`.
+- **Origem:** AT-975 (EP-035), prancha L10 da v11.
+
+<a id="rn-1480"></a>
+
+### RN-1480 — A atividade da Visão geral agrupa turnos seguidos do mesmo agente e o próximo passo abre a página {#rn-1480}
+
+- **Regra:** em "Atividade", turnos seguidos do mesmo agente viram uma linha ("dev-http-api · 7 turnos, N passos") com a idade do mais recente; no máximo 5 linhas e o link "Ver a linha do tempo inteira". O seletor é um `ToggleGroup` "Turnos | Eventos" e, em Turnos, o contador diz o recorte ("últimos N turnos", a janela da RN-180), não o total de eventos. O "Próximo passo" (RN-1162) sai da coluna lateral e abre a coluna principal, com a ação à direita, e ABSORVE os Primeiros passos (RN-708, revisada): enquanto houver passo pendente é UM cartão com os passos (o atual em destaque, mesmas ações e textos, "Começar a ideação" uma vez só, sem esperar o backlog); com os três feitos volta a ser o Próximo passo de hoje. No "Time de agentes" quem trabalha, parou ou espera você fica à vista e os ociosos somam no cartão "+ N concluídos ou ociosos", que os abre (é nele que mora "Procurar tarefa de novo") e vira "Recolher os ociosos"; sem ninguém ativo todos ficam à vista. Não precisa de dado novo da api. Os passos somam só os `tool.result` que a janela de 200 eventos já tem.
+- **Onde:** `src/lib/turnos-agrupados.ts`, `src/routes/ProjectOverviewTab.tsx`, `src/components/ProximoPasso.tsx`, `src/components/PrimeirosPassos.tsx` (variante `integrado`).
+- **Teste:** `src/routes/ProjectOverviewTab.test.tsx`.
+- **Origem:** AT-975 (EP-035), prancha L10 da v11.
+
+<a id="rn-1475"></a>
+
+### RN-1475 — O diagrama da Arquitetura abre legível: da esquerda para a direita, 300 px, texto de 12,5 px ou mais {#rn-1475}
+
+- **Regra:** o grafo de módulos corre da esquerda para a direita (quem depende fica à esquerda, quem não depende de ninguém à direita), com 300 px de altura (420 px quando a altura útil passa de 1000 px). O zoom inicial é 1 e o texto dos nós tem 12,5 px ou mais (nenhum zoom inicial o encolhe); se o grafo não cabe na largura, ele começa na borda esquerda e se arrasta na horizontal. O botão "Ajustar à largura" fica ao lado dos controles de zoom e encolhe o grafo à área. Os diagramas C4 (Mermaid) entram no tamanho natural do SVG, com o `viewBox` ajustado ao conteúdo real (`getBBox` + 16 px; o título do Mermaid sai da vista), rolagem na horizontal e o mesmo botão no canto direito do cabeçalho (os rótulos de estereótipo `<<person>>` do Mermaid ficam em 12 px, fora do controle da tela). Não troca a biblioteca do diagrama. O Mermaid C4 não tem direção de fluxo: o "esquerda para direita" vale para o grafo de módulos.
+- **Onde:** `src/components/ai-elements/canvas.tsx`, `src/components/ai-elements/canvas.helpers.tsx`, `src/components/C4DiagramView.tsx`, `src/components/C4DiagramView.module.css`, `src/lib/svg-largura.ts` (`ajustarAoConteudo`).
+- **Teste:** `src/components/ai-elements/canvas.test.tsx`, `src/components/C4DiagramView.test.tsx` (o corpo medido no navegador está em `13-design/arquitetura-v11`).
+- **Origem:** AT-972 (EP-035), prancha L07 da v11. Revisa a orientação de baixo para cima da AT-946 (v9).
+
+<a id="rn-1476"></a>
+
+### RN-1476 — Diagrama, ADRs e Pendências são vistas de um ToggleGroup, com a contagem {#rn-1476}
+
+- **Regra:** no topo da Arquitetura, um `ToggleGroup` ("Diagrama", "ADRs · N", "Pendências · N") escolhe a vista; o padrão é Diagrama (grafo de módulos e diagramas C4). ADRs e Pendências só aparecem na própria vista, cada uma com a frase de vazio. A contagem vem da resposta da API e usa o formatador de números do locale. A tabela de módulos e os contratos ficam abaixo, em qualquer vista, e a faixa PROPOSTA continua no topo. Erro de carga segue [RN-088](parte-01.md#rn-088) (AT-965).
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/routes/ProjectArchitectureTab.module.css`, `src/locales/*/overview.json` (`architectureTab.views`).
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx`.
+- **Origem:** AT-972 (EP-035), prancha L07 da v11. Revisa [RN-1387](#rn-1387): os contratos seguem abaixo da tabela, e os ADRs e as pendências deixam de ser seções soltas.
+
+<a id="rn-1477"></a>
+
+### RN-1477 — A tabela de módulos quebra linha em Stack e Responsabilidade e não rola na horizontal {#rn-1477}
+
+- **Regra:** as colunas Stack e Responsabilidade usam `white-space: normal` (classe `celulaQuebra`, que anula o `nowrap` do kit, e quebram palavras longas), de modo que `scrollWidth === clientWidth` na tabela a partir de 1100 px de janela (1366 px medido). A coluna Histórias usa o formatador de números do locale.
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`.
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx` (classe `celulaQuebra`; a rolagem é medida na prévia).
+- **Origem:** AT-972 (EP-035), prancha L07 da v11.
+
+<a id="rn-1487"></a>
+
+### RN-1487 — Nos Gastos do owner o gráfico fica ao lado do cartão do teto, e os indicadores dizem desde quando e quanto {#rn-1487}
+
+> **Revisa** a posição do cartão da [RN-1450](#rn-1450) e completa a [RN-1451](#rn-1451).
+
+- **Regra:** na aba Gastos do projeto e na página Gastos do workspace do owner, os indicadores ocupam a largura inteira e a faixa seguinte é uma grade de duas colunas: o gráfico por dia à esquerda e o cartão `#teto` (320 px) à direita, com o mesmo topo (diferença de até 4 px) e até 160 px de altura com o cartão fechado. Abaixo de 1100 px o cartão desce para baixo dos indicadores. O cartão fechado resume a previsão e a virada do mês numa linha só ("Previsão US$ 41,20 · o mês vira 01/12"); os dias restantes e a frase inteira vão no `title` e em texto para leitor de tela. Total ganha "desde dd/mm", o primeiro dia com gasto da série densa de 30 dias; Chamadas ganha "<modelo> em N%" (o modelo com mais chamadas), e só quando a aba já leu o gasto por modelo, senão fica sem nota (a tela não afirma o que não leu, RN-180). As notas de tokens ("N entrada · N saída") usam os mesmos tokens abreviados, com os inteiros no `title`, em "O meu consumo" do membro e nos indicadores do workspace; nenhum número de mais de 6 dígitos fica visível. "Ver os N agentes" é um link do kit (sublinhado, à esquerda, cor `--text-primary`, que passa AA nos dois temas), não um botão neutro centralizado. O custo médio abaixo de 1 centavo segue com 4 casas ("US$ 0,0012").
+- **Onde:** `src/components/SpendPaineis.tsx` (`GastoDoWorkspace`, `DestaquesDoTotal`, `DetalheDeTokens`), `src/components/TetoDoMes.tsx`, `src/routes/ProjectSpendTab.module.css` (`comTeto`), `src/lib/spend.ts` (`primeiroDiaComGasto`), `src/components/ui/BotaoLink.tsx`.
+- **Teste:** `src/routes/ProjectSpendTab.test.tsx` (as sobras da v11), `src/components/CredentialSpendSection.helpers.test.ts`.
+- **Origem:** AT-1005 (EP-035), prancha L08 da v11 e itens 1, 8 e 14 da AT-1000.
+
+<a id="rn-1488"></a>
+
+### RN-1488 — Em Modelos e Pessoas o Popover usa a fonte do texto, o roteamento tem uma ação e as tabelas vazias são uma linha {#rn-1488}
+
+> **Revisa** a [RN-1454](#rn-1454) e a [RN-1453](#rn-1453).
+
+- **Regra:** o Popover da cascata ("De onde vem") usa a fonte do texto, não a mono; só o identificador do modelo ("Se perder o modelo próprio, vale: `X`") fica em mono. "Mostrar os outros N agentes" é um link do kit ([RN-1487](#rn-1487)). A faixa de aviso de roteamento mostra a frase curta ("Roteamento: não provado em <provider>.") e, à direita, "O que isso muda", que abre a frase inteira num Popover. O cabeçalho "Custo estimado mensal do time" deixa de ser uma faixa à parte e entra no título da tabela ("N agentes · US$ X estimado por mês", com a base de 30 dias no `title`). A linha de Modelos segue com cerca de 55 px, a medida da L09 (decisão do dono de 20/11). O erro do convite tem ícone de erro e o texto na cor de erro (`--danger`). As tabelas vazias de tokens e de chaves de dispositivo são uma linha de até 48 px, e a frase de "Tokens de acesso" não se repete em "Todos os tokens do projeto" (que diz "Ninguém neste projeto emitiu token.").
+- **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/ProjectSettingsTab.module.css` (`cadeiaNoPopover`, `idDoModelo`), `src/routes/settings/MembersSection.tsx`, `src/components/ui/Table.tsx` (`vaziaEmUmaLinha`), `src/routes/settings/PersonalAccessTokensSection.tsx`, `src/routes/settings/RunnerDeviceKeysSection.tsx`.
+- **Teste:** `src/routes/settings/preferencia-de-roteamento.test.tsx`, `src/routes/settings/papel-na-secao-de-membros.test.tsx`, `src/routes/settings/chaves-de-dispositivo.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx`, `test/popover-da-cascata.test.ts`.
+- **Origem:** AT-1005 (EP-035), prancha L09 da v11.
+
+<a id="rn-1489"></a>
+
+### RN-1489 — Em Projeto e execução a escada tem rótulos e o Salvar no rodapé, e os controles usam o kit {#rn-1489}
+
+> **Complementa** a [RN-1265](#rn-1265), a [RN-1142](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1142) e a [RN-1316](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-1316); confirma a [RN-1455](#rn-1455).
+
+- **Regra:** "Editar em Gastos" é o `Link` do roteador para `?tab=spend#teto` e não recarrega a página. Cada campo da escada de modelos tem um `<label>` visível ligado pelo `for` ("Modelo do degrau N", "Teto do degrau N (US$)"). O Salvar da escada desce para o rodapé da seção, com a contagem de alterações não salvas; o gesto e a confirmação próprios não mudam ([RN-1265](#rn-1265), [RN-469](parte-03.md#rn-469)). O merge automático usa o `Checkbox` do kit ao lado do rótulo "Entrar sozinha", sem `input[role="switch"]` nativo. No teto por área "sem teto" tem um estado só, "sem teto próprio" (sai o trio "Sem valor próprio", "sem teto" e o placeholder). A promoção de histórias entra na `LinhaDeConfiguracao`: rótulo à esquerda e o controle na coluna de 520 px, como os outros controles da seção.
+- **Onde:** `src/routes/settings/ExecutionSection.tsx`, `src/routes/settings/TetoPorTarefaSection.tsx`, `src/routes/settings/MergeAutomaticoSection.tsx`, `src/routes/settings/BudgetSection.tsx`, `src/routes/settings/PromotionSection.tsx`.
+- **Teste:** `src/routes/settings/teto-e-escada.test.tsx`, `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/settings/MergeAutomaticoSection.test.tsx`, `src/routes/settings/heranca.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx`.
+- **Origem:** AT-1005 (EP-035), prancha L09 da v11 e a W3 da AT-1000.
+
+### RN-1484 — Moeda e número saem no idioma da interface {#rn-1484}
+
+- **Regra:** a moeda é USD (ADR 0040) e o número de casas é o de cada tela (Execução e turno com 4, aprovações e atividade com 2), mas o separador segue `i18n.language`, lido a cada chamada: em pt-BR "US$ 0,9790", em en "$0.9790". Um formatador só, `formatarUsdCasas` em `lib/currency.ts`, atende `formatMicros`, `dolar`, `formatarCusto`, `dolares` (aprovações) e o teto da atividade; os preços de `lib/models.ts` e do catálogo trocam o `'en-US'` fixo pelo idioma vigente. Os `toLocaleString()` sem argumento e os `'pt-BR'` fixos (gráfico de gasto, janela do agente, Hugging Face, sessões, painel do Código) usam `i18n.language`. O custo médio abaixo de 1 centavo segue com 4 casas (RN-1451).
+- **Onde:** `src/lib/currency.ts`, `execution.ts`, `executores-ao-vivo.ts`, `resumo-de-turno.ts`, `activity.ts`, `aprovacoes.ts`, `models.ts` e os componentes citados.
+- **Teste:** `src/lib/formatacao-pt-br.test.ts`.
+- **Origem:** AT-1004 (EP-035).
+
+### RN-1485 — A contagem sai com separador de milhar {#rn-1485}
+
+- **Regra:** as chaves de contagem (eventos, chamadas, tokens, arquivos, linhas, mensagens) usam `{{count, number}}`, a formatação do i18next, que segue o idioma: "8.404 eventos" em pt-BR e "8,404 events" em en. Os plurais continuam decididos pelo `count`. pt-BR, en, ru e zh-Hans mudam juntos, para a paridade. Onde o chamador já passa o valor formatado, a chave fica como está, para não formatar duas vezes.
+- **Onde:** `src/locales/*/*.json` (só chaves de contagem).
+- **Teste:** `src/lib/formatacao-pt-br.test.ts` (8404 em pt-BR e en).
+- **Origem:** AT-1004 (EP-035).
+
+### RN-1486 — O Snippet copia com texto e a borda segue o tema {#rn-1486}
+
+- **Regra:** o `Snippet` mostra o rótulo ("Copiar"/"Copiado") ao lado do ícone (RN-102, `AcaoCopiar` com `comTexto`); o copiar só com ícone do fio não muda. A borda sem cor (a `border-b` da `Table`, por exemplo) usa `var(--border)` por uma regra `@layer base` em `shadcn.css`, e não o `currentColor` do preflight.
+- **Onde:** `src/components/ai-elements/copiar.tsx`, `snippet.tsx` e `src/shadcn.css`.
+- **Teste:** `src/lib/formatacao-pt-br.test.ts`.
+- **Origem:** AT-1004 (EP-035).
+
+<a id="rn-1481"></a>
+
+### RN-1481 — Cada linha de Containers tem uma ação com texto, escolhida pelo estado; parar, ver detalhes e remover moram no menu "…" {#rn-1481}
+
+- **Regra:** a coluna Ações tem uma única ação com texto, em variante secundária: container de pé ("rodando" ou "provisionando"), "Abrir" (link para `/containers/$projectId`); projeto sem imagem decidida, "Decidir imagem" (link para o projeto); nos demais casos "Subir de novo" (com registro) ou "Subir container" (sem registro), desabilitada quando o motivo é papel, sessão, broker ou runner, com o motivo no "?" como antes ([RN-646](parte-05.md#rn-646)). "Parar", "Ver detalhes" e "Remover" ficam no menu "…" (botão só de ícone, legenda "Mais ações de ‹projeto›"); "Remover" vem depois de um separador, em variante destrutiva; "Parar" e "Remover" seguem desabilitados quando não há o que parar ou remover. Nenhum botão primário na tabela. O cartão de aprovação de ação pendente, a confirmação por `proposed_action` e a seção "Remoção pendente" ([RN-1446](#rn-1446)) não mudam. Os cabeçalhos ordenáveis têm área de clique de 32 px.
+- **Onde:** `src/components/AcoesDoContainer.tsx`, `src/components/ui/Table.module.css` (`.ordenar`), `src/locales/*/containers.json` (`actions.open`, `actions.decideImage`, `actions.menu`, `actions.detalhes`).
+- **Teste:** `src/routes/ContainersPage.test.tsx` ("uma ação por linha", menu "…").
+- **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa [RN-646](parte-05.md#rn-646): Parar e Remover deixam de ser botões da linha. Fora: "Subir container" primário no topo da página (não há alvo único para ele) e logs (a tela de detalhe não os tem; o menu leva ao detalhe).
+
+<a id="rn-1482"></a>
+
+### RN-1482 — A matriz de capacidades usa rótulos legíveis e as abas do catálogo mostram só providers com chave {#rn-1482}
+
+- **Regra:** as colunas da matriz "O que cada provider sabe fazer" usam o rótulo de `providers.capabilities.columns.<chave>` (Streaming, Ferramentas, Lista de modelos, Embeddings, Raciocínio, Roteamento, Sessão fixa, Cache de preço, Cache de prompt, Visão), com o identificador da API no `title`; chave nova, ainda sem rótulo, aparece pelo identificador. "provado" continua selo verde; "não provado" é texto simples, sem selo. A tabela rola dentro do próprio contêiner (`max-width: 100%`). No catálogo de modelos só viram aba os providers com chave do titular (ou locais); os sem chave, inclusive com modelo ativo, saem das abas e ficam na linha "N de fora, sem chave do titular" e em "Adicionar provider" (Credenciais).
+- **Onde:** `src/routes/ProvidersPage.tsx`, `src/routes/ProvidersPage.module.css`, `src/components/ModelCatalogSection.tsx`, `src/locales/*/providers.json`, `src/locales/*/models.json` (`catalog.tabs.noKey` e `noKeyNote` saíram).
+- **Teste:** `src/routes/ProvidersPage.test.tsx`, `src/components/ModelCatalogSection.test.tsx`.
+- **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa [RN-931](parte-06.md#rn-931) e a [RN-043](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md): a aba marcada "sem chave" para desativar modelo ativo deixou de existir na tela do catálogo. O rótulo "Cache de preço" é o da prancha para `priceCeiling` (na API é o teto de preço).
+
+<a id="rn-1483"></a>
+
+### RN-1483 — Na página Status o "Voltar" tem ícone e texto, fica no topo, à esquerda do título {#rn-1483}
+
+- **Regra:** `/status` mostra, antes do `<h1>`, o botão "Voltar" (ícone de seta e texto, variante secundária) que leva ao destino decidido pelo router; o botão só de ícone abaixo da tabela sai. A página continua fora do shell, com a rota pública.
+- **Onde:** `src/routes/StatusPage.tsx`.
+- **Teste:** `src/routes/StatusPage.test.tsx`.
+- **Origem:** AT-976 (EP-035), prancha L11 da v11. Revisa o botão só de ícone da AT-327.
+
+<a id="rn-1490"></a>
+
+### RN-1490 — O Início, o Novo projeto e a Caixa fecham as sobras da v11: chip "parado", passos com nome, título do plano e seta nas linhas {#rn-1490}
+
+- **Regra:** (1) o cartão do projeto parado ganha o chip "parado" (tom neutro), pelo mesmo critério do filtro ([RN-1460](#rn-1460): `estaParado`, último evento há mais de 30 dias); sem o resumo do projeto o chip não aparece. (2) O rodapé do cartão usa a regra da "Atividade recente" ([RN-1462](#rn-1462)): evento genérico ("atividade em ‹ator›") não vira frase e o rodapé fica só com a idade. (3) No Novo projeto o nome de cada passo fica sob o número ("Origem · Onde mora · Revisar") e o passo atual leva `aria-current="step"`; no passo "Onde mora" os modos ficam numa grade de uma linha (2 linhas de texto cada) e o caminho da pasta ocupa a largura toda, sem rolagem interna em 1366 × 768. (4) Na Caixa o plano de execução tem título próprio, "Plano de execução do ‹lead›: N dev agents, um por módulo" (no máximo 80 caracteres, montado dos `modulos` do payload), e a linha de baixo deixa de repetir a frase. (5) A linha do plano troca o link "Abrir" pelo botão "Abrir plano", que leva ao card ([RN-467](parte-03.md#rn-467)); o plano continua fora da seleção em lote. (6) Toda linha da Caixa tem à direita o botão de seta (›) com o nome "Abrir ‹título›", para o mesmo destino do link de antes.
+- **Onde:** `src/components/ProjectCard.tsx` (`parado`), `src/routes/Dashboard.tsx` (`lastActivityText`), `src/routes/NewProjectWizard.tsx` e `.module.css` (`stepper`, `modoGrid`), `src/lib/caixa-de-decisoes.ts` (`tituloDoPlano`, `detalheDoPlano`), `src/components/CaixaDeDecisoes.tsx`.
+- **Teste:** `src/routes/Dashboard.test.tsx`, `src/routes/NewProjectWizard.test.tsx`, `src/lib/caixa-de-decisoes.test.ts`, `src/routes/DecisionsPage.test.tsx`.
+- **Origem:** AT-1007 (EP-035), pranchas L02 e L03 da v11. Revisa [RN-1460](#rn-1460). Declarado: a nota "‹agente› · ‹projeto›" em "Agentes agora" fica fora, porque o Início mostra a seção como contagem e a resposta não traz o projeto de cada agente (sobra de api).
+
+<a id="rn-1491"></a>
+
+### RN-1491 — Na Execução, a faixa de parada é de aviso e as seções abaixo da tabela ficam recolhidas numa linha com a contagem {#rn-1491}
+
+- **Regra:** (1) a faixa de execução parada ([RN-1061](#rn-1061)) usa o tom de aviso (âmbar), não o de perigo, e cabe numa linha em 1848 px; quando um gate estacionado está por trás da parada (`gate.rescue_parked` de uma tarefa bloqueada da parada), a faixa oferece "Pedir o parecer de novo", a mesma ação da linha da PR ([RN-1474](#rn-1474)); os botões de `DestravarExecucao` não mudam. (2) O modo automático do time, as tarefas bloqueadas com as PRs e as pendências de outras sessões ficam abaixo da tabela, cada seção recolhida numa linha com a contagem ("3 agentes em manual · Ver", "2 tarefas bloqueadas · 0 PRs · Ver") e abrem ao clicar; a página cabe em 925 px de altura. (3) Em Indicadores, "Ver a fila" fica na mesma linha do valor da Fila, e com zero tarefas rodando a nota diz "nenhuma rodando". (4) O menu "…" da linha da tabela tem 280 px no mínimo, e a dica do modo automático cabe em 3 linhas.
+- **Onde:** `src/routes/ProjectExecutorsTab.tsx`, `src/routes/AcoesDaExecucao.tsx`, `src/components/PendenciasDeOutrasSessoes.tsx` (`padraoAberto={filasDoChat}`), `src/routes/IndicadoresDaExecucao.tsx`, `src/routes/TabelaDeExecutores.tsx` e `.module.css`.
+- **Teste:** `src/routes/ProjectExecutorsTab.test.tsx`, `src/routes/AcoesDaExecucao.test.tsx`.
+- **Origem:** AT-1007 (EP-035), prancha L05 da v11; decisão do dono de 20/11 (P2). Revisa [RN-1061](#rn-1061), [RN-1466](#rn-1466) e [RN-1468](#rn-1468). Declarado: sem chamadas no resumo, o "Gasto da execução" fica sem nota (sobra de api).
+
+<a id="rn-1492"></a>
+
+### RN-1492 — O cartão do agente da Visão geral mostra o chip "local", a autonomia com texto e as ações num menu {#rn-1492}
+
+- **Regra:** (1) com o modelo local (provider `ollama`, o mesmo critério da categoria `local` do catálogo), o cartão ganha o ponto de atenção e o chip "local" ao lado do nome do modelo; sem o modelo no catálogo o chip não aparece. (2) A autonomia é um `ToggleGroup` com o texto visível "Manual | Piloto automático"; `aria-pressed` e `onAutonomyChange` não mudam. (3) "Procurar tarefa de novo" sai do corpo do cartão e entra no menu "⋯" ("Mais ações de ‹agente›"). (4) O gasto do cartão usa o formato pt-BR, com vírgula. (5) O texto da arquitetura vazia é "Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias."
+- **Onde:** `src/components/AgentCard.tsx`, `src/components/AgentTeamGrid.tsx`, `src/locales/*/overview.json` (`architecture.emptyState`).
+- **Teste:** `src/components/AgentCard.test.tsx`, `src/components/AgentTeamGrid.test.tsx`.
+- **Origem:** AT-1007 (EP-035), prancha L10 da v11; revisa RN-603 e RN-670 só na forma do controle. O `formatMicros` local do cartão saiu: ele importa o de `lib/execution.ts`, em pt-BR desde a AT-1004 ([RN-1484](#rn-1484)).
+
+<a id="rn-1493"></a>
+
+### RN-1493 — Container que falhou mostra a primeira linha do motivo na lista; o nome do projeto abre o detalhe {#rn-1493}
+
+- **Regra:** em `/containers`, a coluna "Detalhe" sai (a lista tem 7 colunas) e o nome do projeto abre `/containers/$projectId`. Com o registrado `failed` e `motivoDaFalha` (a primeira linha do `failureReason` gravado, vinda da api, [RN-1493 da api](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api/parte-12.md#rn-1493)), o status mostra o motivo numa linha cortada embaixo do selo, com "Ver detalhe"; sem motivo, só "falhou". O nome de imagem longo quebra a linha na coluna Imagem, sem reticências.
+- **Onde:** `src/routes/ContainersPage.tsx` (`columns`), `src/routes/ContainersPage.module.css` (`.imagemTexto`, `.motivoDaFalha`), `src/lib/api-types.ts`.
+- **Teste:** `src/routes/ContainersPage.test.tsx` ("AT-1006").
+- **Origem:** AT-1006 (EP-035), prancha L11 da v11. Revisa a coluna "Detalhe" da AT-976.
+
+<a id="rn-1494"></a>
+
+### RN-1494 — Código: "aberto por padrão", busca e ref no cabeçalho, "Ver diff" por PR e o motivo à vista {#rn-1494}
+
+- **Regra:** (1) quando o README abre sem escolha ([RN-1473](#rn-1473)), a linha do caminho mostra o rótulo apagado "aberto por padrão", que some ao escolher outro arquivo ou fechar uma aba. (2) O cabeçalho do editor tem o campo "Buscar no código", que abre a busca do painel lateral com o termo (mínimo de 2 caracteres); o botão da ref (`CodeBranchPicker`) mora no cabeçalho do explorador e da busca, e a barra "ref" acima do shell saiu. A trilha de ícones fica. (3) Cada PR tem o botão "Ver diff", que abre o mesmo diff; a linha inteira continua clicável. (4) O título "Pull requests do projeto" e a frase ficam na mesma linha. (5) Sem papel `developer`, o motivo do botão "Pedir o parecer de novo" desabilitado fica em texto à vista (RN-102), e não só para o leitor de tela.
+- **Onde:** `src/routes/code/CodeShell.tsx`, `CodeEditor.tsx`, `CodeExplorer.tsx`, `CodeSearchPanel.tsx`, `PrListAndDiff.tsx`, `src/routes/ProjectPrsTab.tsx`, `src/routes/RetomarGateEstacionado.tsx`.
+- **Teste:** `src/routes/code/CodeEditor.test.tsx`, `CodeShell.test.tsx`, `src/routes/ProjectPrsTab.test.tsx` ("AT-1006").
+- **Origem:** AT-1006 (EP-035), prancha L06 da v11. Revisa a RN-768 e a RN-816.
+
+<a id="rn-1495"></a>
+
+### RN-1495 — Arquitetura: chips ao lado do toggle, legenda do grafo e rótulo de relação do C4 de 12 px ou mais {#rn-1495}
+
+- **Regra:** ao lado do `ToggleGroup` entram os chips "módulos · v‹N›" (só com `moduleMap`, com a sua `version`) e "C4 nível 2" (só com o diagrama de contêineres gerado). Acima do grafo, a legenda "‹N› módulos · fluxo da esquerda para a direita" (N = `moduleMap.modules.length`); o fluxo vale só para o grafo, porque o Mermaid C4 não tem direção. O `mermaid.initialize` fixa `c4.messageFontSize` em 12, o piso dos rótulos de relação ("usa"). O título do Mermaid continua fora do quadro C4 (decisão do dono, 20/11).
+- **Onde:** `src/routes/ProjectArchitectureTab.tsx`, `src/lib/mermaid-render.ts` (`TAMANHO_MINIMO_DO_ROTULO_C4`).
+- **Teste:** `src/routes/ProjectArchitectureTab.test.tsx`, `src/lib/mermaid-render.test.ts`.
+- **Origem:** AT-1006 (EP-035), prancha L07 da v11. Completa a [RN-1475](#rn-1475) e a [RN-1476](#rn-1476).
+
+<a id="rn-1496"></a>
+
+### RN-1496 — A Sessão dá 70% ou mais da altura ao fio, e o composer é compacto {#rn-1496}
+
+- **Regra:** na coluna do chat, o fio (a conversa) mede 70% ou mais da altura da janela em 1848 × 925, 1440 × 900 e 1366 × 768. Para isso o composer fica em cerca de 120 px: o campo nasce de uma linha (`rows=1`, `field-sizing: content`, de 44 a 160 px) com a dica numa linha só, e o respiro do composer é de 8 px. Em janela baixa (`max-height: 800px`, a partir de 768 px de largura) a barra da sessão cai para 48 px (sai a linha de metadados), a faixa de estado para 32 px, o respiro do composer para 4 px e o campo para 36 px; o orçamento fixo de 264 px não deixaria o fio passar de 66% a 768 px.
+- **Onde:** `src/routes/SessionComposer.tsx`, `SessionComposer.module.css` (`.campo`), `SessionPage.module.css` (`.composer`, bloco `max-height: 800px`), `FaixaDeEstado.module.css`.
+- **Teste:** `src/routes/SessionComposer.menu.test.tsx` ("AT-1009"); o percentual é medido no DOM com o harness de `v10-final/fonte/`.
+- **Origem:** AT-1009 (EP-035), recaptura da v10 (AT-963). Completa a AT-954 e a AT-960.
+
+<a id="rn-1497"></a>
+
+### RN-1497 — O aviso de PR pronta mostra o título da PR em uma linha {#rn-1497}
+
+- **Regra:** o aviso de PR pronta (RN-1063) é uma linha de 44 px em que o título da PR ("PR #N "título" está pronta…") tem o espaço que sobra, cortado com reticências, e os botões ("Mergear", "Agora não") não quebram o rótulo nem passam de 44 px de altura. Dentro do aviso a nota do merge ("Pede a confirmação aqui mesmo…", `MergearNoChat` com `semNota`) sai da vista e fica só para leitor de tela (`sr-only`); a confirmação segue no `Popover` do Mergear. Sem papel para decidir, a nota continua à vista com o motivo.
+- **Onde:** `src/components/AvisoDePrPronta.tsx`, `AvisoDePrPronta.module.css`, `src/routes/MergearNoChat.tsx` (`semNota`).
+- **Teste:** `src/components/AvisoDePrPronta.test.tsx` ("AT-1009").
+- **Origem:** AT-1009 (EP-035). Completa a RN-1063 e a RN-1434.
+
+<a id="rn-1498"></a>
+
+### RN-1498 — Telefone: o fio com 65% ou mais, nada passa da largura, e a trilha da barra não é cortada {#rn-1498}
+
+- **Regra:** em 390 × 844 o fio mede 65% ou mais da altura e nenhum elemento passa da largura. A barra da sessão tem 48 px; a faixa de estado perde a barra de progresso ("N de M tarefas" diz o mesmo) para o custo e o "Executores" caberem; a barra do composer é uma linha (o aviso "Há mais de um agente…" fica só para leitor de tela, o seletor já diz "Escolha o agente") e o respiro do composer é de 4 px. Em qualquer largura a trilha "Sessões / título" não começa acima do topo (`top` maior ou igual a 0): `.trilha` e `.meta` têm `line-height: 1.2`, e as três linhas do bloco do título cabem nos 55 px da barra.
+- **Onde:** `src/routes/FaixaDeEstado.module.css`, `SessionPage.module.css` (`.topbarMovel`, `.trilha`, `.meta`, `.composer[data-layout='movel']`), `src/components/AvisoDePrPronta.module.css`.
+- **Teste:** medido no DOM com o harness de `v10-final/fonte/` (jsdom não calcula o layout).
+- **Origem:** AT-1009 (EP-035). Completa a RN-1432 a RN-1434.
+
+<a id="rn-1499"></a>
+
+### RN-1499 — Ação em texto e linha clicável isolada têm alvo de pelo menos 24 px de altura, sem mudar o texto nem a altura da tela {#rn-1499}
+
+- **Regra:** todo `<a>` ou `<button>` que não é um link dentro de frase mede 24 px ou mais de altura (WCAG 2.2, 2.5.8). O `BotaoLink` do kit (`display: inline-flex`, `min-height: 24px`) cobre "O que isso muda" e "Mostrar os outros N agentes"; o mesmo vale para "Ver no fio" (lista de executores), "Abrir a sessão →" (Próximo passo), "Abrir em nova aba" (prévia do entregável), o comando de cada linha da Caixa e a linha de cada turno da Atividade. Onde a linha era menor que 24 px, uma margem vertical negativa devolve o excesso ao fluxo: a altura da tela muda no máximo 8 px (nas telas medidas, 0). Exceções: link dentro de frase, a trilha "Toggle Sidebar" e os campos de 1×1 px de acessibilidade.
+- **Onde:** `src/components/ui/BotaoLink.module.css`, `src/routes/TabelaDeExecutores.module.css`, `src/components/ProximoPasso.module.css`, `src/components/EntregavelPreview.module.css`, `src/components/CaixaDeDecisoes.module.css`, `src/routes/ProjectOverviewTab.module.css`.
+- **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
+- **Origem:** AT-1010 (EP-035), achado 1 da recaptura da v11 (AT-979). Aplica o critério da AT-977.
+
+<a id="rn-1500"></a>
+
+### RN-1500 — O `Checkbox` do kit tem alvo de 24 px e caixa visível de 16 px {#rn-1500}
+
+- **Regra:** a raiz do `Checkbox` mede 24×24 px (`size-6`); a caixa de 16 px é desenhada pelo `::before`, e `-m-1` devolve 4 px por lado ao fluxo, então nenhuma linha ou tela cresce. Foco, erro (`aria-invalid`) e marcado seguem as mesmas cores, agora na caixa; o anel de foco envolve o alvo de 24 px.
+- **Onde:** `src/components/shadcn/checkbox.tsx`.
+- **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
+- **Origem:** AT-1010 (EP-035). Vale para a Caixa, o Backlog, o merge automático, Modelos e os pickers de modelo.
+
+<a id="rn-1501"></a>
+
+### RN-1501 — No editor do Código, o campo "Buscar no código" e o botão "Blame" têm 24 px de altura {#rn-1501}
+
+- **Regra:** `buscaCampo` e `blameToggle` passam de 22 para 24 px; o texto continua em `--fs-label`.
+- **Onde:** `src/routes/code/CodeEditor.module.css`.
+- **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
+- **Origem:** AT-1010 (EP-035). Complementa a [RN-1494](#rn-1494).

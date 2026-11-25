@@ -6,7 +6,10 @@
     "summing": "Somando…",
     "retry": "Tentar de novo",
     "tokensDetail": "{{input}} entrada · {{output}} saída",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "desde {{dia}}",
+    "topModelCalls": "{{modelo}} em {{pct}}%",
+    "callsLabel": "Chamadas"
   },
   "role": {
     "error": "Não consegui descobrir o seu papel neste workspace, e é ele que diz qual relatório mostrar."
@@ -32,7 +35,8 @@
     "byProjectTitle": "Por projeto",
     "byProjectEmpty": "Nenhum projeto gastou nesta janela.",
     "byActorTitle": "Por agente e pessoa",
-    "byActorEmpty": "Ninguém gastou nesta janela."
+    "byActorEmpty": "Ninguém gastou nesta janela.",
+    "whereEmpty": "Onde foi o gasto: nenhum gasto nesta janela."
   },
   "member": {
     "title": "O meu consumo",
@@ -56,9 +60,9 @@
     "window_one": "último dia",
     "window_other": "últimos {{count}} dias",
     "spend": "Gasto",
-    "calls_zero": "{{count}} chamadas",
-    "calls_one": "{{count}} chamada",
-    "calls_other": "{{count}} chamadas",
+    "calls_zero": "{{count, number}} chamadas",
+    "calls_one": "{{count, number}} chamada",
+    "calls_other": "{{count, number}} chamadas",
     "viewAsTable": "Ver como tabela",
     "colDay": "Dia",
     "colSpend": "Gasto",
@@ -66,12 +70,15 @@
     "callsTitle": "Chamadas por dia",
     "tokensTitle": "Entrada e saída",
     "tokensIn": "Entrada",
-    "tokensOut": "Saída"
+    "tokensOut": "Saída",
+    "noSpendInDays_one": "Nenhum gasto no último dia.",
+    "noSpendInDays_other": "Nenhum gasto nos últimos {{count}} dias.",
+    "noSpendInDays_zero": "Nenhum gasto na janela."
   },
   "libSpend": {
-    "callTitle_zero": "{{dia}} · {{custo}} · {{count}} chamadas",
-    "callTitle_one": "{{dia}} · {{custo}} · {{count}} chamada",
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} chamadas",
+    "callTitle_zero": "{{dia}} · {{custo}} · {{count, number}} chamadas",
+    "callTitle_one": "{{dia}} · {{custo}} · {{count, number}} chamada",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} chamadas",
     "actorPerson": "{{id}} (pessoa)",
     "budgetBlocked": "Atingiu {{pct}}% do teto do mês — novas chamadas de LLM estão BLOQUEADAS até o teto subir ou o mês virar.",
     "budgetWarning": "Já passou de {{pct}}% do teto do mês."
@@ -79,7 +86,8 @@
   "window": {
     "month": "Mês",
     "label": "Janela",
-    "option": "{{n}} dias"
+    "option": "{{n}} dias",
+    "sinceStart": "Desde o início · {{n}} dias"
   },
   "subscription": {
     "label": "Assinatura",
@@ -119,7 +127,9 @@
     "byAgentEmpty": "Nenhum agente gastou nesta janela.",
     "byAreaTitle": "Por área",
     "byAreaEmpty": "Nenhuma área gastou nesta janela.",
-    "noArea": "sem área"
+    "noArea": "sem área",
+    "showAll": "Ver os {{n}} agentes",
+    "showTop": "Ver só os 3 maiores"
   },
   "budgetEditor": {
     "title": "Orçamento do projeto",
@@ -127,7 +137,7 @@
     "policyLabel": "Ao atingir o teto",
     "block": "bloquear novas chamadas",
     "allow": "só avisar",
-    "save": "Salvar orçamento",
+    "save": "Salvar teto",
     "saving": "Salvando…",
     "saved": "Orçamento salvo.",
     "error": "Não consegui salvar o orçamento. Nada mudou.",
@@ -140,6 +150,7 @@
     "restantes_other": "{{count}} dias restantes.",
     "previsao": "Previsão no fim do mês: {{valor}}.",
     "virada": "O mês vira em {{quando}} (00:00 UTC).",
+    "resumo": "Previsão {{valor}} · o mês vira {{quando}}",
     "projeto": {
       "titulo": "Teto do mês",
       "semTeto": "Nenhum teto do mês definido para este projeto ainda.",
@@ -152,6 +163,11 @@
       "editor": "Teto do mês do workspace",
       "semPapel": "Só o owner define o teto do workspace."
     },
-    "membro": "O teto do mês do workspace é do owner; você o vê só quando uma chamada é recusada por ele."
+    "membro": "O teto do mês do workspace é do owner; você o vê só quando uma chamada é recusada por ele.",
+    "cartao": {
+      "semTeto": "Sem teto do mês",
+      "definir": "Definir",
+      "editar": "Editar"
+    }
   }
 }

@@ -39,7 +39,7 @@
 .titulo {
   margin: 0;
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-secondary);
@@ -132,7 +132,7 @@
  * transforma uma ressalva em letra miúda que ninguém lê.
  */
 .ressalva {
-  font-size: 11px;
+  font-size: var(--fs-label);
   line-height: 1.45;
   color: var(--text-secondary);
 }
@@ -140,7 +140,7 @@
 .nota {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--fs-label);
   line-height: 1.5;
   color: var(--text-secondary);
 }
@@ -152,7 +152,7 @@
   align-items: center;
   gap: 8px;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 

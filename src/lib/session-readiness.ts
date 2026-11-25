@@ -56,7 +56,7 @@ export interface SessionReadiness {
 
 /**
  * As derivações de "prontidão" da sessão (RN-160/RN-161) — os gates que
- * habilitam "Estou pronto — a necessidade está validada" e "Confirmar
+ * habilitam "Estou pronto — validar necessidade" e "Confirmar
  * arquitetura pronta". "Validar necessidade" saiu no ADR 0185: o primeiro
  * botão a fecha (RN-657). O agente que recebe a mensagem do composer
  * (`activeAgent`, "o último ativado") saiu daqui na RN-631: deixou de ser

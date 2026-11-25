@@ -37,7 +37,6 @@ import { AgentTeamGrid } from '../components/AgentTeamGrid';
 import { ActivityFeed } from '../components/ActivityFeed';
 import { useLayoutMovel } from '../lib/layout-movel';
 import { AmbienteDoProjeto } from '../components/AmbienteDoProjeto';
-import { PrimeirosPassos } from '../components/PrimeirosPassos';
 import { RodarNaSuaMaquina } from '../components/RodarNaSuaMaquina';
 import { releSeInfraAbriuPr } from '../components/RodarNaSuaMaquina.helpers';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -50,6 +49,8 @@ import {
 ItemMedia,
 } from '../components/shadcn/item';
 import { Button } from '../components/ui/Button';
+import { ToggleGroup, ToggleGroupItem } from '@/components/shadcn/toggle-group';
+import { agruparTurnos } from '../lib/turnos-agrupados';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { AgentAutonomyActionType, Architecture } from '../lib/api-types';
 import { addressableAgents, nomeDoAgente } from '../lib/agents';
@@ -263,9 +264,23 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
       group.kind === 'solo' ? [group.entry.id] : [group.lead.id, ...group.members.map((m) => m.id)],
     ),
   );
+  // AT-975 (RN-1480): quem trabalha, parou ou espera você fica à vista; os ociosos
+  // somam num cartão (que os abre, porque "Procurar tarefa de novo" mora no cartão deles).
+  // Sem ninguém ativo não há contra o que somar: todos ficam à vista.
+  const [mostrarOciosos, setMostrarOciosos] = useState(false);
+  const membrosDoGrupo = (g: (typeof overviewGroups)[number]) =>
+    g.kind === 'solo' ? [g.entry] : [g.lead, ...g.members];
+  const gruposAtivos = overviewGroups.filter((g) => membrosDoGrupo(g).some((m) => m.status !== 'ocioso'));
+  const recolher = gruposAtivos.length > 0 && gruposAtivos.length < overviewGroups.length && !mostrarOciosos;
+  const ociosos = overviewGroups
+    .filter((g) => !gruposAtivos.includes(g))
+    .reduce((n, g) => n + membrosDoGrupo(g).length, 0);
   const overviewRoster = roster.filter((r) => overviewRosterIds.has(r.id));
   const [modo, setModo] = useState<'turnos' | 'eventos'>('turnos');
   const turnos = events.filter((e) => e.type === 'agent.response').slice(-10).reverse();
+  // AT-975 (RN-1480): turnos seguidos do mesmo agente numa linha, no máximo 5 linhas.
+  const gruposDeTurnos = agruparTurnos(turnos);
+  const gruposVisiveis = gruposDeTurnos.slice(0, 5);
   const workingCount = overviewRoster.filter((r) => r.status === 'trabalhando').length;
   const conversacionais = new Set<string>(addressableAgents());
   const agenteTrabalhando = overviewRoster.find((r) => r.status === 'trabalhando' && conversacionais.has(r.id));
@@ -274,12 +289,15 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
   return (
     <div className={[styles.layout, movel && styles.layoutMovel].filter(Boolean).join(' ')}>
       <div className={styles.main}>
-        <FaixaPrecisaDeVoce projectId={projectId} />
-        {/* RN-708: o próximo passo de um projeto novo, enquanto faltar. */}
-        <PrimeirosPassos
+        {/* RN-1162, AT-975: o próximo passo é a primeira linha da página. */}
+        <ProximoPasso
           projectId={projectId}
           temSessao={sessoesQuery.data ? !!latestSession : undefined}
+          agenteTrabalhando={agenteTrabalhando ? nomeDoAgente(agenteTrabalhando.id) : null}
+          execucaoAtiva={execucao.isSuccess ? !!execucao.session : undefined}
+          architecture={architecture}
         />
+        <FaixaPrecisaDeVoce projectId={projectId} />
         {/* RN-855: como rodar o entregável, declarado pela Infra. */}
         <RodarNaSuaMaquina projectId={projectId} />
         <div className={styles.sectionRow}>
@@ -294,7 +312,7 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
         </div>
         <AgentTeamGrid
           roster={roster}
-          groups={overviewGroups}
+          groups={recolher ? gruposAtivos : overviewGroups}
           events={events}
           bindingDoAgente={bindingDoAgente}
           allModels={allModels}
@@ -307,18 +325,15 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
           onRearm={handleRearm}
           onWake={handleWake}
         />
+        {gruposAtivos.length > 0 && gruposAtivos.length < overviewGroups.length && (
+          <Button size="sm" variant="secondary" data-testid="cartao-ociosos" onClick={() => setMostrarOciosos(!mostrarOciosos)}>
+            {mostrarOciosos ? t('team.recolherOciosos') : t('team.maisOciosos', { count: ociosos })}
+          </Button>
+        )}
 
       </div>
 
       <aside className={styles.aside}>
-        {/* RN-1162: o próximo passo do projeto, da tabela ordenada. */}
-        <ProximoPasso
-          projectId={projectId}
-          temSessao={sessoesQuery.data ? !!latestSession : undefined}
-          agenteTrabalhando={agenteTrabalhando ? nomeDoAgente(agenteTrabalhando.id) : null}
-          execucaoAtiva={execucao.isSuccess ? !!execucao.session : undefined}
-          architecture={architecture}
-        />
         <ArchitectureSummary projectId={projectId} architecture={architecture} />
         {/* Estado de ambiente ANTES da atividade: a atividade responde "o que
             aconteceu", e ela só se lê direito depois de saber onde o código
@@ -330,11 +345,20 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
 
         <div className={styles.sectionRow}>
           <h2 className={styles.sectionHeader}>{t('activity.title')}</h2>
-          <Button size="sm" variant="secondary" aria-pressed={modo === 'turnos'} onClick={() => setModo(modo === 'turnos' ? 'eventos' : 'turnos')}>
-            {modo === 'turnos' ? t('activity.verEventos') : t('activity.verTurnos')}
-          </Button>
+          <ToggleGroup
+            value={[modo]}
+            onValueChange={(v) => v[0] && setModo(v[0] as 'turnos' | 'eventos')}
+            variant="outline"
+            size="sm"
+            aria-label={t('activity.rotuloModo')}
+          >
+            <ToggleGroupItem value="turnos">{t('activity.verTurnos')}</ToggleGroupItem>
+            <ToggleGroupItem value="eventos">{t('activity.verEventos')}</ToggleGroupItem>
+          </ToggleGroup>
           <span className={styles.sectionCount}>
-            {t('activity.count', { count: historico.carregados })}
+            {modo === 'turnos'
+              ? t('activity.recorteTurnos', { count: turnos.length })
+              : t('activity.count', { count: historico.carregados })}
           </span>
         </div>
         {/* Os três estados, e o ERRO antes do vazio (RN-088): `!dados` é
@@ -354,22 +378,44 @@ export function ProjectOverviewTab({ projectId }: ProjectOverviewTabProps) {
         ) : modo === 'turnos' ? (
           <div className={styles.turnos}>
             {turnos.length === 0 && <EmptyState>{t('activity.turnosVazio')}</EmptyState>}
-            {turnos.map((e) => (
+            {gruposVisiveis.map((g) => (
               <Link
-                key={e.id}
+                key={g.maisRecente.id}
                 to="/projects/$projectId/sessions/$sessionId"
-                params={{ projectId, sessionId: e.sessionId }}
-                search={{ highlightEvent: e.id }}
+                params={{ projectId, sessionId: g.maisRecente.sessionId }}
+                search={{ highlightEvent: g.maisRecente.id }}
               >
-                <ResumoDeTurno
-                  agente={nomeDoAgente(e.actor.id)}
-                  passos={passosDoTurno(events, e).length}
-                  gravado={gravadoDoPayload(e.payload)}
-                  custo={custoDoPayload(e.payload)}
-                  hora={formatRelativeTime(e.createdAt)}
-                />
+                {g.turnos.length === 1 ? (
+                  <ResumoDeTurno
+                    agente={nomeDoAgente(g.agenteId)}
+                    passos={passosDoTurno(events, g.maisRecente).length}
+                    gravado={gravadoDoPayload(g.maisRecente.payload)}
+                    custo={custoDoPayload(g.maisRecente.payload)}
+                    hora={formatRelativeTime(g.maisRecente.createdAt)}
+                  />
+                ) : (
+                  <div data-testid="turnos-agrupados" className={styles.turnoAgrupado}>
+                    <span>
+                      {t('activity.turnosAgrupados', {
+                        agente: nomeDoAgente(g.agenteId),
+                        count: g.turnos.length,
+                        passos: g.turnos.reduce((n, e) => n + passosDoTurno(events, e).length, 0),
+                      })}
+                    </span>
+                    <span>{formatRelativeTime(g.maisRecente.createdAt)}</span>
+                  </div>
+                )}
               </Link>
             ))}
+            {turnos[0] && (
+              <Link
+                to="/projects/$projectId/sessions/$sessionId"
+                params={{ projectId, sessionId: turnos[0].sessionId }}
+                className={styles.adrLink}
+              >
+                {t('activity.verLinhaDoTempo')}
+              </Link>
+            )}
           </div>
         ) : historico.isPending ? (
           <Skeleton height={180} />
@@ -404,7 +450,7 @@ function ArchitectureSummary({
       <Item variant="outline" size="sm">
        <ItemMedia variant="icon"><Info aria-hidden="true" /></ItemMedia>
        <ItemContent>
-        <ItemDescription>
+        <ItemDescription className={styles.descricaoInteira}>
         {moduleCount > 0
           ? t('architectureSummary.summary', {
               count: moduleCount,
@@ -412,7 +458,9 @@ function ArchitectureSummary({
                 ? t('architectureSummary.statusGenerated')
                 : t('architectureSummary.statusPending'),
             })
-          : t('architectureSummary.emptyState')}{' '}
+          : t('architectureSummary.emptyState')}
+        </ItemDescription>
+        {/* AT-1007: o link fica fora da descrição (que corta em 2 linhas) e sempre à vista. */}
         <Link
           to="/projects/$projectId"
           params={{ projectId }}
@@ -421,7 +469,6 @@ function ArchitectureSummary({
         >
           {t('architectureSummary.link')}
         </Link>
-        </ItemDescription>
        </ItemContent>
       </Item>
     </div>

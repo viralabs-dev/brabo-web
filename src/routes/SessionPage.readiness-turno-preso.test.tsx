@@ -15,7 +15,7 @@ import i18n from '../lib/i18n';
  * `handleReadiness`. Até o ADR 0163 a rede era "a chamada síncrona
  * resolveu"; desde ele (RN-578) `confirmReadiness` resolve no ACEITE, e a
  * rede passou a ser a leitura da cauda do log (`agent.status` persistido do
- * Criativo). Sem ela, clicar em "Estou pronto — a necessidade está validada" e o canal nunca
+ * Criativo). Sem ela, clicar em "Estou pronto — validar necessidade" e o canal nunca
  * entregar `onAgentDone` deixava a bolha do agente presa vazia pra sempre.
  */
 
@@ -180,7 +180,7 @@ describe('SessionPage — handleReadiness ganha a mesma rede de segurança de ha
     montar();
 
     const botao = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
     fireEvent.click(botao);
 
@@ -225,7 +225,7 @@ describe('SessionPage — handleReadiness ganha a mesma rede de segurança de ha
     montar();
 
     fireEvent.click(
-      await screen.findByRole('button', { name: 'Estou pronto — a necessidade está validada' }),
+      await screen.findByRole('button', { name: 'Estou pronto — validar necessidade' }),
     );
 
     expect(
@@ -243,7 +243,7 @@ describe('SessionPage — handleReadiness ganha a mesma rede de segurança de ha
     montar();
 
     const botao = await screen.findByRole('button', {
-      name: 'Estou pronto — a necessidade está validada',
+      name: 'Estou pronto — validar necessidade',
     });
     fireEvent.click(botao);
 

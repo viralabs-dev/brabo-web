@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { classifyEvent } from '../lib/activity';
+import { classifyEvent, temSujeitoEResultado } from '../lib/activity';
 import { AGENTS, corDoAgente } from '../lib/agents';
 import { formatRelativeTime } from '../lib/time';
 import type { Project, ProjectCardSummary } from '../lib/api-types';
@@ -9,7 +9,7 @@ const LIMITE = 5;
 
 /**
  * "Atividade recente" do Início (AT-941): o ÚLTIMO evento de cada projeto, já
- * lido no resumo da grade — nenhuma requisição nova (RN-632). Mesma sessão e
+ * lido no resumo da grade (só o que tem sujeito e resultado, RN-1462) — nenhuma requisição nova (RN-632). Mesma sessão e
  * mesmo `classifyEvent` do card (RN-648). Não é um feed: um evento por projeto.
  */
 export function AtividadeRecente({
@@ -27,7 +27,7 @@ export function AtividadeRecente({
   const { t } = useTranslation('dashboard');
   const nomes = new Map(projects.map((p) => [p.id, p.name]));
   const linhas = (cards ?? [])
-    .filter((c) => c.lastEvent && nomes.has(c.projectId))
+    .filter((c) => c.lastEvent && nomes.has(c.projectId) && temSujeitoEResultado(c.lastEvent))
     .sort((a, b) => b.lastEvent!.createdAt.localeCompare(a.lastEvent!.createdAt))
     .slice(0, LIMITE);
 

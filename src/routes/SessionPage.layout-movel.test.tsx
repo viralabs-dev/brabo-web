@@ -21,6 +21,7 @@ import i18n from '../lib/i18n';
  */
 
 const getSession = vi.fn();
+const getProjectPendingActions = vi.fn();
 const eventos = vi.fn<() => { items: unknown[] }>(() => ({ items: [] }));
 const historico = vi.fn(() => historicoFalso(eventos().items));
 
@@ -71,6 +72,7 @@ vi.mock('../lib/auth', () => ({
 vi.mock('../lib/api-client', () => ({
   getProject: vi.fn().mockResolvedValue({ id: 'proj-1', name: 'core' }),
   getSession: (...args: unknown[]) => getSession(...args),
+  getProjectPendingActions: (...args: unknown[]) => getProjectPendingActions(...args),
   getSessionBudget: vi.fn().mockResolvedValue(null),
   getSessionModelBinding: vi.fn().mockResolvedValue(null),
   listModels: vi.fn().mockResolvedValue(null),
@@ -147,6 +149,7 @@ beforeEach(async () => {
   });
   historico.mockImplementation(() => historicoFalso(eventos().items));
   getSession.mockResolvedValue(sessao());
+  getProjectPendingActions.mockResolvedValue([]);
 });
 
 afterAll(() => {
@@ -175,14 +178,14 @@ describe('SessionPage — layout móvel (AT-328)', () => {
     alternar.focus();
     fireEvent.click(alternar);
 
-    const gaveta = screen.getByRole('dialog', { name: TITULO_DO_PAINEL });
+    const gaveta = screen.getByRole('dialog', { name: 'Painel da sessão' });
     expect(gaveta).toHaveAttribute('aria-modal', 'true');
     expect(gaveta).toHaveTextContent(TITULO_DO_PAINEL);
     const fechar = screen.getByRole('button', { name: 'Fechar painel de contexto' });
     await waitFor(() => expect(document.activeElement).toBe(fechar));
 
     fireEvent.keyDown(document, { key: 'Escape' });
-    await waitFor(() => expect(screen.queryByRole('dialog', { name: TITULO_DO_PAINEL })).toBeNull());
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Painel da sessão' })).toBeNull());
     await waitFor(() => expect(document.activeElement).toBe(alternar));
   });
 
@@ -200,22 +203,55 @@ describe('SessionPage — layout móvel (AT-328)', () => {
     expect(screen.queryByRole('dialog')).toBeNull();
   });
 
-  it('a barra quebra linha: título em cima, e "Iniciar ideação" e "Encerrar" continuam na tela', async () => {
+  it('AT-961: a barra é de uma linha; os controles estão na aba Contexto do painel, nada some', async () => {
     largura = simularLayoutMovel(true);
     montar();
 
-    const iniciar = await screen.findByRole('button', { name: 'Iniciar ideação' });
-    const encerrar = screen.getByRole('button', { name: /Encerrar/ });
-    const quebra = screen.getByTestId('quebra-da-barra');
-    const barra = quebra.parentElement as HTMLElement;
+    const alternar = await screen.findByRole('button', { name: ALTERNAR });
+    const barra = alternar.parentElement as HTMLElement;
     expect(barra).toHaveAttribute('data-layout', 'movel');
-    expect(barra).toContainElement(iniciar);
-    // As ações vêm DEPOIS da quebra: é ela que as manda para a linha de baixo.
-    const depois = (a: Element, b: Element) =>
-      Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-    expect(depois(quebra, iniciar.closest('span') ?? iniciar)).toBe(true);
-    expect(depois(quebra, encerrar)).toBe(true);
-    expect(depois(screen.getByRole('button', { name: /Sessão #/ }), quebra)).toBe(true);
+    expect(screen.queryByTestId('quebra-da-barra')).toBeNull();
+    // Fora da barra: nem "Iniciar ideação" nem "Encerrar" existem com o painel fechado.
+    expect(barra).not.toHaveTextContent(/Encerrar/);
+    expect(screen.queryByTestId('controles-no-painel')).toBeNull();
+
+    fireEvent.click(alternar);
+    const controles = await screen.findByTestId('controles-no-painel');
+    expect(controles).toContainElement(screen.getByRole('button', { name: 'Iniciar ideação' }));
+    expect(controles).toContainElement(screen.getByRole('button', { name: /Encerrar/ }));
+    expect(barra).not.toContainElement(controles);
+  });
+
+  it('AT-961: o botão do painel mostra o contador e abre o Sheet na aba Pendências', async () => {
+    largura = simularLayoutMovel(true);
+    getProjectPendingActions.mockResolvedValue([
+      {
+        id: 'acao-exec',
+        projectId: 'proj-1',
+        sessionId: 'd7e9d7e9-bbbb-4bbb-8bbb-222222222222',
+        seq: 7,
+        actionType: 'terminal',
+        payload: { command: 'npm test' },
+        status: 'pending',
+        resolvedPolicy: 'require_approval',
+        actor: { kind: 'agent', id: 'dev-api' },
+        decidedBy: null,
+        decidedAt: null,
+        rejectionReason: null,
+        executionResult: null,
+        createdAt: '2026-08-11T12:30:00.000Z',
+        updatedAt: '2026-08-11T12:30:00.000Z',
+      },
+    ]);
+    montar();
+
+    const contador = await screen.findByTestId('contador-no-botao-do-painel');
+    expect(contador).toHaveTextContent('1');
+    expect(screen.queryByTestId('contador-de-pendencias')).toBeNull();
+
+    fireEvent.click(screen.getByRole('button', { name: ALTERNAR }));
+    expect(await screen.findByTestId('pendencias-de-outras-sessoes')).toBeInTheDocument();
+    expect(screen.getByRole('tab', { name: /Pendências/ })).toHaveAttribute('aria-selected', 'true');
   });
 
   it('caso de falha: no desktop o painel continua ao lado do fio, aberto, sem gaveta nem quebra', async () => {
@@ -223,7 +259,7 @@ describe('SessionPage — layout móvel (AT-328)', () => {
 
     expect(await screen.findByText(TITULO_DO_PAINEL)).toBeInTheDocument();
     expect(screen.queryByRole('dialog')).toBeNull();
-    expect(screen.queryByTestId('quebra-da-barra')).toBeNull();
+    expect(screen.queryByTestId('controles-no-painel')).toBeNull();
     expect(screen.getByRole('button', { name: RECOLHER })).toHaveAttribute('aria-expanded', 'true');
   });
 

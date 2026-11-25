@@ -6,7 +6,10 @@
     "summing": "Подсчитываем…",
     "retry": "Повторить",
     "tokensDetail": "{{input}} вход · {{output}} выход",
-    "rankingDetail": "{{tokens}} tok · {{calls}}×"
+    "rankingDetail": "{{tokens}} tok · {{calls}}×",
+    "sinceDay": "с {{dia}}",
+    "topModelCalls": "{{modelo}}: {{pct}}%",
+    "callsLabel": "Вызовы"
   },
   "role": {
     "error": "Не удалось определить вашу роль в этом workspace, а именно она решает, какой отчёт показать."
@@ -33,7 +36,8 @@
     "byProjectTitle": "По проекту",
     "byProjectEmpty": "Ни один проект не тратил в этом окне.",
     "byActorTitle": "По агенту и человеку",
-    "byActorEmpty": "В этом окне никто не тратил."
+    "byActorEmpty": "В этом окне никто не тратил.",
+    "whereEmpty": "Куда ушли расходы: в этом окне расходов нет."
   },
   "member": {
     "title": "Моё потребление",
@@ -59,10 +63,10 @@
     "window_many": "последние {{count}} дней",
     "window_other": "последние {{count}} дня",
     "spend": "Расход",
-    "calls_one": "{{count}} вызов",
-    "calls_few": "{{count}} вызова",
-    "calls_many": "{{count}} вызовов",
-    "calls_other": "{{count}} вызова",
+    "calls_one": "{{count, number}} вызов",
+    "calls_few": "{{count, number}} вызова",
+    "calls_many": "{{count, number}} вызовов",
+    "calls_other": "{{count, number}} вызова",
     "viewAsTable": "Показать таблицей",
     "colDay": "День",
     "colSpend": "Расход",
@@ -70,13 +74,17 @@
     "callsTitle": "Вызовы по дням",
     "tokensTitle": "Вход и выход",
     "tokensIn": "Вход",
-    "tokensOut": "Выход"
+    "tokensOut": "Выход",
+    "noSpendInDays_one": "Расходов за последний день нет.",
+    "noSpendInDays_few": "Расходов за последние {{count}} дня нет.",
+    "noSpendInDays_many": "Расходов за последние {{count}} дней нет.",
+    "noSpendInDays_other": "Расходов за последние {{count}} дня нет."
   },
   "libSpend": {
-    "callTitle_one": "{{dia}} · {{custo}} · {{count}} вызов",
-    "callTitle_few": "{{dia}} · {{custo}} · {{count}} вызова",
-    "callTitle_many": "{{dia}} · {{custo}} · {{count}} вызовов",
-    "callTitle_other": "{{dia}} · {{custo}} · {{count}} вызова",
+    "callTitle_one": "{{dia}} · {{custo}} · {{count, number}} вызов",
+    "callTitle_few": "{{dia}} · {{custo}} · {{count, number}} вызова",
+    "callTitle_many": "{{dia}} · {{custo}} · {{count, number}} вызовов",
+    "callTitle_other": "{{dia}} · {{custo}} · {{count, number}} вызова",
     "actorPerson": "{{id}} (человек)",
     "budgetBlocked": "Достигнуто {{pct}}% лимита месяца — новые вызовы LLM ЗАБЛОКИРОВАНЫ, пока лимит не повысят или не наступит новый месяц.",
     "budgetWarning": "Уже превышено {{pct}}% лимита месяца."
@@ -84,7 +92,8 @@
   "window": {
     "month": "Месяц",
     "label": "Период",
-    "option": "{{n}} дн."
+    "option": "{{n}} дн.",
+    "sinceStart": "С начала · {{n}} дн."
   },
   "subscription": {
     "label": "Подписка",
@@ -124,7 +133,9 @@
     "byAgentEmpty": "В этот период ни один агент не тратил.",
     "byAreaTitle": "По областям",
     "byAreaEmpty": "В этот период ни одна область не тратила.",
-    "noArea": "без области"
+    "noArea": "без области",
+    "showAll": "Показать всех агентов: {{n}}",
+    "showTop": "Показать только 3 крупнейших"
   },
   "budgetEditor": {
     "title": "Бюджет проекта",
@@ -132,7 +143,7 @@
     "policyLabel": "При достижении лимита",
     "block": "блокировать новые вызовы",
     "allow": "только предупреждать",
-    "save": "Сохранить бюджет",
+    "save": "Сохранить лимит",
     "saving": "Сохранение…",
     "saved": "Бюджет сохранён.",
     "error": "Не удалось сохранить бюджет. Ничего не изменилось.",
@@ -146,6 +157,7 @@
     "restantes_other": "Осталось {{count}} дня.",
     "previsao": "Прогноз на конец месяца: {{valor}}.",
     "virada": "Месяц сменится {{quando}} (00:00 UTC).",
+    "resumo": "Прогноз {{valor}} · месяц сменится {{quando}}",
     "projeto": {
       "titulo": "Лимит месяца",
       "semTeto": "Для этого проекта лимит месяца ещё не задан.",
@@ -158,6 +170,11 @@
       "editor": "Лимит месяца рабочего пространства",
       "semPapel": "Лимит пространства задаёт только owner."
     },
-    "membro": "Лимит месяца пространства принадлежит owner; вы видите его, только когда он отклоняет вызов."
+    "membro": "Лимит месяца пространства принадлежит owner; вы видите его, только когда он отклоняет вызов.",
+    "cartao": {
+      "semTeto": "Лимита месяца нет",
+      "definir": "Задать",
+      "editar": "Изменить"
+    }
   }
 }

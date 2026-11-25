@@ -24,4 +24,16 @@ describe('derivarPrimeirosPassos (RN-708)', () => {
     expect(derivarPrimeirosPassos({ credenciais: undefined, timeComModelo: false, temSessao: false })).toBeNull();
     expect(derivarPrimeirosPassos({ credenciais: 0, timeComModelo: undefined, temSessao: false })).toBeNull();
   });
+
+  it('RN-1395: modelo local com chave de nuvem deixa o passo `modelo` pendente', () => {
+    const passos = derivarPrimeirosPassos({ credenciais: 1, timeComModelo: true, modeloLocal: true, temSessao: true });
+    expect(passos?.find((p) => p.chave === 'modelo')?.feito).toBe(false);
+  });
+
+  it('RN-1395: modelo local sem chave de nuvem conta como feito; de nuvem também', () => {
+    const local = derivarPrimeirosPassos({ credenciais: 0, timeComModelo: true, modeloLocal: true, temSessao: false });
+    expect(local?.map((p) => p.feito)).toEqual([true, true, false]);
+    const nuvem = derivarPrimeirosPassos({ credenciais: 1, timeComModelo: true, modeloLocal: false, temSessao: false });
+    expect(nuvem?.map((p) => p.feito)).toEqual([true, true, false]);
+  });
 });

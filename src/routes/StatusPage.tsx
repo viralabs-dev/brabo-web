@@ -136,9 +136,14 @@ export function StatusPage({
         margin: '0 auto',
       }}
     >
-      <h1 style={{ fontSize: 28, marginBottom: 'var(--space-4)' }}>
-        {t('status.heading')}
-      </h1>
+      {/* AT-976 (RN-1483): "Voltar" com ícone e texto, no topo, à esquerda do título. */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
+        <Button variant="secondary" onClick={() => irPara(voltarPara)}>
+          <ArrowLeft aria-hidden="true" />
+          {t('status.back')}
+        </Button>
+        <h1 style={{ fontSize: 28, margin: 0 }}>{t('status.heading')}</h1>
+      </div>
       <Card padding="md" aria-live="polite" style={{ marginBottom: 'var(--space-4)' }}>
         <strong>{t(`status.resumo.${resumo}`)}</strong>
         {instante && (
@@ -161,12 +166,6 @@ export function StatusPage({
           rowKey={(l) => l.chave}
         />
       </div>
-      <p style={{ marginTop: 'var(--space-4)' }}>
-        {/* AT-327: um botão de verdade, não um link de 33×20 px. */}
-        <Button variant="secondary" legenda={t('status.back')} onClick={() => irPara(voltarPara)}>
-          <ArrowLeft aria-hidden="true" />
-        </Button>
-      </p>
     </main>
   );
 }

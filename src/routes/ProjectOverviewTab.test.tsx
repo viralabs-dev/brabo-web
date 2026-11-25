@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
@@ -33,6 +33,7 @@ function novaInstanciaI18n() {
 // `ProjectInsightsTab.test.tsx`.
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children }: { children?: ReactNode }) => <a>{children}</a>,
+  useNavigate: () => navegar,
 }));
 import type {
   Architecture,
@@ -42,6 +43,10 @@ import type {
   SessionEvent,
 } from '../lib/api-types';
 
+const navegar = vi.fn();
+const createSession = vi.fn();
+const transitionSession = vi.fn();
+const setProjectModelBinding = vi.fn();
 const listSessions = vi.fn();
 const listSessionEvents = vi.fn();
 const listHandoffs = vi.fn();
@@ -67,6 +72,9 @@ vi.mock('../lib/api-client', async () => {
     ApiError: real.ApiError,
     mensagemDaApi: real.mensagemDaApi,
     listSessions: (...args: unknown[]) => listSessions(...args),
+    createSession: (...args: unknown[]) => createSession(...args),
+    transitionSession: (...args: unknown[]) => transitionSession(...args),
+    setProjectModelBinding: (...args: unknown[]) => setProjectModelBinding(...args),
     listSessionEvents: (...args: unknown[]) => listSessionEvents(...args),
     listHandoffs: (...args: unknown[]) => listHandoffs(...args),
     listActions: (...args: unknown[]) => listActions(...args),
@@ -271,6 +279,7 @@ beforeEach(() => {
 describe('ProjectOverviewTab — dev/QA saíram para Executores (FASE 27)', () => {
   it('mostra Criativo, SecOps e Infra, mas não dev-backend nem QA', async () => {
     montar();
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
 
     // Criativo/PO/Arquiteto são a roster BASE — aparecem mesmo antes de
     // eventos/handoffs resolverem, então esperar por eles não prova que os
@@ -304,11 +313,39 @@ describe('ProjectOverviewTab — dev/QA saíram para Executores (FASE 27)', () =
   it('a contagem do cabeçalho conta só quem ainda aparece na Visão geral', async () => {
     montar();
 
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
     await screen.findAllByText('Infra');
     // Roster completa tem 8 (criativo/po/arquiteto/dev-backend/qa/
     // qa-automacao/secops/infra); sem dev-backend/qa/qa-automacao sobram 5:
     // criativo, po, arquiteto, secops, infra.
     expect(screen.getByText(/5 agentes/)).toBeInTheDocument();
+  });
+});
+
+describe('AT-975 (RN-1480): ociosos somam num cartão e os primeiros passos se fundem no Próximo passo', () => {
+  it('quem trabalha fica à vista; os ociosos viram "+ N concluídos ou ociosos", que os abre', async () => {
+    montar();
+    const grid = within(await screen.findByTestId('agent-team-grid'));
+    expect(await grid.findByText('Criativo')).toBeInTheDocument();
+    expect(grid.queryByText('PO')).not.toBeInTheDocument();
+    const cartao = await screen.findByTestId('cartao-ociosos');
+    expect(cartao.textContent).toMatch(/^\+ \d+ concluídos ou ociosos$/);
+    fireEvent.click(cartao);
+    expect(await grid.findByText('PO')).toBeInTheDocument();
+    expect(screen.getByTestId('cartao-ociosos').textContent).toBe('Recolher os ociosos');
+  });
+
+  it('projeto novo: UM cartão (Próximo passo) traz os três passos, com o atual em destaque', async () => {
+    listSessions.mockResolvedValue([]);
+    listCredentials.mockResolvedValue([]);
+    getResolvedModelBindings.mockResolvedValue({ agents: [{ key: 'criativo', binding: null }], areas: [] });
+    montar();
+    const proximo = await screen.findByTestId('proximo-passo');
+    const passos = within(proximo).getByTestId('primeiros-passos');
+    expect(passos.querySelector('[data-atual="sim"]')?.getAttribute('data-passo')).toBe('credencial');
+    expect(screen.getAllByTestId('primeiros-passos')).toHaveLength(1);
+    expect(screen.getAllByRole('button', { name: 'Começar a ideação' })).toHaveLength(1);
+    expect(proximo.closest('[data-testid="primeiros-passos"]')).toBeNull();
   });
 });
 
@@ -322,6 +359,7 @@ describe('ProjectOverviewTab — presença de SecOps vem do resumo, não da jane
 
     montar();
 
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
     const grid = within(await screen.findByTestId('agent-team-grid'));
     expect(await grid.findByText('SecOps')).toBeInTheDocument();
   });
@@ -332,7 +370,7 @@ describe('ProjectOverviewTab — presença de SecOps vem do resumo, não da jane
 
     montar();
 
-    await screen.findAllByText('Infra');
+    fireEvent.click(await screen.findByTestId('cartao-ociosos'));
     const grid = within(await screen.findByTestId('agent-team-grid'));
     expect(grid.queryByText('SecOps')).not.toBeInTheDocument();
   });
@@ -391,11 +429,87 @@ describe('primeiros passos (RN-708, AT-372)', () => {
     expect(within(cartao).getByText('0 de 3 feitos')).toBeInTheDocument();
     expect(within(cartao).getByText('Cadastrar a chave →')).toBeInTheDocument();
     expect(within(cartao).getByText('Escolher o modelo →')).toBeInTheDocument();
-    expect(within(cartao).getByText('Abrir o Criativo →')).toBeInTheDocument();
+    expect(within(cartao).getByRole('button', { name: 'Começar a ideação' })).toBeInTheDocument();
     // Sem sessão, a coluna de atividade é um vazio de verdade, não um esqueleto parado.
     expect(
       await screen.findByText('Nenhuma atividade ainda: ela começa com a primeira sessão do projeto.'),
     ).toBeInTheDocument();
+  });
+
+  // RN-1396 (AT-986): o passo da ideação cria e abre a sessão, sem cair na lista vazia.
+  it('"Começar a ideação" cria, ativa e abre a sessão do Criativo', async () => {
+    listSessions.mockResolvedValue([]);
+    listCredentials.mockResolvedValue([]);
+    getResolvedModelBindings.mockResolvedValue({ agents: [{ key: 'criativo', binding: null }], areas: [] });
+    createSession.mockResolvedValue({ id: 'sess-novo' });
+    transitionSession.mockResolvedValue({});
+    montar();
+    const cartao = await screen.findByTestId('primeiros-passos');
+    await vi.waitFor(() => expect(within(cartao).getByRole('button', { name: 'Começar a ideação' })).toBeEnabled());
+    fireEvent.click(within(cartao).getByRole('button', { name: 'Começar a ideação' }));
+    await vi.waitFor(() => expect(createSession).toHaveBeenCalledWith('proj-1', { kind: 'criativa', name: undefined }));
+    await vi.waitFor(() =>
+      expect(navegar).toHaveBeenCalledWith({
+        to: '/projects/$projectId/sessions/$sessionId',
+        params: { projectId: 'proj-1', sessionId: 'sess-novo' },
+      }),
+    );
+  });
+
+  // RN-1395 (AT-986): time no modelo local + chave de nuvem = passo pendente, com o botão do Haiku.
+  describe('time no modelo local', () => {
+    const LOCAL = { id: 'm-loc', provider: 'ollama', name: 'qwen2.5-coder:7b', displayName: 'Qwen 7B' };
+    const HAIKU = { id: 'm-hk', provider: 'anthropic', name: 'claude-haiku-5-5', displayName: 'Claude Haiku 5.5' };
+    const NO_LOCAL = {
+      agents: [{ key: 'criativo', binding: { modelId: 'm-loc', origin: 'workspace', routingPreference: null, skipped: [] } }],
+      areas: [],
+    };
+
+    it('com chave de nuvem o passo do modelo fica pendente e "Aplicar" grava o Haiku no projeto', async () => {
+      listSessions.mockResolvedValue([]);
+      listCredentials.mockResolvedValue([{ id: 'c-1' }]);
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: { geral: [HAIKU] } });
+      getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
+      listWorkspaces.mockResolvedValue([{ workspace: { id: 'ws-1' }, role: 'maintainer' }]);
+      setProjectModelBinding.mockResolvedValue(undefined);
+      montar();
+      const cartao = await screen.findByTestId('primeiros-passos');
+      const passo = await vi.waitFor(() => {
+        const el = cartao.querySelector('[data-passo="modelo"]') as HTMLElement;
+        expect(el.getAttribute('data-feito')).toBe('nao');
+        return el;
+      });
+      expect(within(passo).getByText(/O time está no modelo local Qwen 7B/)).toBeInTheDocument();
+      expect(within(passo).getByText('Escolher o modelo →')).toBeInTheDocument();
+      const botao = await within(passo).findByRole('button', { name: 'Aplicar Claude Haiku 5.5 ao time' });
+      await vi.waitFor(() => expect(botao).toBeEnabled());
+      fireEvent.click(botao);
+      await vi.waitFor(() => expect(setProjectModelBinding).toHaveBeenCalledWith('proj-1', 'm-hk'));
+    });
+
+    it('sem o papel maintainer o botão fica inerte, com o motivo visível', async () => {
+      listSessions.mockResolvedValue([]);
+      listCredentials.mockResolvedValue([{ id: 'c-1' }]);
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: { geral: [HAIKU] } });
+      getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
+      listWorkspaces.mockResolvedValue([{ workspace: { id: 'ws-1' }, role: 'developer' }]);
+      montar();
+      const botao = await screen.findByRole('button', { name: 'Aplicar Claude Haiku 5.5 ao time' });
+      expect(botao).toBeDisabled();
+      expect(screen.getByText(/Só quem mantém o projeto/)).toBeInTheDocument();
+    });
+
+    it('sem chave de nuvem o local conta como feito: o passo do modelo não fica pendente', async () => {
+      listSessions.mockResolvedValue([]);
+      listCredentials.mockResolvedValue([]);
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: {} });
+      getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
+      montar();
+      const cartao = await screen.findByTestId('primeiros-passos');
+      await vi.waitFor(() =>
+        expect((cartao.querySelector('[data-passo="modelo"]') as HTMLElement).getAttribute('data-feito')).toBe('sim'),
+      );
+    });
   });
 
   it('tudo feito: o cartão não aparece', async () => {
@@ -487,7 +601,7 @@ describe('AT-890: faixa e turnos', () => {
     listSessionEvents.mockResolvedValue({
       items: [
         evento({ id: 'r1', seq: 1, type: 'agent.response', payload: { gravadoNoTurno: { itens: [{ tipo: 'regra', total: 2 }] }, custoMicros: 1000 } }),
-        evento({ id: 'r2', seq: 2, type: 'agent.response', payload: {} }),
+        evento({ id: 'r2', seq: 2, type: 'agent.response', actor: { kind: 'agent', id: 'po' }, payload: {} }),
       ],
       nextCursor: null,
     });
@@ -495,5 +609,32 @@ describe('AT-890: faixa e turnos', () => {
     const linhas = await screen.findAllByTestId('resumo-de-turno');
     expect(linhas).toHaveLength(2);
     expect(linhas[0].textContent).toContain('—');
+  });
+
+  it('AT-975: turnos seguidos do mesmo agente viram uma linha, com a idade do mais recente', async () => {
+    listSessionEvents.mockResolvedValue({
+      items: [1, 2, 3].map((n) => evento({ id: `r${n}`, seq: n, type: 'agent.response', payload: {} })),
+      nextCursor: null,
+    });
+    montar();
+    const linha = await screen.findByTestId('turnos-agrupados');
+    expect(linha.textContent).toMatch(/3 turnos, 0 passos/);
+    expect(screen.queryAllByTestId('resumo-de-turno')).toHaveLength(0);
+    expect(screen.getByText(/linha do tempo inteira/)).toBeInTheDocument();
+  });
+
+  it('AT-975: com as cinco filas em zero a faixa é uma linha, sem chips, com o link das Decisões', async () => {
+    montar();
+    const faixa = await screen.findByTestId('faixa-precisa-de-voce');
+    expect(faixa.getAttribute('data-vazia')).toBe('true');
+    expect(faixa.textContent).toContain('Nada espera por você agora.');
+    expect(faixa.querySelectorAll('[data-slot="badge"], .chips')).toHaveLength(0);
+    expect(within(faixa).getByText(/Abrir Decisões/)).toBeInTheDocument();
+  });
+
+  it('AT-975: Turnos | Eventos é um ToggleGroup', async () => {
+    montar();
+    const grupo = await screen.findByRole('group', { name: 'Ver como' });
+    expect(within(grupo).getByRole('button', { name: 'Turnos' }).getAttribute('aria-pressed')).toBe('true');
   });
 });

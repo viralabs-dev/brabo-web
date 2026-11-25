@@ -1,0 +1,82 @@
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.indicadores > * {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rotulo {
+  font-family: var(--font-mono);
+  font-size: var(--fs-meta);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.valor {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.linhaDoValor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nota {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: var(--fs-meta);
+  color: var(--text-muted);
+}
+
+.abrir {
+  min-height: 24px; /* alvo de 24 px (WCAG 2.2) e o topo alinhado com o valor */
+  padding: 0;
+  font-size: var(--fs-meta);
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.popover {
+  width: min(560px, 90vw);
+}
+
+.tabela {
+  width: 100%;
+  font-size: var(--fs-sm);
+  border-collapse: collapse;
+}
+
+.tabela td {
+  padding: 6px 8px;
+  border-top: 1px solid var(--border);
+}
+
+.tabela tr:first-child td {
+  border-top: none;
+}
+
+.tabela td:nth-child(n + 2) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .indicadores {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

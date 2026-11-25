@@ -1,17 +1,17 @@
 .figura { margin: 0; display: grid; gap: 0.5rem; }
 .legenda {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: var(--fs-label);
   font-weight: 600;
   letter-spacing: 0.05em;
   color: var(--text-muted);
   text-transform: uppercase;
 }
-.vazio { margin: 0; font-size: 0.75rem; color: var(--text-muted); }
+.vazio { margin: 0; font-size: var(--fs-meta); color: var(--text-muted); }
 /* Altura explícita: o ChartContainer do kit nasce com aspect-video e o recharts mede 0x0 sem ela. */
 .grafico { aspect-ratio: auto; height: 10rem; width: 100%; }
 .graficoBaixo { aspect-ratio: auto; height: 8rem; width: 100%; }
-.resumo { cursor: pointer; font-size: 0.75rem; color: var(--text-muted); }
+.resumo { cursor: pointer; font-size: var(--fs-meta); color: var(--text-muted); }
 .legendaDaRosca {
   margin: 0;
   padding: 0;
@@ -19,6 +19,8 @@
   list-style: none;
   justify-content: center;
   gap: 1rem;
-  font-size: 0.75rem;
+  font-size: var(--fs-meta);
   color: var(--text-muted);
 }
+/* Contêiner de grid/flex não encolhe abaixo do conteúdo sem isto: o gráfico passava da largura do cartão (AT-973). */
+.figura, .figura > div { min-width: 0; max-width: 100%; }

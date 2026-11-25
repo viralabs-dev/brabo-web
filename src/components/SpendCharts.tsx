@@ -92,6 +92,8 @@ export interface LinhaDeRanking {
   rotulo: string;
   costMicros: number;
   detalhe: string;
+  /** O detalhe por extenso, no `title` quando o texto vem abreviado. */
+  detalheTitulo?: string;
   /** Substitui o US$ da linha (ex.: assinatura sem preço registrado). */
   valor?: string;
   /** Ponto de cor (cor do agente) antes do rótulo. */
@@ -115,11 +117,14 @@ export function Ranking({
   linhas,
   vazio,
   icone,
+  rodape,
 }: {
   icone?: ReactNode;
   titulo: string;
   linhas: LinhaDeRanking[];
   vazio: string;
+  /** Ação ao pé da lista (ex.: "Ver os N agentes"). */
+  rodape?: ReactNode;
 }) {
   const alturas = alturasRelativas(linhas.map((l) => l.costMicros));
 
@@ -159,7 +164,7 @@ export function Ranking({
                   style={{ width: `${Math.max(alturas[i] * 100, linha.costMicros > 0 ? 2 : 0)}%` }}
                 />
               </span>
-              <span className={styles.rankingDetalhe}>{linha.detalhe}</span>
+              <span className={styles.rankingDetalhe} title={linha.detalheTitulo}>{linha.detalhe}</span>
               <span className={styles.rankingValor}>
                 {linha.valor ?? formatarUsd(linha.costMicros)}
               </span>
@@ -167,6 +172,7 @@ export function Ranking({
           ))}
         </ul>
       )}
+      {rodape}
     </section>
   );
 }

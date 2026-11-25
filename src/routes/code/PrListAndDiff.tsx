@@ -58,6 +58,10 @@ export interface PrListAndDiffProps {
    * (e um clique nele também dispararia o clique da linha).
    */
   renderItemExtra?: (pr: CodePullRequestSummary) => ReactNode;
+  /** Os portões da PR em linha (AT-971, RN-1474), entre o título e o selo de estado. */
+  renderItemPortoes?: (pr: CodePullRequestSummary) => ReactNode;
+  /** Uma frase sob o título (o motivo do bloqueio, em cor de erro). `null` não ocupa linha. */
+  renderItemMotivo?: (pr: CodePullRequestSummary) => ReactNode;
   /** As próximas ações do vazio (AT-895): só a aba PRs as passa; Código segue igual. */
   vazioExtra?: ReactNode;
   /**
@@ -98,12 +102,15 @@ export interface PrListAndDiffProps {
 export function PrListAndDiff({
   projectId,
   renderItemExtra,
+  renderItemPortoes,
+  renderItemMotivo,
   vazioExtra,
   superficie = 'code',
 }: PrListAndDiffProps) {
   const { t } = useTranslation('code');
   const [filtro, setFiltro] = useState<CodePullRequestState | 'all'>('open');
-  const [idDigitado, setIdDigitado] = useState('');
+  // O campo é a busca da lista (AT-971, RN-1474); Enter sem PR que combine abre o diff pelo id digitado.
+  const [busca, setBusca] = useState('');
   const [selecionada, setSelecionada] = useState<CodePullRequestSummary | null>(null);
   const [prIdManual, setPrIdManual] = useState<string | null>(null);
 
@@ -115,6 +122,13 @@ export function PrListAndDiff({
     enabled: !prId,
   });
 
+  const termo = busca.trim().replace(/^#/, '').toLowerCase();
+  const itens = (listaQuery.data?.items ?? []).filter(
+    (pr) =>
+      !termo ||
+      [String(pr.number), pr.title, pr.sourceBranch, pr.author ?? ''].some((c) => c.toLowerCase().includes(termo)),
+  );
+
   const diffQuery = useQuery({
     queryKey: ['code-diff', projectId, prId],
     queryFn: () => getCodeDiff(projectId, prId!),
@@ -124,7 +138,7 @@ export function PrListAndDiff({
   function voltarParaLista() {
     setSelecionada(null);
     setPrIdManual(null);
-    setIdDigitado('');
+    setBusca('');
   }
 
   if (prId) {
@@ -198,13 +212,33 @@ export function PrListAndDiff({
     <div className={styles.painel}>
       {/* AT-327: o mesmo controle segmentado das abas Criativo e Chat. Antes
           eram abas retangulares com `role="tab"` sem painel que controlassem. */}
-      <SegmentedControl
-        className={styles.filtros}
-        rotulo={t('diff.filtersAriaLabel')}
-        opcoes={FILTROS.map((f) => ({ valor: f.chave, rotulo: t(f.chaveRotulo) }))}
-        valor={filtro}
-        onChange={setFiltro}
-      />
+      <div className={styles.barra}>
+        <SegmentedControl
+          className={styles.filtros}
+          rotulo={t('diff.filtersAriaLabel')}
+          opcoes={FILTROS.map((f) => ({ valor: f.chave, rotulo: t(f.chaveRotulo) }))}
+          valor={filtro}
+          onChange={setFiltro}
+        />
+        <form
+          className={styles.busca}
+          role="search"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (busca.trim() && itens.length === 0) setPrIdManual(busca.trim().replace(/^#/, ''));
+          }}
+        >
+          <Input
+            id="diff-pr-busca"
+            data-mono=""
+            className={styles.input}
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            aria-label={t('diff.searchLabel')}
+            placeholder={t('diff.searchPlaceholder')}
+          />
+        </form>
+      </div>
 
       {listaQuery.isLoading && <div className={styles.estado}><Shimmer>{t('diff.loadingPrs')}</Shimmer></div>}
 
@@ -220,6 +254,10 @@ export function PrListAndDiff({
           </div>
         ))}
 
+      {listaQuery.data && listaQuery.data.items.length > 0 && itens.length === 0 && (
+        <div className={styles.estado}>{t('diff.noPrsMatchSearch', { query: busca.trim() })}</div>
+      )}
+
       {listaQuery.data && listaQuery.data.items.length === 0 && (
         <div className={styles.estado}>
           {filtro !== 'all'
@@ -229,9 +267,9 @@ export function PrListAndDiff({
         </div>
       )}
 
-      {listaQuery.data && listaQuery.data.items.length > 0 && (
+      {itens.length > 0 && (
         <ul className={styles.listaPr}>
-          {listaQuery.data.items.map((pr) => (
+          {itens.map((pr) => (
             <li key={pr.id}>
               <div className={styles.itemPrLinha}>
                 <BotaoDoKit
@@ -244,21 +282,26 @@ export function PrListAndDiff({
                   <PrIcon size={15} className={styles[`estadoIcone_${pr.state}`]} />
                   <span className={styles.itemPrCorpo}>
                     <span className={styles.itemPrTitulo}>
-                      #{pr.number} {pr.title}
+                      <span className={styles.itemPrNumero}>#{pr.number}</span> {pr.title}
                     </span>
                     <span className={styles.itemPrMeta}>
                       {pr.author ?? t('diff.unknownAuthor')} · {pr.sourceBranch} → {pr.targetBranch}
                       {pr.updatedAt && ` · ${new Date(pr.updatedAt).toLocaleDateString('pt-BR')}`}
                     </span>
                   </span>
-                  <SeloDoKit variant="outline" className={[styles.itemPrEstado, styles[`estadoSelo_${pr.state}`]].join(' ')}>
-                    {t(CHAVE_ESTADO_PR[pr.state])}
-                  </SeloDoKit>
                 </BotaoDoKit>
-                {renderItemExtra && (
-                  <div className={styles.itemPrExtra}>{renderItemExtra(pr)}</div>
-                )}
+                {renderItemPortoes?.(pr)}
+                <SeloDoKit variant="outline" className={[styles.itemPrEstado, styles[`estadoSelo_${pr.state}`]].join(' ')}>
+                  {t(CHAVE_ESTADO_PR[pr.state])}
+                </SeloDoKit>
+                <div className={styles.itemPrExtra}>
+                  <Button type="button" variant="secondary" size="sm" onClick={() => setSelecionada(pr)}>
+                    {t('diff.viewDiff')}
+                  </Button>
+                  {renderItemExtra?.(pr)}
+                </div>
               </div>
+              {renderItemMotivo?.(pr)}
             </li>
           ))}
         </ul>
@@ -268,28 +311,6 @@ export function PrListAndDiff({
         <div className={styles.truncado}>{t('diff.truncatedList')}</div>
       )}
 
-      <form
-        className={styles.formularioManual}
-        onSubmit={(e) => {
-          e.preventDefault();
-          if (idDigitado.trim()) setPrIdManual(idDigitado.trim());
-        }}
-      >
-        <label className={styles.label} htmlFor="diff-pr-id">
-          {t('diff.idLabel')}
-        </label>
-        <Input
-          id="diff-pr-id"
-          data-mono=""
-          className={styles.input}
-          value={idDigitado}
-          onChange={(e) => setIdDigitado(e.target.value)}
-          placeholder={t('diff.idPlaceholder')}
-        />
-        <BotaoDoKit type="submit" variant="secondary" size="sm">
-          {t('diff.viewDiffButton')}
-        </BotaoDoKit>
-      </form>
     </div>
   );
 }

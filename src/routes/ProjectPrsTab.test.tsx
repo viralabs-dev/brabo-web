@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, beforeAll, afterAll } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { ProjectPrsTab } from './ProjectPrsTab';
 import { ToastProvider } from '../components/ui/ToastProvider';
 import { ApiError } from '../lib/api-client';
@@ -44,8 +44,12 @@ vi.mock('../lib/api-client', async (importOriginal) => {
 const useBacklog = vi.fn();
 const useLatestSession = vi.fn();
 const useProjectPendingActions = vi.fn();
+const useSessionEvents = vi.fn();
+const useCurrentWorkspaceWithRole = vi.fn();
 
 vi.mock('../lib/hooks', () => ({
+  useSessionEvents: (...args: unknown[]) => useSessionEvents(...args),
+  useCurrentWorkspaceWithRole: (...args: unknown[]) => useCurrentWorkspaceWithRole(...args),
   useBacklog: (...args: unknown[]) => useBacklog(...args),
   useLatestSession: (...args: unknown[]) => useLatestSession(...args),
   useProjectPendingActions: (...args: unknown[]) => useProjectPendingActions(...args),
@@ -169,6 +173,8 @@ beforeEach(() => {
   useBacklog.mockReturnValue({ data: undefined, isError: false, error: null, refetch: vi.fn() });
   useLatestSession.mockReturnValue({ latest: sessaoRecente() });
   useProjectPendingActions.mockReturnValue({ data: [] });
+  useSessionEvents.mockReturnValue({ data: { items: [] } });
+  useCurrentWorkspaceWithRole.mockReturnValue({ data: { role: 'developer' } });
   getCodeDiff.mockResolvedValue({ pullRequestId: '', files: [], truncated: false });
   getProjectPendingActions.mockResolvedValue([]);
 });
@@ -198,8 +204,8 @@ describe('ProjectPrsTab — o bug de visibilidade não existe por desenho', () =
 
     montar();
 
-    expect(await screen.findByText('#1 feat: A (sessão antiga)')).toBeInTheDocument();
-    expect(screen.getByText('#2 feat: B (sessão nova)')).toBeInTheDocument();
+    expect(await screen.findByText('feat: A (sessão antiga)')).toBeInTheDocument();
+    expect(screen.getByText('feat: B (sessão nova)')).toBeInTheDocument();
   });
 
   it('cruza um git_merge pendente NASCIDO NUMA SESSÃO ANTIGA com o PR certo, e decide com o sessionId da própria ação', async () => {
@@ -288,7 +294,7 @@ describe('ProjectPrsTab — botão Merge', () => {
     expect(await screen.findByRole('button', { name: 'Merge' })).toBeInTheDocument();
   });
 
-  it('gate bloqueado desabilita o Merge com o motivo em tooltip', async () => {
+  it('AT-971 (RN-1474): tarefa bloqueada não tem Merge; o motivo é uma frase em cor de erro sob o título', async () => {
     getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
     useBacklog.mockReturnValue({
       data: epicComTask({ blocked: true, blockedReason: 'QA pediu mudanças' }),
@@ -299,15 +305,19 @@ describe('ProjectPrsTab — botão Merge', () => {
 
     montar();
 
-    const botaoMerge = await screen.findByRole('button', { name: 'Merge' });
-    expect(botaoMerge).toBeDisabled();
-    expect(botaoMerge.getAttribute('title')).toBe('QA pediu mudanças');
+    const aviso = await screen.findByTestId('aviso-merge-indisponivel');
+    expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+    expect(aviso).toHaveTextContent('a tarefa desta PR está bloqueada — QA pediu mudanças');
+    const estados = within(screen.getByTestId('portoes-da-pr'))
+      .getAllByText(/^[DQSV]$/)
+      .map((e) => `${e.textContent}:${e.getAttribute('data-estado')}`);
+    expect(estados).toEqual(['D:done', 'Q:blocked', 'S:pending', 'V:pending']);
   });
 
-  it('AT-451: tarefa bloqueada com gate pendente NÃO diz que o merge segue disponível', async () => {
+  it('AT-451: tarefa bloqueada sem motivo gravado nomeia o gate e NÃO diz que o merge segue disponível', async () => {
     getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
     useBacklog.mockReturnValue({
-      data: epicComTask({ blocked: true, blockedReason: 'QA pediu mudanças', gateStatus: null }),
+      data: epicComTask({ blocked: true, blockedReason: null, gateStatus: null }),
       isError: false,
       error: null,
       refetch: vi.fn(),
@@ -315,15 +325,13 @@ describe('ProjectPrsTab — botão Merge', () => {
 
     montar();
 
-    const botaoMerge = await screen.findByRole('button', { name: 'Merge' });
-    expect(botaoMerge).toBeDisabled();
+    const aviso = await screen.findByTestId('aviso-merge-indisponivel');
     expect(screen.queryByTestId('aviso-gate-pendente')).toBeNull();
-    const aviso = screen.getByTestId('aviso-merge-indisponivel');
     expect(aviso).toHaveTextContent('qa-verificada');
     expect(aviso.textContent).not.toMatch(/segue disponível|stays available/);
   });
 
-  it('gate de QA pendente AVISA em texto, nomeando o gate, e o Merge segue ativo (AT-249, RN-663)', async () => {
+  it('AT-971 (RN-1474, revisa RN-663): portão pendente NÃO mostra Merge e diz qual falta', async () => {
     getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
     useBacklog.mockReturnValue({
       data: epicComTask({ gateStatus: 'awaiting_qa' }),
@@ -334,11 +342,119 @@ describe('ProjectPrsTab — botão Merge', () => {
 
     montar();
 
-    const botaoMerge = await screen.findByRole('button', { name: 'Merge' });
-    expect(botaoMerge).toBeEnabled();
-    expect(screen.getByTestId('aviso-gate-pendente')).toHaveTextContent(
+    expect(await screen.findByTestId('aviso-gate-pendente')).toHaveTextContent(
       'O gate qa-verificada ainda está pendente',
     );
+    expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+    const estados = within(screen.getByTestId('portoes-da-pr'))
+      .getAllByText(/^[DQSV]$/)
+      .map((e) => e.getAttribute('data-estado'));
+    expect(estados).toEqual(['done', 'current', 'pending', 'pending']);
+  });
+
+  it('AT-971: D, Q e S verdes liberam o Merge, depois dos portões na mesma linha', async () => {
+    getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ gateStatus: 'awaiting_user' }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    montar();
+
+    const merge = await screen.findByRole('button', { name: 'Merge' });
+    const portoes = screen.getByTestId('portoes-da-pr');
+    expect(portoes.compareDocumentPosition(merge) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.queryByTestId('aviso-gate-pendente')).toBeNull();
+  });
+
+  it('AT-971: portão falho com o ciclo estacionado oferece "Pedir o parecer de novo", não o Merge', async () => {
+    getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ blocked: true, blockedReason: 'QA não concluiu', gateStatus: 'awaiting_qa' }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    useSessionEvents.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: 'e1',
+            sessionId: 'sess-recente',
+            seq: 3,
+            type: 'gate.rescue_parked',
+            actor: { kind: 'system', id: 'system' },
+            payload: { taskId: 'aaaaaaaa-1111-1111-1111-111111111111', gate: 'qa-verificada', idadeSegundos: 8000 },
+            createdAt: '2026-08-20T10:00:00.000Z',
+          },
+        ],
+      },
+    });
+
+    montar();
+
+    expect(await screen.findByRole('button', { name: /Pedir o parecer de novo/ })).toBeEnabled();
+    expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Ver diff' })).toBeEnabled();
+    // Com papel, a nota continua só para o leitor de tela.
+    expect(screen.getByTestId('retomar-gate-nota').className).toBe('sr-only');
+  });
+
+  it('AT-1006 (RN-1494): sem papel developer, o motivo do botão desabilitado fica visível (RN-102)', async () => {
+    useCurrentWorkspaceWithRole.mockReturnValue({ data: { role: 'viewer' } });
+    getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ blocked: true, blockedReason: 'QA não concluiu', gateStatus: 'awaiting_qa' }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    useSessionEvents.mockReturnValue({
+      data: {
+        items: [
+          {
+            id: 'e1',
+            sessionId: 'sess-recente',
+            seq: 3,
+            type: 'gate.rescue_parked',
+            actor: { kind: 'system', id: 'system' },
+            payload: { taskId: 'aaaaaaaa-1111-1111-1111-111111111111', gate: 'qa-verificada', idadeSegundos: 8000 },
+            createdAt: '2026-08-20T10:00:00.000Z',
+          },
+        ],
+      },
+    });
+
+    montar();
+
+    expect(await screen.findByRole('button', { name: /Pedir o parecer de novo/ })).toBeDisabled();
+    expect(screen.getByTestId('retomar-gate-nota').className).not.toContain('sr-only');
+  });
+
+  it('AT-971: PR mesclada mostra os quatro portões verdes e nenhuma ação', async () => {
+    getCodePullRequests.mockResolvedValue({
+      items: [prAberta({ id: 'pr-c', number: 3, title: 'feat: C', state: 'merged' })],
+      truncated: false,
+    });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ id: 'aaaaaaaa-2222', status: 'done' }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    montar();
+
+    const portoes = await screen.findByTestId('portoes-da-pr');
+    expect(within(portoes).getAllByText(/^[DQSV]$/).map((e) => e.getAttribute('data-estado'))).toEqual([
+      'done',
+      'done',
+      'done',
+      'done',
+    ]);
+    expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
   });
 
   it('o aviso acompanha também o card da proposta pendente', async () => {
@@ -408,7 +524,7 @@ describe('ProjectPrsTab — botão Merge', () => {
 
     montar();
 
-    expect(await screen.findByText('#3 feat: C')).toBeInTheDocument();
+    expect(await screen.findByText('feat: C')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
   });
 });
@@ -495,6 +611,34 @@ describe('ProjectPrsTab — a recusa de merge aparece (RN-705)', () => {
     });
   });
 
+  it('AT-971: depois do conflito a tarefa volta a in_progress (gate pendente) e a recusa continua à vista', async () => {
+    getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
+    useBacklog.mockReturnValue({
+      data: epicComTask({ status: 'in_progress', gateStatus: null }),
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+    getProjectPendingActions.mockResolvedValue([
+      acaoDeMerge({
+        status: 'failed',
+        executionResult: {
+          kind: 'git_merge',
+          failed: true,
+          error: 'conflito de merge na PR pr-a: package.json',
+          pullRequestId: 'pr-a',
+          conflictingFiles: ['package.json'],
+        } as unknown as ProposedAction['executionResult'],
+      }),
+    ]);
+
+    montar();
+
+    const aviso = await screen.findByTestId('aviso-merge-recusado');
+    expect(aviso.textContent).toContain('package.json');
+    expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+  });
+
   it('recusa de OUTRA PR não aparece nesta', async () => {
     getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
     getProjectPendingActions.mockResolvedValue([
@@ -523,29 +667,29 @@ describe('ProjectPrsTab — a recusa de merge aparece (RN-705)', () => {
     await waitFor(() => expect(getCodePullRequests).toHaveBeenCalledTimes(2));
   });
 
-  describe('RN-816 (AT-480): o Merge não muda de lugar quando o backlog chega', () => {
-    it('com o backlog carregando, o Merge vem primeiro e a esteira tem o lugar reservado', async () => {
+  describe('RN-816 (AT-480): a linha não muda de altura nem o Merge de lugar quando o backlog chega', () => {
+    it('com o backlog carregando, a reserva ocupa o lugar e nem portões nem Merge aparecem', async () => {
       getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
       useBacklog.mockReturnValue({ data: undefined, isPending: true, isError: false, error: null, refetch: vi.fn() });
 
       montar();
 
-      const botaoMerge = await screen.findByRole('button', { name: 'Merge' });
-      const reserva = screen.getByTestId('reserva-da-esteira');
-      // O botão vem ANTES da reserva no DOM: o que chega depois fica abaixo dele.
-      expect(botaoMerge.compareDocumentPosition(reserva) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      expect(await screen.findByTestId('reserva-da-esteira')).toBeInTheDocument();
+      expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
+      expect(screen.queryByTestId('portoes-da-pr')).toBeNull();
     });
 
-    it('com o backlog lido, a reserva sai e a esteira entra no MESMO lugar, abaixo do botão', async () => {
+    it('com o backlog lido, a reserva sai e os portões entram na MESMA linha da PR', async () => {
       getCodePullRequests.mockResolvedValue({ items: [prAberta()], truncated: false });
-      useBacklog.mockReturnValue({ data: epicComTask(), isPending: false, isError: false, error: null, refetch: vi.fn() });
+      useBacklog.mockReturnValue({ data: epicComTask({ gateStatus: 'awaiting_user' }), isPending: false, isError: false, error: null, refetch: vi.fn() });
 
       montar();
 
-      const botaoMerge = await screen.findByRole('button', { name: 'Merge' });
+      const merge = await screen.findByRole('button', { name: 'Merge' });
       expect(screen.queryByTestId('reserva-da-esteira')).not.toBeInTheDocument();
-      const esteira = screen.getByText('Implementar A');
-      expect(botaoMerge.compareDocumentPosition(esteira) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+      const linha = screen.getByRole('button', { name: /Abrir PR #1/ }).parentElement!;
+      expect(linha).toContainElement(screen.getByTestId('portoes-da-pr'));
+      expect(linha).toContainElement(merge);
     });
   });
 });

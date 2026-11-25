@@ -71,7 +71,7 @@
  */
 .summary {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
@@ -89,13 +89,22 @@
   padding: 60px 20px;
 }
 
+.secaoTopo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin: 0 0 12px;
+}
+
 .secao {
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 18px;
   letter-spacing: -0.01em;
   color: var(--text-primary);
-  margin: 0 0 12px;
+  margin: 0;
 }
 
 /* Cartão tracejado "Novo projeto" no fim da grade (AT-941). */
@@ -117,10 +126,15 @@
 }
 
 .novoCartao span {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   color: var(--text-secondary);
 }
 
 .novoCartao:hover {
   border-color: var(--text-secondary);
+}
+
+/* Segunda linha da nota de um indicador (a idade do item mais antigo da Caixa). */
+.bloco {
+  display: block;
 }

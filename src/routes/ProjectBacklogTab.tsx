@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Archive, ListTree, Pencil, Save, X } from 'lucide-react';
+import { Archive, ListTree, Pencil, Save, Search, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -19,10 +19,11 @@ import { roleAtLeast } from '../lib/roles';
 import { estadoDaTarefa, type EstadoDaTarefa } from '../lib/execution';
 import { usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import { AtivarExecucao } from '../components/AtivarExecucao';
-import { Chip } from '../components/ui/Chip';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { useHistoriaInicial } from '../lib/historia-inicial';
 import { Checkbox } from '../components/shadcn/checkbox';
+import { NativeSelect } from '../components/shadcn/native-select';
+import { Progress } from '../components/shadcn/progress';
 import { Item, ItemGroup } from '../components/shadcn/item';
 import { Input } from '../components/ui/Input';
 import type { Epic, Story, StoryStatus, Task } from '../lib/api-types';
@@ -30,6 +31,7 @@ import { Badge, type BadgeTone } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Ajuda } from '../components/ui/Ajuda';
 import { EmptyState } from '../components/ui/EmptyState';
+import { ErroDeCarregamento } from '../components/ErroDeCarregamento';
 import { Modal } from '../components/ui/Modal';
 import { Textarea } from '../components/ui/Textarea';
 import { useToast } from '../components/ui/ToastProvider.helpers';
@@ -45,7 +47,7 @@ import { historiaPassaNoFiltro } from '../lib/trabalho-v9';
 import { aguardandoPromocao } from './ProjectBacklogTab.helpers';
 const STATUS_TONE: Record<StoryStatus, BadgeTone> = {
   draft: 'muted',
-  ready: 'accent',
+  ready: 'neutral',
   in_progress: 'warning',
   done: 'success',
 };
@@ -75,14 +77,16 @@ const TASK_STATE_LABEL_KEY: Record<EstadoDaTarefa, string> = {
 
 export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('backlog');
-  const { data: epics } = useBacklog(projectId);
+  const epicsQuery = useBacklog(projectId);
+  const epics = epicsQuery.data;
   // RN-727: editar/arquivar pedem `developer` no ENDPOINT — o papel de
   // WORKSPACE, com a lacuna declarada da RN-471 (o de projeto pode sobrepor).
   const { data: workspaceComPapel } = useCurrentWorkspaceWithRole();
   const podeEscrever = roleAtLeast(workspaceComPapel?.role, 'developer');
   // AT-912: arquivar tarefa é gesto do dono (o Dev Lead arquiva a que ele criou, pela ferramenta).
   const podeArquivarTarefa = roleAtLeast(workspaceComPapel?.role, 'owner');
-  const { data: coverage } = useCoverage(projectId);
+  const coverageQuery = useCoverage(projectId);
+  const coverage = coverageQuery.data;
   const propostas = aguardandoPromocao(epics);
   const [visao, setVisao] = useState<'epico' | 'quadro'>('epico');
   const [busca, setBusca] = useState('');
@@ -107,6 +111,7 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
   );
 
   return (
+    <div className={styles.pagina}>
     <div className={styles.wrapper}>
       <div className={styles.tree}>
         {propostas.length > 0 && (
@@ -117,33 +122,45 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
         <div className={styles.visoes}>
           <AtivarExecucao projectId={projectId} />
         </div>
-        <div className={styles.visoes}>
+        <div className={styles.filtros} data-testid="filtros-do-backlog">
           <Input
-            label={t('busca.label')}
+            className={styles.busca}
+            placeholder={t('busca.label')}
+            aria-label={t('busca.label')}
+            icon={<Search size={14} aria-hidden="true" />}
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />
-          <Chip pressed={soComPergunta} onClick={() => setSoComPergunta((v) => !v)}>
+          <label className={styles.soComPergunta}>
+            <Checkbox checked={soComPergunta} onCheckedChange={(v) => setSoComPergunta(v === true)} />
             {t('filtro.comPergunta', { count: totalComPergunta })}
-          </Chip>
-          <select aria-label={t('filtro.modulo')} value={modulo} onChange={(e) => setModulo(e.target.value)}>
+          </label>
+          <NativeSelect wrapperClassName={styles.modulo} aria-label={t('filtro.modulo')} value={modulo} onChange={(e) => setModulo(e.target.value)}>
             <option value="">{t('filtro.todosModulos')}</option>
             {modulos.map((m) => (
               <option key={m} value={m}>
                 {m}
               </option>
             ))}
-          </select>
-        </div>
-        {recorte && <p className={styles.description}>{t('filtro.recorte', { total: perguntasQuery?.total })}</p>}
-        <div role="group" aria-label={t('visao.label')} className={styles.visoes}>
+          </NativeSelect>
+          <div role="group" aria-label={t('visao.label')} className={styles.visoesDoFiltro}>
           {(['epico', 'quadro'] as const).map((v) => (
             <Button key={v} variant={visao === v ? 'secondary' : 'ghost'} aria-pressed={visao === v} onClick={() => setVisao(v)}>
               {t(`visao.${v}`)}
             </Button>
           ))}
+          </div>
         </div>
-        {visao === 'quadro' ? (
+        {recorte && <p className={styles.description}>{t('filtro.recorte', { total: perguntasQuery?.total })}</p>}
+        {!epics && epicsQuery.isError ? (
+          // Erro de carga não é "sem épicos" (AT-965, RN-088).
+          <ErroDeCarregamento
+            titulo={t('loadError.epics')}
+            erro={epicsQuery.error}
+            coisa={t('loadError.epicsThing')}
+            onTentarDeNovo={() => void epicsQuery.refetch()}
+          />
+        ) : visao === 'quadro' ? (
           <QuadroDeTarefas epics={epicsVisiveis} />
         ) : !epics || epics.length === 0 ? (
           <EmptyState titulo={t('empty.epicsTitle')} icone={<ListTree size={18} />}>{t('empty.epics')}</EmptyState>
@@ -172,31 +189,33 @@ export function ProjectBacklogTab({ projectId }: { projectId: string }) {
             </Badge>
           )}
         </div>
-        {!coverage || coverage.rules.length === 0 ? (
+        {!coverage && coverageQuery.isError ? (
+          <ErroDeCarregamento
+            titulo={t('loadError.rules')}
+            erro={coverageQuery.error}
+            coisa={t('loadError.rulesThing')}
+            onTentarDeNovo={() => void coverageQuery.refetch()}
+          />
+        ) : !coverage || coverage.rules.length === 0 ? (
           <EmptyState titulo={t('empty.rulesTitle')} icone={<ListTree size={18} />}>{t('empty.rules')}</EmptyState>
         ) : (
-          coverage.rules.map((r) => (
-            <div
-              key={r.ruleId}
-              className={[styles.ruleCard, !r.covered && styles.uncovered]
-                .filter(Boolean)
-                .join(' ')}
-            >
-              <div className={styles.ruleTitle}>{r.title}</div>
-              {r.covered ? (
-                <div className={styles.ruleMeta}>
-                  <CheckIcon size={12} />{' '}
-                  {t('coverage.coveredBy', {
-                    count: r.coveredByStoryIds.length,
-                  })}
-                </div>
-              ) : (
-                <Badge tone="danger">{t('coverage.uncovered')}</Badge>
-              )}
-            </div>
-          ))
+          <ul className={styles.ruleList}>
+            {coverage.rules.map((r) => (
+              <li key={r.ruleId} className={[styles.ruleRow, !r.covered && styles.uncovered].filter(Boolean).join(' ')}>
+                <span className={styles.ruleTitle}>{r.title}</span>
+                {r.covered ? (
+                  <span className={styles.ruleMeta}>
+                    <CheckIcon size={12} /> {t('coverage.coveredBy', { count: r.coveredByStoryIds.length })}
+                  </span>
+                ) : (
+                  <Badge tone="danger">{t('coverage.uncovered')}</Badge>
+                )}
+              </li>
+            ))}
+          </ul>
         )}
       </aside>
+    </div>
     </div>
   );
 }
@@ -405,6 +424,7 @@ function EpicNode({
 }) {
   const { t } = useTranslation('backlog');
   const [open, setOpen] = useState(true);
+  const concluidas = epic.stories.filter((st) => st.status === 'done').length;
   return (
     <div className={styles.epic}>
       <button
@@ -422,8 +442,13 @@ function EpicNode({
         <StackIcon size={15} />
         <span className={styles.epicTitle}>{epic.title}</span>
         <span className={styles.count}>
-          {t('epico.progresso', { count: epic.stories.length, prontas: epic.stories.filter((st) => st.status === 'done').length })}
+          {t('epico.progresso', { count: epic.stories.length, prontas: concluidas })}
         </span>
+        <Progress
+          className={styles.progresso}
+          value={epic.stories.length === 0 ? 0 : (100 * concluidas) / epic.stories.length}
+          aria-hidden="true"
+        />
       </button>
       {open && (
         <div className={styles.stories}>

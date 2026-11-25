@@ -12,6 +12,11 @@ interface ErroDeCarregamentoProps {
   erro: unknown;
   /** Normalmente `() => void query.refetch()`. Sem ele, o botão não aparece. */
   onTentarDeNovo?: () => void;
+  /**
+   * O que a tela mostraria se tivesse lido ("módulos nem ADRs"). Com 429 a frase
+   * diz que recusar a leitura não é o projeto estar vazio (AT-965).
+   */
+  coisa?: string;
 }
 
 /**
@@ -37,6 +42,7 @@ export function ErroDeCarregamento({
   titulo,
   erro,
   onTentarDeNovo,
+  coisa,
 }: ErroDeCarregamentoProps) {
   const { t } = useTranslation('ui');
   const traceId = erro instanceof ApiError ? erro.traceId : undefined;
@@ -48,7 +54,11 @@ export function ErroDeCarregamento({
       icon={<span className={styles.quadro}><TriangleAlert size={16} aria-hidden="true" /></span>}
     >
       <strong>{titulo}</strong>
-      <p>{mensagemDaApi(erro, t('erroDeCarregamento.defaultMessage'))}</p>
+      <p>
+        {coisa && erro instanceof ApiError && erro.status === 429
+          ? t('erroDeCarregamento.rateLimited', { coisa })
+          : mensagemDaApi(erro, t('erroDeCarregamento.defaultMessage'))}
+      </p>
       {traceId && (
         <div className={styles.trace}>{t('erroDeCarregamento.trace', { traceId })}</div>
       )}

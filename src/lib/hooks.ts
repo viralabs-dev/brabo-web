@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { getActiveExecutionSession, getArchitecture, getContainersOverview, getDecisionInbox, getWorkspaceBudget, getCoverage, getProjectPendingActions, getProjectsStatus, getProjectsSummary, getPsychologistStatus, getSessionEvent, getWorkspaceSummary, listBacklog, listHandoffs, listHypotheses, listInfraArtifacts, listProficiency, listProjects, listPsychologistAnalyses, listSessionEvents, listSessions, listWorkspaces, getSessionTokenUsage } from './api-client';
+import { getActiveExecutionSession, getArchitecture, getContainersOverview, getRemocoesPendentes, getDecisionInbox, getWorkspaceBudget, getCoverage, getProjectPendingActions, getProjectsStatus, getProjectsSummary, getPsychologistStatus, getSessionEvent, getWorkspaceSummary, listBacklog, listHandoffs, listHypotheses, listInfraArtifacts, listProficiency, listProjects, listPsychologistAnalyses, listSessionEvents, listSessions, listWorkspaces, getSessionTokenUsage } from './api-client';
 import type { ActionType, SessionEvent } from './api-types';
 // Todo poll deste arquivo passa por aqui: um `refetchInterval` numérico não
 // sabe parar, e a api limita 300 req/min por usuário (ver `query-policy.ts`).
@@ -131,6 +131,16 @@ export function useContainersOverview(
   return useQuery({
     queryKey: ['containers-overview', workspaceId],
     queryFn: () => getContainersOverview(workspaceId!),
+    enabled: !!workspaceId,
+    refetchInterval: pollQueParaNoErro(intervalMs),
+  });
+}
+
+/** Projetos apagados com container ainda por remover (AT-980, RN-1446). */
+export function useRemocoesPendentes(workspaceId: string | undefined, intervalMs = 5000) {
+  return useQuery({
+    queryKey: ['remocoes-pendentes', workspaceId],
+    queryFn: () => getRemocoesPendentes(workspaceId!),
     enabled: !!workspaceId,
     refetchInterval: pollQueParaNoErro(intervalMs),
   });

@@ -40,3 +40,24 @@
   gap: 4px;
   color: var(--text-primary);
 }
+
+/* Alvo de clique de 24 px (AT-977) sem mudar o tamanho do texto. */
+.verTodas {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+}
+
+/* AT-975: nada espera — uma linha de até 48 px. */
+.linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  max-height: 48px;
+  border: 1px solid var(--accent-panel-border);
+  background: var(--accent-panel);
+  border-radius: var(--r-lg);
+  padding: 0 18px;
+}

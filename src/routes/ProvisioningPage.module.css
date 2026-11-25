@@ -22,7 +22,7 @@
 }
 
 .subtitle {
-  font-size: 13px;
+  font-size: var(--fs-sm);
   color: var(--text-muted);
   margin: 0;
 }
@@ -34,7 +34,7 @@
 .bannerError {
   margin-top: 2px;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-secondary);
   word-break: break-word;
 }
@@ -53,7 +53,7 @@
 
 .working {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
@@ -68,7 +68,7 @@
 .planTitle {
   margin: 0;
   font-family: var(--font-display);
-  font-size: 12px;
+  font-size: var(--fs-meta);
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;

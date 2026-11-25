@@ -101,7 +101,7 @@ describe('ModelPicker', () => {
     abrir();
 
     // A média de 5 e 25 daria "$15", que não é o preço de nada.
-    expect(screen.getByText('$5.00 / $25.00 por 1M')).toBeTruthy();
+    expect(screen.getByText('US$ 5,00 / US$ 25,00 por 1M')).toBeTruthy();
     expect(screen.getAllByText('grátis').length).toBe(2);
   });
 

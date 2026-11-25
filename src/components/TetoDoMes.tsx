@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Alert, AlertTexto } from './shadcn/alert';
-import { Badge } from './shadcn/badge';
+import { Card } from './shadcn/card';
 import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Select } from './ui/Select';
@@ -14,6 +14,19 @@ import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
 import { alertaDeOrcamento, viradaDoMesLocal } from '../lib/spend';
 import type { Budget, BudgetPolicy } from '../lib/api-types';
 import styles from '../routes/ProjectSpendTab.module.css';
+
+/** Destino de `?tab=spend#teto`: rola até o cartão quando ele monta com a âncora no endereço (AT-973). */
+function rolarSeForAncora(el: HTMLElement | null) {
+  if (el && window.location.hash === '#teto') el.scrollIntoView?.({ block: 'start' });
+}
+
+function CartaoDoTeto({ children }: { children: React.ReactNode }) {
+  return (
+    <Card id="teto" ref={rolarSeForAncora} className={styles.cartaoDoTeto}>
+      {children}
+    </Card>
+  );
+}
 
 type Gravar = (input: { limitUsd: number; policy: BudgetPolicy }) => Promise<Budget>;
 
@@ -38,6 +51,7 @@ export function TetoDoMes({
   podeEditar: boolean;
 }) {
   const { t, i18n } = useTranslation('spend');
+  const [editando, setEditando] = useState(false);
   const budget = useQuery({ queryKey, queryFn: ler, staleTime: FRESCOR_DA_CONFIGURACAO_MS });
   const editor = (
     <EditorDoTeto
@@ -48,25 +62,40 @@ export function TetoDoMes({
       atual={budget.data ?? null}
     />
   );
+  // "Editar"/"Definir" abre o formulário DENTRO do cartão (sem Popover): a âncora `#teto` segue caindo nele.
+  const abrir = (rotulo: string) =>
+    podeEditar ? (
+      <Button type="button" variant="secondary" size="sm" aria-expanded={editando} onClick={() => setEditando((v) => !v)}>
+        {rotulo}
+      </Button>
+    ) : (
+      <p className={styles.nota}>{t(`teto.${escopo}.semPapel`)}</p>
+    );
 
   if (budget.isLoading) return null;
-  if (budget.isError) return podeEditar ? editor : null;
+  if (budget.isError) return podeEditar ? <CartaoDoTeto>{editor}</CartaoDoTeto> : null;
   if (!budget.data) {
     return (
-      <div className={styles.orcamentoProjeto}>
-        <Badge variant="outline">{t('budget.notConfigured')}</Badge>
-        <p className={styles.nota}>{t(`teto.${escopo}.semTeto`)}</p>
-        {editor}
-      </div>
+      <CartaoDoTeto>
+        <div className={styles.linhaDoTeto}>
+          <p className={styles.nota}>{t('teto.cartao.semTeto')}</p>
+          {abrir(t('teto.cartao.definir'))}
+        </div>
+        {podeEditar && editando && editor}
+      </CartaoDoTeto>
     );
   }
 
   const b = budget.data;
   const alerta = alertaDeOrcamento(b);
   return (
-    <div className={styles.orcamentoProjeto}>
-      <p className={styles.nota}>{t(`teto.${escopo}.titulo`)}</p>
+    <CartaoDoTeto>
+      <div className={styles.linhaDoTeto}>
+        <p className={styles.nota}>{t(`teto.${escopo}.titulo`)}</p>
+        {podeEditar && abrir(t('teto.cartao.editar'))}
+      </div>
       <TokenMeter
+        variant="compact"
         unitLabel="USD"
         used={b.spentMicros / 1_000_000}
         limit={b.limitMicros / 1_000_000}
@@ -74,10 +103,16 @@ export function TetoDoMes({
         costUSD={b.spentMicros / 1_000_000}
       />
       {b.periodo && (
-        <p className={styles.nota} data-testid="periodo-do-teto">
-          {t('teto.restantes', { count: b.periodo.diasRestantes })}{' '}
-          {t('teto.previsao', { valor: formatarUsd(b.periodo.previsaoMicros) })}{' '}
-          {t('teto.virada', { quando: viradaDoMesLocal(b.periodo.fim, i18n.language) })}
+        <p
+          className={`${styles.nota} ${styles.resumoDoTeto}`}
+          data-testid="periodo-do-teto"
+          title={`${t('teto.restantes', { count: b.periodo.diasRestantes })} ${t('teto.previsao', { valor: formatarUsd(b.periodo.previsaoMicros) })} ${t('teto.virada', { quando: viradaDoMesLocal(b.periodo.fim, i18n.language) })}`}
+        >
+          <span className={styles.somenteLeitor}>{t('teto.restantes', { count: b.periodo.diasRestantes })} </span>
+          {t('teto.resumo', {
+            valor: formatarUsd(b.periodo.previsaoMicros),
+            quando: viradaDoMesLocal(b.periodo.fim, i18n.language),
+          })}
         </p>
       )}
       {alerta && (
@@ -85,8 +120,9 @@ export function TetoDoMes({
           <AlertTexto>{alerta.mensagem}</AlertTexto>
         </Alert>
       )}
-      {editor}
-    </div>
+      {!podeEditar && <p className={styles.nota}>{t(`teto.${escopo}.semPapel`)}</p>}
+      {podeEditar && editando && editor}
+    </CartaoDoTeto>
   );
 }
 
@@ -152,12 +188,9 @@ function EditorDoTeto({
           </Select>
         </Field>
         <div className={styles.acoes}>
-          <Button
-            type="submit"
-            disabled={!podeEditar || salvar.isPending}
-            legenda={salvar.isPending ? t('budgetEditor.saving') : t('budgetEditor.save')}
-          >
+          <Button type="submit" disabled={!podeEditar || salvar.isPending}>
             <Save aria-hidden="true" />
+            {salvar.isPending ? t('budgetEditor.saving') : t('budgetEditor.save')}
           </Button>
         </div>
       </div>

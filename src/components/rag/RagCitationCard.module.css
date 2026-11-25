@@ -12,7 +12,7 @@
 }
 
 .score {
-  font-size: 12px;
+  font-size: var(--fs-meta);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -20,13 +20,13 @@
 .sinais {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--fs-label);
   color: var(--text-muted);
 }
 
 .conteudo {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
   color: var(--text-secondary);
   white-space: pre-wrap;
@@ -38,7 +38,7 @@
 
 .conteudoExpandido {
   margin: 0;
-  font-size: 13px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
   color: var(--text-secondary);
   white-space: pre-wrap;

@@ -4,6 +4,8 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import i18next from 'i18next';
 import { initReactI18next, I18nextProvider } from 'react-i18next';
 import overviewPtBR from '../locales/pt-BR/overview.json';
+import uiPtBR from '../locales/pt-BR/ui.json';
+import { ApiError } from '../lib/api-client';
 import { ProjectArchitectureTab } from './ProjectArchitectureTab';
 import { ouvirPedidosDeAba } from '../lib/contagens-do-projeto';
 import type { Architecture } from '../lib/api-types';
@@ -15,11 +17,11 @@ import type { Architecture } from '../lib/api-types';
 function novaInstanciaI18n() {
   const instancia = i18next.createInstance();
   void instancia.use(initReactI18next).init({
-    resources: { 'pt-BR': { overview: overviewPtBR } },
+    resources: { 'pt-BR': { overview: overviewPtBR, ui: uiPtBR } },
     lng: 'pt-BR',
     fallbackLng: 'pt-BR',
     defaultNS: 'overview',
-    ns: ['overview'],
+    ns: ['overview', 'ui'],
     interpolation: { escapeValue: false },
     returnNull: false,
   });
@@ -53,6 +55,7 @@ const ARQUITETURA_VAZIA: Architecture = {
   adrs: [],
   pendencies: [],
   c4Diagram: { status: 'sem_diagrama', diagrama: null, version: 0, eventId: null, createdAt: null },
+  contratos: [],
 };
 
 function montar(backlog?: unknown) {
@@ -89,13 +92,47 @@ beforeEach(() => {
  * pendências.
  */
 describe('ProjectArchitectureTab', () => {
+  // AT-981, RN-1387: a aba mostra os contratos por módulo, com o tipo (tabela/identidade em destaque).
+  it('mostra a tabela agendamento sob agenda com o tipo "tabela"', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      contratos: [
+        {
+          modulo: 'agenda',
+          expoe: [
+            { tipo: 'tabela', assinatura: 'agendamento(id, clienteId:int)', descricao: 'dono: agenda' },
+            { tipo: 'identidade', assinatura: 'profissional.usuarioId -> usuario.id', descricao: 'vínculo' },
+          ],
+        },
+      ],
+    });
+
+    montar();
+
+    const secao = await screen.findByRole('region', { name: 'agenda' });
+    expect(secao).toHaveTextContent('tabela');
+    expect(secao).toHaveTextContent('agendamento(id, clienteId:int)');
+    expect(secao).toHaveTextContent('identidade');
+  });
+
+  it('sem contrato declarado, diz que o Arquiteto ainda não declarou', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      adrs: [{ actionId: 'a1', title: 'ADR', status: 'approved', pullRequestUrl: null }],
+    });
+
+    montar();
+
+    expect(await screen.findByText(/Sem contrato declarado ainda/)).toBeInTheDocument();
+  });
+
   it('sem arquitetura nenhuma, mostra a frase de vazio', async () => {
     getArchitecture.mockResolvedValue(ARQUITETURA_VAZIA);
 
     montar();
 
     expect(
-      await screen.findByText('Sem arquitetura ainda — o Arquiteto gera o module_map e os ADRs.'),
+      await screen.findByText('Ainda sem arquitetura. O Arquiteto desenha os módulos e as decisões depois das histórias.'),
     ).toBeInTheDocument();
   });
 
@@ -193,6 +230,7 @@ describe('ProjectArchitectureTab', () => {
 
     montar();
 
+    fireEvent.click(await screen.findByRole('button', { name: /^ADRs/ }));
     const link = await screen.findByRole('link', { name: 'ADR 0099 — grafo de conhecimento' });
     expect(link).toHaveAttribute('href', 'https://github.com/x/y/pull/1');
     expect(screen.getByText('ADR sem PR ainda')).toBeInTheDocument();
@@ -217,7 +255,7 @@ describe('ProjectArchitectureTab', () => {
 
     montar();
 
-    expect(await screen.findByText('2')).toBeInTheDocument();
+    fireEvent.click(await screen.findByRole('button', { name: /^Pendências/ }));
     expect(screen.getByText('História sem módulo')).toBeInTheDocument();
     expect(screen.getByText('sem módulo vinculado')).toBeInTheDocument();
     expect(screen.getByText('História com módulo inexistente')).toBeInTheDocument();
@@ -258,5 +296,99 @@ describe('ProjectArchitectureTab', () => {
     const linha = (await screen.findByRole('rowheader', { name: 'booking' })).closest('tr')!;
     expect(linha).toHaveTextContent('2');
     expect(getBacklog).not.toHaveBeenCalled();
+  });
+});
+
+describe('ProjectArchitectureTab — v11 (AT-972)', () => {
+  const comModulo = {
+    ...ARQUITETURA_VAZIA,
+    adrs: [{ actionId: 'a-1', title: 'ADR um', status: 'approved', pullRequestUrl: null }],
+    pendencies: [{ storyId: 's-1', title: 'Sem módulo', status: 'ready', reason: 'no_module', missing: [] }],
+    moduleMap: {
+      id: 'mm-1',
+      projectId: 'proj-1',
+      sessionId: 's',
+      version: 1,
+      modules: [{ name: 'persistencia', stack: 'Node 22 + TypeScript + better-sqlite3', responsibility: 'Único ponto de acesso ao banco', dependsOn: [] }],
+      createdAt: '2026-08-10T10:00:00.000Z',
+    },
+  };
+
+  it('Diagrama, ADRs e Pendências são um ToggleGroup com contagem; o padrão é Diagrama', async () => {
+    getArchitecture.mockResolvedValue(comModulo);
+    montar();
+
+    const diagrama = await screen.findByRole('button', { name: 'Diagrama' });
+    expect(diagrama).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByRole('button', { name: 'ADRs · 1' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByRole('button', { name: 'Pendências · 1' })).toHaveAttribute('aria-pressed', 'false');
+    // ADRs e pendências só aparecem na própria vista
+    expect(screen.queryByText('ADR um')).not.toBeInTheDocument();
+    expect(screen.queryByText('Sem módulo')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'ADRs · 1' }));
+    expect(screen.getByText('ADR um')).toBeInTheDocument();
+  });
+
+  it('as colunas Stack e Responsabilidade quebram linha (classe que anula o nowrap do kit), para a tabela não passar da largura', async () => {
+    getArchitecture.mockResolvedValue(comModulo);
+    montar();
+
+    const celula = (await screen.findByText('Único ponto de acesso ao banco')).closest('td')!;
+    expect(celula.className).toContain('celulaQuebra');
+    expect(screen.getByRole('cell', { name: /better-sqlite3/ }).className).toContain('celulaQuebra');
+  });
+});
+
+describe('ProjectArchitectureTab — erro de carga não é vazio (AT-965)', () => {
+  it('429 simulado: mostra o erro com Tentar de novo e NUNCA "Ainda sem arquitetura"', async () => {
+    getArchitecture.mockRejectedValue(new ApiError(429, { message: 'Limite de requisições excedido' }));
+
+    montar();
+
+    expect(await screen.findByText('Não deu para carregar a Arquitetura')).toBeInTheDocument();
+    expect(screen.getByText(/O servidor recusou a leitura \(429\)\. Isto não quer dizer que o projeto não tem módulos nem ADRs\./)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeInTheDocument();
+    expect(screen.queryByText(/Ainda sem arquitetura/)).not.toBeInTheDocument();
+  });
+
+  it('enquanto carrega também não diz "Ainda sem arquitetura"', () => {
+    getArchitecture.mockReturnValue(new Promise(() => {}));
+    montar();
+    expect(screen.queryByText(/Ainda sem arquitetura/)).not.toBeInTheDocument();
+  });
+
+  it('AT-1006 (RN-1495): chips "módulos · v‹N›" e "C4 nível 2" e a legenda do grafo só com dado', async () => {
+    getArchitecture.mockResolvedValue({
+      ...ARQUITETURA_VAZIA,
+      moduleMap: {
+        id: 'mm-1',
+        projectId: 'proj-1',
+        sessionId: 'sess-1',
+        version: 3,
+        modules: [
+          { name: 'A', stack: 's', responsibility: 'r', dependsOn: [] },
+          { name: 'B', stack: 's', responsibility: 'r', dependsOn: ['A'] },
+        ],
+        createdAt: '2026-08-10T10:00:00.000Z',
+      },
+      c4Diagram: {
+        status: 'gerado',
+        diagrama: { systemName: 'X', systemDescription: '', actors: [], contextDiagram: 'C4Context', containerDiagram: 'C4Container' },
+        version: 1,
+        eventId: 'evt-1',
+        createdAt: '2026-08-10T10:00:00.000Z',
+      },
+    });
+    const { unmount } = montar();
+    expect(await screen.findByText('módulos · v3')).toBeInTheDocument();
+    expect(screen.getByText('C4 nível 2')).toBeInTheDocument();
+    expect(screen.getByText('2 módulos · fluxo da esquerda para a direita')).toBeInTheDocument();
+    unmount();
+
+    getArchitecture.mockResolvedValue({ ...ARQUITETURA_VAZIA, adrs: [{ actionId: 'a1', title: 'ADR', status: 'approved', pullRequestUrl: null }] });
+    montar();
+    await screen.findByText(/ADRs · 1/);
+    expect(screen.queryByText(/módulos · v/)).toBeNull();
+    expect(screen.queryByText('C4 nível 2')).toBeNull();
   });
 });

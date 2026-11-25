@@ -35,8 +35,7 @@
     "since": "Desde",
     "sinceNone": "—",
     "actions": "Ações",
-    "detail": "Detalhe",
-    "openDetail": "Abrir"
+    "verDetalhe": "Ver detalhe"
   },
   "status": {
     "provisioning": "provisionando",
@@ -97,7 +96,11 @@
       "registrado_rodando_observado_parado": "Registrado rodando, observado parado."
     },
     "ajuda": "Ações do container",
-    "ajudaIndisponiveis": "Por que as ações estão indisponíveis"
+    "ajudaIndisponiveis": "Por que as ações estão indisponíveis",
+    "open": "Abrir",
+    "decideImage": "Decidir imagem",
+    "menu": "Mais ações de {{projeto}}",
+    "detalhes": "Ver detalhes"
   },
   "detail": {
     "title": "Container",
@@ -151,5 +154,17 @@
       "nomeReservado": "nome reservado"
     },
     "ajuda": "Rede do container"
+  },
+  "remocoes": {
+    "title": "Remoção pendente",
+    "help": "Projetos apagados cujos containers ainda serão removidos quando o broker voltar.",
+    "recursos_one": "{{count}} recurso",
+    "recursos_other": "{{count}} recursos",
+    "tentativas_one": "{{count}} tentativa",
+    "tentativas_other": "{{count}} tentativas",
+    "semMotivo": "sem motivo registrado",
+    "recursos_zero": "{{count}} recurso",
+    "tentativas_zero": "{{count}} tentativa",
+    "apagado": "projeto apagado · {{id}}"
   }
 }

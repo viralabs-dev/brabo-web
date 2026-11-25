@@ -82,7 +82,6 @@
   },
   "modelsSection": {
     "title": "按智能体的模型",
-    "eyebrow": "按级联生效的 binding",
     "subtitle": {
       "intro": "来源表示值在哪里解析：",
       "mostSpecificWins": "最具体的优先。",
@@ -91,15 +90,10 @@
       "needsDeveloper": " 更换模型、将某个模型应用到所有智能体或恢复继承需要 developer 角色。",
       "needsMaintainerArea": " 勾选领域复选框或更改其模型需要 maintainer 角色。"
     },
-    "costCard": {
-      "label": "团队每月预估成本",
-      "detail": "· 基于 30 天历史"
-    },
     "columns": {
       "agent": "智能体",
       "model": "当前模型",
       "origin": "来源",
-      "fallback": "回退",
       "estimate": "月预估"
     },
     "backToInheritTitleWithArea": "删除此智能体的自有模型——它将恢复使用领域 {{area}} 的默认值。",
@@ -142,7 +136,27 @@
         "partial": "领域默认值已保存，但 {{agent}} 自己的模型未被移除（{{reason}}）"
       }
     },
-    "ajudaRoteamento": "路由：该偏好（最低价格、最高吞吐、最低延迟）只有在针对真实 API 证实之后，才会为提供方声明。未经证实时，该行会说明尚未证实。"
+    "ajudaRoteamento": "路由：该偏好（最低价格、最高吞吐、最低延迟）只有在针对真实 API 证实之后，才会为提供方声明。未经证实时，该行会说明尚未证实。",
+    "deOndeVem": {
+      "semModelo": "无模型",
+      "herdaDoCriativo": "继承自 {{nome}}",
+      "herda": {
+        "agent": "继承自其他智能体",
+        "session": "继承自会话",
+        "area": "继承自领域",
+        "project": "继承自项目",
+        "workspace": "继承自工作区"
+      },
+      "proprio": "在此智能体上设置",
+      "abrir": "{{agente}} 的模型来自哪里",
+      "esconderOutros": "隐藏无支出的智能体",
+      "mostrarOutros_other": "显示其余 {{count}} 个智能体"
+    },
+    "tituloDaTabela_other": "{{count}} 个智能体 · 预计每月 {{valor}}",
+    "tituloDaTabelaBase": "基于过去 30 天的历史",
+    "oQueIssoMuda": "这会带来什么变化",
+    "fallbackPopover": "如果丢失自有模型，则使用：<m>{{modelo}}</m>",
+    "faixaRoteamentoMuda": "该提供方的路由偏好尚未在真实 API 上验证，因此不会应用：由提供方决定。适用于全部 {{total}} 个智能体。与此不同的行会在该行显示差异。"
   },
   "members": {
     "title": "成员与角色",
@@ -151,7 +165,8 @@
     "subtitleCascata": " 此表中的角色在本项目中取代工作区角色，双向生效——在这里设为 viewer 甚至会降级工作区的 owner。仅通过工作区访问项目的人不会出现在列表中。",
     "subtitleNeedsMaintainer": " 邀请、更改角色或移除成员需要 maintainer 角色。",
     "invite": {
-      "placeholder": "用户 ID（UUID）",
+      "placeholder": "邮箱",
+      "label": "工作区成员的邮箱",
       "button": "邀请"
     },
     "table": {
@@ -214,7 +229,8 @@
       "modelo": "第 {{n}} 级模型",
       "teto": "第 {{n}} 级上限（US$）",
       "remover": "删除第 {{n}} 级",
-      "adicionar": "添加一级"
+      "adicionar": "添加一级",
+      "alteracoes_other": "{{count}} 项未保存的更改"
     }
   },
   "executionMode": {
@@ -302,9 +318,8 @@
       "title": "领域 {{area}}",
       "spent": "已花费：{{amount}}",
       "capAria": "领域 {{area}} 的花费上限（美元）",
-      "noCap": "无上限"
+      "semTetoProprio": "无自有上限"
     },
-    "placeholder": "无上限",
     "save": "保存",
     "saving": "正在保存…",
     "toast": {
@@ -313,7 +328,11 @@
     },
     "mes": {
       "rotulo": "月度支出上限",
-      "descricao": "项目每月（UTC）可支出的额度；重置时间显示在上限旁。"
+      "descricao": "项目每月（UTC）可支出的额度；重置时间显示在上限旁。",
+      "semTeto": "本月无上限",
+      "valor": "{{gasto}} / {{teto}} · {{pct}}%",
+      "editarEmGastos": "在“支出”中修改",
+      "naoLido": "无法读取上限"
     }
   },
   "promotion": {
@@ -393,7 +412,7 @@
       "noModels": "目录中暂无此 provider 的模型——登记密钥不会发现模型。",
       "noCatalogSource": "此 provider 不提供模型列表，因此无需同步——其模型通过 seed 导入。",
       "openSwapAria": "输入 {{label}} 的新密钥",
-      "calls_other": "{{count}} 次调用"
+      "calls_other": "{{count, number}} 次调用"
     },
     "toast": {
       "saved": "凭据已保存",
@@ -481,7 +500,7 @@
       "title": "项目的所有令牌",
       "eyebrow": "maintainer",
       "subtitle": "事件响应——撤销项目中任何用户的令牌，而不仅是你自己的。",
-      "emptyMessage": "本项目尚未生成任何访问令牌。",
+      "emptyMessage": "本项目中无人生成过令牌。",
       "table": {
         "name": "名称",
         "owner": "所有者",
@@ -621,7 +640,6 @@
       "hintOff": "关闭：每个 PR 都等待你点击 Merge。",
       "hintOn": "开启：所有关卡为绿色且无冲突的 PR 会自动合并，你无需事先查看代码。"
     },
-    "switchAria": "项目 PR 的自动合并",
     "reason": {
       "ligar": "只有工作区 owner 可以开启自动合并。请联系 owner。",
       "desligar": "只有 maintainer 或工作区 owner 可以关闭自动合并。"
@@ -636,6 +654,26 @@
     "toast": {
       "on": "自动合并已开启",
       "off": "自动合并已关闭",
+      "error": "无法保存"
+    }
+  },
+  "passagensSemClique": {
+    "title": "智能体之间无需点击的交接",
+    "eyebrow": "当条件满足时",
+    "subtitle": "默认开启。开关打开时，条件一旦满足，Brabo 会自动把工作交给下一个智能体；关闭后，交接会重新等待你点击“接受”。",
+    "arquitetoInfra": {
+      "title": "架构师到 Infra",
+      "hint": "有模块图、已提出的 ADR 且架构师没有未决问题时自动接受。"
+    },
+    "infraDevLead": {
+      "title": "Infra 到 Dev Lead",
+      "hint": "基础设施 PR 已合并且项目容器已启动并验证网络时自动接受。"
+    },
+    "reason": "只有 maintainer 或工作区 owner 能更改这些开关。",
+    "switchAria": "无需点击的交接 {{passagem}}",
+    "toast": {
+      "on": "已开启无需点击的交接",
+      "off": "已关闭无需点击的交接",
       "error": "无法保存"
     }
   },
@@ -698,6 +736,22 @@
     "toast": {
       "saved": "工具路由器已保存",
       "error": "无法保存"
+    }
+  },
+  "regrasDeOferta": {
+    "title": "自动完成规则",
+    "eyebrow": "在聊天中接受",
+    "subtitle": "你在聊天中通过“今后自动完成”接受的规则。撤销后会重新由你点击确认。",
+    "categoria": {
+      "aprovacao": "批准",
+      "handoff": "代理之间的交接",
+      "desbloqueio": "解除阻塞"
+    },
+    "desfazer": "撤销",
+    "reason": "只有 maintainer 或工作区 owner 可以撤销这些规则。",
+    "toast": {
+      "ok": "规则已撤销",
+      "error": "无法撤销"
     }
   }
 }

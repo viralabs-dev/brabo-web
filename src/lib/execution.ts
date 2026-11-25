@@ -1,4 +1,5 @@
 import type { Epic, SessionEvent, Task } from './api-types';
+import { formatarUsdCasas } from './currency';
 
 export type EstadoDaTarefa = 'blocked' | 'todo' | 'in_progress' | 'in_review' | 'done';
 
@@ -144,7 +145,7 @@ export function deriveExecutionProgress(
 
 /** US$ com 4 casas — o custo de uma task fica na casa dos centavos. */
 export function formatMicros(micros: number): string {
-  return `US$ ${(micros / 1_000_000).toFixed(4)}`;
+  return formatarUsdCasas(micros / 1_000_000, 4);
 }
 
 /**

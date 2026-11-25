@@ -8,6 +8,10 @@ import { historicoFalso } from '../test/historico-de-eventos';
 // é o idioma DEFAULT (mesmo padrão de ProjectExecutorsTab.test.tsx).
 import i18n from '../lib/i18n';
 
+// AT-957: o painel da sessão também tem abas (Contexto · Executores · Pendências); só as do carrossel contam aqui.
+const abasDoCarrossel = () =>
+  screen.queryAllByRole('tab').filter((t) => !t.closest('[data-testid="painel-da-sessao"]'));
+
 /**
  * Carrossel de histórias no fio do PO (RN-148).
  *
@@ -176,7 +180,7 @@ describe('SessionPage — carrossel de histórias (RN-148)', () => {
     expect(screen.queryByText(/Checkout com cartão/)).not.toBeInTheDocument();
 
     // Navegação: 3 dots, um por história.
-    expect(screen.getAllByRole('tab')).toHaveLength(3);
+    expect(abasDoCarrossel()).toHaveLength(3);
 
     // "Aprovar todas" existe no cabeçalho do carrossel.
     expect(screen.getByRole('button', { name: 'Aprovar todas' })).toBeInTheDocument();
@@ -265,7 +269,7 @@ describe('SessionPage — carrossel de histórias (RN-148)', () => {
 
     expect(screen.queryByRole('group', { name: /histórias aguardando promoção/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Aprovar todas' })).not.toBeInTheDocument();
-    expect(screen.queryAllByRole('tab')).toHaveLength(0);
+    expect(abasDoCarrossel()).toHaveLength(0);
     expect(screen.getByRole('button', { name: 'Promover' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Devolver' })).toBeInTheDocument();
   });
@@ -292,7 +296,7 @@ describe('SessionPage — carrossel de histórias (RN-148)', () => {
     expect(
       await screen.findByRole('group', { name: '2 histórias aguardando promoção' }),
     ).toBeInTheDocument();
-    expect(screen.getAllByRole('tab')).toHaveLength(2);
+    expect(abasDoCarrossel()).toHaveLength(2);
     expect(screen.getByText('história "Cadastro de usuário" pronta, aguardando sua promoção')).toBeInTheDocument();
 
     // A resolvida narra separado, como divisor — não como slide.

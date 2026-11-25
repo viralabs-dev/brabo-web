@@ -292,12 +292,16 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/settings/RoteadorDeFerramentasSection.test.tsx` (um caso por estado e motivo, não-owner, PUT, 409, aviso de queda).
 - **Origem:** AT-626 (Rodada C), decisão do dono de 13/11/2026.
 
+<a id="rn-1332"></a>
+
 ### RN-1332 — O cartão do QA e do SecOps diz o estado real do gate: tarefa bloqueada ou de volta na fila do dev nunca aparece como "Julgando" {#rn-1332}
 
 - **Regra:** o `markBlocked` mantém `gate_status = awaiting_qa` sem emitir `pr.gate_changed`, então o último parecer não basta. (a) Um `backlog.task_blocked` da MESMA `taskId` depois do último `pr.gate_changed`/`infra.gate_changed` encerra o "trabalhando" do gate (`gateStatus` devolve `ocioso`; o carrossel e a aba Executores usam a mesma função), com o texto "A tarefa bloqueou: o gate espera a correção". (b) Se o backlog tem tarefa `todo` com `gateStatus` aberto do gate (`awaiting_qa` no QA, `awaiting_secops` no SecOps), o cartão diz "A PR #N espera voltar ao QA: a tarefa está na fila do dev" ou, com `blocked`, "… a tarefa está bloqueada"; esse estado vale mais que o último parecer. Os campos novos da api (`origin`, `blockedBy`) não são exigidos. O texto do dev travado aponta o botão que existe: "Use Rearmar aqui nas pendências ou em Executores."
 - **Onde:** `src/lib/agent-status.ts` (`gateStatus`, `gateParadoPorBloqueio`), `src/lib/executores-ao-vivo.ts` (`cartaoDoGate`), `src/locales/*/executors.json` (`gateEsperaVolta*`, `gateEsperaDesbloqueio*`, `gateTarefaBloqueada`, `travado`).
 - **Teste:** `src/lib/agent-status.test.ts`, `src/lib/executores-ao-vivo.test.ts`.
 - **Origem:** AT-982 (achado 44), AT-985 (achado 34) e AT-984 (passo 8); Rodada 382.
+
+<a id="rn-1333"></a>
 
 ### RN-1333 — Nenhum texto fica abaixo de 11 px e links e cabeçalhos de ordenação têm alvo de pelo menos 24 px {#rn-1333}
 
@@ -643,11 +647,11 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/ProjectSpendTab.test.tsx`.
 - **Origem:** AT-973 (EP-035), prancha L08 da v11.
 
-<a id="rn-1453"></a>
+<a id="rn-1502"></a>
 
-### RN-1453 — O convite de membro do projeto é por e-mail {#rn-1453}
+### RN-1502 — O convite de membro do projeto é por e-mail {#rn-1502}
 
-- **Regra:** em Configurações › Pessoas e acesso o campo do convite é "E-mail" (antes pedia o UUID do usuário); a tela envia `{ email, role }` e a api resolve o e-mail entre os membros do workspace do projeto. E-mail de fora devolve 404 com a frase da api, mostrada na linha do convite. Tabelas vazias de membros, tokens e chaves mostram uma frase só, sem cabeçalho de colunas. Regra da api: `brabo-api` RN-1453.
+- **Regra:** em Configurações › Pessoas e acesso o campo do convite é "E-mail" (antes pedia o UUID do usuário); a tela envia `{ email, role }` e a api resolve o e-mail entre os membros do workspace do projeto. E-mail de fora devolve 404 com a frase da api, mostrada na linha do convite. Tabelas vazias de membros, tokens e chaves mostram uma frase só, sem cabeçalho de colunas. Par da RN-1453 da api (`brabo-api`).
 - **Onde:** `src/routes/settings/MembersSection.tsx` (`handleInvite`), `src/components/ui/Table.tsx` (`semCabecalhoSeVazia`), `src/lib/api-client.ts` (`addProjectMember`).
 - **Teste:** `src/routes/settings/papel-na-secao-de-membros.test.tsx`.
 - **Origem:** AT-974 (EP-035), prancha L09 da v11.
@@ -658,7 +662,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 > **Revisada pela [RN-1488](#rn-1488) (AT-1005):** o Popover usa a fonte do texto (só o identificador do modelo é mono), a faixa de roteamento mostra a frase curta e "O que isso muda" abre a inteira num Popover, e o custo estimado entra no título da tabela. A altura da linha segue a da L09 (~55 px).
 
-- **Regra:** a tabela tem quatro colunas: Agente, Modelo vigente, "De onde vem" e Est. mês (a coluna Fallback saiu). "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) e o fallback ("Se perder o modelo próprio, vale: X", ou "não há nível abaixo") abrem num Popover do chip. Os agentes com gasto no mês vêm primeiro, do maior para o menor gasto, e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). A caixa "Valer para a área" do lead fica na mesma linha do seletor, sem dobrar a altura da linha. O sobretítulo "binding vigente por cascata" saiu e a explicação da cascata fica visível em linha. O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa de aviso (`Alert` com ícone e borda) acima da tabela, com "O que isso muda". A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px` (o critério de 32 px vale entre as colunas). O erro do convite (RN-1453) usa o `Alert` de erro e "Editar em Gastos" (RN-1455) é o `Link` do roteador.
+- **Regra:** a tabela tem quatro colunas: Agente, Modelo vigente, "De onde vem" e Est. mês (a coluna Fallback saiu). "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) e o fallback ("Se perder o modelo próprio, vale: X", ou "não há nível abaixo") abrem num Popover do chip. Os agentes com gasto no mês vêm primeiro, do maior para o menor gasto, e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). A caixa "Valer para a área" do lead fica na mesma linha do seletor, sem dobrar a altura da linha. O sobretítulo "binding vigente por cascata" saiu e a explicação da cascata fica visível em linha. O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa de aviso (`Alert` com ícone e borda) acima da tabela, com "O que isso muda". A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px` (o critério de 32 px vale entre as colunas). O erro do convite (RN-1502) usa o `Alert` de erro e "Editar em Gastos" (RN-1455) é o `Link` do roteador.
 - **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/settings/PreferenciaDeRoteamento.tsx` (`semAvisoDeCapability`), `src/routes/settings/LinhaDeConfiguracao.module.css`.
 - **Teste:** `src/routes/settings/cascata.test.tsx`, `src/routes/settings/bindings-em-lote.test.tsx`.
 - **Origem:** AT-974 (EP-035), prancha L09 da v11; decisão do dono de 17/11 (v11 vale sobre a revisão visual).
@@ -883,7 +887,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1488 — Em Modelos e Pessoas o Popover usa a fonte do texto, o roteamento tem uma ação e as tabelas vazias são uma linha {#rn-1488}
 
-> **Revisa** a [RN-1454](#rn-1454) e a [RN-1453](#rn-1453).
+> **Revisa** a [RN-1454](#rn-1454) e a [RN-1502](#rn-1502).
 
 - **Regra:** o Popover da cascata ("De onde vem") usa a fonte do texto, não a mono; só o identificador do modelo ("Se perder o modelo próprio, vale: `X`") fica em mono. "Mostrar os outros N agentes" é um link do kit ([RN-1487](#rn-1487)). A faixa de aviso de roteamento mostra a frase curta ("Roteamento: não provado em <provider>.") e, à direita, "O que isso muda", que abre a frase inteira num Popover. O cabeçalho "Custo estimado mensal do time" deixa de ser uma faixa à parte e entra no título da tabela ("N agentes · US$ X estimado por mês", com a base de 30 dias no `title`). A linha de Modelos segue com cerca de 55 px, a medida da L09 (decisão do dono de 20/11). O erro do convite tem ícone de erro e o texto na cor de erro (`--danger`). As tabelas vazias de tokens e de chaves de dispositivo são uma linha de até 48 px, e a frase de "Tokens de acesso" não se repete em "Todos os tokens do projeto" (que diz "Ninguém neste projeto emitiu token.").
 - **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/ProjectSettingsTab.module.css` (`cadeiaNoPopover`, `idDoModelo`), `src/routes/settings/MembersSection.tsx`, `src/components/ui/Table.tsx` (`vaziaEmUmaLinha`), `src/routes/settings/PersonalAccessTokensSection.tsx`, `src/routes/settings/RunnerDeviceKeysSection.tsx`.
@@ -901,6 +905,8 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/settings/teto-e-escada.test.tsx`, `src/routes/settings/teto-so-em-gastos.test.tsx`, `src/routes/settings/MergeAutomaticoSection.test.tsx`, `src/routes/settings/heranca.test.tsx`, `src/routes/ProjectSettingsTab.test.tsx`.
 - **Origem:** AT-1005 (EP-035), prancha L09 da v11 e a W3 da AT-1000.
 
+<a id="rn-1484"></a>
+
 ### RN-1484 — Moeda e número saem no idioma da interface {#rn-1484}
 
 - **Regra:** a moeda é USD (ADR 0040) e o número de casas é o de cada tela (Execução e turno com 4, aprovações e atividade com 2), mas o separador segue `i18n.language`, lido a cada chamada: em pt-BR "US$ 0,9790", em en "$0.9790". Um formatador só, `formatarUsdCasas` em `lib/currency.ts`, atende `formatMicros`, `dolar`, `formatarCusto`, `dolares` (aprovações) e o teto da atividade; os preços de `lib/models.ts` e do catálogo trocam o `'en-US'` fixo pelo idioma vigente. Os `toLocaleString()` sem argumento e os `'pt-BR'` fixos (gráfico de gasto, janela do agente, Hugging Face, sessões, painel do Código) usam `i18n.language`. O custo médio abaixo de 1 centavo segue com 4 casas (RN-1451).
@@ -908,12 +914,16 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/lib/formatacao-pt-br.test.ts`.
 - **Origem:** AT-1004 (EP-035).
 
+<a id="rn-1485"></a>
+
 ### RN-1485 — A contagem sai com separador de milhar {#rn-1485}
 
 - **Regra:** as chaves de contagem (eventos, chamadas, tokens, arquivos, linhas, mensagens) usam `{{count, number}}`, a formatação do i18next, que segue o idioma: "8.404 eventos" em pt-BR e "8,404 events" em en. Os plurais continuam decididos pelo `count`. pt-BR, en, ru e zh-Hans mudam juntos, para a paridade. Onde o chamador já passa o valor formatado, a chave fica como está, para não formatar duas vezes.
 - **Onde:** `src/locales/*/*.json` (só chaves de contagem).
 - **Teste:** `src/lib/formatacao-pt-br.test.ts` (8404 em pt-BR e en).
 - **Origem:** AT-1004 (EP-035).
+
+<a id="rn-1486"></a>
 
 ### RN-1486 — O Snippet copia com texto e a borda segue o tema {#rn-1486}
 
@@ -976,9 +986,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/components/AgentCard.test.tsx`, `src/components/AgentTeamGrid.test.tsx`.
 - **Origem:** AT-1007 (EP-035), prancha L10 da v11; revisa RN-603 e RN-670 só na forma do controle. O `formatMicros` local do cartão saiu: ele importa o de `lib/execution.ts`, em pt-BR desde a AT-1004 ([RN-1484](#rn-1484)).
 
-<a id="rn-1493"></a>
+<a id="rn-1503"></a>
 
-### RN-1493 — Container que falhou mostra a primeira linha do motivo na lista; o nome do projeto abre o detalhe {#rn-1493}
+### RN-1503 — Container que falhou mostra a primeira linha do motivo na lista; o nome do projeto abre o detalhe {#rn-1503}
 
 - **Regra:** em `/containers`, a coluna "Detalhe" sai (a lista tem 7 colunas) e o nome do projeto abre `/containers/$projectId`. Com o registrado `failed` e `motivoDaFalha` (a primeira linha do `failureReason` gravado, vinda da api, [RN-1493 da api](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api/parte-12.md#rn-1493)), o status mostra o motivo numa linha cortada embaixo do selo, com "Ver detalhe"; sem motivo, só "falhou". O nome de imagem longo quebra a linha na coluna Imagem, sem reticências.
 - **Onde:** `src/routes/ContainersPage.tsx` (`columns`), `src/routes/ContainersPage.module.css` (`.imagemTexto`, `.motivoDaFalha`), `src/lib/api-types.ts`.

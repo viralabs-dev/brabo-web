@@ -927,7 +927,7 @@ describe('ContainersPage — layout estreito (AT-330)', () => {
   });
 });
 
-it('AT-1006 (RN-1493): falhou mostra a primeira linha do motivo e "Ver detalhe"; sem motivo, só "falhou"', () => {
+it('AT-1006 (RN-1503): falhou mostra a primeira linha do motivo e "Ver detalhe"; sem motivo, só "falhou"', () => {
   useContainersOverview.mockReturnValue({
     isPending: false,
     isError: false,
@@ -958,7 +958,7 @@ it('AT-1006: sem a coluna "Detalhe" (7 colunas) e o nome do projeto abre o detal
   expect(screen.getByRole('link', { name: 'core' })).toHaveAttribute('href', '/containers/$projectId-{"projectId":"proj-1"}');
 });
 
-it('AT-1006 (RN-1493): o nome de imagem quebra a linha, sem reticências', () => {
+it('AT-1006 (RN-1503): o nome de imagem quebra a linha, sem reticências', () => {
   const css = readFileSync(resolve(__dirname, 'ContainersPage.module.css'), 'utf8');
   const bloco = /\.imagemTexto \{[^}]*\}/.exec(css)?.[0] ?? '';
   expect(bloco).toContain('overflow-wrap: anywhere');

@@ -60,7 +60,7 @@
   font-family: var(--font-mono);
   font-size: var(--fs-meta);
   color: var(--text-primary);
-  /* RN-1493: nome de imagem longo quebra a linha, sem reticências. */
+  /* RN-1503: nome de imagem longo quebra a linha, sem reticências. */
   overflow-wrap: anywhere;
 }
 

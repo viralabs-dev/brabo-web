@@ -352,7 +352,7 @@ describe('membros — a recusa da api tem desfecho na tela', () => {
     ).toBeInTheDocument();
   });
 
-  it('convidar vai por e-mail (RN-1453) e a frase da api (404) aparece na linha do convite', async () => {
+  it('convidar vai por e-mail (RN-1504) e a frase da api (404) aparece na linha do convite', async () => {
     const { campoDeConvite, convidar } = await cenario({ noWorkspace: 'maintainer' });
     addProjectMember.mockRejectedValueOnce(
       new ApiError(404, { message: 'Nenhum usuário do workspace tem este e-mail' }),

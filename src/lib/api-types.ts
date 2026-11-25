@@ -1689,7 +1689,7 @@ export interface ContainerOverviewItem {
   decisaoVigente: { version: number; image: string; network: "none" | "egress" } | null;
   /** Conteúdo do container registrado difere da decisão vigente (RN-902). */
   imagemDesatualizada: boolean;
-  /** Primeira linha do `failureReason` gravado, ou `null` (RN-1493). */
+  /** Primeira linha do `failureReason` gravado, ou `null` (RN-1503). */
   motivoDaFalha: string | null;
 }
 

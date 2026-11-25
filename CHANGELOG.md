@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Doc (AT-1011): as refs empatadas de `parte-05` e `parte-06` seguem o símbolo, e o link da RN-418 em `parte-07.md` aponta para a api, que a hospeda.
+
 - Doc (AT-1011): as RN do web que colidiam com a api foram renumeradas (RN-1453 para RN-1504 e RN-1493 para RN-1503; a api mantém os números; as RN-1500 e RN-1501 já eram do web, AT-1010) e as RN-1332, RN-1333, RN-1484, RN-1485 e RN-1486 ganharam a âncora `rn-N`.
 
 - Fix (AT-1009, EP-035, RN-1496, RN-1497, RN-1498): a Sessão dá 70% ou mais da altura ao fio (1848 × 925: 72%, 1440 × 900: 71%, 1366 × 768: 70%) e o aviso de PR pronta mostra o título. O composer fica em ~120 px (campo de uma linha, dica sem quebrar); em janela baixa a barra da sessão vai a 48 px (sem a linha de metadados) e a faixa de estado a 32 px. No aviso, a nota do merge sai da vista (fica para leitor de tela) e "Agora não" não quebra. No telefone (390 × 844) o fio chega a 65%, a faixa perde a barra de progresso e nada passa da largura; a trilha "Sessões / ..." deixa de ser cortada no topo. Regressivo `brabo-qa`: revisar specs que leem a nota `mergear-nota` ou a linha de metadados da barra a 768 px de altura.

@@ -93,7 +93,7 @@ keywords: [regras de negócio, web]
   pede para não prometer ganho de paralelismo. A aspa do modelo nas pontas do
   resumo é removida antes de a frase citá-lo, para não sobrar `coberto."`.
 - **Onde:** `apps/web/src/lib/aprovacoes.ts:360` (`propose_execution_plan`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:316` (`sobem`), `:289`
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:440` (`sobem`), `:409`
   (`classificar`), `:97` (`spec`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("plano com 2 agentes num
   módulo único diz que sobe 1…"; "plano sem agente a mais não fala de
@@ -1001,7 +1001,7 @@ keywords: [regras de negócio, web]
   e a tarefa segue na lista. Claim, desbloqueio e retomada não mudam.
 - **Onde:** `apps/web/src/lib/execution.ts:10` (`estadoDaTarefa`);
   `apps/web/src/routes/ProjectBacklogTab.tsx` (o selo da lista de tarefas);
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:622` (`bloqueio`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:987` (`bloqueio`)
 - **Teste:** `apps/web/src/lib/execution.test.ts` ("blocked vence o status";
   falha: "sem bloqueio, o status"); `apps/web/src/routes/ProjectBacklogTab.test.tsx`
   ("a bloqueada mostra \"Bloqueada\" e o motivo, sem o selo \"a fazer\"");

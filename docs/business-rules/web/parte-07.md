@@ -341,7 +341,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1358 — O "Mergear" confirma num Popover do próprio botão, e o merge segue gesto humano {#rn-1358}
 
-- **Regra:** o botão "Mergear" do `MergearNoChat` (aviso de PR pronta, fila de prontas e cartão da PR) abre um `Popover` com "Mergear #N em <alvo>?", Confirmar e Cancelar; Esc fecha e o foco volta ao botão. Confirmar propõe o `git_merge` (ator `user`) e o aprova no mesmo gesto, pelos mesmos endpoints; nada muda na proposição ([RN-418](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-418), [RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)).
+- **Regra:** o botão "Mergear" do `MergearNoChat` (aviso de PR pronta, fila de prontas e cartão da PR) abre um `Popover` com "Mergear #N em <alvo>?", Confirmar e Cancelar; Esc fecha e o foco volta ao botão. Confirmar propõe o `git_merge` (ator `user`) e o aprova no mesmo gesto, pelos mesmos endpoints; nada muda na proposição ([RN-418](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-418), [RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)).
 - **Onde:** `src/routes/MergearNoChat.tsx`.
 - **Teste:** `src/routes/MergearNoChat.test.tsx` ("Popover; Esc fecha").
 - **Origem:** AT-960 (EP-035), v10 de 14/11/2026.

@@ -827,7 +827,7 @@ da linha.
 
 ### RN-470 — A origem do modelo distingue binding próprio de herança do Criativo, e nenhum vazio da cascata usa o mesmo símbolo de outro {#rn-470}
 
-> **Revisada na AT-974 ([RN-1454](parte-07.md#rn-1454)):** a cadeia deixou a linha da tabela. A coluna mostra um chip ("herda do Criativo", "herda do projeto", "definido neste agente") e a cadeia, com os mesmos quatro estados, abre num Popover do chip. O que segue descreve a cadeia.
+> **Revisada na AT-974 ([RN-1454](parte-08.md#rn-1454)):** a cadeia deixou a linha da tabela. A coluna mostra um chip ("herda do Criativo", "herda do projeto", "definido neste agente") e a cadeia, com os mesmos quatro estados, abre num Popover do chip. O que segue descreve a cadeia.
 
 `origin: 'agent'` na resposta da api significa **duas coisas diferentes**, e a
 api está certa em não separá-las: o agente tem uma linha de escopo `agent` em

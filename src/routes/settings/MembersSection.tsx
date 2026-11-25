@@ -116,7 +116,7 @@ export function MembersSection({ projectId }: { projectId: string }) {
     queryClient.invalidateQueries({ queryKey: ['members', projectId] });
   }
 
-  /** Convidar por e-mail (AT-974, RN-1502): a api resolve o e-mail no workspace e o 404 dela diz o que faltou. */
+  /** Convidar por e-mail (AT-974, RN-1504): a api resolve o e-mail no workspace e o 404 dela diz o que faltou. */
   async function handleInvite() {
     if (!inviteEmail.trim()) return;
     setErroDoConvite(null);
@@ -125,7 +125,7 @@ export function MembersSection({ projectId }: { projectId: string }) {
       setInviteEmail('');
       invalidate();
     } catch (erro) {
-      // O convite é por e-mail (RN-1502): a api responde 404 com a frase clara
+      // O convite é por e-mail (RN-1504): a api responde 404 com a frase clara
       // para quem não é do workspace, e ela vai na linha do convite.
       setErroDoConvite(mensagemDaApi(erro, t('members.toast.inviteErrorMessage')));
     }

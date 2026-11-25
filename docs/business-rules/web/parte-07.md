@@ -647,9 +647,9 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 - **Teste:** `src/routes/ProjectSpendTab.test.tsx`.
 - **Origem:** AT-973 (EP-035), prancha L08 da v11.
 
-<a id="rn-1502"></a>
+<a id="rn-1504"></a>
 
-### RN-1502 — O convite de membro do projeto é por e-mail {#rn-1502}
+### RN-1504 — O convite de membro do projeto é por e-mail {#rn-1504}
 
 - **Regra:** em Configurações › Pessoas e acesso o campo do convite é "E-mail" (antes pedia o UUID do usuário); a tela envia `{ email, role }` e a api resolve o e-mail entre os membros do workspace do projeto. E-mail de fora devolve 404 com a frase da api, mostrada na linha do convite. Tabelas vazias de membros, tokens e chaves mostram uma frase só, sem cabeçalho de colunas. Par da RN-1453 da api (`brabo-api`).
 - **Onde:** `src/routes/settings/MembersSection.tsx` (`handleInvite`), `src/components/ui/Table.tsx` (`semCabecalhoSeVazia`), `src/lib/api-client.ts` (`addProjectMember`).
@@ -662,7 +662,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 > **Revisada pela [RN-1488](#rn-1488) (AT-1005):** o Popover usa a fonte do texto (só o identificador do modelo é mono), a faixa de roteamento mostra a frase curta e "O que isso muda" abre a inteira num Popover, e o custo estimado entra no título da tabela. A altura da linha segue a da L09 (~55 px).
 
-- **Regra:** a tabela tem quatro colunas: Agente, Modelo vigente, "De onde vem" e Est. mês (a coluna Fallback saiu). "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) e o fallback ("Se perder o modelo próprio, vale: X", ou "não há nível abaixo") abrem num Popover do chip. Os agentes com gasto no mês vêm primeiro, do maior para o menor gasto, e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). A caixa "Valer para a área" do lead fica na mesma linha do seletor, sem dobrar a altura da linha. O sobretítulo "binding vigente por cascata" saiu e a explicação da cascata fica visível em linha. O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa de aviso (`Alert` com ícone e borda) acima da tabela, com "O que isso muda". A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px` (o critério de 32 px vale entre as colunas). O erro do convite (RN-1502) usa o `Alert` de erro e "Editar em Gastos" (RN-1455) é o `Link` do roteador.
+- **Regra:** a tabela tem quatro colunas: Agente, Modelo vigente, "De onde vem" e Est. mês (a coluna Fallback saiu). "De onde vem" é um chip: "herda do Criativo", "herda do projeto/workspace/área" ou "definido neste agente" (este com "voltar a herdar" ao lado). A cadeia da cascata (RN-470) e o fallback ("Se perder o modelo próprio, vale: X", ou "não há nível abaixo") abrem num Popover do chip. Os agentes com gasto no mês vêm primeiro, do maior para o menor gasto, e os demais ficam atrás de "Mostrar os outros N agentes" (sem a leitura de custos, ou sem nenhum agente com gasto, a tabela mostra todos). A caixa "Valer para a área" do lead fica na mesma linha do seletor, sem dobrar a altura da linha. O sobretítulo "binding vigente por cascata" saiu e a explicação da cascata fica visível em linha. O aviso "Roteamento: não provado em <provider>" sai das linhas e vem uma única vez, numa faixa de aviso (`Alert` com ícone e borda) acima da tabela, com "O que isso muda". A `LinhaDeConfiguracao` é uma grade `minmax(220px, 340px) minmax(0, 520px)` com `gap: 32px` (o critério de 32 px vale entre as colunas). O erro do convite (RN-1504) usa o `Alert` de erro e "Editar em Gastos" (RN-1455) é o `Link` do roteador.
 - **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/settings/PreferenciaDeRoteamento.tsx` (`semAvisoDeCapability`), `src/routes/settings/LinhaDeConfiguracao.module.css`.
 - **Teste:** `src/routes/settings/cascata.test.tsx`, `src/routes/settings/bindings-em-lote.test.tsx`.
 - **Origem:** AT-974 (EP-035), prancha L09 da v11; decisão do dono de 17/11 (v11 vale sobre a revisão visual).
@@ -887,7 +887,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 
 ### RN-1488 — Em Modelos e Pessoas o Popover usa a fonte do texto, o roteamento tem uma ação e as tabelas vazias são uma linha {#rn-1488}
 
-> **Revisa** a [RN-1454](#rn-1454) e a [RN-1502](#rn-1502).
+> **Revisa** a [RN-1454](#rn-1454) e a [RN-1504](#rn-1504).
 
 - **Regra:** o Popover da cascata ("De onde vem") usa a fonte do texto, não a mono; só o identificador do modelo ("Se perder o modelo próprio, vale: `X`") fica em mono. "Mostrar os outros N agentes" é um link do kit ([RN-1487](#rn-1487)). A faixa de aviso de roteamento mostra a frase curta ("Roteamento: não provado em <provider>.") e, à direita, "O que isso muda", que abre a frase inteira num Popover. O cabeçalho "Custo estimado mensal do time" deixa de ser uma faixa à parte e entra no título da tabela ("N agentes · US$ X estimado por mês", com a base de 30 dias no `title`). A linha de Modelos segue com cerca de 55 px, a medida da L09 (decisão do dono de 20/11). O erro do convite tem ícone de erro e o texto na cor de erro (`--danger`). As tabelas vazias de tokens e de chaves de dispositivo são uma linha de até 48 px, e a frase de "Tokens de acesso" não se repete em "Todos os tokens do projeto" (que diz "Ninguém neste projeto emitiu token.").
 - **Onde:** `src/routes/settings/ModelsSection.tsx`, `src/routes/ProjectSettingsTab.module.css` (`cadeiaNoPopover`, `idDoModelo`), `src/routes/settings/MembersSection.tsx`, `src/components/ui/Table.tsx` (`vaziaEmUmaLinha`), `src/routes/settings/PersonalAccessTokensSection.tsx`, `src/routes/settings/RunnerDeviceKeysSection.tsx`.

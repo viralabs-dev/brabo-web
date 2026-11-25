@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Doc (AT-1011): as refs empatadas de `parte-05` e `parte-06` seguem o símbolo, e o link da RN-418 em `parte-07.md` aponta para a api, que a hospeda.
+- Doc (AT-1011): as refs empatadas de `parte-05` e `parte-06` seguem o símbolo, e o link da RN-418 em `parte-07.md` aponta para a api, que a hospeda; a `parte-07.md` passou de 139 KB e as RNs a partir da RN-1432 foram para a nova `parte-08.md` (orçamento de 150 KB do site, ADR 0287).
 
 - Doc (AT-1011): as RN do web que colidiam com a api foram renumeradas (RN-1453 para RN-1504 e RN-1493 para RN-1503; a api mantém os números; as RN-1500 e RN-1501 já eram do web, AT-1010) e as RN-1332, RN-1333, RN-1484, RN-1485 e RN-1486 ganharam a âncora `rn-N`.
 

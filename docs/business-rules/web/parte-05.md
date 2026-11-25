@@ -786,7 +786,7 @@ toda aba — a mesma lacuna que a [RN-632](#rn-632) declara.
 
 ### RN-646 — Bloqueio e controle inerte dizem o motivo de QUEM está na tela: a aba PRs fala da lista de PRs, e Parar/Remover sem container dizem que não há container {#rn-646}
 
-> Revisão (AT-976, [RN-1481](parte-07.md#rn-1481)): em Containers, Parar e Remover moram no menu "…" da linha; o motivo continua no "?".
+> Revisão (AT-976, [RN-1481](parte-08.md#rn-1481)): em Containers, Parar e Remover moram no menu "…" da linha; o motivo continua no "?".
 
 Duas telas mostravam um estado certo com o texto de outro lugar (AT-323,
 AT-324 — achados P1 e K1/K2 do levantamento visual da Rodada 29).
@@ -1255,7 +1255,7 @@ momento em que ele aparecer, antes de qualquer correção.
 
 ### RN-708 — O projeto novo diz o próximo passo, derivado do que já se lê {#rn-708}
 
-> **Revisada pela [RN-1480](parte-07.md#rn-1480) (AT-975):** os três passos continuam com os mesmos estados, ações e textos, mas deixam de ser um cartão à parte: enquanto houver passo pendente eles são o conteúdo do cartão "Próximo passo", no topo da Visão geral, com o passo atual em destaque. Com os três feitos o cartão volta a ser o Próximo passo da RN-1162.
+> **Revisada pela [RN-1480](parte-08.md#rn-1480) (AT-975):** os três passos continuam com os mesmos estados, ações e textos, mas deixam de ser um cartão à parte: enquanto houver passo pendente eles são o conteúdo do cartão "Próximo passo", no topo da Visão geral, com o passo atual em destaque. Com os três feitos o cartão volta a ser o Próximo passo da RN-1162.
 
 A Visão geral de um projeto recém-criado não dizia o que fazer: sem chave de
 provedor, sem modelo e sem sessão, nada na tela apontava o caminho, e a

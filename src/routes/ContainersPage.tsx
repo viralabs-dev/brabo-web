@@ -146,7 +146,7 @@ export function ContainersPage() {
             >
               {t(`status.${item.registrado.status}`)}
             </Badge>
-            {/* RN-1493: só com motivo gravado; sem ele, só "falhou". */}
+            {/* RN-1503: só com motivo gravado; sem ele, só "falhou". */}
             {item.registrado.status === 'failed' && item.motivoDaFalha && (
               <>
                 <span className={styles.motivoDaFalha} title={item.motivoDaFalha}>

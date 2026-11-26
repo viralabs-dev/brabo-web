@@ -666,7 +666,7 @@ ficam como estavam.
 
 ### RN-121 — Dev agent e QA são "executores": aba própria, fora do "Time de agentes" {#rn-121}
 
-> **Revisada pela [RN-1466](parte-07.md#rn-1466) a [RN-1468](parte-07.md#rn-1468) (AT-970):** a aba Execução lista os executores numa tabela e a linha do tempo é uma visão própria; o `AgentTeamGrid` descrito abaixo segue só na Visão geral. A separação (`isExecutorGroup`) não mudou.
+> **Revisada pela [RN-1466](parte-08.md#rn-1466) a [RN-1468](parte-08.md#rn-1468) (AT-970):** a aba Execução lista os executores numa tabela e a linha do tempo é uma visão própria; o `AgentTeamGrid` descrito abaixo segue só na Visão geral. A separação (`isExecutorGroup`) não mudou.
 
 O grid "Time de agentes" e a "Linha do tempo do time" da Visão geral
 misturavam Criativo/PO/Arquiteto/Infra com dev-`<módulo>` e QA (lead +

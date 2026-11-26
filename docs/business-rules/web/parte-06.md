@@ -93,7 +93,7 @@ keywords: [regras de negócio, web]
   pede para não prometer ganho de paralelismo. A aspa do modelo nas pontas do
   resumo é removida antes de a frase citá-lo, para não sobrar `coberto."`.
 - **Onde:** `apps/web/src/lib/aprovacoes.ts:360` (`propose_execution_plan`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:316` (`sobem`), `:289`
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:440` (`sobem`), `:409`
   (`classificar`), `:97` (`spec`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("plano com 2 agentes num
   módulo único diz que sobe 1…"; "plano sem agente a mais não fala de
@@ -251,7 +251,7 @@ keywords: [regras de negócio, web]
 
 ### RN-768 — Na aba PRs, o texto ao lado do Merge diz a verdade do botão {#rn-768}
 
-> **Revisada pela [RN-1474](parte-07.md#rn-1474) (AT-971):** tarefa bloqueada ou portão pendente não mostram mais o botão desabilitado; o motivo é uma frase sob o título da PR (erro quando bloqueada) e o Merge só aparece com D, Q e S verdes.
+> **Revisada pela [RN-1474](parte-08.md#rn-1474) (AT-971):** tarefa bloqueada ou portão pendente não mostram mais o botão desabilitado; o motivo é uma frase sob o título da PR (erro quando bloqueada) e o Merge só aparece com D, Q e S verdes.
 
 - **Regra:** gate pendente continua AVISO e não trava o merge
   ([RN-663](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-663)). Tarefa BLOQUEADA (`task.blocked`) é outra coisa e
@@ -465,7 +465,7 @@ keywords: [regras de negócio, web]
 
 ### RN-816 — O botão não muda de lugar quando um bloco tardio chega {#rn-816}
 
-> **Revisada pela [RN-1474](parte-07.md#rn-1474) (AT-971):** na aba PRs a reserva deixou de ser a da esteira de 96 px e é a caixa de 160 × 24 px dos portões e do Merge; enquanto o backlog carrega nem portões nem Merge aparecem.
+> **Revisada pela [RN-1474](parte-08.md#rn-1474) (AT-971):** na aba PRs a reserva deixou de ser a da esteira de 96 px e é a caixa de 160 × 24 px dos portões e do Merge; enquanto o backlog carrega nem portões nem Merge aparecem.
 
 - **Regra:** bloco que chega DEPOIS do primeiro paint não fica acima do botão
   que a pessoa vai clicar, e o que precisa ficar acima tem o espaço reservado
@@ -1001,7 +1001,7 @@ keywords: [regras de negócio, web]
   e a tarefa segue na lista. Claim, desbloqueio e retomada não mudam.
 - **Onde:** `apps/web/src/lib/execution.ts:10` (`estadoDaTarefa`);
   `apps/web/src/routes/ProjectBacklogTab.tsx` (o selo da lista de tarefas);
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:622` (`bloqueio`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:987` (`bloqueio`)
 - **Teste:** `apps/web/src/lib/execution.test.ts` ("blocked vence o status";
   falha: "sem bloqueio, o status"); `apps/web/src/routes/ProjectBacklogTab.test.tsx`
   ("a bloqueada mostra \"Bloqueada\" e o motivo, sem o selo \"a fazer\"");
@@ -1097,7 +1097,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/models.ts:363` (`providerAtivo`), `apps/web/src/lib/models.ts:371` (`catalogoDoProvider`), `apps/web/src/components/ModelCatalogSection.tsx:136` (`useMemo`), `apps/web/src/routes/ProvidersPage.tsx:33` (`deFora`)
 - **Teste:** `apps/web/src/routes/ProvidersPage.test.tsx:102` (só os com chave do titular, e a falha que mostra todos), `apps/web/src/components/ModelCatalogSection.test.tsx:399` (aba "sem chave" com modelo ativo; seleção entre abas; busca nomeia a aba que casa), `apps/web/src/lib/models.test.ts:126` (`providerAtivo`)
 - **Origem:** AT-607 (EP-026), tela; a rota é a RN-926.
-- **Revisão (AT-976, [RN-1482](parte-07.md#rn-1482)):** a aba "sem chave" com modelo ativo deixou de existir; todo provider sem chave sai das abas e entra na linha "de fora".
+- **Revisão (AT-976, [RN-1482](parte-08.md#rn-1482)):** a aba "sem chave" com modelo ativo deixou de existir; todo provider sem chave sai das abas e entra na linha "de fora".
 
 <a id="rn-939"></a>
 
@@ -1130,7 +1130,7 @@ keywords: [regras de negócio, web]
 
 ### RN-963 — O gasto tem página GLOBAL e aba do PROJETO, e o orçamento tem editor {#rn-963}
 
-> **Revisada pela AT-967 ([RN-1460](parte-07.md#rn-1460)):** o botão "Definir orçamento" do cartão do projeto (item 3) saiu; o cartão diz "sem teto do mês · definir" e o link vai para `?tab=spend#teto`.
+> **Revisada pela AT-967 ([RN-1460](parte-08.md#rn-1460)):** o botão "Definir orçamento" do cartão do projeto (item 3) saiu; o cartão diz "sem teto do mês · definir" e o link vai para `?tab=spend#teto`.
 
 Revisa a [RN-212](parte-02.md#rn-212) no destino do botão "Definir orçamento" e convive com a [RN-060](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-060), a [RN-952](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-952), a [RN-953](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-953) e a [RN-954](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-954).
 

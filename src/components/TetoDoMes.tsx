@@ -51,7 +51,7 @@ export function TetoDoMes({
   podeEditar: boolean;
 }) {
   const { t, i18n } = useTranslation('spend');
-  const [editando, setEditando] = useState(false);
+  const [editando, setEditando] = useState(() => podeEditar && hashEhTeto());
   const budget = useQuery({ queryKey, queryFn: ler, staleTime: FRESCOR_DA_CONFIGURACAO_MS });
   const editor = (
     <EditorDoTeto
@@ -200,4 +200,13 @@ function EditorDoTeto({
       {salvar.isSuccess && <p className={styles.nota} role="status">{t('budgetEditor.saved')}</p>}
     </form>
   );
+}
+
+// Chegando por `#teto` (RN-1450) o formulário já abre; o try/catch cobre teste e SSR.
+function hashEhTeto() {
+  try {
+    return window.location.hash === '#teto';
+  } catch {
+    return false;
+  }
 }

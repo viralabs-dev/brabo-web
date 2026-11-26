@@ -9,6 +9,7 @@ import { useModeloDoTime, usePrimeirosPassos } from './PrimeirosPassos.helpers';
 import { setProjectModelBinding } from '../lib/api-client';
 import { invalidarBindingsResolvidos } from '../lib/bindings-resolvidos';
 import { useCurrentWorkspaceWithRole } from '../lib/hooks';
+import { formatarPreco } from '../lib/models';
 import { roleAtLeast } from '../lib/roles';
 import { Card } from '@/components/shadcn/card';
 import { Item, ItemActions, ItemContent, ItemGroup, ItemMedia, ItemTitle, ItemDescription } from '@/components/shadcn/item';
@@ -124,7 +125,7 @@ export function PrimeirosPassos({
                       disabled={motivoDoAplicar !== null || aplicar.isPending}
                       onClick={() => aplicar.mutate()}
                     >
-                      {t('primeirosPassos.modelo.aplicar', { modelo: haiku?.displayName ?? 'Claude Haiku 5.5' })}
+                      {t('primeirosPassos.modelo.aplicar', { modelo: haiku?.displayName ?? 'Claude Haiku 5.5', preco: haiku ? formatarPreco(haiku) : '' })}
                     </Button>
                   )}
                 </ItemActions>

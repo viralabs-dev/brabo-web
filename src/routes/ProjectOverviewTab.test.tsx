@@ -459,7 +459,11 @@ describe('primeiros passos (RN-708, AT-372)', () => {
   // RN-1395 (AT-986): time no modelo local + chave de nuvem = passo pendente, com o botão do Haiku.
   describe('time no modelo local', () => {
     const LOCAL = { id: 'm-loc', provider: 'ollama', name: 'qwen2.5-coder:7b', displayName: 'Qwen 7B' };
-    const HAIKU = { id: 'm-hk', provider: 'anthropic', name: 'claude-haiku-5-5', displayName: 'Claude Haiku 5.5' };
+    const APTO = { supportsToolCalling: true, availability: 'available' };
+    const HAIKU = { id: 'm-hk', provider: 'anthropic', name: 'claude-haiku-5-5', displayName: 'Claude Haiku 5.5', ...APTO, inputPricePerMillionMicros: 100_000, outputPricePerMillionMicros: 500_000 };
+    // AT-1024: o 4.5 vem ANTES na lista e custa 10x; o sem tool calling é mais barato, mas inapto (RN-040).
+    const HAIKU_45 = { ...HAIKU, id: 'm-hk45', name: 'claude-haiku-4-5', displayName: 'Claude Haiku 4.5', inputPricePerMillionMicros: 1_000_000, outputPricePerMillionMicros: 5_000_000 };
+    const HAIKU_SEM_TOOLS = { ...HAIKU, id: 'm-hk-x', name: 'claude-haiku-3', displayName: 'Claude Haiku 3', supportsToolCalling: false, inputPricePerMillionMicros: 1, outputPricePerMillionMicros: 1 };
     const NO_LOCAL = {
       agents: [{ key: 'criativo', binding: { modelId: 'm-loc', origin: 'workspace', routingPreference: null, skipped: [] } }],
       areas: [],
@@ -468,7 +472,7 @@ describe('primeiros passos (RN-708, AT-372)', () => {
     it('com chave de nuvem o passo do modelo fica pendente e "Aplicar" grava o Haiku no projeto', async () => {
       listSessions.mockResolvedValue([]);
       listCredentials.mockResolvedValue([{ id: 'c-1' }]);
-      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: { geral: [HAIKU] } });
+      listModels.mockResolvedValue({ local: { geral: [LOCAL] }, cloud: { geral: [HAIKU_45, HAIKU_SEM_TOOLS, HAIKU] } });
       getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
       listWorkspaces.mockResolvedValue([{ workspace: { id: 'ws-1' }, role: 'maintainer' }]);
       setProjectModelBinding.mockResolvedValue(undefined);
@@ -481,7 +485,7 @@ describe('primeiros passos (RN-708, AT-372)', () => {
       });
       expect(within(passo).getByText(/O time está no modelo local Qwen 7B/)).toBeInTheDocument();
       expect(within(passo).getByText('Escolher o modelo →')).toBeInTheDocument();
-      const botao = await within(passo).findByRole('button', { name: 'Aplicar Claude Haiku 5.5 ao time' });
+      const botao = await within(passo).findByRole('button', { name: /^Aplicar Claude Haiku 5\.5 ao time · \$0\.10 \/ \$0\.50/ });
       await vi.waitFor(() => expect(botao).toBeEnabled());
       fireEvent.click(botao);
       await vi.waitFor(() => expect(setProjectModelBinding).toHaveBeenCalledWith('proj-1', 'm-hk'));
@@ -494,7 +498,7 @@ describe('primeiros passos (RN-708, AT-372)', () => {
       getResolvedModelBindings.mockResolvedValue(NO_LOCAL);
       listWorkspaces.mockResolvedValue([{ workspace: { id: 'ws-1' }, role: 'developer' }]);
       montar();
-      const botao = await screen.findByRole('button', { name: 'Aplicar Claude Haiku 5.5 ao time' });
+      const botao = await screen.findByRole('button', { name: /^Aplicar Claude Haiku 5\.5 ao time · \$0\.10 \/ \$0\.50/ });
       expect(botao).toBeDisabled();
       expect(screen.getByText(/Só quem mantém o projeto/)).toBeInTheDocument();
     });

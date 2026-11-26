@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { XIcon } from './icons';
 import styles from './Toast.module.css';
@@ -45,6 +45,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const { t } = useTranslation('ui');
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
 
+  // Os temporizadores vivos: a desmontagem os limpa, senão disparam depois do fim do ambiente (AT-1027).
+  const timers = useRef(new Set<number>());
+  useEffect(() => {
+    const vivos = timers.current;
+    return () => {
+      for (const id of vivos) window.clearTimeout(id);
+      vivos.clear();
+    };
+  }, []);
+
   const dismiss = useCallback((id: number) => {
     setToasts((current) => current.filter((t) => t.id !== id));
   }, []);
@@ -53,7 +63,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     ({ title, message, tone = 'accent', durationMs = 5000, acao }: ToastOptions) => {
       const id = nextId++;
       setToasts((current) => [...current, { id, title, message, tone, acao }]);
-      window.setTimeout(() => dismiss(id), durationMs);
+      const timer = window.setTimeout(() => {
+        timers.current.delete(timer);
+        dismiss(id);
+      }, durationMs);
+      timers.current.add(timer);
     },
     [dismiss],
   );

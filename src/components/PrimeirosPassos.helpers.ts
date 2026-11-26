@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { listCredentials, listModels } from '../lib/api-client';
+import type { Model } from '../lib/api-types';
 import { useBindingsResolvidos } from '../lib/bindings-resolvidos';
 import { derivarPrimeirosPassos } from '../lib/primeiros-passos';
 import { FRESCOR_DA_CONFIGURACAO_MS } from '../lib/query-policy';
@@ -20,8 +21,17 @@ export function useModeloDoTime(projectId: string) {
     // `undefined` = "não sei" (RN-470): sem a lista de modelos não se afirma local nem nuvem.
     local: doCriativo ? (locais ? !!modeloLocal : undefined) : false,
     nomeLocal: modeloLocal?.displayName ?? modeloLocal?.name,
-    haiku: modelos ? Object.values(modelos.cloud).flat().find((m) => /haiku/i.test(`${m.displayName} ${m.name}`)) : undefined,
+    haiku: modelos ? haikuAptoMaisBarato(Object.values(modelos.cloud).flat()) : undefined,
   };
+}
+
+/** O Haiku apto (RN-040) e disponível mais barato; preço desconhecido (RN-470) vai para o fim. */
+export function haikuAptoMaisBarato(modelos: Model[]): Model | undefined {
+  const custo = (m: Model) => m.inputPricePerMillionMicros + m.outputPricePerMillionMicros;
+  const semPreco = (m: Model) => custo(m) === 0 && m.billing !== 'free';
+  return modelos
+    .filter((m) => /haiku/i.test(`${m.displayName} ${m.name}`) && m.supportsToolCalling && m.availability === 'available')
+    .sort((a, b) => Number(semPreco(a)) - Number(semPreco(b)) || custo(a) - custo(b) || a.name.localeCompare(b.name))[0];
 }
 
 /**

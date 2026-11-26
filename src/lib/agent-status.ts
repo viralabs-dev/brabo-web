@@ -193,7 +193,15 @@ function delegationEventsFor(events: SessionEvent[], subagentId: string): Sessio
 }
 
 function subagentStatus(events: SessionEvent[], subagentId: string): AgentStatus {
-  const last = delegationEventsFor(events, subagentId).at(-1);
+  // AT-1017 (RN-1512): `qa.awaiting_environment` do próprio subagente, depois da
+  // última delegação, é espera da vez no ambiente de teste — `aguardando`, nunca `falhou`.
+  const last = lastEventFor(
+    events,
+    (e) =>
+      (e.type === 'qa.awaiting_environment' && e.actor.id === subagentId) ||
+      delegationEventsFor(events, subagentId).includes(e),
+  );
+  if (last?.type === 'qa.awaiting_environment') return 'aguardando';
   return last?.type === 'delegation.failed' ? 'falhou' : 'ocioso';
 }
 

@@ -372,6 +372,16 @@ export function classifyEvent(event: SessionEvent): ActivityDisplay {
         '. Rearme no painel do time para retomar.',
     };
   }
+  // AT-1017 (RN-1512): a instância de QA é de uma tarefa por vez; a outra espera, não falha.
+  if (type === 'qa.awaiting_environment') {
+    return {
+      kind: 'hypothesis',
+      icon: HypothesisIcon,
+      color: 'var(--text-secondary)',
+      bad: false,
+      text: 'Esperando a vez no teste: outra tarefa está usando o ambiente de teste. Segue sozinho quando liberar.',
+    };
+  }
   if (type.startsWith('dev.')) {
     return {
       kind: 'commit',

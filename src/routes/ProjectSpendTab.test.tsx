@@ -390,6 +390,17 @@ describe('ProjectSpendTab — o orçamento do projeto', () => {
     expect(document.getElementById('teto')?.contains(screen.getByLabelText(/Teto em US\$/))).toBe(true);
   });
 
+  it('chegando por #teto (AT-1024), o formulário já vem aberto', async () => {
+    getProjectBudget.mockResolvedValue(null);
+    window.location.hash = '#teto';
+    try {
+      montar();
+      expect(await screen.findByLabelText(/Teto em US\$/)).toBeInTheDocument();
+    } finally {
+      window.location.hash = '';
+    }
+  });
+
   it('com orçamento abaixo de 70%, mostra o medidor sem alerta', async () => {
     getProjectBudget.mockResolvedValue({
       id: 'b-1',

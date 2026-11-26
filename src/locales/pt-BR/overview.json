@@ -209,7 +209,7 @@
       "pendente": "Nenhum agente tem modelo ainda: ative um modelo em Providers e escolha-o aqui.",
       "link": "Escolher o modelo →",
       "pendenteLocal": "O time está no modelo local {{modelo}}. Escolha um modelo do seu provedor.",
-      "aplicar": "Aplicar {{modelo}} ao time",
+      "aplicar": "Aplicar {{modelo}} ao time · {{preco}}",
       "aplicarSemPapel": "Só quem mantém o projeto (maintainer) aplica o modelo ao time.",
       "aplicarSemHaiku": "O Claude Haiku 5.5 não está ativo no catálogo: ative-o em Providers.",
       "aplicarFalhou": "Não deu para aplicar o modelo ao time. Tente de novo."

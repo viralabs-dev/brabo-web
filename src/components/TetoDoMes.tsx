@@ -37,6 +37,15 @@ type Gravar = (input: { limitUsd: number; policy: BudgetPolicy }) => Promise<Bud
  * em texto. Sem teto, a api responde `null`. Erro é silencioso para quem não
  * edita (403 de papel, mesma régua da RN-060).
  */
+// Chegando por `#teto` (RN-1450) o formulário já abre; o try/catch cobre teste e SSR.
+function hashEhTeto() {
+  try {
+    return window.location.hash === '#teto';
+  } catch {
+    return false;
+  }
+}
+
 export function TetoDoMes({
   escopo,
   queryKey,
@@ -51,7 +60,7 @@ export function TetoDoMes({
   podeEditar: boolean;
 }) {
   const { t, i18n } = useTranslation('spend');
-  const [editando, setEditando] = useState(false);
+  const [editando, setEditando] = useState(() => podeEditar && hashEhTeto());
   const budget = useQuery({ queryKey, queryFn: ler, staleTime: FRESCOR_DA_CONFIGURACAO_MS });
   const editor = (
     <EditorDoTeto

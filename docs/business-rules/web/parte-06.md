@@ -895,7 +895,7 @@ keywords: [regras de negócio, web]
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
-  (`PerguntasEmAberto`), `:229` (`eAutor`), `:406`
+  (`PerguntasEmAberto`), `:233` (`eAutor`), `:406`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PerguntasEmAberto.test.tsx` ("fila

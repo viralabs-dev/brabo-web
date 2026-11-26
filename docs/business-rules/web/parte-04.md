@@ -1003,9 +1003,9 @@ lógico, monótono) à janela e ao parâmetro, que também passa a olhar
 evento pode ter saído da janela e a aba volta a decidir só por ela — é o custo
 da guarda, o mesmo dos outros dois fatos.
 
-- **Código:** `apps/web/src/lib/agent-status.ts:376` (`AgregadoDaSessao`),
+- **Código:** `apps/web/src/lib/agent-status.ts:384` (`AgregadoDaSessao`),
 
-- **Código:** `apps/web/src/lib/agent-status.ts:376` (`AgregadoDaSessao`),
+- **Código:** `apps/web/src/lib/agent-status.ts:384` (`AgregadoDaSessao`),
   `:296` (o parâmetro opcional de `rosterFactsFromEvents`), `:304` (a união das
   delegações), `:312` (o OU do gate), `:410` (o parâmetro repassado por
   `deriveAgentRoster`); `apps/web/src/routes/ProjectOverviewTab.tsx:97` e

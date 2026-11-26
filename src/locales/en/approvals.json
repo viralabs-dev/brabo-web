@@ -353,6 +353,7 @@
       },
       "earlierAuto_one": "{{count}} earlier automatic decision",
       "earlierAuto_other": "{{count}} earlier automatic decisions",
+      "agenteSemNome": "an agent",
       "chipAuto": "auto · policy",
       "seeAllLower": "see all"
     }

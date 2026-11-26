@@ -19,7 +19,7 @@ Esta página é o índice das regras de negócio da área `web`. As RNs moram em
 | [parte 5](web/parte-05.md) | RN-626 | 24 | Decidir no chat, onde o dono está (RN-626); Acompanhar ao vivo sem martelar (RN-639); O autor de cada fala do fio é o ator do evento (RN-652); O motivo da política em cada cartão de Aprovações (RN-656); O fluxo do runner pelo navegador é aposentado (RN-687, ADR 0203); O teto da RN-418 vale também pela porta tipada (RN-689); O instalador oferece os modelos locais, e não confunde o dev com uma instalação (RN-691, RN-692); Uma chave de cache, uma pergunta (RN-718) |
 | [parte 6](web/parte-06.md) | RN-728 | 64 | A Anamnese não paga duas vezes pela mesma janela, e o resgate de gate não reinicia ciclo que espera alguém (RN-722) |
 | [parte 7](web/parte-07.md) | RN-978 | 55 | A Anamnese não paga duas vezes pela mesma janela, e o resgate de gate não reinicia ciclo que espera alguém (RN-722); A versão do brabo-contracts é uma só (RN-1038); Achados do TP-01 27ª (RN-1060 a RN-1063) |
-| [parte 8](web/parte-08.md) | RN-1432 | 59 | Achados do TP-01 27ª (RN-1060 a RN-1063) |
+| [parte 8](web/parte-08.md) | RN-1432 | 64 | Achados do TP-01 27ª (RN-1060 a RN-1063); O bloqueio e a pergunta trazem a causa e a retomada em um clique (RN-1531, RN-1532); Respostas e avisos sem identificador interno nem número cru (RN-1535, RN-1536) |
 
 A grade abaixo preserva as âncoras antigas (`#rn-NNN`): cada número leva à parte onde a RN mora.
 

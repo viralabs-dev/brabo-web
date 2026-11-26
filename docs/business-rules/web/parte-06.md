@@ -139,7 +139,7 @@ keywords: [regras de negócio, web]
   fecho tem o botão; os passos do turno não. A tela reconhece a linha pelo
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:989` (`respostaCortada`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:998` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:449` (`continuarRespostaCortada`),
   `:695` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
@@ -573,7 +573,7 @@ keywords: [regras de negócio, web]
   para as mesmas releituras da [RN-841](#rn-841)) e o backlog a 15 s, sem poll
   novo apertado ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579)).
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:30` (`prsProntasParaMerge`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:103` (`prontas`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:118` (`prontas`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("a PR com os gates aprovados aparece, a com gate pendente não, e Mergear
   mostra o cartão ali")
@@ -597,10 +597,12 @@ keywords: [regras de negócio, web]
   `travado` do card (`devStatus`). A tarefa bloqueada cujo `assignedTo` está
   travado diz "rearme antes de desbloquear".
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:261` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:284` (`retomar`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
+
+> **Alterada pela [RN-1531](parte-08.md#rn-1531) (AT-1021).** A tarefa bloqueada não mostra mais o `blockedReason` como frase: mostra a causa em uma frase e as ações que chamam o mesmo `unblock` em um clique, com a orientação da ação; o campo de orientação fica recolhido em "Escrever outra orientação". O retorno de sucesso passa a dizer "Retomado." O papel e a recusa da api seguem como aqui.
 
 <a id="rn-829"></a>
 
@@ -795,7 +797,7 @@ keywords: [regras de negócio, web]
   tarefa nem passar por este canal só aparece na próxima leitura disparada por
   outro motivo.
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:66` (`assinaturaDoBacklog`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:115` (`assinaturaAnterior`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:130` (`assinaturaAnterior`),
   `apps/web/src/lib/canal-vivo.ts:134` (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("RN-841: a tarefa que entra em awaiting_user relê as PRs…" e "CASO DE FALHA
@@ -839,9 +841,9 @@ keywords: [regras de negócio, web]
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:781` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:821` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1428` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1437` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -893,7 +895,7 @@ keywords: [regras de negócio, web]
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
-  (`PerguntasEmAberto`), `:229` (`eAutor`), `:406`
+  (`PerguntasEmAberto`), `:233` (`eAutor`), `:465`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PerguntasEmAberto.test.tsx` ("fila
@@ -922,6 +924,8 @@ keywords: [regras de negócio, web]
   resgate por tempo grava idadeSegundos e lê como tempo"; falha: "a pergunta
   em aberto não tem idadeSegundos e não fala em 2 h")
 - **Origem:** AT-528
+
+> **Alterada pela [RN-1531](parte-08.md#rn-1531) e [RN-1532](parte-08.md#rn-1532) (AT-1021).** A pergunta em aberto que o gate espera pode trazer até duas opções prontas (um clique responde) e o detalhe técnico recolhido; o aviso do fio e o cartão "Perguntas em aberto" seguem como aqui.
 
 <a id="rn-882"></a>
 
@@ -977,7 +981,7 @@ keywords: [regras de negócio, web]
   com ela aberta (`?historia=`). Não aciona o PO (decisão do dono, 14/10). Não
   corrigível: o link não existe e o motivo é dito em texto (RN-102). A régua é
   a MESMA função da aba Histórias, movida para `lib/`.
-- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:344`
+- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:403`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
   (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:489`
   (`useHistoriaInicial`)
@@ -1001,7 +1005,7 @@ keywords: [regras de negócio, web]
   e a tarefa segue na lista. Claim, desbloqueio e retomada não mudam.
 - **Onde:** `apps/web/src/lib/execution.ts:10` (`estadoDaTarefa`);
   `apps/web/src/routes/ProjectBacklogTab.tsx` (o selo da lista de tarefas);
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:987` (`bloqueio`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:1011` (`bloqueio`)
 - **Teste:** `apps/web/src/lib/execution.test.ts` ("blocked vence o status";
   falha: "sem bloqueio, o status"); `apps/web/src/routes/ProjectBacklogTab.test.tsx`
   ("a bloqueada mostra \"Bloqueada\" e o motivo, sem o selo \"a fazer\"");
@@ -1113,7 +1117,7 @@ keywords: [regras de negócio, web]
 ### RN-943 — O bloco de pendências do chat se chama "Pendências deste projeto"; só a aba Executores diz "de outras sessões" {#rn-943}
 
 - **Regra:** refina a RN-626, a RN-825, a RN-826 e a RN-861. Dentro do bloco do chat moram cinco filas, e só aprovações e merges são filtradas por "outra sessão"; perguntas em aberto, PRs prontas e tarefas bloqueadas são do projeto inteiro (a pergunta da PRÓPRIA sessão aparece ali de propósito, porque o aviso do composer lê a mesma query). Por isso, com `filasDoChat` (o chat) o título é "Pendências deste projeto" (`pendencias.tituloDoProjeto`, nos quatro locales); com `filasDoChat={false}` (aba Executores, só aprovações e merges) o título segue "Pendências de outras sessões deste projeto". Nenhuma fila é filtrada, nenhum teto muda e o `data-testid` não muda.
-- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:756` (`tituloDoProjeto`).
+- **Onde:** `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:808` (`tituloDoProjeto`).
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` (pergunta da própria sessão: cabeçalho "Pendências deste projeto", sem "outras sessões"; `filasDoChat={false}` mantém o título antigo).
 - **Origem:** AT-619 (EP-031).
 
@@ -1122,7 +1126,7 @@ keywords: [regras de negócio, web]
 ### RN-951 — O fio da Sessão acompanha SEMPRE a última mensagem {#rn-951}
 
 - **Regra:** revê a [RN-173](parte-02.md#rn-173), o item 4 da [RN-751](#rn-751) e a [RN-836](#rn-836) (decisão do dono de 31/10). Cada evento ou ação nova no fio o leva à última mensagem, mesmo que a pessoa tenha rolado para cima: a guarda dos 120 px e a "intenção de estar no fim" saíram, e o botão "↓ N novas" (com o realce de aprovação) foi aposentado. O acompanhamento dispara por IDENTIDADE (`seq` do último evento e ids das ações, não pelo tamanho das listas, que não muda no teto de 200), pelo texto do streaming e por `ResizeObserver` no CONTEÚDO e no CONTAINER (faixa de atividade, composer e pendências mudam a altura). `?highlightEvent` segue levando ao evento citado na abertura, mas não desliga o acompanhamento: a primeira mudança depois o devolve ao fim. A rolagem é instantânea (`block: 'end'`) e o foco não se move. Entre duas mensagens a pessoa pode rolar e ler; a próxima a traz de volta.
-- **Onde:** `apps/web/src/lib/session-rolagem.ts:29` (`identidadeDoFio`), `apps/web/src/lib/session-rolagem.ts:45` (`useRolagemDoFio`).
+- **Onde:** `apps/web/src/lib/session-rolagem.ts:29` (`identidadeDoFio`), `apps/web/src/lib/session-rolagem.ts:66` (`useRolagemDoFio`).
 - **Teste:** `apps/web/src/lib/session-rolagem.test.tsx` (mensagem nova com a pessoa acima, `length` igual com `seq` novo, ação nova, container que encolhe, `highlightEvent`, rajada, streaming, sem conteúdo).
 - **Origem:** AT-635 (EP-031).
 
@@ -1207,7 +1211,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
 - **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
-- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:1012` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`).
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:1021` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`).
 - **Teste:** `apps/web/src/components/ai-elements/passos-do-turno.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
 - **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 
@@ -1216,7 +1220,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-975 — O painel de pendências do chat é uma faixa de abas, e cada fila pagina de 3 em 3 {#rn-975}
 
 - **Regra:** (AT-950: no chat o painel mora num Sheet à direita, com `Tabs` no lugar do `ToggleGroup`, a primeira fila com itens aberta e UMA pergunta por vez na aba Perguntas; a faixa de `ToggleGroup` abaixo vale para a aba Executores — [RN-626](parte-05.md#rn-626)) o painel "Pendências deste projeto" tem uma faixa de abas, uma por fila (perguntas em aberto, aprovações, merges de PR, PRs prontas, tarefas bloqueadas), que SÓ aparece com contagem maior que zero e traz o total da PRÓPRIA fila, nunca somado (RN-467). Nenhuma aba nasce aberta; clicar abre a fila, clicar de novo fecha (`aria-pressed`). Exceção (AT-810, [RN-1063](parte-07.md#rn-1063)): PR que entra na fila `prontas` abre essa aba sozinha quando nenhuma está aberta. O conteúdo das abas fechadas continua montado, só escondido (`hidden`): o "Responder perguntas" do composer abre a aba Perguntas e rola até ela (`rolarAteAsPerguntas`), e o cartão de merge segue registrado no fio (RN-843). Dentro da aba, a fila desenha no máximo 3 itens (`ITENS_POR_PAGINA_DA_FILA`), com "anterior / x–y de N / próxima" no fim, só com mais de uma página (RN-178), a faixa em `role="status"` (RN-180) e o `aria-label` nomeando a fila. A página é ajustada em render: decidir o último item da última página a faz voltar. O teto antigo de 20 cards compartilhado e a frase "as demais estão na aba Aprovações" saem (revisam a RN-626/AT-318); a paginação é sobre a lista já lida, sem query nova (RN-579/632). As perguntas respondidas (RN-884) ficam fora da paginação.
-- **Onde:** `apps/web/src/lib/paginacao-de-fila.ts:16` (`paginar`), `apps/web/src/components/PaginadorDaFila.tsx:11` (`PaginadorDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:90` (`PendenciasDeOutrasSessoes`).
+- **Onde:** `apps/web/src/lib/paginacao-de-fila.ts:16` (`paginar`), `apps/web/src/components/PaginadorDaFila.tsx:11` (`PaginadorDaFila`), `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:101` (`PendenciasDeOutrasSessoes`).
 - **Teste:** `apps/web/src/lib/paginacao-de-fila.test.ts`, `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`, `apps/web/src/components/PerguntasEmAberto.test.tsx`.
 - **Origem:** AT-680 (EP-031).
 
@@ -1234,6 +1238,6 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-977 — O fio da Sessão para de seguir quando a pessoa sobe e oferece "Ir ao fim" {#rn-977}
 
 - **Regra:** revisa a [RN-951](#rn-951), que não é editada (decisão do dono de 02/11, AT-683). O fio acompanha a última mensagem — por identidade de evento/ação, texto do streaming e `ResizeObserver` — SÓ enquanto a pessoa está no fim. Rolou para mais de 80 px do fim: o acompanhamento PAUSA (nenhum gatilho rola) e aparece o botão "Ir ao fim" (`afastado`); o clique, ou voltar ao fim rolando à mão, retoma e rola ao fim. Rolagem instantânea (`block: 'end'`), foco intocado, `?highlightEvent` como na RN-951. O texto por token continua fora do estado da página (RN-639): `SessionPage.streaming-isolado.test.tsx` segue verde.
-- **Onde:** `apps/web/src/lib/session-rolagem.ts:45` (`useRolagemDoFio`), `src/components/shadcn/message-scroller.tsx` (`MessageScrollerButton`, que substituiu o `ConversationScrollButton` na AT-959; texto e âncora ao enviar: [RN-1405](parte-07.md#rn-1405)).
+- **Onde:** `apps/web/src/lib/session-rolagem.ts:66` (`useRolagemDoFio`), `src/components/shadcn/message-scroller.tsx` (`MessageScrollerButton`, que substituiu o `ConversationScrollButton` na AT-959; texto e âncora ao enviar: [RN-1405](parte-07.md#rn-1405)).
 - **Teste:** `apps/web/src/lib/session-rolagem.test.tsx` (para ao subir, mostra o botão, o clique retoma; perto do fim não pausa), `apps/web/src/routes/SessionPage.streaming-isolado.test.tsx`.
 - **Origem:** AT-683 (EP-031).

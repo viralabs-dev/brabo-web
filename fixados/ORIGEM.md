@@ -11,6 +11,8 @@ byte a byte em 07/11/2026 contra o repo de origem. O histórico do monorepo (`vi
 | `decide.ts` | `brabo-api:src/domain/actions/decide.ts` | ainda a cópia do `brabo-legacy` em **`1586158973`**; a api já passou dele (RN-1019, `semMergeLocal`), e a cópia não o importa porque o `external-effect.ts` não vem junto | `aprovacoes.test.ts` |
 | `events.md` | `brabo:docs/reference/events.md` | ainda a cópia do `brabo-legacy` em **`1586158973`**; o `brabo` já seguiu | `activity-catalog.test.ts` |
 
+Em 26/11 (AT-1021) o `openapi.json` passou à `dev` do brabo-api em **`f0851f631`** (`blockedExplicacao`, `opcoes` e `detalhe` da pergunta em aberto).
+
 Em 20/11 (AT-1006) o `openapi.json` passou à `dev` do brabo-api após a api#142 (`c7ccc928ae`), com `motivoDaFalha` (RN-1493).
 
 Quando o `brabo-api` publicar uma tag estável, troque `openapi.json`, `sempre-permitir.ts` e `decide.ts` pelos

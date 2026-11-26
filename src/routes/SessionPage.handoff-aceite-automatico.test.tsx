@@ -155,7 +155,7 @@ afterAll(() => {
 
 const SISTEMA = { kind: 'system', id: 'handoff-auto-accept' };
 
-function aceitoPeloSistema(seq: number, handoffId: string) {
+function aceitoPeloSistema(seq: number, handoffId: string, criterio: object = { regras: 4, cobertas: 4, repositorio: 'a_provisionar_local' }) {
   return {
     id: `evt-${seq}`,
     seq,
@@ -165,7 +165,7 @@ function aceitoPeloSistema(seq: number, handoffId: string) {
       handoffId,
       toAgent: 'arquiteto',
       automatico: true,
-      criterio: { regras: 4, cobertas: 4, repositorio: 'a_provisionar_local' },
+      criterio,
     },
     createdAt: '2026-08-10T12:00:00.000Z',
   };
@@ -192,6 +192,23 @@ describe('SessionPage — o aceite automático do handoff PO → Arquiteto (RN-6
     expect(
       screen.queryByRole('button', { name: 'Aceitar e passar a Arquiteto' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('RN-1536: critério de passagem diz a passagem, nunca "0 regras"', async () => {
+    eventos.mockReturnValue({
+      items: [
+        ativou('infra', 1),
+        oferecido(2, 'h-dev', 'dev-lead', { kind: 'agent', id: 'infra' }),
+        aceitoPeloSistema(3, 'h-dev', { passagem: 'infra->dev-lead', repositorio: 'local' }),
+      ],
+    });
+    handoffsMock.mockReturnValue([
+      handoff({ id: 'h-dev', fromAgent: 'infra', toAgent: 'dev-lead', status: 'accepted' }),
+    ]);
+    montar();
+    const aviso = await screen.findByTestId('handoff-aceite-automatico');
+    expect(aviso).toHaveTextContent('a passagem para');
+    expect(aviso).not.toHaveTextContent('0 regras');
   });
 
   it('CASO DE FALHA: o aceite automático que falhou é dito, e a oferta segue com botão', async () => {

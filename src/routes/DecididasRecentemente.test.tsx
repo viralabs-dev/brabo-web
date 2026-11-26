@@ -77,6 +77,19 @@ describe('DecididasRecentemente (RN-1225)', () => {
     await waitFor(() => expect(getProjectPendingActions.mock.calls.length).toBeGreaterThan(1));
   });
 
+  it('RN-1535: ator pessoa ou agente com UUID nunca aparece cru', async () => {
+    const id = '3bee9c2f-1a2b-4c3d-8e9f-0123456789ab';
+    getProjectPendingActions.mockResolvedValue([
+      acao({ id: 'a1', status: 'approved', actionType: 'git_merge', actor: { kind: 'user', id } }),
+      acao({ id: 'a2', status: 'approved', actor: { kind: 'agent', id } }),
+    ]);
+    montar();
+    const linhas = await screen.findAllByTestId('acao-decidida');
+    expect(linhas.map((l) => l.textContent).join(' ')).not.toContain(id);
+    expect(linhas[0]!.textContent).toContain('Outro membro');
+    expect(linhas[1]!.textContent).toContain('um agente');
+  });
+
   it('vazio tem texto próprio e "Ver todas" alarga a janela', async () => {
     getProjectPendingActions.mockResolvedValue([]);
     montar();

@@ -5,11 +5,13 @@ import { useTranslation } from 'react-i18next';
 import type {
   CoverageMatrixRow,
   ExecucaoDeTestes,
+  ExplicacaoDoBloqueio,
   ProposedAction,
   PrGateStatus,
   RegistroDeGates,
 } from '../lib/api-types';
 import { Badge } from './ui/Badge';
+import { CausaDaLinha } from './BloqueioRetomavel';
 import { Alert } from './ui/Alert';
 import { Card } from './ui/Card';
 import { TestResults } from './ai-elements/test-results';
@@ -57,6 +59,7 @@ export interface GateSubject {
   title: string;
   blocked: boolean;
   blockedReason: string | null;
+  blockedExplicacao?: ExplicacaoDoBloqueio | null;
   gateStatus: PrGateStatus | null;
 }
 
@@ -174,7 +177,7 @@ export function PrGateTimeline({
 
       {task.blocked && task.blockedReason && (
         <Alert tone="danger">
-          <span className={styles.blockedReason}>{task.blockedReason}</span>
+          <CausaDaLinha tarefa={task} className={styles.blockedReason} comDetalhe />
         </Alert>
       )}
 

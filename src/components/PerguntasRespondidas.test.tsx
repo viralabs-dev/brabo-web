@@ -46,6 +46,8 @@ function pergunta(id: string, over: Partial<OpenQuestion> = {}): OpenQuestion {
     sessionId: 'sess-1',
     pergunta: `Pergunta ${id}?`,
     sugestao: `Sugestão ${id}`,
+    opcoes: [],
+    detalhe: null,
     afeta: { regras: ['r1'], historias: [], tarefas: [] },
     autor: 'criativo',
     criadaEm: new Date().toISOString(),

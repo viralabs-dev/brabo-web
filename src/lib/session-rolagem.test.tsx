@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import type { ProposedAction, SessionEvent } from './api-types';
-import { identidadeDoFio, novasDepoisDe, useRolagemDoFio } from './session-rolagem';
+import type { Handoff } from './api-types';
+import { cartoesNovosDepoisDe, identidadeDoFio, novasDepoisDe, useRolagemDoFio } from './session-rolagem';
 import { criarStoreDoStreaming } from './streaming-do-turno';
 
 const ev = (seq: number) => ({ id: `e${seq}`, seq, type: 'chat.message' }) as unknown as SessionEvent;
@@ -123,6 +124,7 @@ describe('useRolagemDoFio (RN-951, revisada na RN-977)', () => {
     Object.defineProperty(el, 'clientHeight', { value: 400, configurable: true });
     el.scrollTop = 600 - distanciaDoFim;
     act(() => {
+      el.dispatchEvent(new Event('wheel'));
       el.dispatchEvent(new Event('scroll'));
     });
   }
@@ -171,6 +173,7 @@ describe('"Ir ao fim · N novas" e âncora ao enviar (RN-977, AT-959)', () => {
     Object.defineProperty(el, 'clientHeight', { value: 400, configurable: true });
     el.scrollTop = 100;
     act(() => {
+      el.dispatchEvent(new Event('wheel'));
       el.dispatchEvent(new Event('scroll'));
     });
     expect(rolagem().novas).toBe(0);
@@ -194,6 +197,7 @@ describe('"Ir ao fim · N novas" e âncora ao enviar (RN-977, AT-959)', () => {
     Object.defineProperty(el, 'clientHeight', { value: 400, configurable: true });
     el.scrollTop = 100;
     act(() => {
+      el.dispatchEvent(new Event('wheel'));
       el.dispatchEvent(new Event('scroll'));
     });
     expect(rolagem().afastado).toBe(true);
@@ -206,5 +210,80 @@ describe('"Ir ao fim · N novas" e âncora ao enviar (RN-977, AT-959)', () => {
     expect(subir).toHaveBeenCalledWith({ block: 'start' });
     hook.rerender({ events: [msg(1), msg(2)], actions: [] });
     expect(rolar).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('pausa só por gesto e cartões esperando (RN-1510, AT-1022)', () => {
+  const oferta = (id: string, status: Handoff['status'] = 'offered') => ({ id, status }) as unknown as Handoff;
+  function longe(el: HTMLElement) {
+    Object.defineProperty(el, 'scrollHeight', { value: 1000, configurable: true });
+    Object.defineProperty(el, 'clientHeight', { value: 400, configurable: true });
+    el.scrollTop = 100;
+  }
+
+  it('rolagem do sistema (scroll sem gesto) não pausa; o gesto da pessoa pausa', () => {
+    const { rolagem } = montar({ events: [ev(1)], actions: [] });
+    const el = rolagem().scrollContainerRef.current!;
+    longe(el);
+    act(() => {
+      el.dispatchEvent(new Event('scroll'));
+    });
+    expect(rolagem().afastado).toBe(false);
+    act(() => {
+      el.dispatchEvent(new Event('wheel'));
+      el.dispatchEvent(new Event('scroll'));
+    });
+    expect(rolagem().afastado).toBe(true);
+  });
+
+  it('o gesto vale só por ~500 ms: scroll depois da janela não pausa', () => {
+    const { rolagem } = montar({ events: [ev(1)], actions: [] });
+    const el = rolagem().scrollContainerRef.current!;
+    longe(el);
+    act(() => {
+      el.dispatchEvent(new Event('wheel'));
+      vi.advanceTimersByTime(600);
+      el.dispatchEvent(new Event('scroll'));
+    });
+    expect(rolagem().afastado).toBe(false);
+  });
+
+  it('identidade do fio muda com a oferta de passagem; ação ou oferta nova com o fio no fim rola ao fim', () => {
+    expect(identidadeDoFio([ev(1)], [], [])).not.toBe(identidadeDoFio([ev(1)], [], [oferta('h1')]));
+    const store = criarStoreDoStreaming();
+    const rolar = vi.fn();
+    const hook = renderHook(
+      (p: { handoffs: Handoff[] }) => {
+        const r = useRolagemDoFio({ logOpen: true, streamingStore: store, highlightEvent: undefined, events: [ev(1)], actions: [], ...p });
+        r.messagesEndRef.current ??= { scrollIntoView: rolar } as unknown as HTMLDivElement;
+        r.scrollContainerRef.current ??= document.createElement('div');
+        return r;
+      },
+      { initialProps: { handoffs: [] as Handoff[] } },
+    );
+    expect(rolar).toHaveBeenCalledTimes(1);
+    hook.rerender({ handoffs: [oferta('h1')] });
+    expect(rolar).toHaveBeenCalledTimes(2);
+  });
+
+  it('cartoesNovosDepoisDe conta ação e oferta `offered` fora dos vistos', () => {
+    const vistos = new Set(['a']);
+    expect(cartoesNovosDepoisDe([ac('a'), ac('b')], [oferta('h', 'accepted'), oferta('h2')], vistos)).toBe(2);
+    expect(cartoesNovosDepoisDe([ac('a')], [], null)).toBe(0);
+  });
+
+  it('com o fio pausado, cartão novo acende `cartoes`; ir ao fim zera', () => {
+    const { hook, rolagem } = montar({ events: [ev(1)], actions: [ac('a')] });
+    const el = rolagem().scrollContainerRef.current!;
+    longe(el);
+    act(() => {
+      el.dispatchEvent(new Event('wheel'));
+      el.dispatchEvent(new Event('scroll'));
+    });
+    expect(rolagem().cartoes).toBe(0);
+    hook.rerender({ events: [ev(1)], actions: [ac('a'), ac('b')] });
+    expect(rolagem().cartoes).toBe(1);
+    act(() => rolagem().irAoFim());
+    expect(rolagem().cartoes).toBe(0);
   });
 });

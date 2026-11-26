@@ -208,6 +208,8 @@
   },
   "handoff": {
     "aceiteAutomatico": "Accepted automatically: the backlog covers all {{regras}} business rules and the repository is local, so {{agente}} joined without a click.",
+    "aceiteAutomaticoPassagem": "Accepted automatically: the handoff to {{agente}} is turned on and the repository is local, so {{agente}} came in without a click.",
+    "aceiteAutomaticoOferta": "Accepted automatically by the accept rule you turned on, so {{agente}} came in without a click.",
     "aceiteAutomaticoFalhou": "The automatic accept of the handoff to {{agente}} failed: {{erro}}. Accept it from the offer card.",
     "passouOBastaoAo": "handed off to",
     "aceitarEPassar": "Accept and hand over to {{agente}}",
@@ -385,7 +387,12 @@
       "bloqueadas": "Blocked tasks",
       "perguntas": "Open questions",
       "travados": "Stuck agents",
-      "semModulo": "Tasks without a module"
+      "semModulo": "Tasks without a module",
+      "noChat": "Waiting for you in this chat"
+    },
+    "noChat": {
+      "verNoChat": "See in chat",
+      "oferta": "{{de}} handed over to {{para}}"
     },
     "origem_one": "Proposed in session {{hashtag}} · {{tempo}}",
     "origem_other": "{{count}} proposed in session {{hashtag}} · oldest {{tempo}}",
@@ -404,7 +411,7 @@
     },
     "bloqueadas": {
       "botao": "Unblock (back to the dev queue)",
-      "ok": "Task unblocked: it goes back to the module's dev agent queue.",
+      "ok": "Resumed. The task went back to the dev. It continues where it stopped.",
       "erro": "Could not unblock the task.",
       "semMotivo": "No reason recorded.",
       "semPapel": "Unblocking requires the developer role on the project.",
@@ -417,7 +424,48 @@
       "gravarTeto": "Save the cap",
       "tetoOk": "Project cap updated: live agents pick it up on the next lap. Now just unblock.",
       "tetoErro": "Could not save the cap.",
-      "tetoSemPapel": "Raising the cap requires the maintainer role on the project."
+      "tetoSemPapel": "Raising the cap requires the maintainer role on the project.",
+      "causaGenerica": "The agent stopped and needs you to continue.",
+      "diagnosticoTecnico": "See technical details",
+      "outraOrientacao": "Write other guidance",
+      "tentarDeNovo": "Try again",
+      "botaoComTexto": "Unblock with this text",
+      "soVoce": "What only you can do",
+      "causas": {
+        "reinicio_do_engine": "The system was restarted while the task was in progress.",
+        "falha_de_contexto": "Could not gather the task information for the agent to continue.",
+        "push_nao_aprovado": "Sending the work to the repository was not approved, so the task stopped.",
+        "push_falhou": "Could not send the work to the project repository.",
+        "commit_recusado": "The commit or the sending of the fix was refused, so the task stopped.",
+        "pr_nao_aberta": "The PR was not opened because the task's git actions were not approved.",
+        "retomada_da_branch": "Could not resume the branch of the PR that is in conflict.",
+        "conflito_de_integracao": "The work conflicted with the newest version of the project and the agent did not resolve it.",
+        "conflito_de_merge": "The PR conflicted with the newest version of the project and no agent could resolve it.",
+        "credencial_de_git": "The repository access key cannot be used on this execution machine.",
+        "falha_no_worktree": "Could not prepare the task's working folder.",
+        "worktree_diverge": "The working folder and the published branch are on different versions.",
+        "orcamento_excedido": "This task's spending limit was reached, and only you can release more.",
+        "limite_de_iteracoes": "The agent used all the task's attempts without being able to finish.",
+        "limite_de_iteracoes_correcao": "The agent used all the fix's attempts without being able to finish it.",
+        "credito_do_provedor": "The model provider's credit ran out, so the agent stopped.",
+        "limite_de_uso": "The model provider reached its usage limit and the agent had to stop.",
+        "falha_de_rede": "The connection to the model provider dropped; the task comes back on its own in a few minutes.",
+        "resposta_cortada": "The model spent the whole response space thinking and never acted.",
+        "parada_sem_sinal": "The agent stopped without finishing the task and without saying why.",
+        "qa_instancia_indisponivel": "QA Automation could not start the test environment.",
+        "qa_espera_esgotada": "The test environment took too long to be ready.",
+        "gate_bloqueado": "The task's verification stopped before giving its verdict.",
+        "sessao_encerrada": "The execution session was ended with the task in progress.",
+        "generico": "The agent stopped and needs you to continue."
+      },
+      "soVocePode": {
+        "credito_do_provedor": "Top up the balance on the AI provider account. Then come back here and tap “Try again”."
+      },
+      "acoes": {
+        "aumentar_o_teto": "Raise the limit and continue",
+        "tentar_de_novo": "Try again"
+      },
+      "irAoTeto": "Raise the limit (in Settings)"
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",
@@ -447,7 +495,8 @@
       "corrigir": "Fix the story",
       "corrigirHistoria": "Affected story: {{titulo}}",
       "dispensar": "Dismiss",
-      "responderComTexto": "Answer with text"
+      "responderComTexto": "Answer with text",
+      "detalheTecnico": "See technical details"
     },
     "verOCartao": "See the card",
     "saidas": {
@@ -500,6 +549,8 @@
     "irAoFim": "Go to end",
     "irAoFimComNovas_one": "Go to end · {{count}} new",
     "irAoFimComNovas_other": "Go to end · {{count}} new",
+    "irAoFimComCartao_one": "Go to end · {{count}} card waiting for you",
+    "irAoFimComCartao_other": "Go to end · {{count}} cards waiting for you",
     "verRespostaInteira": "View full response",
     "recolherResposta": "Collapse response"
   },

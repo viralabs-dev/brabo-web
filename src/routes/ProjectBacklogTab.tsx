@@ -41,6 +41,7 @@ import {
   HypothesisIcon,
   CheckIcon,
 } from '../components/ui/icons';
+import { CausaDaLinha } from '../components/BloqueioRetomavel';
 import styles from './ProjectBacklogTab.module.css';
 
 import { historiaPassaNoFiltro } from '../lib/trabalho-v9';
@@ -758,7 +759,9 @@ function TarefaDoBacklog({
         <div className={styles.taskBlockedReason}>{t('taskNode.archivedReason', { motivo: task.archivedReason })}</div>
       )}
       {!arquivada && task.blocked && task.blockedReason && (
-        <div className={styles.taskBlockedReason}>{task.blockedReason}</div>
+        <div className={styles.taskBlockedReason}>
+          <CausaDaLinha tarefa={task} comDetalhe />
+        </div>
       )}
       {!arquivada && podeArquivar && task.status === 'todo' && (
         <Button

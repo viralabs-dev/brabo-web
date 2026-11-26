@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Reply, ThumbsUp, X } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import type { OpenQuestion, Story, Task } from '../lib/api-types';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { nomeDoAgente } from '../lib/agents';
 import { userIdDaSessao } from '../lib/auth';
+import { semIdentificadorInterno } from '../lib/sem-identificador';
 import {
   ID_DA_FILA_DE_PERGUNTAS,
   rolarAteAsPerguntas,
@@ -14,6 +15,7 @@ import {
 } from '../lib/perguntas-em-aberto';
 import { formatRelativeTime } from '../lib/time';
 import { Button } from './ui/Button';
+import { Disclosure } from './ui/Disclosure';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { paginar } from '../lib/paginacao-de-fila';
 import styles from './PendenciasDeOutrasSessoes.module.css';
@@ -225,7 +227,10 @@ function CartaoDaPergunta({
   const [erro, setErro] = useState<string | null>(null);
   // Compacto: com sugestão, o campo só aparece quando pedido; sem ela, é o único caminho.
   const [escrevendo, setEscrevendo] = useState(false);
-  const campoVisivel = !compacto || !pergunta.sugestao || escrevendo;
+  // AT-1021 (RN-1531): com opções prontas, o campo livre fica recolhido (e disponível) no
+  // "Responder com texto"; sem elas (dado antigo), vale o comportamento de antes.
+  const opcoes = pergunta.opcoes ?? [];
+  const campoVisivel = opcoes.length > 0 ? false : !compacto || !pergunta.sugestao || escrevendo;
   const eAutor = pergunta.autorDaSessao !== null && pergunta.autorDaSessao === userIdDaSessao();
 
   const afeta = [
@@ -239,6 +244,14 @@ function CartaoDaPergunta({
   const esperando = pergunta.afeta.tarefas
     .map((id) => tarefas?.find((task) => task.id === id))
     .filter((task): task is Task => !!task);
+
+  // RN-1536: Enter envia a resposta curta, com as mesmas travas do clique; IME em composição não conta.
+  function enviarComEnter(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter' || e.nativeEvent.isComposing || !eAutor || enviando !== null) return;
+    if (texto.trim() === '') return;
+    e.preventDefault();
+    void responder({ resposta: texto.trim() });
+  }
 
   async function responder(corpo: { resposta: string } | { aceitarSugestao: true }) {
     setEnviando('resposta' in corpo ? 'resposta' : 'sugestao');
@@ -266,7 +279,7 @@ function CartaoDaPergunta({
           tempo: formatRelativeTime(pergunta.criadaEm),
         })}
       </div>
-      <p>{pergunta.pergunta}</p>
+      <p>{semIdentificadorInterno(pergunta.pergunta)}</p>
       {afeta.length > 0 && (
         <p className={styles.nota}>
           {t('pendencias.perguntas.afeta')} {afeta.join(' · ')}
@@ -283,6 +296,17 @@ function CartaoDaPergunta({
         </p>
       )}
       <div className={styles.acoesDaLinha}>
+        {opcoes.map((o, i) => (
+          <Button
+            key={o.rotulo}
+            variant={i === 0 ? 'primary' : 'secondary'}
+            disabled={!eAutor || enviando !== null}
+            onClick={() => void responder({ resposta: o.resposta })}
+            data-testid="opcao-da-pergunta"
+          >
+            {o.rotulo}
+          </Button>
+        ))}
         {pergunta.sugestao && (
           <Button
             variant="secondary"
@@ -295,7 +319,7 @@ function CartaoDaPergunta({
             {compacto && t('pendencias.perguntas.aceitar')}
           </Button>
         )}
-        {compacto && pergunta.sugestao && !escrevendo && (
+        {opcoes.length === 0 && compacto && pergunta.sugestao && !escrevendo && (
           <Button variant="ghost" onClick={() => setEscrevendo(true)}>
             {t('pendencias.perguntas.responderComTexto')}
           </Button>
@@ -311,6 +335,7 @@ function CartaoDaPergunta({
           placeholder={t('pendencias.perguntas.campo')}
           autoComplete="off"
           onChange={(e) => setTexto(e.target.value)}
+          onKeyDown={enviarComEnter}
         />
         <Button
           variant="primary"
@@ -323,6 +348,40 @@ function CartaoDaPergunta({
         </Button>
         </>)}
       </div>
+      {pergunta.detalhe && (
+        <Disclosure titulo={t('pendencias.perguntas.detalheTecnico')}>
+          <p className={styles.nota} data-testid="detalhe-tecnico">
+            {pergunta.detalhe}
+          </p>
+        </Disclosure>
+      )}
+      {opcoes.length > 0 && (
+        <Disclosure titulo={t('pendencias.perguntas.responderComTexto')}>
+          <div className={styles.acoesDaLinha}>
+            <input
+              type="text"
+              className={styles.campo}
+              value={texto}
+              maxLength={TETO_DA_RESPOSTA}
+              disabled={!eAutor || enviando !== null}
+              aria-label={t('pendencias.perguntas.campo')}
+              placeholder={t('pendencias.perguntas.campo')}
+              autoComplete="off"
+              onChange={(e) => setTexto(e.target.value)}
+              onKeyDown={enviarComEnter}
+            />
+            <Button
+              variant="primary"
+              disabled={!eAutor || enviando !== null || texto.trim() === ''}
+              loading={enviando === 'resposta'}
+              onClick={() => void responder({ resposta: texto.trim() })}
+              legenda={t('pendencias.perguntas.responder')}
+            >
+              <Reply aria-hidden="true" />
+            </Button>
+          </div>
+        </Disclosure>
+      )}
       {!eAutor && <p className={styles.nota}>{t('pendencias.perguntas.soOAutor')}</p>}
       {erro && (
         <p className={styles.erro} role="alert">
@@ -361,7 +420,7 @@ export function CartaoRespondido({
     .filter((s): s is Story => !!s);
   return (
     <div className={styles.grupo} data-testid="pergunta-respondida">
-      <p>{pergunta.pergunta}</p>
+      <p>{semIdentificadorInterno(pergunta.pergunta)}</p>
       <p className={styles.nota}>{t('pendencias.perguntas.respondida')}</p>
       {afetadas.map((story) => {
         const inerte = motivoDeCorrecaoInerte(story, podeCorrigir);

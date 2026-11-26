@@ -198,7 +198,7 @@
       "pendente": "No agent has a model yet: activate one in Providers and pick it here.",
       "link": "Pick the model →",
       "pendenteLocal": "The team is on the local model {{modelo}}. Pick a model from your provider.",
-      "aplicar": "Apply {{modelo}} to the team",
+      "aplicar": "Apply {{modelo}} to the team · {{preco}}",
       "aplicarSemPapel": "Only project maintainers can apply the model to the team.",
       "aplicarSemHaiku": "Claude Haiku 5.5 is not active in the catalog: activate it in Providers.",
       "aplicarFalhou": "Could not apply the model to the team. Try again."

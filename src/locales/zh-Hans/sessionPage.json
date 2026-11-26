@@ -203,6 +203,8 @@
   },
   "handoff": {
     "aceiteAutomatico": "已自动接受：待办列表覆盖了 {{regras}} 条业务规则且仓库为本地仓库，因此 {{agente}} 无需点击即已加入。",
+    "aceiteAutomaticoPassagem": "已自动接受：向 {{agente}} 的交接已开启且仓库为本地仓库，因此 {{agente}} 无需点击即已加入。",
+    "aceiteAutomaticoOferta": "已按您开启的接受规则自动接受，因此 {{agente}} 无需点击即已加入。",
     "aceiteAutomaticoFalhou": "向 {{agente}} 的 handoff 自动接受失败：{{erro}}。请通过邀请卡片接受。",
     "passouOBastaoAo": "把接力棒交给了",
     "aceitarEPassar": "接受并交给 {{agente}}",
@@ -372,7 +374,12 @@
       "bloqueadas": "被阻塞的任务",
       "perguntas": "未回答的问题",
       "travados": "卡住的智能体",
-      "semModulo": "无模块的任务"
+      "semModulo": "无模块的任务",
+      "noChat": "在此聊天中等你处理"
+    },
+    "noChat": {
+      "verNoChat": "在聊天中查看",
+      "oferta": "{{de}} 已交棒给 {{para}}"
     },
     "origem_other": "会话 {{hashtag}} 中的 {{count}} 个提议 · 最早的 {{tempo}}",
     "abas": "待处理队列",
@@ -388,7 +395,7 @@
     },
     "bloqueadas": {
       "botao": "解除阻塞（回到 dev 队列）",
-      "ok": "任务已解除阻塞：它回到该模块 dev agent 的队列。",
+      "ok": "已恢复。任务回到了 dev，它会从停下的地方继续。",
       "erro": "无法解除任务阻塞。",
       "semMotivo": "未记录原因。",
       "semPapel": "解除阻塞需要项目中的 developer 角色。",
@@ -401,7 +408,48 @@
       "gravarTeto": "保存上限",
       "tetoOk": "项目上限已更新：运行中的代理在下一轮生效。现在只需解除阻塞。",
       "tetoErro": "无法保存上限。",
-      "tetoSemPapel": "提高上限需要项目中的 maintainer 角色。"
+      "tetoSemPapel": "提高上限需要项目中的 maintainer 角色。",
+      "causaGenerica": "智能体停下了，需要你来继续。",
+      "diagnosticoTecnico": "查看技术细节",
+      "outraOrientacao": "写其他指示",
+      "tentarDeNovo": "重试",
+      "botaoComTexto": "用这段文字解除阻塞",
+      "soVoce": "只有你能做的事",
+      "causas": {
+        "reinicio_do_engine": "任务进行中系统被重启了。",
+        "falha_de_contexto": "无法为智能体汇集任务信息，因此无法继续。",
+        "push_nao_aprovado": "把工作发送到仓库的操作未获批准，所以任务停止了。",
+        "push_falhou": "无法把工作发送到项目仓库。",
+        "commit_recusado": "修复的提交或发送被拒绝，所以任务停止了。",
+        "pr_nao_aberta": "PR 没有打开，因为任务的 git 操作未获批准。",
+        "retomada_da_branch": "无法恢复处于冲突中的 PR 分支。",
+        "conflito_de_integracao": "这项工作与项目的最新版本发生冲突，智能体没有解决。",
+        "conflito_de_merge": "PR 与项目的最新版本发生冲突，没有任何智能体能解决。",
+        "credencial_de_git": "这台执行机器无法使用仓库的访问密钥。",
+        "falha_no_worktree": "无法准备任务的工作文件夹。",
+        "worktree_diverge": "工作文件夹与已发布的分支版本不一致。",
+        "orcamento_excedido": "这个任务的花费上限已到，只有你能放宽。",
+        "limite_de_iteracoes": "智能体用完了任务的所有尝试，仍没能完成。",
+        "limite_de_iteracoes_correcao": "智能体用完了修复的所有尝试，仍没能完成。",
+        "credito_do_provedor": "模型提供商的额度用完了，所以智能体停下了。",
+        "limite_de_uso": "模型提供商达到了使用上限，智能体不得不停下。",
+        "falha_de_rede": "与模型提供商的连接断了；任务几分钟后会自动恢复。",
+        "resposta_cortada": "模型把整个回复空间都用来思考，没有采取行动。",
+        "parada_sem_sinal": "智能体没完成任务就停了，也没说明原因。",
+        "qa_instancia_indisponivel": "QA 自动化无法启动测试环境。",
+        "qa_espera_esgotada": "测试环境等了太久还没准备好。",
+        "gate_bloqueado": "任务的验证在给出结论前就停了。",
+        "sessao_encerrada": "执行会话在任务进行中被结束了。",
+        "generico": "智能体停下了，需要你来继续。"
+      },
+      "soVocePode": {
+        "credito_do_provedor": "给 AI 提供商账户充值。然后回到这里点“重试”。"
+      },
+      "acoes": {
+        "aumentar_o_teto": "提高上限并继续",
+        "tentar_de_novo": "重试"
+      },
+      "irAoTeto": "提高上限（在设置中）"
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",
@@ -428,7 +476,8 @@
       "corrigir": "修正用户故事",
       "corrigirHistoria": "受影响的用户故事：{{titulo}}",
       "dispensar": "忽略",
-      "responderComTexto": "用文字回答"
+      "responderComTexto": "用文字回答",
+      "detalheTecnico": "查看技术细节"
     },
     "verOCartao": "查看卡片",
     "saidas": {
@@ -473,6 +522,7 @@
     "rotuloDoFio": "会话对话",
     "irAoFim": "跳到末尾",
     "irAoFimComNovas_other": "跳到末尾 · {{count}} 条新消息",
+    "irAoFimComCartao_other": "跳到末尾 · {{count}} 张卡片等你处理",
     "verRespostaInteira": "查看完整回复",
     "recolherResposta": "收起回复"
   },

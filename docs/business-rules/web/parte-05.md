@@ -113,11 +113,11 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   (`turnoEmCursoNoLog`), `:536` (`useRetomarTurnoDoLog`);
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
   `:56` (`separarPendenciasDeOutrasSessoes`);
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:90`
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:101`
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:62` (`MergearNoChat`);
   `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:276`
-  (`useRetomarTurnoDoLog`), `:881` (`PainelDaSessao`)
+  (`useRetomarTurnoDoLog`), `:893` (`PainelDaSessao`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -132,6 +132,8 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   caso de falha), `:134` (papel — caso de falha)
 - **Origem:** AT-256, AT-268, AT-265, AT-266 e AT-753 (UX-2, UX-7, UX-9), da análise do uso real de
   2026-09-29 (itens 4, 5 e 10a), rodada 27, lane web-sessao
+
+> **Item 6 alterado pela [RN-1531](parte-08.md#rn-1531) (AT-1021).** A frase principal do card de bloqueio deixa de ser o título antes do " — ": é a `causa` do `blockedExplicacao` (ou a frase genérica), e o `blockedReason` inteiro vai para "Ver detalhes técnicos". `tituloEDiagnostico` fica sem uso na tela, só como utilitário testado.
 
 <a id="rn-631"></a>
 
@@ -975,7 +977,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 `position: absolute` dentro de controles abaixo da dobra, não algo cortado.
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
-  (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
+  (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:45`
   (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:141`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:47` (`movel`); `apps/web/src/routes/Dashboard.tsx:315` (`movel`);
@@ -1332,10 +1334,10 @@ decisão, fechados juntos:
 
 - **Onde:** `apps/web/src/lib/aprovacoes.ts:485` (`verboDaAcao`),
   `apps/api/src/domain/actions/sempre-permitir.ts:33` (`TIPOS_SEM_SEMPRE_PERMITIR`),
-  `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:95` (`execute`),
+  `apps/api/src/application/use-cases/actions/propose-action.use-case.ts:101` (`execute`),
   `apps/api/src/application/use-cases/execution/execute-execution-plan.use-case.ts:89` (`execute`),
   `apps/api/src/application/use-cases/execution/activate-execution.use-case.ts:123` (`execute`),
-  `apps/engine/lib/engine/agents/dev_lead_tools.ex:1164` (`resumo_do_plano`)
+  `apps/engine/lib/engine/agents/dev_lead_tools.ex:1188` (`resumo_do_plano`)
 - **Teste:** `apps/web/src/lib/aprovacoes.test.ts` ("AT-371 — o verbo segue o
   estado da ação", "AT-381 — o plano mostra a estimativa de gasto"),
   `apps/web/src/components/ApprovalCard.test.tsx` ("open_adr_pr pendente"),

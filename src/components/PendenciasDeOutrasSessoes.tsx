@@ -11,12 +11,15 @@ import {
   unblockTask,
   updateProject,
 } from '../lib/api-client';
-import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
+import type { Handoff, OpenQuestion, ProposedAction, Task } from '../lib/api-types';
+import { nomeDoAgente } from '../lib/agents';
+import { verboDaAcao } from '../lib/aprovacoes';
 import { usePrsProntas } from '../lib/prs-prontas';
 import { useAgentesTravados } from '../lib/agentes-travados-query';
 import { assinaturaDoBacklog, tarefasBloqueadas, tarefasSemModulo } from '../lib/prontas-e-bloqueadas';
 import { Button } from './ui/Button';
-import { Textarea } from './ui/Textarea';
+import { BloqueioRetomavel } from './BloqueioRetomavel';
+import { ACAO_AUMENTAR_O_TETO, type AcaoProntaDoBloqueio } from '../lib/explicacao-do-bloqueio';
 import { Input } from './ui/Input';
 import { useCurrentWorkspaceWithRole } from '../lib/hooks';
 import { roleAtLeast } from '../lib/roles';
@@ -24,6 +27,7 @@ import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
   CHAVE_DAS_PENDENCIAS_DO_PROJETO,
+  pendenciasDestaSessao,
   separarPendenciasDeOutrasSessoes,
 } from '../lib/pendencias-do-projeto';
 import { hashtagDaSessao } from '../lib/session-label';
@@ -34,7 +38,7 @@ import { useRegistrarAcoesNoBloco } from '../lib/acoes-no-bloco';
 import { Disclosure } from './ui/Disclosure';
 import { Alert } from './ui/Alert';
 import { MergearNoChat } from '../routes/MergearNoChat';
-import { entradasDaFila, saidasDaFila, tituloEDiagnostico, type IdsPorFila } from '../lib/saidas-da-fila';
+import { entradasDaFila, saidasDaFila, type IdsPorFila } from '../lib/saidas-da-fila';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from './shadcn/sheet';
 import { Tabs, TabsCount, TabsList, TabsTrigger } from './shadcn/tabs';
@@ -42,7 +46,7 @@ import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
 
-type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados' | 'semModulo';
+type ChaveDeFila = 'noChat' | 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados' | 'semModulo';
 
 /** Nenhum evento local: estas ações são sempre de OUTRA sessão (AT-340). */
 const SEM_EVENTOS_LOCAIS: readonly never[] = [];
@@ -70,6 +74,14 @@ interface PendenciasDeOutrasSessoesProps {
   modo?: 'inline' | 'sheet' | 'painel';
   aberto?: boolean;
   aoMudarAberto?: (aberto: boolean) => void;
+  /**
+   * RN-1510 (AT-1022): o que espera o dono NESTE chat — as ações e as ofertas de passagem da sessão
+   * aberta, lidas pela tela. Viram LINHAS da fila `noChat` ("Ver no chat"); o cartão segue só no fio.
+   */
+  acoesDaSessao?: readonly ProposedAction[];
+  ofertasDaSessao?: readonly Handoff[];
+  /** "Ver no chat" no Sheet compacto: fecha o painel para o fio aparecer. */
+  aoVerNoChat?: () => void;
   /** Só no modo `sheet`: o total de pendências, para o contador do cabeçalho e a linha do fio. */
   aoContar?: (total: number) => void;
 }
@@ -96,6 +108,9 @@ export function PendenciasDeOutrasSessoes({
   aberto = false,
   aoMudarAberto,
   aoContar,
+  acoesDaSessao,
+  ofertasDaSessao,
+  aoVerNoChat,
 }: PendenciasDeOutrasSessoesProps) {
   // AT-957: `painel` é o corpo da aba Pendências do painel da sessão (mesmo desenho compacto do Sheet, sem o invólucro).
   const noSheet = modo !== 'inline';
@@ -128,7 +143,6 @@ export function PendenciasDeOutrasSessoes({
   const [desbloqueio, setDesbloqueio] = useState<
     Record<string, { tom: 'ok' | 'erro'; texto: string } | 'enviando'>
   >({});
-  const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
   // AT-917: "Aumentar o teto" grava o teto do PROJETO (`PATCH /projects/:id`, `maintainer`).
   const { data: comPapel } = useCurrentWorkspaceWithRole();
   const podeEditarTeto = roleAtLeast(comPapel?.role, 'maintainer');
@@ -152,6 +166,10 @@ export function PendenciasDeOutrasSessoes({
   const [respondidas, setRespondidas] = useState<OpenQuestion[]>([]);
   const totalDePerguntas = perguntasQuery.data?.total ?? 0;
   const total = aprovacoes.length + merges.length;
+  // RN-1510: as linhas do que espera aqui (só ação `pending` e oferta `offered`).
+  const noChatAcoes = pendenciasDestaSessao(acoesDaSessao, sessionId);
+  const noChatOfertas = (ofertasDaSessao ?? []).filter((h) => h.status === 'offered');
+  const totalNoChat = noChatAcoes.length + noChatOfertas.length;
 
   // AT-680 (RN-975): cada fila pagina por si, de 3 em 3, no cliente e sobre a
   // lista que já foi lida (nenhuma query nova). A página é ajustada em render:
@@ -243,13 +261,14 @@ export function PendenciasDeOutrasSessoes({
 
   // AT-950: o contador do cabeçalho soma as filas; cada aba segue com o PRÓPRIO número (RN-467).
   const totalGeral =
-    total + prontas.length + bloqueadas.length + travados.length + semModulo.length + totalDePerguntas;
+    totalNoChat + total + prontas.length + bloqueadas.length + travados.length + semModulo.length + totalDePerguntas;
   useEffect(() => {
     if (noSheet) aoContar?.(totalGeral);
   }, [noSheet, aoContar, totalGeral]);
 
   if (
     saidas === null &&
+    totalNoChat === 0 &&
     total === 0 &&
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
@@ -260,11 +279,14 @@ export function PendenciasDeOutrasSessoes({
   )
     return null;
 
-  async function desbloquear(task: Task) {
+  // AT-1021 (RN-1531): o clique numa ação retoma direto, com a orientação dela (RN-1124); a do teto
+  // grava o teto antes e, se a gravação falha, não retoma.
+  async function retomar(task: Task, orientacao: string, acao?: AcaoProntaDoBloqueio) {
     if (desbloqueio[task.id] === 'enviando') return;
+    if (acao?.id === ACAO_AUMENTAR_O_TETO && !(await gravarTeto(task))) return;
     setDesbloqueio((d) => ({ ...d, [task.id]: 'enviando' }));
     try {
-      await unblockTask(projectId, sessionId, task.id, orientacoes[task.id]);
+      await unblockTask(projectId, sessionId, task.id, orientacao);
       setDesbloqueio((d) => ({ ...d, [task.id]: { tom: 'ok', texto: t('pendencias.bloqueadas.ok') } }));
       void queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
     } catch (erro) {
@@ -275,18 +297,20 @@ export function PendenciasDeOutrasSessoes({
     }
   }
 
-  async function gravarTeto(task: Task) {
+  async function gravarTeto(task: Task): Promise<boolean> {
     const usd = Number(tetos[task.id]);
-    if (!Number.isFinite(usd) || Math.round(usd * 1_000_000) <= 0) return;
+    if (!Number.isFinite(usd) || Math.round(usd * 1_000_000) <= 0) return false;
     try {
       await updateProject(projectId, { taskBudgetMicros: Math.round(usd * 1_000_000) });
       void queryClient.invalidateQueries({ queryKey: ['project', projectId] });
       setRetornoDoTeto((r) => ({ ...r, [task.id]: { tom: 'ok', texto: t('pendencias.bloqueadas.tetoOk') } }));
+      return true;
     } catch (erro) {
       setRetornoDoTeto((r) => ({
         ...r,
         [task.id]: { tom: 'erro', texto: mensagemDaApi(erro, t('pendencias.bloqueadas.tetoErro')) },
       }));
+      return false;
     }
   }
 
@@ -413,6 +437,7 @@ export function PendenciasDeOutrasSessoes({
   // Presença POR FILA no cabeçalho, visível com o bloco recolhido — cada fila
   // com o próprio número, nunca uma soma (RN-467).
   const contagens = {
+    noChat: totalNoChat,
     aprovacoes: aprovacoes.length,
     merges: merges.length,
     prontas: prontas.length,
@@ -422,11 +447,11 @@ export function PendenciasDeOutrasSessoes({
     perguntas: totalDePerguntas,
   };
   // AT-950: no Sheet nenhuma aba fica sem escolha — abre a primeira fila com itens.
-  const filasComItens = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const).filter(
+  const filasComItens = (['noChat', 'perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const).filter(
     (chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0),
   );
   const abertaDeFato = noSheet ? (aberta ?? filasComItens[0] ?? null) : aberta;
-  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
+  const presenca = (['noChat', 'perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
@@ -479,7 +504,7 @@ export function PendenciasDeOutrasSessoes({
           onValueChange={(v) => setAberta((v[0] as ChaveDeFila | undefined) ?? null)}
         >
           <Ajuda assunto={t('pendencias.abas')}>{t('pendencias.nota')}</Ajuda>
-          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
+          {(['noChat', 'perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
             .filter((chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0))
             .map((chave) => (
               <ToggleGroupItem key={chave} value={chave}>
@@ -489,6 +514,37 @@ export function PendenciasDeOutrasSessoes({
         </ToggleGroup>
         )}
         <div className={noSheet ? styles.listaDoSheet : styles.lista}>
+          {painel('noChat', totalNoChat > 0 && (
+            <section
+              className={styles.fila}
+              aria-label={t('pendencias.filas.noChat')}
+              data-testid="fila-no-chat"
+            >
+              <h4 className={styles.filaTitulo}>
+                {t('pendencias.filas.noChat')}
+                <span className={styles.contagem}>{totalNoChat}</span>
+              </h4>
+              {noChatAcoes.map((acao) => (
+                <LinhaNoChat
+                  key={acao.id}
+                  texto={`${verboDaAcao(acao.actionType)} · ${nomeDoAgente(acao.actor.id)}`}
+                  alvo={`acao-${acao.id}`}
+                  aoVer={aoVerNoChat}
+                />
+              ))}
+              {noChatOfertas.map((oferta) => (
+                <LinhaNoChat
+                  key={oferta.id}
+                  texto={t('pendencias.noChat.oferta', {
+                    de: nomeDoAgente(oferta.fromAgent),
+                    para: nomeDoAgente(oferta.toAgent),
+                  })}
+                  alvo={`oferta-${oferta.id}`}
+                  aoVer={aoVerNoChat}
+                />
+              ))}
+            </section>
+          ))}
           {painel('perguntas', <PerguntasEmAberto
             projectId={projectId}
             perguntas={perguntas}
@@ -571,87 +627,69 @@ export function PendenciasDeOutrasSessoes({
               </h4>
               {pBloqueadas.itens.map((task) => {
                 const estado = desbloqueio[task.id];
-                const { titulo, diagnostico } = tituloEDiagnostico(
-                  task.blockedReason ?? t('pendencias.bloqueadas.semMotivo'),
-                );
+                const explicaTeto = !!task.blockedExplicacao?.acoes.some((x) => x.id === ACAO_AUMENTAR_O_TETO);
                 return (
                   <div key={task.id} className={styles.grupo} data-testid="tarefa-bloqueada">
                     <div className={styles.origem}>{task.title}</div>
-                    <p className={styles.nota}>{titulo}</p>
                     {task.assignedTo && idsTravados.has(task.assignedTo) && (
                       <p className={styles.erro} data-testid="bloqueada-agente-travado">
                         {t('pendencias.bloqueadas.agenteTravado', { agente: task.assignedTo })}
                       </p>
                     )}
-                    {diagnostico && (
-                      <Disclosure titulo={t('pendencias.bloqueadas.diagnostico')}>
-                        <p className={styles.nota}>{diagnostico}</p>
-                      </Disclosure>
-                    )}
-                    <Textarea
-                      label={t('pendencias.bloqueadas.orientacao')}
-                      placeholder={t('pendencias.bloqueadas.orientacaoDica')}
-                      maxLength={2000}
-                      value={orientacoes[task.id] ?? ''}
-                      disabled={!podeDecidir || estado === 'enviando'}
-                      onChange={(e) => setOrientacoes((o) => ({ ...o, [task.id]: e.target.value }))}
+                    <BloqueioRetomavel
+                      tarefa={task}
+                      podeDecidir={podeDecidir}
+                      enviando={estado === 'enviando'}
+                      aoRetomar={(orientacao, acao) => void retomar(task, orientacao, acao)}
+                      acaoDesabilitada={(a) =>
+                        a.id === ACAO_AUMENTAR_O_TETO && (!podeEditarTeto || !(Number(tetos[task.id]) > 0))
+                      }
+                      antes={
+                        (task.blockedOrigin === 'politica' || explicaTeto) && (
+                          <div className={styles.acoesDaLinha} data-testid="aumentar-teto">
+                            {tetos[task.id] === undefined && !explicaTeto ? (
+                              <Button
+                                variant="secondary"
+                                disabled={!podeEditarTeto}
+                                onClick={() => setTetos((v) => ({ ...v, [task.id]: '' }))}
+                              >
+                                {t('pendencias.bloqueadas.aumentarTeto')}
+                              </Button>
+                            ) : (
+                              <>
+                                <Input
+                                  mono
+                                  type="number"
+                                  min={0.01}
+                                  step={0.01}
+                                  aria-label={t('pendencias.bloqueadas.tetoCampo')}
+                                  value={tetos[task.id] ?? ''}
+                                  onChange={(e) => setTetos((v) => ({ ...v, [task.id]: e.target.value }))}
+                                />
+                                <Button
+                                  variant="secondary"
+                                  disabled={!(Number(tetos[task.id]) > 0)}
+                                  onClick={() => void gravarTeto(task)}
+                                >
+                                  {t('pendencias.bloqueadas.gravarTeto')}
+                                </Button>
+                              </>
+                            )}
+                            {!podeEditarTeto && (
+                              <span className={styles.nota}>{t('pendencias.bloqueadas.tetoSemPapel')}</span>
+                            )}
+                            {retornoDoTeto[task.id] && (
+                              <span
+                                className={retornoDoTeto[task.id].tom === 'erro' ? styles.erro : styles.nota}
+                                role={retornoDoTeto[task.id].tom === 'erro' ? 'alert' : 'status'}
+                              >
+                                {retornoDoTeto[task.id].texto}
+                              </span>
+                            )}
+                          </div>
+                        )
+                      }
                     />
-                    <div className={styles.acoesDaLinha}>
-                      <Button
-                        variant="secondary"
-                        disabled={!podeDecidir || estado === 'enviando'}
-                        loading={estado === 'enviando'}
-                        onClick={() => void desbloquear(task)}
-                      >
-                        {t('pendencias.bloqueadas.botao')}
-                      </Button>
-                      {!podeDecidir && (
-                        <span className={styles.nota}>{t('pendencias.bloqueadas.semPapel')}</span>
-                      )}
-                    </div>
-                    {task.blockedOrigin === 'politica' && (
-                      <div className={styles.acoesDaLinha} data-testid="aumentar-teto">
-                        {tetos[task.id] === undefined ? (
-                          <Button
-                            variant="secondary"
-                            disabled={!podeEditarTeto}
-                            onClick={() => setTetos((v) => ({ ...v, [task.id]: '' }))}
-                          >
-                            {t('pendencias.bloqueadas.aumentarTeto')}
-                          </Button>
-                        ) : (
-                          <>
-                            <Input
-                              mono
-                              type="number"
-                              min={0.01}
-                              step={0.01}
-                              aria-label={t('pendencias.bloqueadas.tetoCampo')}
-                              value={tetos[task.id]}
-                              onChange={(e) => setTetos((v) => ({ ...v, [task.id]: e.target.value }))}
-                            />
-                            <Button
-                              variant="secondary"
-                              disabled={!(Number(tetos[task.id]) > 0)}
-                              onClick={() => void gravarTeto(task)}
-                            >
-                              {t('pendencias.bloqueadas.gravarTeto')}
-                            </Button>
-                          </>
-                        )}
-                        {!podeEditarTeto && (
-                          <span className={styles.nota}>{t('pendencias.bloqueadas.tetoSemPapel')}</span>
-                        )}
-                        {retornoDoTeto[task.id] && (
-                          <span
-                            className={retornoDoTeto[task.id].tom === 'erro' ? styles.erro : styles.nota}
-                            role={retornoDoTeto[task.id].tom === 'erro' ? 'alert' : 'status'}
-                          >
-                            {retornoDoTeto[task.id].texto}
-                          </span>
-                        )}
-                      </div>
-                    )}
                     {estado && estado !== 'enviando' && (
                       <p
                         className={estado.tom === 'erro' ? styles.erro : styles.nota}
@@ -782,4 +820,27 @@ export function PendenciasDeOutrasSessoes({
 function RegistroDoBloco({ ids }: { ids: readonly string[] }) {
   useRegistrarAcoesNoBloco(ids);
   return null;
+}
+
+/**
+ * RN-1510: uma linha da fila "Esperando você neste chat". NÃO desenha o cartão
+ * (ele vive no fio) nem se registra no bloco (RN-843): só leva até ele.
+ */
+function LinhaNoChat({ texto, alvo, aoVer }: { texto: string; alvo: string; aoVer?: () => void }) {
+  const { t } = useTranslation('sessionPage');
+  return (
+    <div className={styles.linhaNoChat} data-testid="linha-no-chat">
+      <span className={styles.textoNoChat}>{texto}</span>
+      <Button
+        variant="secondary"
+        onClick={() => {
+          aoVer?.();
+          // Depois do render que fecha o Sheet; `scrollIntoView` pode não existir (jsdom).
+          setTimeout(() => document.getElementById(alvo)?.scrollIntoView?.({ behavior: 'smooth', block: 'center' }), 0);
+        }}
+      >
+        {t('pendencias.noChat.verNoChat')}
+      </Button>
+    </div>
+  );
 }

@@ -772,6 +772,7 @@ describe('RN-173 — o fio acompanha o que cresce', () => {
     Object.defineProperty(rolavel, 'scrollHeight', { value: 5000, configurable: true });
     Object.defineProperty(rolavel, 'clientHeight', { value: 500, configurable: true });
     Object.defineProperty(rolavel, 'scrollTop', { value: 0, configurable: true });
+    fireEvent.wheel(rolavel);
     fireEvent.scroll(rolavel);
 
     rolou.mockClear();
@@ -780,7 +781,10 @@ describe('RN-173 — o fio acompanha o que cresce', () => {
 
     await screen.findByText('propõe alteração');
     expect(rolou).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole('button', { name: 'Ir ao fim' }));
+    // RN-1510: faixa fora do fio, com o rótulo do cartão que chegou na pausa.
+    const irAoFim = screen.getByRole('button', { name: 'Ir ao fim · 1 cartão esperando você' });
+    expect(irAoFim.closest('[data-slot="message-scroller"]')).toBeNull();
+    fireEvent.click(irAoFim);
     expect(rolou).toHaveBeenCalled();
   });
 });

@@ -1,4 +1,5 @@
-import { describe, it, expect } from 'vitest';
+import { afterAll, beforeAll, describe, it, expect } from 'vitest';
+import i18n from './i18n';
 import type { CodePullRequestSummary, Epic, ModuleMap, SessionEvent, Task } from './api-types';
 import { cartoesDaExecucao, contagemPorEstado, motivoDoOcio, progressoDaExecucao } from './executores-ao-vivo';
 
@@ -195,6 +196,13 @@ describe('cartões de QA e SecOps', () => {
   });
 });
 
+beforeAll(async () => {
+  await i18n.changeLanguage('pt-BR');
+});
+afterAll(() => {
+  void i18n.changeLanguage('en');
+});
+
 describe('motivoDoOcio', () => {
   it('pausa de rede passa o reason; várias dependências escolhem a que tem PR; bloqueada; fallback', () => {
     const e = epics([task(T1, 'a'), task(T2, 'b', { status: 'in_review' }), task('cccccccc-3', 'c')]);
@@ -205,7 +213,18 @@ describe('motivoDoOcio', () => {
     const bloq = epics([task(T1, 'a', { blocked: true, blockedReason: 'sem credencial' })]);
     expect(motivoDoOcio('a', undefined, { ...ctx, epics: bloq, moduleMap: mapa(['a', []]) })).toEqual({
       key: 'tarefaBloqueada',
-      params: { motivo: 'sem credencial' },
+      // AT-1021 (RN-1531): a causa, nunca o relato cru.
+      params: { motivo: 'O agente parou e precisa de você para continuar.' },
+    });
+    const comCausa = epics([
+      task(T1, 'a', {
+        blocked: true,
+        blockedReason: 'sem credencial',
+        blockedExplicacao: { causa: 'A chave de acesso não funciona.', acoes: [{ rotulo: 'Tentar de novo', orientacao: '' }] },
+      }),
+    ]);
+    expect(motivoDoOcio('a', undefined, { ...ctx, epics: comCausa, moduleMap: mapa(['a', []]) }).params).toEqual({
+      motivo: 'A chave de acesso não funciona.',
     });
     expect(motivoDoOcio('a', undefined, { ...ctx, epics: epics([]), moduleMap: mapa(['a', []]) })).toEqual({ key: 'semTarefa' });
   });

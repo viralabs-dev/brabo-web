@@ -5152,6 +5152,17 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        AcaoDoBloqueioDto: {
+            /** @example concluir_sem_app */
+            id?: string;
+            /** @example Concluir sem subir o app */
+            rotulo: string;
+            /**
+             * @description Free text that goes to the dev agent when the button is clicked (may be empty).
+             * @example Conclua a tarefa sem subir o app; o teste de subida fica para o fim.
+             */
+            orientacao: string;
+        };
         AcceptParallelizationDto: {
             /**
              * @description Module name, as it appears in the `module_map`. Starts a dev agent dedicated to it, in an isolated worktree.
@@ -5925,6 +5936,8 @@ export interface components {
              * @enum {string}
              */
             origin?: "infra" | "modelo" | "codigo" | "politica";
+            /** @description Optional plain-language explanation (cause + 1..2 ready actions). Shape is NOT validated by the DTO: an explanation that breaks the language rule is discarded and the block still happens (RN-1527). */
+            explicacao?: components["schemas"]["ExplicacaoDoBloqueioDto"];
         };
         BootstrapDiagnosticResponseDto: {
             /**
@@ -6266,6 +6279,8 @@ export interface components {
              * @enum {string|null}
              */
             blockedOrigin: "infra" | "modelo" | "codigo" | "politica" | null;
+            /** @description Plain-language explanation of the block (cause + 1..2 ready actions, RN-1527). `null` for legacy blocks. */
+            blockedExplicacao: components["schemas"]["ExplicacaoDoBloqueioDto"] | null;
             /**
              * @description Where the task's PR is in the gate pipeline: QA, then SecOps, then the user. `null` while no PR is open.
              * @example null
@@ -6737,6 +6752,13 @@ export interface components {
              */
             changed: boolean;
         };
+        ContainerDoProjetoNoContextoResponseDto: {
+            /** @example running */
+            status: string;
+            /** @example 2026-11-26T01:13:00.000Z */
+            statusChangedAt: string;
+            failureReason: string | null;
+        };
         ContainerExecInternalDto: {
             /**
              * @description The shell command, interpreted by `sh -c` INSIDE the container — same convention as the terminal action run outside one.
@@ -6906,6 +6928,12 @@ export interface components {
                 /** @example a1b2c3d4 */
                 chave?: string;
                 services?: Record<string, never>[];
+            };
+            /** @description AT-1015 (RN-1520): NON-shared `run.qa.services`, started beside the WORK container (no `papel=qa`). Same item shape as `qa.services`. Absent when none. */
+            services?: Record<string, never>[];
+            /** @description AT-1015 (RN-1520): `run.env` (development connection variables, never a real secret), for the work container AND the QA instance. Absent when none. */
+            env?: {
+                [key: string]: string;
             };
         };
         ContratoDeModuloInternalDto: {
@@ -7664,6 +7692,10 @@ export interface components {
             primeiraDoModulo: boolean;
             /** @description AT-982: true when no OTHER non-archived task of the project is open (every one is done). The engine then asks the QA gate for the end-to-end proof of the deliverable. */
             ultimaDoProjeto: boolean;
+            /** @description AT-1016 (RN-1514): the module that starts the app (the one `run.app` cites, or the only one that depends on others and nobody depends on); `null` when unknown. */
+            moduloDoPontoDeEntrada?: string | null;
+            /** @description AT-1016: this task is the foundation of the app skeleton, in the module that starts the app. The engine then asks the QA gate for the real compose proof. */
+            esqueletoDoApp: boolean;
             /** @description AT-982: the business rules of ALL stories of the project (at most 50); empty unless `ultimaDoProjeto`. */
             regrasDoProjeto: components["schemas"]["DevContextBusinessRuleResponseDto"][];
             /** @description Real number of project rules — larger than `regrasDoProjeto.length` when the list was cut. */
@@ -7817,6 +7849,16 @@ export interface components {
              *     ]
              */
             modules: string[];
+        };
+        ExplicacaoDoBloqueioDto: {
+            /** @example qa_instancia_indisponivel */
+            codigo?: string;
+            /**
+             * @description One sentence for a non-programmer (no file names, ids or jargon).
+             * @example O app não subiu no teste e o agente não sabe como seguir.
+             */
+            causa: string;
+            acoes: components["schemas"]["AcaoDoBloqueioDto"][];
         };
         FerramentaDoAgenteResponseDto: {
             /** @example write_file */
@@ -8387,6 +8429,10 @@ export interface components {
             moduleRouting: components["schemas"]["EstadoDoRoteamentoResponseDto"];
             /** @description RN-852: the CURRENT artifact.project_image decision (image, network, resources) — the FROM of the Dockerfile and the network the Infra compose respects. null when no image has been decided. */
             projectImage: components["schemas"]["DecisaoDeImagemResponseDto"] | null;
+            /** @description RN-1525: the REGISTERED state of the project work container (no broker call). null when there is no row. */
+            containerDoProjeto: components["schemas"]["ContainerDoProjetoNoContextoResponseDto"] | null;
+            /** @description RN-1525: the active QA instance of the project. It belongs to the api and the QA automation agent, never to Infra. null when none is active. */
+            instanciaDeQa: components["schemas"]["InstanciaDeQaNoContextoResponseDto"] | null;
         };
         InfraGateVerdictResponseDto: {
             /**
@@ -8410,6 +8456,11 @@ export interface components {
             title: string;
             /** @description The content comes from the `proposed_action`'s own payload: an infra artifact NEVER touches a worktree, same as ADRs. */
             files: components["schemas"]["InfraPrFileResponseDto"][];
+        };
+        InstanciaDeQaNoContextoResponseDto: {
+            taskId: string;
+            /** @enum {string} */
+            status: "provisioning" | "running" | "failed" | "removed";
         };
         InstrucoesDoProjetoResponseDto: {
             /** @example 3 */
@@ -9612,6 +9663,15 @@ export interface components {
             /** Format: date-time */
             respondidaEm: string;
         };
+        OpenQuestionOptionDto: {
+            /** @example Seguir sem esse teste */
+            rotulo: string;
+            /**
+             * @description Sent as `resposta` when the user clicks the option.
+             * @example Siga sem o teste de banco.
+             */
+            resposta: string;
+        };
         OpenQuestionResponseDto: {
             /** Format: uuid */
             questionId: string;
@@ -9619,6 +9679,10 @@ export interface components {
             sessionId: string;
             pergunta: string;
             sugestao: string | null;
+            /** @description Up to 2 ready answers that become buttons (RN-1528); empty when none. */
+            opcoes: components["schemas"]["OpenQuestionOptionDto"][];
+            /** @description Technical detail the screen keeps collapsed (RN-1528). */
+            detalhe: string | null;
             afeta: components["schemas"]["OpenQuestionAffectsDto"];
             /**
              * @description The agent that asked.
@@ -10964,6 +11028,10 @@ export interface components {
              * @example 404 with a plain message.
              */
             sugestao?: string;
+            /** @description With `needs_user_decision`: up to 2 ready answers that become buttons (RN-1528). Shape is checked when the question is recorded. */
+            opcoes?: components["schemas"]["OpenQuestionOptionDto"][];
+            /** @description With `needs_user_decision`: technical detail the screen keeps collapsed (up to 2000 chars, RN-1528). */
+            detalhe?: string;
             /**
              * Format: uuid
              * @description With `needs_user_decision`: an EXISTING open question instead of a new one.
@@ -11128,6 +11196,11 @@ export interface components {
              * @example 1
              */
             exitCode?: number;
+            /**
+             * @description RN-1514: name of the module that starts the app, present on start-up failures (`app_saiu`, `tempo_esgotado`, `falha_no_exec`). A module name, never log text.
+             * @example entrega
+             */
+            modulo?: string;
         };
         RemocaoPendenteResponseDto: {
             /**
@@ -11462,6 +11535,10 @@ export interface components {
             app?: components["schemas"]["AppDeExecucaoResponseDto"];
             /** @description AT-612 (ADR 0229): the infra services of the ephemeral QA instance declared by the Infra (`run.qa`). Absent when none. */
             qa?: Record<string, never>;
+            /** @description AT-1015 (RN-1520): development connection variables (never a real secret) injected in the work container and in the QA instance. Absent when none. */
+            env?: {
+                [key: string]: string;
+            };
             /** @example http://localhost:3000/git/acme/pulls/3 */
             prUrl: string;
             /** @example 1 */
@@ -12495,6 +12572,8 @@ export interface components {
              * @enum {string|null}
              */
             blockedOrigin: "infra" | "modelo" | "codigo" | "politica" | null;
+            /** @description Plain-language explanation of the block (cause + 1..2 ready actions, RN-1527). `null` for legacy blocks. */
+            blockedExplicacao: components["schemas"]["ExplicacaoDoBloqueioDto"] | null;
             /**
              * @description Where the task's PR is in the gate pipeline: QA, then SecOps, then the user. `null` while no PR is open.
              * @example null

@@ -346,6 +346,13 @@ describe('classifyEvent — reagendamento e circuit breaker (Fase 12b)', () => {
     ).toContain('dev-api');
   });
 
+  it('qa.awaiting_environment vira "esperando a vez no teste", sem alarme (AT-1017)', () => {
+    const c = classifyEvent(ev('qa.awaiting_environment', 'qa-automacao', { taskId: 't-1' }));
+    expect(c.text).toContain('Esperando a vez no teste');
+    expect(c.text).not.toContain('qa.awaiting_environment');
+    expect(c.bad).toBe(false);
+  });
+
   it('awaiting_gate NÃO é bad — é o fluxo normal, não um problema', () => {
     const c = classifyEvent(ev('dev.awaiting_gate', 'dev-api', { gate: 'qa' }));
     expect(c.bad).toBe(false);

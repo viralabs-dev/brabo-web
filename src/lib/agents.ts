@@ -1,4 +1,5 @@
 import type { ComponentType, CSSProperties } from 'react';
+import { pareceUuid } from './sem-identificador';
 import { AREAS, SOLO_CONVERSATIONAL_AGENTS } from './agent-areas.generated';
 import {
   BulbIcon,
@@ -304,7 +305,8 @@ export function addressableAgents(): AgentKey[] {
  */
 export function nomeDoAgente(id: string | undefined): string {
   if (!id) return 'agente';
-  return AGENTS[id as keyof typeof AGENTS]?.name ?? id;
+  // AT-1026 (RN-1535): id com cara de UUID nunca volta cru.
+  return AGENTS[id as keyof typeof AGENTS]?.name ?? (pareceUuid(id) ? 'agente' : id);
 }
 
 /**

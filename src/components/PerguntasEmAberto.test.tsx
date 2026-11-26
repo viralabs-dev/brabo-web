@@ -111,6 +111,31 @@ describe('Perguntas em aberto no chat (RN-861)', () => {
     );
   });
 
+  it('RN-1536: Enter envia uma vez; vazio e composição de IME não enviam', async () => {
+    montar(pendencias());
+    await abrir();
+    const [primeira] = await screen.findAllByTestId('pergunta-em-aberto');
+    const campo = within(primeira!).getByLabelText('Sua resposta');
+    fireEvent.keyDown(campo, { key: 'Enter' });
+    expect(answerOpenQuestion).not.toHaveBeenCalled();
+    fireEvent.change(campo, { target: { value: 'Use Postgres' } });
+    fireEvent.keyDown(campo, { key: 'Enter', isComposing: true });
+    expect(answerOpenQuestion).not.toHaveBeenCalled();
+    fireEvent.keyDown(campo, { key: 'Enter' });
+    await waitFor(() => expect(answerOpenQuestion).toHaveBeenCalledTimes(1));
+    expect(answerOpenQuestion).toHaveBeenCalledWith('proj-1', 'a', { resposta: 'Use Postgres' });
+  });
+
+  it('RN-1535: a pergunta não mostra UUID', async () => {
+    getOpenQuestions.mockResolvedValue({
+      itens: [pergunta('a', { pergunta: 'Qual prazo (3bee9c2f-1a2b-4c3d-8e9f-0123456789ab)?' })],
+      total: 1,
+    });
+    montar(pendencias());
+    await abrir();
+    expect(await screen.findByText('Qual prazo?')).toBeTruthy();
+  });
+
   it('AT-713: Aceitar, Responder e Dispensar são só ícone, com nome e ícone aria-hidden', async () => {
     montar(pendencias());
     await abrir();

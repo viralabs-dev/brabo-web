@@ -333,6 +333,7 @@
         "executed": "已执行",
         "failed": "失败"
       },
+      "agenteSemNome": "一个智能体",
       "chipAuto": "自动 · 策略",
       "seeAllLower": "查看全部",
       "earlierAuto_other": "此前 {{count}} 条自动决定"

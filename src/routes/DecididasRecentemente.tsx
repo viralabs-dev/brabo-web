@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProjectDecidedActions, type JanelaDeDecididas } from '../lib/decididas-queries';
 import { verboDaAcao } from '../lib/aprovacoes';
-import { AGENTS } from '../lib/agents';
+import { nomeDoAgente } from '../lib/agents';
+import { pareceUuid } from '../lib/sem-identificador';
+import { NomeDoMembroAtor } from '../components/NomeDoAtor';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -54,12 +56,11 @@ export function DecididasRecentemente({ projectId }: { projectId: string }) {
       ) : (
         <ul className={styles.decididas}>
           {visiveis.map((a) => {
-            const quem = AGENTS[a.actor.id as keyof typeof AGENTS]?.name ?? a.actor.id;
             return (
               <li key={a.id} data-testid="acao-decidida" className={styles.linhaDecidida}>
                 <span className={styles.pontoDecidida} data-tom={TOM[a.status as keyof typeof TOM] ?? 'warning'} aria-hidden="true" />
                 <span className={styles.fraseDecidida}>
-                  <b>{quem}</b> {verboDaAcao(a.actionType, a.status)}
+                  <b>{a.actor.kind === 'user' ? <NomeDoMembroAtor action={a} /> : pareceUuid(a.actor.id) ? t('approvalsTab.decided.agenteSemNome') : nomeDoAgente(a.actor.id)}</b> {verboDaAcao(a.actionType, a.status)}
                   {a.status === 'denied' && a.rejectionReason && (
                     <> · {t('approvalsTab.decided.reason', { reason: a.rejectionReason })}</>
                   )}

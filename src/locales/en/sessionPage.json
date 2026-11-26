@@ -208,6 +208,8 @@
   },
   "handoff": {
     "aceiteAutomatico": "Accepted automatically: the backlog covers all {{regras}} business rules and the repository is local, so {{agente}} joined without a click.",
+    "aceiteAutomaticoPassagem": "Accepted automatically: the handoff to {{agente}} is turned on and the repository is local, so {{agente}} came in without a click.",
+    "aceiteAutomaticoOferta": "Accepted automatically by the accept rule you turned on, so {{agente}} came in without a click.",
     "aceiteAutomaticoFalhou": "The automatic accept of the handoff to {{agente}} failed: {{erro}}. Accept it from the offer card.",
     "passouOBastaoAo": "handed off to",
     "aceitarEPassar": "Accept and hand over to {{agente}}",

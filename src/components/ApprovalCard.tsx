@@ -3,8 +3,7 @@ import { Ajuda } from '@/components/ui/Ajuda';
 import { Terminal } from './ai-elements/terminal';
 import { Commit } from './ai-elements/commit';
 import { QueryClientContext } from '@tanstack/react-query';
-import { useAutoriaDaSessao } from '../lib/autoria-da-sessao';
-import { autorDaMensagem } from '../lib/autor-da-mensagem';
+import { NomeDoMembroAtor } from './NomeDoAtor';
 import { useTranslation } from 'react-i18next';
 import {
   AGENT_AUTONOMY_ALL_ACTIONS,
@@ -1154,19 +1153,4 @@ function ApprovalBody({ actionType, payload, executionResult, expandedFile, onTo
       <pre className={styles.payloadCru}>{JSON.stringify(payload, null, 2)}</pre>
     </div>
   );
-}
-
-/**
- * O nome de quem propôs, quando é uma PESSOA (RN-705): a mesma leitura de
- * membros do fio da sessão (RN-652/655). Quem a tela não sabe nomear vira
- * "outro membro", nunca o UUID cru.
- */
-function NomeDoMembroAtor({ action }: { action: ProposedAction }) {
-  const { t } = useTranslation('approvals');
-  const autoria = useAutoriaDaSessao(action.projectId);
-  const autor = autorDaMensagem(action.actor, autoria);
-  if (autor.tipo === 'voce') return <>{autor.nome ?? t('approvalCard.actorYou')}</>;
-  if (autor.tipo === 'membro') return <>{autor.nome}</>;
-  if (autor.tipo === 'outroMembro') return <>{t('approvalCard.actorOtherMember')}</>;
-  return <>{action.actor.id}</>;
 }

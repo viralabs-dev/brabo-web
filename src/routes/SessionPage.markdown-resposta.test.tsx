@@ -118,6 +118,24 @@ describe('SessionPage — Markdown em agent.response (RN-158)', () => {
     expect(screen.getByText('const').tagName).toBe('SPAN');
   });
 
+  it('RN-1535: o UUID da resposta do agente não vai para a tela', async () => {
+    eventos.mockReturnValue({
+      items: [
+        {
+          id: 'ev-1',
+          seq: 1,
+          type: 'agent.response',
+          actor: { kind: 'agent', id: 'po' },
+          payload: { content: 'Prazo de cancelamento (3bee9c2f-1a2b-4c3d-8e9f-0123456789ab) vale' },
+          createdAt: '2026-08-10T12:00:00.000Z',
+        },
+      ],
+    });
+    montar();
+    expect(await screen.findByText('Prazo de cancelamento vale')).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/[0-9a-f]{8}-[0-9a-f]{4}-/);
+  });
+
   it('`chat.message` (texto do USUÁRIO) continua literal — markdown não se aplica à entrada humana', async () => {
     eventos.mockReturnValue({
       items: [

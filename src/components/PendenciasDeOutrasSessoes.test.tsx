@@ -516,7 +516,7 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     expect(await within(fila).findByText('Mergeada')).toBeInTheDocument();
   });
 
-  it('AT-753 (UX-9): a tarefa bloqueada mostra o título antes do " — " e o diagnóstico recolhido', async () => {
+  it('AT-1021 (RN-1531): o relato cru só aparece em "Ver detalhes técnicos"; a frase principal é a causa genérica', async () => {
     getProjectPendingActions.mockResolvedValue([]);
     listBacklog.mockResolvedValue(
       backlog([{ id: 't9', title: 'Tarefa 9', blocked: true, blockedReason: 'Falta o validador — o diagnóstico longo' }]),
@@ -524,10 +524,10 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     montar();
     await abrir('Tarefas bloqueadas');
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
-    expect(within(fila).getByText('Falta o validador')).toBeInTheDocument();
-    expect(within(fila).queryByText('o diagnóstico longo')).toBeNull();
-    fireEvent.click(within(fila).getByRole('button', { name: /Diagnóstico/ }));
-    expect(within(fila).getByText('o diagnóstico longo')).toBeInTheDocument();
+    expect(within(fila).getByTestId('causa-do-bloqueio')).toHaveTextContent('O agente parou e precisa de você para continuar.');
+    expect(within(fila).queryByText(/o diagnóstico longo/)).toBeNull();
+    fireEvent.click(within(fila).getByRole('button', { name: 'Ver detalhes técnicos' }));
+    expect(within(fila).getByText('Falta o validador — o diagnóstico longo')).toBeInTheDocument();
   });
 
   it('AT-912/RN-1397: com a execução ativa, a tarefa sem módulo em história de vários módulos aparece', async () => {
@@ -631,9 +631,9 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     await abrir('Tarefas bloqueadas');
 
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
-    expect(within(fila).getByText('ciclo de correção esgotado')).toBeInTheDocument();
-    fireEvent.click(within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' }));
-    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8', undefined));
+    expect(within(fila).queryByText('ciclo de correção esgotado')).toBeNull();
+    fireEvent.click(within(fila).getByRole('button', { name: 'Tentar de novo' }));
+    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't8', ''));
     expect(await within(fila).findByTestId('retorno-desbloqueio')).toHaveTextContent(
       'a tarefa não está bloqueada',
     );
@@ -677,17 +677,226 @@ describe('PendenciasDeOutrasSessoes — PRs prontas e tarefas bloqueadas (AT-497
     await abrir('Tarefas bloqueadas');
 
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    fireEvent.click(within(fila).getByRole('button', { name: 'Escrever outra orientação' }));
     fireEvent.change(within(fila).getByLabelText('Orientação para o dev (opcional)'), {
       target: { value: '  suba pelo start  ' },
     });
-    const botao = within(fila).getByRole('button', { name: 'Desbloquear (volta à fila do dev)' });
+    const botao = within(fila).getByRole('button', { name: 'Desbloquear com este texto' });
     fireEvent.click(botao);
     fireEvent.click(botao);
     await waitFor(() => expect(botao).toBeDisabled());
     expect(unblockTask).toHaveBeenCalledTimes(1);
-    expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't9', '  suba pelo start  ');
+    expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 't9', 'suba pelo start');
     liberar({ ok: true });
     expect(await within(fila).findByTestId('retorno-desbloqueio')).toBeInTheDocument();
+  });
+});
+
+// AT-1021 (RN-1531): as paradas do TP-01 30ª (L2, L3, L5, L7, L8, L10) com os textos reais. Em cada
+// uma: causa sem jargão, um botão que retoma em UM clique com a orientação da ação, relato cru recolhido.
+const JARGAO = /`|[a-z]+_[a-z]+|\.(json|lock|ts|ex|yml)\b|ECONN|\d+\.\d+\.\d+\.\d+/;
+const PARADAS: {
+  l: string;
+  cru: string;
+  explicacao?: Record<string, unknown>;
+  botao: string;
+  orientacao: string;
+}[] = [
+  {
+    l: 'L2',
+    cru: 'QA de Automação não subiu a instância de QA (teto de 1 instância atingido)',
+    explicacao: {
+      codigo: 'qa_instancia_indisponivel',
+      causa: 'O ambiente de teste de qualidade não ficou disponível agora.',
+      acoes: [{ id: 'tentar_de_novo', rotulo: 'Tentar de novo', orientacao: '' }],
+    },
+    botao: 'Tentar de novo',
+    orientacao: '',
+  },
+  {
+    l: 'L3',
+    cru: 'A prova por HTTP com o processo de pé não foi feita: printRoutes mostra as rotas, mas o nohup encerrou com FST_ERR_CTP_INVALID_JSON_BODY.',
+    explicacao: {
+      causa: 'O agente não conseguiu testar o app rodando, mas os testes automáticos já passam.',
+      acoes: [
+        { rotulo: 'Concluir sem subir o app', orientacao: 'Conclua a tarefa sem subir o app.' },
+        { rotulo: 'Deixar para o fim', orientacao: 'Deixe a subida do app para o fim.' },
+      ],
+    },
+    botao: 'Concluir sem subir o app',
+    orientacao: 'Conclua a tarefa sem subir o app.',
+  },
+  {
+    l: 'L5',
+    cru: 'package-lock.json da raiz alterado pelo npm install, sem cópia original para restaurar. report_done recusado.',
+    explicacao: {
+      causa: 'O agente alterou um arquivo de instalação do projeto e não sabe se pode mantê-lo.',
+      acoes: [{ rotulo: 'Manter a alteração e concluir', orientacao: 'Mantenha a alteração e conclua.' }],
+    },
+    botao: 'Manter a alteração e concluir',
+    orientacao: 'Mantenha a alteração e conclua.',
+  },
+  {
+    l: 'L7',
+    cru: 'run.qa.services indisponível: o módulo que monta o app ainda não entrou',
+    explicacao: {
+      causa: 'O app só sobe quando o módulo que o monta entrar.',
+      acoes: [{ rotulo: 'Deixar para quando o módulo que monta o app entrar', orientacao: 'Adie o teste de subida.' }],
+    },
+    botao: 'Deixar para quando o módulo que monta o app entrar',
+    orientacao: 'Adie o teste de subida.',
+  },
+  {
+    l: 'L8',
+    cru: 'app_saiu (código 1): connect ECONNREFUSED 127.0.0.1:5432',
+    explicacao: {
+      causa: 'O app não sobe porque o banco de dados só existe no ambiente completo.',
+      acoes: [{ rotulo: 'Seguir: o banco só existe no compose', orientacao: 'Siga sem subir o banco.' }],
+    },
+    botao: 'Seguir: o banco só existe no compose',
+    orientacao: 'Siga sem subir o banco.',
+  },
+  {
+    l: 'L10 (sem explicação: dado antigo)',
+    cru: 'o commit ou o push da correção foi recusado — desfechos (commit, push): [:refused, :executed]',
+    botao: 'Tentar de novo',
+    orientacao: '',
+  },
+];
+
+describe('PendenciasDeOutrasSessoes — retomada em um clique (AT-1021, RN-1531)', () => {
+  it.each(PARADAS)('$l: causa sem jargão, um clique retoma e o relato cru fica recolhido', async (p) => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([{ id: 'tl', title: 'Tarefa L', blocked: true, blockedReason: p.cru, blockedExplicacao: p.explicacao ?? null }]),
+    );
+    unblockTask.mockResolvedValue({ ok: true });
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    const causa = within(fila).getByTestId('causa-do-bloqueio').textContent ?? '';
+    expect(causa).not.toMatch(JARGAO);
+    expect(causa).not.toBe(p.cru);
+    expect(within(fila).queryByText(p.cru)).toBeNull();
+    fireEvent.click(within(fila).getByRole('button', { name: 'Ver detalhes técnicos' }));
+    expect(within(fila).getByText(p.cru)).toBeInTheDocument();
+    fireEvent.click(within(fila).getByRole('button', { name: p.botao }));
+    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 'tl', p.orientacao));
+    expect(unblockTask).toHaveBeenCalledTimes(1);
+    expect(await within(fila).findByTestId('retorno-desbloqueio')).toHaveTextContent('Retomado.');
+  });
+
+  it('o bloqueio do sistema é traduzido pelo código; sem tradução vale o texto da api', async () => {
+    await i18n.changeLanguage('en');
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([
+        {
+          id: 'tl', title: 'T', blocked: true, blockedReason: 'x',
+          blockedExplicacao: { codigo: 'qa_instancia_indisponivel', causa: 'texto pt', acoes: [{ id: 'tentar_de_novo', rotulo: 'Tentar de novo', orientacao: '' }] },
+        },
+        {
+          id: 'tm', title: 'U', blocked: true, blockedReason: 'y',
+          blockedExplicacao: { codigo: 'codigo_novo', causa: 'texto novo do catálogo', acoes: [{ rotulo: 'Seguir', orientacao: '' }] },
+        },
+      ]),
+    );
+    montar();
+    await abrir('Blocked tasks');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(within(fila).getByText('The quality test environment is not available right now.')).toBeInTheDocument();
+    expect(within(fila).getByText('texto novo do catálogo')).toBeInTheDocument();
+    expect(within(fila).getByRole('button', { name: 'Try again' })).toBeInTheDocument();
+    await i18n.changeLanguage('pt-BR');
+  });
+
+  it('o campo livre fica recolhido e continua disponível: a orientação digitada retoma', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 'tf', title: 'F', blocked: true, blockedReason: 'x' }]));
+    unblockTask.mockResolvedValue({ ok: true });
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(within(fila).queryByLabelText('Orientação para o dev (opcional)')).toBeNull();
+    fireEvent.click(within(fila).getByRole('button', { name: 'Escrever outra orientação' }));
+    fireEvent.change(within(fila).getByLabelText('Orientação para o dev (opcional)'), { target: { value: 'faça assim' } });
+    fireEvent.click(within(fila).getByRole('button', { name: 'Desbloquear com este texto' }));
+    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 'tf', 'faça assim'));
+  });
+
+  it('o teto: "Aumentar o teto e continuar" grava o teto e só então retoma; sem valor fica inerte', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([
+        {
+          id: 'tt', title: 'T', blocked: true, blockedReason: 'orçamento por tarefa excedido', blockedOrigin: 'politica',
+          blockedExplicacao: {
+            codigo: 'orcamento_excedido',
+            causa: 'Esta tarefa gastou o limite de custo definido para cada tarefa.',
+            acoes: [{ id: 'aumentar_o_teto', rotulo: 'Aumentar o teto e continuar', orientacao: 'Continue de onde parou.' }],
+          },
+        },
+      ]),
+    );
+    updateProject.mockResolvedValue({});
+    unblockTask.mockResolvedValue({ ok: true });
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    const botao = within(fila).getByRole('button', { name: 'Aumentar o teto e continuar' });
+    expect(botao).toBeDisabled();
+    fireEvent.change(within(fila).getByLabelText('Novo teto por tarefa (US$)'), { target: { value: '3' } });
+    fireEvent.click(botao);
+    await waitFor(() => expect(unblockTask).toHaveBeenCalledWith('proj-1', AQUI, 'tt', 'Continue de onde parou.'));
+    expect(updateProject).toHaveBeenCalledWith('proj-1', { taskBudgetMicros: 3_000_000 });
+  });
+
+  it('o teto: se a gravação falha, a tarefa não é retomada', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([
+        {
+          id: 'tt', title: 'T', blocked: true, blockedReason: 'x', blockedOrigin: 'politica',
+          blockedExplicacao: { causa: 'Gastou o limite.', acoes: [{ id: 'aumentar_o_teto', rotulo: 'Aumentar o teto e continuar', orientacao: 'Siga.' }] },
+        },
+      ]),
+    );
+    updateProject.mockRejectedValue(new ApiError(403, { message: 'sem papel' }));
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    fireEvent.change(within(fila).getByLabelText('Novo teto por tarefa (US$)'), { target: { value: '3' } });
+    fireEvent.click(within(fila).getByRole('button', { name: 'Aumentar o teto e continuar' }));
+    await waitFor(() => expect(updateProject).toHaveBeenCalled());
+    await new Promise((r) => setTimeout(r, 20));
+    expect(unblockTask).not.toHaveBeenCalled();
+  });
+
+  it('o bloqueio que só o dono resolve diz o que só ele pode fazer, e o botão repete a tentativa', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(
+      backlog([
+        {
+          id: 'tc', title: 'C', blocked: true, blockedReason: '402 Payment Required',
+          blockedExplicacao: { codigo: 'credito_do_provedor', causa: 'O saldo da conta do provedor de IA acabou, e só você pode recarregá-lo.', acoes: [] },
+        },
+      ]),
+    );
+    montar();
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(within(fila).getByTestId('so-voce-pode')).toHaveTextContent('Recarregar o saldo na conta do provedor de IA');
+    expect(within(fila).getByRole('button', { name: 'Tentar de novo' })).toBeInTheDocument();
+  });
+
+  it('sem o papel developer os botões ficam inertes e o motivo é dito em texto', async () => {
+    getProjectPendingActions.mockResolvedValue([]);
+    listBacklog.mockResolvedValue(backlog([{ id: 'ts', title: 'S', blocked: true, blockedReason: 'x' }]));
+    montar(false);
+    await abrir('Tarefas bloqueadas');
+    const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
+    expect(within(fila).getByRole('button', { name: 'Tentar de novo' })).toBeDisabled();
+    expect(within(fila).getByText('Desbloquear exige o papel developer no projeto.')).toBeInTheDocument();
   });
 });
 

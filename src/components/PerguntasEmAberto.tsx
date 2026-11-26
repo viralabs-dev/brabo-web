@@ -14,6 +14,7 @@ import {
 } from '../lib/perguntas-em-aberto';
 import { formatRelativeTime } from '../lib/time';
 import { Button } from './ui/Button';
+import { Disclosure } from './ui/Disclosure';
 import { PaginadorDaFila } from './PaginadorDaFila';
 import { paginar } from '../lib/paginacao-de-fila';
 import styles from './PendenciasDeOutrasSessoes.module.css';
@@ -225,7 +226,10 @@ function CartaoDaPergunta({
   const [erro, setErro] = useState<string | null>(null);
   // Compacto: com sugestão, o campo só aparece quando pedido; sem ela, é o único caminho.
   const [escrevendo, setEscrevendo] = useState(false);
-  const campoVisivel = !compacto || !pergunta.sugestao || escrevendo;
+  // AT-1021 (RN-1531): com opções prontas, o campo livre fica recolhido (e disponível) no
+  // "Responder com texto"; sem elas (dado antigo), vale o comportamento de antes.
+  const opcoes = pergunta.opcoes ?? [];
+  const campoVisivel = opcoes.length > 0 ? false : !compacto || !pergunta.sugestao || escrevendo;
   const eAutor = pergunta.autorDaSessao !== null && pergunta.autorDaSessao === userIdDaSessao();
 
   const afeta = [
@@ -283,6 +287,17 @@ function CartaoDaPergunta({
         </p>
       )}
       <div className={styles.acoesDaLinha}>
+        {opcoes.map((o, i) => (
+          <Button
+            key={o.rotulo}
+            variant={i === 0 ? 'primary' : 'secondary'}
+            disabled={!eAutor || enviando !== null}
+            onClick={() => void responder({ resposta: o.resposta })}
+            data-testid="opcao-da-pergunta"
+          >
+            {o.rotulo}
+          </Button>
+        ))}
         {pergunta.sugestao && (
           <Button
             variant="secondary"
@@ -295,7 +310,7 @@ function CartaoDaPergunta({
             {compacto && t('pendencias.perguntas.aceitar')}
           </Button>
         )}
-        {compacto && pergunta.sugestao && !escrevendo && (
+        {opcoes.length === 0 && compacto && pergunta.sugestao && !escrevendo && (
           <Button variant="ghost" onClick={() => setEscrevendo(true)}>
             {t('pendencias.perguntas.responderComTexto')}
           </Button>
@@ -323,6 +338,39 @@ function CartaoDaPergunta({
         </Button>
         </>)}
       </div>
+      {pergunta.detalhe && (
+        <Disclosure titulo={t('pendencias.perguntas.detalheTecnico')}>
+          <p className={styles.nota} data-testid="detalhe-tecnico">
+            {pergunta.detalhe}
+          </p>
+        </Disclosure>
+      )}
+      {opcoes.length > 0 && (
+        <Disclosure titulo={t('pendencias.perguntas.responderComTexto')}>
+          <div className={styles.acoesDaLinha}>
+            <input
+              type="text"
+              className={styles.campo}
+              value={texto}
+              maxLength={TETO_DA_RESPOSTA}
+              disabled={!eAutor || enviando !== null}
+              aria-label={t('pendencias.perguntas.campo')}
+              placeholder={t('pendencias.perguntas.campo')}
+              autoComplete="off"
+              onChange={(e) => setTexto(e.target.value)}
+            />
+            <Button
+              variant="primary"
+              disabled={!eAutor || enviando !== null || texto.trim() === ''}
+              loading={enviando === 'resposta'}
+              onClick={() => void responder({ resposta: texto.trim() })}
+              legenda={t('pendencias.perguntas.responder')}
+            >
+              <Reply aria-hidden="true" />
+            </Button>
+          </div>
+        </Disclosure>
+      )}
       {!eAutor && <p className={styles.nota}>{t('pendencias.perguntas.soOAutor')}</p>}
       {erro && (
         <p className={styles.erro} role="alert">

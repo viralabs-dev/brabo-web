@@ -1103,6 +1103,8 @@ export type TaskStatus = 'todo' | 'in_progress' | 'in_review' | 'done';
 
 export type PrGateStatus = 'awaiting_qa' | 'awaiting_secops' | 'awaiting_user';
 
+export type ExplicacaoDoBloqueio = components['schemas']['ExplicacaoDoBloqueioDto'];
+
 export interface Task {
   id: string;
   storyId: string;
@@ -1114,6 +1116,8 @@ export interface Task {
   blockedReason: string | null;
   /** Origem do bloqueio (ADR 0020/0038); `politica` = teto de gasto. */
   blockedOrigin?: 'infra' | 'modelo' | 'codigo' | 'politica' | null;
+  /** AT-1021: causa em uma frase e até 2 ações prontas; ausente em dado antigo (vale o fallback). */
+  blockedExplicacao?: ExplicacaoDoBloqueio | null;
   gateStatus: PrGateStatus | null;
   gateCorrectionCount: number;
   /** Módulo do `module_map` a que a tarefa pertence (AT-880); `null` para a sem módulo. */
@@ -1248,6 +1252,7 @@ export interface InfraArtifact {
   gateCorrectionCount: number;
   blocked: boolean;
   blockedReason: string | null;
+  blockedExplicacao?: ExplicacaoDoBloqueio | null;
   createdAt: string;
   updatedAt: string;
 }

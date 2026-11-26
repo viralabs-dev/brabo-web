@@ -133,6 +133,8 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
 - **Origem:** AT-256, AT-268, AT-265, AT-266 e AT-753 (UX-2, UX-7, UX-9), da análise do uso real de
   2026-09-29 (itens 4, 5 e 10a), rodada 27, lane web-sessao
 
+> **Item 6 alterado pela [RN-1531](parte-08.md#rn-1531) (AT-1021).** A frase principal do card de bloqueio deixa de ser o título antes do " — ": é a `causa` do `blockedExplicacao` (ou a frase genérica), e o `blockedReason` inteiro vai para "Ver detalhes técnicos". `tituloEDiagnostico` fica sem uso na tela, só como utilitário testado.
+
 <a id="rn-631"></a>
 
 ### RN-631 — O destinatário do chat é escolhido e visível, e a oferta de handoff é casada pelo `handoffId` {#rn-631}

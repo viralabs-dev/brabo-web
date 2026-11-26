@@ -3,11 +3,12 @@ import { ThumbsUp } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { mensagemDaApi, requestParallelization, unblockTask } from '../lib/api-client';
-import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemTitle } from '../components/shadcn/item';
+import { Item, ItemActions, ItemContent, ItemGroup, ItemTitle } from '../components/shadcn/item';
 import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Disclosure } from '../components/ui/Disclosure';
-import { Textarea } from '../components/ui/Textarea';
+import { BloqueioRetomavel } from '../components/BloqueioRetomavel';
+import { ACAO_AUMENTAR_O_TETO } from '../lib/explicacao-do-bloqueio';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { Epic, ProposedAction, SessionEvent } from '../lib/api-types';
 import styles from './ProjectOverviewTab.module.css';
@@ -40,13 +41,12 @@ export function AcoesDaExecucao({
   const queryClient = useQueryClient();
   const { showToast } = useToast();
   const [desbloqueio, setDesbloqueio] = useState<Record<string, Desbloqueio>>({});
-  const [orientacoes, setOrientacoes] = useState<Record<string, string>>({});
 
   const bloqueadas = (epics ?? []).flatMap((epic) =>
     epic.stories.flatMap((story) =>
       story.tasks
         .filter((x) => x.blocked && !x.archivedAt)
-        .map((x) => ({ id: x.id, title: x.title, storyTitle: story.title, motivo: x.blockedReason })),
+        .map((x) => ({ id: x.id, title: x.title, storyTitle: story.title, tarefa: x })),
     ),
   );
 
@@ -68,11 +68,11 @@ export function AcoesDaExecucao({
       url: (a.executionResult as { pullRequestUrl?: string } | null)?.pullRequestUrl ?? null,
     }));
 
-  async function desbloquear(taskId: string) {
+  async function desbloquear(taskId: string, orientacao: string) {
     if (desbloqueio[taskId]?.estado === 'em_voo') return;
     setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'em_voo' } }));
     try {
-      await unblockTask(projectId, sessionId, taskId, orientacoes[taskId]);
+      await unblockTask(projectId, sessionId, taskId, orientacao);
       setDesbloqueio((d) => ({ ...d, [taskId]: { estado: 'ok' } }));
       await queryClient.invalidateQueries({ queryKey: ['backlog', projectId] });
     } catch (erro) {
@@ -132,17 +132,13 @@ export function AcoesDaExecucao({
                     <ItemTitle className={styles.pendTitle}>
                       {b.title} <span className={styles.moduleStack}>({b.storyTitle})</span>
                     </ItemTitle>
-                    <ItemDescription className={styles.pendReason}>
-                      {b.motivo ?? t('acoes.noDiagnosis')}
-                    </ItemDescription>
-                    {d?.estado !== 'ok' && (
-                      <Textarea
-                        label={t('acoes.unblockGuidance')}
-                        placeholder={t('acoes.unblockGuidanceHint')}
-                        maxLength={2000}
-                        value={orientacoes[b.id] ?? ''}
-                        disabled={!podeDecidir || d?.estado === 'em_voo'}
-                        onChange={(e) => setOrientacoes((o) => ({ ...o, [b.id]: e.target.value }))}
+                    {d?.estado === 'ok' ? null : (
+                      <BloqueioRetomavel
+                        tarefa={b.tarefa}
+                        podeDecidir={podeDecidir}
+                        enviando={d?.estado === 'em_voo'}
+                        aoRetomar={(orientacao) => void desbloquear(b.id, orientacao)}
+                        acoesOcultas={[ACAO_AUMENTAR_O_TETO]}
                       />
                     )}
                     {d?.estado === 'erro' && (
@@ -151,22 +147,13 @@ export function AcoesDaExecucao({
                       </span>
                     )}
                   </ItemContent>
-                  <ItemActions>
-                    {d?.estado === 'ok' ? (
+                  {d?.estado === 'ok' && (
+                    <ItemActions>
                       <span role="status" data-testid="desbloqueada">
                         {t('acoes.unblockedTitle')}
                       </span>
-                    ) : (
-                      <Button
-                        variant="secondary"
-                        onClick={() => desbloquear(b.id)}
-                        disabled={!podeDecidir || d?.estado === 'em_voo'}
-                        aria-busy={d?.estado === 'em_voo'}
-                      >
-                        {d?.estado === 'em_voo' ? t('acoes.unblocking') : t('acoes.unblock')}
-                      </Button>
-                    )}
-                  </ItemActions>
+                    </ItemActions>
+                  )}
                 </Item>
               );
             })}

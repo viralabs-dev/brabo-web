@@ -40,8 +40,9 @@ describe('AcoesDaExecucao (RN-1220)', () => {
     unblockTask.mockResolvedValue(undefined);
     montar(true);
     await userEvent.click(screen.getByRole('button', { name: /Pendências da execução/ }));
-    await userEvent.click(screen.getByRole('button', { name: /^desbloquear$|^unblock$/i }));
-    expect(unblockTask).toHaveBeenCalledWith('p', 'x', 't1', undefined);
+    // AT-1021: sem explicação (dado antigo), "Tentar de novo" com orientação vazia, em um clique.
+    await userEvent.click(screen.getByRole('button', { name: 'Tentar de novo' }));
+    expect(unblockTask).toHaveBeenCalledWith('p', 'x', 't1', '');
     expect(await screen.findByTestId('desbloqueada')).toBeTruthy();
   });
 
@@ -51,15 +52,15 @@ describe('AcoesDaExecucao (RN-1220)', () => {
     expect(cab).toHaveAttribute('aria-expanded', 'false');
     expect(cab).toHaveTextContent('1 tarefa bloqueada · nenhuma PR aguardando você · Ver');
     expect(screen.queryByTestId('desbloqueada')).toBeNull();
-    expect(screen.queryByRole('button', { name: /^desbloquear$/i })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Tentar de novo' })).toBeNull();
     await userEvent.click(cab);
     expect(cab).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByRole('button', { name: /^desbloquear$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Tentar de novo' })).toBeInTheDocument();
   });
 
   it('sem papel developer o botão fica inerte', async () => {
     montar(false);
     await userEvent.click(screen.getByRole('button', { name: /Pendências da execução/ }));
-    expect((screen.getByRole('button', { name: /^desbloquear$/i }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole('button', { name: 'Tentar de novo' }) as HTMLButtonElement).disabled).toBe(true);
   });
 });

@@ -10,6 +10,7 @@ import { ToastProvider } from '../components/ui/ToastProvider';
 import type { Epic, Story } from '../lib/api-types';
 import backlogEn from '../locales/en/backlog.json';
 import backlogPtBR from '../locales/pt-BR/backlog.json';
+import sessionPagePtBR from '../locales/pt-BR/sessionPage.json';
 
 const listBacklog = vi.fn();
 const getCoverage = vi.fn();
@@ -82,12 +83,12 @@ function novaInstanciaI18n() {
   void instancia.use(initReactI18next).init({
     resources: {
       en: { backlog: backlogEn },
-      'pt-BR': { backlog: backlogPtBR, ui: uiPtBR },
+      'pt-BR': { backlog: backlogPtBR, ui: uiPtBR, sessionPage: sessionPagePtBR },
     },
     lng: 'pt-BR',
     fallbackLng: 'en',
     defaultNS: 'backlog',
-    ns: ['backlog', 'ui'],
+    ns: ['backlog', 'ui', 'sessionPage'],
     interpolation: { escapeValue: false },
     returnNull: false,
   });
@@ -388,7 +389,9 @@ describe('ProjectBacklogTab — estado da tarefa (RN-887, AT-536)', () => {
     const li = await linhaDa('Presa');
     expect(li.getAttribute('data-task-state')).toBe('blocked');
     expect(li.textContent).toContain('Bloqueada');
-    expect(li.textContent).toContain('limite de correções');
+    // AT-1021 (RN-1531): a linha mostra a causa em uma frase; o cru fica no title e em "Ver detalhes técnicos".
+    expect(li.textContent).toContain('O agente parou e precisa de você para continuar.');
+    expect(li.querySelector('[data-testid="causa-da-linha"]')?.getAttribute('title')).toBe('limite de correções');
     expect(li.textContent).not.toContain('a fazer');
   });
 

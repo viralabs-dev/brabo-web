@@ -409,7 +409,7 @@
     },
     "bloqueadas": {
       "botao": "Unblock (back to the dev queue)",
-      "ok": "Task unblocked: it goes back to the module's dev agent queue.",
+      "ok": "Resumed. The task went back to the dev. It continues where it stopped.",
       "erro": "Could not unblock the task.",
       "semMotivo": "No reason recorded.",
       "semPapel": "Unblocking requires the developer role on the project.",
@@ -422,7 +422,25 @@
       "gravarTeto": "Save the cap",
       "tetoOk": "Project cap updated: live agents pick it up on the next lap. Now just unblock.",
       "tetoErro": "Could not save the cap.",
-      "tetoSemPapel": "Raising the cap requires the maintainer role on the project."
+      "tetoSemPapel": "Raising the cap requires the maintainer role on the project.",
+      "causaGenerica": "The agent stopped and needs you to continue.",
+      "diagnosticoTecnico": "See technical details",
+      "outraOrientacao": "Write other guidance",
+      "tentarDeNovo": "Try again",
+      "botaoComTexto": "Unblock with this text",
+      "soVoce": "What only you can do",
+      "causas": {
+        "qa_instancia_indisponivel": "The quality test environment is not available right now.",
+        "credito_do_provedor": "The AI provider account balance ran out, and only you can top it up.",
+        "orcamento_excedido": "This task spent the cost limit set for each task."
+      },
+      "soVocePode": {
+        "credito_do_provedor": "Top up the balance on the AI provider account. Then come back here and tap “Try again”."
+      },
+      "acoes": {
+        "aumentar_o_teto": "Raise the limit and continue",
+        "tentar_de_novo": "Try again"
+      }
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",
@@ -452,7 +470,8 @@
       "corrigir": "Fix the story",
       "corrigirHistoria": "Affected story: {{titulo}}",
       "dispensar": "Dismiss",
-      "responderComTexto": "Answer with text"
+      "responderComTexto": "Answer with text",
+      "detalheTecnico": "See technical details"
     },
     "verOCartao": "See the card",
     "saidas": {

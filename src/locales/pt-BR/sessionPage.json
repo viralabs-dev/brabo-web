@@ -425,7 +425,7 @@
     },
     "bloqueadas": {
       "botao": "Desbloquear (volta à fila do dev)",
-      "ok": "Tarefa desbloqueada: ela volta para a fila do dev agent do módulo.",
+      "ok": "Retomado. A tarefa voltou para o dev. Ele continua de onde parou.",
       "erro": "Não foi possível desbloquear a tarefa.",
       "semMotivo": "Sem motivo registrado.",
       "semPapel": "Desbloquear exige o papel developer no projeto.",
@@ -438,7 +438,25 @@
       "gravarTeto": "Gravar o teto",
       "tetoOk": "Teto do projeto atualizado: vale para os agentes vivos na próxima volta. Agora é só desbloquear.",
       "tetoErro": "Não foi possível gravar o teto.",
-      "tetoSemPapel": "Aumentar o teto exige o papel maintainer no projeto."
+      "tetoSemPapel": "Aumentar o teto exige o papel maintainer no projeto.",
+      "causaGenerica": "O agente parou e precisa de você para continuar.",
+      "diagnosticoTecnico": "Ver detalhes técnicos",
+      "outraOrientacao": "Escrever outra orientação",
+      "tentarDeNovo": "Tentar de novo",
+      "botaoComTexto": "Desbloquear com este texto",
+      "soVoce": "O que só você pode fazer",
+      "causas": {
+        "qa_instancia_indisponivel": "O ambiente de teste de qualidade não ficou disponível agora.",
+        "credito_do_provedor": "O saldo da conta do provedor de IA acabou, e só você pode recarregá-lo.",
+        "orcamento_excedido": "Esta tarefa gastou o limite de custo definido para cada tarefa."
+      },
+      "soVocePode": {
+        "credito_do_provedor": "Recarregar o saldo na conta do provedor de IA. Depois, volte aqui e toque em “Tentar de novo”."
+      },
+      "acoes": {
+        "aumentar_o_teto": "Aumentar o teto e continuar",
+        "tentar_de_novo": "Tentar de novo"
+      }
     },
     "perguntas": {
       "origem": "{{agente}} perguntou · {{tempo}}",
@@ -471,7 +489,8 @@
       "corrigir": "Corrigir a história",
       "corrigirHistoria": "História afetada: {{titulo}}",
       "dispensar": "Dispensar",
-      "responderComTexto": "Responder com texto"
+      "responderComTexto": "Responder com texto",
+      "detalheTecnico": "Ver detalhes técnicos"
     },
     "verOCartao": "Ver o cartão",
     "saidas": {

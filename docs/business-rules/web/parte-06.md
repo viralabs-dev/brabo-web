@@ -602,6 +602,8 @@ keywords: [regras de negócio, web]
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
 
+> **Alterada pela [RN-1531](parte-08.md#rn-1531) (AT-1021).** A tarefa bloqueada não mostra mais o `blockedReason` como frase: mostra a causa em uma frase e as ações que chamam o mesmo `unblock` em um clique, com a orientação da ação; o campo de orientação fica recolhido em "Escrever outra orientação". O retorno de sucesso passa a dizer "Retomado." O papel e a recusa da api seguem como aqui.
+
 <a id="rn-829"></a>
 
 ### RN-829 — O avatar de quem fala no fio é o do agente, no streaming e depois dele {#rn-829}
@@ -922,6 +924,8 @@ keywords: [regras de negócio, web]
   resgate por tempo grava idadeSegundos e lê como tempo"; falha: "a pergunta
   em aberto não tem idadeSegundos e não fala em 2 h")
 - **Origem:** AT-528
+
+> **Alterada pela [RN-1531](parte-08.md#rn-1531) e [RN-1532](parte-08.md#rn-1532) (AT-1021).** A pergunta em aberto que o gate espera pode trazer até duas opções prontas (um clique responde) e o detalhe técnico recolhido; o aviso do fio e o cartão "Perguntas em aberto" seguem como aqui.
 
 <a id="rn-882"></a>
 

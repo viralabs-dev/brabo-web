@@ -50,6 +50,8 @@ function pergunta(id: string, over: Partial<OpenQuestion> = {}): OpenQuestion {
     sessionId: 'sess-1',
     pergunta: `Pergunta ${id}?`,
     sugestao: `Sugestão ${id}`,
+    opcoes: [],
+    detalhe: null,
     afeta: { regras: ['r1'], historias: [], tarefas: [] },
     autor: 'criativo',
     criadaEm: new Date().toISOString(),
@@ -236,5 +238,75 @@ describe('AT-997: aceitar as sugestões do mesmo agente em lote', () => {
     await abrir();
     await screen.findAllByTestId('pergunta-em-aberto');
     expect(screen.queryByTestId('aceitar-lote')).toBeNull();
+  });
+});
+
+// AT-1021 (RN-1531): as perguntas do TP-01 30ª (L1, L4, L6, L9): um botão por opção que responde
+// com `{ resposta }` em um clique; detalhe técnico e campo livre recolhidos.
+const PERGUNTAS_COM_OPCOES = [
+  { l: 'L1', pergunta: 'A execução já está rodando. Posso seguir?', opcoes: [{ rotulo: 'Seguir: a execução já está rodando', resposta: 'Siga: a execução já está rodando.' }] },
+  { l: 'L4', pergunta: 'O Arquiteto sugeriu outra estrutura. Qual seguir?', opcoes: [{ rotulo: 'Seguir a sugestão do Arquiteto', resposta: 'Siga a sugestão do Arquiteto.' }] },
+  { l: 'L6', pergunta: 'Qual nome usar para o módulo?', opcoes: [{ rotulo: 'Usar o nome sugerido', resposta: 'Use o nome sugerido.' }] },
+  {
+    l: 'L9',
+    pergunta: 'Quer que eu teste também com um banco de dados de verdade? Demora mais.',
+    opcoes: [
+      { rotulo: 'Testar com banco (demora mais)', resposta: 'Teste com banco.' },
+      { rotulo: 'Seguir sem esse teste', resposta: 'Siga sem esse teste.' },
+    ],
+  },
+];
+
+describe('Perguntas com opções prontas (AT-1021, RN-1531)', () => {
+  it.each(PERGUNTAS_COM_OPCOES)('$l: um botão por opção; o clique responde em um clique', async ({ pergunta: texto, opcoes }) => {
+    getOpenQuestions.mockResolvedValue({
+      itens: [pergunta('q', { pergunta: texto, opcoes, detalhe: 'Posso declarar run.qa.services com postgres:16@sha256:3f9a' })],
+      total: 1,
+    });
+    montar(pendencias());
+    await abrir();
+    const cartao = await screen.findByTestId('pergunta-em-aberto');
+    const botoes = within(cartao).getAllByTestId('opcao-da-pergunta');
+    expect(botoes.map((b) => b.textContent)).toEqual(opcoes.map((o) => o.rotulo));
+    expect(within(cartao).queryByText(/sha256/)).toBeNull();
+    expect(within(cartao).queryByLabelText('Sua resposta')).toBeNull();
+    fireEvent.click(botoes[botoes.length - 1]!);
+    await waitFor(() =>
+      expect(answerOpenQuestion).toHaveBeenCalledWith('proj-1', 'q', { resposta: opcoes[opcoes.length - 1]!.resposta }),
+    );
+    expect(answerOpenQuestion).toHaveBeenCalledTimes(1);
+  });
+
+  it('o detalhe técnico abre sob demanda e a resposta por texto continua disponível', async () => {
+    getOpenQuestions.mockResolvedValue({
+      itens: [pergunta('q', { opcoes: [{ rotulo: 'Sim', resposta: 'Sim.' }], detalhe: 'run.qa.services' })],
+      total: 1,
+    });
+    montar(pendencias());
+    await abrir();
+    const cartao = await screen.findByTestId('pergunta-em-aberto');
+    fireEvent.click(within(cartao).getByRole('button', { name: 'Ver detalhes técnicos' }));
+    expect(within(cartao).getByTestId('detalhe-tecnico')).toHaveTextContent('run.qa.services');
+    fireEvent.click(within(cartao).getByRole('button', { name: 'Responder com texto' }));
+    fireEvent.change(within(cartao).getByLabelText('Sua resposta'), { target: { value: 'Outra coisa' } });
+    fireEvent.click(within(cartao).getByRole('button', { name: 'Responder' }));
+    await waitFor(() => expect(answerOpenQuestion).toHaveBeenCalledWith('proj-1', 'q', { resposta: 'Outra coisa' }));
+  });
+
+  it('"Aceitar sugestão" continua ao lado das opções', async () => {
+    getOpenQuestions.mockResolvedValue({ itens: [pergunta('q', { opcoes: [{ rotulo: 'Sim', resposta: 'Sim.' }] })], total: 1 });
+    montar(pendencias());
+    await abrir();
+    const cartao = await screen.findByTestId('pergunta-em-aberto');
+    fireEvent.click(within(cartao).getByRole('button', { name: 'Aceitar sugestão' }));
+    await waitFor(() => expect(answerOpenQuestion).toHaveBeenCalledWith('proj-1', 'q', { aceitarSugestao: true }));
+  });
+
+  it('quem não é o autor da sessão vê as opções inertes', async () => {
+    usuario = 'outro';
+    getOpenQuestions.mockResolvedValue({ itens: [pergunta('q', { opcoes: [{ rotulo: 'Sim', resposta: 'Sim.' }] })], total: 1 });
+    montar(pendencias());
+    await abrir();
+    expect(within(await screen.findByTestId('pergunta-em-aberto')).getByTestId('opcao-da-pergunta')).toBeDisabled();
   });
 });

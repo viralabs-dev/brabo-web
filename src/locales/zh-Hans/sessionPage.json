@@ -393,7 +393,7 @@
     },
     "bloqueadas": {
       "botao": "解除阻塞（回到 dev 队列）",
-      "ok": "任务已解除阻塞：它回到该模块 dev agent 的队列。",
+      "ok": "已恢复。任务回到了 dev，它会从停下的地方继续。",
       "erro": "无法解除任务阻塞。",
       "semMotivo": "未记录原因。",
       "semPapel": "解除阻塞需要项目中的 developer 角色。",
@@ -406,7 +406,25 @@
       "gravarTeto": "保存上限",
       "tetoOk": "项目上限已更新：运行中的代理在下一轮生效。现在只需解除阻塞。",
       "tetoErro": "无法保存上限。",
-      "tetoSemPapel": "提高上限需要项目中的 maintainer 角色。"
+      "tetoSemPapel": "提高上限需要项目中的 maintainer 角色。",
+      "causaGenerica": "智能体停下了，需要你来继续。",
+      "diagnosticoTecnico": "查看技术细节",
+      "outraOrientacao": "写其他指示",
+      "tentarDeNovo": "重试",
+      "botaoComTexto": "用这段文字解除阻塞",
+      "soVoce": "只有你能做的事",
+      "causas": {
+        "qa_instancia_indisponivel": "质量测试环境目前不可用。",
+        "credito_do_provedor": "AI 提供商账户余额用完了，只有你能充值。",
+        "orcamento_excedido": "这个任务用完了为每个任务设定的费用上限。"
+      },
+      "soVocePode": {
+        "credito_do_provedor": "给 AI 提供商账户充值。然后回到这里点“重试”。"
+      },
+      "acoes": {
+        "aumentar_o_teto": "提高上限并继续",
+        "tentar_de_novo": "重试"
+      }
     },
     "perguntas": {
       "origem": "{{agente}} 提问 · {{tempo}}",
@@ -433,7 +451,8 @@
       "corrigir": "修正用户故事",
       "corrigirHistoria": "受影响的用户故事：{{titulo}}",
       "dispensar": "忽略",
-      "responderComTexto": "用文字回答"
+      "responderComTexto": "用文字回答",
+      "detalheTecnico": "查看技术细节"
     },
     "verOCartao": "查看卡片",
     "saidas": {

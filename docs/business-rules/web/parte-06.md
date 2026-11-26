@@ -139,7 +139,7 @@ keywords: [regras de negócio, web]
   fecho tem o botão; os passos do turno não. A tela reconhece a linha pelo
   texto, e as duas frases são o contrato com `Engine.Harness.RespostaCortada`.
 - **Onde:** `apps/web/src/lib/resposta-cortada.ts:14` (`respostaCortada`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:989` (`respostaCortada`),
+  `apps/web/src/routes/session-timeline-montagem.tsx:998` (`respostaCortada`),
   `apps/web/src/routes/SessionPage.tsx:449` (`continuarRespostaCortada`),
   `:695` (`enviarMensagem`)
 - **Teste:** `apps/web/src/lib/resposta-cortada.test.ts` (`respostaCortada
@@ -843,7 +843,7 @@ keywords: [regras de negócio, web]
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
   `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:821` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
-  `apps/web/src/routes/session-timeline-montagem.tsx:1428` (`CartaoOuReferenciaNoFio`)
+  `apps/web/src/routes/session-timeline-montagem.tsx:1437` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
   `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx` ("a PR com os
   gates aprovados aparece…")
@@ -895,7 +895,7 @@ keywords: [regras de negócio, web]
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
-  (`PerguntasEmAberto`), `:233` (`eAutor`), `:454`
+  (`PerguntasEmAberto`), `:233` (`eAutor`), `:465`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PerguntasEmAberto.test.tsx` ("fila
@@ -981,7 +981,7 @@ keywords: [regras de negócio, web]
   com ela aberta (`?historia=`). Não aciona o PO (decisão do dono, 14/10). Não
   corrigível: o link não existe e o motivo é dito em texto (RN-102). A régua é
   a MESMA função da aba Histórias, movida para `lib/`.
-- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:392`
+- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:403`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
   (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:489`
   (`useHistoriaInicial`)
@@ -1211,7 +1211,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-974 — O fio mostra os passos do turno encerrado, recolhidos, sem os args {#rn-974}
 
 - **Regra:** antes de cada `agent.response` o fio mostra um `ChainOfThought` recolhido, "Passos do turno · N passos", com um `Tool` por `tool.result` do MESMO ator desde a resposta anterior: nome, estado (ok ou falha) e o `resultado` (RN-589), com aviso quando há `resultadoTotal` (corte de 2.000 caracteres). Quando o `tool.result` não traz `resultado` mas traz `result` (formato do `ToolLoop` dos dev agents e dos gates, AT-718), a saída é esse `result` (objeto vira JSON), com o MESMO teto de 2.000 caracteres e o MESMO aviso de corte; o evento gravado não muda. Nunca os `args` (RN-096). Turno sem ferramenta não ganha bloco. O bloco é só do turno ENCERRADO (a faixa narra o turno em curso, RN-460), vai junto da resposta e não conta como mensagem no corte do histórico recolhido (RN-644); lê só a janela de eventos já carregada (RN-180). AT-803: um evento gera várias entradas do fio (passos, raciocínio, consultado, bolhas), todas com o MESMO `seq`; por isso cada entrada tem a chave própria `TimelineEntry.chave` (`<id do evento>:<n>`, `acao-<id>`, `leva-promocoes`), e é ela, nunca o `seq`, a `key` React do fio e dos grupos. O `seq` segue sendo só o eixo de ORDEM (RN-155), do corte e do colapso (RN-138); com chave repetida o React deixava nós órfãos a cada poll e a aba travava.
-- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:1012` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`).
+- **Onde:** `apps/web/src/routes/session-fio.tsx:143` (`entradaSimples`), `apps/web/src/lib/passos-do-turno.ts:16` (`passosDoTurno`), `apps/web/src/routes/session-timeline-montagem.tsx:1021` (`passosDoTurno`), `apps/web/src/components/ai-elements/passos-do-turno.tsx:11` (`PassosDoTurno`).
 - **Teste:** `apps/web/src/components/ai-elements/passos-do-turno.test.tsx`, `apps/web/src/routes/SessionFio.chaves.test.tsx` (chave única; o turno não se repete depois de vários polls).
 - **Origem:** AT-675 (EP-031); AT-803 (EP-031).
 

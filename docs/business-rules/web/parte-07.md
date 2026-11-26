@@ -369,7 +369,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1392 — Cada turno mostra UMA linha de trabalho que abre no lugar: raciocínio, consultas e passos dentro {#rn-1392}
 
 - **Regra:** o `agent.response` encerrado ganha, depois da bolha, um só `Trace` recolhido ("Trabalhou 14,0 s · 5 passos") no lugar dos três blocos separados (passos, raciocínio, "Consultado neste turno"). Ao abrir, mostra nessa ordem o `Reasoning` (`data-testid` `raciocinio-do-turno`), o "Consultado neste turno" e os passos (`PassosDoTurno`, com o seletor da RN-1185). A duração é o `duracaoMs` do fecho do turno, nunca relógio da tela; sem o campo o título diz "Trabalhou · N passos", sem "0 s". Turno sem passos, raciocínio nem fontes não gera linha. O raciocínio só chega a quem a api autoriza (ADR 0249, RN-993): o web mostra o que vier. A linha não conta no corte do fio (RN-974, RN-644) e a chave é `${event.id}-trabalho`.
-- **Onde:** `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`), `src/routes/session-timeline-montagem.tsx:1022` (`LinhaDeTrabalho`).
+- **Onde:** `src/components/ai-elements/linha-de-trabalho.tsx:21` (`LinhaDeTrabalho`), `src/routes/session-timeline-montagem.tsx:1033` (`LinhaDeTrabalho`).
 - **Teste:** `src/components/ai-elements/linha-de-trabalho.test.tsx`, `src/routes/session-timeline-montagem.raciocinio.test.tsx`.
 - **Origem:** AT-958 (EP-035), v10 (K02).
 

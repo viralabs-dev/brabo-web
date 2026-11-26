@@ -307,7 +307,8 @@ describe('ProjectPrsTab — botão Merge', () => {
 
     const aviso = await screen.findByTestId('aviso-merge-indisponivel');
     expect(screen.queryByRole('button', { name: 'Merge' })).toBeNull();
-    expect(aviso).toHaveTextContent('a tarefa desta PR está bloqueada — QA pediu mudanças');
+    expect(aviso).toHaveTextContent('a tarefa desta PR está bloqueada — O agente parou e precisa de você para continuar.');
+    expect(aviso).not.toHaveTextContent('QA pediu mudanças');
     const estados = within(screen.getByTestId('portoes-da-pr'))
       .getAllByText(/^[DQSV]$/)
       .map((e) => `${e.textContent}:${e.getAttribute('data-estado')}`);

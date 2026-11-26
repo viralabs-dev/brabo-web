@@ -4,6 +4,8 @@ import { classifyEvent } from './activity';
 import { deriveExecutionProgress } from './execution';
 import { tarefaDaBranch } from './prontas-e-bloqueadas';
 import { formatarUsdCasas } from './currency';
+import i18n from './i18n';
+import { causaDoBloqueio } from './explicacao-do-bloqueio';
 
 /**
  * AT-880 (RN-1303/RN-1073): o estado de cada executor da execução vigente para
@@ -87,7 +89,7 @@ export function motivoDoOcio(modulo: string, reason: string | undefined, c: Cont
   }
   const abertas = abertasDe(modulo);
   if (abertas.length > 0 && abertas.every((t) => t.blocked)) {
-    return { key: 'tarefaBloqueada', params: { motivo: abertas[0]!.blockedReason ?? '' } };
+    return { key: 'tarefaBloqueada', params: { motivo: causaDoBloqueio(abertas[0]!, i18n.getFixedT(null, 'sessionPage')) } };
   }
   return { key: 'semTarefa' };
 }

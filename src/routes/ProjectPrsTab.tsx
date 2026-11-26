@@ -20,6 +20,7 @@ import {
 import { roleAtLeast } from '../lib/roles';
 import { portoesDaPr } from '../lib/portoes-da-pr';
 import { userIdDaSessao } from '../lib/auth';
+import { causaDoBloqueio } from '../lib/explicacao-do-bloqueio';
 import { gatePendenteNoMerge } from '../lib/gate-do-merge';
 import type { CodePullRequestSummary, Epic, ProposedAction, Task } from '../lib/api-types';
 import { ApprovalCard } from '../components/ApprovalCard';
@@ -91,6 +92,7 @@ function acaoDeMergeParaPr(
  */
 export function ProjectPrsTab({ projectId }: { projectId: string }) {
   const { t } = useTranslation('approvals');
+  const { t: tSessao } = useTranslation('sessionPage');
   const { latest: latestSession } = useLatestSession(projectId);
   const backlogQuery = useBacklog(projectId);
   const mergeActionsQuery = useProjectPendingActions(projectId, 'git_merge');
@@ -267,7 +269,9 @@ export function ProjectPrsTab({ projectId }: { projectId: string }) {
               <p className={styles.motivoErro} data-testid="aviso-merge-indisponivel">
                 {task.blockedReason || !gatePendente
                   ? t('prsTab.mergeIndisponivelBloqueada', {
-                      reason: task.blockedReason ?? t('prsTab.mergeBlockedFallback'),
+                      reason: task.blockedReason
+                        ? causaDoBloqueio(task, tSessao)
+                        : t('prsTab.mergeBlockedFallback'),
                     })
                   : t('prsTab.gatePendenteBloqueada', { gate: gatePendente })}
               </p>

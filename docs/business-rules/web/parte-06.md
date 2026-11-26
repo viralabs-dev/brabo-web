@@ -597,10 +597,12 @@ keywords: [regras de negócio, web]
   `travado` do card (`devStatus`). A tarefa bloqueada cujo `assignedTo` está
   travado diz "rearme antes de desbloquear".
 - **Onde:** `apps/web/src/lib/prontas-e-bloqueadas.ts:53` (`tarefasBloqueadas`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:282` (`desbloquear`)
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:284` (`retomar`)
 - **Teste:** `apps/web/src/components/PendenciasDeOutrasSessoes.test.tsx`
   ("CASO DE FALHA: desbloquear com erro diz o erro da api na linha da tarefa")
 - **Origem:** AT-497
+
+> **Alterada pela [RN-1531](parte-08.md#rn-1531) (AT-1021).** A tarefa bloqueada não mostra mais o `blockedReason` como frase: mostra a causa em uma frase e as ações que chamam o mesmo `unblock` em um clique, com a orientação da ação; o campo de orientação fica recolhido em "Escrever outra orientação". O retorno de sucesso passa a dizer "Retomado." O papel e a recusa da api seguem como aqui.
 
 <a id="rn-829"></a>
 
@@ -839,7 +841,7 @@ keywords: [regras de negócio, web]
   botão "Ver o cartão" que abre a aba "PRs prontas" (`brabo:abrir-fila`, que
   generaliza o evento das perguntas), porque a aba nasce fechada (AT-680).
 - **Onde:** `apps/web/src/lib/acoes-no-bloco.ts:48` (`useAcaoEstaNoBloco`),
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:834` (`useRegistrarAcoesNoBloco`),
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:821` (`useRegistrarAcoesNoBloco`),
   `apps/web/src/components/CartaoOuReferenciaNoFio.tsx:11` (`CartaoOuReferenciaNoFio`),
   `apps/web/src/routes/session-timeline-montagem.tsx:1428` (`CartaoOuReferenciaNoFio`)
 - **Teste:** `apps/web/src/components/CartaoOuReferenciaNoFio.test.tsx`,
@@ -893,7 +895,7 @@ keywords: [regras de negócio, web]
   aberto" com atalho até a fila, lendo a MESMA query — só avisa, os botões
   seguem habilitados (ADR 0214).
 - **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:55`
-  (`PerguntasEmAberto`), `:229` (`eAutor`), `:406`
+  (`PerguntasEmAberto`), `:233` (`eAutor`), `:454`
   (`AvisoDePerguntasEmAberto`), `apps/web/src/lib/canal-vivo.ts:135`
   (`alvosDoEvento`)
 - **Teste:** `apps/web/src/components/PerguntasEmAberto.test.tsx` ("fila
@@ -922,6 +924,8 @@ keywords: [regras de negócio, web]
   resgate por tempo grava idadeSegundos e lê como tempo"; falha: "a pergunta
   em aberto não tem idadeSegundos e não fala em 2 h")
 - **Origem:** AT-528
+
+> **Alterada pela [RN-1531](parte-08.md#rn-1531) e [RN-1532](parte-08.md#rn-1532) (AT-1021).** A pergunta em aberto que o gate espera pode trazer até duas opções prontas (um clique responde) e o detalhe técnico recolhido; o aviso do fio e o cartão "Perguntas em aberto" seguem como aqui.
 
 <a id="rn-882"></a>
 
@@ -977,7 +981,7 @@ keywords: [regras de negócio, web]
   com ela aberta (`?historia=`). Não aciona o PO (decisão do dono, 14/10). Não
   corrigível: o link não existe e o motivo é dito em texto (RN-102). A régua é
   a MESMA função da aba Histórias, movida para `lib/`.
-- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:344`
+- **Onde:** `apps/web/src/components/PerguntasEmAberto.tsx:392`
   (`CartaoRespondido`); `apps/web/src/lib/correcao-de-historia.ts`
   (`motivoDeCorrecaoInerte`); `apps/web/src/routes/ProjectBacklogTab.tsx:489`
   (`useHistoriaInicial`)

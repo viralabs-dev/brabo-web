@@ -4,6 +4,8 @@
 
 - Feat (AT-1022, EP-036, RN-1510): a aba Pendências mostra tudo o que espera o dono, sem recarregar. Nova fila "Esperando você neste chat" com uma linha por ação pendente e por oferta de passagem da sessão aberta, com "Ver no chat" (sem segundo cartão; o contador e o vazio passam a dizer a verdade). As perguntas em aberto pollam a cada 15 s (a pergunta do QA em outra sessão aparece sem F5). O fio só pausa por gesto da pessoa (a rolagem do sistema não pausa) e acompanha cartão novo; "Ir ao fim" vira faixa entre o fio e a doca ("Ir ao fim · N cartões esperando você"). Revisa as RN-626, RN-943 e RN-977. i18n nos quatro idiomas. Fora: a rolagem horizontal do chat (causa não achada). Regressivo `brabo-qa` (opcional): `scrollWidth <= clientWidth` no fio e o botão fora dos botões do último cartão.
 
+- Feature (AT-1017; RN-1512 do engine): o evento `qa.awaiting_environment` aparece como "Esperando a vez no teste" e deixa o QA de Automação `aguardando`, não `falhou`.
+
 - Fix (AT-1027): o `ToastProvider` guarda os temporizadores dos toasts e os limpa ao desmontar; o `ProjectSettingsTab.test.tsx` deixa de falhar de forma intermitente com `window is not defined` depois do fim do ambiente. Teste novo em `ToastProvider.test.tsx`.
 
 - Fix (AT-1024, RN-1395, RN-1450): o atalho do primeiro uso propõe o Haiku apto (com chamada de ferramentas e disponível) mais barato do catálogo ativo e mostra o preço no botão ("Aplicar Claude Haiku 5.5 ao time · US$ 0,10 / US$ 0,50 por 1M"); antes pegava o primeiro Haiku da lista (o 4.5, 10 vezes mais caro). "Definir teto" do cabeçalho, do cartão do projeto e de Configurações abre o formulário do teto já aberto, sem segundo clique. O `.env.example` do entregável (parte c) é do `brabo-engine`.

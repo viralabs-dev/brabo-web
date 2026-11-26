@@ -443,6 +443,20 @@ describe('deriveAgentRoster — subagentes de área (Fase 8b/8c, no painel — F
     expect(statusOf(roster, 'qa-automacao')).toBe('falhou');
   });
 
+  it('qa.awaiting_environment do subagente é aguardando, nunca falhou (AT-1017)', () => {
+    const roster = deriveAgentRoster(
+      [
+        gateEvent,
+        ev('delegation.completed', 'qa-lead', { subagent: 'qa-automacao', area: 'qa' }),
+        ev('qa.awaiting_environment', 'qa-automacao', { taskId: 't-1' }),
+      ],
+      moduleMap,
+      true,
+      [],
+    );
+    expect(statusOf(roster, 'qa-automacao')).toBe('aguardando');
+  });
+
   it('infra-workflows entra sob o mesmo critério, associado à área infra', () => {
     const roster = deriveAgentRoster(
       [ev('delegation.completed', 'infra-lead', { subagent: 'infra-workflows', area: 'infra' })],

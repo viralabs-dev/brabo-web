@@ -652,7 +652,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
         // acionável e divisor mudo): a leitura errada é a mesma.
         desfecho: true,
         node: isOfertaAtual ? (
-          <AlertShadcn variant="success" className={styles.handoffCard} key={event.id}>
+          <AlertShadcn variant="success" className={styles.handoffCard} key={event.id} id={`oferta-${oferta.id}`}>
             <Badge tone="muted" size="md">
               {origem}
               <ChevronRightIcon size={13} />

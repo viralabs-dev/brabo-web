@@ -787,3 +787,65 @@ describe('AT-799: fila Agentes travados', () => {
     expect(screen.getByRole('textbox', { name: /Sua resposta/ })).toBeInTheDocument();
   });
 });
+
+describe('PendenciasDeOutrasSessoes — fila "Esperando você neste chat" (RN-1510, AT-1022)', () => {
+  const oferta = (id: string, status: 'offered' | 'accepted') =>
+    ({ id, sessionId: AQUI, projectId: 'proj-1', fromAgent: 'po', toAgent: 'dev-lead', artifactId: null, status, createdAt: '', updatedAt: '' }) as never;
+
+  function montarNoChat(acoes: ProposedAction[], ofertas: never[] = [], aoContar = vi.fn(), aoVerNoChat = vi.fn()) {
+    getProjectPendingActions.mockResolvedValue([]);
+    render(
+      <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+        <ToastProvider>
+          <PendenciasDeOutrasSessoes
+            modo="painel"
+            projectId="proj-1"
+            sessionId={AQUI}
+            podeDecidir
+            acoesDaSessao={acoes}
+            ofertasDaSessao={ofertas}
+            aoContar={aoContar}
+            aoVerNoChat={aoVerNoChat}
+          />
+        </ToastProvider>
+      </QueryClientProvider>,
+    );
+    return { aoContar, aoVerNoChat };
+  }
+
+  it('ação da sessão aberta vira UMA linha com "Ver no chat" e entra na contagem, sem segundo cartão', async () => {
+    const a = acao('a1', { sessionId: AQUI, actionType: 'open_adr_pr', payload: {} });
+    const alvo = document.createElement('div');
+    alvo.id = 'acao-a1';
+    alvo.scrollIntoView = vi.fn();
+    document.body.append(alvo);
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const { aoContar, aoVerNoChat } = montarNoChat([a]);
+    expect(await screen.findByTestId('fila-no-chat')).toBeInTheDocument();
+    expect(screen.getAllByTestId('linha-no-chat')).toHaveLength(1);
+    expect(screen.queryByText('Aprovar')).toBeNull();
+    expect(acaoEstaNoBloco('a1')).toBe(false);
+    await waitFor(() => expect(aoContar).toHaveBeenLastCalledWith(1));
+    fireEvent.click(screen.getByRole('button', { name: 'Ver no chat' }));
+    expect(aoVerNoChat).toHaveBeenCalled();
+    vi.advanceTimersByTime(10);
+    expect(alvo.scrollIntoView).toHaveBeenCalled();
+    vi.useRealTimers();
+    alvo.remove();
+  });
+
+  it('só oferta `offered` entra; ação decidida ou de outra sessão não conta aqui', async () => {
+    montarNoChat(
+      [acao('x', { sessionId: AQUI, status: 'approved' }), acao('y', { sessionId: EXECUCAO })],
+      [oferta('h1', 'offered'), oferta('h2', 'accepted')],
+    );
+    expect(await screen.findAllByTestId('linha-no-chat')).toHaveLength(1);
+    expect(screen.getByText(/passou a vez para/)).toBeInTheDocument();
+  });
+
+  it('sem nada, a fila não existe e nada é desenhado (o vazio é do painel)', async () => {
+    const { aoContar } = montarNoChat([]);
+    await waitFor(() => expect(aoContar).toHaveBeenCalledWith(0));
+    expect(screen.queryByTestId('fila-no-chat')).toBeNull();
+  });
+});

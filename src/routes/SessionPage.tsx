@@ -290,19 +290,21 @@ export function SessionPage({
   const actionsQuery = usePendingActions(projectId, sessionId, 3000);
   const actions = actionsQuery.data?.items ?? VAZIO;
 
+  const handoffsQuery = useHandoffs(projectId, sessionId, 3000);
+  const handoffs = handoffsQuery.data ?? VAZIO;
+
   // A rolagem do fio (achado 10, Fase 4b, RN-173) mora em
   // `../lib/session-rolagem` desde o PR 7 do ADR 0176 — os mesmos refs e
   // efeitos, chamados neste mesmo ponto.
-  const { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, irAoFim, ancorarNoEnvio } = useRolagemDoFio({
+  const { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, cartoes, irAoFim, ancorarNoEnvio } = useRolagemDoFio({
     highlightEvent,
     logOpen,
     events,
     actions,
+    handoffs,
     streamingStore,
   });
 
-  const handoffsQuery = useHandoffs(projectId, sessionId, 3000);
-  const handoffs = handoffsQuery.data ?? VAZIO;
   // Quem já foi ativado na sessão PEDIDA, de fontes sem janela (RN-630,
   // RN-631): o resumo quando esta é a sessão mais recente, os handoffs desta
   // sessão e o gasto por agente dela. Somado à janela pelo destinatário do
@@ -812,13 +814,20 @@ export function SessionPage({
               {/* Sentinela do achado 10 — alvo do scroll de abertura e do
                   "acompanha o fim" enquanto o usuário está perto dele. */}
               <div ref={messagesEndRef} />
-              <MessageScrollerButton
-                visivel={afastado}
-                rotulo={novas > 0 ? t('fio.irAoFimComNovas', { count: novas }) : t('fio.irAoFim')}
-                onClick={irAoFim}
-              />
             </MessageScrollerContent>
           </MessageScroller>
+          {/* RN-1510: faixa entre o fio e a doca, fora da área que rola. */}
+          <MessageScrollerButton
+            visivel={afastado}
+            rotulo={
+              cartoes > 0
+                ? t('fio.irAoFimComCartao', { count: cartoes })
+                : novas > 0
+                  ? t('fio.irAoFimComNovas', { count: novas })
+                  : t('fio.irAoFim')
+            }
+            onClick={irAoFim}
+          />
 
           {/* A faixa de atividade do turno — narra em tempo real o que um
               agente conversacional está fazendo, FORA da área que rola (o
@@ -892,6 +901,8 @@ export function SessionPage({
           comExecutores={sessaoCriativa}
           podeDecidir={podeDecidir}
           totalDePendencias={totalDePendencias}
+          acoesDaSessao={actions}
+          ofertasDaSessao={handoffs}
           aoContarPendencias={setTotalDePendencias}
           contexto={
             <>

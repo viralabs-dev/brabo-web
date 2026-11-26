@@ -52,6 +52,8 @@ function Casa({ emSheet = false }: { emSheet?: boolean }) {
         comExecutores
         podeDecidir
         totalDePendencias={3}
+        acoesDaSessao={[]}
+        ofertasDaSessao={[]}
         aoContarPendencias={() => undefined}
         contexto={<div data-testid="contexto" />}
       />

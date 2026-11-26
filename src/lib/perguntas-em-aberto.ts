@@ -1,12 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { getOpenQuestions } from './api-client';
+import { INTERVALO_DO_PROJETO_MS } from './canal-vivo';
+import { pollQueParaNoErro } from './query-policy';
 
 /**
  * RN-861 (AT-521): a fila "Perguntas em aberto" do projeto. UMA chave, lida
- * pelo bloco de pendências do chat e pelo aviso do composer. SEM poll: quem
- * diz quando reler é o canal da sessão (`artifact.open_question`,
- * `open_question.answered`, `pr.gate_changed` — alvo `perguntas` do
- * `criarInvalidadorDoCanal`) e a resposta dada aqui.
+ * pelo bloco de pendências do chat e pelo aviso do composer. O canal da sessão
+ * a relê (`artifact.open_question`, `open_question.answered`,
+ * `pr.gate_changed` — alvo `perguntas`) e a resposta dada aqui também; mas o QA
+ * grava a pergunta na sessão de EXECUÇÃO, cujo canal esta tela não ouve. Por
+ * isso ela polla no ritmo de projeto, 15 s (RN-632, RN-1510).
  */
 export const CHAVE_DAS_PERGUNTAS_EM_ABERTO = (projectId: string) =>
   ['open-questions', projectId, 'open'] as const;
@@ -19,6 +22,7 @@ export function usePerguntasEmAberto(projectId: string | undefined) {
     queryKey: CHAVE_DAS_PERGUNTAS_EM_ABERTO(projectId ?? ''),
     queryFn: () => getOpenQuestions(projectId!, 'open'),
     enabled: !!projectId,
+    refetchInterval: pollQueParaNoErro(INTERVALO_DO_PROJETO_MS),
   });
 }
 

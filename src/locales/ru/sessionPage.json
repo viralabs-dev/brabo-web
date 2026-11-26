@@ -411,7 +411,12 @@
       "bloqueadas": "Заблокированные задачи",
       "perguntas": "Открытые вопросы",
       "travados": "Застрявшие агенты",
-      "semModulo": "Задачи без модуля"
+      "semModulo": "Задачи без модуля",
+      "noChat": "Ждёт вас в этом чате"
+    },
+    "noChat": {
+      "verNoChat": "Показать в чате",
+      "oferta": "{{de}} передал(а) эстафету: {{para}}"
     },
     "origem_one": "{{count}} предложение в сессии {{hashtag}} · {{tempo}}",
     "origem_few": "{{count}} предложения в сессии {{hashtag}} · самое старое {{tempo}}",
@@ -554,6 +559,10 @@
     "irAoFimComNovas_few": "К концу · новых: {{count}}",
     "irAoFimComNovas_many": "К концу · новых: {{count}}",
     "irAoFimComNovas_other": "К концу · новых: {{count}}",
+    "irAoFimComCartao_one": "К концу · карточек ждёт вас: {{count}}",
+    "irAoFimComCartao_few": "К концу · карточек ждёт вас: {{count}}",
+    "irAoFimComCartao_many": "К концу · карточек ждёт вас: {{count}}",
+    "irAoFimComCartao_other": "К концу · карточек ждёт вас: {{count}}",
     "verRespostaInteira": "Показать весь ответ",
     "recolherResposta": "Свернуть ответ"
   },

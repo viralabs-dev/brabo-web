@@ -385,7 +385,12 @@
       "bloqueadas": "Blocked tasks",
       "perguntas": "Open questions",
       "travados": "Stuck agents",
-      "semModulo": "Tasks without a module"
+      "semModulo": "Tasks without a module",
+      "noChat": "Waiting for you in this chat"
+    },
+    "noChat": {
+      "verNoChat": "See in chat",
+      "oferta": "{{de}} handed over to {{para}}"
     },
     "origem_one": "Proposed in session {{hashtag}} · {{tempo}}",
     "origem_other": "{{count}} proposed in session {{hashtag}} · oldest {{tempo}}",
@@ -500,6 +505,8 @@
     "irAoFim": "Go to end",
     "irAoFimComNovas_one": "Go to end · {{count}} new",
     "irAoFimComNovas_other": "Go to end · {{count}} new",
+    "irAoFimComCartao_one": "Go to end · {{count}} card waiting for you",
+    "irAoFimComCartao_other": "Go to end · {{count}} cards waiting for you",
     "verRespostaInteira": "View full response",
     "recolherResposta": "Collapse response"
   },

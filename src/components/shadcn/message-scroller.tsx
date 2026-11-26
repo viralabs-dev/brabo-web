@@ -39,7 +39,11 @@ function MessageScrollerContent({
   )
 }
 
-/** "Ir ao fim · N novas": aparece só com o fio pausado; pega carona num wrapper sticky de altura zero. */
+/**
+ * "Ir ao fim · N novas": aparece só com o fio pausado, numa FAIXA própria entre o
+ * fio e a doca (RN-1510) — fora da área que rola, então empurra o fio em vez de
+ * flutuar sobre os botões do último cartão. Altura de conteúdo (RN-1389).
+ */
 function MessageScrollerButton({
   visivel,
   rotulo,
@@ -51,15 +55,12 @@ function MessageScrollerButton({
 }) {
   if (!visivel) return null
   return (
-    <div
-      data-slot="message-scroller-button"
-      className="sticky bottom-3 flex h-0 justify-center"
-    >
+    <div data-slot="message-scroller-button" className="flex justify-center py-2">
       <Button
         type="button"
         variant="outline"
         size="sm"
-        className="-translate-y-full rounded-full"
+        className="rounded-full"
         onClick={onClick}
       >
         <ArrowDownIcon />

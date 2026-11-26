@@ -10,7 +10,7 @@
   margin: 12px auto 8px;
   box-sizing: border-box;
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-sm);
   background: var(--surface-1);
 }
 
@@ -180,4 +180,23 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* RN-1510: a linha compacta da fila "Esperando você neste chat". */
+.linhaNoChat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+}
+
+.textoNoChat {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: var(--fs-body);
+  color: var(--text-primary);
 }

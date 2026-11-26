@@ -328,6 +328,9 @@
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
+  /* RN-1510: só a pessoa move o fio; sem isso o navegador reancora a rolagem
+     quando o teto de eventos corta o começo e o fio "pausa" sozinho. */
+  overflow-anchor: none;
   padding: 28px var(--space-4) 40px;
 }
 

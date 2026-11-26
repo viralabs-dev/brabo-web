@@ -560,4 +560,13 @@ keywords: [regras de negócio, web]
 - **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
 - **Origem:** AT-1010 (EP-035). Complementa a [RN-1494](#rn-1494).
 
+<a id="rn-1510"></a>
+
+### RN-1510 — A aba Pendências mostra o que espera no chat, o fio só pausa por gesto e "Ir ao fim" é faixa {#rn-1510}
+
+- **Regra:** (1) a aba Pendências ganha a fila "Esperando você neste chat": uma LINHA por ação pendente da sessão aberta e por oferta de passagem (`offered`), com "Ver no chat". A linha não desenha segundo cartão e não se registra no bloco (o cartão segue no fio, RN-843); a fila tem contagem própria (RN-467) e entra no contador da aba, então "Nenhuma pendência neste projeto" só aparece com todas as filas zeradas. Revisa a [RN-626](parte-05.md#rn-626) e a [RN-943](parte-06.md#rn-943). (2) A lista de perguntas em aberto polla a cada 15 s (ritmo de projeto, [RN-632](parte-05.md#rn-632)): a pergunta que o QA grava em OUTRA sessão aparece sem recarregar. (3) O fio só pausa quando a pessoa rola (roda, toque, tecla de rolagem ou barra, até 500 ms antes do `scroll`); a rolagem do sistema (ancorar no envio, âncora do navegador, `overflow-anchor: none` no fio) não pausa. A oferta de passagem entra na identidade do fio. Revisa a [RN-977](parte-06.md#rn-977). (4) "Ir ao fim" é uma faixa entre o fio e a doca (altura de conteúdo, RN-1389), fora da área que rola, e nunca cobre botão; com cartão novo durante a pausa o rótulo diz "Ir ao fim · N cartões esperando você".
+- **Onde:** `src/lib/pendencias-do-projeto.ts` (`pendenciasDestaSessao`), `src/components/PendenciasDeOutrasSessoes.tsx` (`LinhaNoChat`), `src/lib/perguntas-em-aberto.ts`, `src/lib/session-rolagem.ts`, `src/components/shadcn/message-scroller.tsx`, `src/routes/SessionPage.tsx`, `src/routes/PainelDaSessao.tsx`.
+- **Teste:** `src/components/PendenciasDeOutrasSessoes.test.tsx`, `src/lib/perguntas-em-aberto.test.tsx`, `src/lib/session-rolagem.test.tsx`, `src/routes/SessionPage.ordenacao-e-avisos.test.tsx`.
+- **Origem:** AT-1022 (EP-036). A rolagem horizontal do chat (achado 5) ficou fora: a causa não foi achada.
+
 > **Referência à [RN-1512](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine/parte-07.md#rn-1512) (engine, AT-1017).** O evento `qa.awaiting_environment` aparece como "Esperando a vez no teste: outra tarefa está usando o ambiente de teste. Segue sozinho quando liberar." (sem alarme) e deixa o `qa-automacao` em `aguardando`, nunca `falhou`. Onde: `src/lib/activity.ts:229` (`classifyEvent`), `src/lib/agent-status.ts:195` (`subagentStatus`). Teste: `src/lib/activity.test.ts`, `src/lib/agent-status.test.ts`.

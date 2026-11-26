@@ -44,6 +44,8 @@ import type { SessionChannelHandlers } from '../lib/session-channel';
  *   idem, canal que nunca conecta ........ 156 + 104 = 260 → 162 + 104 = 266
  *     (AT-880: o carrossel de executores do chat lê a execução — arquitetura,
  *     PRs abertas e custo — a 15–30 s; mais nada do que o canal já avisa)
+ *   AT-1022 (RN-1510): +4 em cada cenário, o poll de 15 s das perguntas em aberto
+ *   (`GET /projects/:id/open-questions`) no chat: 140 / 165 / 273
  *   CARGA de Executores / Visão geral .... 29 / 33 → 27 / 31 (bindings em lote)
  *   Visão geral + "Rodar na sua máquina" (RN-855): 31 → 32, UMA leitura
  *   de configuração, sem poll
@@ -295,7 +297,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
 
     // `dev`: 208. A aba de Executores caiu de 138 para 72, e mediu 64 na
     // AT-339 — o teto é o número medido (71 + 64).
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(136);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(140);
     // `dev`: 12/min (5s). Ritmo de projeto: 15s.
     expect(executores['GET /projects/:id/sessions']).toBe(4);
     // `GET /projects/:id` só na montagem: nenhuma das duas o polla.
@@ -323,7 +325,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
     expect(executores['GET /projects/:id/actions']).toBeGreaterThanOrEqual(12);
     expect(executores['GET /projects/:id/sessions/:id/actions'] ?? 0).toBe(0);
     // Medido na AT-339: 71 + 89.
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(161);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(165);
   }, 60_000);
 
   it('CASO DE FALHA: canal que nunca conecta — o poll curto volta, e as duas abas ainda cabem no teto', async () => {
@@ -335,7 +337,7 @@ describe('orçamento de requisições com DUAS abas (AT-278, RN-632)', () => {
     expect(executores['GET /projects/:id/sessions/:id/events']).toBe(20);
     // `dev`: 341 — o teto estourava só com as duas abas paradas na tela.
     // Medido na AT-339: 156 + 104.
-    expect(total(chat) + total(executores)).toBeLessThanOrEqual(269);
+    expect(total(chat) + total(executores)).toBeLessThanOrEqual(273);
   }, 60_000);
 
   it('a carga da Visão geral e da aba Executores lê os bindings em LOTE, não um por agente (AT-339)', async () => {

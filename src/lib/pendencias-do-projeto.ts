@@ -63,3 +63,18 @@ export function separarPendenciasDeOutrasSessoes(
     merges: deOutras.filter((a) => a.actionType === 'git_merge').sort(maisAntigaPrimeiro),
   };
 }
+
+/**
+ * O que espera o dono no chat ABERTO (RN-1510, AT-1022): as ações pendentes da
+ * própria sessão. O fio já desenha o cartão de cada uma; a aba Pendências só
+ * ganha uma LINHA com "Ver no chat" (sem segundo cartão, sem registrar no
+ * bloco — RN-843), para a contagem e o vazio dizerem a verdade.
+ */
+export function pendenciasDestaSessao(
+  acoes: readonly ProposedAction[] | undefined,
+  sessionId: string,
+): ProposedAction[] {
+  return (acoes ?? [])
+    .filter((a) => a.status === 'pending' && a.sessionId === sessionId)
+    .sort(maisAntigaPrimeiro);
+}

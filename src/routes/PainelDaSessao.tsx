@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { Handoff, ProposedAction } from '../lib/api-types';
 import { useTranslation } from 'react-i18next';
 import { Sheet, SheetClose, SheetContent } from '../components/shadcn/sheet';
 import { Tabs, TabsContent, TabsCount, TabsList, TabsTrigger } from '../components/shadcn/tabs';
@@ -24,6 +25,9 @@ interface Props {
   comExecutores: boolean;
   podeDecidir: boolean;
   totalDePendencias: number;
+  /** O que espera o dono neste chat (RN-1510): as ações e as ofertas de passagem da sessão aberta. */
+  acoesDaSessao: readonly ProposedAction[];
+  ofertasDaSessao: readonly Handoff[];
   aoContarPendencias: (total: number) => void;
   /** O `ContextAside`: montado só com o painel aberto. */
   contexto: ReactNode;
@@ -76,6 +80,9 @@ export function PainelDaSessao(p: Props) {
           projectId={p.projectId}
           sessionId={p.sessionId}
           podeDecidir={p.podeDecidir}
+          acoesDaSessao={p.acoesDaSessao}
+          ofertasDaSessao={p.ofertasDaSessao}
+          aoVerNoChat={p.emSheet ? p.aoFechar : undefined}
           aoMudarAberto={(o) => o && p.aoMudarAba('pendencias')}
           aoContar={p.aoContarPendencias}
         />

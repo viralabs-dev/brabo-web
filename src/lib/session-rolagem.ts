@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ProposedAction, SessionEvent } from './api-types';
+import type { Handoff, ProposedAction, SessionEvent } from './api-types';
 import type { StoreDoStreaming } from './streaming-do-turno';
 
 /**
@@ -29,10 +29,31 @@ export function novasDepoisDe(events: readonly SessionEvent[], seqVisto: number 
 export function identidadeDoFio(
   events: readonly SessionEvent[],
   actions: readonly ProposedAction[],
+  handoffs: readonly Handoff[] = [],
 ): string {
   const ultimo = events.reduce((m, e) => (e.seq > m ? e.seq : m), 0);
-  return `${events.length === 0 ? 'vazio' : ultimo}|${actions.map((a) => a.id).join(',')}`;
+  return `${events.length === 0 ? 'vazio' : ultimo}|${actions.map((a) => a.id).join(',')}|${handoffs.map((h) => h.id).join(',')}`;
 }
+
+/** Os cartões que esperam a pessoa (RN-1510): ação e oferta de passagem; o que "Ir ao fim" conta além das mensagens. */
+const idsDosCartoes = (actions: readonly ProposedAction[], handoffs: readonly Handoff[]) => [
+  ...actions.map((a) => a.id),
+  ...handoffs.filter((h) => h.status === 'offered').map((h) => h.id),
+];
+
+/** Quantos cartões chegaram depois da pausa (os `ids` já vistos ficam de fora). */
+export function cartoesNovosDepoisDe(
+  actions: readonly ProposedAction[],
+  handoffs: readonly Handoff[],
+  idsVistos: ReadonlySet<string> | null,
+): number {
+  if (idsVistos === null) return 0;
+  return idsDosCartoes(actions, handoffs).filter((id) => !idsVistos.has(id)).length;
+}
+
+/** Janela em que um gesto da pessoa (roda, toque, tecla, barra) ainda vale como causa do `scroll` (RN-1510). */
+const JANELA_DO_GESTO_MS = 500;
+const TECLAS_DE_ROLAGEM = new Set(['PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End', ' ']);
 
 /**
  * A rolagem do fio da tela de Sessão (AT-683, v5; revisa a RN-951): o fio
@@ -47,12 +68,15 @@ export function useRolagemDoFio({
   logOpen,
   events,
   actions,
+  handoffs = [],
   streamingStore,
 }: {
   highlightEvent: string | undefined;
   logOpen: boolean;
   events: SessionEvent[];
   actions: ProposedAction[];
+  /** As ofertas de passagem da sessão: entram na identidade do fio e no "N cartões esperando". */
+  handoffs?: Handoff[];
   /** O texto em curso vem como STORE (AT-301): não é dependência de efeito. */
   streamingStore: StoreDoStreaming;
 }) {
@@ -68,8 +92,12 @@ export function useRolagemDoFio({
   const [afastado, setAfastado] = useState(false);
   // O `seq` do último evento no instante da pausa; `null` com o fio no fim.
   const [seqVisto, setSeqVisto] = useState<number | null>(null);
+  // Os cartões que já estavam no fio quando a pessoa subiu; `null` com o fio no fim.
+  const [cartoesVistos, setCartoesVistos] = useState<Set<string> | null>(null);
   const eventsRef = useRef(events);
   eventsRef.current = events;
+  const cartoesRef = useRef(new Set<string>());
+  cartoesRef.current = new Set(idsDosCartoes(actions, handoffs));
 
   // Navegação de evidência (Fase 4b): rola até o evento assim que ele existir.
   useEffect(() => {
@@ -85,9 +113,9 @@ export function useRolagemDoFio({
 
   // Por IDENTIDADE, não por `length`: a primeira leva abre no fim (achado 10;
   // com `highlightEvent` fica no evento citado); toda mudança depois vai ao fim.
-  const identidade = identidadeDoFio(events, actions);
+  const identidade = identidadeDoFio(events, actions, handoffs);
   useEffect(() => {
-    if (events.length === 0 && actions.length === 0) return;
+    if (events.length === 0 && actions.length === 0 && handoffs.length === 0) return;
     const primeira = vistoRef.current === null;
     vistoRef.current = identidade;
     if (primeira && highlightEvent) return;
@@ -128,26 +156,63 @@ export function useRolagemDoFio({
     return () => observador.disconnect();
   }, [acompanharOFim]);
 
-  // Distância do fim: acima de ~1 linha de folga, a pessoa subiu.
+  // Distância do fim: acima de ~1 linha de folga, a pessoa subiu — mas SÓ por
+  // gesto dela (RN-1510): rolagem do sistema (ancorar no envio, ancoragem do
+  // navegador) também dispara `scroll` e não pausa.
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
+    let ultimoGesto = Number.NEGATIVE_INFINITY;
+    let pressionado = false;
+    const gesto = () => {
+      ultimoGesto = Date.now();
+    };
+    const aoTecla = (e: KeyboardEvent) => {
+      if (TECLAS_DE_ROLAGEM.has(e.key)) gesto();
+    };
+    const aoPressionar = () => {
+      pressionado = true;
+      gesto();
+    };
+    const aoSoltar = () => {
+      pressionado = false;
+    };
     const aoRolar = () => {
       const longe = el.scrollHeight - el.scrollTop - el.clientHeight > 80;
+      const daPessoa = pressionado || Date.now() - ultimoGesto < JANELA_DO_GESTO_MS;
+      if (longe && !pausadoRef.current && !daPessoa) return;
       const subiuAgora = longe && !pausadoRef.current;
       pausadoRef.current = longe;
       setAfastado(longe);
-      if (!longe) setSeqVisto(null);
-      else if (subiuAgora) setSeqVisto(eventsRef.current.reduce((m, e) => (e.seq > m ? e.seq : m), 0));
+      if (!longe) {
+        setSeqVisto(null);
+        setCartoesVistos(null);
+      } else if (subiuAgora) {
+        setSeqVisto(eventsRef.current.reduce((m, e) => (e.seq > m ? e.seq : m), 0));
+        setCartoesVistos(cartoesRef.current);
+      }
     };
+    el.addEventListener('wheel', gesto, { passive: true });
+    el.addEventListener('touchmove', gesto, { passive: true });
+    el.addEventListener('keydown', aoTecla);
+    el.addEventListener('pointerdown', aoPressionar);
+    window.addEventListener('pointerup', aoSoltar);
     el.addEventListener('scroll', aoRolar, { passive: true });
-    return () => el.removeEventListener('scroll', aoRolar);
+    return () => {
+      el.removeEventListener('wheel', gesto);
+      el.removeEventListener('touchmove', gesto);
+      el.removeEventListener('keydown', aoTecla);
+      el.removeEventListener('pointerdown', aoPressionar);
+      window.removeEventListener('pointerup', aoSoltar);
+      el.removeEventListener('scroll', aoRolar);
+    };
   }, []);
 
   const irAoFim = useCallback(() => {
     pausadoRef.current = false;
     setAfastado(false);
     setSeqVisto(null);
+    setCartoesVistos(null);
     rolarParaOFim(messagesEndRef.current);
   }, []);
 
@@ -160,6 +225,7 @@ export function useRolagemDoFio({
     seguindoRef.current = true;
     setAfastado(false);
     setSeqVisto(null);
+    setCartoesVistos(null);
     setTimeout(() => {
       const meus = messagesInnerRef.current?.querySelectorAll?.('[data-autor="voce"]');
       const ultimo = meus && meus.length > 0 ? (meus[meus.length - 1] as HTMLElement) : null;
@@ -169,6 +235,7 @@ export function useRolagemDoFio({
   }, []);
 
   const novas = novasDepoisDe(events, seqVisto);
+  const cartoes = cartoesNovosDepoisDe(actions, handoffs, cartoesVistos);
 
-  return { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, irAoFim, ancorarNoEnvio };
+  return { messagesEndRef, scrollContainerRef, messagesInnerRef, afastado, novas, cartoes, irAoFim, ancorarNoEnvio };
 }

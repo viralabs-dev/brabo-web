@@ -11,7 +11,9 @@ import {
   unblockTask,
   updateProject,
 } from '../lib/api-client';
-import type { OpenQuestion, ProposedAction, Task } from '../lib/api-types';
+import type { Handoff, OpenQuestion, ProposedAction, Task } from '../lib/api-types';
+import { nomeDoAgente } from '../lib/agents';
+import { verboDaAcao } from '../lib/aprovacoes';
 import { usePrsProntas } from '../lib/prs-prontas';
 import { useAgentesTravados } from '../lib/agentes-travados-query';
 import { assinaturaDoBacklog, tarefasBloqueadas, tarefasSemModulo } from '../lib/prontas-e-bloqueadas';
@@ -24,6 +26,7 @@ import { PerguntasEmAberto } from './PerguntasEmAberto';
 import { EVENTO_ABRIR_FILA, EVENTO_ABRIR_PERGUNTAS, usePerguntasEmAberto } from '../lib/perguntas-em-aberto';
 import {
   CHAVE_DAS_PENDENCIAS_DO_PROJETO,
+  pendenciasDestaSessao,
   separarPendenciasDeOutrasSessoes,
 } from '../lib/pendencias-do-projeto';
 import { hashtagDaSessao } from '../lib/session-label';
@@ -42,7 +45,7 @@ import { paginar } from '../lib/paginacao-de-fila';
 import { ToggleGroup, ToggleGroupItem } from './shadcn/toggle-group';
 import styles from './PendenciasDeOutrasSessoes.module.css';
 
-type ChaveDeFila = 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados' | 'semModulo';
+type ChaveDeFila = 'noChat' | 'perguntas' | 'aprovacoes' | 'merges' | 'prontas' | 'bloqueadas' | 'travados' | 'semModulo';
 
 /** Nenhum evento local: estas ações são sempre de OUTRA sessão (AT-340). */
 const SEM_EVENTOS_LOCAIS: readonly never[] = [];
@@ -70,6 +73,14 @@ interface PendenciasDeOutrasSessoesProps {
   modo?: 'inline' | 'sheet' | 'painel';
   aberto?: boolean;
   aoMudarAberto?: (aberto: boolean) => void;
+  /**
+   * RN-1510 (AT-1022): o que espera o dono NESTE chat — as ações e as ofertas de passagem da sessão
+   * aberta, lidas pela tela. Viram LINHAS da fila `noChat` ("Ver no chat"); o cartão segue só no fio.
+   */
+  acoesDaSessao?: readonly ProposedAction[];
+  ofertasDaSessao?: readonly Handoff[];
+  /** "Ver no chat" no Sheet compacto: fecha o painel para o fio aparecer. */
+  aoVerNoChat?: () => void;
   /** Só no modo `sheet`: o total de pendências, para o contador do cabeçalho e a linha do fio. */
   aoContar?: (total: number) => void;
 }
@@ -96,6 +107,9 @@ export function PendenciasDeOutrasSessoes({
   aberto = false,
   aoMudarAberto,
   aoContar,
+  acoesDaSessao,
+  ofertasDaSessao,
+  aoVerNoChat,
 }: PendenciasDeOutrasSessoesProps) {
   // AT-957: `painel` é o corpo da aba Pendências do painel da sessão (mesmo desenho compacto do Sheet, sem o invólucro).
   const noSheet = modo !== 'inline';
@@ -152,6 +166,10 @@ export function PendenciasDeOutrasSessoes({
   const [respondidas, setRespondidas] = useState<OpenQuestion[]>([]);
   const totalDePerguntas = perguntasQuery.data?.total ?? 0;
   const total = aprovacoes.length + merges.length;
+  // RN-1510: as linhas do que espera aqui (só ação `pending` e oferta `offered`).
+  const noChatAcoes = pendenciasDestaSessao(acoesDaSessao, sessionId);
+  const noChatOfertas = (ofertasDaSessao ?? []).filter((h) => h.status === 'offered');
+  const totalNoChat = noChatAcoes.length + noChatOfertas.length;
 
   // AT-680 (RN-975): cada fila pagina por si, de 3 em 3, no cliente e sobre a
   // lista que já foi lida (nenhuma query nova). A página é ajustada em render:
@@ -243,13 +261,14 @@ export function PendenciasDeOutrasSessoes({
 
   // AT-950: o contador do cabeçalho soma as filas; cada aba segue com o PRÓPRIO número (RN-467).
   const totalGeral =
-    total + prontas.length + bloqueadas.length + travados.length + semModulo.length + totalDePerguntas;
+    totalNoChat + total + prontas.length + bloqueadas.length + travados.length + semModulo.length + totalDePerguntas;
   useEffect(() => {
     if (noSheet) aoContar?.(totalGeral);
   }, [noSheet, aoContar, totalGeral]);
 
   if (
     saidas === null &&
+    totalNoChat === 0 &&
     total === 0 &&
     prontas.length === 0 &&
     bloqueadas.length === 0 &&
@@ -413,6 +432,7 @@ export function PendenciasDeOutrasSessoes({
   // Presença POR FILA no cabeçalho, visível com o bloco recolhido — cada fila
   // com o próprio número, nunca uma soma (RN-467).
   const contagens = {
+    noChat: totalNoChat,
     aprovacoes: aprovacoes.length,
     merges: merges.length,
     prontas: prontas.length,
@@ -422,11 +442,11 @@ export function PendenciasDeOutrasSessoes({
     perguntas: totalDePerguntas,
   };
   // AT-950: no Sheet nenhuma aba fica sem escolha — abre a primeira fila com itens.
-  const filasComItens = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const).filter(
+  const filasComItens = (['noChat', 'perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const).filter(
     (chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0),
   );
   const abertaDeFato = noSheet ? (aberta ?? filasComItens[0] ?? null) : aberta;
-  const presenca = (['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
+  const presenca = (['noChat', 'perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
     .map((chave) => ({ chave, n: contagens[chave] }))
     .filter(({ n }) => n > 0)
     .map(({ chave, n }) => `${t(`pendencias.filas.${chave}`)} ${n}`)
@@ -479,7 +499,7 @@ export function PendenciasDeOutrasSessoes({
           onValueChange={(v) => setAberta((v[0] as ChaveDeFila | undefined) ?? null)}
         >
           <Ajuda assunto={t('pendencias.abas')}>{t('pendencias.nota')}</Ajuda>
-          {(['perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
+          {(['noChat', 'perguntas', 'aprovacoes', 'merges', 'prontas', 'bloqueadas', 'travados', 'semModulo'] as const)
             .filter((chave) => contagens[chave] > 0 || (chave === 'perguntas' && respondidas.length > 0))
             .map((chave) => (
               <ToggleGroupItem key={chave} value={chave}>
@@ -489,6 +509,37 @@ export function PendenciasDeOutrasSessoes({
         </ToggleGroup>
         )}
         <div className={noSheet ? styles.listaDoSheet : styles.lista}>
+          {painel('noChat', totalNoChat > 0 && (
+            <section
+              className={styles.fila}
+              aria-label={t('pendencias.filas.noChat')}
+              data-testid="fila-no-chat"
+            >
+              <h4 className={styles.filaTitulo}>
+                {t('pendencias.filas.noChat')}
+                <span className={styles.contagem}>{totalNoChat}</span>
+              </h4>
+              {noChatAcoes.map((acao) => (
+                <LinhaNoChat
+                  key={acao.id}
+                  texto={`${verboDaAcao(acao.actionType)} · ${nomeDoAgente(acao.actor.id)}`}
+                  alvo={`acao-${acao.id}`}
+                  aoVer={aoVerNoChat}
+                />
+              ))}
+              {noChatOfertas.map((oferta) => (
+                <LinhaNoChat
+                  key={oferta.id}
+                  texto={t('pendencias.noChat.oferta', {
+                    de: nomeDoAgente(oferta.fromAgent),
+                    para: nomeDoAgente(oferta.toAgent),
+                  })}
+                  alvo={`oferta-${oferta.id}`}
+                  aoVer={aoVerNoChat}
+                />
+              ))}
+            </section>
+          ))}
           {painel('perguntas', <PerguntasEmAberto
             projectId={projectId}
             perguntas={perguntas}
@@ -782,4 +833,27 @@ export function PendenciasDeOutrasSessoes({
 function RegistroDoBloco({ ids }: { ids: readonly string[] }) {
   useRegistrarAcoesNoBloco(ids);
   return null;
+}
+
+/**
+ * RN-1510: uma linha da fila "Esperando você neste chat". NÃO desenha o cartão
+ * (ele vive no fio) nem se registra no bloco (RN-843): só leva até ele.
+ */
+function LinhaNoChat({ texto, alvo, aoVer }: { texto: string; alvo: string; aoVer?: () => void }) {
+  const { t } = useTranslation('sessionPage');
+  return (
+    <div className={styles.linhaNoChat} data-testid="linha-no-chat">
+      <span className={styles.textoNoChat}>{texto}</span>
+      <Button
+        variant="secondary"
+        onClick={() => {
+          aoVer?.();
+          // Depois do render que fecha o Sheet; `scrollIntoView` pode não existir (jsdom).
+          setTimeout(() => document.getElementById(alvo)?.scrollIntoView?.({ behavior: 'smooth', block: 'center' }), 0);
+        }}
+      >
+        {t('pendencias.noChat.verNoChat')}
+      </Button>
+    </div>
+  );
 }

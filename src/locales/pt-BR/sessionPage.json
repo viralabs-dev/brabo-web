@@ -398,7 +398,12 @@
       "bloqueadas": "Tarefas bloqueadas",
       "perguntas": "Perguntas em aberto",
       "travados": "Agentes travados",
-      "semModulo": "Tarefas sem módulo"
+      "semModulo": "Tarefas sem módulo",
+      "noChat": "Esperando você neste chat"
+    },
+    "noChat": {
+      "verNoChat": "Ver no chat",
+      "oferta": "{{de}} passou a vez para {{para}}"
     },
     "origem_zero": "{{count}} propostas na sessão {{hashtag}} · a mais antiga {{tempo}}",
     "origem_one": "Proposta na sessão {{hashtag}} · {{tempo}}",
@@ -527,6 +532,9 @@
     "irAoFimComNovas_zero": "Ir ao fim",
     "irAoFimComNovas_one": "Ir ao fim · {{count}} nova",
     "irAoFimComNovas_other": "Ir ao fim · {{count}} novas",
+    "irAoFimComCartao_zero": "Ir ao fim",
+    "irAoFimComCartao_one": "Ir ao fim · {{count}} cartão esperando você",
+    "irAoFimComCartao_other": "Ir ao fim · {{count}} cartões esperando você",
     "verRespostaInteira": "Ver resposta inteira",
     "recolherResposta": "Recolher resposta"
   },

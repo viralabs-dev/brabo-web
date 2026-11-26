@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feat (AT-1022, EP-036, RN-1510): a aba Pendências mostra tudo o que espera o dono, sem recarregar. Nova fila "Esperando você neste chat" com uma linha por ação pendente e por oferta de passagem da sessão aberta, com "Ver no chat" (sem segundo cartão; o contador e o vazio passam a dizer a verdade). As perguntas em aberto pollam a cada 15 s (a pergunta do QA em outra sessão aparece sem F5). O fio só pausa por gesto da pessoa (a rolagem do sistema não pausa) e acompanha cartão novo; "Ir ao fim" vira faixa entre o fio e a doca ("Ir ao fim · N cartões esperando você"). Revisa as RN-626, RN-943 e RN-977. i18n nos quatro idiomas. Fora: a rolagem horizontal do chat (causa não achada). Regressivo `brabo-qa` (opcional): `scrollWidth <= clientWidth` no fio e o botão fora dos botões do último cartão.
+
 - Doc (AT-1028): o link da RN-1493 da api em `parte-08.md` aponta para a `parte-13.md`, para onde a regra foi na divisão da página (api#162).
 
 - Doc (AT-1028): as refs da `parte-05` e da `parte-06` para arquivos do `brabo-engine` e da `brabo-api` voltam a bater com a `dev` depois das rodadas de 26/11 (`dev_lead_tools.ex` `resumo_do_plano` e `bloqueio`, `propose-action.use-case.ts`).

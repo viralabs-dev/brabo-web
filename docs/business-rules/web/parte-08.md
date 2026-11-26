@@ -483,7 +483,7 @@ keywords: [regras de negócio, web]
 
 ### RN-1503 — Container que falhou mostra a primeira linha do motivo na lista; o nome do projeto abre o detalhe {#rn-1503}
 
-- **Regra:** em `/containers`, a coluna "Detalhe" sai (a lista tem 7 colunas) e o nome do projeto abre `/containers/$projectId`. Com o registrado `failed` e `motivoDaFalha` (a primeira linha do `failureReason` gravado, vinda da api, [RN-1493 da api](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api/parte-12.md#rn-1493)), o status mostra o motivo numa linha cortada embaixo do selo, com "Ver detalhe"; sem motivo, só "falhou". O nome de imagem longo quebra a linha na coluna Imagem, sem reticências.
+- **Regra:** em `/containers`, a coluna "Detalhe" sai (a lista tem 7 colunas) e o nome do projeto abre `/containers/$projectId`. Com o registrado `failed` e `motivoDaFalha` (a primeira linha do `failureReason` gravado, vinda da api, [RN-1493 da api](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api/parte-13.md#rn-1493)), o status mostra o motivo numa linha cortada embaixo do selo, com "Ver detalhe"; sem motivo, só "falhou". O nome de imagem longo quebra a linha na coluna Imagem, sem reticências.
 - **Onde:** `src/routes/ContainersPage.tsx` (`columns`), `src/routes/ContainersPage.module.css` (`.imagemTexto`, `.motivoDaFalha`), `src/lib/api-types.ts`.
 - **Teste:** `src/routes/ContainersPage.test.tsx` ("AT-1006").
 - **Origem:** AT-1006 (EP-035), prancha L11 da v11. Revisa a coluna "Detalhe" da AT-976.

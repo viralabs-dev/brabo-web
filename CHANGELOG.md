@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Doc (AT-1028): o link da RN-1493 da api em `parte-08.md` aponta para a `parte-13.md`, para onde a regra foi na divisão da página (api#162).
+
 - Doc (AT-1028): as refs da `parte-05` e da `parte-06` para arquivos do `brabo-engine` e da `brabo-api` voltam a bater com a `dev` depois das rodadas de 26/11 (`dev_lead_tools.ex` `resumo_do_plano` e `bloqueio`, `propose-action.use-case.ts`).
 
 - Feature (AT-1017; RN-1512 do engine): o evento `qa.awaiting_environment` aparece como "Esperando a vez no teste" e deixa o QA de Automação `aguardando`, não `falhou`.

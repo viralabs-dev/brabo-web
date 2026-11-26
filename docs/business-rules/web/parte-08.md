@@ -559,3 +559,5 @@ keywords: [regras de negócio, web]
 - **Onde:** `src/routes/code/CodeEditor.module.css`.
 - **Teste:** `src/components/ui/alvos-de-24px.test.tsx`.
 - **Origem:** AT-1010 (EP-035). Complementa a [RN-1494](#rn-1494).
+
+> **Referência à [RN-1512](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine/parte-07.md#rn-1512) (engine, AT-1017).** O evento `qa.awaiting_environment` aparece como "Esperando a vez no teste: outra tarefa está usando o ambiente de teste. Segue sozinho quando liberar." (sem alarme) e deixa o `qa-automacao` em `aguardando`, nunca `falhou`. Onde: `src/lib/activity.ts:229` (`classifyEvent`), `src/lib/agent-status.ts:195` (`subagentStatus`). Teste: `src/lib/activity.test.ts`, `src/lib/agent-status.test.ts`.

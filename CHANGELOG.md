@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Feature (AT-1017; RN-1512 do engine): o evento `qa.awaiting_environment` aparece como "Esperando a vez no teste" e deixa o QA de Automação `aguardando`, não `falhou`.
+
 - Fix (AT-1027): o `ToastProvider` guarda os temporizadores dos toasts e os limpa ao desmontar; o `ProjectSettingsTab.test.tsx` deixa de falhar de forma intermitente com `window is not defined` depois do fim do ambiente. Teste novo em `ToastProvider.test.tsx`.
 
 - Fix (AT-1024, RN-1395, RN-1450): o atalho do primeiro uso propõe o Haiku apto (com chamada de ferramentas e disponível) mais barato do catálogo ativo e mostra o preço no botão ("Aplicar Claude Haiku 5.5 ao time · US$ 0,10 / US$ 0,50 por 1M"); antes pegava o primeiro Haiku da lista (o 4.5, 10 vezes mais caro). "Definir teto" do cabeçalho, do cartão do projeto e de Configurações abre o formulário do teto já aberto, sem segundo clique. O `.env.example` do entregável (parte c) é do `brabo-engine`.

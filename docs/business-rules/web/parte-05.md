@@ -113,11 +113,11 @@ continuam SEM decisão inline (não há `ApprovalCard` para elas).
   (`turnoEmCursoNoLog`), `:536` (`useRetomarTurnoDoLog`);
   `apps/web/src/lib/pendencias-do-projeto.ts:24` (`usePendenciasDoProjeto`),
   `:56` (`separarPendenciasDeOutrasSessoes`);
-  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:90`
+  `apps/web/src/components/PendenciasDeOutrasSessoes.tsx:101`
   (`PendenciasDeOutrasSessoes`); `apps/web/src/routes/MergearNoChat.helpers.ts:14`
   (`prAbertaDaAcao`), `:42` (`jaHaMergeDaPr`), `apps/web/src/routes/MergearNoChat.tsx:62` (`MergearNoChat`);
   `apps/web/src/routes/SessionPage.tsx:144` (`podeDecidir`), `:276`
-  (`useRetomarTurnoDoLog`), `:881` (`PainelDaSessao`)
+  (`useRetomarTurnoDoLog`), `:893` (`PainelDaSessao`)
 - **Teste:** `apps/web/src/components/ApprovalCard.decisao-em-voo.test.tsx:37`
   (duplo clique), `:52` (409 no card e botões inertes — caso de falha), `:67`
   (erro que não é 409 devolve os botões); `apps/web/src/lib/turno-em-curso-no-log.test.ts:18`
@@ -975,7 +975,7 @@ verificador ainda relata nas Configurações e em Aprovações são ícones deco
 `position: absolute` dentro de controles abaixo da dobra, não algo cortado.
 
 - **Código:** `apps/web/src/lib/painel-de-contexto.ts:16`
-  (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:41`
+  (`usePainelDeContexto`); `apps/web/src/routes/PainelDaSessao.tsx:45`
   (`PainelDaSessao`); `apps/web/src/routes/SessionTopbar.tsx:141`
   (`movel`); `apps/web/src/components/ui/Table.tsx:24` (`largaNoMovel`),
   `:47` (`movel`); `apps/web/src/routes/Dashboard.tsx:315` (`movel`);

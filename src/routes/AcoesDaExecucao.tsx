@@ -8,7 +8,7 @@ import { Badge } from '../components/ui/Badge';
 import { Button } from '../components/ui/Button';
 import { Disclosure } from '../components/ui/Disclosure';
 import { BloqueioRetomavel } from '../components/BloqueioRetomavel';
-import { ACAO_AUMENTAR_O_TETO } from '../lib/explicacao-do-bloqueio';
+import { pedirAba } from '../lib/contagens-do-projeto';
 import { useToast } from '../components/ui/ToastProvider.helpers';
 import type { Epic, ProposedAction, SessionEvent } from '../lib/api-types';
 import styles from './ProjectOverviewTab.module.css';
@@ -138,7 +138,7 @@ export function AcoesDaExecucao({
                         podeDecidir={podeDecidir}
                         enviando={d?.estado === 'em_voo'}
                         aoRetomar={(orientacao) => void desbloquear(b.id, orientacao)}
-                        acoesOcultas={[ACAO_AUMENTAR_O_TETO]}
+                        aoIrAoTeto={() => pedirAba({ projectId, tab: 'settings' })}
                       />
                     )}
                     {d?.estado === 'erro' && (

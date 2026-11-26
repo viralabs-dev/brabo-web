@@ -430,9 +430,31 @@
       "botaoComTexto": "Unblock with this text",
       "soVoce": "What only you can do",
       "causas": {
-        "qa_instancia_indisponivel": "The quality test environment is not available right now.",
-        "credito_do_provedor": "The AI provider account balance ran out, and only you can top it up.",
-        "orcamento_excedido": "This task spent the cost limit set for each task."
+        "reinicio_do_engine": "The system was restarted while the task was in progress.",
+        "falha_de_contexto": "Could not gather the task information for the agent to continue.",
+        "push_nao_aprovado": "Sending the work to the repository was not approved, so the task stopped.",
+        "push_falhou": "Could not send the work to the project repository.",
+        "commit_recusado": "The commit or the sending of the fix was refused, so the task stopped.",
+        "pr_nao_aberta": "The PR was not opened because the task's git actions were not approved.",
+        "retomada_da_branch": "Could not resume the branch of the PR that is in conflict.",
+        "conflito_de_integracao": "The work conflicted with the newest version of the project and the agent did not resolve it.",
+        "conflito_de_merge": "The PR conflicted with the newest version of the project and no agent could resolve it.",
+        "credencial_de_git": "The repository access key cannot be used on this execution machine.",
+        "falha_no_worktree": "Could not prepare the task's working folder.",
+        "worktree_diverge": "The working folder and the published branch are on different versions.",
+        "orcamento_excedido": "This task's spending limit was reached, and only you can release more.",
+        "limite_de_iteracoes": "The agent used all the task's attempts without being able to finish.",
+        "limite_de_iteracoes_correcao": "The agent used all the fix's attempts without being able to finish it.",
+        "credito_do_provedor": "The model provider's credit ran out, so the agent stopped.",
+        "limite_de_uso": "The model provider reached its usage limit and the agent had to stop.",
+        "falha_de_rede": "The connection to the model provider dropped; the task comes back on its own in a few minutes.",
+        "resposta_cortada": "The model spent the whole response space thinking and never acted.",
+        "parada_sem_sinal": "The agent stopped without finishing the task and without saying why.",
+        "qa_instancia_indisponivel": "QA Automation could not start the test environment.",
+        "qa_espera_esgotada": "The test environment took too long to be ready.",
+        "gate_bloqueado": "The task's verification stopped before giving its verdict.",
+        "sessao_encerrada": "The execution session was ended with the task in progress.",
+        "generico": "The agent stopped and needs you to continue."
       },
       "soVocePode": {
         "credito_do_provedor": "Top up the balance on the AI provider account. Then come back here and tap “Try again”."
@@ -440,7 +462,8 @@
       "acoes": {
         "aumentar_o_teto": "Raise the limit and continue",
         "tentar_de_novo": "Try again"
-      }
+      },
+      "irAoTeto": "Raise the limit (in Settings)"
     },
     "perguntas": {
       "origem": "{{agente}} asked · {{tempo}}",

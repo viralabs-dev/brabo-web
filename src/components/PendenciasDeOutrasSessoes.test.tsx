@@ -804,7 +804,7 @@ describe('PendenciasDeOutrasSessoes — retomada em um clique (AT-1021, RN-1531)
     montar();
     await abrir('Blocked tasks');
     const fila = await screen.findByTestId('fila-tarefas-bloqueadas');
-    expect(within(fila).getByText('The quality test environment is not available right now.')).toBeInTheDocument();
+    expect(within(fila).getByText('QA Automation could not start the test environment.')).toBeInTheDocument();
     expect(within(fila).getByText('texto novo do catálogo')).toBeInTheDocument();
     expect(within(fila).getByRole('button', { name: 'Try again' })).toBeInTheDocument();
     await i18n.changeLanguage('pt-BR');

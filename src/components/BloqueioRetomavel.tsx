@@ -1,11 +1,13 @@
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ExplicacaoDoBloqueio } from '../lib/api-types';
-import { acoesDoBloqueio, causaDoBloqueio, type AcaoProntaDoBloqueio } from '../lib/explicacao-do-bloqueio';
+import { ACAO_AUMENTAR_O_TETO, acoesDoBloqueio, causaDoBloqueio, type AcaoProntaDoBloqueio } from '../lib/explicacao-do-bloqueio';
 import { Button } from './ui/Button';
 import { Disclosure } from './ui/Disclosure';
 import { Textarea } from './ui/Textarea';
 import styles from './PendenciasDeOutrasSessoes.module.css';
+
+const IR_AO_TETO = 'ir_ao_teto';
 
 /**
  * AT-1021 (RN-1531): o corpo de um bloqueio para quem não programa. Causa em uma frase, uma ou duas
@@ -20,7 +22,7 @@ export function BloqueioRetomavel({
   aoRetomar,
   antes,
   acaoDesabilitada,
-  acoesOcultas,
+  aoIrAoTeto,
 }: {
   tarefa: { blockedReason: string | null; blockedExplicacao?: ExplicacaoDoBloqueio | null };
   podeDecidir: boolean;
@@ -29,12 +31,22 @@ export function BloqueioRetomavel({
   aoRetomar: (orientacao: string, acao?: AcaoProntaDoBloqueio) => void;
   antes?: ReactNode;
   acaoDesabilitada?: (acao: AcaoProntaDoBloqueio) => boolean;
-  /** Ações que esta tela não sabe executar (ex.: o teto, que só as Pendências gravam). */
-  acoesOcultas?: readonly string[];
+  /**
+   * Telas que não gravam o teto (a Visão geral): a ação `aumentar_o_teto` vira "Aumentar o teto
+   * (nas Configurações)", que leva até lá, seguida de "Tentar de novo" para retomar depois.
+   */
+  aoIrAoTeto?: () => void;
 }) {
   const { t, i18n } = useTranslation('sessionPage');
   const [texto, setTexto] = useState('');
-  const acoes = acoesDoBloqueio(tarefa, t).filter((a) => !a.id || !acoesOcultas?.includes(a.id));
+  const acoes = acoesDoBloqueio(tarefa, t).flatMap((a): AcaoProntaDoBloqueio[] =>
+    aoIrAoTeto && a.id === ACAO_AUMENTAR_O_TETO
+      ? [
+          { id: IR_AO_TETO, rotulo: t('pendencias.bloqueadas.irAoTeto'), orientacao: '' },
+          { rotulo: t('pendencias.bloqueadas.tentarDeNovo'), orientacao: a.orientacao },
+        ]
+      : [a],
+  );
   // O que só o dono pode fazer (ex.: recarregar o saldo): texto do catálogo, traduzido por código.
   const chaveSoVoce = `pendencias.bloqueadas.soVocePode.${tarefa.blockedExplicacao?.codigo}`;
   const soVoce = tarefa.blockedExplicacao?.codigo && i18n.exists(chaveSoVoce, { ns: 'sessionPage' }) ? t(chaveSoVoce) : null;
@@ -58,7 +70,7 @@ export function BloqueioRetomavel({
             variant={i === 0 ? 'primary' : 'secondary'}
             disabled={inerte || !!acaoDesabilitada?.(a)}
             loading={enviando && i === 0}
-            onClick={() => aoRetomar(a.orientacao, a)}
+            onClick={() => (a.id === IR_AO_TETO ? aoIrAoTeto?.() : aoRetomar(a.orientacao, a))}
             data-testid="acao-do-bloqueio"
           >
             {a.rotulo}

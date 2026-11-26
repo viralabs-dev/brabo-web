@@ -588,3 +588,21 @@ keywords: [regras de negócio, web]
 - **Onde:** `src/components/PerguntasEmAberto.tsx` (`CartaoDaPergunta`), `src/locales/*/sessionPage.json` (`pendencias.perguntas.detalheTecnico`).
 - **Teste:** `src/components/PerguntasEmAberto.test.tsx` (L1, L4, L6 e L9 do TP-01 30ª).
 - **Origem:** AT-1021 (EP-036).
+
+<a id="rn-1535"></a>
+
+### RN-1535 — Resposta, pergunta e ator nunca mostram identificador interno {#rn-1535}
+
+- **Regra:** o texto de `agent.response` no fio e o texto da pergunta em aberto passam por `semIdentificadorInterno`, que APAGA o UUID entre parênteses (com o espaço antes), o prefixo hex de 8 caracteres seguido de `-` entre parênteses, os pares `questionId=<uuid>` e `taskId=<uuid>` e o UUID solto, sem deixar espaço duplo; crase e bloco de código ficam intactos (ali o id pode ser o assunto). O UUID não vira link nem chip, e o id segue no log de eventos. "Decididas recentemente" nomeia o ator como o cartão de aprovação (RN-705 da api, RN-652/655): a pessoa pelo nome do membro, "Você" ou "Outro membro"; agente fora do roster com cara de UUID vira "um agente". `nomeDoAgente` nunca devolve UUID cru. Complementa a [RN-1225](parte-07.md#rn-1225).
+- **Onde:** `src/lib/sem-identificador.ts` (`semIdentificadorInterno`, `pareceUuid`), `src/routes/session-timeline-montagem.tsx` (`MarkdownMessage`), `src/components/PerguntasEmAberto.tsx`, `src/components/NomeDoAtor.tsx` (`NomeDoMembroAtor`), `src/routes/DecididasRecentemente.tsx`, `src/lib/agents.ts` (`nomeDoAgente`), `src/locales/*/approvals.json` (`approvalsTab.decided.agenteSemNome`).
+- **Teste:** `src/lib/sem-identificador.test.ts`, `src/routes/SessionPage.markdown-resposta.test.tsx`, `src/routes/DecididasRecentemente.test.tsx`, `src/components/PerguntasEmAberto.test.tsx`.
+- **Origem:** AT-1026 (EP-036, achados 4, 16 e 27 do TP-01 30ª), fatia F3 (web).
+
+<a id="rn-1536"></a>
+
+### RN-1536 — O aviso de aceite automático diz o critério que valeu, e Enter envia a resposta curta {#rn-1536}
+
+- **Regra:** o aviso do aceite sem clique usa a frase da FORMA do critério: com `criterio.regras` (PO ao Arquiteto, RN-660 da api) fica "o backlog cobre as N regras"; com `criterio.origem === 'oferta'`, a frase da regra de aceite que a pessoa ligou; nos demais casos (`criterio.passagem`), a da passagem ligada com repositório local. Nunca `?? 0`. Na pergunta em aberto ([RN-861](parte-06.md#rn-861)), Enter no campo de resposta envia UMA vez `{ resposta }`, com as mesmas travas do botão (autor da sessão, sem envio em curso), e não envia com o campo vazio nem durante composição de IME.
+- **Onde:** `src/routes/session-timeline-montagem.tsx` (`handoff.accepted` automático), `src/locales/*/sessionPage.json` (`handoff.aceiteAutomaticoPassagem`, `handoff.aceiteAutomaticoOferta`), `src/components/PerguntasEmAberto.tsx` (`enviarComEnter`).
+- **Teste:** `src/routes/SessionPage.handoff-aceite-automatico.test.tsx`, `src/components/PerguntasEmAberto.test.tsx`.
+- **Origem:** AT-1026 (EP-036, achados 10 e 12 do TP-01 30ª), fatia F3 (web).

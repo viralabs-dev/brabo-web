@@ -387,6 +387,7 @@
         "executed": "Выполнено",
         "failed": "Сбой"
       },
+      "agenteSemNome": "агент",
       "chipAuto": "авто · политика",
       "seeAllLower": "показать все",
       "earlierAuto_one": "{{count}} более раннее автоматическое решение",

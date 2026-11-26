@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Reply, ThumbsUp, X } from 'lucide-react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -7,6 +7,7 @@ import type { OpenQuestion, Story, Task } from '../lib/api-types';
 import { motivoDeCorrecaoInerte } from '../lib/correcao-de-historia';
 import { nomeDoAgente } from '../lib/agents';
 import { userIdDaSessao } from '../lib/auth';
+import { semIdentificadorInterno } from '../lib/sem-identificador';
 import {
   ID_DA_FILA_DE_PERGUNTAS,
   rolarAteAsPerguntas,
@@ -244,6 +245,14 @@ function CartaoDaPergunta({
     .map((id) => tarefas?.find((task) => task.id === id))
     .filter((task): task is Task => !!task);
 
+  // RN-1536: Enter envia a resposta curta, com as mesmas travas do clique; IME em composição não conta.
+  function enviarComEnter(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key !== 'Enter' || e.nativeEvent.isComposing || !eAutor || enviando !== null) return;
+    if (texto.trim() === '') return;
+    e.preventDefault();
+    void responder({ resposta: texto.trim() });
+  }
+
   async function responder(corpo: { resposta: string } | { aceitarSugestao: true }) {
     setEnviando('resposta' in corpo ? 'resposta' : 'sugestao');
     setErro(null);
@@ -270,7 +279,7 @@ function CartaoDaPergunta({
           tempo: formatRelativeTime(pergunta.criadaEm),
         })}
       </div>
-      <p>{pergunta.pergunta}</p>
+      <p>{semIdentificadorInterno(pergunta.pergunta)}</p>
       {afeta.length > 0 && (
         <p className={styles.nota}>
           {t('pendencias.perguntas.afeta')} {afeta.join(' · ')}
@@ -326,6 +335,7 @@ function CartaoDaPergunta({
           placeholder={t('pendencias.perguntas.campo')}
           autoComplete="off"
           onChange={(e) => setTexto(e.target.value)}
+          onKeyDown={enviarComEnter}
         />
         <Button
           variant="primary"
@@ -358,6 +368,7 @@ function CartaoDaPergunta({
               placeholder={t('pendencias.perguntas.campo')}
               autoComplete="off"
               onChange={(e) => setTexto(e.target.value)}
+              onKeyDown={enviarComEnter}
             />
             <Button
               variant="primary"
@@ -409,7 +420,7 @@ export function CartaoRespondido({
     .filter((s): s is Story => !!s);
   return (
     <div className={styles.grupo} data-testid="pergunta-respondida">
-      <p>{pergunta.pergunta}</p>
+      <p>{semIdentificadorInterno(pergunta.pergunta)}</p>
       <p className={styles.nota}>{t('pendencias.perguntas.respondida')}</p>
       {afetadas.map((story) => {
         const inerte = motivoDeCorrecaoInerte(story, podeCorrigir);

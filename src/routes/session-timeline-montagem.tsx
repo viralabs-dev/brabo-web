@@ -20,6 +20,7 @@ import type { useTurnoDoAgente } from '../lib/session-turno';
 import { ApprovalCard } from '../components/ApprovalCard';
 import { CartaoOuReferenciaNoFio } from '../components/CartaoOuReferenciaNoFio';
 import { MarkdownMessage } from '../components/ui/MarkdownMessage';
+import { semIdentificadorInterno } from '../lib/sem-identificador';
 import { AvatarDoAgente } from '../components/ui/AvatarDoAgente';
 import { Button } from '../components/ui/Button';
 import { Badge } from '../components/ui/Badge';
@@ -725,7 +726,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
       // é o único lugar onde a pessoa descobre por que o Arquiteto entrou.
       const payload = event.payload as {
         toAgent?: string;
-        criterio?: { regras?: number };
+        criterio?: { regras?: number; passagem?: string; origem?: string };
       };
       empurrar({
         desfecho: true,
@@ -735,10 +736,18 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
             data-testid="handoff-aceite-automatico"
           >
             <Badge tone="muted" size="md">
-              {t('handoff.aceiteAutomatico', {
-                agente: nomeDoAgente(payload.toAgent),
-                regras: payload.criterio?.regras ?? 0,
-              })}
+              {/* RN-1536: a frase é a do critério que valeu; nunca "0 regras". */}
+              {typeof payload.criterio?.regras === 'number'
+                ? t('handoff.aceiteAutomatico', {
+                    agente: nomeDoAgente(payload.toAgent),
+                    regras: payload.criterio.regras,
+                  })
+                : t(
+                    payload.criterio?.origem === 'oferta'
+                      ? 'handoff.aceiteAutomaticoOferta'
+                      : 'handoff.aceiteAutomaticoPassagem',
+                    { agente: nomeDoAgente(payload.toAgent) },
+                  )}
             </Badge>
           </Marker>
         ),
@@ -1003,7 +1012,7 @@ export function montarTimeline(ctx: ContextoDaTimeline): TimelineEntry[] {
                 texto DIGITADO. */}
             {text === '' ? t('mensagens.respostaVazia') : (
               <TextoDoAgente recolhivel={event.id !== ultimaRespostaId && ehLongo(text)}>
-                <MarkdownMessage text={text} selo={seloDoTurno(event, projectId, sessionId)} />
+                <MarkdownMessage text={semIdentificadorInterno(text)} selo={seloDoTurno(event, projectId, sessionId)} />
               </TextoDoAgente>
             )}
           </MensagemDeConversa>

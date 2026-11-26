@@ -203,6 +203,8 @@
   },
   "handoff": {
     "aceiteAutomatico": "已自动接受：待办列表覆盖了 {{regras}} 条业务规则且仓库为本地仓库，因此 {{agente}} 无需点击即已加入。",
+    "aceiteAutomaticoPassagem": "已自动接受：向 {{agente}} 的交接已开启且仓库为本地仓库，因此 {{agente}} 无需点击即已加入。",
+    "aceiteAutomaticoOferta": "已按您开启的接受规则自动接受，因此 {{agente}} 无需点击即已加入。",
     "aceiteAutomaticoFalhou": "向 {{agente}} 的 handoff 自动接受失败：{{erro}}。请通过邀请卡片接受。",
     "passouOBastaoAo": "把接力棒交给了",
     "aceitarEPassar": "接受并交给 {{agente}}",

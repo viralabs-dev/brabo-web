@@ -369,6 +369,7 @@
         "executed": "Executada",
         "failed": "Falhou"
       },
+      "agenteSemNome": "um agente",
       "chipAuto": "auto · política",
       "seeAllLower": "ver todas",
       "earlierAuto_zero": "{{count}} decisões automáticas anteriores",

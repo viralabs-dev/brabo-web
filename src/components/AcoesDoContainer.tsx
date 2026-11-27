@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -61,6 +61,16 @@ export function AcoesDoContainer({
 
   // AT-422 (RN-738): a linha E o ciclo de vida do projeto. Sem poll novo —
   // é o desfecho da decisão que diz quando reler.
+  // RN-1545: só o cartão nascido do clique desta linha é trazido à vista.
+  const veioDoClique = useRef(false);
+  const cartaoRef = useRef<HTMLDivElement>(null);
+  const acaoPendenteId = item.acaoPendente?.id;
+  useEffect(() => {
+    if (!acaoPendenteId || !veioDoClique.current) return;
+    veioDoClique.current = false;
+    cartaoRef.current?.scrollIntoView?.({ block: 'nearest' });
+  }, [acaoPendenteId]);
+
   function invalidateContainers() {
     queryClient.invalidateQueries({ queryKey: ['containers-overview'] });
     queryClient.invalidateQueries({
@@ -73,6 +83,7 @@ export function AcoesDoContainer({
   ) {
     if (!latestSession) return;
     try {
+      veioDoClique.current = true;
       await proposeAction(item.projectId, latestSession.id, {
         actionType,
         actor: { kind: 'user', id: userIdDaSessao() ?? 'usuário' },
@@ -80,6 +91,7 @@ export function AcoesDoContainer({
       });
       invalidateContainers();
     } catch (erro) {
+      veioDoClique.current = false;
       showToast({
         title: t('actions.errorTitle'),
         message: mensagemDaApi(erro),
@@ -130,6 +142,7 @@ export function AcoesDoContainer({
           : await payloadDeStartPeloBroker();
       if (!payload) return;
 
+      veioDoClique.current = true;
       await proposeAction(item.projectId, latestSession.id, {
         actionType: acao,
         actor: { kind: 'user', id: userIdDaSessao() ?? 'usuário' },
@@ -137,6 +150,7 @@ export function AcoesDoContainer({
       });
       invalidateContainers();
     } catch (erro) {
+      veioDoClique.current = false;
       showToast({
         title: t('actions.errorTitle'),
         message: mensagemDaApi(erro),
@@ -215,13 +229,15 @@ export function AcoesDoContainer({
   // existe, decidir É a próxima ação, não propor de novo.
   if (item.acaoPendente) {
     return (
-      <ApprovalCard
-        action={item.acaoPendente}
-        detalheRecolhido
-        onApprove={() => aprovar()}
-        onDeny={() => negar()}
-        onAlwaysAllow={() => sempreAprovar()}
-      />
+      <div ref={cartaoRef}>
+        <ApprovalCard
+          action={item.acaoPendente}
+          detalheRecolhido
+          onApprove={() => aprovar()}
+          onDeny={() => negar()}
+          onAlwaysAllow={() => sempreAprovar()}
+        />
+      </div>
     );
   }
 

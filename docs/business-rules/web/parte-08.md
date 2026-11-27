@@ -606,3 +606,12 @@ keywords: [regras de negócio, web]
 - **Onde:** `src/routes/session-timeline-montagem.tsx` (`handoff.accepted` automático), `src/locales/*/sessionPage.json` (`handoff.aceiteAutomaticoPassagem`, `handoff.aceiteAutomaticoOferta`), `src/components/PerguntasEmAberto.tsx` (`enviarComEnter`).
 - **Teste:** `src/routes/SessionPage.handoff-aceite-automatico.test.tsx`, `src/components/PerguntasEmAberto.test.tsx`.
 - **Origem:** AT-1026 (EP-036, achados 10 e 12 do TP-01 30ª), fatia F3 (web).
+
+<a id="rn-1545"></a>
+
+### RN-1545 — O cartão de aprovação que nasce do clique da pessoa numa linha de Containers é trazido à vista {#rn-1545}
+
+- **Regra:** depois de "Parar", "Remover" ou "Subir" numa linha de Containers, o cartão de aprovação que substitui os botões ([RN-1481](#rn-1481)) é trazido à vista (`scrollIntoView({ block: 'nearest' })`), para o "Aprovar" não ficar abaixo da dobra; `nearest` não move a tela se o cartão já está visível. Só vale para o cartão nascido do clique da própria pessoa naquela linha e uma vez por ação: o que já vem pendente ao abrir a página (proposta de agente) não rola a tela. Proposta recusada pela api não deixa a marca armada. Nenhuma leitura nova.
+- **Onde:** `src/components/AcoesDoContainer.tsx` (`veioDoClique`, `cartaoRef`).
+- **Teste:** `src/routes/ContainersPage.test.tsx` ("RN-1545").
+- **Origem:** AT-1035 (EP-034), achado 17 do TP-01 31ª, fatia F2 (web).

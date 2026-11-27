@@ -283,7 +283,7 @@ keywords: [regras de negócio, web]
   vocabulário lê os JSON, e o enum entrava pela interpolação em runtime;
   `i18n-enum-cru.test.ts` reprova `t(…, { status: x.status })`.
 - **Onde:** `apps/web/src/routes/ConfirmarEncerramento.tsx:13`
-  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:617`
+  (`useEncerrarComConfirmacao`) e `apps/web/src/routes/SessionComposer.tsx:624`
   (`statusGenerico`)
 - **Teste:** `apps/web/src/routes/ConfirmarEncerramento.test.tsx` (sem
   execução encerra direto; com execução só encerra ao confirmar; cancelar não
@@ -544,8 +544,9 @@ keywords: [regras de negócio, web]
   [RN-102](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-102)); o botão habilitado ganha a explicação no `title`. A
   derivação lê os `events` que a tela já tem — nenhuma query nova
   ([RN-579](https://github.com/viralabs-dev/brabo-engine/blob/dev/docs/business-rules/engine.md#rn-579)).
+- **Emenda (AT-1034):** durante o turno o texto some, mas o lugar dele fica reservado (`visibility: hidden` e `aria-hidden`), para o botão "Confirmar arquitetura pronta" não mudar de posição sob o cursor.
 - **Onde:** `apps/web/src/lib/session-readiness.ts:144` (`temMapaDeModulos`),
-  `apps/web/src/routes/SessionComposer.tsx:136` (`hasModuleMap`)
+  `apps/web/src/routes/SessionComposer.tsx:140` (`hasModuleMap`)
 - **Teste:** `apps/web/src/routes/SessionPage.proximo-passo-arquitetura.test.tsx`
   ("mapa gravado + história promovida + Arquiteto parado: o texto aparece";
   falhas: "com o handoff do Arquiteto já oferecido, o texto some", "com turno
@@ -1229,7 +1230,7 @@ Por decisão do dono (31/10, AT-636 decisão 4), a página de Gastos ganha o Cha
 ### RN-976 — As ações de passo da conversa são sugestões acima do destinatário, com o mesmo predicado e o mesmo endpoint, e a inércia é dita em texto {#rn-976}
 
 - **Regra:** "Estou pronto", "Confirmar arquitetura pronta", "Responder N perguntas em aberto" e "Endereçar handoff a outro agente…" saem de dentro e de cima do composer e viram uma fileira de sugestões fixa, ACIMA do composer (AT-960: o "Para" deixou de ser linha própria e mora na barra do composer, [RN-1357](parte-07.md#rn-1357)). **AT-950 (14/11/2026): a fileira tem no máximo 3 ações, todas com TEXTO — "Estou pronto — validar necessidade" nunca é só ícone —; "N perguntas em aberto" sai dela (o contador "Pendências" do cabeçalho leva ao Sheet; o comando `/` segue) e "Endereçar handoff a outro agente…" vai para o menu "+" do composer (`menu-mais-acoes`).** O predicado de cada uma e o handler (e o endpoint) são os de antes (RN-142, RN-657, RN-672, RN-861, RN-712); a caixa de mensagem fica sozinha na linha e ocupa a largura do fio (780px, antes ~448px). O clique só chama o handler da página, nunca escreve no campo (RN-882), e nada é clicado sozinho; merge nunca vira sugestão. Ação inerte diz o motivo em TEXTO visível, nunca em `title` (RN-102, ADR 0064); as de prontidão e o handoff manual ficam inertes sem o papel `developer`, o mínimo do endpoint, com o motivo de papel dito uma vez. O contrato do E2E `turno-pelo-canal` são os `data-testid` (`destinatario-do-chat` no `select`, `enviar-mensagem` no Enviar), não a posição dos botões (AT-960).
-- **Onde:** `apps/web/src/routes/SessionComposer.tsx:139` (`acoes`), `apps/web/src/components/ai-elements/suggestion.tsx:50` (`SugestoesDeAcao`).
+- **Onde:** `apps/web/src/routes/SessionComposer.tsx:143` (`acoes`), `apps/web/src/components/ai-elements/suggestion.tsx:50` (`SugestoesDeAcao`).
 - **Teste:** `apps/web/src/routes/SessionPage.sugestoes-no-chat.test.tsx`, `apps/web/src/components/ai-elements/suggestion.test.tsx`.
 - **Origem:** AT-681 (EP-031).
 

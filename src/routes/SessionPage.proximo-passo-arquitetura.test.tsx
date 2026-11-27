@@ -231,7 +231,7 @@ describe('SessionPage — próximo passo depois do mapa de módulos (RN-824)', (
     expect(screen.queryByRole('button', { name: 'Confirmar arquitetura pronta' })).toBeNull();
   });
 
-  it('com turno em curso (streaming), o texto não aparece', () => {
+  it('com turno em curso (streaming), o texto fica invisível e mantém o lugar', () => {
     const noop = async () => undefined;
     render(
       // RN-861: o composer lê a fila de perguntas em aberto (react-query).
@@ -272,6 +272,9 @@ describe('SessionPage — próximo passo depois do mapa de módulos (RN-824)', (
       />
       </QueryClientProvider>,
     );
-    expect(screen.queryByTestId('proximo-passo-arquitetura')).toBeNull();
+    // RN-824: o texto some, mas o lugar fica reservado (o botão não salta) e o leitor de tela o ignora.
+    const aviso = screen.getByTestId('proximo-passo-arquitetura');
+    expect(aviso).toHaveStyle({ visibility: 'hidden' });
+    expect(aviso).toHaveAttribute('aria-hidden', 'true');
   });
 });

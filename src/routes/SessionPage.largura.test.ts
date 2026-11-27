@@ -12,3 +12,12 @@ describe('largura do chat da Sessão (ADR 0250)', () => {
     },
   );
 });
+
+// RN-1407: o trilho de turnos cabe no padding do fio, sem criar rolagem horizontal.
+describe('trilho de turnos dentro do padding do fio (RN-1407)', () => {
+  it('.trilho não passa do padding lateral (right: -var(--space-4), sem px extra)', () => {
+    const css = readFileSync(resolve(__dirname, 'SessionPage.module.css'), 'utf8');
+    const regra = css.match(/\.trilho\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(regra).toMatch(/right:\s*calc\(-1 \* var\(--space-4\)\);/);
+  });
+});

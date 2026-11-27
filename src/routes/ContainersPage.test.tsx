@@ -320,6 +320,47 @@ describe('ContainersPage', () => {
     });
   });
 
+  describe('RN-1545: o cartão de aprovação nascido do clique vem à vista', () => {
+    const scrollIntoView = vi.fn();
+    beforeEach(() => {
+      scrollIntoView.mockClear();
+      Element.prototype.scrollIntoView = scrollIntoView;
+    });
+    afterEach(() => {
+      delete (Element.prototype as { scrollIntoView?: unknown }).scrollIntoView;
+    });
+    const arvore = () => (
+      <QueryClientProvider client={new QueryClient()}>
+        <ToastProvider>
+          <ContainersPage />
+        </ToastProvider>
+      </QueryClientProvider>
+    );
+    const lista = (it: ContainerOverviewItem) => ({ isPending: false, isError: false, data: [it], refetch: vi.fn() });
+
+    it('o cartão que nasce do clique em "Parar" é rolado com block nearest, uma vez', async () => {
+      useContainersOverview.mockReturnValue(lista(item()));
+      proposeAction.mockResolvedValue(acaoPendente());
+      const r = montar();
+      fireEvent.click(itemDoMenu('Parar'));
+      await waitFor(() => expect(proposeAction).toHaveBeenCalled());
+      expect(scrollIntoView).not.toHaveBeenCalled();
+
+      useContainersOverview.mockReturnValue(lista(item({ acaoPendente: acaoPendente() })));
+      r.rerender(arvore());
+      await waitFor(() => expect(scrollIntoView).toHaveBeenCalledWith({ block: 'nearest' }));
+      r.rerender(arvore());
+      expect(scrollIntoView).toHaveBeenCalledTimes(1);
+    });
+
+    it('o cartão que já vem pendente ao abrir a página não rola a tela', () => {
+      useContainersOverview.mockReturnValue(lista(item({ acaoPendente: acaoPendente() })));
+      montar();
+      expect(screen.getAllByRole('button', { name: /Aprovar/ }).length).toBeGreaterThan(0);
+      expect(scrollIntoView).not.toHaveBeenCalled();
+    });
+  });
+
   it('clique em "Remover" propõe container_remove', async () => {
     useContainersOverview.mockReturnValue({ isPending: false, isError: false, data: [item()], refetch: vi.fn() });
     proposeAction.mockResolvedValue(acaoPendente({ actionType: 'container_remove' }));

@@ -1205,7 +1205,7 @@
 .trilho {
   position: absolute;
   top: 0;
-  right: calc(-1 * var(--space-4) - 6px);
+  right: calc(-1 * var(--space-4));
   width: 28px;
   max-height: 60vh;
   overflow-y: auto;

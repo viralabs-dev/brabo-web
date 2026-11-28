@@ -136,7 +136,9 @@ export function SessionComposer({
   const [ancora, setAncora] = useState<HTMLDivElement | null>(null);
   const perguntas = usePerguntasEmAberto(session?.projectId).data?.total ?? 0;
   const motivoDePapel = t('composer.sugestaoExigeDeveloper');
-  const proximoPasso = arquitetoActive && !arquiteturaJaDeclarada && !streaming && hasModuleMap;
+  // RN-824: o texto mantém o lugar durante o turno (invisível), para o botão não saltar.
+  const avisoDoProximoPasso = arquitetoActive && !arquiteturaJaDeclarada && hasModuleMap;
+  const proximoPasso = avisoDoProximoPasso && !streaming;
   // RN-976: as ações de passo são sugestões acima do "Para", com o predicado e o handler de antes.
   const acoes: AcaoSugerida[] = [];
   if (criativoActive && !prontidaoJaDeclarada)
@@ -350,12 +352,17 @@ export function SessionComposer({
 
       {session?.status === 'active' ? (
         <>
-        {(barra.length > 0 || proximoPasso) && (
+        {(barra.length > 0 || avisoDoProximoPasso) && (
           <div className={styles.sugestoesRow}>
             <SugestoesDeAcao acoes={barra} />
             {/* RN-824: o próximo passo é um clique HUMANO, dito em texto. */}
-            {proximoPasso && (
-              <span className={styles.destinatarioAviso} data-testid="proximo-passo-arquitetura">
+            {avisoDoProximoPasso && (
+              <span
+                className={styles.destinatarioAviso}
+                data-testid="proximo-passo-arquitetura"
+                style={{ visibility: streaming ? 'hidden' : undefined }}
+                aria-hidden={streaming || undefined}
+              >
                 {hasPromotedStory
                   ? t('composer.confirmarArquiteturaProximoPasso')
                   : t('composer.confirmarArquiteturaDesabilitado')}

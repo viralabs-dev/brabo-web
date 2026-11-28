@@ -486,6 +486,7 @@ O web cumpre a RN-1039 (o token do GitHub Packages nunca entra em camada, `ARG` 
 ### RN-1407 — O trilho de turnos mostra só o carregado {#rn-1407}
 
 - **Regra:** à direita do fio, em 28 px, um ponto por mensagem da janela de eventos já baixada (RN-632, nenhuma leitura nova), na cor do agente; âmbar quando o agente tem ação `pending`. Passar o mouse mostra o turno (`HoverCard`); clicar leva a ele; cada ponto é um botão com nome acessível. Se a janela não começa no primeiro evento (`events[0].seq > 1`), o trilho marca "…" e diz que mostra só os turnos carregados. Some abaixo de 768 px e com menos de 2 pontos.
+- **Emenda (AT-1034):** o trilho cabe no padding lateral do fio (`right: calc(-1 * var(--space-4))`), sem criar rolagem horizontal; antes passava 6 px e o fio rolava de lado. Teste: `src/routes/SessionPage.largura.test.ts`.
 - **Onde:** `src/routes/TrilhoDeTurnos.tsx`, `src/lib/trilho-de-turnos.ts` (`pontosDoTrilho`).
 - **Teste:** `src/routes/TextoDoAgente.test.tsx` (trilho).
 - **Origem:** AT-959 (EP-035).

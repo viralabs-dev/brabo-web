@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Fix (AT-1034 F2, RN-513, ADR 0301): o projeto novo nasce em Container quando há broker confirmado (sem broker, Runner local, como antes). "Pasta montada" continua oferecida com base consentida, só deixa de vir marcada.
+
+- Fix (AT-1034 F1, RN-1407, RN-824): o trilho de turnos cabe no padding do fio (some a barra de rolagem horizontal do chat) e o texto do próximo passo da arquitetura mantém o lugar, invisível, durante o turno, para o botão "Confirmar arquitetura pronta" não saltar.
+
+- Fix (AT-1035 F2, RN-1545): em Containers, o cartão de aprovação que nasce do clique em Parar/Remover/Subir é trazido à vista; o que já vem pendente ao abrir a página não rola a tela.
+
+- Chore (AT-1029, F5): liga no `refs.yml` os checks `refs-entre-repos`, `rn-unica` e `indice-de-rn` do `brabo-ci` v1.6.0 (nenhum é obrigatório) e repina todos os workflows do brabo-ci de v1.4.0 para v1.6.0. PR de dados: regenera a grade de `docs/business-rules/web.md` (faltavam 108 RNs) e aponta os dois links de RN de outro repo para o índice `…/business-rules/<x>.md#rn-N`. Nenhum texto de regra mudou.
+
 - Doc (AT-1028): a ref de `docs/business-rules/web/parte-05.md` para o `brabo-engine` segue o código depois da AT-1037 (só número de linha; sem mudança de regra).
 
 - Feat (AT-1026, EP-036, RN-1535, RN-1536; fatia web): resposta de agente e pergunta em aberto não mostram UUID, `questionId=` nem `taskId=` (o filtro apaga, fora de crase e bloco de código); "Decididas recentemente" nomeia a pessoa pelo membro ("Você"/"Outro membro") e o agente sem nome vira "um agente"; o aviso de aceite automático diz o critério que valeu (passagem ou regra de oferta), não mais "0 regras"; Enter envia a resposta curta da pergunta em aberto. i18n nas quatro línguas.

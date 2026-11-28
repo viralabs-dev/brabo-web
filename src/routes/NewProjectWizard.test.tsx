@@ -334,6 +334,20 @@ describe('NewProjectWizard — onde o código vai morar', () => {
     });
   });
 
+  // ADR 0301: com base E broker, o pré-selecionado é Container mesmo com a
+  // base consentida; Pasta montada segue oferecida e vai à api só se escolhida.
+  it('com base e broker confirmados, Container vem marcado e é o modo enviado à api por padrão', async () => {
+    createProject.mockResolvedValue({ id: 'proj-1' });
+    await ateWorkspaceComBase();
+    expect(estaSelecionado('Container')).toBe(true);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continuar' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Criar projeto' }));
+
+    await waitFor(() => expect(createProject).toHaveBeenCalled());
+    expect(createProject.mock.calls[0][1]).toMatchObject({ executionMode: 'container' });
+  });
+
   // RN-659 (AT-313): o resumo diz com que promoção o projeto nasce, e a
   // criação NÃO manda o campo — o valor é o default da coluna na api, uma
   // fonte só (o payload exato do teste acima prova a ausência).
@@ -537,21 +551,19 @@ describe('NewProjectWizard — onde o código vai morar', () => {
  * pré-seleção, que revisa o default do ADR 0072 só para a instalação local.
  */
 describe('NewProjectWizard — a base de projetos decide o que é oferecido', () => {
-  it('com base, Pasta montada é o pré-selecionado e o campo abre com <base>/<slug>', async () => {
+  it('com base e broker, Container é o pré-selecionado; Pasta montada fica oferecida e desmarcada', async () => {
     await ateWorkspaceComBase();
 
-    expect(estaSelecionado('Pasta montada')).toBe(true);
-    expect(estaSelecionado('Container')).toBe(false);
-    // O campo de caminho só existe fora do modo Container: a presença dele
-    // já prova o modo vigente, e o valor prova a sugestão.
-    expect(screen.getByLabelText('Caminho da pasta')).toHaveValue(
-      `${BASE}/loja`,
-    );
+    expect(estaSelecionado('Container')).toBe(true);
+    expect(estaSelecionado('Pasta montada')).toBe(false);
+    expect(screen.getByText('Pasta montada').closest('button')).not.toBeDisabled();
+    expect(screen.queryByLabelText('Caminho da pasta')).toBeNull();
     expect(getProjectsBase).toHaveBeenCalledWith('ws-1');
   });
 
   it('a sugestão acompanha o nome enquanto ninguém digitou por cima', async () => {
     await ateWorkspaceComBase();
+    fireEvent.click(screen.getByText('Pasta montada'));
     expect(screen.getByLabelText('Caminho da pasta')).toHaveValue(
       `${BASE}/loja`,
     );
@@ -571,6 +583,7 @@ describe('NewProjectWizard — a base de projetos decide o que é oferecido', ()
 
   it('caminho digitado NUNCA é sobrescrito pela sugestão, nem quando o nome muda', async () => {
     await ateWorkspaceComBase();
+    fireEvent.click(screen.getByText('Pasta montada'));
     fireEvent.change(screen.getByLabelText('Caminho da pasta'), {
       target: { value: `${BASE}/minha-pasta` },
     });
@@ -717,6 +730,7 @@ describe('NewProjectWizard — a base de projetos decide o que é oferecido', ()
    */
   it('caminho fora da base avisa da recusa nomeando a base; sob a base, nota neutra', async () => {
     await ateWorkspaceComBase();
+    fireEvent.click(screen.getByText('Pasta montada'));
 
     // `getAllByText`: o `<Trans>` quebra a frase em `<strong>`/`<code>`, e a
     // asserção é sobre a FRASE estar na tela, não sobre quantos nós a

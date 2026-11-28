@@ -234,7 +234,7 @@ da interface, o binário segue sendo refinado); o protocolo em
 
 <a id="rn-513"></a>
 
-### RN-513 — Com base consentida, `mounted` é o pré-selecionado com `<base>/<slug>` sugerido; sem base, ou sem saber, ele não é oferecido {#rn-513}
+### RN-513 — Com base consentida, `mounted` é oferecido com `<base>/<slug>` sugerido, mas não vem marcado; sem base, ou sem saber, ele não é oferecido {#rn-513}
 
 > **Revisada pela [RN-573](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-573) (ADR 0161):** a pré-seleção de `mounted`
 > passou a exigir TAMBÉM o broker de container confirmado. Com base e sem
@@ -242,6 +242,8 @@ da interface, o binário segue sendo refinado); o protocolo em
 > `container`/`mounted` ficam inertes com o motivo em texto; com o broker
 > desconhecido, `container` segue selecionado. O resto desta regra vale como
 > está.
+>
+> **Emendada pelo ADR [0301](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0301-projeto-novo-nasce-em-container.md)** (revisa o ponto 4 do ADR 0146): a pré-seleção de `mounted` cai. Com broker confirmado, `container` é sempre o pré-selecionado, com ou sem base consentida; `mounted` continua oferecido (com base) e desmarcado. Sem broker, `runner` segue pré-selecionado como acima.
 
 Duas metades desta regra **já eram regra** e nunca tinham chegado ao cliente.
 "Não oferecer o modo sem base" é a [RN-500](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-500); "sugerir `<base>/<slug>`"
@@ -253,10 +255,12 @@ instalação sem `BRABO_PROJECTS_BASE`, escolher o modo terminava numa recusa
 400 da api depois de a pessoa ter escolhido, digitado o caminho e chegado ao
 fim do assistente.
 
-O que é **novo** é a **pré-seleção**: com base configurada, `mounted` nasce
-selecionado. Ela revisa o default do ADR 0072 (onde `container` é "a normal" e
-o modo local é escape hatch) e o revisa **só para a instalação local**, onde a
-base foi consentida por um humano no host ([RN-511](https://github.com/viralabs-dev/brabo-infra/blob/dev/deploy/docs/business-rules/infra.md#rn-511)). O enum
+O que era **novo** era a **pré-seleção**: com base configurada, `mounted` nascia
+selecionado. Essa pré-seleção cai pelo ADR 0301: o usuário leigo não sabe o
+que é uma pasta montada no host, então `container` (o Brabo cuida de tudo) é o
+padrão seguro com broker, e `mounted` fica oferecido como escolha consciente.
+O ADR 0072 volta a valer como default, e o caminho de base consentida por um
+humano no host ([RN-511](https://github.com/viralabs-dev/brabo-infra/blob/dev/deploy/docs/business-rules/infra.md#rn-511)) segue sugerindo `<base>/<slug>` quando `mounted` é escolhido. O enum
 `project_execution_mode` não muda, nenhum modo novo nasce, e a conversão de
 modo (ADR 0111) não é tocada.
 
@@ -312,6 +316,7 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
   `apps/web/src/lib/wizard.test.ts` (`describe('caminhoSugeridoNaBase')` e
   `describe('caminhoDentroDaBase')`)
 - **ADR:** [0146](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0146-base-consentida-no-bootstrap.md), ponto 4
+- **Emenda:** ADR [0301](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0301-projeto-novo-nasce-em-container.md), que revisa o ponto 4 do ADR 0146 (a pré-seleção de `mounted` cai)
 - **Origem:** FASE 28, sessão 3
 
 ---

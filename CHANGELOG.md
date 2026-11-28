@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix (AT-1034 F2, RN-513, ADR 0301): o projeto novo nasce em Container quando há broker confirmado (sem broker, Runner local, como antes). "Pasta montada" continua oferecida com base consentida, só deixa de vir marcada.
+
 - Fix (AT-1034 F1, RN-1407, RN-824): o trilho de turnos cabe no padding do fio (some a barra de rolagem horizontal do chat) e o texto do próximo passo da arquitetura mantém o lugar, invisível, durante o turno, para o botão "Confirmar arquitetura pronta" não saltar.
 
 - Fix (AT-1035 F2, RN-1545): em Containers, o cartão de aprovação que nasce do clique em Parar/Remover/Subir é trazido à vista; o que já vem pendente ao abrir a página não rola a tela.

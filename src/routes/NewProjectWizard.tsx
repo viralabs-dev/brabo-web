@@ -163,9 +163,9 @@ export function NewProjectWizard({ workspaceId, onClose }: NewProjectWizardProps
   const [visibility, setVisibility] = useState<Visibility>('private');
   // O modo que o USUÁRIO escolheu, e só ele — `undefined` é "ainda não
   // tocou nos cards". O modo VIGENTE é derivado logo abaixo, porque desde o
-  // ADR 0146 (ponto 4) o default depende da instalação: com base consentida,
-  // `mounted` é o pré-selecionado; sem ela, `container` continua sendo (o
-  // default do ADR 0072). Guardar a escolha separada do vigente é o que
+  // ADR 0301 (revisa o ponto 4 do ADR 0146) o default é `container` sempre
+  // que há broker; sem broker, `runner`. Com base consentida, `mounted`
+  // continua oferecido, só não vem marcado. Guardar a escolha separada do vigente é o que
   // impede a pré-seleção de trocar o modo debaixo da mão de quem já clicou
   // — a base chega por rede, sempre DEPOIS do primeiro render (RN-513).
   const [modoDeWorkspaceEscolhido, setModoDeWorkspaceEscolhido] =
@@ -256,9 +256,6 @@ export function NewProjectWizard({ workspaceId, onClose }: NewProjectWizardProps
    * comportamento de antes, `container` selecionado e `mounted` fora da tela
    * pela régua da RN-513.
    */
-  const brokerConfirmado =
-    projectsBaseQuery.isSuccess &&
-    projectsBaseQuery.data.brokerConfigurado === true;
   const semBrokerConfirmado =
     projectsBaseQuery.isSuccess &&
     projectsBaseQuery.data.brokerConfigurado === false;
@@ -278,10 +275,9 @@ export function NewProjectWizard({ workspaceId, onClose }: NewProjectWizardProps
   // resposta dizer que não há broker) cai para o default em vez de ficar
   // apontando para um card que saiu da tela ou ficou inerte.
   //
-  // `mounted` só é PRÉ-selecionado com base E broker confirmados (RN-513
-  // revisada pela RN-573): pré-selecionar um modo que não sobe container foi
-  // o que deixou a instalação do AT-085 com seis dev agents bloqueados para
-  // sempre.
+  // Pré-selecionar um modo que não sobe container foi o que deixou a
+  // instalação do AT-085 com seis dev agents bloqueados (RN-573); por isso sem
+  // broker o default é `runner`, e com broker é sempre `container` (ADR 0301).
   const modoDeWorkspace: ModoDeWorkspace =
     modoDeWorkspaceEscolhido !== undefined &&
     (modoDeWorkspaceEscolhido !== 'mounted' || podeOferecerMounted) &&
@@ -289,9 +285,7 @@ export function NewProjectWizard({ workspaceId, onClose }: NewProjectWizardProps
       ? modoDeWorkspaceEscolhido
       : semBrokerConfirmado
         ? 'runner'
-        : podeOferecerMounted && brokerConfirmado
-          ? 'mounted'
-          : 'container';
+        : 'container';
 
   /**
    * DE ONDE o navegador de pastas lê o disco, decidido pelo MODO (RN-533).

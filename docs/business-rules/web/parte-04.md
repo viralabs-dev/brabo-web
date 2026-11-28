@@ -234,7 +234,7 @@ da interface, o binário segue sendo refinado); o protocolo em
 
 <a id="rn-513"></a>
 
-### RN-513 — Com base consentida, `mounted` é o pré-selecionado com `<base>/<slug>` sugerido; sem base, ou sem saber, ele não é oferecido {#rn-513}
+### RN-513 — Com base consentida, `mounted` é oferecido com `<base>/<slug>` sugerido, mas não vem marcado; sem base, ou sem saber, ele não é oferecido {#rn-513}
 
 > **Revisada pela [RN-573](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-573) (ADR 0161):** a pré-seleção de `mounted`
 > passou a exigir TAMBÉM o broker de container confirmado. Com base e sem
@@ -242,6 +242,8 @@ da interface, o binário segue sendo refinado); o protocolo em
 > `container`/`mounted` ficam inertes com o motivo em texto; com o broker
 > desconhecido, `container` segue selecionado. O resto desta regra vale como
 > está.
+>
+> **Emendada pelo ADR [0301](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0301-projeto-novo-nasce-em-container.md)** (revisa o ponto 4 do ADR 0146): a pré-seleção de `mounted` cai. Com broker confirmado, `container` é sempre o pré-selecionado, com ou sem base consentida; `mounted` continua oferecido (com base) e desmarcado. Sem broker, `runner` segue pré-selecionado como acima.
 
 Duas metades desta regra **já eram regra** e nunca tinham chegado ao cliente.
 "Não oferecer o modo sem base" é a [RN-500](https://github.com/viralabs-dev/brabo-api/blob/dev/docs/business-rules/api.md#rn-500); "sugerir `<base>/<slug>`"
@@ -253,10 +255,12 @@ instalação sem `BRABO_PROJECTS_BASE`, escolher o modo terminava numa recusa
 400 da api depois de a pessoa ter escolhido, digitado o caminho e chegado ao
 fim do assistente.
 
-O que é **novo** é a **pré-seleção**: com base configurada, `mounted` nasce
-selecionado. Ela revisa o default do ADR 0072 (onde `container` é "a normal" e
-o modo local é escape hatch) e o revisa **só para a instalação local**, onde a
-base foi consentida por um humano no host ([RN-511](https://github.com/viralabs-dev/brabo-infra/blob/dev/deploy/docs/business-rules/infra.md#rn-511)). O enum
+O que era **novo** era a **pré-seleção**: com base configurada, `mounted` nascia
+selecionado. Essa pré-seleção cai pelo ADR 0301: o usuário leigo não sabe o
+que é uma pasta montada no host, então `container` (o Brabo cuida de tudo) é o
+padrão seguro com broker, e `mounted` fica oferecido como escolha consciente.
+O ADR 0072 volta a valer como default, e o caminho de base consentida por um
+humano no host ([RN-511](https://github.com/viralabs-dev/brabo-infra/blob/dev/deploy/docs/business-rules/infra.md#rn-511)) segue sugerindo `<base>/<slug>` quando `mounted` é escolhido. O enum
 `project_execution_mode` não muda, nenhum modo novo nasce, e a conversão de
 modo (ADR 0111) não é tocada.
 
@@ -301,7 +305,7 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
 
 - **Onde:** `apps/web/src/routes/NewProjectWizard.tsx:220` (a consulta),
   `:238` (`podeOferecerMounted`/`baseDeProjetos`), `:283` (o modo vigente),
-  `:333` (`caminhoForaDaBase`), `:360` (a sugestão);
+  `:329` (`caminhoForaDaBase`), `:360` (a sugestão);
   `apps/web/src/lib/wizard.ts:143` (`caminhoSugeridoNaBase`) e `:171`
   (`caminhoDentroDaBase`) — as funções puras;
   `apps/web/src/lib/api-client.ts:309` (`getProjectsBase`)
@@ -312,6 +316,7 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
   `apps/web/src/lib/wizard.test.ts` (`describe('caminhoSugeridoNaBase')` e
   `describe('caminhoDentroDaBase')`)
 - **ADR:** [0146](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0146-base-consentida-no-bootstrap.md), ponto 4
+- **Emenda:** ADR [0301](https://github.com/viralabs-dev/brabo/blob/dev/docs/adr/0301-projeto-novo-nasce-em-container.md), que revisa o ponto 4 do ADR 0146 (a pré-seleção de `mounted` cai)
 - **Origem:** FASE 28, sessão 3
 
 ---
@@ -407,7 +412,7 @@ duas devem.
   origens; `apps/web/src/components/EsperaDoRunner.tsx:91` (`onConfirmado`) e
   `:136` (o `ref` que a dispara uma vez);
   `apps/web/src/components/RunnerOnboardingPanel.tsx:131` (`mostrarEspera`);
-  `apps/web/src/routes/NewProjectWizard.tsx:304` (`origemDoNavegador`, o
+  `apps/web/src/routes/NewProjectWizard.tsx:300` (`origemDoNavegador`, o
   transporte escolhido pelo modo, `undefined` quando não há projeto a ancorar)
 - **Teste:** `apps/web/src/components/FolderBrowserModal.test.tsx` (a lista
   declarando o disco da máquina do usuário; `sem-agente` caindo no painel de
@@ -482,7 +487,7 @@ branch" saiu da tela junto — não por ter deixado de ser verdade, mas por ter
 ficado **inalcançável**: a condição era `provider === 'github'`, e ao criar não
 há mais provider escolhido.
 
-- **Onde:** `apps/web/src/routes/NewProjectWizard.tsx:379` (`stepKeys`, agora
+- **Onde:** `apps/web/src/routes/NewProjectWizard.tsx:375` (`stepKeys`, agora
   dependente de `adotando`), `:540` (a guarda de `provider` restrita à adoção) e
   `:590` (a navegação para `/projects/$projectId`)
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx`, `describe('NewProjectWizard — o git é adiado')`
@@ -1155,8 +1160,8 @@ runner ao conectar (RN-423).
 
 - **Código:** `apps/web/src/lib/wizard.ts:108` (`nomeAceitoPelaApi`);
   `apps/web/src/routes/NewProjectWizard.tsx:112` (`montarPayloadDeCriacao`),
-  `:202` (`criacaoEmVoo`), `:321` (`bloqueioDoProcurarNoRunner`), `:486`
-  (`handleProcurarPasta`), `:536` (`handleConfirm`)
+  `:202` (`criacaoEmVoo`), `:317` (`bloqueioDoProcurarNoRunner`), `:482`
+  (`handleProcurarPasta`), `:532` (`handleConfirm`)
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx:850` (describe
   `criar projeto sem rajada de 400` — sem nome, 11 cliques e nenhum POST;
   caminho relativo; nome de uma letra; nome recortado; três cliques no mesmo

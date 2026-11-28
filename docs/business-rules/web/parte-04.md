@@ -305,7 +305,7 @@ nunca `startsWith` cru — `/base-outra` não está dentro de `/base` —, espel
 
 - **Onde:** `apps/web/src/routes/NewProjectWizard.tsx:220` (a consulta),
   `:238` (`podeOferecerMounted`/`baseDeProjetos`), `:283` (o modo vigente),
-  `:333` (`caminhoForaDaBase`), `:360` (a sugestão);
+  `:329` (`caminhoForaDaBase`), `:360` (a sugestão);
   `apps/web/src/lib/wizard.ts:143` (`caminhoSugeridoNaBase`) e `:171`
   (`caminhoDentroDaBase`) — as funções puras;
   `apps/web/src/lib/api-client.ts:309` (`getProjectsBase`)
@@ -412,7 +412,7 @@ duas devem.
   origens; `apps/web/src/components/EsperaDoRunner.tsx:91` (`onConfirmado`) e
   `:136` (o `ref` que a dispara uma vez);
   `apps/web/src/components/RunnerOnboardingPanel.tsx:131` (`mostrarEspera`);
-  `apps/web/src/routes/NewProjectWizard.tsx:304` (`origemDoNavegador`, o
+  `apps/web/src/routes/NewProjectWizard.tsx:300` (`origemDoNavegador`, o
   transporte escolhido pelo modo, `undefined` quando não há projeto a ancorar)
 - **Teste:** `apps/web/src/components/FolderBrowserModal.test.tsx` (a lista
   declarando o disco da máquina do usuário; `sem-agente` caindo no painel de
@@ -487,7 +487,7 @@ branch" saiu da tela junto — não por ter deixado de ser verdade, mas por ter
 ficado **inalcançável**: a condição era `provider === 'github'`, e ao criar não
 há mais provider escolhido.
 
-- **Onde:** `apps/web/src/routes/NewProjectWizard.tsx:379` (`stepKeys`, agora
+- **Onde:** `apps/web/src/routes/NewProjectWizard.tsx:375` (`stepKeys`, agora
   dependente de `adotando`), `:540` (a guarda de `provider` restrita à adoção) e
   `:590` (a navegação para `/projects/$projectId`)
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx`, `describe('NewProjectWizard — o git é adiado')`
@@ -1160,8 +1160,8 @@ runner ao conectar (RN-423).
 
 - **Código:** `apps/web/src/lib/wizard.ts:108` (`nomeAceitoPelaApi`);
   `apps/web/src/routes/NewProjectWizard.tsx:112` (`montarPayloadDeCriacao`),
-  `:202` (`criacaoEmVoo`), `:321` (`bloqueioDoProcurarNoRunner`), `:486`
-  (`handleProcurarPasta`), `:536` (`handleConfirm`)
+  `:202` (`criacaoEmVoo`), `:317` (`bloqueioDoProcurarNoRunner`), `:482`
+  (`handleProcurarPasta`), `:532` (`handleConfirm`)
 - **Teste:** `apps/web/src/routes/NewProjectWizard.test.tsx:850` (describe
   `criar projeto sem rajada de 400` — sem nome, 11 cliques e nenhum POST;
   caminho relativo; nome de uma letra; nome recortado; três cliques no mesmo
